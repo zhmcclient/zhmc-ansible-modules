@@ -1,0 +1,31 @@
+---
+- hosts: localhost
+  vars_files:
+    - vars.yml
+  tasks:
+  - name: Get HMC Webservice API info.
+    zhmc_api:
+      auth_hmc: "{{ hmc }}"
+    register: result
+
+  - debug: var=result
+
+  - name: Deactivate LPAR.
+    zhmc_lpar:
+      auth_hmc: "{{ hmc }}"
+      auth_userid: "{{ ws_api_userid }}"
+      auth_password: "{{ ws_api_password }}"
+      cpc_name: "{{ cpc_name }}"
+      lpar_name: "{{ lpar_name }}"
+      state: deactivated
+
+  - name: Activate LPAR and load.
+    zhmc_lpar:
+      auth_hmc: "{{ hmc }}"
+      auth_userid: "{{ ws_api_userid }}"
+      auth_password: "{{ ws_api_password }}"
+      cpc_name: "{{ cpc_name }}"
+      lpar_name: "{{ lpar_name }}"
+#      load: "{{ load_address }}"
+      state: activated
+

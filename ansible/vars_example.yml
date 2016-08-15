@@ -1,0 +1,7 @@
+---
+hmc: 192.168.1.42
+ws_api_userid: ensadmin
+ws_api_password: secret
+cpc_name: P0000P30
+lpar_name: TESTPARTITION
+# load_address: 1234

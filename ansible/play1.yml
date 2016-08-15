@@ -1,0 +1,12 @@
+---
+- hosts: localhost
+  vars_files:
+    - vars.yml
+  tasks:
+  - name: Get HMC Webservice API info.
+    zhmc_api:
+      auth_hmc: "{{ hmc }}"
+    register: result
+
+  - debug: var=result
+
