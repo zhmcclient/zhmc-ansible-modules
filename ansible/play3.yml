@@ -1,0 +1,23 @@
+---
+- hosts: localhost
+  vars_files:
+    - vars.yml
+  tasks:
+  - name: Get HMC Webservice API info.
+    zhmc_api:
+      auth_hmc: "{{ hmc }}"
+    register: result
+
+  - debug: var=result
+
+  - name: CPC list.
+    zhmc_cpc_facts:
+      auth_hmc: "{{ hmc }}"
+      auth_userid: "{{ ws_api_userid }}"
+      auth_password: "{{ ws_api_password }}"
+#      cpc_name: "{{ cpc_name }}"
+#      detailed: true
+
+  - debug:
+       var: cpcs
+
