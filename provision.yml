@@ -1,0 +1,36 @@
+---
+- hosts: all
+  sudo: true
+  tasks:
+  - name: Update and Upgrade apt packages
+    apt: >
+      upgrade=yes
+      update_cache=yes
+      cache_valid_time=3600
+
+  - name: Install software-properties-common
+    apt: name=software-properties-common state=present
+
+  - name: Install latest Ansible through PPA.
+    apt_repository: repo='ppa:ansible/ansible' update_cache=yes
+
+  - name: Install required packages
+    apt: name={{ item }} state=present
+    with_items:
+      - git
+      - python-pip
+      - build-essential
+      - python-dev
+      - ansible
+
+  - name: Install python packages
+    pip: name={{ item }}
+    with_items:
+      - pexpect
+        #      - virtualenv
+
+  - name: Add localhost to inventory file
+    lineinfile:
+      dest: /etc/ansible/hosts
+      line: 'localhost ansible_connection=local'
+
