@@ -1,0 +1,83 @@
+---
+- hosts: localhost
+  vars_files:
+    - vars.yml
+  tasks:
+  - name: Get HMC Webservice API info.
+    zhmc_api:
+      auth_hmc: "{{ hmc }}"
+    register: result
+
+  - debug: var=result
+
+  - name: Create partition.
+    zhmc_lpar:
+      auth_hmc: 1.2.3.4
+      auth_userid: user
+      auth_password: pw
+      cpc_name: cpc-name
+      name: foo-partition
+      description: foo-description
+      state: present
+# Does this make sense? Before the parition can be started, somebody needs to configure the lun masking on the storage subsystem
+# But the WWPN of the hba is not known before it's creation....
+# But it could make sense for ftp boot for example?
+      status: active
+      processors:
+        type: IFL
+        shared: yes
+        amount: 3
+      memory:
+        initial: 512
+      adapters:
+        - adapter_name: osa1
+          name: nic1
+          port: 0
+        - adapter-name: fcp1
+          port: 3
+          name: hba1
+      boot:
+        boot-device: storage-adapter
+        boot-storage-device: hba-name
+        boot-logical-unit-number: 00000000001
+        boot-world-wide-port-name: abcdefabcdef
+
+  - name: add another hba
+    zhmc_hba:
+       auth_hmc: 1.2.3.4
+       auth_userid: user
+       auth_password: pw
+       cpc_name: cpc-name
+       partition_name: foo-partition
+       adapter_name: fcp2
+       port: 0
+       name: hba2
+       state: present
+
+
+  - name: remove that hba again
+    zhmc_hba:
+       auth_hmc: 1.2.3.4
+       auth_userid: user
+       auth_password: pw
+       cpc_name: cpc-name
+       partition_name: foo-partition
+       name: hba2
+       state: absent
+
+  - name: add another nic
+    zhmc_nic:
+       auth_hmc: 1.2.3.4
+       auth_userid: user
+       auth_password: pw
+       cpc_name: cpc-name
+       partition_name: foo-partition
+       adapter_name: hs3
+       port: 1
+       name: nic4
+       devno: 1234
+       state: present
+
+
+# How to update partition attributes like the boot stuff?
+
