@@ -44,7 +44,7 @@ a) `Install Ansible`_
 
 b) Then ...
 
-.. code-block:: bash
+.. code-block:: text
 
     $ git clone git@github.ibm.com:LEOPOLDJ/zhmc-ansible-modules.git
     $ cd zhmc-ansible-modules
@@ -53,6 +53,9 @@ b) Then ...
     Location: /usr/local/lib/python2.7/dist-packages
     $ export ANSIBLE_LIBRARY=/usr/local/lib/python2.7/dist-packages/ansible/modules
 
+The sequence above installs this Python package and its dependent packages
+into your system Python. If you prefer using virtual Python environments instead,
+see `Using virtual Python environments`_.
 
 Quickstart
 ===========
@@ -62,7 +65,7 @@ which retrieves information about the HMC. Before you run the playbook, copy
 vars_example.yml to vars.yml and fill out the variables with proper values.
 
 
-.. code-block:: bash
+.. code-block:: text
 
     $ cp vars_example.yml vars.yml
     $ vim vars.yml
@@ -97,3 +100,54 @@ vars_example.yml to vars.yml and fill out the variables with proper values.
 
     PLAY RECAP ****************************************************************
     localhost                  : ok=3    changed=0    unreachable=0    failed=0
+
+Using virtual Python environments
+=================================
+
+It is possible to use this Python package in a virtual Python environment
+set up using ``virtualenv``, by configuring Ansible to use the Python that
+is found in the PATH, for the local target system.
+
+This is based on the fact that when using ``virtualenv``, the PATH is set
+up to use the desired virtual Python, and on the fact that this Python
+package uses Ansible to target the local system (which then talks to
+the desired HMC).
+
+To set up your local Ansible installation to use the currently active
+Python, issue these commands in a bash shell on the system you plan to
+invoke Ansible from (e.g. your workstation), after possibly adjusting
+the shell variables that are shown:
+
+.. code-block:: bash
+
+    # Adjust this if needed: File path to a shell script that invokes
+    # the current Python in PATH:
+    set env_python=$HOME/local/bin/env_python
+
+    # Create a shell script that invokes the currently active Python:
+    cat >$env_python <<'EOT'
+    #!/bin/bash
+    py=$(which python)
+    $py "$@"
+    EOT
+    chmod 755 $env_python
+
+    # Configure Ansible to invoke Python via the new shell script when
+    # targeting the local system:
+    sudo tee -a /etc/ansible/hosts >/dev/null <<EOT
+
+    [local:vars]
+    ansible_python_interpreter=$env_python
+    EOT
+
+To work with this Python package in a virtual Python environment, issue:
+
+.. code-block:: text
+
+    $ git clone git@github.ibm.com:LEOPOLDJ/zhmc-ansible-modules.git
+    $ cd zhmc-ansible-modules
+    $ workon {venv}
+    $ pip install .
+    $ pip show zhmc-ansible-modules | grep Location
+    Location: /home/{user}/virtualenvs/{venv}/lib/python2.7/site-packages
+    $ export ANSIBLE_LIBRARY=/home/{user}/virtualenvs/{venv}/lib/python2.7/site-packages/ansible/modules
