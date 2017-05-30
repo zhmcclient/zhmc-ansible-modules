@@ -46,7 +46,7 @@ b) Then ...
 
 .. code-block:: text
 
-    $ git clone git@github.ibm.com:LEOPOLDJ/zhmc-ansible-modules.git
+    $ git clone git@github.ibm.com:zhmcclient/zhmc-ansible-modules.git
     $ cd zhmc-ansible-modules
     $ sudo pip install .
     $ pip show zhmc-ansible-modules | grep Location
@@ -144,7 +144,7 @@ To work with this Python package in a virtual Python environment, issue:
 
 .. code-block:: text
 
-    $ git clone git@github.ibm.com:LEOPOLDJ/zhmc-ansible-modules.git
+    $ git clone git@github.ibm.com:zhmcclient/zhmc-ansible-modules.git
     $ cd zhmc-ansible-modules
     $ workon {venv}
     $ pip install .
