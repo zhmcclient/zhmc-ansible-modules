@@ -6,13 +6,14 @@
   tasks:
   - name: Ensure partition 1 exists and is stopped
     zhmc_partition:
-      hmc_host: {{ hmc_host }}
-      hmc_credentials: {{ hmc_credentials }}
-      cpc_name: {{ cpc_name }}
-      name: {{ partition_name }}
+      hmc_host: "{{ hmc_host }}"
+      hmc_userid: "{{ hmc_userid }}"
+      hmc_password: "{{ hmc_password }}"
+      cpc_name: "{{ cpc_name }}"
+      name: "{{ partition_name }}"
       state: stopped
       properties:
-        description: zhmc Ansible modules: partition 1
+        description: "zhmc Ansible modules: partition 1"
 
         short_name:  # auto-generated
         autogenerate_partition_id: true
@@ -86,10 +87,11 @@
 
   - name: Ensure HBA 1 exists in the partition
     zhmc_hba:
-      hmc_host: {{ hmc_host }}
-      hmc_credentials: {{ hmc_credentials }}
-      cpc_name: {{ cpc_name }}
-      partition_name: {{ partition_name }}
+      hmc_host: "{{ hmc_host }}"
+      hmc_userid: "{{ hmc_userid }}"
+      hmc_password: "{{ hmc_password }}"
+      cpc_name: "{{ cpc_name }}"
+      partition_name: "{{ partition_name }}"
       name: hba-1
       state: present
       properties:
@@ -101,19 +103,21 @@
 
   - name: Ensure HBA 2 does not exist in the partition
     zhmc_hba:
-      hmc_host: {{ hmc_host }}
-      hmc_credentials: {{ hmc_credentials }}
-      cpc_name: {{ cpc_name }}
-      partition_name: {{ partition_name }}
+      hmc_host: "{{ hmc_host }}"
+      hmc_userid: "{{ hmc_userid }}"
+      hmc_password: "{{ hmc_password }}"
+      cpc_name: "{{ cpc_name }}"
+      partition_name: "{{ partition_name }}"
       name: hba-2
       state: absent
 
   - name: Ensure NIC 1 exists in the partition
     zhmc_nic:
-      hmc_host: {{ hmc_host }}
-      hmc_credentials: {{ hmc_credentials }}
-      cpc_name: {{ cpc_name }}
-      partition_name: {{ partition_name }}
+      hmc_host: "{{ hmc_host }}"
+      hmc_userid: "{{ hmc_userid }}"
+      hmc_password: "{{ hmc_password }}"
+      cpc_name: "{{ cpc_name }}"
+      partition_name: "{{ partition_name }}"
       name: nic-1
       state: present
       properties:
@@ -131,8 +135,9 @@
 
   - name: Start partition 1
     zhmc_partition:
-      hmc_host: {{ hmc_host }}
-      hmc_credentials: {{ hmc_credentials }}
-      cpc_name: {{ cpc_name }}
-      partition_name: {{ partition_name }}
+      hmc_host: "{{ hmc_host }}"
+      hmc_userid: "{{ hmc_userid }}"
+      hmc_password: "{{ hmc_password }}"
+      cpc_name: "{{ cpc_name }}"
+      name: "{{ partition_name }}"
       state: active

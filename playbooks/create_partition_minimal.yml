@@ -1,0 +1,19 @@
+---
+- hosts: localhost
+  vars_files:
+    - vars_67b.yml
+  tasks:
+  - name: Ensure partition 1 exists and is stopped
+    zhmc_partition:
+      hmc_host: "{{ hmc_host }}"
+      hmc_userid: "{{ hmc_userid }}"
+      hmc_password: "{{ hmc_password }}"
+      cpc_name: "{{ cpc_name }}"
+      name: zhmc-part-1
+      state: stopped
+      properties:
+        description: "zhmc Ansible modules: partition 1"
+        ifl_processors: 2
+        initial_memory: 1024
+        maximum_memory: 1024
+    register: part1
