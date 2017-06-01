@@ -1,4 +1,25 @@
 #!/usr/bin/env python
+# Copyright 2017 IBM Corp. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+from __future__ import absolute_import
+
+from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils.zhmc.utils import ParameterError, StatusError, \
+    stop_partition, start_partition
+import requests.packages.urllib3
+import zhmcclient
 
 # For information on the format of the ANSIBLE_METADATA, DOCUMENTATION,
 # EXAMPLES, and RETURN strings, see
@@ -24,9 +45,9 @@ description:
 notes:
   - See also Ansible modules zhmc_hba, zhmc_nic, zhmc_virtualfunction.
 author:
-  - Andreas Maier (@andy-maier)
-  - Andreas Scheuring (@scheuran)
-  - Juergen Leopold (@leopoldjuergen)
+  - Andreas Maier (@andy-maier, maiera@de.ibm.com)
+  - Andreas Scheuring (@scheuran, scheuran@de.ibm.com)
+  - Juergen Leopold (@leopoldjuergen, leopoldj@de.ibm.com)
 requirements:
   - z Systems or LinuxONE CPC in DPM mode
   - Python package zhmcclient >=0.14.0
@@ -97,8 +118,8 @@ options:
   - option-name: properties
     description:
       - A dictionary of input properties for the partition, for C(state) values
-        C(stopped) and C(active). The dictionary may be specified and will
-        be ignored for C(state) value C(absent).
+        C(stopped) and C(active). The dictionary will be ignored for C(state)
+        value C(absent).
       - These input properties are used to ensure that the partition properties
         have the specified values. If needed, a "Create Partition" operation
         will be followed by an "Update Partition properties" operation (some
@@ -114,8 +135,9 @@ options:
           * The C(type) property cannot be changed, because updating it
             is not supported, and deleting and recreating the partition just
             for a change of the partition type seems prohibitive.
-          * Some properties from the data model are replaced with more
-            convenient artificial properties, see below.
+          * The C(boot-storage-device) and C(boot-network-device) properties
+            from the data model are replaced with more convenient artificial
+            properties, see below.
         * The following artificial properties, replacing their corresponding
           data model properties:
           * C(boot_storage_hba_name): The name of the HBA whose URI will be
@@ -176,24 +198,35 @@ EXAMPLES = """
       boot_logical_unit_number: 00000000001
       boot_world_wide_port_name: abcdefabcdef
   register: part1
+
+- name: Ensure the partition does not exist
+  zhmc_partition:
+    hmc_host: "{{ hmc_host }}"
+    hmc_userid: "{{ hmc_userid }}"
+    hmc_password: "{{ hmc_password }}"
+    cpc_name: "{{ cpc_name }}"
+    name: zhmc-part-1
+    state: absent
 """
 
 RETURN = """
 properties:
   description:
-    - For state=stopped and state=active, a dictionary with all resource
-      properties of the partition (after changes, if any), as defined in the
-      data model for partition resources in the HMC API book.
+    - For state=stopped and state=active, a dictionary with the resource
+      properties of the partition (after changes, if any) returned by the
+      "Get Partition Properties" operation defined in the HMC API book. This
+      means that some properties of the partition resource are not returned,
+      for example passwords.
     - For state=absent, an empty dictionary.
     - The dictionary keys are the exact property names as described in the
-      data model for partition resources, i.e. they contain hyphens (-),
-      not underscores (_).
+      data model for the resource, i.e. they contain hyphens (-), not
+      underscores (_).
     - The dictionary values are the property values using the Python
       representations described in the documentation of the zhmcclient Python
       package.
-    - Note that the returned dictionary contains all resource properties of
-      the partition, not just those that can be or have been provided when
-      creating the partition.
+    - Note that the returned dictionary contains all properties of the
+      resource, not just those that can be or have been provided when
+      creating the resource.
     - Note that the names of properties in the returned dictionary are
       different from the names of properties in the 'properties' input
       parameter in two ways:
@@ -207,20 +240,13 @@ properties:
   returned: success
   type: dict
   sample:
-    - {
-        'name': 'part-1',
-        'description': 'partition #1',
-        'status': 'active',
-        'boot-device': 'storage-adapter',
+    - 'partition': {
+        'name': 'hba-1',
+        'description': 'HBA #1',
+        'adapter-port-uri': '/api/adapters/.../ports/...',
         . . .
       }
 """
-
-
-import traceback
-from ansible.module_utils.basic import AnsibleModule
-import requests.packages.urllib3
-import zhmcclient
 
 # Dictionary of properties of partition resources, in this format:
 #   name: (allowed?, create?, update?, update-while-active?)
@@ -236,21 +262,16 @@ import zhmcclient
 #     Properties" operation while the partition is active?
 ZHMC_PARTITION_PROPERTIES = {
 
-    # properties provided in specific module parameters (not in 'properties'):
-    'name': (False, True, True, True),
-
-    # HMC properties handled by artificial properties:
-    'boot_network_device': (False, False, True, True),
-    'boot_storage_device': (False, False, True, True),
-
-    # the corresponding artificial properties:
-    'boot_network_nic_name': (True, False, True, True),
-    'boot_storage_hba_name': (True, False, True, True),
-
     # create-only properties:
-    'type': (False, True, False, None),  # not allowed by restriction
+    'type': (False, True, False, None),  # restriction not to change type
 
     # update-only properties:
+    'boot_network_device': (False, False, True, True),  # via artificial prop
+    'boot_network_nic_name': (True, False, True, True),  # artificial prop
+    'boot_storage_device': (False, False, True, True),  # via artificial prop
+    'boot_storage_hba_name': (True, False, True, True),  # artificial prop
+    'acceptable_status': (True, False, True, True),
+    'processor_management_enabled': (True, False, True, True),
     'ifl_absolute_processor_capping': (True, False, True, True),
     'ifl_absolute_processor_capping_value': (True, False, True, True),
     'ifl_processing_weight_capped': (True, False, True, True),
@@ -259,6 +280,7 @@ ZHMC_PARTITION_PROPERTIES = {
     'initial_ifl_processing_weight': (True, False, True, True),
     'cp_absolute_processor_capping': (True, False, True, True),
     'cp_absolute_processor_capping_value': (True, False, True, True),
+    'cp_processing_weight_capped': (True, False, True, True),
     'minimum_cp_processing_weight': (True, False, True, True),
     'maximum_cp_processing_weight': (True, False, True, True),
     'initial_cp_processing_weight': (True, False, True, True),
@@ -269,6 +291,7 @@ ZHMC_PARTITION_PROPERTIES = {
     'ssc_boot_selection': (True, False, True, True),
 
     # create+update properties:
+    'name': (False, True, True, True),  # provided in 'name' module parameter
     'description': (True, True, True, True),
     'short_name': (True, True, True, True),
     'partition_id': (True, True, True, True),
@@ -307,10 +330,13 @@ ZHMC_PARTITION_PROPERTIES = {
     'ssc_master_pw': (True, True, True, True),
 
     # read-only properties:
-    'object-uri': (False, False, False, None),
+    'object_uri': (False, False, False, None),
+    'object_id': (False, False, False, None),
     'parent': (False, False, False, None),
     'class': (False, False, False, None),
     'status': (False, False, False, None),
+    'has_unacceptable_status': (False, False, False, None),
+    'is_locked': (False, False, False, None),
     'os_name': (False, False, False, None),
     'os_type': (False, False, False, None),
     'os_version': (False, False, False, None),
@@ -327,138 +353,21 @@ ZHMC_PARTITION_PROPERTIES = {
     'crypto_configuration': (False, False, False, None),
 }
 
-# Partition status values that may happen after Partition.start()
-STARTED_STATUSES = ('active', 'degraded', 'reservation-error')
-
-# Partition status values that may happen after Partition.stop()
-STOPPED_STATUSES = ('stopped', 'terminated', 'paused')
-
-# Partition status values that indicate CPC issues
-BAD_STATUSES = ('communications-not-active', 'status-check')
-
-
-class ParameterError(Exception):
-    """
-    Indicates an error with the module input parameters.
-    """
-    pass
-
-
-class StatusError(Exception):
-    """
-    Indicates an error with the status of the partition.
-    """
-    pass
-
-
-def stop_partition(partition, check_mode):
-    """
-    Ensure that the partition is stopped, by influencing the operational
-    status of the partition, regardless of what its current operational status
-    is.
-
-    The resulting operational status will be one of STOPPED_STATUSES.
-
-    Parameters:
-      partition (zhmcclient.Partition): The partition (must exist, and its
-        status property is assumed to be current).
-      check_mode (bool): Indicates whether the playbook was run in check mode,
-        in which case this method does ot actually stop the partition, but
-        just returns what would have been done.
-
-    Returns:
-      bool: Indicates whether the partition was changed.
-
-    Raises:
-      StatusError: Partition is in one of BAD_STATUSES.
-      zhmcclient.Error: Any zhmcclient exception can happen.
-    """
-    changed = False
-    status = partition.get_property('status')
-    if status in BAD_STATUSES:
-        raise StatusError(
-            "Target CPC {!r} has issues; status of partition {!r} is: {!r}".
-            format(partition.manager.cpc.name, partition.name, status))
-    elif status == 'starting':
-        if not check_mode:
-            # Let it first finish the starting
-            partition.wait_for_status(STARTED_STATUSES)
-            partition.stop()
-        changed = True
-    elif status == 'stopping':
-        if not check_mode:
-            partition.wait_for_status(STOPPED_STATUSES)
-        changed = True
-    elif status in STARTED_STATUSES:
-        if not check_mode:
-            partition.stop()
-        changed = True
-    else:
-        assert status in STOPPED_STATUSES
-    return changed
-
-
-def start_partition(partition, check_mode):
-    """
-    Ensure that the partition is started, by influencing the operational
-    status of the partition, regardless of what its current operational status
-    is.
-
-    The resulting operational status will be one of STARTED_STATUSES.
-
-    Parameters:
-      partition (zhmcclient.Partition): The partition (must exist, and its
-        status property is assumed to be current).
-      check_mode (bool): Indicates whether the playbook was run in check mode,
-        in which case this method does not actually change the partition, but
-        just returns what would have been done.
-
-    Returns:
-      bool: Indicates whether the partition was changed.
-
-    Raises:
-      StatusError: Partition is in one of BAD_STATUSES.
-      zhmcclient.Error: Any zhmcclient exception can happen.
-    """
-    changed = False
-    status = partition.get_property('status')
-    if status in BAD_STATUSES:
-        raise StatusError(
-            "Target CPC {!r} has issues; status of partition {!r} is: {!r}".
-            format(partition.manager.cpc.name, partition.name, status))
-    elif status == 'stopping':
-        if not check_mode:
-            # Let it first finish the stopping
-            partition.wait_for_status(STOPPED_STATUSES)
-            partition.start()
-        changed = True
-    elif status == 'starting':
-        if not check_mode:
-            partition.wait_for_status(STARTED_STATUSES)
-        changed = True
-    elif status in STOPPED_STATUSES:
-        if not check_mode:
-            partition.start()
-        changed = True
-    else:
-        assert status in STARTED_STATUSES
-    return changed
-
 
 def process_properties(partition, params):
     """
-    Process the properties specified in the 'partition' module parameter,
-    and return a tuple of dictionaries (create, update) that contain
+    Process the properties specified in the 'properties' module parameter,
+    and return two dictionaries (create_props, update_props) that contain
     the properties that can be created, and the properties that can be updated,
-    respectively. If the partition exists, the input property values are
-    compared with the existing partition property values and the returned set
+    respectively. If the resource exists, the input property values are
+    compared with the existing resource property values and the returned set
     of properties is the minimal set of properties that need to be changed.
 
     - Underscores in the property names are translated into hyphens.
     - The presence of read-only properties, invalid properties (i.e. not
       defined in the data model for partitions), and properties that are not
       allowed because of restrictions or because they are auto-created from
-      an artificial property is surfaced by raising ValueError.
+      an artificial property is surfaced by raising ParameterError.
     - The properties resulting from handling artificial properties are
       added to the returned dictionaries.
 

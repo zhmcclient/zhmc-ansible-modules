@@ -3,17 +3,52 @@
   vars_files:
     - vars_67b.yml
   tasks:
-  - name: Ensure partition 1 exists and is stopped
+
+  - name: Ensure partition exists and is stopped
     zhmc_partition:
       hmc_host: "{{ hmc_host }}"
       hmc_userid: "{{ hmc_userid }}"
       hmc_password: "{{ hmc_password }}"
       cpc_name: "{{ cpc_name }}"
-      name: zhmc-part-1
+      name: "{{ partition_name }}"
       state: stopped
       properties:
         description: "zhmc Ansible modules: partition 1"
         ifl_processors: 2
         initial_memory: 1024
         maximum_memory: 1024
+        minimum_ifl_processing_weight: 50
+        maximum_ifl_processing_weight: 800
+        initial_ifl_processing_weight: 200
+    register: part1
+
+  - name: Ensure HBA exists in the partition
+    zhmc_hba:
+      hmc_host: "{{ hmc_host }}"
+      hmc_userid: "{{ hmc_userid }}"
+      hmc_password: "{{ hmc_password }}"
+      cpc_name: "{{ cpc_name }}"
+      partition_name: "{{ partition_name }}"
+      name: "{{ hba_name }}"
+      state: present
+      properties:
+        adapter_name: "{{ hba_adapter_name }}"
+        adapter_port_index: "{{ hba_port_index }}"
+        description: The HBA to our storage
+        device_number: "123F"
+    register: hba1
+
+  - name: Configure partition for booting via HBA
+    zhmc_partition:
+      hmc_host: "{{ hmc_host }}"
+      hmc_userid: "{{ hmc_userid }}"
+      hmc_password: "{{ hmc_password }}"
+      cpc_name: "{{ cpc_name }}"
+      name: "{{ partition_name }}"
+      state: stopped
+      properties:
+        boot_device: storage-adapter
+        boot_storage_hba_name: "{{ hba_name }}"
+        boot_logical_unit_number: 00000000001
+        boot_world_wide_port_name: abcdef01abcdef01
     register: part1
