@@ -1,0 +1,43 @@
+# Pip requirements file for Ansible zhmc modules development dependencies.
+#
+# The order of packages is significant, because pip processes them in the order
+# of appearance. Changing the order has an impact on the overall integration
+# process, which may cause wedges in the gate later.
+
+# Make sure that the package versions in minimum-constraints.txt are also
+# the minimum versions required in requirements.txt and dev-requirements.txt.
+
+# Runtime dependencies:
+-r requirements.txt
+
+# Ansible docs tooling:
+PyYAML>=3.12
+
+# Sphinx:
+Sphinx>=1.5.1 # BSD
+sphinxcontrib-websupport>=1.0.1 # BSD
+
+# Flake8:
+flake8>=3.2.1 # MIT
+
+# Twine: Needed for uploading to Pypi
+twine>=1.8.1 # Apache-2.0
+
+# Indirect dependencies:
+alabaster>=0.7.9
+Babel>=2.3.4
+configparser>=3.5.0
+docutils>=0.13.1
+enum34>=1.1.6
+imagesize>=0.7.1
+Jinja2>=2.8
+MarkupSafe>=0.23
+mccabe>=0.5.3
+pycodestyle>=2.2.0
+pyflakes>=1.3.0
+Pygments>=2.1.3
+pytz>=2016.10
+requests-toolbelt>=0.8.0
+snowballstemmer>=1.2.1
+tqdm>=4.14.0
+typing>=3.6.1

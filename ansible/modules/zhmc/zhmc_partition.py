@@ -13,8 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.zhmc.utils import ParameterError, StatusError, \
     stop_partition, start_partition
@@ -34,14 +32,14 @@ ANSIBLE_METADATA = {
 DOCUMENTATION = """
 ---
 module: zhmc_partition
-short_description: Manages partitions on z Systems / LinuxONE machines
+version_added:
+short_description: Manages partitions
 description:
   - Creates, updates, deletes, starts, and stops partitions on z Systems and
     LinuxONE machines that are in the Dynamic Partition Manager (DPM)
     operational mode.
   - Child resources on partitions such as HBAs, NICs or virtual functions are
     managed by separate Ansible modules.
-  - If the targeted CPC is not in DPM mode, the module will fail.
 notes:
   - See also Ansible modules zhmc_hba, zhmc_nic, zhmc_virtualfunction.
 author:
@@ -49,113 +47,77 @@ author:
   - Andreas Scheuring (@scheuran, scheuran@de.ibm.com)
   - Juergen Leopold (@leopoldjuergen, leopoldj@de.ibm.com)
 requirements:
-  - z Systems or LinuxONE CPC in DPM mode
-  - Python package zhmcclient >=0.14.0
+  - Network access to HMC
+  - zhmcclient >=0.13.0
 options:
-  - option-name: hmc_host
+  hmc_host:
     description:
-      - The hostname or IP address of the HMC managing the target z Systems or
-        LinuxONE machine (CPC).
+      - The hostname or IP address of the HMC managing the CPC with the
+        target partition.
     required: true
     type: string
-  - option-name: hmc_userid
+  hmc_userid:
     description:
       - The userid for authenticating with the HMC.
     required: true
     type: string
-  - option-name: hmc_password
+  hmc_password:
     description:
       - The password of the userid for authenticating with the HMC.
     required: true
     type: string
-  - option-name: cpc_name
+  cpc_name:
     description:
-      - The name of the CPC containing the target partition (i.e. the value of
-        the C(name) property of the CPC resource). This value is used to look
-        up the CPC within the specified HMC.
+      - The name of the CPC with the target partition.
     required: true
     type: string
-  - option-name: name
+  name:
     description:
-      - The name of the target partition (i.e. the value of the C(name)
-        property of the partition resource).  This value is used to look up the
-        partition within the specified CPC. If a partition needs to be created,
-        this value becomes its name.
+      - The name of the target partition.
     required: true
     type: string
-  - option-name: state
+  state:
     description:
-      - The desired existence and operational status for the partition, using
-        the following values:
-        * C(absent): The partition shall not exist in the specified CPC.
-          Details: If the partition exists, it will be stopped (if active or
-          degraded) and deleted.
-          This will also delete all child resources of the partition (HBAs,
-          NICs, virtual functions).
-        * C(stopped): The partition shall exist and shall be in the "stopped"
-          operational status (i.e. its C(status) property has the according
-          value.
-          Details: If the partition does not exist in the specified CPC, it is
-          created, and updated if needed (some properties can only be updated).
-          If the partition exists, the input properties will be used to update
-          the partition.
-          If the partition is not in the stopped status, it will be stopped.
-        * C(active): The partition shall exist and shall be in the "active"
-          or "degraded" operational status (i.e. its C(status) property has the
-          according value).
-          Details: If the partition does not exist in the specified CPC, it is
-          created, and updated if needed (some properties can only be updated).
-          If the partition exists, the input properties will be used to update
-          the partition.
-          If the partition is not in the active or degraded status, it will be
-          started.
+      - "The desired state for the target partition:"
+      - "C(absent): Ensures that the partition does not exist in the specified
+         CPC."
+      - "C(stopped): Ensures that the partition exists in the specified CPC,
+         has the specified properties, and is in the 'stopped' status."
+      - "C(active): Ensures that the partition exists in the specified CPC,
+         has the specified properties, and is in the 'active' or 'degraded'
+         status."
     required: true
     type: string
-    choices:
-      - absent
-      - stopped
-      - active
-  - option-name: properties
+    choices: ['absent', 'stopped', 'active']
+  properties:
     description:
-      - A dictionary of input properties for the partition, for C(state) values
-        C(stopped) and C(active). The dictionary will be ignored for C(state)
-        value C(absent).
-      - These input properties are used to ensure that the partition properties
-        have the specified values. If needed, a "Create Partition" operation
-        will be followed by an "Update Partition properties" operation (some
-        properties cannot be set at creation time, but can be updated
-        afterwards).
-      - The possible input properties in this dictionary are:
-        * The properties defined as writeable in the data model for partition
-          resources in the HMC API book, with the following additional
-          considerations:
-          * Property names are specified with underscores instead of hyphens.
-          * The C(name) property cannot be specified here because the name has
-            already been specified in the C(name) module parameter.
-          * The C(type) property cannot be changed, because updating it
-            is not supported, and deleting and recreating the partition just
-            for a change of the partition type seems prohibitive.
-          * The C(boot-storage-device) and C(boot-network-device) properties
-            from the data model are replaced with more convenient artificial
-            properties, see below.
-        * The following artificial properties, replacing their corresponding
-          data model properties:
-          * C(boot_storage_hba_name): The name of the HBA whose URI will be
-            used to construct the C(boot-storage-device) property. A
-            C(boot_storage_device) property cannot be specified in the
-            input dictionary.
-          * C(boot_network_nic_name): The name of the NIC whose URI will be
-            used to construct the C(boot-network-device) property. A
-            C(boot_network_device) property cannot be specified in the
-            input dictionary.
-      - Properties omitted in this dictionary will remain unchanged when the
-        partition already existed, and will get the default value defined in
-        the data model for partitions in the HMC API book when the partition
-        was created.
+      - "Input properties for the partition, for C(state=stopped) and
+         C(state=active). Will be ignored for C(state=absent)."
+      - "The possible input properties in this dictionary are:"
+      - "The properties defined as writeable in the data model for partition
+         resources, where the property names contain underscores instead of
+         hyphens."
+      - "C(name): Cannot be specified because the name has already been
+         specified in the C(name) module parameter."
+      - "C(type): Cannot be changed once the partition exists, because updating
+         it is not supported."
+      - "C(boot_storage_device): Cannot be specified because it is derived from
+         the artificial property C(boot_storage_hba_name)."
+      - "C(boot_network_device): Cannot be specified because it is derived from
+         the artificial property C(boot_network_nic_name)."
+      - "C(boot_storage_hba_name): The name of the HBA whose URI is used to
+         construct C(boot_storage_device). Specifying it requires that the
+         partition exists."
+      - "C(boot_network_nic_name): The name of the NIC whose URI is used to
+         construct C(boot_network_device). Specifying it requires that the
+         partition exists."
+      - "Properties omitted in this dictionary will remain unchanged when the
+         partition already exists, and will get the default value defined in
+         the data model for partitions in the HMC API book when the partition
+         is being created."
     required: false
     type: dict
-    default:
-      - No input properties
+    default: No input properties
 """
 
 EXAMPLES = """
@@ -210,42 +172,25 @@ EXAMPLES = """
 """
 
 RETURN = """
-properties:
+partition:
   description:
-    - For state=stopped and state=active, a dictionary with the resource
-      properties of the partition (after changes, if any) returned by the
-      "Get Partition Properties" operation defined in the HMC API book. This
-      means that some properties of the partition resource are not returned,
-      for example passwords.
-    - For state=absent, an empty dictionary.
-    - The dictionary keys are the exact property names as described in the
-      data model for the resource, i.e. they contain hyphens (-), not
-      underscores (_).
-    - The dictionary values are the property values using the Python
-      representations described in the documentation of the zhmcclient Python
-      package.
-    - Note that the returned dictionary contains all properties of the
-      resource, not just those that can be or have been provided when
-      creating the resource.
-    - Note that the names of properties in the returned dictionary are
-      different from the names of properties in the 'properties' input
-      parameter in two ways:
-      * In the returned dictionary, the property names contain the hyphens
-        exactly as defined in the data model, while in the 'properties' input
-        parameter, the hyphens have been replaced with underscores.
-      * The returned dictionary does not have the artificial properties
-        that have been added to the properties in the 'properties' input
-        parameter, but has the underlying properties from the data model
-        instead.
+    - "For C(state=absent), empty."
+    - "For C(state=stopped) and C(state=active), the resource properties of the
+       partition (after changes, if any)."
+    - "The dictionary keys are the exact property names as described in the
+       data model for the resource, i.e. they contain hyphens (-), not
+       underscores (_). The dictionary values are the property values using the
+       Python representations described in the documentation of the zhmcclient
+       Python package."
   returned: success
   type: dict
-  sample:
-    - 'partition': {
-        'name': 'hba-1',
-        'description': 'HBA #1',
-        'adapter-port-uri': '/api/adapters/.../ports/...',
-        . . .
-      }
+  sample: |
+    C({
+      "name": "hba-1",
+      "description": "HBA #1",
+      "adapter-port-uri": "/api/adapters/.../ports/...",
+      # . . .
+    })
 """
 
 # Dictionary of properties of partition resources, in this format:

@@ -13,8 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.zhmc.utils import ParameterError, StatusError
 import requests.packages.urllib3
@@ -33,110 +31,86 @@ ANSIBLE_METADATA = {
 DOCUMENTATION = """
 ---
 module: zhmc_hba
-short_description: Manages HBAs on z Systems / LinuxONE machines
+version_added:
+short_description: Manages HBAs in an existing partition
 description:
-  - Creates, updates, deletes HBAs on z Systems and LinuxONE machines that are
-    in the Dynamic Partition Manager (DPM) operational mode.
-  - If the targeted CPC is not in DPM mode, the module will fail.
+  - Creates, updates, and deletes HBAs in existing partitions.
+  - The targeted CPC must be in the Dynamic Partition Manager (DPM) operational
+    mode.
 notes:
-  - See also Ansible modules zhmc_partition.
+  - See also Ansible module zhmc_partition.
 author:
   - Andreas Maier (@andy-maier, maiera@de.ibm.com)
   - Andreas Scheuring (@scheuran, scheuran@de.ibm.com)
   - Juergen Leopold (@leopoldjuergen, leopoldj@de.ibm.com)
 requirements:
-  - z Systems or LinuxONE CPC in DPM mode
-  - Python package zhmcclient >=0.14.0
+  - Network access to HMC
+  - zhmcclient >=0.13.0
 options:
-  - option-name: hmc_host
+  hmc_host:
     description:
-      - The hostname or IP address of the HMC managing the target z Systems or
-        LinuxONE machine (CPC).
+      - The hostname or IP address of the HMC managing the CPC with the
+        partition containing the target HBA.
     required: true
     type: string
-  - option-name: hmc_userid
+  hmc_userid:
     description:
       - The userid for authenticating with the HMC.
     required: true
     type: string
-  - option-name: hmc_password
+  hmc_password:
     description:
       - The password of the userid for authenticating with the HMC.
     required: true
     type: string
-  - option-name: cpc_name
+  cpc_name:
     description:
-      - The name of the CPC containing the partition (i.e. the value of
-        the C(name) property of the CPC resource). This value is used to look
-        up the CPC within the specified HMC.
+      - The name of the CPC with the partition containing the HBA.
     required: true
     type: string
-  - option-name: partition_name
+  partition_name:
     description:
-      - The name of the partition containing the HBA (i.e. the value of the
-        C(name)  property of the partition resource).  This value is used to
-        look up the partition within the specified CPC.
+      - The name of the partition containing the HBA.
     required: true
     type: string
-  - option-name: name
+  name:
     description:
-      - The name of the target HBA (i.e. the value of the C(name) property of
-        the HBA resource).  This value is used to look up the HBA within the
-        specified partition. If an HBA needs to be created, this value becomes
-        its name.
+      - The name of the target HBA that is managed. If the HBA needs to be
+        created, this value becomes its name.
     required: true
     type: string
-  - option-name: state
+  state:
     description:
-      - The desired existence status for the HBA, using the following values:
-        * C(absent): Ensure that the HBA does not exist in the specified
-          partition.
-        * C(present): Ensure that the HBA exists in the specified partition,
-          and has the specified properties.
+      - "The desired state for the target HBA:"
+      - "C(absent): Ensures that the HBA does not exist in the specified
+         partition."
+      - "C(present): Ensures that the HBA exists in the specified partition
+         and has the specified properties."
     required: true
     type: string
-    choices:
-      - absent
-      - present
-  - option-name: properties
+    choices: ["absent", "present"]
+  properties:
     description:
-      - A dictionary of input properties for the HBA, for C(state) value
-        C(present). The dictionary will be ignored for C(state) value
-        C(absent).
-      - These input properties are used to ensure that the HBA properties
-        have the specified values. If needed, a "Create HBA" operation
-        will be followed by an "Update HBA Properties" operation (some
-        properties cannot be set at creation time, but can be updated
-        afterwards).
-      - The possible input properties in this dictionary are:
-        * The properties defined as writeable in the data model for HBA
-          resources in the HMC API book, with the following additional
-          considerations:
-          * Property names are specified with underscores instead of hyphens.
-          * The C(name) property cannot be specified here because the name has
-            already been specified in the C(name) module parameter.
-          * The artificial properties C(adapter_name) and C(adapter_port_index)
-            cannot be changed.
-          * The C(adapter-port-uri) property from the data model is replaced
-            with more convenient artificial properties, see below.
-        * The following artificial properties, replacing their corresponding
-          data model property:
-          * C(adapter_name): The name of the adapter that has the port backing
-            the target HBA.
-          * C(adapter_port_index): The index of the adapter port backing the
-            target HBA.
-          These two artificial properties will be used to look up the adapter
-          port's URI in order to construct the C(adapter-port-uri) property.
-          An C(adapter_port_uri) property cannot be specified in the input
-          dictionary.
-      - Properties omitted in this dictionary will remain unchanged when the
-        HBA already existed, and will get the default value defined in
-        the data model for HBAs in the HMC API book when the HBA
-        did not already exist.
+      - "Input properties for the HBA, for C(state=present).
+         Will be ignored for C(state=absent)."
+      - "The possible input properties in this dictionary are:"
+      - "The properties defined as writeable in the data model for HBA
+         resources, where the property names contain underscores instead of
+         hyphens."
+      - "C(name): Cannot be specified because the name has already been
+         specified in the C(name) module parameter."
+      - "C(adapter_port_uri): Cannot be specified because it is derived from
+         the artificial properties C(adapter_name) and C(adapter_port_index)."
+      - "C(adapter_name): The name of the adapter that has the port backing the
+         target HBA. Cannot be changed after the HBA exists."
+      - "C(adapter_port_index): The index of the adapter port backing the
+         target HBA. Cannot be changed after the HBA exists."
+      - "Properties omitted in this dictionary will remain unchanged when the
+         HBA already exists, and will get the default value defined in the
+         data model for HBAs when the HBA is being created."
     required: false
     type: dict
-    default:
-      - No input properties
+    default: No input properties
 """
 
 EXAMPLES = """
@@ -170,41 +144,26 @@ EXAMPLES = """
 """
 
 RETURN = """
-properties:
+hba:
   description:
-    - For state=present, a dictionary with the resource properties of the HBA
-      (after changes, if any) returned by the "Get HBA Properties" operation
-      defined in the HMC API book.
-    - For state=absent, an empty dictionary.
-    - The dictionary keys are the exact property names as described in the
-      data model for the resource, i.e. they contain hyphens (-), not
-      underscores (_).
-    - The dictionary values are the property values using the Python
-      representations described in the documentation of the zhmcclient Python
-      package.
-    - Note that the returned dictionary contains all properties of the
-      resource, not just those that can be or have been provided when
-      creating the resource.
-    - Note that the names of properties in the returned dictionary are
-      different from the names of properties in the 'properties' input
-      parameter in two ways:
-      * In the returned dictionary, the property names contain the hyphens
-        exactly as defined in the data model, while in the 'properties' input
-        parameter, the hyphens have been replaced with underscores.
-      * The returned dictionary does not have the artificial properties
-        that have been added to the properties in the 'properties' input
-        parameter, but has the underlying properties from the data model
-        instead.
+    - "For C(state=absent), empty."
+    - "For C(state=present), the resource properties of the HBA (after changes,
+       if any)."
+    - "The dictionary keys are the exact property names as described in the
+       data model for the resource, i.e. they contain hyphens (-), not
+       underscores (_). The dictionary values are the property values using the
+       Python representations described in the documentation of the zhmcclient
+       Python package."
   returned: success
   type: dict
-  sample:
-    - 'hba': {
-        'name': 'part-1',
-        'description': 'partition #1',
-        'status': 'active',
-        'boot-device': 'storage-adapter',
-        . . .
-      }
+  sample: |
+    C({
+      "name": "part-1",
+      "description": "partition #1",
+      "status": "active",
+      "boot-device": "storage-adapter",
+      # . . .
+    })
 """
 
 # Dictionary of properties of partition resources, in this format:
@@ -356,11 +315,11 @@ def process_properties(partition, hba, params):
         if hba:
             existing_port_uri = hba.get_property(hmc_prop_name)
             if port.uri != existing_port_uri:
-            raise ParameterError(
-                "Artificial properties {!r} and {!r} cannot be used to change "
-                "the adapter port {!r} in an existing HBA to: {!r}".
-                format(adapter_name_art_name, port_index_art_name,
-                       existing_port_uri, port.uri))
+                raise ParameterError(
+                    "Artificial properties {!r} and {!r} cannot be used to "
+                    "change the adapter port {!r} in an existing HBA to: {!r}".
+                    format(adapter_name_art_name, port_index_art_name,
+                           existing_port_uri, port.uri))
         create_props[hmc_prop_name] = port.uri
 
     return create_props, update_props, stop
