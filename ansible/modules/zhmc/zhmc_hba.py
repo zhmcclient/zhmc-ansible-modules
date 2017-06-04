@@ -275,9 +275,25 @@ def process_properties(partition, hba, params):
             # Artificial properties will be processed together after this loop
             continue
 
+        if prop_name == 'device_number':
+            # Normalize the specified 'device_number' property to the format
+            # returned by the HMC (4-digit lower case hex string), because the
+            # HMC rejects an attempt to update the property to its current
+            # value. Using the same format will cause it not to be added to
+            # the update_props dict:
+            try:
+                devno_str = input_props[prop_name]
+                devno_int = int(devno_str, 16)
+            except ValueError:
+                raise ParameterError(
+                    "Property {!r} is not a valid hex number: {!r}".
+                    format(prop_name, devno_str))
+            input_prop_value = "%0.4x" % devno_int
+        else:
+            input_prop_value = input_props[prop_name]
+
         # Process a normal (= non-artificial) property
         hmc_prop_name = prop_name.replace('_', '-')
-        input_prop_value = input_props[prop_name]
         if not hba or hba.properties[hmc_prop_name] != input_prop_value:
             if create:
                 create_props[hmc_prop_name] = input_prop_value

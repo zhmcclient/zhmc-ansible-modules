@@ -1,7 +1,7 @@
 ---
 - hosts: localhost
   vars_files:
-    - vars_67b.yml
+    - vars.yml
   tasks:
 
   - name: Ensure partition exists and is stopped
@@ -49,6 +49,6 @@
       properties:
         boot_device: storage-adapter
         boot_storage_hba_name: "{{ hba_name }}"
-        boot_logical_unit_number: 00000000001
-        boot_world_wide_port_name: abcdef01abcdef01
+        boot_logical_unit_number: "00000000001"
+        boot_world_wide_port_name: "abcdef01abcdef01"
     register: part1
