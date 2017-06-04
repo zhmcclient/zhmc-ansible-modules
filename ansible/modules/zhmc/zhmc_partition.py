@@ -603,7 +603,7 @@ def ensure_absent(params, check_mode):
             return changed, result
 
         if not check_mode:
-            stop_partition(partition)
+            stop_partition(partition, check_mode)
             partition.delete()
         changed = True
 
