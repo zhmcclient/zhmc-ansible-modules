@@ -1,0 +1,143 @@
+---
+- hosts: localhost
+  vars_files:
+    - vars.yml
+#    - vault.yml
+  tasks:
+  - name: Ensure partition 1 exists and is stopped
+    zhmc_partition:
+      hmc_host: "{{ hmc_host }}"
+      hmc_userid: "{{ hmc_userid }}"
+      hmc_password: "{{ hmc_password }}"
+      cpc_name: "{{ cpc_name }}"
+      name: "{{ partition_name }}"
+      state: stopped
+      properties:
+        description: "zhmc Ansible modules: partition 1"
+
+        short_name:  # auto-generated
+        autogenerate_partition_id: true
+        partition_id: null
+
+        reserve_resources: false
+
+        processor_mode: shared
+        processor_management_enabled: false
+
+        cp_processors: 0  # one of cp or ifl must be > 0
+        cp_absolute_processor_capping: false
+        cp_absolute_processor_capping_value: 1.0
+        minimum_cp_processing_weight: 1
+        maximum_cp_processing_weight: 999
+        initial_cp_processing_weight: 100
+
+        ifl_processors: 0  # one of cp or ifl must be > 0
+        ifl_absolute_processor_capping: false
+        ifl_absolute_processor_capping_value: 1.0
+        ifl_processing_weight_capped: false
+        minimum_ifl_processing_weight: 1
+        maximum_ifl_processing_weight: 999
+        initial_ifl_processing_weight: 100
+
+        initial_memory: 1024
+        maximum_memory: 1024
+
+        boot_device: none  # (storage-adapter|network-adapter|ftp|removable-media|iso-image|none)
+        boot_timeout: 60
+        boot_configuration_selector: 0
+        boot_record_lba: ?
+        boot_os_specific_parameters:
+
+        boot_storage_device: null  # (hba.uri)
+        boot_logical_unit_number: 00000000001
+        boot_world_wide_port_name: abcdefabcdef
+
+        boot_network_device: null  # (nic.uri)
+
+        boot_ftp_host: null  # (FTP hostname / IP address)
+        boot_ftp_username: null  # (FTP userid)
+        boot_ftp_password: null  # (FTP password)
+        boot_ftp_insfile: null  # (File path to INS file on FTP server)
+
+        boot_removable_media: null  # (File path to image file or mounted media on HMC)
+        boot_removable_media_type: null  # (cdrom|usb)
+
+        boot_iso_image_name: null  # (Name of ISO image)
+        boot_iso_ins_file: null  # (INS file location within the ISO image)
+
+        access_global_performance_data: false
+        permit_cross_partition_commands: false
+        access_basic_counter_set: false
+        access_problem_state_counter_set: false
+        access_crypto_activity_counter_set: false
+        access_extended_counter_set: false
+        access_coprocessor_group_set: false
+        access_basic_sampling: false
+        access_diagnostic_sampling: false
+        permit_des_key_import_functions: false
+        permit_aes_key_import_functions: false
+
+        ssc_host_name: ?
+        ssc_boot_selection: installer
+        ssc_ipv4_gateway: null
+        ssc_dns_servers:
+        ssc_master_userid: null
+        ssc_master_pw: null
+    register: part1
+
+  - name: Ensure HBA 1 exists in the partition
+    zhmc_hba:
+      hmc_host: "{{ hmc_host }}"
+      hmc_userid: "{{ hmc_userid }}"
+      hmc_password: "{{ hmc_password }}"
+      cpc_name: "{{ cpc_name }}"
+      partition_name: "{{ partition_name }}"
+      name: hba-1
+      state: present
+      properties:
+        adapter_name: FCP-1  # Used to look up adapter-port-uri; Cannot be changed after creation
+        adapter_port_index: 0  # Used to look up adapter-port-uri; Cannot be changed after creation
+        description: The port to our V7K 1
+        device_number: 123F
+    register: hba1
+
+  - name: Ensure HBA 2 does not exist in the partition
+    zhmc_hba:
+      hmc_host: "{{ hmc_host }}"
+      hmc_userid: "{{ hmc_userid }}"
+      hmc_password: "{{ hmc_password }}"
+      cpc_name: "{{ cpc_name }}"
+      partition_name: "{{ partition_name }}"
+      name: hba-2
+      state: absent
+
+  - name: Ensure NIC 1 exists in the partition
+    zhmc_nic:
+      hmc_host: "{{ hmc_host }}"
+      hmc_userid: "{{ hmc_userid }}"
+      hmc_password: "{{ hmc_password }}"
+      cpc_name: "{{ cpc_name }}"
+      partition_name: "{{ partition_name }}"
+      name: nic-1
+      state: present
+      properties:
+        adapter_name: OSA-1  # Used to look up network-adapter-port-uri; Cannot be changed after creation
+        adapter_port_index: 0  # Used to look up network-adapter-port-uri; Cannot be changed after creation
+        virtual_switch_name: VS-1  # Used to look up virtual-switch-uri; Cannot be changed after creation
+        description: The port to our private network zone
+        device_number: 123F
+        ssc_management_nic: false
+        ssc_ip_address_type:
+        ssc_ip_address:
+        ssc_mask_prefix:
+        vlan_id:
+    register: nic1
+
+  - name: Start partition 1
+    zhmc_partition:
+      hmc_host: "{{ hmc_host }}"
+      hmc_userid: "{{ hmc_userid }}"
+      hmc_password: "{{ hmc_password }}"
+      cpc_name: "{{ cpc_name }}"
+      name: "{{ partition_name }}"
+      state: active
