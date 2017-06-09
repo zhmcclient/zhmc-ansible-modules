@@ -17,14 +17,22 @@ Utility functions for use by more than one Ansible module.
 """
 
 
-class ParameterError(Exception):
+class Error(Exception):
+    """
+    Abstract base class that serves as a common exception superclass for the
+    zhmc Ansible module.
+    """
+    pass
+
+
+class ParameterError(Error):
     """
     Indicates an error with the module input parameters.
     """
     pass
 
 
-class StatusError(Exception):
+class StatusError(Error):
     """
     Indicates an error with the status of the partition.
     """
