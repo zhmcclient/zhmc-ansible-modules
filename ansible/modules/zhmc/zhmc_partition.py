@@ -32,7 +32,7 @@ ANSIBLE_METADATA = {
 DOCUMENTATION = """
 ---
 module: zhmc_partition
-version_added:
+version_added: "0.0"
 short_description: Manages partitions
 description:
   - Creates, updates, deletes, starts, and stops partitions on z Systems and
@@ -55,27 +55,22 @@ options:
       - The hostname or IP address of the HMC managing the CPC with the
         target partition.
     required: true
-    type: string
   hmc_userid:
     description:
       - The userid for authenticating with the HMC.
     required: true
-    type: string
   hmc_password:
     description:
       - The password of the userid for authenticating with the HMC.
     required: true
-    type: string
   cpc_name:
     description:
       - The name of the CPC with the target partition.
     required: true
-    type: string
   name:
     description:
       - The name of the target partition.
     required: true
-    type: string
   state:
     description:
       - "The desired state for the target partition:"
@@ -87,12 +82,13 @@ options:
          has the specified properties, and is in the 'active' or 'degraded'
          status."
     required: true
-    type: string
     choices: ['absent', 'stopped', 'active']
   properties:
     description:
-      - "Input properties for the partition, for C(state=stopped) and
-         C(state=active). Will be ignored for C(state=absent)."
+      - "Dictionary with input properties for the partition, for
+         C(state=stopped) and C(state=active). Key is the property name with
+         underscores instead of hyphens, and value is the property value in
+         YAML syntax. Will be ignored for C(state=absent)."
       - "The possible input properties in this dictionary are:"
       - "The properties defined as writeable in the data model for partition
          resources, where the property names contain underscores instead of
@@ -116,7 +112,6 @@ options:
          the data model for partitions in the HMC API book when the partition
          is being created."
     required: false
-    type: dict
     default: No input properties
 """
 
@@ -155,6 +150,7 @@ EXAMPLES = """
     cpc_name: "{{ cpc_name }}"
     name: zhmc-part-1
     state: active
+    properties:
       boot_device: storage-adapter
       boot_storage_device_hba_name: hba1
       boot_logical_unit_number: 00000000001
