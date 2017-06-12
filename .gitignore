@@ -6,6 +6,8 @@ env*
 /venv
 /docs/gen/
 /build/
+/htmlcov/
+/tests/.coverage
 *.egg
 *.egg-info
 /_mailinglist

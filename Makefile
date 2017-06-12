@@ -240,9 +240,13 @@ $(flake8_log_file): Makefile $(flake8_rc_file) $(check_py_files)
 	mv -f $@.tmp $@
 	@echo 'Done: Created Flake8 log file: $@'
 
+# We cd into tests in order to find the installed ansible module (in site-packages)
+# and not our ansible subdirectory. As a consequence, we need to install our Ansible
+# module (into site-packages).
 $(test_log_file): Makefile $(check_py_files)
+	@echo "Note: This tests the *installed* Ansible module; make sure you have run 'make install'"
 	rm -f $@
-	bash -c 'set -o pipefail; PYTHONWARNINGS=default py.test --cov $(ansible_dir) --cov-config .coveragerc --cov-report=html $(pytest_opts) -s 2>&1 |tee $@.tmp'
+	bash -c 'set -o pipefail; cd tests; PYTHONWARNINGS=default py.test --cov $$(dirname $$(python -c "from ansible.modules import zhmc; print(zhmc.__file__)")) --cov-config ../.coveragerc --cov-report=html:../htmlcov $(pytest_opts) -s 2>&1 |tee ../$@.tmp'
 	mv -f $@.tmp $@
 	@echo 'Done: Created test log file: $@'
 
