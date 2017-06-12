@@ -77,7 +77,8 @@ _short_description = u'Ansible modules for z Systems and LinuxONE'
 def package_version(package_name):
     """Return package version string by reading `filename` and retrieving its
        module-global variable `varnam`."""
-    out = subprocess.check_output(['pip', 'show', package_name])
+    out = subprocess.check_output(['pip', 'show', package_name]).\
+        decode('utf-8')
     lines = out.split('\n')
     version = None
     for line in lines:

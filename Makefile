@@ -26,10 +26,16 @@
 
 # Python / Pip commands
 ifndef PYTHON_CMD
+  $(warning Using default python command (PYTHON_CMD not set))
   PYTHON_CMD := python
+else
+  $(warning Using python command from PYTHON_CMD: $(PYTHON_CMD))
 endif
 ifndef PIP_CMD
+  $(warning Using default pip command (PIP_CMD not set))
   PIP_CMD := pip
+else
+  $(warning Using pip command from PIP_CMD: $(PIP_CMD))
 endif
 
 # Package level
@@ -155,8 +161,9 @@ _pip:
 	$(PIP_CMD) install $(pip_level_opts) wheel
 
 .PHONY: setup
-setup: _pip requirements.txt dev-requirements.txt
+setup: _pip requirements.txt dev-requirements.txt os_setup.sh
 	@echo 'Setting up the development environment with PACKAGE_LEVEL=$(PACKAGE_LEVEL)'
+	bash -c './os_setup.sh'
 	$(PIP_CMD) install $(pip_level_opts) -r dev-requirements.txt
 	@echo '$@ done.'
 
@@ -185,6 +192,7 @@ all: setup dist docs check test
 install: _pip
 	@echo 'Installing package $(package_name) and its requirements with PACKAGE_LEVEL=$(PACKAGE_LEVEL)'
 	$(PIP_CMD) install $(pip_level_opts) .
+	@echo "Installed $(package_name) in $$(cd tests && dirname $$(python -c 'from ansible.modules import zhmc; print(zhmc.__file__)'))"
 	@echo 'Done: Installed $(package_name) into current Python environment.'
 	@echo '$@ done.'
 

@@ -1,0 +1,95 @@
+# Pip constraints file for runtime and development.
+#
+# This constraints file specifies constraints that match the minimum versions
+# specified in the requirements files for runtime and development. The reason
+# for this approach is that in the CI systems, we want to be able to test with
+# the minimum package versions in order to catch any incorrect minimum
+# versions.
+
+# Make sure that the package versions in minimum-constraints.txt are also
+# the minimum versions required in requirements.txt and dev-requirements.txt.
+
+# Note: New dependent packages for current version of setuptools that are not
+# in the specified version fo setuptools. They are installed into virtual
+# environments default (due to using the latest setuptools version).
+# Ideally, these packages would be removed when testing the minimum package
+# level, but probably they don't hurt:
+#   appdirs (1.4.3) # from setuptools
+#   packaging (16.8) # from setuptools
+#   pyparsing (2.2.0) # from packaging
+
+
+## Dependencies for installation with Pip:
+
+pip===9.0.1
+setuptools===30.0.0
+wheel===0.29.0
+
+
+## Dependencies for runtime (must be consistent with requirements.txt)
+
+# Direct dependencies (except pip, setuptools, wheel):
+pbr===1.10.0
+zhmcclient===0.13.0
+ansible===2.0.0.1
+
+# Indirect dependencies:
+asn1crypto===0.21.0
+bcrypt===3.0.0
+certifi===2016.9.26
+cffi===1.7.0
+chardet===3.0.3
+click===6.6
+click-repl===0.1.0
+click-spinner===0.1.6
+cryptography===1.1
+decorator===4.0.10
+enum34===1.1.6
+idna===2.5
+ipaddress===1.0.1
+Jinja2===2.8
+MarkupSafe===0.23
+paramiko===2.2.0
+progressbar2===3.12.0
+prompt_toolkit===1.0.9
+pyasn1===0.1.7
+pycparser===2.17
+pycrypto===2.6
+PyNaCl===1.0.1
+python-utils===2.0.1
+PyYAML===3.12
+requests===2.12.4
+six===1.10.0
+stomp.py===4.1.15
+tabulate===0.7.7
+urllib3===1.21.1
+wcwidth===0.1.7
+
+
+## Dependencies for development (must be consistent with dev-requirements.txt)
+
+# Sphinx:
+Sphinx===1.5.1
+sphinxcontrib-websupport===1.0.1
+
+# Flake8:
+flake8===3.2.1
+
+# Twine: Needed for uploading to Pypi
+twine===1.8.1
+
+# Indirect dependencies:
+alabaster===0.7.9
+Babel===2.3.4
+configparser===3.5.0
+docutils===0.13.1
+imagesize===0.7.1
+mccabe===0.5.3
+pycodestyle===2.2.0
+pyflakes===1.3.0
+Pygments===2.1.3
+pytz===2016.10
+requests-toolbelt===0.8.0
+snowballstemmer===1.2.1
+tqdm===4.14.0
+typing===3.6.1
