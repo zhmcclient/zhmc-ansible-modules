@@ -75,7 +75,7 @@ install:
     fi
   - id
   - pwd
-  - git clone https://github.com/ansible/ansible.git ../ansible
+  - git clone https://github.com/andy-maier/ansible.git --branch zhmc-fixes --depth 1 ../ansible
   - $PIP_CMD list
   - make setup
   - make install
@@ -86,7 +86,7 @@ install:
 script:
   - make docs
   - make check
-#  - make test
+  - make test
 
 after_success:
   - if [[ $TRAVIS_PYTHON_VERSION == 2.7 && $PACKAGE_LEVEL == latest ]]; then coveralls; fi
