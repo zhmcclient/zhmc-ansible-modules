@@ -22,4 +22,5 @@ tmp_*
 *.log
 *.retry
 vars.yml
+vault.yml
 /python-zhmcclient

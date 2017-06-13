@@ -26,9 +26,9 @@ class TestZhmcPartitionMain(unittest.TestCase):
 
         # Module invocation
         params = {
-            'hmc_host': 'fake-host',
-            'hmc_userid': 'fake-userid',
-            'hmc_password': 'fake-password',
+            'hmc': dict(host='fake-host',
+                        userid='fake-userid',
+                        password='fake-password'),
             'cpc_name': 'fake-cpc-name',
             'name': 'fake-name',
             'state': 'absent',
@@ -58,17 +58,9 @@ class TestZhmcPartitionMain(unittest.TestCase):
 
         # Assert call to AnsibleModule()
         expected_param_spec = {
-            'hmc_host': {
+            'hmc': {
                 'required': True,
-                'type': 'str',
-            },
-            'hmc_userid': {
-                'required': True,
-                'type': 'str',
-            },
-            'hmc_password': {
-                'required': True,
-                'type': 'str',
+                'type': 'dict',
                 'no_log': True,
             },
             'cpc_name': {
@@ -117,9 +109,9 @@ class TestZhmcPartitionMain(unittest.TestCase):
 
         # Module invocation
         params = {
-            'hmc_host': 'fake-host',
-            'hmc_userid': 'fake-userid',
-            'hmc_password': 'fake-password',
+            'hmc': dict(host='fake-host',
+                        userid='fake-userid',
+                        password='fake-password'),
             'cpc_name': 'fake-cpc-name',
             'name': 'fake-name',
             'state': 'absent',

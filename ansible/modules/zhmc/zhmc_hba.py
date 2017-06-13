@@ -14,7 +14,8 @@
 # limitations under the License.
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.zhmc.utils import Error, ParameterError, eq_hex
+from ansible.module_utils.zhmc.utils import Error, ParameterError, eq_hex, \
+    hmc_params
 import requests.packages.urllib3
 import zhmcclient
 
@@ -47,19 +48,22 @@ requirements:
   - Network access to HMC
   - zhmcclient >=0.13.0
 options:
-  hmc_host:
+  hmc:
     description:
-      - The hostname or IP address of the HMC managing the CPC with the
-        partition containing the target HBA.
+      - A dictionary that specifies the host address and authentication
+        credentials for an HMC that manages the desired CPC.
     required: true
-  hmc_userid:
-    description:
-      - The userid for authenticating with the HMC.
-    required: true
-  hmc_password:
-    description:
-      - The password of the userid for authenticating with the HMC.
-    required: true
+    suboptions:
+      host:
+        description:
+          - The hostname or IP address of the HMC (required).
+      userid:
+        description:
+          - The userid (username) for authenticating with the HMC (required).
+      password:
+        description:
+          - The password of the userid for authenticating with the HMC
+            (required).
   cpc_name:
     description:
       - The name of the CPC with the partition containing the HBA.
@@ -109,32 +113,37 @@ options:
 
 EXAMPLES = """
 ---
+vars:
+  hmc:
+    host: 10.11.12.13
+    userid: myuserid
+    password: mysecret
+  cpc_name: P0001234
+  partition_name: zhmc-part-1
+  hba_name: hba-1
 
-- name: Ensure HBA 1 exists in the partition
-  zhmc_partition:
-    hmc_host: "{{ hmc_host }}"
-    hmc_userid: "{{ hmc_userid }}"
-    hmc_password: "{{ hmc_password }}"
-    cpc_name: "{{ cpc_name }}"
-    partition_name: zhmc-part-1
-    name: hba-1
-    state: present
-    properties:
-      adapter_name: FCP-1
-      adapter_port_index: 0
-      description: "The port to our V7K #1"
-      device_number: "123F"
-  register: hba1
+tasks:
+  - name: Ensure HBA exists in the partition
+    zhmc_partition:
+      hmc: "{{ hmc }}"
+      cpc_name: "{{ cpc_name }}"
+      partition_name: "{{ partition_name }}"
+      name: "{{ hba_name }}"
+      state: present
+      properties:
+        adapter_name: FCP-1
+        adapter_port_index: 0
+        description: "The port to our V7K #1"
+        device_number: "23F"
+    register: hba1
 
-- name: Ensure HBA 2 does not exist in the partition
-  zhmc_partition:
-    hmc_host: "{{ hmc_host }}"
-    hmc_userid: "{{ hmc_userid }}"
-    hmc_password: "{{ hmc_password }}"
-    cpc_name: "{{ cpc_name }}"
-    partition_name: zhmc-part-1
-    name: hba-2
-    state: absent
+  - name: Ensure HBA does not exist in the partition
+    zhmc_partition:
+      hmc: "{{ hmc }}"
+      cpc_name: "{{ cpc_name }}"
+      partition_name: "{{ partition_name }}"
+      name: "{{ hba_name }}"
+      state: absent
 """
 
 RETURN = """
@@ -346,9 +355,7 @@ def ensure_present(params, check_mode):
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
 
-    hmc = params['hmc_host']
-    userid = params['hmc_userid']
-    password = params['hmc_password']
+    host, userid, password = hmc_params(params['hmc'])
     cpc_name = params['cpc_name']
     partition_name = params['partition_name']
     hba_name = params['name']
@@ -357,7 +364,7 @@ def ensure_present(params, check_mode):
     result = {}
 
     try:
-        session = zhmcclient.Session(hmc, userid, password)
+        session = zhmcclient.Session(host, userid, password)
         client = zhmcclient.Client(session)
         cpc = client.cpcs.find(name=cpc_name)
         partition = cpc.partitions.find(name=partition_name)
@@ -415,9 +422,7 @@ def ensure_absent(params, check_mode):
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
 
-    hmc = params['hmc_host']
-    userid = params['hmc_userid']
-    password = params['hmc_password']
+    host, userid, password = hmc_params(params['hmc'])
     cpc_name = params['cpc_name']
     partition_name = params['partition_name']
     hba_name = params['name']
@@ -426,7 +431,7 @@ def ensure_absent(params, check_mode):
     result = {}
 
     try:
-        session = zhmcclient.Session(hmc, userid, password)
+        session = zhmcclient.Session(host, userid, password)
         client = zhmcclient.Client(session)
         cpc = client.cpcs.find(name=cpc_name)
         partition = cpc.partitions.find(name=partition_name)
@@ -472,17 +477,9 @@ def main():
     # The following definition of module parameters must match the description
     # of the options in the DOCUMENTATION string.
     module_param_spec = {
-        'hmc_host': {
+        'hmc': {
             'required': True,
-            'type': 'str',
-        },
-        'hmc_userid': {
-            'required': True,
-            'type': 'str',
-        },
-        'hmc_password': {
-            'required': True,
-            'type': 'str',
+            'type': 'dict',
             'no_log': True,
         },
         'cpc_name': {
