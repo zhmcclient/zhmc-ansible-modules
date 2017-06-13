@@ -16,7 +16,7 @@
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.zhmc.utils import Error, ParameterError, \
     StatusError, stop_partition, start_partition, \
-    wait_for_transition_completion, eq_hex
+    wait_for_transition_completion, eq_hex, get_hmc_auth
 import requests.packages.urllib3
 import zhmcclient
 
@@ -53,17 +53,21 @@ requirements:
 options:
   hmc_host:
     description:
-      - The hostname or IP address of the HMC managing the CPC with the
-        target partition.
+      - The hostname or IP address of the HMC.
     required: true
-  hmc_userid:
+  hmc_auth:
     description:
-      - The userid for authenticating with the HMC.
+      - The authentication credentials for the HMC.
     required: true
-  hmc_password:
-    description:
-      - The password of the userid for authenticating with the HMC.
-    required: true
+    suboptions:
+      userid:
+        description:
+          - The userid (username) for authenticating with the HMC.
+        required: true
+      password:
+        description:
+          - The password for authenticating with the HMC.
+        required: true
   cpc_name:
     description:
       - The name of the CPC with the target partition.
@@ -128,8 +132,7 @@ EXAMPLES = """
 - name: Ensure the partition exists and is stopped
   zhmc_partition:
     hmc_host: "{{ my_hmc_host }}"
-    hmc_userid: "{{ my_hmc_userid }}"
-    hmc_password: "{{ my_hmc_password }}"
+    hmc_auth: "{{ my_hmc_auth }}"
     cpc_name: "{{ my_cpc_name }}"
     name: "{{ my_partition_name }}"
     state: stopped
@@ -147,8 +150,7 @@ EXAMPLES = """
 - name: Configure boot device and start the partition
   zhmc_partition:
     hmc_host: "{{ my_hmc_host }}"
-    hmc_userid: "{{ my_hmc_userid }}"
-    hmc_password: "{{ my_hmc_password }}"
+    hmc_auth: "{{ my_hmc_auth }}"
     cpc_name: "{{ my_cpc_name }}"
     name: "{{ my_partition_name }}"
     state: active
@@ -162,8 +164,7 @@ EXAMPLES = """
 - name: Ensure the partition does not exist
   zhmc_partition:
     hmc_host: "{{ my_hmc_host }}"
-    hmc_userid: "{{ my_hmc_userid }}"
-    hmc_password: "{{ my_hmc_password }}"
+    hmc_auth: "{{ my_hmc_auth }}"
     cpc_name: "{{ my_cpc_name }}"
     name: "{{ my_partition_name }}"
     state: absent
@@ -444,8 +445,7 @@ def ensure_active(params, check_mode):
     """
 
     host = params['hmc_host']
-    userid = params['hmc_userid']
-    password = params['hmc_password']
+    userid, password = get_hmc_auth(params['hmc_auth'])
     cpc_name = params['cpc_name']
     partition_name = params['name']
 
@@ -525,8 +525,7 @@ def ensure_stopped(params, check_mode):
     """
 
     host = params['hmc_host']
-    userid = params['hmc_userid']
-    password = params['hmc_password']
+    userid, password = get_hmc_auth(params['hmc_auth'])
     cpc_name = params['cpc_name']
     partition_name = params['name']
 
@@ -597,8 +596,7 @@ def ensure_absent(params, check_mode):
     """
 
     host = params['hmc_host']
-    userid = params['hmc_userid']
-    password = params['hmc_password']
+    userid, password = get_hmc_auth(params['hmc_auth'])
     cpc_name = params['cpc_name']
     partition_name = params['name']
 
@@ -654,8 +652,7 @@ def main():
     # description of the options in the DOCUMENTATION string.
     argument_spec = dict(
         hmc_host=dict(required=True, type='str'),
-        hmc_userid=dict(required=True, type='str'),
-        hmc_password=dict(required=True, type='str', no_log=True),
+        hmc_auth=dict(required=True, type='dict', no_log=True),
         cpc_name=dict(required=True, type='str'),
         name=dict(required=True, type='str'),
         state=dict(required=True, type='str',
