@@ -41,6 +41,26 @@ STOPPED_STATUSES = ('stopped', 'terminated', 'paused')
 BAD_STATUSES = ('communications-not-active', 'status-check')
 
 
+def eq_hex(hex_actual, hex_new, prop_name):
+    """
+    Test two hex string values of a property for equality.
+    """
+    try:
+        int_actual = int(hex_actual, 16)
+    except ValueError:
+        raise ParameterError(
+            "Unexpected: Actual value of property {!r} is not a valid hex "
+            "number: {!r}".
+            format(prop_name, hex_actual))
+    try:
+        int_new = int(hex_new, 16)
+    except ValueError:
+        raise ParameterError(
+            "New value for property {!r} is not a valid hex number: {!r}".
+            format(prop_name, hex_new))
+    return int_actual == int_new
+
+
 def stop_partition(partition, check_mode):
     """
     Ensure that the partition is stopped, by influencing the operational

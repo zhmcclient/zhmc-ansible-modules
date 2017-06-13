@@ -15,7 +15,7 @@
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.zhmc.utils import ParameterError, StatusError, \
-    stop_partition, start_partition
+    stop_partition, start_partition, eq_hex
 import requests.packages.urllib3
 import zhmcclient
 
@@ -194,108 +194,113 @@ partition:
 """
 
 # Dictionary of properties of partition resources, in this format:
-#   name: (allowed?, create?, update?, update-while-active?)
+#   name: (allowed, create, update, update_while_active, eq_func)
 # where:
 #   name: Name of the property according to the data model, with hyphens
 #     replaced by underscores (this is how it is or would be specified in
 #     the 'properties' module parameter).
-#   allowed?: Is it allowed in the 'properties' module parameter?
-#   create?: Can it be specified for the "Create Partition" operation?
-#   update?: Can it be specified for the "Update Partition Properties"
-#     operation (at all)?
-#   update-while-active?: Can it be be specified for the "Update Partition
-#     Properties" operation while the partition is active?
+#   allowed: Indicates whether it is allowed in the 'properties' module
+#     parameter.
+#   create: Indicates whether it can be specified for the "Create Partition"
+#     operation.
+#   update: Indicates whether it can be specified for the "Update Partition
+#     Properties" operation (at all).
+#   update_while_active: Indicates whether it can be specified for the "Update
+#     Partition Properties" operation while the partition is active. None means
+#     "not applicable" (i.e. update=False).
+#   eq_func: Equality test function for two values of the property; None means
+#     to use Python equality.
 ZHMC_PARTITION_PROPERTIES = {
 
     # create-only properties:
-    'type': (False, True, False, None),  # restriction not to change type
+    'type': (False, True, False, None, None),  # restriction not to change type
 
     # update-only properties:
-    'boot_network_device': (False, False, True, True),  # via artificial prop
-    'boot_network_nic_name': (True, False, True, True),  # artificial prop
-    'boot_storage_device': (False, False, True, True),  # via artificial prop
-    'boot_storage_hba_name': (True, False, True, True),  # artificial prop
-    'acceptable_status': (True, False, True, True),
-    'processor_management_enabled': (True, False, True, True),
-    'ifl_absolute_processor_capping': (True, False, True, True),
-    'ifl_absolute_processor_capping_value': (True, False, True, True),
-    'ifl_processing_weight_capped': (True, False, True, True),
-    'minimum_ifl_processing_weight': (True, False, True, True),
-    'maximum_ifl_processing_weight': (True, False, True, True),
-    'initial_ifl_processing_weight': (True, False, True, True),
-    'cp_absolute_processor_capping': (True, False, True, True),
-    'cp_absolute_processor_capping_value': (True, False, True, True),
-    'cp_processing_weight_capped': (True, False, True, True),
-    'minimum_cp_processing_weight': (True, False, True, True),
-    'maximum_cp_processing_weight': (True, False, True, True),
-    'initial_cp_processing_weight': (True, False, True, True),
-    'boot_logical_unit_number': (True, False, True, True),
-    'boot_world_wide_port_name': (True, False, True, True),
-    'boot_os_specific_parameters': (True, False, True, True),
-    'boot_iso_ins_file': (True, False, True, True),
-    'ssc_boot_selection': (True, False, True, True),
+    'boot_network_device': (False, False, True, True, None),  # via artif. prop
+    'boot_network_nic_name': (True, False, True, True, None),  # artif. prop
+    'boot_storage_device': (False, False, True, True, None),  # via artif. prop
+    'boot_storage_hba_name': (True, False, True, True, None),  # artif. prop
+    'acceptable_status': (True, False, True, True, None),
+    'processor_management_enabled': (True, False, True, True, None),
+    'ifl_absolute_processor_capping': (True, False, True, True, None),
+    'ifl_absolute_processor_capping_value': (True, False, True, True, None),
+    'ifl_processing_weight_capped': (True, False, True, True, None),
+    'minimum_ifl_processing_weight': (True, False, True, True, None),
+    'maximum_ifl_processing_weight': (True, False, True, True, None),
+    'initial_ifl_processing_weight': (True, False, True, True, None),
+    'cp_absolute_processor_capping': (True, False, True, True, None),
+    'cp_absolute_processor_capping_value': (True, False, True, True, None),
+    'cp_processing_weight_capped': (True, False, True, True, None),
+    'minimum_cp_processing_weight': (True, False, True, True, None),
+    'maximum_cp_processing_weight': (True, False, True, True, None),
+    'initial_cp_processing_weight': (True, False, True, True, None),
+    'boot_logical_unit_number': (True, False, True, True, eq_hex),
+    'boot_world_wide_port_name': (True, False, True, True, eq_hex),
+    'boot_os_specific_parameters': (True, False, True, True, None),
+    'boot_iso_ins_file': (True, False, True, True, None),
+    'ssc_boot_selection': (True, False, True, True, None),
 
     # create+update properties:
-    'name': (False, True, True, True),  # provided in 'name' module parameter
-    'description': (True, True, True, True),
-    'short_name': (True, True, True, True),
-    'partition_id': (True, True, True, True),
-    'autogenerate_partition_id': (True, True, True, True),
-    'ifl_processors': (True, True, True, True),
-    'cp_processors': (True, True, True, True),
-    'processor_mode': (True, True, True, True),
-    'initial_memory': (True, True, True, True),
-    'maximum_memory': (True, True, True, True),
-    'reserve_resources': (True, True, True, True),
-    'boot_device': (True, True, True, True),
-    'boot_timeout': (True, True, True, True),
-    'boot_ftp_host': (True, True, True, True),
-    'boot_ftp_username': (True, True, True, True),
-    'boot_ftp_password': (True, True, True, True),
-    'boot_ftp_insfile': (True, True, True, True),
-    'boot_removable_media': (True, True, True, True),
-    'boot_removable_media_type': (True, True, True, True),
-    'boot_configuration_selector': (True, True, True, True),
-    'boot_record_lba': (True, True, True, True),
-    'access_global_performance_data': (True, True, True, True),
-    'permit_cross_partition_commands': (True, True, True, True),
-    'access_basic_counter_set': (True, True, True, True),
-    'access_problem_state_counter_set': (True, True, True, True),
-    'access_crypto_activity_counter_set': (True, True, True, True),
-    'access_extended_counter_set': (True, True, True, True),
-    'access_coprocessor_group_set': (True, True, True, True),
-    'access_basic_sampling': (True, True, True, True),
-    'access_diagnostic_sampling': (True, True, True, True),
-    'permit_des_key_import_functions': (True, True, True, True),
-    'permit_aes_key_import_functions': (True, True, True, True),
-    'ssc_host_name': (True, True, True, True),
-    'ssc_ipv4_gateway': (True, True, True, True),
-    'ssc_dns_servers': (True, True, True, True),
-    'ssc_master_userid': (True, True, True, True),
-    'ssc_master_pw': (True, True, True, True),
+    'name': (False, True, True, True, None),  # provided in 'name' module parm
+    'description': (True, True, True, True, None),
+    'short_name': (True, True, True, True, None),
+    'partition_id': (True, True, True, True, None),
+    'autogenerate_partition_id': (True, True, True, True, None),
+    'ifl_processors': (True, True, True, True, None),
+    'cp_processors': (True, True, True, True, None),
+    'processor_mode': (True, True, True, True, None),
+    'initial_memory': (True, True, True, True, None),
+    'maximum_memory': (True, True, True, True, None),
+    'reserve_resources': (True, True, True, True, None),
+    'boot_device': (True, True, True, True, None),
+    'boot_timeout': (True, True, True, True, None),
+    'boot_ftp_host': (True, True, True, True, None),
+    'boot_ftp_username': (True, True, True, True, None),
+    'boot_ftp_password': (True, True, True, True, None),
+    'boot_ftp_insfile': (True, True, True, True, None),
+    'boot_removable_media': (True, True, True, True, None),
+    'boot_removable_media_type': (True, True, True, True, None),
+    'boot_configuration_selector': (True, True, True, True, None),
+    'boot_record_lba': (True, True, True, True, None),
+    'access_global_performance_data': (True, True, True, True, None),
+    'permit_cross_partition_commands': (True, True, True, True, None),
+    'access_basic_counter_set': (True, True, True, True, None),
+    'access_problem_state_counter_set': (True, True, True, True, None),
+    'access_crypto_activity_counter_set': (True, True, True, True, None),
+    'access_extended_counter_set': (True, True, True, True, None),
+    'access_coprocessor_group_set': (True, True, True, True, None),
+    'access_basic_sampling': (True, True, True, True, None),
+    'access_diagnostic_sampling': (True, True, True, True, None),
+    'permit_des_key_import_functions': (True, True, True, True, None),
+    'permit_aes_key_import_functions': (True, True, True, True, None),
+    'ssc_host_name': (True, True, True, True, None),
+    'ssc_ipv4_gateway': (True, True, True, True, None),
+    'ssc_dns_servers': (True, True, True, True, None),
+    'ssc_master_userid': (True, True, True, True, None),
+    'ssc_master_pw': (True, True, True, True, None),
 
     # read-only properties:
-    'object_uri': (False, False, False, None),
-    'object_id': (False, False, False, None),
-    'parent': (False, False, False, None),
-    'class': (False, False, False, None),
-    'status': (False, False, False, None),
-    'has_unacceptable_status': (False, False, False, None),
-    'is_locked': (False, False, False, None),
-    'os_name': (False, False, False, None),
-    'os_type': (False, False, False, None),
-    'os_version': (False, False, False, None),
-    'degraded_adapters': (False, False, False, None),
-    'current_ifl_processing_weight': (False, False, False, None),
-    'current_cp_processing_weight': (False, False, False, None),
-    'reserved_memory': (False, False, False, None),
-    'auto_start': (False, False, False, None),
-    'boot_iso_image_name': (False, False, False, None),
-    'threads_per_processor': (False, False, False, None),
-    'virtual_function_uris': (False, False, False, None),
-    'nic_uris': (False, False, False, None),
-    'hba_uris': (False, False, False, None),
-    'crypto_configuration': (False, False, False, None),
+    'object_uri': (False, False, False, None, None),
+    'object_id': (False, False, False, None, None),
+    'parent': (False, False, False, None, None),
+    'class': (False, False, False, None, None),
+    'status': (False, False, False, None, None),
+    'has_unacceptable_status': (False, False, False, None, None),
+    'is_locked': (False, False, False, None, None),
+    'os_name': (False, False, False, None, None),
+    'os_type': (False, False, False, None, None),
+    'os_version': (False, False, False, None, None),
+    'degraded_adapters': (False, False, False, None, None),
+    'current_ifl_processing_weight': (False, False, False, None, None),
+    'current_cp_processing_weight': (False, False, False, None, None),
+    'reserved_memory': (False, False, False, None, None),
+    'auto_start': (False, False, False, None, None),
+    'boot_iso_image_name': (False, False, False, None, None),
+    'threads_per_processor': (False, False, False, None, None),
+    'virtual_function_uris': (False, False, False, None, None),
+    'nic_uris': (False, False, False, None, None),
+    'hba_uris': (False, False, False, None, None),
+    'crypto_configuration': (False, False, False, None, None),
 }
 
 
@@ -354,7 +359,7 @@ def process_properties(partition, params):
                 "Property {!r} is not defined in the data model for "
                 "partitions.".format(prop_name))
 
-        allowed, create, update, update_while_active = \
+        allowed, create, update, update_while_active, eq_func = \
             ZHMC_PARTITION_PROPERTIES[prop_name]
 
         if not allowed:
@@ -405,14 +410,25 @@ def process_properties(partition, params):
             # Process a normal (= non-artificial) property
             hmc_prop_name = prop_name.replace('_', '-')
             input_prop_value = input_props[prop_name]
-            if not partition or \
-                    partition.properties[hmc_prop_name] != input_prop_value:
-                if create:
-                    create_props[hmc_prop_name] = input_prop_value
+            if partition:
+                if eq_func:
+                    equal = eq_func(partition.properties[hmc_prop_name],
+                                    input_prop_value,
+                                    prop_name)
+                else:
+                    equal = (partition.properties[hmc_prop_name] ==
+                             input_prop_value)
+                if not equal and update:
+                    update_props[hmc_prop_name] = input_prop_value
+                    if not update_while_active:
+                        stop = True
+            else:
                 if update:
                     update_props[hmc_prop_name] = input_prop_value
-                if not update_while_active:
-                    stop = True
+                    if not update_while_active:
+                        stop = True
+                if create:
+                    create_props[hmc_prop_name] = input_prop_value
 
     return create_props, update_props, stop
 

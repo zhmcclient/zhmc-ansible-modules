@@ -35,7 +35,7 @@
         adapter_name: "{{ hba_adapter_name }}"
         adapter_port_index: "{{ hba_port_index }}"
         description: The HBA to our storage
-        device_number: "123F"
+        device_number: "23F"
     register: hba1
 
   - name: Configure partition for booting via HBA
@@ -49,6 +49,6 @@
       properties:
         boot_device: storage-adapter
         boot_storage_hba_name: "{{ hba_name }}"
-        boot_logical_unit_number: "00000000001"
-        boot_world_wide_port_name: "abcdef01abcdef01"
+        boot_logical_unit_number: "0001"
+        boot_world_wide_port_name: "00cdef01abcdef01"
     register: part1

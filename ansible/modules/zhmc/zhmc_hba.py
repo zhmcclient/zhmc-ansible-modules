@@ -14,7 +14,7 @@
 # limitations under the License.
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.zhmc.utils import ParameterError, StatusError
+from ansible.module_utils.zhmc.utils import ParameterError, StatusError, eq_hex
 import requests.packages.urllib3
 import zhmcclient
 
@@ -166,36 +166,41 @@ hba:
     })
 """
 
-# Dictionary of properties of partition resources, in this format:
-#   name: (allowed?, create?, update?, update-while-active?)
+# Dictionary of properties of HBA resources, in this format:
+#   name: (allowed, create, update, update_while_active, eq_func)
 # where:
 #   name: Name of the property according to the data model, with hyphens
 #     replaced by underscores (this is how it is or would be specified in
 #     the 'properties' module parameter).
-#   allowed?: Is it allowed in the 'properties' module parameter?
-#   create?: Can it be specified for the "Create Partition" operation?
-#   update?: Can it be specified for the "Update Partition Properties"
-#     operation (at all)?
-#   update-while-active?: Can it be be specified for the "Update Partition
-#     Properties" operation while the partition is active?
+#   allowed: Indicates whether it is allowed in the 'properties' module
+#     parameter.
+#   create: Indicates whether it can be specified for the "Create HBA"
+#     operation.
+#   update: Indicates whether it can be specified for the "Update HBA
+#     Properties" operation (at all).
+#   update_while_active: Indicates whether it can be specified for the "Update
+#     HBA Properties" operation while the partition of the HBA is active. None
+#     means "not applicable" (i.e. update=False).
+#   eq_func: Equality test function for two values of the property; None means
+#     to use Python equality.
 ZHMC_HBA_PROPERTIES = {
 
     # create-only properties:
-    'adapter_port_uri': (False, True, False, None),  # via artificial props
-    'adapter_name': (True, True, False, None),  # artificial prop
-    'adapter_port_index': (True, True, False, None),  # artificial prop
+    'adapter_port_uri': (False, True, False, None, None),  # via artif. props
+    'adapter_name': (True, True, False, None, None),  # artificial prop
+    'adapter_port_index': (True, True, False, None, None),  # artificial prop
 
     # create+update properties:
-    'name': (False, True, True, True),  # provided in 'name' module parameter
-    'description': (True, True, True, True),
-    'device_number': (True, True, True, True),
+    'name': (False, True, True, True, None),  # provided in 'name' module parm
+    'description': (True, True, True, True, None),
+    'device_number': (True, True, True, True, eq_hex),
 
     # read-only properties:
-    'element-uri': (False, False, False, None),
-    'element-id': (False, False, False, None),
-    'parent': (False, False, False, None),
-    'class': (False, False, False, None),
-    'wwpn': (False, False, False, None),
+    'element-uri': (False, False, False, None, None),
+    'element-id': (False, False, False, None, None),
+    'parent': (False, False, False, None, None),
+    'class': (False, False, False, None, None),
+    'wwpn': (False, False, False, None, None),
 }
 
 
@@ -260,7 +265,7 @@ def process_properties(partition, hba, params):
                 "Property {!r} is not defined in the data model for "
                 "HBAs.".format(prop_name))
 
-        allowed, create, update, update_while_active = \
+        allowed, create, update, update_while_active, eq_func = \
             ZHMC_HBA_PROPERTIES[prop_name]
 
         if not allowed:
@@ -275,32 +280,28 @@ def process_properties(partition, hba, params):
             # Artificial properties will be processed together after this loop
             continue
 
-        if prop_name == 'device_number':
-            # Normalize the specified 'device_number' property to the format
-            # returned by the HMC (4-digit lower case hex string), because the
-            # HMC rejects an attempt to update the property to its current
-            # value. Using the same format will cause it not to be added to
-            # the update_props dict:
-            try:
-                devno_str = input_props[prop_name]
-                devno_int = int(devno_str, 16)
-            except ValueError:
-                raise ParameterError(
-                    "Property {!r} is not a valid hex number: {!r}".
-                    format(prop_name, devno_str))
-            input_prop_value = "%0.4x" % devno_int
-        else:
-            input_prop_value = input_props[prop_name]
-
         # Process a normal (= non-artificial) property
         hmc_prop_name = prop_name.replace('_', '-')
-        if not hba or hba.properties[hmc_prop_name] != input_prop_value:
-            if create:
-                create_props[hmc_prop_name] = input_prop_value
+        input_prop_value = input_props[prop_name]
+        if hba:
+            if eq_func:
+                equal = eq_func(hba.properties[hmc_prop_name],
+                                input_prop_value,
+                                prop_name)
+            else:
+                equal = (hba.properties[hmc_prop_name] ==
+                         input_prop_value)
+            if not equal and update:
+                update_props[hmc_prop_name] = input_prop_value
+                if not update_while_active:
+                    stop = True
+        else:
             if update:
                 update_props[hmc_prop_name] = input_prop_value
-            if not update_while_active:
-                stop = True
+                if not update_while_active:
+                    stop = True
+            if create:
+                create_props[hmc_prop_name] = input_prop_value
 
     # Process artificial properties
     if (adapter_name_art_name in input_props) != \
