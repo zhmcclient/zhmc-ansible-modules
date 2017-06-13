@@ -648,36 +648,19 @@ def perform_task(params, check_mode):
 
 def main():
 
-    # The following definition of module parameters must match the description
-    # of the options in the DOCUMENTATION string.
-    module_param_spec = {
-        'hmc': {
-            'required': True,
-            'type': 'dict',
-            'no_log': True,
-        },
-        'cpc_name': {
-            'required': True,
-            'type': 'str',
-        },
-        'name': {
-            'required': True,
-            'type': 'str',
-        },
-        'state': {
-            'required': True,
-            'type': 'str',
-            'choices': ['absent', 'stopped', 'active'],
-        },
-        'properties': {
-            'required': False,
-            'type': 'dict',
-            'default': {},
-        },
-    }
+    # The following definition of module input parameters must match the
+    # description of the options in the DOCUMENTATION string.
+    argument_spec = dict(
+        hmc=dict(required=True, type='dict', no_log=True),
+        cpc_name=dict(required=True, type='str'),
+        name=dict(required=True, type='str'),
+        state=dict(required=True, type='str',
+                   choices=['absent', 'stopped', 'active']),
+        properties=dict(required=False, type='dict', default={}),
+    )
 
     module = AnsibleModule(
-        argument_spec=module_param_spec,
+        argument_spec=argument_spec,
         supports_check_mode=True)
 
     try:
