@@ -14,8 +14,8 @@
 # limitations under the License.
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.zhmc.utils import ParameterError, StatusError, \
-    stop_partition, start_partition, eq_hex
+from ansible.module_utils.zhmc.utils import Error, ParameterError, \
+    StatusError, stop_partition, start_partition, eq_hex
 import requests.packages.urllib3
 import zhmcclient
 
@@ -692,7 +692,7 @@ def main():
 
         changed, result = perform_task(module.params, module.check_mode)
 
-    except (ParameterError, StatusError, zhmcclient.Error) as exc:
+    except (Error, zhmcclient.Error) as exc:
         # These exceptions are considered errors in the environment or in user
         # input. They have a proper message that stands on its own, so we
         # simply pass that message on and will not need a traceback.
