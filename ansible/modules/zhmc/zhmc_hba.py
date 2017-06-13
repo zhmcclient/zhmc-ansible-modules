@@ -152,10 +152,9 @@ hba:
   type: dict
   sample: |
     C({
-      "name": "part-1",
-      "description": "partition #1",
-      "status": "active",
-      "boot-device": "storage-adapter",
+      "name": "hba-1",
+      "description": "HBA #1",
+      "adapter-port-uri": "/api/adapters/.../ports/...",
       # . . .
     })
 """
