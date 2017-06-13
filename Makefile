@@ -26,16 +26,10 @@
 
 # Python / Pip commands
 ifndef PYTHON_CMD
-  $(warning Using default python command (PYTHON_CMD not set))
   PYTHON_CMD := python
-else
-  $(warning Using python command from PYTHON_CMD: $(PYTHON_CMD))
 endif
 ifndef PIP_CMD
-  $(warning Using default pip command (PIP_CMD not set))
   PIP_CMD := pip
-else
-  $(warning Using pip command from PIP_CMD: $(PIP_CMD))
 endif
 
 # Package level
@@ -107,6 +101,20 @@ dist_dependent_files := \
 doc_dir := docs
 doc_gen_dir := $(doc_dir)/gen
 
+# Directory for generated documentation
+doc_build_dir := $(build_dir)/docs
+
+# Documentation generator command
+sphinx := sphinx-build
+sphinx_conf_dir := $(doc_dir)
+sphinx_opts := -v -d $(doc_build_dir)/doctrees -c $(sphinx_conf_dir)
+
+# Dependents for Sphinx documentation build
+doc_dependent_files := \
+    $(sphinx_conf_dir)/conf.py \
+    $(wildcard $(doc_dir)/*.rst) \
+    $(ansible_py_files) \
+
 # Flake8 config file
 flake8_rc_file := setup.cfg
 
@@ -131,14 +139,27 @@ else
 pytest_opts :=
 endif
 
-# Git repo of Ansible project (remote URL and cloned repo)
-ansible_repo_url := git://github.com/ansible/ansible.git
+# Location of local clone of Ansible project's Git repository.
+# Note: For now, that location must have checked out the 'zhmc-fixes' branch
+# from our fork of the Ansible repo. Create that with:
+# git clone https://github.com/andy-maier/ansible.git --branch zhmc-fixes ../ansible
 ansible_repo_dir := ../ansible
 
-# Module validator
-validate := $(ansible_repo_dir)/test/sanity/validate-modules/validate-modules
-validate_log_file := validate.log
-validate_exclude_pattern := (E101|E105|E106)
+# Documentation-related stuff from Ansible project
+ansible_repo_template_dir := $(ansible_repo_dir)/docs/templates
+ansible_repo_lib_dir := $(ansible_repo_dir)/lib
+
+ansible_repo_plugin_formatter := $(ansible_repo_dir)/docs/bin/plugin_formatter.py
+ansible_repo_plugin_template := $(ansible_repo_template_dir)/plugin.rst.j2
+
+ansible_repo_keyword_dumper := $(ansible_repo_dir)/docs/bin/dump_keywords.py
+ansible_repo_keyword_template := $(ansible_repo_template_dir)/playbooks_keywords.rst.j2
+ansible_repo_keyword_desc := $(ansible_repo_dir)/docs/docsite/keyword_desc.yml
+
+# validate-modules tool from Ansible project
+ansible_repo_validate_modules := $(ansible_repo_dir)/test/sanity/validate-modules/validate-modules
+validate_modules_log_file := validate.log
+validate_modules_exclude_pattern := (E101|E105|E106)
 
 # No built-in rules needed:
 .SUFFIXES:
@@ -151,8 +172,8 @@ help:
 	@echo 'Valid targets are:'
 	@echo '  setup      - Set up the development environment'
 	@echo '  dist       - Build the distribution files in: $(dist_build_dir)'
-	@echo '  docs       - Build the documentation'
-	@echo '  check      - Run Flake8 on sources and save results in: $(flake8_log_file)'
+	@echo '  docs       - Build the documentation in: $(doc_build_dir)'
+	@echo '  check      - Run Flake8 and Ansible validate-modules'
 	@echo '  test       - Run unit tests (and test coverage) and save results in: $(test_log_file)'
 	@echo '               Env.var TESTCASES can be used to specify a py.test expression for its -k option'
 	@echo '  all        - Do all of the above'
@@ -160,6 +181,7 @@ help:
 	@echo '  uninstall  - Uninstall package from active Python environment'
 	@echo '  upload     - Upload the package to PyPI'
 	@echo '  clobber    - Remove any produced files'
+	@echo '  linkcheck  - Check links in documentation'
 	@echo 'Environment variables:'
 	@echo '  PACKAGE_LEVEL="minimum" - Install minimum version of dependent Python packages'
 	@echo '  PACKAGE_LEVEL="latest" - Default: Install latest version of dependent Python packages'
@@ -174,7 +196,7 @@ _pip:
 	$(PIP_CMD) install $(pip_level_opts) wheel
 
 .PHONY: setup
-setup: _pip requirements.txt dev-requirements.txt os_setup.sh
+setup: _pip requirements.txt dev-requirements.txt os_setup.sh $(ansible_repo_dir)
 	@echo 'Setting up the development environment with PACKAGE_LEVEL=$(PACKAGE_LEVEL)'
 	bash -c './os_setup.sh'
 	$(PIP_CMD) install $(pip_level_opts) -r dev-requirements.txt
@@ -185,12 +207,11 @@ dist: $(bdist_file) $(sdist_file)
 	@echo '$@ done.'
 
 .PHONY: docs
-docs:
-	$(MAKE) -C $(doc_dir) docs
+docs: $(doc_build_dir)/html/index.html
 	@echo '$@ done.'
 
 .PHONY: check
-check: $(flake8_log_file) $(validate_log_file)
+check: $(flake8_log_file) $(validate_modules_log_file)
 	@echo '$@ done.'
 
 .PHONY: test
@@ -247,26 +268,55 @@ else
 	@false
 endif
 
+.PHONY: linkcheck
+linkcheck: $(doc_build_dir)/linkcheck/output.txt
+	@echo '$@ done.'
+
+$(ansible_repo_dir):
+	@echo 'Cloning our fork of the Ansible repo into: $@'
+	git clone https://github.com/andy-maier/ansible.git --branch zhmc-fixes $@
+
+$(doc_gen_dir)/list_of_all_modules.rst: $(ansible_repo_plugin_formatter) $(ansible_repo_plugin_template) $(ansible_py_files)
+	mkdir -p $(doc_gen_dir)
+	PYTHONPATH=$(ansible_repo_lib_dir) $(ansible_repo_plugin_formatter) -vv --type=rst --template-dir=$(ansible_repo_template_dir) --module-dir=$(ansible_module_dir) --output-dir=$(doc_gen_dir)/
+
+$(doc_gen_dir)/playbooks_keywords.rst: $(ansible_repo_keyword_dumper) $(ansible_repo_keyword_template) $(ansible_repo_keyword_desc)
+	mkdir -p $(doc_gen_dir)
+	PYTHONPATH=$(ansible_repo_lib_dir) $(ansible_repo_keyword_dumper) --template-dir=$(ansible_repo_template_dir) --docs-source=$(ansible_repo_keyword_desc) --output-dir=$(doc_gen_dir)/
+
+#staticmin:
+#	cat _themes/srtd/static/css/theme.css | sed -e 's/^[    ]*//g; s/[      ]*$$//g; s/\([:{;,]\) /\1/g; s/ {/{/g; s/\/\*.*\*\///g; /^$$/d' | sed -e :a -e '$$!N; s/\n\(.\)/\1/; ta' > _themes/srtd/static/css/theme.min.css
+
+$(doc_build_dir)/html/index.html: Makefile $(doc_dependent_files) $(doc_gen_dir)/list_of_all_modules.rst $(doc_gen_dir)/playbooks_keywords.rst
+	rm -fv $@
+	mkdir -p $(doc_build_dir)
+	$(sphinx) -b html $(sphinx_opts) $(doc_dir) $(doc_build_dir)/html
+	@echo "Done: Created the HTML pages with top level file: $@"
+
+$(doc_build_dir)/linkcheck/output.txt: Makefile $(doc_dependent_files) $(doc_gen_dir)/list_of_all_modules.rst $(doc_gen_dir)/playbooks_keywords.rst
+	$(sphinx) -b linkcheck $(sphinx_opts) $(doc_dir) $(doc_build_dir)/linkcheck
+	@echo
+	@echo "Done: Look for any errors in the above output or in: $@"
+
 $(flake8_log_file): Makefile $(flake8_rc_file) $(check_py_files)
 	rm -f $@
 	bash -c 'set -o pipefail; flake8 $(check_py_files) 2>&1 |tee $@.tmp'
 	mv -f $@.tmp $@
-	@echo 'Done: Flake8 succeeded'
+	@echo 'Done: Flake8 checker succeeded'
 
-$(validate_log_file): Makefile $(ansible_module_files)
+$(validate_modules_log_file): Makefile $(ansible_module_files)
 	rm -f $@
-	bash -c 'PYTHONPATH=$(ansible_repo_dir)/lib $(validate) $(ansible_module_files) 2>&1 |grep -v -E "$(validate_exclude_pattern)" |tee $@.tmp'
+	bash -c 'PYTHONPATH=$(ansible_repo_lib_dir) $(ansible_repo_validate_modules) $(ansible_module_files) 2>&1 |grep -v -E "$(validate_modules_exclude_pattern)" |tee $@.tmp'
 	if [[ -n "$$(cat $@.tmp)" ]]; then false; fi
 	mv -f $@.tmp $@
-	@echo 'Done: Ansible validate-modules succeeded'
+	@echo 'Done: Ansible validate-modules checker succeeded'
 
 # We cd into tests in order to find the installed ansible module (in site-packages)
 # and not our ansible subdirectory. As a consequence, we need to install our Ansible
 # module (into site-packages).
 $(test_log_file): Makefile $(check_py_files)
-	@echo "Note: This tests the *installed* Ansible module; make sure you have run 'make install'"
+	@echo "Note: This tests the *installed* Ansible modules; make sure you have run 'make install'"
 	rm -f $@
 	bash -c 'set -o pipefail; cd tests; PYTHONWARNINGS=default py.test --cov $$(dirname $$(python -c "from ansible.modules import zhmc; print(zhmc.__file__)")) --cov-config ../.coveragerc --cov-report=html:../htmlcov $(pytest_opts) -s 2>&1 |tee ../$@.tmp'
 	mv -f $@.tmp $@
 	@echo 'Done: Created test log file: $@'
-
