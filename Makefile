@@ -79,6 +79,10 @@ build_dir = build
 # Directory tree with our Ansible module source files
 ansible_dir := ansible
 
+# Directory with the Ansible zhmc module
+ansible_module_dir := $(ansible_dir)/modules/zhmc
+ansible_module_files := $(wildcard $(ansible_module_dir)/zhmc_*.py)
+
 # Our Ansible module source files
 ansible_py_files := \
     $(wildcard $(ansible_dir)/*.py) \
@@ -126,6 +130,15 @@ pytest_opts := -k $(TESTCASES)
 else
 pytest_opts :=
 endif
+
+# Git repo of Ansible project (remote URL and cloned repo)
+ansible_repo_url := git://github.com/ansible/ansible.git
+ansible_repo_dir := ../ansible
+
+# Module validator
+validate := $(ansible_repo_dir)/test/sanity/validate-modules/validate-modules
+validate_log_file := validate.log
+validate_exclude_pattern := (E101|E105|E106)
 
 # No built-in rules needed:
 .SUFFIXES:
@@ -177,7 +190,7 @@ docs:
 	@echo '$@ done.'
 
 .PHONY: check
-check: $(flake8_log_file)
+check: $(flake8_log_file) $(validate_log_file)
 	@echo '$@ done.'
 
 .PHONY: test
@@ -218,7 +231,7 @@ endif
 .PHONY: clobber
 clobber:
 	rm -Rf .cache $(package_name_under).egg-info .eggs $(build_dir) $(doc_gen_dir) htmlcov .tox
-	rm -f MANIFEST MANIFEST.in AUTHORS ChangeLog .coverage flake8_*.log test_*.log
+	rm -f MANIFEST MANIFEST.in AUTHORS ChangeLog .coverage flake8_*.log test_*.log validate.log
 	find . -name "*.pyc" -delete -o -name "__pycache__" -delete -o -name "*.tmp" -delete -o -name "tmp_*" -delete
 	@echo 'Done: Removed all build products to get to a fresh state.'
 	@echo '$@ done.'
@@ -238,7 +251,14 @@ $(flake8_log_file): Makefile $(flake8_rc_file) $(check_py_files)
 	rm -f $@
 	bash -c 'set -o pipefail; flake8 $(check_py_files) 2>&1 |tee $@.tmp'
 	mv -f $@.tmp $@
-	@echo 'Done: Created Flake8 log file: $@'
+	@echo 'Done: Flake8 succeeded'
+
+$(validate_log_file): Makefile $(ansible_module_files)
+	rm -f $@
+	bash -c 'PYTHONPATH=$(ansible_repo_dir)/lib $(validate) $(ansible_module_files) 2>&1 |grep -v -E "$(validate_exclude_pattern)" |tee $@.tmp'
+	if [[ -n "$$(cat $@.tmp)" ]]; then false; fi
+	mv -f $@.tmp $@
+	@echo 'Done: Ansible validate-modules succeeded'
 
 # We cd into tests in order to find the installed ansible module (in site-packages)
 # and not our ansible subdirectory. As a consequence, we need to install our Ansible

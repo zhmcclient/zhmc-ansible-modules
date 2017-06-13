@@ -82,6 +82,10 @@ twine===1.8.1
 pytest===3.0.5
 pytest-cov===2.4.0
 
+# Ansible validate-modules:
+mock===2.0.0
+voluptuous===0.10.2
+
 # Indirect dependencies:
 alabaster===0.7.9
 Babel===2.3.4

@@ -31,7 +31,7 @@ ANSIBLE_METADATA = {
 DOCUMENTATION = """
 ---
 module: zhmc_hba
-version_added:
+version_added: "0.0"
 short_description: Manages HBAs in an existing partition
 description:
   - Creates, updates, and deletes HBAs in existing partitions.
@@ -52,33 +52,27 @@ options:
       - The hostname or IP address of the HMC managing the CPC with the
         partition containing the target HBA.
     required: true
-    type: string
   hmc_userid:
     description:
       - The userid for authenticating with the HMC.
     required: true
-    type: string
   hmc_password:
     description:
       - The password of the userid for authenticating with the HMC.
     required: true
-    type: string
   cpc_name:
     description:
       - The name of the CPC with the partition containing the HBA.
     required: true
-    type: string
   partition_name:
     description:
       - The name of the partition containing the HBA.
     required: true
-    type: string
   name:
     description:
       - The name of the target HBA that is managed. If the HBA needs to be
         created, this value becomes its name.
     required: true
-    type: string
   state:
     description:
       - "The desired state for the target HBA:"
@@ -87,12 +81,13 @@ options:
       - "C(present): Ensures that the HBA exists in the specified partition
          and has the specified properties."
     required: true
-    type: string
     choices: ["absent", "present"]
   properties:
     description:
-      - "Input properties for the HBA, for C(state=present).
-         Will be ignored for C(state=absent)."
+      - "Dictionary with input properties for the HBA, for C(state=present).
+         Key is the property name with underscores instead of hyphens, and
+         value is the property value in YAML syntax. Will be ignored for
+         C(state=absent)."
       - "The possible input properties in this dictionary are:"
       - "The properties defined as writeable in the data model for HBA
          resources, where the property names contain underscores instead of
@@ -109,7 +104,6 @@ options:
          HBA already exists, and will get the default value defined in the
          data model for HBAs when the HBA is being created."
     required: false
-    type: dict
     default: No input properties
 """
 
