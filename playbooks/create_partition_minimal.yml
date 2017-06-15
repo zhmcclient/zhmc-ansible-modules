@@ -2,13 +2,12 @@
 - hosts: localhost
   vars_files:
     - vars.yml
+    - vault.yml
   tasks:
 
   - name: Ensure partition exists and is stopped
     zhmc_partition:
-      hmc_host: "{{ hmc_host }}"
-      hmc_userid: "{{ hmc_userid }}"
-      hmc_password: "{{ hmc_password }}"
+      hmc: "{{ hmc }}"
       cpc_name: "{{ cpc_name }}"
       name: "{{ partition_name }}"
       state: stopped
@@ -24,9 +23,7 @@
 
   - name: Ensure HBA exists in the partition
     zhmc_hba:
-      hmc_host: "{{ hmc_host }}"
-      hmc_userid: "{{ hmc_userid }}"
-      hmc_password: "{{ hmc_password }}"
+      hmc: "{{ hmc }}"
       cpc_name: "{{ cpc_name }}"
       partition_name: "{{ partition_name }}"
       name: "{{ hba_name }}"
@@ -40,9 +37,7 @@
 
   - name: Configure partition for booting via HBA
     zhmc_partition:
-      hmc_host: "{{ hmc_host }}"
-      hmc_userid: "{{ hmc_userid }}"
-      hmc_password: "{{ hmc_password }}"
+      hmc: "{{ hmc }}"
       cpc_name: "{{ cpc_name }}"
       name: "{{ partition_name }}"
       state: stopped

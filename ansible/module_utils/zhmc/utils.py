@@ -69,6 +69,41 @@ def eq_hex(hex_actual, hex_new, prop_name):
     return int_actual == int_new
 
 
+def hmc_params(hmc):
+    """
+    Extract HMC host, userid, and password from the 'hmc' module input
+    parameter.
+
+    Parameters:
+      hmc (dict): value of the 'hmc' module input parameter, which is a
+        dictionary with items 'host', 'userid', 'password', with HMC
+        hostname or IP address, HMC userid, and HMC password, respectively.
+
+    Returns:
+      tuple(host, userid, password): A tuple with the respective items
+        of the input dictionary.
+
+    Raises:
+      ParameterError: An item in the input dictionary was missing.
+    """
+    try:
+        host = hmc['host']
+    except KeyError:
+        raise ParameterError("Required item 'host' is missing in "
+                             "dictionary module parameter 'hmc'.")
+    try:
+        userid = hmc['userid']
+    except KeyError:
+        raise ParameterError("Required item 'userid' is missing in "
+                             "dictionary module parameter 'hmc'.")
+    try:
+        password = hmc['password']
+    except KeyError:
+        raise ParameterError("Required item 'password' is missing in "
+                             "dictionary module parameter 'hmc'.")
+    return host, userid, password
+
+
 def stop_partition(partition, check_mode):
     """
     Ensure that the partition is stopped, by influencing the operational
