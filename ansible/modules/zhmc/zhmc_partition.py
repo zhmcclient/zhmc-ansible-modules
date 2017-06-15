@@ -15,7 +15,7 @@
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.zhmc.utils import Error, ParameterError, \
-    StatusError, stop_partition, start_partition, eq_hex, hmc_params
+    StatusError, stop_partition, start_partition, eq_hex
 import requests.packages.urllib3
 import zhmcclient
 
@@ -50,22 +50,19 @@ requirements:
   - Network access to HMC
   - zhmcclient >=0.13.0
 options:
-  hmc:
+  hmc_host:
     description:
-      - A dictionary that specifies the host address and authentication
-        credentials for an HMC that manages the desired CPC.
+      - The hostname or IP address of the HMC managing the CPC with the
+        target partition.
     required: true
-    suboptions:
-      host:
-        description:
-          - The hostname or IP address of the HMC (required).
-      userid:
-        description:
-          - The userid (username) for authenticating with the HMC (required).
-      password:
-        description:
-          - The password of the userid for authenticating with the HMC
-            (required).
+  hmc_userid:
+    description:
+      - The userid for authenticating with the HMC.
+    required: true
+  hmc_password:
+    description:
+      - The password of the userid for authenticating with the HMC.
+    required: true
   cpc_name:
     description:
       - The name of the CPC with the target partition.
@@ -120,57 +117,54 @@ options:
 
 EXAMPLES = """
 ---
-vars:
-  hmc:
-    host: 10.11.12.13
-    userid: myuserid
-    password: mysecret
-  cpc_name: P0001234
-  partition_name: zhmc-part-1
 
-tasks:
+# Because configuring LUN masking in the SAN requires the host WWPN, and the
+# host WWPN is automatically assigned and will be known only after an HBA has
+# been added to the partition, the partition needs to be created in stopped
+# state. Also, because the HBA has not yet been created, the boot configuration
+# cannot be done yet:
+- name: Ensure the partition exists and is stopped
+  zhmc_partition:
+    hmc_host: "{{ hmc_host }}"
+    hmc_userid: "{{ hmc_userid }}"
+    hmc_password: "{{ hmc_password }}"
+    cpc_name: "{{ cpc_name }}"
+    name: zhmc-part-1
+    state: stopped
+    properties:
+      description: "zhmc Ansible modules: Example partition 1"
+      ifl_processors: 2
+      initial_memory: 1024
+      maximum_memory: 1024
+  register: part1
 
-  # Because configuring LUN masking in the SAN requires the host WWPN, and the
-  # host WWPN is automatically assigned and will be known only after an HBA has
-  # been added to the partition, the partition needs to be created in stopped
-  # state. Also, because the HBA has not yet been created, the boot
-  # configuration cannot be done yet:
-  - name: Ensure the partition exists and is stopped
-    zhmc_partition:
-      hmc: "{{ hmc }}"
-      cpc_name: "{{ cpc_name }}"
-      name: "{{ partition_name }}"
-      state: stopped
-      properties:
-        description: "zhmc Ansible modules: Example partition 1"
-        ifl_processors: 2
-        initial_memory: 1024
-        maximum_memory: 1024
-    register: part1
+# After an HBA has been added (see Ansible module zhmc_hba), and LUN masking
+# has been configured in the SAN, and a bootable image is available at the
+# configured LUN and target WWPN, the partition can be configured for boot from
+# the FCP LUN and can be started:
+- name: Configure boot device and start the partition
+  zhmc_partition:
+    hmc_host: "{{ hmc_host }}"
+    hmc_userid: "{{ hmc_userid }}"
+    hmc_password: "{{ hmc_password }}"
+    cpc_name: "{{ cpc_name }}"
+    name: zhmc-part-1
+    state: active
+    properties:
+      boot_device: storage-adapter
+      boot_storage_device_hba_name: hba1
+      boot_logical_unit_number: 00000000001
+      boot_world_wide_port_name: abcdefabcdef
+  register: part1
 
-  # After an HBA has been added (see Ansible module zhmc_hba), and LUN masking
-  # has been configured in the SAN, and a bootable image is available at the
-  # configured LUN and target WWPN, the partition can be configured for boot
-  # from the FCP LUN and can be started:
-  - name: Configure boot device and start the partition
-    zhmc_partition:
-      hmc: "{{ hmc }}"
-      cpc_name: "{{ cpc_name }}"
-      name: "{{ partition_name }}"
-      state: active
-      properties:
-        boot_device: storage-adapter
-        boot_storage_device_hba_name: hba1
-        boot_logical_unit_number: "00000000001"
-        boot_world_wide_port_name: "00abcdefabcdef00"
-    register: part1
-
-  - name: Ensure the partition does not exist
-    zhmc_partition:
-      hmc: "{{ hmc }}"
-      cpc_name: "{{ cpc_name }}"
-      name: "{{ partition_name }}"
-      state: absent
+- name: Ensure the partition does not exist
+  zhmc_partition:
+    hmc_host: "{{ hmc_host }}"
+    hmc_userid: "{{ hmc_userid }}"
+    hmc_password: "{{ hmc_password }}"
+    cpc_name: "{{ cpc_name }}"
+    name: zhmc-part-1
+    state: absent
 """
 
 RETURN = """
@@ -447,7 +441,9 @@ def ensure_active(params, check_mode):
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
 
-    host, userid, password = hmc_params(params['hmc'])
+    hmc = params['hmc_host']
+    userid = params['hmc_userid']
+    password = params['hmc_password']
     cpc_name = params['cpc_name']
     partition_name = params['name']
 
@@ -455,7 +451,7 @@ def ensure_active(params, check_mode):
     result = {}
 
     try:
-        session = zhmcclient.Session(host, userid, password)
+        session = zhmcclient.Session(hmc, userid, password)
         client = zhmcclient.Client(session)
         cpc = client.cpcs.find(name=cpc_name)
         # The default exception handling is sufficient for the above.
@@ -524,7 +520,9 @@ def ensure_stopped(params, check_mode):
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
 
-    host, userid, password = hmc_params(params['hmc'])
+    hmc = params['hmc_host']
+    userid = params['hmc_userid']
+    password = params['hmc_password']
     cpc_name = params['cpc_name']
     partition_name = params['name']
 
@@ -532,7 +530,7 @@ def ensure_stopped(params, check_mode):
     result = {}
 
     try:
-        session = zhmcclient.Session(host, userid, password)
+        session = zhmcclient.Session(hmc, userid, password)
         client = zhmcclient.Client(session)
         cpc = client.cpcs.find(name=cpc_name)
         # The default exception handling is sufficient for the above.
@@ -597,7 +595,9 @@ def ensure_absent(params, check_mode):
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
 
-    host, userid, password = hmc_params(params['hmc'])
+    hmc = params['hmc_host']
+    userid = params['hmc_userid']
+    password = params['hmc_password']
     cpc_name = params['cpc_name']
     partition_name = params['name']
 
@@ -605,7 +605,7 @@ def ensure_absent(params, check_mode):
     result = {}
 
     try:
-        session = zhmcclient.Session(host, userid, password)
+        session = zhmcclient.Session(hmc, userid, password)
         client = zhmcclient.Client(session)
         cpc = client.cpcs.find(name=cpc_name)
         # The default exception handling is sufficient for the above.
@@ -649,19 +649,44 @@ def perform_task(params, check_mode):
 
 def main():
 
-    # The following definition of module input parameters must match the
-    # description of the options in the DOCUMENTATION string.
-    argument_spec = dict(
-        hmc=dict(required=True, type='dict', no_log=True),
-        cpc_name=dict(required=True, type='str'),
-        name=dict(required=True, type='str'),
-        state=dict(required=True, type='str',
-                   choices=['absent', 'stopped', 'active']),
-        properties=dict(required=False, type='dict', default={}),
-    )
+    # The following definition of module parameters must match the description
+    # of the options in the DOCUMENTATION string.
+    module_param_spec = {
+        'hmc_host': {
+            'required': True,
+            'type': 'str',
+        },
+        'hmc_userid': {
+            'required': True,
+            'type': 'str',
+        },
+        'hmc_password': {
+            'required': True,
+            'type': 'str',
+            'no_log': True,
+        },
+        'cpc_name': {
+            'required': True,
+            'type': 'str',
+        },
+        'name': {
+            'required': True,
+            'type': 'str',
+        },
+        'state': {
+            'required': True,
+            'type': 'str',
+            'choices': ['absent', 'stopped', 'active'],
+        },
+        'properties': {
+            'required': False,
+            'type': 'dict',
+            'default': {},
+        },
+    }
 
     module = AnsibleModule(
-        argument_spec=argument_spec,
+        argument_spec=module_param_spec,
         supports_check_mode=True)
 
     try:

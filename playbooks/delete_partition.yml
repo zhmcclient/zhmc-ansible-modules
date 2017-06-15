@@ -2,12 +2,13 @@
 - hosts: localhost
   vars_files:
     - vars.yml
-    - vault.yml
   tasks:
 
   - name: Ensure partition does not exist
     zhmc_partition:
-      hmc: "{{ hmc }}"
+      hmc_host: "{{ hmc_host }}"
+      hmc_userid: "{{ hmc_userid }}"
+      hmc_password: "{{ hmc_password }}"
       cpc_name: "{{ cpc_name }}"
       name: "{{ partition_name }}"
       state: absent
