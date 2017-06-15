@@ -79,6 +79,7 @@ class TestZhmcPartitionMain(unittest.TestCase):
             state=dict(required=True, type='str',
                        choices=['absent', 'stopped', 'active']),
             properties=dict(required=False, type='dict', default={}),
+            faked_session=dict(required=False, type='object'),
         )
         assert(ansible_mod_cls.call_args ==
                mock.call(argument_spec=expected_argument_spec,

@@ -15,7 +15,7 @@
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.zhmc.utils import Error, ParameterError, \
-    wait_for_transition_completion, eq_hex, get_hmc_auth
+    wait_for_transition_completion, eq_hex, get_hmc_auth, get_session
 import requests.packages.urllib3
 import zhmcclient
 
@@ -110,6 +110,13 @@ options:
          data model for HBAs when the HBA is being created."
     required: false
     default: No input properties
+  faked_session:
+    description:
+      - "A C(zhmcclient_mock.FakedSession) object that has a mocked HMC set up.
+         If provided, it will be used instead of connecting to a real HMC. This
+         is used for testing purposes only."
+    required: false
+    default: Real HMC will be used.
 """
 
 EXAMPLES = """
@@ -357,12 +364,13 @@ def ensure_present(params, check_mode):
     cpc_name = params['cpc_name']
     partition_name = params['partition_name']
     hba_name = params['name']
+    faked_session = params.get('faked_session', None)
 
     changed = False
     result = {}
 
     try:
-        session = zhmcclient.Session(host, userid, password)
+        session = get_session(faked_session, host, userid, password)
         client = zhmcclient.Client(session)
         cpc = client.cpcs.find(name=cpc_name)
         # The default exception handling is sufficient for the above.
@@ -436,12 +444,13 @@ def ensure_absent(params, check_mode):
     cpc_name = params['cpc_name']
     partition_name = params['partition_name']
     hba_name = params['name']
+    faked_session = params.get('faked_session', None)
 
     changed = False
     result = {}
 
     try:
-        session = zhmcclient.Session(host, userid, password)
+        session = get_session(faked_session, host, userid, password)
         client = zhmcclient.Client(session)
         cpc = client.cpcs.find(name=cpc_name)
         partition = cpc.partitions.find(name=partition_name)
