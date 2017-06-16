@@ -442,7 +442,7 @@ def ensure_active(params, check_mode):
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
 
-    hmc = params['hmc_host']
+    host = params['hmc_host']
     userid = params['hmc_userid']
     password = params['hmc_password']
     cpc_name = params['cpc_name']
@@ -452,7 +452,7 @@ def ensure_active(params, check_mode):
     result = {}
 
     try:
-        session = zhmcclient.Session(hmc, userid, password)
+        session = zhmcclient.Session(host, userid, password)
         client = zhmcclient.Client(session)
         cpc = client.cpcs.find(name=cpc_name)
         # The default exception handling is sufficient for the above.
@@ -521,7 +521,7 @@ def ensure_stopped(params, check_mode):
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
 
-    hmc = params['hmc_host']
+    host = params['hmc_host']
     userid = params['hmc_userid']
     password = params['hmc_password']
     cpc_name = params['cpc_name']
@@ -531,7 +531,7 @@ def ensure_stopped(params, check_mode):
     result = {}
 
     try:
-        session = zhmcclient.Session(hmc, userid, password)
+        session = zhmcclient.Session(host, userid, password)
         client = zhmcclient.Client(session)
         cpc = client.cpcs.find(name=cpc_name)
         # The default exception handling is sufficient for the above.
@@ -596,7 +596,7 @@ def ensure_absent(params, check_mode):
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
 
-    hmc = params['hmc_host']
+    host = params['hmc_host']
     userid = params['hmc_userid']
     password = params['hmc_password']
     cpc_name = params['cpc_name']
@@ -606,7 +606,7 @@ def ensure_absent(params, check_mode):
     result = {}
 
     try:
-        session = zhmcclient.Session(hmc, userid, password)
+        session = zhmcclient.Session(host, userid, password)
         client = zhmcclient.Client(session)
         cpc = client.cpcs.find(name=cpc_name)
         # The default exception handling is sufficient for the above.
