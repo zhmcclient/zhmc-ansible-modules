@@ -6,8 +6,9 @@ Unit tests for the 'zhmc_partition' Ansible module.
 
 import unittest
 import mock
+
 from ansible.modules.zhmc import zhmc_partition
-from ansible.module_utils.zhmc.utils import ParameterError
+from ansible.module_utils.zhmc import utils
 
 
 class TestZhmcPartitionMain(unittest.TestCase):
@@ -104,7 +105,7 @@ class TestZhmcPartitionMain(unittest.TestCase):
         check_mode = False
 
         # Exception raised by perform_task()
-        perform_task_exc = ParameterError("fake message")
+        perform_task_exc = utils.ParameterError("fake message")
 
         # Prepare mocks
         mod_obj = ansible_mod_cls.return_value
@@ -133,4 +134,140 @@ class TestZhmcPartitionMain(unittest.TestCase):
         # Assert no call to exit_json()
         assert(mod_obj.exit_json.called is False)
 
-# TODO: Add unit tests for all other functions of the module.
+
+class TestZhmcPartitionPerformTask(unittest.TestCase):
+    """
+    Unit tests for the perform_task() function.
+    """
+
+    @mock.patch("ansible.modules.zhmc.zhmc_partition.ensure_absent",
+                autospec=True)
+    @mock.patch("ansible.modules.zhmc.zhmc_partition.ensure_active",
+                autospec=True)
+    @mock.patch("ansible.modules.zhmc.zhmc_partition.ensure_stopped",
+                autospec=True)
+    def test_pt_active(self, ensure_stopped_func, ensure_active_func,
+                       ensure_absent_func):
+        """
+        Test perform_task() with state 'active'.
+        """
+
+        # Prepare input arguments
+        params = {
+            'state': 'active',
+        }
+        check_mode = True
+
+        # Prepare return values
+        changed = False
+        result = {
+            'fake-prop': 'fake-value',
+        }
+
+        # Prepare mocks
+        ensure_active_func.return_value = (changed, result)
+
+        # Exercise code
+        actual_changed, actual_result = zhmc_partition.perform_task(
+            params, check_mode)
+
+        # Assert return values
+        assert(actual_changed == changed)
+        assert(actual_result == result)
+
+        # Assert call to the desired action function
+        assert(ensure_active_func.call_args ==
+               mock.call(params, check_mode))
+
+        # Assert no call to the other action functions
+        assert(ensure_stopped_func.called is False)
+        assert(ensure_absent_func.called is False)
+
+    @mock.patch("ansible.modules.zhmc.zhmc_partition.ensure_absent",
+                autospec=True)
+    @mock.patch("ansible.modules.zhmc.zhmc_partition.ensure_active",
+                autospec=True)
+    @mock.patch("ansible.modules.zhmc.zhmc_partition.ensure_stopped",
+                autospec=True)
+    def test_pt_stopped(self, ensure_stopped_func, ensure_active_func,
+                        ensure_absent_func):
+        """
+        Test perform_task() with state 'stopped'.
+        """
+
+        # Prepare input arguments
+        params = {
+            'state': 'stopped',
+        }
+        check_mode = True
+
+        # Prepare return values
+        changed = True
+        result = {
+            'fake-prop': 'fake-value',
+        }
+
+        # Prepare mocks
+        ensure_stopped_func.return_value = (changed, result)
+
+        # Exercise code
+        actual_changed, actual_result = zhmc_partition.perform_task(
+            params, check_mode)
+
+        # Assert return values
+        assert(actual_changed == changed)
+        assert(actual_result == result)
+
+        # Assert call to the desired action function
+        assert(ensure_stopped_func.call_args ==
+               mock.call(params, check_mode))
+
+        # Assert no call to the other action functions
+        assert(ensure_active_func.called is False)
+        assert(ensure_absent_func.called is False)
+
+    @mock.patch("ansible.modules.zhmc.zhmc_partition.ensure_absent",
+                autospec=True)
+    @mock.patch("ansible.modules.zhmc.zhmc_partition.ensure_active",
+                autospec=True)
+    @mock.patch("ansible.modules.zhmc.zhmc_partition.ensure_stopped",
+                autospec=True)
+    def test_pt_absent(self, ensure_stopped_func, ensure_active_func,
+                       ensure_absent_func):
+        """
+        Test perform_task() with state 'absent'.
+        """
+
+        # Prepare input arguments
+        params = {
+            'state': 'absent',
+        }
+        check_mode = False
+
+        # Prepare return values
+        changed = True
+        result = {
+            'fake-prop': 'fake-value',
+        }
+
+        # Prepare mocks
+        ensure_absent_func.return_value = (changed, result)
+
+        # Exercise code
+        actual_changed, actual_result = zhmc_partition.perform_task(
+            params, check_mode)
+
+        # Assert return values
+        assert(actual_changed == changed)
+        assert(actual_result == result)
+
+        # Assert call to the desired action function
+        assert(ensure_absent_func.call_args ==
+               mock.call(params, check_mode))
+
+        # Assert no call to the other action functions
+        assert(ensure_active_func.called is False)
+        assert(ensure_stopped_func.called is False)
+
+
+# The other functions of the module are tested with function tests.
