@@ -1,7 +1,7 @@
 ---
-hmc_host: 9.152.151.49
+hmc_host: 10.11.12.13
 
-cpc_name: P000S67B
+cpc_name: P0001234
 partition_name: zhmc-part-1
 
 hba_name: hba-1

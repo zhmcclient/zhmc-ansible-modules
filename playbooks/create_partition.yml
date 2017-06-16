@@ -2,6 +2,7 @@
 - hosts: localhost
   vars_files:
     - vars.yml
+    - vault.yml
   tasks:
 
   - name: Ensure partition exists and is stopped
@@ -35,7 +36,7 @@
         adapter_name: "{{ hba_adapter_name }}"
         adapter_port_index: "{{ hba_port_index }}"
         description: The HBA to our storage
-        device_number: "23F"
+        device_number: "023F"
     register: hba1
 
   - name: Configure partition for booting via HBA
