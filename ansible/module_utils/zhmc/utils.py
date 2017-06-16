@@ -53,19 +53,25 @@ def eq_hex(hex_actual, hex_new, prop_name):
     """
     Test two hex string values of a property for equality.
     """
-    try:
-        int_actual = int(hex_actual, 16)
-    except ValueError:
-        raise ParameterError(
-            "Unexpected: Actual value of property {!r} is not a valid hex "
-            "number: {!r}".
-            format(prop_name, hex_actual))
-    try:
-        int_new = int(hex_new, 16)
-    except ValueError:
-        raise ParameterError(
-            "New value for property {!r} is not a valid hex number: {!r}".
-            format(prop_name, hex_new))
+    if hex_actual:
+        try:
+            int_actual = int(hex_actual, 16)
+        except ValueError:
+            raise ParameterError(
+                "Unexpected: Actual value of property {!r} is not a valid hex "
+                "number: {!r}".
+                format(prop_name, hex_actual))
+    else:
+        int_actual = None
+    if hex_new:
+        try:
+            int_new = int(hex_new, 16)
+        except ValueError:
+            raise ParameterError(
+                "New value for property {!r} is not a valid hex number: {!r}".
+                format(prop_name, hex_new))
+    else:
+        int_new = None
     return int_actual == int_new
 
 
