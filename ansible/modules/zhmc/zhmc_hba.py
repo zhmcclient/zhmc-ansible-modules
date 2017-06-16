@@ -251,7 +251,7 @@ def process_properties(partition, hba, params):
     port_index_art_name = 'adapter_port_index'
 
     # handle the other properties
-    input_props = params['properties']
+    input_props = params.get('properties', {})
     for prop_name in input_props:
 
         if prop_name not in ZHMC_HBA_PROPERTIES:

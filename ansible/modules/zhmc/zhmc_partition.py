@@ -349,7 +349,7 @@ def process_properties(partition, params):
     # the partition name
 
     # handle the other properties
-    input_props = params['properties']
+    input_props = params.get('properties', {})
     for prop_name in input_props:
 
         if prop_name not in ZHMC_PARTITION_PROPERTIES:
