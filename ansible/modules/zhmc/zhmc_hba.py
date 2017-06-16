@@ -109,15 +109,16 @@ options:
 
 EXAMPLES = """
 ---
+# Note: The following examples assume that some variables named 'my_*' are set.
 
-- name: Ensure HBA 1 exists in the partition
+- name: Ensure HBA exists in the partition
   zhmc_partition:
-    hmc_host: "{{ hmc_host }}"
-    hmc_userid: "{{ hmc_userid }}"
-    hmc_password: "{{ hmc_password }}"
-    cpc_name: "{{ cpc_name }}"
-    partition_name: zhmc-part-1
-    name: hba-1
+    hmc_host: "{{ my_hmc_host }}"
+    hmc_userid: "{{ my_hmc_userid }}"
+    hmc_password: "{{ my_hmc_password }}"
+    cpc_name: "{{ my_cpc_name }}"
+    partition_name: "{{ my_partition_name }}"
+    name: "{{ my_hba_name }}"
     state: present
     properties:
       adapter_name: FCP-1
@@ -126,14 +127,14 @@ EXAMPLES = """
       device_number: "123F"
   register: hba1
 
-- name: Ensure HBA 2 does not exist in the partition
+- name: Ensure HBA does not exist in the partition
   zhmc_partition:
-    hmc_host: "{{ hmc_host }}"
-    hmc_userid: "{{ hmc_userid }}"
-    hmc_password: "{{ hmc_password }}"
-    cpc_name: "{{ cpc_name }}"
-    partition_name: zhmc-part-1
-    name: hba-2
+    hmc_host: "{{ my_hmc_host }}"
+    hmc_userid: "{{ my_hmc_userid }}"
+    hmc_password: "{{ my_hmc_password }}"
+    cpc_name: "{{ my_cpc_name }}"
+    partition_name: "{{ my_partition_name }}"
+    name: "{{ my_hba_name }}"
     state: absent
 """
 

@@ -57,41 +57,18 @@ class TestZhmcPartitionMain(unittest.TestCase):
         assert(exit_code == 0)
 
         # Assert call to AnsibleModule()
-        expected_param_spec = {
-            'hmc_host': {
-                'required': True,
-                'type': 'str',
-            },
-            'hmc_userid': {
-                'required': True,
-                'type': 'str',
-            },
-            'hmc_password': {
-                'required': True,
-                'type': 'str',
-                'no_log': True,
-            },
-            'cpc_name': {
-                'required': True,
-                'type': 'str',
-            },
-            'name': {
-                'required': True,
-                'type': 'str',
-            },
-            'state': {
-                'required': True,
-                'type': 'str',
-                'choices': ['absent', 'stopped', 'active'],
-            },
-            'properties': {
-                'required': False,
-                'type': 'dict',
-                'default': {},
-            },
-        }
+        expected_argument_spec = dict(
+            hmc_host=dict(required=True, type='str'),
+            hmc_userid=dict(required=True, type='str'),
+            hmc_password=dict(required=True, type='str', no_log=True),
+            cpc_name=dict(required=True, type='str'),
+            name=dict(required=True, type='str'),
+            state=dict(required=True, type='str',
+                       choices=['absent', 'stopped', 'active']),
+            properties=dict(required=False, type='dict', default={}),
+        )
         assert(ansible_mod_cls.call_args ==
-               mock.call(argument_spec=expected_param_spec,
+               mock.call(argument_spec=expected_argument_spec,
                          supports_check_mode=True))
 
         # Assert call to perform_task()

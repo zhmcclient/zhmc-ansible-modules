@@ -117,19 +117,20 @@ options:
 
 EXAMPLES = """
 ---
+# Note: The following examples assume that some variables named 'my_*' are set.
 
 # Because configuring LUN masking in the SAN requires the host WWPN, and the
 # host WWPN is automatically assigned and will be known only after an HBA has
 # been added to the partition, the partition needs to be created in stopped
-# state. Also, because the HBA has not yet been created, the boot configuration
-# cannot be done yet:
+# state. Also, because the HBA has not yet been created, the boot
+# configuration cannot be done yet:
 - name: Ensure the partition exists and is stopped
   zhmc_partition:
-    hmc_host: "{{ hmc_host }}"
-    hmc_userid: "{{ hmc_userid }}"
-    hmc_password: "{{ hmc_password }}"
-    cpc_name: "{{ cpc_name }}"
-    name: zhmc-part-1
+    hmc_host: "{{ my_hmc_host }}"
+    hmc_userid: "{{ my_hmc_userid }}"
+    hmc_password: "{{ my_hmc_password }}"
+    cpc_name: "{{ my_cpc_name }}"
+    name: "{{ my_partition_name }}"
     state: stopped
     properties:
       description: "zhmc Ansible modules: Example partition 1"
@@ -140,15 +141,15 @@ EXAMPLES = """
 
 # After an HBA has been added (see Ansible module zhmc_hba), and LUN masking
 # has been configured in the SAN, and a bootable image is available at the
-# configured LUN and target WWPN, the partition can be configured for boot from
-# the FCP LUN and can be started:
+# configured LUN and target WWPN, the partition can be configured for boot
+# from the FCP LUN and can be started:
 - name: Configure boot device and start the partition
   zhmc_partition:
-    hmc_host: "{{ hmc_host }}"
-    hmc_userid: "{{ hmc_userid }}"
-    hmc_password: "{{ hmc_password }}"
-    cpc_name: "{{ cpc_name }}"
-    name: zhmc-part-1
+    hmc_host: "{{ my_hmc_host }}"
+    hmc_userid: "{{ my_hmc_userid }}"
+    hmc_password: "{{ my_hmc_password }}"
+    cpc_name: "{{ my_cpc_name }}"
+    name: "{{ my_partition_name }}"
     state: active
     properties:
       boot_device: storage-adapter
@@ -159,11 +160,11 @@ EXAMPLES = """
 
 - name: Ensure the partition does not exist
   zhmc_partition:
-    hmc_host: "{{ hmc_host }}"
-    hmc_userid: "{{ hmc_userid }}"
-    hmc_password: "{{ hmc_password }}"
-    cpc_name: "{{ cpc_name }}"
-    name: zhmc-part-1
+    hmc_host: "{{ my_hmc_host }}"
+    hmc_userid: "{{ my_hmc_userid }}"
+    hmc_password: "{{ my_hmc_password }}"
+    cpc_name: "{{ my_cpc_name }}"
+    name: "{{ my_partition_name }}"
     state: absent
 """
 

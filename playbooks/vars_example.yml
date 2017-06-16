@@ -1,7 +1,6 @@
 ---
 hmc_host: 9.152.151.49
-hmc_userid: ensadmin
-hmc_password: secret
+
 cpc_name: P000S67B
 partition_name: zhmc-part-1
 
