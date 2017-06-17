@@ -75,6 +75,39 @@ def eq_hex(hex_actual, hex_new, prop_name):
     return int_actual == int_new
 
 
+def _normalized_mac(mac_str):
+    mac_ints = [int(h, 16) for h in mac_str.split(':')]
+    mac_str = ':'.join(["%02x" % i for i in mac_ints])
+    return mac_str
+
+
+def eq_mac(mac_actual, mac_new, prop_name):
+    """
+    Test two MAC address string values of a property for equality.
+    """
+
+    if mac_actual:
+        try:
+            mac_actual = _normalized_mac(mac_actual)
+        except ValueError:
+            raise ParameterError(
+                "Unexpected: Actual value of property {!r} is not a valid MAC "
+                "address: {!r}".
+                format(prop_name, mac_actual))
+    else:
+        mac_actual = None
+    if mac_new:
+        try:
+            mac_new = _normalized_mac(mac_new)
+        except ValueError:
+            raise ParameterError(
+                "New value for property {!r} is not a valid MAC address: {!r}".
+                format(prop_name, mac_new))
+    else:
+        mac_new = None
+    return mac_actual == mac_new
+
+
 def stop_partition(partition, check_mode):
     """
     Ensure that the partition is stopped, by influencing the operational

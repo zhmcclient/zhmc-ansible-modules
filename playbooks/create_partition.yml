@@ -39,6 +39,17 @@
         device_number: "023F"
     register: hba1
 
+  - name: Ensure NIC exists in the partition
+    zhmc_nic:
+      name: "{{ nic_name }}"
+      state: present
+      properties:
+        adapter_name: "{{ nic_adapter_name }}"
+        adapter_port: "{{ nic_adapter_port }}"
+        description: The NIC to our data network
+        device_number: "013F"
+    register: nic1
+
   - name: Ensure virtual function exists in the partition
     zhmc_virtual_function:
       hmc_host: "{{ hmc_host }}"
