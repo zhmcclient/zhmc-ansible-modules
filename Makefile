@@ -233,9 +233,9 @@ all: setup dist docs check test
 	@echo '$@ done.'
 
 .PHONY: install
-install: _pip
+install: _pip requirements.txt setup.cfg setup.py
 	@echo 'Installing package $(package_name) and its requirements with PACKAGE_LEVEL=$(PACKAGE_LEVEL)'
-	$(PIP_CMD) install $(pip_level_opts) .
+	$(PIP_CMD) install $(pip_level_opts) -r requirements.txt .
 	@echo "Installed $(package_name) in $$(cd tests && dirname $$(python -c 'from ansible.modules import zhmc; print(zhmc.__file__)'))"
 	@echo 'Done: Installed $(package_name) into current Python environment.'
 	@echo '$@ done.'
