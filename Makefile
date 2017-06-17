@@ -329,6 +329,6 @@ $(validate_modules_log_file): Makefile $(ansible_module_files) $(validate_module
 $(test_log_file): Makefile $(check_py_files)
 	@echo "Note: This tests the *installed* Ansible modules; make sure you have run 'make install'"
 	rm -f $@
-	bash -c 'set -o pipefail; cd tests; PYTHONWARNINGS=default py.test --cov $$(dirname $$(python -c "from ansible.modules import zhmc; print(zhmc.__file__)")) --cov-config ../.coveragerc --cov-report=html:../htmlcov $(pytest_opts) -s 2>&1 |tee ../$@.tmp'
+	bash -c 'set -o pipefail; cd tests; PYTHONWARNINGS=default py.test --cov $$(dirname $$(python -c "from ansible.modules import zhmc; print(zhmc.__file__)")) --cov $$(dirname $$(python -c "from ansible.module_utils import zhmc; print(zhmc.__file__)")) --cov-config ../.coveragerc --cov-report=html:../htmlcov $(pytest_opts) -s 2>&1 |tee ../$@.tmp'
 	mv -f $@.tmp $@
 	@echo 'Done: Created test log file: $@'
