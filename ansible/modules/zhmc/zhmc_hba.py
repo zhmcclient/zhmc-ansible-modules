@@ -95,10 +95,10 @@ options:
       - "C(name): Cannot be specified because the name has already been
          specified in the C(name) module parameter."
       - "C(adapter_port_uri): Cannot be specified because it is derived from
-         the artificial properties C(adapter_name) and C(adapter_port_index)."
+         the artificial properties C(adapter_name) and C(adapter_port)."
       - "C(adapter_name): The name of the adapter that has the port backing the
          target HBA. Cannot be changed after the HBA exists."
-      - "C(adapter_port_index): The index of the adapter port backing the
+      - "C(adapter_port): The port index of the adapter port backing the
          target HBA. Cannot be changed after the HBA exists."
       - "Properties omitted in this dictionary will remain unchanged when the
          HBA already exists, and will get the default value defined in the
@@ -122,7 +122,7 @@ EXAMPLES = """
     state: present
     properties:
       adapter_name: FCP-1
-      adapter_port_index: 0
+      adapter_port: 0
       description: "The port to our V7K #1"
       device_number: "123F"
   register: hba1
@@ -182,7 +182,7 @@ ZHMC_HBA_PROPERTIES = {
     # create-only properties:
     'adapter_port_uri': (False, True, False, None, None),  # via artif. props
     'adapter_name': (True, True, False, None, None),  # artificial prop
-    'adapter_port_index': (True, True, False, None, None),  # artificial prop
+    'adapter_port': (True, True, False, None, None),  # artificial prop
 
     # create+update properties:
     'name': (False, True, True, True, None),  # provided in 'name' module parm
@@ -248,7 +248,7 @@ def process_properties(partition, hba, params):
 
     # Names of the artificial properties
     adapter_name_art_name = 'adapter_name'
-    port_index_art_name = 'adapter_port_index'
+    adapter_port_art_name = 'adapter_port'
 
     # handle the other properties
     input_props = params.get('properties', {})
@@ -270,7 +270,7 @@ def process_properties(partition, hba, params):
         # Double check that read-only properties are all marked as not allowed:
         assert (create or update) is True
 
-        if prop_name in (adapter_name_art_name, port_index_art_name):
+        if prop_name in (adapter_name_art_name, adapter_port_art_name):
             # Artificial properties will be processed together after this loop
             continue
 
@@ -299,38 +299,39 @@ def process_properties(partition, hba, params):
 
     # Process artificial properties
     if (adapter_name_art_name in input_props) != \
-            (port_index_art_name in input_props):
+            (adapter_port_art_name in input_props):
         raise ParameterError(
             "Artificial properties {!r} and {!r} must either both be "
             "specified or both be omitted.".
-            format(adapter_name_art_name, port_index_art_name))
+            format(adapter_name_art_name, adapter_port_art_name))
     if adapter_name_art_name in input_props and \
-            port_index_art_name in input_props:
+            adapter_port_art_name in input_props:
         adapter_name = input_props[adapter_name_art_name]
-        port_index = input_props[port_index_art_name]
+        adapter_port_index = input_props[adapter_port_art_name]
         try:
             adapter = partition.manager.cpc.adapters.find(
                 name=adapter_name)
         except zhmcclient.NotFound:
             raise ParameterError(
-                "Artificial property {!r} does not name an existing "
-                "adapter: {!r}".format(adapter_name_art_name, adapter_name))
+                "Artificial property {!r} does not specify the name of an "
+                "existing adapter: {!r}".
+                format(adapter_name_art_name, adapter_name))
         try:
-            port = adapter.ports.find(index=port_index)
+            port = adapter.ports.find(index=adapter_port_index)
         except zhmcclient.NotFound:
             raise ParameterError(
-                "Artificial property {!r} does not name an existing port on "
-                "adapter {!r}: {!r}".
-                format(port_index_art_name, adapter_name, port_index))
+                "Artificial property {!r} does not specify the index of an "
+                "existing port on adapter {!r}: {!r}".
+                format(adapter_port_art_name, adapter_name,
+                       adapter_port_index))
         hmc_prop_name = 'adapter-port-uri'
         if hba:
             existing_port_uri = hba.get_property(hmc_prop_name)
             if port.uri != existing_port_uri:
                 raise ParameterError(
                     "Artificial properties {!r} and {!r} cannot be used to "
-                    "change the adapter port {!r} in an existing HBA to: {!r}".
-                    format(adapter_name_art_name, port_index_art_name,
-                           existing_port_uri, port.uri))
+                    "change the adapter port of an existing HBA".
+                    format(adapter_name_art_name, adapter_port_art_name))
         create_props[hmc_prop_name] = port.uri
 
     return create_props, update_props, stop
@@ -500,7 +501,7 @@ def main():
     # Other exceptions are considered module errors and are handled by Ansible
     # by showing the traceback.
 
-    module.exit_json(changed=changed, partition=result)
+    module.exit_json(changed=changed, hba=result)
 
 
 if __name__ == '__main__':

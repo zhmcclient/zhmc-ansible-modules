@@ -34,7 +34,7 @@
       state: present
       properties:
         adapter_name: "{{ hba_adapter_name }}"
-        adapter_port_index: "{{ hba_port_index }}"
+        adapter_port: "{{ hba_adapter_port }}"
         description: The HBA to our storage
         device_number: "023F"
     register: hba1
