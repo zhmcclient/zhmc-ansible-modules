@@ -15,7 +15,8 @@
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.zhmc.utils import Error, ParameterError, \
-    StatusError, stop_partition, start_partition, eq_hex
+    StatusError, stop_partition, start_partition, \
+    wait_for_transition_completion, eq_hex
 import requests.packages.urllib3
 import zhmcclient
 
@@ -241,14 +242,14 @@ ZHMC_PARTITION_PROPERTIES = {
     # create+update properties:
     'name': (False, True, True, True, None),  # provided in 'name' module parm
     'description': (True, True, True, True, None),
-    'short_name': (True, True, True, True, None),
-    'partition_id': (True, True, True, True, None),
-    'autogenerate_partition_id': (True, True, True, True, None),
+    'short_name': (True, True, True, False, None),
+    'partition_id': (True, True, True, False, None),
+    'autogenerate_partition_id': (True, True, True, False, None),
     'ifl_processors': (True, True, True, True, None),
     'cp_processors': (True, True, True, True, None),
-    'processor_mode': (True, True, True, True, None),
+    'processor_mode': (True, True, True, False, None),
     'initial_memory': (True, True, True, True, None),
-    'maximum_memory': (True, True, True, True, None),
+    'maximum_memory': (True, True, True, False, None),
     'reserve_resources': (True, True, True, True, None),
     'boot_device': (True, True, True, True, None),
     'boot_timeout': (True, True, True, True, None),
@@ -350,6 +351,8 @@ def process_properties(partition, params):
 
     # handle the other properties
     input_props = params.get('properties', {})
+    if input_props is None:
+        input_props = {}
     for prop_name in input_props:
 
         if prop_name not in ZHMC_PARTITION_PROPERTIES:
@@ -382,10 +385,9 @@ def process_properties(partition, params):
                     "Artificial property {!r} does not name an existing HBA: "
                     "{!r}".format(prop_name, hba_name))
             hmc_prop_name = 'boot-storage-device'
-            if partition.properties[hmc_prop_name] != hba.uri:
+            if partition.properties.get(hmc_prop_name) != hba.uri:
                 update_props[hmc_prop_name] = hba.uri
-                if not update_while_active:
-                    stop = True
+                assert update_while_active
         elif prop_name == 'boot_network_nic_name':
             # Process this artificial property
             if not partition:
@@ -400,21 +402,20 @@ def process_properties(partition, params):
                     "Artificial property {!r} does not name an existing NIC: "
                     "{!r}".format(prop_name, nic_name))
             hmc_prop_name = 'boot-network-device'
-            if partition.properties[hmc_prop_name] != nic.uri:
+            if partition.properties.get(hmc_prop_name) != nic.uri:
                 update_props[hmc_prop_name] = nic.uri
-                if not update_while_active:
-                    stop = True
+                assert update_while_active
         else:
             # Process a normal (= non-artificial) property
             hmc_prop_name = prop_name.replace('_', '-')
             input_prop_value = input_props[prop_name]
             if partition:
                 if eq_func:
-                    equal = eq_func(partition.properties[hmc_prop_name],
+                    equal = eq_func(partition.properties.get(hmc_prop_name),
                                     input_prop_value,
                                     prop_name)
                 else:
-                    equal = (partition.properties[hmc_prop_name] ==
+                    equal = (partition.properties.get(hmc_prop_name) ==
                              input_prop_value)
                 if not equal and update:
                     update_props[hmc_prop_name] = input_prop_value
@@ -466,7 +467,6 @@ def ensure_active(params, check_mode):
         if not partition:
             # It does not exist. Create it and update it if there are
             # update-only properties.
-
             if not check_mode:
                 create_props, update_props, stop = process_properties(
                     partition, params)
@@ -479,14 +479,17 @@ def ensure_active(params, check_mode):
                     partition.update_properties(update2_props)
             changed = True
         else:
-            # It exists, just update its properties. Stop only if needed.
-
+            # It exists. Stop if needed due to property update requirements,
+            # or wait for an updateable partition status, and update its
+            # properties.
             create_props, update_props, stop = process_properties(
                 partition, params)
-            if stop:
-                changed |= stop_partition(partition, check_mode)
             if update_props:
                 if not check_mode:
+                    if stop:
+                        stop_partition(partition, check_mode)
+                    else:
+                        wait_for_transition_completion(partition)
                     partition.update_properties(update_props)
                 changed = True
 
@@ -499,7 +502,7 @@ def ensure_active(params, check_mode):
             if status not in ('active', 'degraded'):
                 raise StatusError(
                     "Could not get partition {!r} into an active state, "
-                    "status is: {r}".format(partition.name, status))
+                    "status is: {!r}".format(partition.name, status))
 
         if partition:
             result = partition.properties
@@ -545,7 +548,6 @@ def ensure_stopped(params, check_mode):
         if not partition:
             # It does not exist. Create it and update it if there are
             # update-only properties.
-
             if not check_mode:
                 create_props, update_props, stop = process_properties(
                     partition, params)
@@ -558,12 +560,10 @@ def ensure_stopped(params, check_mode):
                     partition.update_properties(update2_props)
             changed = True
         else:
-            # It exists, stop it and update its properties.
-
-            changed |= stop_partition(partition, check_mode)
-
+            # It exists. Stop it and update its properties.
             create_props, update_props, stop = process_properties(
                 partition, params)
+            changed |= stop_partition(partition, check_mode)
             if update_props:
                 if not check_mode:
                     partition.update_properties(update_props)

@@ -98,6 +98,7 @@ def stop_partition(partition, check_mode):
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
     changed = False
+    partition.pull_full_properties()
     status = partition.get_property('status')
     if status in BAD_STATUSES:
         raise StatusError(
@@ -145,6 +146,7 @@ def start_partition(partition, check_mode):
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
     changed = False
+    partition.pull_full_properties()
     status = partition.get_property('status')
     if status in BAD_STATUSES:
         raise StatusError(
@@ -167,3 +169,33 @@ def start_partition(partition, check_mode):
     else:
         assert status in STARTED_STATUSES
     return changed
+
+
+def wait_for_transition_completion(partition):
+    """
+    If the partition is in a transitional state, wait for completion of that
+    transition. This is required for updating properties.
+
+    The resulting operational status will be one of STARTED_STATUSES or
+    STOPPED_STATUSES.
+
+    Parameters:
+      partition (zhmcclient.Partition): The partition (must exist, and its
+        status property is assumed to be current).
+
+    Raises:
+      StatusError: Partition is in one of BAD_STATUSES.
+      zhmcclient.Error: Any zhmcclient exception can happen.
+    """
+    partition.pull_full_properties()
+    status = partition.get_property('status')
+    if status in BAD_STATUSES:
+        raise StatusError(
+            "Target CPC {!r} has issues; status of partition {!r} is: {!r}".
+            format(partition.manager.cpc.name, partition.name, status))
+    elif status == 'stopping':
+        partition.wait_for_status(STOPPED_STATUSES)
+    elif status == 'starting':
+        partition.wait_for_status(STARTED_STATUSES)
+    else:
+        assert status in STARTED_STATUSES or status in STOPPED_STATUSES
