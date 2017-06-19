@@ -322,7 +322,7 @@ def process_properties(partition, nic, params):
                 name=adapter_name)
         except zhmcclient.NotFound:
             raise ParameterError(
-                "Artificial property {!r} does not specify the name if an "
+                "Artificial property {!r} does not specify the name of an "
                 "existing adapter: {!r}".
                 format(adapter_name_art_name, adapter_name))
         try:
