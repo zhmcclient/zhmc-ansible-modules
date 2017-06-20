@@ -407,8 +407,17 @@ def ensure_present(params, check_mode):
         session = zhmcclient.Session(host, userid, password)
         client = zhmcclient.Client(session)
         cpc = client.cpcs.find(name=cpc_name)
-        partition = cpc.partitions.find(name=partition_name)
         # The default exception handling is sufficient for the above.
+
+        try:
+            partition = cpc.partitions.find(name=partition_name)
+        except zhmcclient.NotFound:
+            if check_mode:
+                # Once the partition is created, the NIC will also need to be
+                # created. Therefore, we set changed.
+                changed = True
+                return changed, result
+            raise
 
         try:
             nic = partition.nics.find(name=nic_name)
