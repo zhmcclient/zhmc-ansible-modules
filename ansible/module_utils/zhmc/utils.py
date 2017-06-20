@@ -16,6 +16,9 @@
 Utility functions for use by more than one Ansible module.
 """
 
+from zhmcclient import Session
+from zhmcclient_mock import FakedSession
+
 
 class Error(Exception):
     """
@@ -261,3 +264,20 @@ def wait_for_transition_completion(partition):
         partition.wait_for_status(STARTED_STATUSES)
     else:
         assert status in STARTED_STATUSES or status in STOPPED_STATUSES
+
+
+def get_session(faked_session, host, userid, password):
+    """
+    Return a session object for the HMC.
+
+    Parameters:
+      faked_session (zhmcclient_mock.FakedSession or None):
+        If this object is a `zhmcclient_mock.FakedSession` object, return that
+        object.
+        Else, return a new `zhmcclient.Session` object from the `host`,
+        `userid`, and `password` arguments.
+    """
+    if isinstance(faked_session, FakedSession):
+        return faked_session
+    else:
+        return Session(host, userid, password)
