@@ -14,7 +14,8 @@
 # limitations under the License.
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.zhmc.utils import Error, ParameterError, eq_hex
+from ansible.module_utils.zhmc.utils import Error, ParameterError, \
+    wait_for_transition_completion, eq_hex
 import requests.packages.urllib3
 import zhmcclient
 
@@ -252,6 +253,8 @@ def process_properties(partition, hba, params):
 
     # handle the other properties
     input_props = params.get('properties', {})
+    if input_props is None:
+        input_props = {}
     for prop_name in input_props:
 
         if prop_name not in ZHMC_HBA_PROPERTIES:
@@ -279,11 +282,11 @@ def process_properties(partition, hba, params):
         input_prop_value = input_props[prop_name]
         if hba:
             if eq_func:
-                equal = eq_func(hba.properties[hmc_prop_name],
+                equal = eq_func(hba.properties.get(hmc_prop_name),
                                 input_prop_value,
                                 prop_name)
             else:
-                equal = (hba.properties[hmc_prop_name] ==
+                equal = (hba.properties.get(hmc_prop_name) ==
                          input_prop_value)
             if not equal and update:
                 update_props[hmc_prop_name] = input_prop_value
@@ -372,7 +375,6 @@ def ensure_present(params, check_mode):
         if not hba:
             # It does not exist. Create it and update it if there are
             # update-only properties.
-
             if not check_mode:
                 create_props, update_props, stop = process_properties(
                     partition, hba, params)
@@ -385,14 +387,17 @@ def ensure_present(params, check_mode):
                     hba.update_properties(update2_props)
             changed = True
         else:
-            # It exists, update its properties.
-
+            # It exists. Stop the partition if needed due to the HBA property
+            # update requirements, or wait for an updateable partition status,
+            # and update the HBA properties.
             create_props, update_props, stop = process_properties(
                 partition, hba, params)
-            # A need for partition stop is not yet supported. It is not needed
-            # according to the current property definitions, though.
             if update_props:
                 if not check_mode:
+                    # HBA properties can all be updated while the partition is
+                    # active, therefore:
+                    assert not stop
+                    wait_for_transition_completion(partition)
                     hba.update_properties(update_props)
                 changed = True
 
