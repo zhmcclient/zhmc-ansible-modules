@@ -153,6 +153,23 @@ FAKED_HBA_1 = {
     'adapter-port-uri': 'faked-adapter-port-uri',
 }
 
+# Faked OSA NIC that is used for these tests (for partition boot from storage).
+# Most properties are set to their default values.
+FAKED_NIC_1_NAME = 'nic-1'
+FAKED_NIC_1 = {
+    # element-id is auto-generated
+    # element-uri is auto-generated
+    'parent': '/api/partitions/{}'.format(FAKED_PARTITION_1_NAME),
+    'class': 'nic',
+    'name': FAKED_NIC_1_NAME,
+    'description': 'NIC #1',
+    'device_number': '022F',
+    'virtual-switch-uri': 'faked-vswitch-uri',
+    'type': 'osd',
+    'ssc-management-nic': False,
+    'mac-address': 'fa:ce:da:dd:6e:55',
+}
+
 # Translation table from 'state' module input parameter to corresponding
 # desired partition 'status' property value. 'None' means the partition
 # does not exist.
@@ -252,6 +269,22 @@ class TestPartition(object):
         else:
             self.faked_hba = None
             self.hba = None
+
+    def setup_nic(self):
+        """
+        Prepare the faked NIC, on top of the faked partition created by
+        setup_partition().
+        """
+        self.nic_name = FAKED_NIC_1_NAME
+        if self.partition:
+            # Create the NIC
+            self.faked_nic = self.faked_partition.nics.add(FAKED_NIC_1)
+            nics = self.partition.nics.list()
+            assert len(nics) == 1
+            self.nic = nics[0]
+        else:
+            self.faked_nic = None
+            self.nic = None
 
     @pytest.mark.parametrize(
         "check_mode", [False, True])
@@ -636,6 +669,145 @@ class TestPartition(object):
             'boot_storage_hba_name': 'invalid-hba-name',  # artif. prop.
             'boot_logical_unit_number': '0002',
             'boot_world_wide_port_name': '1023456789abcdef',
+        }
+
+        # Prepare module input parameters
+        params = {
+            'hmc_host': 'fake-host',
+            'hmc_auth': dict(userid='fake-userid',
+                             password='fake-password'),
+            'cpc_name': self.cpc.name,
+            'name': self.partition_name,
+            'state': desired_state,
+            'properties': properties,
+            'faked_session': self.session,
+        }
+
+        # Prepare mocks for AnsibleModule object
+        mod_obj = mock_ansible_module(ansible_mod_cls, params, check_mode)
+
+        # Exercise the code to be tested
+        with pytest.raises(SystemExit) as exc_info:
+            zhmc_partition.main()
+        exit_code = exc_info.value.args[0]
+
+        # Assert module exit code
+        assert exit_code == 1, \
+            "Module unexpectedly succeeded with this output:\n" \
+            "changed: {!r}, partition: {!r}". \
+            format(*get_module_output(mod_obj))
+
+        # Assert the failure message
+        msg = get_failure_msg(mod_obj)
+        assert msg.startswith("ParameterError:")
+
+    @pytest.mark.parametrize(
+        "check_mode", [False, True])
+    @pytest.mark.parametrize(
+        "initial_state", ['stopped', 'active'])
+    @pytest.mark.parametrize(
+        "desired_state", ['stopped', 'active'])
+    @mock.patch("ansible.modules.zhmc.zhmc_partition.AnsibleModule",
+                autospec=True)
+    def test_boot_network_success(
+            self, ansible_mod_cls, desired_state, initial_state, check_mode):
+        """
+        Tests for successful configuration of boot from network.
+        """
+
+        # Prepare the initial partition and HBA before the test is run
+        self.setup_partition(initial_state)
+        assert self.partition
+        self.setup_nic()
+
+        # Set some expectations for this test from its parametrization
+        exp_status = (PARTITION_STATUS_FROM_STATE[initial_state] if check_mode
+                      else PARTITION_STATUS_FROM_STATE[desired_state])
+
+        properties = {
+            'boot_device': 'network-adapter',
+            'boot_network_nic_name': self.nic_name,  # artif. prop.
+        }
+
+        exp_properties = {
+            'boot_device': 'network-adapter',
+            'boot_network_device': self.nic.uri,  # real prop for artif. prop.
+        }
+
+        # Prepare module input parameters
+        params = {
+            'hmc_host': 'fake-host',
+            'hmc_auth': dict(userid='fake-userid',
+                             password='fake-password'),
+            'cpc_name': self.cpc.name,
+            'name': self.partition_name,
+            'state': desired_state,
+            'properties': properties,
+            'faked_session': self.session,
+        }
+
+        # Prepare mocks for AnsibleModule object
+        mod_obj = mock_ansible_module(ansible_mod_cls, params, check_mode)
+
+        # Exercise the code to be tested
+        with pytest.raises(SystemExit) as exc_info:
+            zhmc_partition.main()
+        exit_code = exc_info.value.args[0]
+
+        # Assert module exit code
+        assert exit_code == 0, \
+            "Module unexpectedly failed with this message:\n{}". \
+            format(get_failure_msg(mod_obj))
+
+        # Assert module output
+        changed, part_props = get_module_output(mod_obj)
+        assert changed
+        assert part_props != {}
+        if not check_mode:
+            assert part_props['status'] == exp_status
+            assert part_props['name'] == params['name']
+            for prop_name in exp_properties:
+                hmc_prop_name = prop_name.replace('_', '-')
+                assert part_props[hmc_prop_name] == \
+                    exp_properties[prop_name], \
+                    "Property: {}".format(prop_name)
+
+        # Assert the partition resource
+        if not check_mode:
+            parts = self.cpc.partitions.list()
+            assert len(parts) == 1
+            part = parts[0]
+            part.pull_full_properties()
+            assert part.properties['status'] == exp_status
+            assert part.properties['name'] == params['name']
+            for prop_name in exp_properties:
+                hmc_prop_name = prop_name.replace('_', '-')
+                assert part.properties[hmc_prop_name] == \
+                    exp_properties[prop_name], \
+                    "Property: {}".format(prop_name)
+
+    @pytest.mark.parametrize(
+        "check_mode", [False, True])
+    @pytest.mark.parametrize(
+        "initial_state", ['stopped', 'active'])
+    @pytest.mark.parametrize(
+        "desired_state", ['stopped', 'active'])
+    @mock.patch("ansible.modules.zhmc.zhmc_partition.AnsibleModule",
+                autospec=True)
+    def test_boot_network_error_hba_not_found(
+            self, ansible_mod_cls, desired_state, initial_state, check_mode):
+        """
+        Tests for successful configuration of boot from network.
+        """
+
+        # Prepare the initial partition and HBA before the test is run
+        self.setup_partition(initial_state)
+        assert self.partition
+        self.setup_nic()
+
+        properties = {
+            'boot_device': 'network-adapter',
+            'boot_network_nic_name': 'invalid-nic-name',  # artif. prop.
         }
 
         # Prepare module input parameters
