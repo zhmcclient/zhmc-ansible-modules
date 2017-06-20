@@ -108,6 +108,35 @@ def eq_mac(mac_actual, mac_new, prop_name):
     return mac_actual == mac_new
 
 
+def get_hmc_auth(hmc_auth):
+    """
+    Extract HMC userid and password from the 'hmc_auth' module input
+    parameter.
+
+    Parameters:
+      hmc_auth (dict): value of the 'hmc_auth' module input parameter,
+        which is a dictionary with items 'userid' and 'password'.
+
+    Returns:
+      tuple(userid, password): A tuple with the respective items
+        of the input dictionary.
+
+    Raises:
+      ParameterError: An item in the input dictionary was missing.
+    """
+    try:
+        userid = hmc_auth['userid']
+    except KeyError:
+        raise ParameterError("Required item 'userid' is missing in "
+                             "dictionary module parameter 'hmc_auth'.")
+    try:
+        password = hmc_auth['password']
+    except KeyError:
+        raise ParameterError("Required item 'password' is missing in "
+                             "dictionary module parameter 'hmc_auth'.")
+    return userid, password
+
+
 def stop_partition(partition, check_mode):
     """
     Ensure that the partition is stopped, by influencing the operational

@@ -8,8 +8,7 @@
   - name: Ensure partition does not exist
     zhmc_partition:
       hmc_host: "{{ hmc_host }}"
-      hmc_userid: "{{ hmc_userid }}"
-      hmc_password: "{{ hmc_password }}"
+      hmc_auth: "{{ hmc_auth }}"
       cpc_name: "{{ cpc_name }}"
       name: "{{ partition_name }}"
       state: absent

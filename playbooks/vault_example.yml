@@ -1,3 +1,4 @@
 ---
-hmc_userid: myuserid
-hmc_password: mypassword
+hmc_auth:
+  userid: myuserid
+  password: mypassword
