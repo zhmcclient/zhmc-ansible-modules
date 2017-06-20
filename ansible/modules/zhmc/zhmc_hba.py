@@ -504,6 +504,7 @@ def main():
         state=dict(required=True, type='str',
                    choices=['absent', 'present']),
         properties=dict(required=False, type='dict', default={}),
+        faked_session=dict(required=False, type='object'),
     )
 
     module = AnsibleModule(
