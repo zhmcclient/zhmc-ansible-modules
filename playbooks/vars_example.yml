@@ -11,3 +11,6 @@ hba_adapter_port: 0
 nic_name: nic-1
 nic_adapter_name: OSD 0128 A13B-13
 nic_adapter_port: 0
+
+vfunction_name: vfunction-1
+vfunction_adapter_name: zEDC 0144 A13B-21
