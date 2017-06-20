@@ -44,8 +44,8 @@ class TestZhmcVirtualFunctionMain(object):
         # Module invocation
         params = {
             'hmc_host': 'fake-host',
-            'hmc_userid': 'fake-userid',
-            'hmc_password': 'fake-password',
+            'hmc_auth': dict(userid='fake-userid',
+                             password='fake-password'),
             'cpc_name': 'fake-cpc-name',
             'partition_name': 'fake-partition-name',
             'name': 'fake-vfunction-name',
@@ -76,8 +76,7 @@ class TestZhmcVirtualFunctionMain(object):
         # Assert call to AnsibleModule()
         expected_argument_spec = dict(
             hmc_host=dict(required=True, type='str'),
-            hmc_userid=dict(required=True, type='str'),
-            hmc_password=dict(required=True, type='str', no_log=True),
+            hmc_auth=dict(required=True, type='dict', no_log=True),
             cpc_name=dict(required=True, type='str'),
             partition_name=dict(required=True, type='str'),
             name=dict(required=True, type='str'),
@@ -116,8 +115,8 @@ class TestZhmcVirtualFunctionMain(object):
         # Module invocation
         params = {
             'hmc_host': 'fake-host',
-            'hmc_userid': 'fake-userid',
-            'hmc_password': 'fake-password',
+            'hmc_auth': dict(userid='fake-userid',
+                             password='fake-password'),
             'cpc_name': 'fake-cpc-name',
             'partition_name': 'fake-partition-name',
             'name': 'fake-vfunction-name',

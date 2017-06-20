@@ -39,6 +39,10 @@
 
   - name: Ensure NIC exists in the partition
     zhmc_nic:
+      hmc_host: "{{ hmc_host }}"
+      hmc_auth: "{{ hmc_auth }}"
+      cpc_name: "{{ cpc_name }}"
+      partition_name: "{{ partition_name }}"
       name: "{{ nic_name }}"
       state: present
       properties:
@@ -51,8 +55,7 @@
   - name: Ensure virtual function exists in the partition
     zhmc_virtual_function:
       hmc_host: "{{ hmc_host }}"
-      hmc_userid: "{{ hmc_userid }}"
-      hmc_password: "{{ hmc_password }}"
+      hmc_auth: "{{ hmc_auth }}"
       cpc_name: "{{ cpc_name }}"
       partition_name: "{{ partition_name }}"
       name: "{{ vfunction_name }}"
