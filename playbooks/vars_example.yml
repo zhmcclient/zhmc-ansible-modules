@@ -6,8 +6,8 @@ partition_name: zhmc-part-1
 
 hba_name: hba-1
 hba_adapter_name: FCP 0108 A13B-03
-hba_port_index: 0
+hba_adapter_port: 0
 
 nic_name: nic-1
 nic_adapter_name: OSD 0128 A13B-13
-nic_port_index: 0
+nic_adapter_port: 0
