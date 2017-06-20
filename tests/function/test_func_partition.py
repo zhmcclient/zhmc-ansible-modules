@@ -362,8 +362,8 @@ class TestPartition(object):
         # Prepare module input parameters
         params = {
             'hmc_host': 'fake-host',
-            'hmc_userid': 'fake-userid',
-            'hmc_password': 'fake-password',
+            'hmc_auth': dict(userid='fake-userid',
+                             password='fake-password'),
             'cpc_name': self.cpc.name,
             'name': self.partition_name,
             'state': desired_state,
@@ -496,8 +496,8 @@ class TestPartition(object):
         # Prepare module input parameters
         params = {
             'hmc_host': 'fake-host',
-            'hmc_userid': 'fake-userid',
-            'hmc_password': 'fake-password',
+            'hmc_auth': dict(userid='fake-userid',
+                             password='fake-password'),
             'cpc_name': self.cpc.name,
             'name': self.partition_name,
             'state': desired_state,
@@ -563,8 +563,8 @@ class TestPartition(object):
         # Prepare module input parameters
         params = {
             'hmc_host': 'fake-host',
-            'hmc_userid': 'fake-userid',
-            'hmc_password': 'fake-password',
+            'hmc_auth': dict(userid='fake-userid',
+                             password='fake-password'),
             'cpc_name': self.cpc.name,
             'name': self.partition_name,
             'state': desired_state,
@@ -641,8 +641,8 @@ class TestPartition(object):
         # Prepare module input parameters
         params = {
             'hmc_host': 'fake-host',
-            'hmc_userid': 'fake-userid',
-            'hmc_password': 'fake-password',
+            'hmc_auth': dict(userid='fake-userid',
+                             password='fake-password'),
             'cpc_name': self.cpc.name,
             'name': self.partition_name,
             'state': desired_state,
