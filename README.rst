@@ -54,52 +54,85 @@ b) Then ...
     $ export ANSIBLE_LIBRARY=/usr/local/lib/python2.7/dist-packages/ansible/modules
 
 The sequence above installs this Python package and its dependent packages
-into your system Python. If you prefer using virtual Python environments instead,
-see `Using virtual Python environments`_.
+into your system Python, from the master branch of its Git repository.
+If you prefer using virtual Python environments instead, see
+`Using virtual Python environments`_.
+
+If you want to use one of the released versions of this project, check out
+the desired release. For example, to check out release 0.1.0, issue before
+the `pip install`:
+
+.. code-block:: text
+
+    $ git checkout 0.1.0
+
 
 Quickstart
 ===========
 
-Then you can run the example playbook play1.yml in the folder 'playbooks'
-which retrieves information about the HMC. Before you run the playbook, copy
-vars_example.yml to vars.yml and fill out the variables with proper values.
+Then you can run the example playbooks in folder ``playbooks``:
 
+* ``create_partition.yml`` creates a partition with a NIC, HBA and virtual
+  function to an accelerator adapter.
+
+* ``delete_partition.yml`` deletes a partition.
+
+Before you run a playbook, copy ``vars_example.yml`` to ``vars.yml`` and
+``vault_example.yml`` to ``vault.yml`` and change the variables in those files
+as needed:
 
 .. code-block:: text
 
+    $ cd playbooks
     $ cp vars_example.yml vars.yml
     $ vim vars.yml
-    $ ansible-playbook play1.yml
+    # Edit variables in vars.yml
+    $ cp vault_example.yml vault.yml
+    $ vim vault.yml
+    # Edit variables in vault.yml
+
+Then, run the playbooks:
+
+.. code-block:: text
+
+    $ ansible-playbook create_partition.yml
 
     PLAY [localhost] **********************************************************
 
     TASK [Gathering Facts] ****************************************************
-    ok: [localhost]
+    ok: [127.0.0.1]
 
-    TASK [Get HMC Webservice API info.] ***************************************
-    ok: [localhost]
+    TASK [Ensure partition exists and is stopped] *****************************
+    changed: [127.0.0.1]
 
-    TASK [debug] **************************************************************
-    ok: [localhost] => {
-        "changed": false,
-        "result": {
-            "changed": false,
-            "meta": {
-                "response": {
-                    "api-features": [
-                        "internal-get-files-from-se"
-                    ],
-                    "api-major-version": 2,
-                    "api-minor-version": 1,
-                    "hmc-name": "HMCpS67b",
-                    "hmc-version": "2.13.1"
-                }
-            }
-        }
-    }
+    TASK [Ensure HBA exists in the partition] *********************************
+    changed: [127.0.0.1]
+
+    TASK [Ensure NIC exists in the partition] *********************************
+    changed: [127.0.0.1]
+
+    TASK [Ensure virtual function exists in the partition] ********************
+    changed: [127.0.0.1]
+
+    TASK [Configure partition for booting via HBA] ****************************
+    changed: [127.0.0.1]
 
     PLAY RECAP ****************************************************************
-    localhost                  : ok=3    changed=0    unreachable=0    failed=0
+    127.0.0.1                  : ok=6    changed=5    unreachable=0    failed=0
+
+    $ ansible-playbook delete_partition.yml
+
+    PLAY [localhost] **********************************************************
+
+    TASK [Gathering Facts] ****************************************************
+    ok: [127.0.0.1]
+
+    TASK [Ensure partition does not exist] ************************************
+    changed: [127.0.0.1]
+
+    PLAY RECAP ****************************************************************
+    127.0.0.1                  : ok=2    changed=1    unreachable=0    failed=0
+
 
 Using virtual Python environments
 =================================
