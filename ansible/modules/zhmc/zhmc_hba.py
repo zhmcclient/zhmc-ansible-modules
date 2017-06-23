@@ -398,13 +398,19 @@ def ensure_present(params, check_mode):
                 create_props, update_props, stop = process_properties(
                     partition, hba, params)
                 hba = partition.hbas.create(create_props)
-                hba.pull_full_properties()
                 update2_props = {}
                 for name in update_props:
                     if name not in create_props:
                         update2_props[name] = update_props[name]
                 if update2_props:
                     hba.update_properties(update2_props)
+                # We refresh the properties after the update, in case an
+                # input property value gets changed (for example, the
+                # partition does that with memory properties).
+                hba.pull_full_properties()
+            else:
+                # TODO: Show props in module result also in check mode.
+                pass
             changed = True
         else:
             # It exists. Stop the partition if needed due to the HBA property
@@ -419,6 +425,13 @@ def ensure_present(params, check_mode):
                     assert not stop
                     wait_for_transition_completion(partition)
                     hba.update_properties(update_props)
+                    # We refresh the properties after the update, in case an
+                    # input property value gets changed (for example, the
+                    # partition does that with memory properties).
+                    hba.pull_full_properties()
+                else:
+                    # TODO: Show updated props in mod.result also in chk.mode
+                    pass
                 changed = True
 
         if hba:
