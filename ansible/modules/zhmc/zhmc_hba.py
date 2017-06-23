@@ -398,6 +398,7 @@ def ensure_present(params, check_mode):
                 create_props, update_props, stop = process_properties(
                     partition, hba, params)
                 hba = partition.hbas.create(create_props)
+                hba.pull_full_properties()
                 update2_props = {}
                 for name in update_props:
                     if name not in create_props:
