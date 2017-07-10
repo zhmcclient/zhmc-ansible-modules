@@ -447,6 +447,13 @@ def ensure_present(params, check_mode):
                         update2_props[name] = update_props[name]
                 if update2_props:
                     nic.update_properties(update2_props)
+                # We refresh the properties after the update, in case an
+                # input property value gets changed (for example, the
+                # partition does that with memory properties).
+                nic.pull_full_properties()
+            else:
+                # TODO: Show props in module result also in check mode.
+                pass
             changed = True
         else:
             # It exists. Stop the partition if needed due to the NIC property
@@ -461,6 +468,13 @@ def ensure_present(params, check_mode):
                     assert not stop
                     wait_for_transition_completion(partition)
                     nic.update_properties(update_props)
+                    # We refresh the properties after the update, in case an
+                    # input property value gets changed (for example, the
+                    # partition does that with memory properties).
+                    nic.pull_full_properties()
+                else:
+                    # TODO: Show updated props in mod.result also in chk.mode
+                    pass
                 changed = True
 
         if nic:
