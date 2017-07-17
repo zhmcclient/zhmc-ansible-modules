@@ -13,7 +13,7 @@
 .. limitations under the License.
 ..
 
-zhmc-ansible-modules - Ansible modules for the z Systems HMC Web Services API
+zhmc_ansible_modules - Ansible modules for the z Systems HMC Web Services API
 =============================================================================
 
 
@@ -50,8 +50,8 @@ b) Then ...
     $ cd zhmc-ansible-modules
     $ sudo pip install .
     $ pip show zhmc-ansible-modules | grep Location
-    Location: /usr/local/lib/python2.7/dist-packages
-    $ export ANSIBLE_LIBRARY=/usr/local/lib/python2.7/dist-packages/ansible/modules
+    Location: /usr/lib/python2.7/site-packages
+    $ export ANSIBLE_LIBRARY=/usr/local/lib/python2.7/site-packages/zhmc_ansible_modules
 
 The sequence above installs this Python package and its dependent packages
 into your system Python, from the master branch of its Git repository.
@@ -183,4 +183,4 @@ To work with this Python package in a virtual Python environment, issue:
     $ pip install .
     $ pip show zhmc-ansible-modules | grep Location
     Location: /home/{user}/virtualenvs/{venv}/lib/python2.7/site-packages
-    $ export ANSIBLE_LIBRARY=/home/{user}/virtualenvs/{venv}/lib/python2.7/site-packages/ansible/modules
+    $ export ANSIBLE_LIBRARY=/home/{user}/virtualenvs/{venv}/lib/python2.7/site-packages/zhmc_ansible_modules

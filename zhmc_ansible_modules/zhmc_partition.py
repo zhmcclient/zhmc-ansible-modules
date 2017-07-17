@@ -13,14 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from operator import itemgetter
+from __future__ import absolute_import, print_function
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.zhmc.utils import Error, ParameterError, \
-    StatusError, stop_partition, start_partition, \
-    wait_for_transition_completion, eq_hex, get_hmc_auth, get_session
+from operator import itemgetter
 import requests.packages.urllib3
 import zhmcclient
+
+from zhmc_ansible_modules.utils import Error, ParameterError, StatusError, \
+    stop_partition, start_partition, wait_for_transition_completion, eq_hex, \
+    get_hmc_auth, get_session
 
 # For information on the format of the ANSIBLE_METADATA, DOCUMENTATION,
 # EXAMPLES, and RETURN strings, see

@@ -54,12 +54,15 @@ else
   PLATFORM := $(shell uname -s)
 endif
 
-# Name of this package on Pypi
-package_name := zhmc_ansible_modules
-package_name_under := zhmc_ansible_modules
+# Name of this package on Pypi and in Python
+# Note: Underscores in package names are automatically converted to dashes in
+#       the Pypi package name (see https://stackoverflow.com/q/19097057/1424462),
+#       so we specify dashes for the Pypi package name right away.
+package_name_pypi := zhmc-ansible-modules
+package_name_python := zhmc_ansible_modules
 
 # Package version (full version, including any pre-release suffixes, e.g. "0.2.1.dev42")
-package_version := $(shell $(PIP_CMD) show $(package_name) | grep "Version:" | sed -e 's/Version: *\(.*\)$$/\1/')
+package_version := $(shell $(PIP_CMD) show $(package_name_pypi) | grep "Version:" | sed -e 's/Version: *\(.*\)$$/\1/')
 
 # Python major version
 python_major_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('%s'%sys.version_info[0])")
@@ -70,32 +73,28 @@ python_mn_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('%s%
 # Build directory
 build_dir = build
 
-# Directory tree with our Ansible module source files
-ansible_dir := ansible
+# Directory with the source code of our Ansible module source files
+module_src_dir := $(package_name_python)
+module_py_files := $(wildcard $(module_src_dir)/zhmc_*.py)
 
-# Directory with the Ansible zhmc module
-ansible_module_dir := $(ansible_dir)/modules/zhmc
-ansible_module_files := $(wildcard $(ansible_module_dir)/zhmc_*.py)
-
-# Our Ansible module source files
-ansible_py_files := \
-    $(wildcard $(ansible_dir)/*.py) \
-    $(wildcard $(ansible_dir)/*/*.py) \
-    $(wildcard $(ansible_dir)/*/*/*.py) \
+# Directory with test source files
+test_dir = tests
 
 # Directory for the generated distribution files
 dist_build_dir := $(build_dir)/dist
 
 # Distribution archives (as built by setup.py)
-bdist_file := $(dist_build_dir)/$(package_name_under)-$(package_version)-py2.py3-none-any.whl
-sdist_file := $(dist_build_dir)/$(package_name)-$(package_version).tar.gz
+bdist_file := $(dist_build_dir)/$(package_name_pypi)-$(package_version)-py2.py3-none-any.whl
+sdist_file := $(dist_build_dir)/$(package_name_pypi)-$(package_version).tar.gz
 
 # Files the distribution archive depends upon.
 dist_dependent_files := \
     README.rst \
     requirements.txt \
     $(wildcard *.py) \
-    $(wildcard $(package_name)/*.py) \
+    $(wildcard $(module_src_dir)/*.py) \
+    $(wildcard $(module_src_dir)/*/*.py) \
+    $(wildcard $(module_src_dir)/*/*/*.py) \
 
 # Directory for documentation (with Makefile)
 doc_dir := docs
@@ -114,7 +113,9 @@ sphinx_opts := -v -d $(doc_build_dir)/doctrees -c $(sphinx_conf_dir)
 doc_dependent_files := \
     $(sphinx_conf_dir)/conf.py \
     $(wildcard $(doc_dir)/*.rst) \
-    $(ansible_py_files) \
+    $(wildcard $(module_src_dir)/*.py) \
+    $(wildcard $(module_src_dir)/*/*.py) \
+    $(wildcard $(module_src_dir)/*/*/*.py) \
 
 # Flake8 config file
 flake8_rc_file := setup.cfg
@@ -125,10 +126,12 @@ flake8_log_file := flake8_$(python_mn_version).log
 # Source files for check (with Flake8)
 check_py_files := \
     setup.py \
-    $(ansible_py_files) \
-    $(wildcard tests/*.py) \
-    $(wildcard tests/*/*.py) \
-    $(wildcard tests/*/*/*.py) \
+    $(wildcard $(module_src_dir)/*.py) \
+    $(wildcard $(module_src_dir)/*/*.py) \
+    $(wildcard $(module_src_dir)/*/*/*.py) \
+    $(wildcard $(test_dir)/*.py) \
+    $(wildcard $(test_dir)/*/*.py) \
+    $(wildcard $(test_dir)/*/*/*.py) \
     $(wildcard tools/*.py) \
 
 # Test log file
@@ -176,7 +179,7 @@ doc_copy_files := \
 
 .PHONY: help
 help:
-	@echo 'Makefile for $(package_name) project'
+	@echo 'Makefile for $(package_name_pypi) project'
 	@echo 'Package version will be: $(package_version)'
 	@echo 'Currently active Python environment: Python $(python_mn_version)'
 	@echo 'Valid targets are:'
@@ -234,34 +237,33 @@ all: setup dist docs check test
 
 .PHONY: install
 install: _pip requirements.txt setup.cfg setup.py
-	@echo 'Installing package $(package_name) and its requirements with PACKAGE_LEVEL=$(PACKAGE_LEVEL)'
-	$(PIP_CMD) install $(pip_level_opts) -r requirements.txt .
-	@echo "Installed $(package_name) in $$(cd tests && dirname $$(python -c 'from ansible.modules import zhmc; print(zhmc.__file__)'))"
-	@echo 'Done: Installed $(package_name) into current Python environment.'
+	@echo 'Installing package $(package_name_pypi) and its requirements with PACKAGE_LEVEL=$(PACKAGE_LEVEL)'
+	$(PIP_CMD) install $(pip_level_opts) .
+	@echo 'Done: Installed $(package_name_pypi) into current Python environment.'
 	@echo '$@ done.'
 
 .PHONY: uninstall
 uninstall:
-	bash -c '$(PIP_CMD) show $(package_name) >/dev/null; rc=$$?; if [[ $$rc == 0 ]]; then $(PIP_CMD) uninstall -y $(package_name); fi'
+	bash -c '$(PIP_CMD) show $(package_name_pypi) >/dev/null; rc=$$?; if [[ $$rc == 0 ]]; then $(PIP_CMD) uninstall -y $(package_name_pypi); fi'
 	@echo '$@ done.'
 
 .PHONY: upload
 upload: $(bdist_file) $(sdist_file)
 ifeq (,$(findstring .dev,$(package_version)))
-	@echo '==> This will upload $(package_name) version $(package_version) to PyPI!'
+	@echo '==> This will upload $(package_name_pypi) version $(package_version) to PyPI!'
 	@echo -n '==> Continue? [yN] '
 	@bash -c 'read answer; if [[ "$$answer" != "y" ]]; then echo "Aborted."; false; fi'
 	twine upload $(bdist_file) $(sdist_file)
-	@echo 'Done: Uploaded $(package_name) version to PyPI: $(package_version)'
+	@echo 'Done: Uploaded $(package_name_pypi) version to PyPI: $(package_version)'
 	@echo '$@ done.'
 else
-	@echo 'Error: A development version $(package_version) of $(package_name) cannot be uploaded to PyPI!'
+	@echo 'Error: A development version $(package_version) of $(package_name_pypi) cannot be uploaded to PyPI!'
 	@false
 endif
 
 .PHONY: clobber
 clobber:
-	rm -Rf .cache $(package_name_under).egg-info .eggs $(build_dir) $(doc_gen_dir) htmlcov .tox
+	rm -Rf .cache $(package_name_python).egg-info .eggs $(build_dir) $(doc_gen_dir) htmlcov .tox
 	rm -f MANIFEST MANIFEST.in AUTHORS ChangeLog .coverage flake8_*.log test_*.log validate.log
 	find . -name "*.pyc" -delete -o -name "__pycache__" -delete -o -name "*.tmp" -delete -o -name "tmp_*" -delete
 	@echo 'Done: Removed all build products to get to a fresh state.'
@@ -269,7 +271,7 @@ clobber:
 
 $(bdist_file) $(sdist_file): Makefile setup.py $(dist_dependent_files)
 ifneq ($(PLATFORM),Windows)
-	rm -Rf $(package_name_under).egg-info .eggs
+	rm -Rf $(package_name_python).egg-info .eggs
 	mkdir -p $(dist_build_dir)
 	$(PYTHON_CMD) setup.py sdist -d $(dist_build_dir) bdist_wheel -d $(dist_build_dir) --universal
 	@echo 'Done: Created distribution files: $@'
@@ -286,9 +288,9 @@ $(ansible_repo_dir):
 	@echo 'Cloning our fork of the Ansible repo into: $@'
 	git clone https://github.com/andy-maier/ansible.git --branch zhmc-fixes $@
 
-$(doc_gen_dir)/list_of_all_modules.rst: $(plugin_formatter) $(plugin_formatter_template_file) $(ansible_py_files)
+$(doc_gen_dir)/list_of_all_modules.rst: $(plugin_formatter) $(plugin_formatter_template_file) $(module_py_files)
 	mkdir -p $(doc_gen_dir)
-	PYTHONPATH=$(ansible_repo_lib_dir) $(plugin_formatter) -vv --type=rst --template-dir=$(plugin_formatter_template_dir) --module-dir=$(ansible_module_dir) --output-dir=$(doc_gen_dir)/
+	PYTHONPATH=$(ansible_repo_lib_dir) $(plugin_formatter) -vv --type=rst --template-dir=$(plugin_formatter_template_dir) --module-dir=$(module_src_dir) --output-dir=$(doc_gen_dir)/
 	rm -fv $(doc_gen_dir)/modules_by_category.rst $(doc_gen_dir)/list_of__modules.rst
 
 $(doc_gen_dir)/playbooks_keywords.rst: $(keyword_dumper) $(keyword_dumper_template_file) $(keyword_dumper_desc_file)
@@ -316,19 +318,15 @@ $(flake8_log_file): Makefile $(flake8_rc_file) $(check_py_files)
 	mv -f $@.tmp $@
 	@echo 'Done: Flake8 checker succeeded'
 
-$(validate_modules_log_file): Makefile $(ansible_module_files) $(validate_modules)
+$(validate_modules_log_file): Makefile $(module_py_files) $(validate_modules)
 	rm -f $@
-	bash -c 'PYTHONPATH=$(ansible_repo_lib_dir) $(validate_modules) $(ansible_module_files) 2>&1 |grep -v -E "$(validate_modules_exclude_pattern)" |tee $@.tmp'
+	bash -c 'PYTHONPATH=$(ansible_repo_lib_dir) $(validate_modules) $(module_py_files) 2>&1 |grep -v -E "$(validate_modules_exclude_pattern)" |tee $@.tmp'
 	if [[ -n "$$(cat $@.tmp)" ]]; then false; fi
 	mv -f $@.tmp $@
 	@echo 'Done: Ansible validate-modules checker succeeded'
 
-# We cd into tests in order to find the installed ansible module (in site-packages)
-# and not our ansible subdirectory. As a consequence, we need to install our Ansible
-# module (into site-packages).
 $(test_log_file): Makefile $(check_py_files)
-	@echo "Note: This tests the *installed* Ansible modules; make sure you have run 'make install'"
 	rm -f $@
-	bash -c 'set -o pipefail; cd tests; PYTHONWARNINGS=default py.test --cov $$(dirname $$(python -c "from ansible.modules import zhmc; print(zhmc.__file__)")) --cov $$(dirname $$(python -c "from ansible.module_utils import zhmc; print(zhmc.__file__)")) --cov-config ../.coveragerc --cov-report=html:../htmlcov $(pytest_opts) -s 2>&1 |tee ../$@.tmp'
+	bash -c 'set -o pipefail; PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_src_dir) PYTHONPATH=. py.test -s --cov $(module_src_dir) --cov-config .coveragerc --cov-report=html:htmlcov $(pytest_opts) $(test_dir) 2>&1 |tee $@.tmp'
 	mv -f $@.tmp $@
 	@echo 'Done: Created test log file: $@'

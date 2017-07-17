@@ -21,9 +21,11 @@ import pytest
 import mock
 import re
 
-from ansible.modules.zhmc import zhmc_partition
 from zhmcclient import Client
 from zhmcclient_mock import FakedSession
+
+from zhmc_ansible_modules import zhmc_partition
+
 from .func_utils import mock_ansible_module
 
 # FakedSession() init arguments
@@ -872,7 +874,7 @@ class TestPartition(object):
             # ({'ssc_master_userid': 'fake'}, True),
             # ({'ssc_master_pw': 'fake'}, True),
         ])
-    @mock.patch("ansible.modules.zhmc.zhmc_partition.AnsibleModule",
+    @mock.patch("zhmc_ansible_modules.zhmc_partition.AnsibleModule",
                 autospec=True)
     def test_success(
             self, ansible_mod_cls, properties, props_changed, desired_state,
@@ -1009,7 +1011,7 @@ class TestPartition(object):
             ({'nic_uris': ['/api/fake-nic-uri']}, True, True),
             ({'hba_uris': ['/api/fake-hba-uri']}, True, True),
         ])
-    @mock.patch("ansible.modules.zhmc.zhmc_partition.AnsibleModule",
+    @mock.patch("zhmc_ansible_modules.zhmc_partition.AnsibleModule",
                 autospec=True)
     def test_error_properties(
             self, ansible_mod_cls, properties, test_when_created,
@@ -1081,7 +1083,7 @@ class TestPartition(object):
         "initial_state", ['stopped', 'active'])
     @pytest.mark.parametrize(
         "desired_state", ['stopped', 'active'])
-    @mock.patch("ansible.modules.zhmc.zhmc_partition.AnsibleModule",
+    @mock.patch("zhmc_ansible_modules.zhmc_partition.AnsibleModule",
                 autospec=True)
     def test_boot_storage_success(
             self, ansible_mod_cls, desired_state, initial_state, check_mode):
@@ -1170,7 +1172,7 @@ class TestPartition(object):
         "initial_state", ['stopped', 'active'])
     @pytest.mark.parametrize(
         "desired_state", ['stopped', 'active'])
-    @mock.patch("ansible.modules.zhmc.zhmc_partition.AnsibleModule",
+    @mock.patch("zhmc_ansible_modules.zhmc_partition.AnsibleModule",
                 autospec=True)
     def test_boot_storage_error_hba_not_found(
             self, ansible_mod_cls, desired_state, initial_state, check_mode):
@@ -1226,7 +1228,7 @@ class TestPartition(object):
         "initial_state", ['stopped', 'active'])
     @pytest.mark.parametrize(
         "desired_state", ['stopped', 'active'])
-    @mock.patch("ansible.modules.zhmc.zhmc_partition.AnsibleModule",
+    @mock.patch("zhmc_ansible_modules.zhmc_partition.AnsibleModule",
                 autospec=True)
     def test_boot_network_success(
             self, ansible_mod_cls, desired_state, initial_state, check_mode):
@@ -1311,7 +1313,7 @@ class TestPartition(object):
         "initial_state", ['stopped', 'active'])
     @pytest.mark.parametrize(
         "desired_state", ['stopped', 'active'])
-    @mock.patch("ansible.modules.zhmc.zhmc_partition.AnsibleModule",
+    @mock.patch("zhmc_ansible_modules.zhmc_partition.AnsibleModule",
                 autospec=True)
     def test_boot_network_error_hba_not_found(
             self, ansible_mod_cls, desired_state, initial_state, check_mode):
@@ -1371,7 +1373,7 @@ class TestPartition(object):
     @pytest.mark.parametrize(
         "desc, adapters, initial_config, input_props, exp_config, exp_changed",
         CRYPTO_CONFIG_SUCCESS_TESTCASES)
-    @mock.patch("ansible.modules.zhmc.zhmc_partition.AnsibleModule",
+    @mock.patch("zhmc_ansible_modules.zhmc_partition.AnsibleModule",
                 autospec=True)
     def test_crypto_config_success(
             self, ansible_mod_cls, desc, adapters, initial_config, input_props,
@@ -1574,7 +1576,7 @@ class TestPartition(object):
                 "ParameterError: .*access_mode.*",
             ),
         ])
-    @mock.patch("ansible.modules.zhmc.zhmc_partition.AnsibleModule",
+    @mock.patch("zhmc_ansible_modules.zhmc_partition.AnsibleModule",
                 autospec=True)
     def test_crypto_config_parm_errors(
             self, ansible_mod_cls, input_props, error_msg_pattern, adapters,

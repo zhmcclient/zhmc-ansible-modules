@@ -20,8 +20,7 @@ Unit tests for the 'zhmc_hba' Ansible module.
 import pytest
 import mock
 
-from ansible.modules.zhmc import zhmc_hba
-from ansible.module_utils.zhmc import utils
+from zhmc_ansible_modules import zhmc_hba, utils
 
 
 class TestZhmcHbaMain(object):
@@ -31,9 +30,9 @@ class TestZhmcHbaMain(object):
 
     @pytest.mark.parametrize(
         "check_mode", [False, True])
-    @mock.patch("ansible.modules.zhmc.zhmc_hba.perform_task",
+    @mock.patch("zhmc_ansible_modules.zhmc_hba.perform_task",
                 autospec=True)
-    @mock.patch("ansible.modules.zhmc.zhmc_hba.AnsibleModule",
+    @mock.patch("zhmc_ansible_modules.zhmc_hba.AnsibleModule",
                 autospec=True)
     def test_main_success(
             self, ansible_mod_cls, perform_task_func, check_mode):
@@ -103,9 +102,9 @@ class TestZhmcHbaMain(object):
 
     @pytest.mark.parametrize(
         "check_mode", [False, True])
-    @mock.patch("ansible.modules.zhmc.zhmc_hba.perform_task",
+    @mock.patch("zhmc_ansible_modules.zhmc_hba.perform_task",
                 autospec=True)
-    @mock.patch("ansible.modules.zhmc.zhmc_hba.AnsibleModule",
+    @mock.patch("zhmc_ansible_modules.zhmc_hba.AnsibleModule",
                 autospec=True)
     def test_main_param_error(
             self, ansible_mod_cls, perform_task_func, check_mode):
@@ -162,9 +161,9 @@ class TestZhmcHbaPerformTask(object):
 
     @pytest.mark.parametrize(
         "check_mode", [False, True])
-    @mock.patch("ansible.modules.zhmc.zhmc_hba.ensure_absent",
+    @mock.patch("zhmc_ansible_modules.zhmc_hba.ensure_absent",
                 autospec=True)
-    @mock.patch("ansible.modules.zhmc.zhmc_hba.ensure_present",
+    @mock.patch("zhmc_ansible_modules.zhmc_hba.ensure_present",
                 autospec=True)
     def test_pt_present(
             self, ensure_present_func, ensure_absent_func, check_mode):
@@ -203,9 +202,9 @@ class TestZhmcHbaPerformTask(object):
 
     @pytest.mark.parametrize(
         "check_mode", [False, True])
-    @mock.patch("ansible.modules.zhmc.zhmc_hba.ensure_absent",
+    @mock.patch("zhmc_ansible_modules.zhmc_hba.ensure_absent",
                 autospec=True)
-    @mock.patch("ansible.modules.zhmc.zhmc_hba.ensure_present",
+    @mock.patch("zhmc_ansible_modules.zhmc_hba.ensure_present",
                 autospec=True)
     def test_pt_absent(
             self, ensure_present_func, ensure_absent_func, check_mode):
