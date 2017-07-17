@@ -35,9 +35,11 @@ FAKED_SESSION_KWARGS = dict(
 
 # Faked CPC in DPM mode that is used for all tests
 # (with property names as specified in HMC data model)
+FAKED_CPC_1_OID = 'fake-cpc-1'
+FAKED_CPC_1_URI = '/api/cpcs/' + FAKED_CPC_1_OID
 FAKED_CPC_1 = {
-    'object-id': 'cpc-oid-1',
-    # object-uri is auto-generated
+    'object-id': FAKED_CPC_1_OID,
+    'object-uri': FAKED_CPC_1_URI,
     'class': 'cpc',
     'name': 'cpc-name-1',
     'description': 'CPC #1 in DPM mode',
@@ -51,10 +53,12 @@ FAKED_CPC_1 = {
 # their default values. Note, we are prepping a faked partition; we are not
 # passing these properties to PartitionManager.create().
 FAKED_PARTITION_1_NAME = 'part-name-1'
+FAKED_PARTITION_1_OID = 'fake-part-1'
+FAKED_PARTITION_1_URI = '/api/partitions/' + FAKED_PARTITION_1_OID
 FAKED_PARTITION_1 = {
-    # object-id is auto-generated
-    # object-uri is auto-generated
-    'parent': '/api/cpcs/cpc-name-1',
+    'object-id': FAKED_PARTITION_1_OID,
+    'object-uri': FAKED_PARTITION_1_URI,
+    'parent': FAKED_CPC_1_URI,
     'class': 'partition',
     'name': FAKED_PARTITION_1_NAME,
     'description': 'Partition #1',
@@ -141,10 +145,12 @@ FAKED_PARTITION_1 = {
 # Faked HBA that is used for these tests (for partition boot from storage).
 # Most properties are set to their default values.
 FAKED_HBA_1_NAME = 'hba-1'
+FAKED_HBA_1_OID = 'fake-hba-1'
+FAKED_HBA_1_URI = FAKED_PARTITION_1_URI + '/hbas/' + FAKED_HBA_1_OID
 FAKED_HBA_1 = {
-    # element-id is auto-generated
-    # element-uri is auto-generated
-    'parent': '/api/partitions/{}'.format(FAKED_PARTITION_1_NAME),
+    'element-id': FAKED_HBA_1_OID,
+    'element-uri': FAKED_HBA_1_URI,
+    'parent': FAKED_PARTITION_1_URI,
     'class': 'hba',
     'name': FAKED_HBA_1_NAME,
     'description': 'HBA #1',
@@ -153,18 +159,62 @@ FAKED_HBA_1 = {
     'adapter-port-uri': 'faked-adapter-port-uri',
 }
 
+# Faked adapter, port and vswitch used for the OSA NIC.
+FAKED_ADAPTER_1_NAME = 'osa adapter #1'
+FAKED_ADAPTER_1_OID = 'fake-osa-adapter-1'
+FAKED_ADAPTER_1_URI = '/api/adapters/' + FAKED_ADAPTER_1_OID
+FAKED_PORT_1_NAME = 'Port #1'
+FAKED_PORT_1_OID = 'fake-port-1'
+FAKED_PORT_1_URI = '/api/adapters/' + FAKED_ADAPTER_1_OID + '/ports/' + \
+    FAKED_PORT_1_OID
+FAKED_VSWITCH_1_NAME = 'vswitch-1'
+FAKED_VSWITCH_1_OID = 'fake-vswitch-1'
+FAKED_VSWITCH_1_URI = '/api/virtual-switches/' + FAKED_VSWITCH_1_OID
+FAKED_ADAPTER_1 = {
+    'object-id': FAKED_ADAPTER_1_OID,
+    'object-uri': FAKED_ADAPTER_1_URI,
+    'parent': FAKED_CPC_1_URI,
+    'class': 'adapter',
+    'name': FAKED_ADAPTER_1_NAME,
+    'description': 'OSA adapter #1',
+    'type': 'osd',
+    'adapter-family': 'osa',
+    'port-count': 1,
+    'network-port-uris': [FAKED_PORT_1_URI],
+}
+FAKED_PORT_1 = {
+    'element-id': FAKED_PORT_1_OID,
+    'element-uri': FAKED_PORT_1_URI,
+    'parent': FAKED_ADAPTER_1_URI,
+    'class': 'network-port',
+    'name': FAKED_PORT_1_NAME,
+    'description': 'Port #1 of OSA adapter #1',
+    'index': 0,
+}
+FAKED_VSWITCH_1 = {
+    'object-id': FAKED_VSWITCH_1_OID,
+    'object-uri': FAKED_VSWITCH_1_URI,
+    'parent': FAKED_CPC_1_URI,
+    'class': 'virtual-switch',
+    'name': FAKED_VSWITCH_1_NAME,
+    'description': 'vswitch for OSA adapter #1',
+    'type': 'osd',
+}
+
 # Faked OSA NIC that is used for these tests (for partition boot from storage).
 # Most properties are set to their default values.
 FAKED_NIC_1_NAME = 'nic-1'
+FAKED_NIC_1_OID = 'fake-nic-1'
+FAKED_NIC_1_URI = FAKED_PARTITION_1_URI + '/nics/' + FAKED_NIC_1_OID
 FAKED_NIC_1 = {
-    # element-id is auto-generated
-    # element-uri is auto-generated
-    'parent': '/api/partitions/{}'.format(FAKED_PARTITION_1_NAME),
+    'element-id': FAKED_NIC_1_OID,
+    'element-uri': FAKED_NIC_1_URI,
+    'parent': FAKED_PARTITION_1_URI,
     'class': 'nic',
     'name': FAKED_NIC_1_NAME,
     'description': 'NIC #1',
     'device_number': '022F',
-    'virtual-switch-uri': 'faked-vswitch-uri',
+    'virtual-switch-uri': FAKED_VSWITCH_1_URI,
     'type': 'osd',
     'ssc-management-nic': False,
     'mac-address': 'fa:ce:da:dd:6e:55',
@@ -275,6 +325,9 @@ class TestPartition(object):
         Prepare the faked NIC, on top of the faked partition created by
         setup_partition().
         """
+        self.faked_adapter = self.faked_cpc.adapters.add(FAKED_ADAPTER_1)
+        self.faked_vswitch = self.faked_cpc.virtual_switches.add(
+            FAKED_VSWITCH_1)
         self.nic_name = FAKED_NIC_1_NAME
         if self.partition:
             # Create the NIC
@@ -294,10 +347,10 @@ class TestPartition(object):
         "desired_state", ['absent', 'stopped', 'active'])
     @pytest.mark.parametrize(
         "properties, props_changed", [
+            # Note: The required properties are always added if not specified.
 
             # special cases:
-            (None, False),
-            ({}, False),
+            ({}, True),
 
             # allowed update-only properties:
 
@@ -333,9 +386,9 @@ class TestPartition(object):
             ({'short_name': 'fake'}, True),
             ({'partition_id': '7F'}, True),
             ({'autogenerate_partition_id': False}, True),
-            ({'ifl_processors': 1}, False),
+            ({'ifl_processors': 1}, True),
             ({'ifl_processors': 2}, True),
-            ({'cp_processors': 0}, False),
+            ({'cp_processors': 0}, True),
             ({'cp_processors': 10}, True),
             ({'processor_mode': 'dedicated'}, True),
             ({'initial_memory': 2048}, True),
@@ -392,6 +445,15 @@ class TestPartition(object):
         exp_changed = (initial_state != desired_state or
                        props_changed and desired_state != 'absent')
 
+        # Set up required input properties:
+        props = properties.copy()
+        if 'ifl_processors' not in props and 'cp_processors' not in props:
+            props['ifl_processors'] = 1
+        if 'initial_memory' not in props:
+            props['initial_memory'] = 512
+        if 'maximum_memory' not in props:
+            props['maximum_memory'] = 512
+
         # Prepare module input parameters
         params = {
             'hmc_host': 'fake-host',
@@ -400,7 +462,7 @@ class TestPartition(object):
             'cpc_name': self.cpc.name,
             'name': self.partition_name,
             'state': desired_state,
-            'properties': properties,
+            'properties': props,
             'faked_session': self.session,
         }
 
@@ -526,6 +588,15 @@ class TestPartition(object):
         # Prepare the initial partition before the test is run
         self.setup_partition(initial_state)
 
+        # Set up required input properties:
+        props = properties.copy()
+        if 'ifl_processors' not in props and 'cp_processors' not in props:
+            props['ifl_processors'] = 1
+        if 'initial_memory' not in props:
+            props['initial_memory'] = 512
+        if 'maximum_memory' not in props:
+            props['maximum_memory'] = 512
+
         # Prepare module input parameters
         params = {
             'hmc_host': 'fake-host',
@@ -534,7 +605,7 @@ class TestPartition(object):
             'cpc_name': self.cpc.name,
             'name': self.partition_name,
             'state': desired_state,
-            'properties': properties,
+            'properties': props,
             'faked_session': self.session,
         }
 
