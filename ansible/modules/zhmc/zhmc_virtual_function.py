@@ -24,9 +24,11 @@ import zhmcclient
 # http://docs.ansible.com/ansible/dev_guide/developing_modules_documenting.html
 
 ANSIBLE_METADATA = {
-    'metadata_version': '1.0',
+    'metadata_version': '1.1',
     'status': ['preview'],
-    'supported_by': 'core'
+    'supported_by': 'community',
+    'shipped_by': 'other',
+    'other_repo_url': 'https://github.ibm.com/zhmcclient/zhmc-ansible-modules'
 }
 
 DOCUMENTATION = """
