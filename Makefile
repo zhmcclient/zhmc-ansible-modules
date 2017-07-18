@@ -84,11 +84,12 @@ test_dir = tests
 dist_build_dir := $(build_dir)/dist
 
 # Distribution archives (as built by setup.py)
-bdist_file := $(dist_build_dir)/$(package_name_pypi)-$(package_version)-py2.py3-none-any.whl
+bdist_file := $(dist_build_dir)/$(package_name_python)-$(package_version)-py2.py3-none-any.whl
 sdist_file := $(dist_build_dir)/$(package_name_pypi)-$(package_version).tar.gz
 
 # Files the distribution archive depends upon.
 dist_dependent_files := \
+    setup.py setup.cfg \
     README.rst \
     requirements.txt \
     $(wildcard *.py) \
@@ -269,14 +270,25 @@ clobber:
 	@echo 'Done: Removed all build products to get to a fresh state.'
 	@echo '$@ done.'
 
-$(bdist_file) $(sdist_file): Makefile setup.py $(dist_dependent_files)
+$(bdist_file): Makefile $(dist_dependent_files)
 ifneq ($(PLATFORM),Windows)
 	rm -Rf $(package_name_python).egg-info .eggs
 	mkdir -p $(dist_build_dir)
-	$(PYTHON_CMD) setup.py sdist -d $(dist_build_dir) bdist_wheel -d $(dist_build_dir) --universal
-	@echo 'Done: Created distribution files: $@'
+	$(PYTHON_CMD) setup.py bdist_wheel -d $(dist_build_dir) --universal
+	@echo 'Done: Created distribution file: $@'
 else
-	@echo 'Error: Creating distribution archives requires to run on Linux or OS-X'
+	@echo 'Error: Creating bdist_wheel distribution archive requires to run on Linux or OS-X'
+	@false
+endif
+
+$(sdist_file): Makefile $(dist_dependent_files)
+ifneq ($(PLATFORM),Windows)
+	rm -Rf $(package_name_python).egg-info .eggs
+	mkdir -p $(dist_build_dir)
+	$(PYTHON_CMD) setup.py sdist -d $(dist_build_dir)
+	@echo 'Done: Created distribution file: $@'
+else
+	@echo 'Error: Creating sdist distribution archive requires to run on Linux or OS-X'
 	@false
 endif
 

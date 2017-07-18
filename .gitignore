@@ -8,6 +8,8 @@ env*
 /build/
 /htmlcov/
 .coverage
+/AUTHORS
+/ChangeLog
 *.egg
 *.egg-info
 /_mailinglist
