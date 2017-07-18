@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from operator import itemgetter
+
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.zhmc.utils import Error, ParameterError, \
     StatusError, stop_partition, start_partition, \
@@ -112,6 +114,13 @@ options:
       - "C(boot_network_nic_name): The name of the NIC whose URI is used to
          construct C(boot_network_device). Specifying it requires that the
          partition exists."
+      - "C(crypto_configuration): The crypto configuration for the partition,
+         in the format of the 'crypto-configuration' property of the
+         partition (see HMC API book for details), with the exception that
+         adapters are specified with their names in field
+         'crypto_adapter_names' instead of their URIs in field
+         'crypto_adapter_uris'. If the 'crypto_adapter_names' field is null,
+         all crypto adapters of the CPC are used."
       - "Properties omitted in this dictionary will remain unchanged when the
          partition already exists, and will get the default value defined in
          the data model for partitions in the HMC API book when the partition
@@ -175,6 +184,26 @@ EXAMPLES = """
     cpc_name: "{{ my_cpc_name }}"
     name: "{{ my_partition_name }}"
     state: absent
+
+- name: Define crypto configuration
+  zhmc_partition:
+    hmc_host: "{{ my_hmc_host }}"
+    hmc_auth: "{{ my_hmc_auth }}"
+    cpc_name: "{{ my_cpc_name }}"
+    name: "{{ my_partition_name }}"
+    state: active
+    properties:
+      crypto_configuration:
+        crypto_adapter_names:
+          - adapter1
+          - adapter2
+        crypto_domain_configurations:
+          - domain_index: 0
+            access_mode: control-usage
+          - domain_index: 1
+            access_mode: control
+  register: part1
+
 """
 
 RETURN = """
@@ -227,6 +256,7 @@ ZHMC_PARTITION_PROPERTIES = {
     'boot_network_nic_name': (True, False, True, True, None),  # artif. prop
     'boot_storage_device': (False, False, True, True, None),  # via artif. prop
     'boot_storage_hba_name': (True, False, True, True, None),  # artif. prop
+    'crypto_configuration': (True, False, False, None, None),  # art+real prop
     'acceptable_status': (True, False, True, True, None),
     'processor_management_enabled': (True, False, True, True, None),
     'ifl_absolute_processor_capping': (True, False, True, True, None),
@@ -307,11 +337,10 @@ ZHMC_PARTITION_PROPERTIES = {
     'virtual_function_uris': (False, False, False, None, None),
     'nic_uris': (False, False, False, None, None),
     'hba_uris': (False, False, False, None, None),
-    'crypto_configuration': (False, False, False, None, None),
 }
 
 
-def process_properties(partition, params):
+def process_properties(cpc, partition, params):
     """
     Process the properties specified in the 'properties' module parameter,
     and return two dictionaries (create_props, update_props) that contain
@@ -330,19 +359,31 @@ def process_properties(partition, params):
 
     Parameters:
 
+      cpc (zhmcclient.Cpc): CPC with the partition to be updated, and
+        with the adapters to be used for the partition.
+
       partition (zhmcclient.Partition): Partition to be updated with the full
         set of current properties, or `None` if it did not previously exist.
 
       params (dict): Module input parameters.
 
     Returns:
-      tuple of (create_props, update_props, stop), where:
+      tuple of (create_props, update_props, stop, crypto_changes), where:
         * create_props: dict of properties for
           zhmcclient.PartitionManager.create()
         * update_props: dict of properties for
           zhmcclient.Partition.update_properties()
         * stop (bool): Indicates whether some update properties require the
           partition to be stopped when doing the update.
+        * crypto_changes (tuple): Changes to the crypto configuration if any
+          (or `None` if no changes were specified), as a tuple of:
+          * remove_adapters: List of Adapter objects to be removed
+          * remove_domain_indexes: List of domain indexes to be removed
+          * add_adapters: List of Adapter objects to be added
+          * add_domain_configs: List of domain configs to be added (dict of
+            'domain-index', 'access-mode')
+          * change_domain_configs: List of domain configs for changing the
+            access mode of existing domain indexes.
 
     Raises:
       ParameterError: An issue with the module parameters.
@@ -350,6 +391,7 @@ def process_properties(partition, params):
     create_props = {}
     update_props = {}
     stop = False
+    crypto_changes = None
 
     # handle 'name' property
     part_name = params['name']
@@ -376,11 +418,9 @@ def process_properties(partition, params):
                 "Property {!r} is not allowed in the 'properties' module "
                 "parameter.".format(prop_name))
 
-        # Double check that read-only properties are all marked as not allowed:
-        assert (create or update) is True
-
         if prop_name == 'boot_storage_hba_name':
             # Process this artificial property
+
             if not partition:
                 raise ParameterError(
                     "Artificial property {!r} can only be specified when the "
@@ -396,8 +436,10 @@ def process_properties(partition, params):
             if partition.properties.get(hmc_prop_name) != hba.uri:
                 update_props[hmc_prop_name] = hba.uri
                 assert update_while_active
+
         elif prop_name == 'boot_network_nic_name':
             # Process this artificial property
+
             if not partition:
                 raise ParameterError(
                     "Artificial property {!r} can only be specified when the "
@@ -413,8 +455,143 @@ def process_properties(partition, params):
             if partition.properties.get(hmc_prop_name) != nic.uri:
                 update_props[hmc_prop_name] = nic.uri
                 assert update_while_active
+
+        elif prop_name == 'crypto_configuration':
+            # Process this artificial property
+
+            crypto_config = input_props[prop_name]
+
+            if not isinstance(crypto_config, dict):
+                raise ParameterError(
+                    "Artificial property {!r} is not a dictionary: {!r}.".
+                    format(prop_name, crypto_config))
+
+            if partition:
+                hmc_prop_name = 'crypto-configuration'
+                current_crypto_config = partition.properties.get(hmc_prop_name)
+            else:
+                current_crypto_config = None
+
+            # Determine adapter changes
+            try:
+                adapter_field_name = 'crypto_adapter_names'
+                adapter_names = crypto_config[adapter_field_name]
+            except KeyError:
+                raise ParameterError(
+                    "Artificial property {!r} does not have required field "
+                    "{!r}.".format(prop_name, adapter_field_name))
+            adapter_uris = set()
+            adapter_dict = {}  # adapters by uri
+            if adapter_names is None:
+                # Default: Use all crypto adapters of the CPC
+                adapters = cpc.adapters.findall(type='crypto')
+                for adapter in adapters:
+                    adapter_dict[adapter.uri] = adapter
+                    adapter_uris.add(adapter.uri)
+            else:
+                for adapter_name in adapter_names:
+                    try:
+                        adapter = cpc.adapters.find(name=adapter_name,
+                                                    type='crypto')
+                    except zhmcclient.NotFound:
+                        raise ParameterError(
+                            "Artificial property {!r} does not specify the "
+                            "name of an existing crypto adapter in its {!r} "
+                            "field: {!r}".
+                            format(prop_name, adapter_field_name,
+                                   adapter_name))
+                    adapter_dict[adapter.uri] = adapter
+                    adapter_uris.add(adapter.uri)
+            if current_crypto_config:
+                current_adapter_uris = set(
+                    current_crypto_config['crypto-adapter-uris'])
+            else:
+                current_adapter_uris = set()
+            if adapter_uris != current_adapter_uris:
+                add_adapter_uris = adapter_uris - current_adapter_uris
+                # Result: List of adapters to be added:
+                add_adapters = [adapter_dict[uri] for uri in add_adapter_uris]
+                remove_adapter_uris = current_adapter_uris - adapter_uris
+                for uri in remove_adapter_uris:
+                    adapter = cpc.adapters.find(**{'object-uri': uri})
+                    # We assume the current crypto config lists only valid URIs
+                    adapter_dict[adapter.uri] = adapter
+                # Result: List of adapters to be removed:
+                remove_adapters = \
+                    [adapter_dict[uri] for uri in remove_adapter_uris]
+            else:
+                # Result: List of adapters to be added:
+                add_adapters = []
+                # Result: List of adapters to be removed:
+                remove_adapters = []
+
+            # Determine domain config changes.
+            try:
+                config_field_name = 'crypto_domain_configurations'
+                domain_configs = crypto_config[config_field_name]
+            except KeyError:
+                raise ParameterError(
+                    "Artificial property {!r} does not have required field "
+                    "{!r}.".format(prop_name, config_field_name))
+            di_field_name = 'domain_index'
+            am_field_name = 'access_mode'
+            try:
+                domain_indexes = set([dc[di_field_name]
+                                      for dc in domain_configs])
+            except KeyError:
+                raise ParameterError(
+                    "Artificial property {!r} does not have required "
+                    "sub-field {!r} in one of its {!r} fields.".
+                    format(prop_name, di_field_name, config_field_name))
+            current_access_mode_dict = {}  # dict: acc.mode by dom.index
+            if current_crypto_config:
+                current_domain_configs = \
+                    current_crypto_config['crypto-domain-configurations']
+                di_prop_name = 'domain-index'
+                am_prop_name = 'access-mode'
+                for dc in current_domain_configs:
+                    current_access_mode_dict[dc[di_prop_name]] = \
+                        dc[am_prop_name]
+            current_domain_indexes = \
+                set([di for di in current_access_mode_dict])
+            # Result: List of domain indexes to be removed:
+            remove_domain_indexes = \
+                list(current_domain_indexes - domain_indexes)
+            # Building result: List of domain configs to be added:
+            add_domain_configs = []
+            # Building result: List of domain configs to be changed:
+            change_domain_configs = []
+            for domain_config in domain_configs:
+                domain_index = domain_config[di_field_name]
+                try:
+                    access_mode = domain_config[am_field_name]
+                except KeyError:
+                    raise ParameterError(
+                        "Artificial property {!r} does not have required "
+                        "sub-field {!r} in one of its {!r} fields.".
+                        format(prop_name, am_field_name, config_field_name))
+                hmc_domain_config = {
+                    'domain-index': domain_index,
+                    'access-mode': access_mode,
+                }
+                if domain_index not in current_access_mode_dict:
+                    # Domain is not included yet
+                    add_domain_configs.append(hmc_domain_config)
+                elif access_mode != current_access_mode_dict[domain_index]:
+                    # Domain is included but access mode needs to be changed
+                    change_domain_configs.append(hmc_domain_config)
+
+            crypto_changes = (remove_adapters, remove_domain_indexes,
+                              add_adapters, add_domain_configs,
+                              change_domain_configs)
+
         else:
             # Process a normal (= non-artificial) property
+
+            # Double check that normal read-only properties are all marked as
+            # not allowed:
+            assert (create or update) is True
+
             hmc_prop_name = prop_name.replace('_', '-')
             input_prop_value = input_props[prop_name]
             if partition:
@@ -437,7 +614,50 @@ def process_properties(partition, params):
                 if create:
                     create_props[hmc_prop_name] = input_prop_value
 
-    return create_props, update_props, stop
+    return create_props, update_props, stop, crypto_changes
+
+
+def change_crypto_config(partition, crypto_changes, check_mode):
+    """
+    Change the crypto configuration of the partition as specified.
+
+    Returns whether the crypto configuration has or would have changed.
+    """
+
+    remove_adapters, remove_domain_indexes, \
+        add_adapters, add_domain_configs, \
+        change_domain_configs = crypto_changes
+
+    changed = False
+
+    # We process additions first, in order to avoid
+    # HTTPError 409,111 (At least one 'usage' required).
+    if add_adapters or add_domain_configs:
+        if not check_mode:
+            partition.increase_crypto_config(add_adapters,
+                                             add_domain_configs)
+        changed = True
+
+    if change_domain_configs:
+        # We process changes that set access mode 'control-usage' first,
+        # in order to avoid HTTPError 409,111 (At least one 'usage' required).
+        for domain_config in sorted(change_domain_configs,
+                                    key=itemgetter('access-mode'),
+                                    reverse=True):
+            domain_index = domain_config['domain-index']
+            access_mode = domain_config['access-mode']
+            if not check_mode:
+                partition.change_crypto_domain_config(domain_index,
+                                                      access_mode)
+        changed = True
+
+    if remove_adapters or remove_domain_indexes:
+        if not check_mode:
+            partition.decrease_crypto_config(remove_adapters,
+                                             remove_domain_indexes)
+        changed = True
+
+    return changed
 
 
 def ensure_active(params, check_mode):
@@ -476,8 +696,8 @@ def ensure_active(params, check_mode):
             # It does not exist. Create it and update it if there are
             # update-only properties.
             if not check_mode:
-                create_props, update_props, stop = process_properties(
-                    partition, params)
+                create_props, update_props, stop, crypto_changes = \
+                    process_properties(cpc, partition, params)
                 partition = cpc.partitions.create(create_props)
                 update2_props = {}
                 for name in update_props:
@@ -489,6 +709,8 @@ def ensure_active(params, check_mode):
                 # input property value gets changed (for example, the
                 # partition does that with memory properties).
                 partition.pull_full_properties()
+                if crypto_changes:
+                    change_crypto_config(partition, crypto_changes, check_mode)
             else:
                 # TODO: Show props in module result also in check mode.
                 pass
@@ -497,8 +719,8 @@ def ensure_active(params, check_mode):
             # It exists. Stop if needed due to property update requirements,
             # or wait for an updateable partition status, and update its
             # properties.
-            create_props, update_props, stop = process_properties(
-                partition, params)
+            create_props, update_props, stop, crypto_changes = \
+                process_properties(cpc, partition, params)
             if update_props:
                 if not check_mode:
                     if stop:
@@ -514,6 +736,9 @@ def ensure_active(params, check_mode):
                     # TODO: Show updated props in mod.result also in chk.mode
                     pass
                 changed = True
+            if crypto_changes:
+                changed |= change_crypto_config(partition, crypto_changes,
+                                                check_mode)
 
         if partition:
             changed |= start_partition(partition, check_mode)
@@ -571,8 +796,8 @@ def ensure_stopped(params, check_mode):
             # It does not exist. Create it and update it if there are
             # update-only properties.
             if not check_mode:
-                create_props, update_props, stop = process_properties(
-                    partition, params)
+                create_props, update_props, stop, crypto_changes = \
+                    process_properties(cpc, partition, params)
                 partition = cpc.partitions.create(create_props)
                 update2_props = {}
                 for name in update_props:
@@ -580,16 +805,21 @@ def ensure_stopped(params, check_mode):
                         update2_props[name] = update_props[name]
                 if update2_props:
                     partition.update_properties(update2_props)
+                if crypto_changes:
+                    change_crypto_config(partition, crypto_changes, check_mode)
             changed = True
         else:
             # It exists. Stop it and update its properties.
-            create_props, update_props, stop = process_properties(
-                partition, params)
+            create_props, update_props, stop, crypto_changes = \
+                process_properties(cpc, partition, params)
             changed |= stop_partition(partition, check_mode)
             if update_props:
                 if not check_mode:
                     partition.update_properties(update_props)
                 changed = True
+            if crypto_changes:
+                changed |= change_crypto_config(partition, crypto_changes,
+                                                check_mode)
 
         if partition and not check_mode:
             partition.pull_full_properties()

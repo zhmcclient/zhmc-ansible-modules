@@ -79,3 +79,21 @@
         boot_logical_unit_number: "0001"
         boot_world_wide_port_name: "00cdef01abcdef01"
     register: part1
+
+  - name: Ensure crypto config for partition
+    zhmc_partition:
+      hmc_host: "{{ hmc_host }}"
+      hmc_auth: "{{ hmc_auth }}"
+      cpc_name: "{{ cpc_name }}"
+      name: "{{ partition_name }}"
+      state: stopped
+      properties:
+        crypto_configuration:
+          crypto_adapter_names:
+            - "{{ crypto_adapter_name }}"
+          crypto_domain_configurations:
+            - domain_index: 17
+              access_mode: "control-usage"
+            - domain_index: 19
+              access_mode: "control"
+    register: part1

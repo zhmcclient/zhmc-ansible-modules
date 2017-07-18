@@ -19,6 +19,7 @@ Function tests for the 'zhmc_partition' Ansible module.
 
 import pytest
 import mock
+import re
 
 from ansible.modules.zhmc import zhmc_partition
 from zhmcclient import Client
@@ -220,6 +221,49 @@ FAKED_NIC_1 = {
     'mac-address': 'fa:ce:da:dd:6e:55',
 }
 
+# Faked crypto adapters
+# (with property names as specified in HMC data model)
+FAKED_CRYPTO_ADAPTER_1 = {
+    'object-id': 'crypto-adapter-oid-1',
+    # We need object-uri for the assertions
+    'object-uri': '/api/cpcs/cpc-oid-1/adapters/crypto-adapter-oid-1',
+    'parent': '/api/cpcs/cpc-oid-1',
+    'class': 'adapter',
+    'name': 'crypto-adapter-name-1',
+    'crypto-number': 1,
+    'crypto-type': 'ep11-coprocessor',
+    'udx-loaded': True,
+    'description': 'Crypto adapter #1',
+    'status': 'active',
+    'type': 'crypto',
+    'adapter-id': '02A',
+    'adapter-family': 'crypto',
+    'detected-card-type': 'crypto-express-5s',
+    'card-location': 'vvvv-wwww',
+    'state': 'online',
+    'physical-channel-status': 'operating',
+}
+FAKED_CRYPTO_ADAPTER_2 = {
+    'object-id': 'crypto-adapter-oid-2',
+    # We need object-uri for the assertions
+    'object-uri': '/api/cpcs/cpc-oid-1/adapters/crypto-adapter-oid-2',
+    'parent': '/api/cpcs/cpc-oid-1',
+    'class': 'adapter',
+    'name': 'crypto-adapter-name-2',
+    'crypto-number': 2,
+    'crypto-type': 'cca-coprocessor',
+    'udx-loaded': True,
+    'description': 'Crypto adapter #2',
+    'status': 'active',
+    'type': 'crypto',
+    'adapter-id': '02B',
+    'adapter-family': 'crypto',
+    'detected-card-type': 'crypto-express-5s',
+    'card-location': 'vvvv-wwww',
+    'state': 'online',
+    'physical-channel-status': 'operating',
+}
+
 # Translation table from 'state' module input parameter to corresponding
 # desired partition 'status' property value. 'None' means the partition
 # does not exist.
@@ -268,6 +312,394 @@ def get_module_output(mod_obj):
     return func(*call_args[0], **call_args[1])
 
 
+CRYPTO_CONFIG_SUCCESS_TESTCASES = [
+    (
+        "No_change_to_empty_config",
+        # adapters:
+        [],
+        # initial_config:
+        None,
+        # input_props:
+        None,
+        # exp_config:
+        None,
+        # exp_changed:
+        False
+    ),
+    (
+        "Add adapter to empty config",
+        # adapters:
+        [
+            FAKED_CRYPTO_ADAPTER_1,
+            FAKED_CRYPTO_ADAPTER_2,
+        ],
+        # initial_config:
+        None,
+        # input_props:
+        dict(
+            crypto_configuration=dict(
+                crypto_adapter_names=[
+                    FAKED_CRYPTO_ADAPTER_1['name'],
+                ],
+                crypto_domain_configurations=[
+                ],
+            ),
+        ),
+        # exp_config:
+        {
+            'crypto-adapter-uris': [
+                FAKED_CRYPTO_ADAPTER_1['object-uri'],
+            ],
+            'crypto-domain-configurations': [
+            ],
+        },
+        # exp_changed:
+        True
+    ),
+    (
+        "Add domain to empty config",
+        # adapters:
+        [
+            FAKED_CRYPTO_ADAPTER_1,
+            FAKED_CRYPTO_ADAPTER_2,
+        ],
+        # initial_config:
+        None,
+        # input_props:
+        dict(
+            crypto_configuration=dict(
+                crypto_adapter_names=[
+                ],
+                crypto_domain_configurations=[
+                    dict(domain_index=3, access_mode='control-usage'),
+                ],
+            ),
+        ),
+        # exp_config:
+        {
+            'crypto-adapter-uris': [
+            ],
+            'crypto-domain-configurations': [
+                {'domain-index': 3, 'access-mode': 'control-usage'},
+            ],
+        },
+        # exp_changed:
+        True
+    ),
+    (
+        "Add adapter+domain to empty config",
+        # adapters:
+        [
+            FAKED_CRYPTO_ADAPTER_1,
+            FAKED_CRYPTO_ADAPTER_2,
+        ],
+        # initial_config:
+        None,
+        # input_props:
+        dict(
+            crypto_configuration=dict(
+                crypto_adapter_names=[
+                    FAKED_CRYPTO_ADAPTER_1['name'],
+                ],
+                crypto_domain_configurations=[
+                    dict(domain_index=3, access_mode='control-usage'),
+                ],
+            ),
+        ),
+        # exp_config:
+        {
+            'crypto-adapter-uris': [
+                FAKED_CRYPTO_ADAPTER_1['object-uri'],
+            ],
+            'crypto-domain-configurations': [
+                {'domain-index': 3, 'access-mode': 'control-usage'},
+            ],
+        },
+        # exp_changed:
+        True
+    ),
+    (
+        "Change access mode of domain",
+        # adapters:
+        [
+            FAKED_CRYPTO_ADAPTER_1,
+            FAKED_CRYPTO_ADAPTER_2,
+        ],
+        # initial_config:
+        {
+            'crypto-adapter-uris': [
+                FAKED_CRYPTO_ADAPTER_1['object-uri'],
+            ],
+            'crypto-domain-configurations': [
+                {'domain-index': 3, 'access-mode': 'control'},
+            ],
+        },
+        # input_props:
+        dict(
+            crypto_configuration=dict(
+                crypto_adapter_names=[
+                    FAKED_CRYPTO_ADAPTER_1['name'],
+                ],
+                crypto_domain_configurations=[
+                    dict(domain_index=3, access_mode='control-usage'),
+                ],
+            ),
+        ),
+        # exp_config:
+        {
+            'crypto-adapter-uris': [
+                FAKED_CRYPTO_ADAPTER_1['object-uri'],
+            ],
+            'crypto-domain-configurations': [
+                {'domain-index': 3, 'access-mode': 'control-usage'},
+            ],
+        },
+        # exp_changed:
+        True
+    ),
+    (
+        "No change to adapter+domain",
+        # adapters:
+        [
+            FAKED_CRYPTO_ADAPTER_1,
+            FAKED_CRYPTO_ADAPTER_2,
+        ],
+        # initial_config:
+        {
+            'crypto-adapter-uris': [
+                FAKED_CRYPTO_ADAPTER_1['object-uri'],
+            ],
+            'crypto-domain-configurations': [
+                {'domain-index': 2, 'access-mode': 'control-usage'},
+            ],
+        },
+        # input_props:
+        dict(
+            crypto_configuration=dict(
+                crypto_adapter_names=[
+                    FAKED_CRYPTO_ADAPTER_1['name'],
+                ],
+                crypto_domain_configurations=[
+                    dict(domain_index=2, access_mode='control-usage'),
+                ],
+            ),
+        ),
+        # exp_config:
+        {
+            'crypto-adapter-uris': [
+                FAKED_CRYPTO_ADAPTER_1['object-uri'],
+            ],
+            'crypto-domain-configurations': [
+                {'domain-index': 2, 'access-mode': 'control-usage'},
+            ],
+        },
+        # exp_changed:
+        False
+    ),
+    (
+        "Add adapter to adapter+domain",
+        # adapters:
+        [
+            FAKED_CRYPTO_ADAPTER_1,
+            FAKED_CRYPTO_ADAPTER_2,
+        ],
+        # initial_config:
+        {
+            'crypto-adapter-uris': [
+                FAKED_CRYPTO_ADAPTER_1['object-uri'],
+            ],
+            'crypto-domain-configurations': [
+                {'domain-index': 2, 'access-mode': 'control-usage'},
+            ],
+        },
+        # input_props:
+        dict(
+            crypto_configuration=dict(
+                crypto_adapter_names=[
+                    FAKED_CRYPTO_ADAPTER_1['name'],
+                    FAKED_CRYPTO_ADAPTER_2['name'],
+                ],
+                crypto_domain_configurations=[
+                    dict(domain_index=2, access_mode='control-usage'),
+                ],
+            ),
+        ),
+        # exp_config:
+        {
+            'crypto-adapter-uris': [
+                FAKED_CRYPTO_ADAPTER_1['object-uri'],
+                FAKED_CRYPTO_ADAPTER_2['object-uri'],
+            ],
+            'crypto-domain-configurations': [
+                {'domain-index': 2, 'access-mode': 'control-usage'},
+            ],
+        },
+        # exp_changed:
+        True
+    ),
+    (
+        "Add domain to adapter+domain",
+        # adapters:
+        [
+            FAKED_CRYPTO_ADAPTER_1,
+            FAKED_CRYPTO_ADAPTER_2,
+        ],
+        # initial_config:
+        {
+            'crypto-adapter-uris': [
+                FAKED_CRYPTO_ADAPTER_1['object-uri'],
+            ],
+            'crypto-domain-configurations': [
+                {'domain-index': 2, 'access-mode': 'control-usage'},
+            ],
+        },
+        # input_props:
+        dict(
+            crypto_configuration=dict(
+                crypto_adapter_names=[
+                    FAKED_CRYPTO_ADAPTER_1['name'],
+                ],
+                crypto_domain_configurations=[
+                    dict(domain_index=2, access_mode='control-usage'),
+                    dict(domain_index=3, access_mode='control'),
+                ],
+            ),
+        ),
+        # exp_config:
+        {
+            'crypto-adapter-uris': [
+                FAKED_CRYPTO_ADAPTER_1['object-uri'],
+            ],
+            'crypto-domain-configurations': [
+                {'domain-index': 2, 'access-mode': 'control-usage'},
+                {'domain-index': 3, 'access-mode': 'control'},
+            ],
+        },
+        # exp_changed:
+        True
+    ),
+    (
+        "Add adapter+domain to adapter+domain",
+        # adapters:
+        [
+            FAKED_CRYPTO_ADAPTER_1,
+            FAKED_CRYPTO_ADAPTER_2,
+        ],
+        # initial_config:
+        {
+            'crypto-adapter-uris': [
+                FAKED_CRYPTO_ADAPTER_1['object-uri'],
+            ],
+            'crypto-domain-configurations': [
+                {'domain-index': 2, 'access-mode': 'control-usage'},
+            ],
+        },
+        # input_props:
+        dict(
+            crypto_configuration=dict(
+                crypto_adapter_names=[
+                    FAKED_CRYPTO_ADAPTER_1['name'],
+                    FAKED_CRYPTO_ADAPTER_2['name'],
+                ],
+                crypto_domain_configurations=[
+                    dict(domain_index=2, access_mode='control-usage'),
+                    dict(domain_index=3, access_mode='control'),
+                ],
+            ),
+        ),
+        # exp_config:
+        {
+            'crypto-adapter-uris': [
+                FAKED_CRYPTO_ADAPTER_1['object-uri'],
+                FAKED_CRYPTO_ADAPTER_2['object-uri'],
+            ],
+            'crypto-domain-configurations': [
+                {'domain-index': 2, 'access-mode': 'control-usage'},
+                {'domain-index': 3, 'access-mode': 'control'},
+            ],
+        },
+        # exp_changed:
+        True
+    ),
+    (
+        "Remove adapter+domain from adapter+domain",
+        # adapters:
+        [
+            FAKED_CRYPTO_ADAPTER_1,
+            FAKED_CRYPTO_ADAPTER_2,
+        ],
+        # initial_config:
+        {
+            'crypto-adapter-uris': [
+                FAKED_CRYPTO_ADAPTER_1['object-uri'],
+            ],
+            'crypto-domain-configurations': [
+                {'domain-index': 2, 'access-mode': 'control-usage'},
+            ],
+        },
+        # input_props:
+        dict(
+            crypto_configuration=dict(
+                crypto_adapter_names=[
+                ],
+                crypto_domain_configurations=[
+                ],
+            ),
+        ),
+        # exp_config:
+        {
+            'crypto-adapter-uris': [
+            ],
+            'crypto-domain-configurations': [
+            ],
+        },
+        # exp_changed:
+        True
+    ),
+    (
+        "Remove adapter+domain from 2 adapters + 2 domains",
+        # adapters:
+        [
+            FAKED_CRYPTO_ADAPTER_1,
+            FAKED_CRYPTO_ADAPTER_2,
+        ],
+        # initial_config:
+        {
+            'crypto-adapter-uris': [
+                FAKED_CRYPTO_ADAPTER_1['object-uri'],
+                FAKED_CRYPTO_ADAPTER_2['object-uri'],
+            ],
+            'crypto-domain-configurations': [
+                {'domain-index': 2, 'access-mode': 'control-usage'},
+                {'domain-index': 3, 'access-mode': 'control'},
+            ],
+        },
+        # input_props:
+        dict(
+            crypto_configuration=dict(
+                crypto_adapter_names=[
+                    FAKED_CRYPTO_ADAPTER_1['name'],
+                ],
+                crypto_domain_configurations=[
+                    dict(domain_index=2, access_mode='control-usage'),
+                ],
+            ),
+        ),
+        # exp_config:
+        {
+            'crypto-adapter-uris': [
+                FAKED_CRYPTO_ADAPTER_1['object-uri'],
+            ],
+            'crypto-domain-configurations': [
+                {'domain-index': 2, 'access-mode': 'control-usage'},
+            ],
+        },
+        # exp_changed:
+        True
+    ),
+]
+
+
 class TestPartition(object):
     """
     All tests for partitions.
@@ -284,8 +716,10 @@ class TestPartition(object):
         cpcs = self.client.cpcs.list()
         assert len(cpcs) == 1
         self.cpc = cpcs[0]
+        self.faked_crypto_adapters = []
+        self.faked_crypto_adapter_names = []
 
-    def setup_partition(self, initial_state):
+    def setup_partition(self, initial_state, additional_props=None):
         """
         Prepare the faked partition, on top of the CPC created by
         setup_method().
@@ -293,8 +727,11 @@ class TestPartition(object):
         self.partition_name = FAKED_PARTITION_1_NAME
         if initial_state in ('stopped', 'active'):
             # Create the partition (it is in stopped state by default)
+            partition_props = FAKED_PARTITION_1.copy()
+            if additional_props:
+                partition_props.update(additional_props)
             self.faked_partition = self.faked_cpc.partitions.add(
-                FAKED_PARTITION_1)
+                partition_props)
             partitions = self.cpc.partitions.list()
             assert len(partitions) == 1
             self.partition = partitions[0]
@@ -339,6 +776,16 @@ class TestPartition(object):
             self.faked_nic = None
             self.nic = None
 
+    def setup_crypto_adapter(self, adapter_props):
+        """
+        Prepare a faked crypto adapter, on top of the faked CPC created by
+        setup_method().
+        """
+        faked_adapter = self.faked_cpc.adapters.add(adapter_props)
+        self.faked_crypto_adapters.append(faked_adapter)
+        self.faked_crypto_adapter_names.append(
+            faked_adapter.properties['name'])
+
     @pytest.mark.parametrize(
         "check_mode", [False, True])
     @pytest.mark.parametrize(
@@ -351,6 +798,8 @@ class TestPartition(object):
 
             # special cases:
             ({}, True),
+
+            # Note: Property 'crypto_configuration' is tested in separate meth.
 
             # allowed update-only properties:
 
@@ -559,7 +1008,6 @@ class TestPartition(object):
             ({'virtual_function_uris': ['/api/fake-vf-uri']}, True, True),
             ({'nic_uris': ['/api/fake-nic-uri']}, True, True),
             ({'hba_uris': ['/api/fake-hba-uri']}, True, True),
-            ({'crypto_configuration': 'fake-config'}, True, True),
         ])
     @mock.patch("ansible.modules.zhmc.zhmc_partition.AnsibleModule",
                 autospec=True)
@@ -910,3 +1358,264 @@ class TestPartition(object):
         # Assert the failure message
         msg = get_failure_msg(mod_obj)
         assert msg.startswith("ParameterError:")
+
+    @pytest.mark.parametrize(
+        "check_mode", [False, True])
+    @pytest.mark.parametrize(
+        # We omit initial state 'absent' due to limitations in the mock support
+        # (when creating partitions, it does not populate them with all
+        # properties).
+        "initial_state", ['stopped', 'active'])
+    @pytest.mark.parametrize(
+        "desired_state", ['stopped', 'active'])
+    @pytest.mark.parametrize(
+        "desc, adapters, initial_config, input_props, exp_config, exp_changed",
+        CRYPTO_CONFIG_SUCCESS_TESTCASES)
+    @mock.patch("ansible.modules.zhmc.zhmc_partition.AnsibleModule",
+                autospec=True)
+    def test_crypto_config_success(
+            self, ansible_mod_cls, desc, adapters, initial_config, input_props,
+            exp_config, exp_changed, desired_state, initial_state, check_mode):
+        """
+        Tests for successful crypto configuration.
+        """
+
+        # Prepare the initial partition and crypto adapters
+        self.setup_partition(initial_state,
+                             {'crypto-configuration': initial_config})
+        for adapter_props in adapters:
+            self.setup_crypto_adapter(adapter_props)
+
+        # Set some expectations for this test from its parametrization
+        exp_status = (PARTITION_STATUS_FROM_STATE[initial_state] if check_mode
+                      else PARTITION_STATUS_FROM_STATE[desired_state])
+
+        # Adjust expected changes - the exp_changed argument only indicates the
+        # expectation for changes to the crypto config property.
+        if desired_state != initial_state:
+            exp_changed = True
+
+        properties = input_props
+
+        if self.partition:
+            self.partition.pull_full_properties()
+            exp_properties = self.partition.properties.copy()
+        else:
+            exp_properties = {}
+        exp_properties['crypto-configuration'] = exp_config
+
+        # Prepare module input parameters
+        params = {
+            'hmc_host': 'fake-host',
+            'hmc_auth': dict(userid='fake-userid',
+                             password='fake-password'),
+            'cpc_name': self.cpc.name,
+            'name': self.partition_name,
+            'state': desired_state,
+            'properties': properties,
+            'faked_session': self.session,
+        }
+
+        # Prepare mocks for AnsibleModule object
+        mod_obj = mock_ansible_module(ansible_mod_cls, params, check_mode)
+
+        # Exercise the code to be tested
+        with pytest.raises(SystemExit) as exc_info:
+            zhmc_partition.main()
+        exit_code = exc_info.value.args[0]
+
+        # Assert module exit code
+        assert exit_code == 0, \
+            "Module unexpectedly failed with this message:\n{}". \
+            format(get_failure_msg(mod_obj))
+
+        # Assert module output
+        changed, part_props = get_module_output(mod_obj)
+        assert changed == exp_changed
+        assert part_props != {}
+        if not check_mode:
+            assert part_props['status'] == exp_status
+            assert part_props['name'] == params['name']
+            for prop_name in exp_properties:
+
+                # Because we built the expected properties from the initial
+                # properties (adding the crypto_config property we test),
+                # we need to skip the 'status' property (it would still show
+                # the initial value).
+                if prop_name == 'status':
+                    continue
+
+                hmc_prop_name = prop_name.replace('_', '-')
+                assert hmc_prop_name in part_props
+                result_property = part_props[hmc_prop_name]
+                exp_property = exp_properties[prop_name]
+                assert result_property == exp_property, \
+                    "Property: {}".format(prop_name)
+
+        # Assert the partition resource
+        if not check_mode:
+            parts = self.cpc.partitions.list()
+            assert len(parts) == 1
+            part = parts[0]
+            part.pull_full_properties()
+            assert part.properties['status'] == exp_status
+            assert part.properties['name'] == params['name']
+            for prop_name in exp_properties:
+
+                # Because we built the expected properties from the initial
+                # properties (adding the crypto_config property we test),
+                # we need to skip the 'status' property (it would still show
+                # the initial value).
+                if prop_name == 'status':
+                    continue
+
+                hmc_prop_name = prop_name.replace('_', '-')
+                assert hmc_prop_name in part.properties
+                part_property = part.properties[hmc_prop_name]
+                exp_property = exp_properties[prop_name]
+                assert part_property == exp_property, \
+                    "Property: {}".format(prop_name)
+
+    @pytest.mark.parametrize(
+        "check_mode", [False, True])
+    @pytest.mark.parametrize(
+        # We omit initial state 'absent' due to limitations in the mock support
+        # (when creating partitions, it does not populate them with all
+        # properties).
+        "initial_state", ['stopped', 'active'])
+    @pytest.mark.parametrize(
+        "desired_state", ['stopped', 'active'])
+    @pytest.mark.parametrize(
+        "adapters, initial_config", [
+            (
+                [
+                    FAKED_CRYPTO_ADAPTER_1,
+                    FAKED_CRYPTO_ADAPTER_2,
+                ],
+                {
+                    'crypto-adapter-uris': [
+                        FAKED_CRYPTO_ADAPTER_1['object-uri'],
+                    ],
+                    'crypto-domain-configurations': [
+                        {'domain-index': 3, 'access-mode': 'control'},
+                    ],
+                },
+            ),
+        ])
+    @pytest.mark.parametrize(
+        "input_props, error_msg_pattern", [
+            (
+                dict(
+                    crypto_configuration='abc',  # error: no dictionary
+                ),
+                "ParameterError: .*",
+            ),
+            (
+                dict(
+                    crypto_configuration=dict(
+                        # error: no crypto_adapter_names field
+                        crypto_domain_configurations=[
+                            dict(domain_index=3, access_mode='control-usage'),
+                        ],
+                    ),
+                ),
+                "ParameterError: .*crypto_adapter_names.*",
+            ),
+            (
+                dict(
+                    crypto_configuration=dict(
+                        crypto_adapter_names=[
+                            'invalid-adapter-name',  # error: not found
+                        ],
+                        crypto_domain_configurations=[
+                            dict(domain_index=3, access_mode='control-usage'),
+                        ],
+                    ),
+                ),
+                "ParameterError: .*invalid-adapter-name.*",
+            ),
+            (
+                dict(
+                    crypto_configuration=dict(
+                        crypto_adapter_names=[
+                            FAKED_CRYPTO_ADAPTER_1['name'],
+                        ],
+                        # error: no crypto_domain_configurations field
+                    ),
+                ),
+                "ParameterError: .*crypto_domain_configurations.*",
+            ),
+            (
+                dict(
+                    crypto_configuration=dict(
+                        crypto_adapter_names=[
+                            FAKED_CRYPTO_ADAPTER_1['name'],
+                        ],
+                        crypto_domain_configurations=[
+                            dict(access_mode='control-usage'),
+                            # error: no domain_index field
+                        ],
+                    ),
+                ),
+                "ParameterError: .*domain_index.*",
+            ),
+            (
+                dict(
+                    crypto_configuration=dict(
+                        crypto_adapter_names=[
+                            FAKED_CRYPTO_ADAPTER_1['name'],
+                        ],
+                        crypto_domain_configurations=[
+                            dict(domain_index=3),
+                            # error: no access_mode field
+                        ],
+                    ),
+                ),
+                "ParameterError: .*access_mode.*",
+            ),
+        ])
+    @mock.patch("ansible.modules.zhmc.zhmc_partition.AnsibleModule",
+                autospec=True)
+    def test_crypto_config_parm_errors(
+            self, ansible_mod_cls, input_props, error_msg_pattern, adapters,
+            initial_config, desired_state, initial_state, check_mode):
+        """
+        Tests for 'crypto_configuration' property with parameter errors.
+        """
+
+        # Prepare the initial partition and crypto adapters
+        self.setup_partition(initial_state,
+                             {'crypto-configuration': initial_config})
+        for adapter_props in adapters:
+            self.setup_crypto_adapter(adapter_props)
+
+        # Prepare module input parameters
+        params = {
+            'hmc_host': 'fake-host',
+            'hmc_auth': dict(userid='fake-userid',
+                             password='fake-password'),
+            'cpc_name': self.cpc.name,
+            'name': self.partition_name,
+            'state': desired_state,
+            'properties': input_props,
+            'faked_session': self.session,
+        }
+
+        # Prepare mocks for AnsibleModule object
+        mod_obj = mock_ansible_module(ansible_mod_cls, params, check_mode)
+
+        # Exercise the code to be tested
+        with pytest.raises(SystemExit) as exc_info:
+            zhmc_partition.main()
+        exit_code = exc_info.value.args[0]
+
+        # Assert module exit code
+        assert exit_code == 1, \
+            "Module unexpectedly succeeded with this output:\n" \
+            "changed: {!r}, partition: {!r}". \
+            format(*get_module_output(mod_obj))
+
+        # Assert the failure message
+        msg = get_failure_msg(mod_obj)
+        pattern = r'^{}$'.format(error_msg_pattern)
+        assert re.match(pattern, msg)

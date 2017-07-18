@@ -3,6 +3,7 @@ hmc_host: 10.11.12.13
 
 cpc_name: P0001234
 partition_name: zhmc-part-1
+crypto_adapter_name: Crypto 0124 A13B-12
 
 hba_name: hba-1
 hba_adapter_name: FCP 0108 A13B-03
