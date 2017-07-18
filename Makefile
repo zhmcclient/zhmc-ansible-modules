@@ -159,12 +159,6 @@ plugin_formatter := $(ansible_repo_dir)/docs/bin/plugin_formatter.py
 plugin_formatter_template_file := $(doc_template_dir)/plugin.rst.j2
 plugin_formatter_template_dir := $(shell dirname $(plugin_formatter_template_file))
 
-# dump_keywords tool from Ansible project
-keyword_dumper := $(ansible_repo_dir)/docs/bin/dump_keywords.py
-keyword_dumper_template_file := $(ansible_repo_template_dir)/playbooks_keywords.rst.j2
-keyword_dumper_template_dir := $(shell dirname $(keyword_dumper_template_file))
-keyword_dumper_desc_file := $(ansible_repo_dir)/docs/docsite/keyword_desc.yml
-
 # validate-modules tool from Ansible project
 validate_modules := $(ansible_repo_dir)/test/sanity/validate-modules/validate-modules
 validate_modules_log_file := validate.log
@@ -293,21 +287,14 @@ $(doc_gen_dir)/list_of_all_modules.rst: $(plugin_formatter) $(plugin_formatter_t
 	PYTHONPATH=$(ansible_repo_lib_dir) $(plugin_formatter) -vv --type=rst --template-dir=$(plugin_formatter_template_dir) --module-dir=$(module_src_dir) --output-dir=$(doc_gen_dir)/
 	rm -fv $(doc_gen_dir)/modules_by_category.rst $(doc_gen_dir)/list_of__modules.rst
 
-$(doc_gen_dir)/playbooks_keywords.rst: $(keyword_dumper) $(keyword_dumper_template_file) $(keyword_dumper_desc_file)
-	mkdir -p $(doc_gen_dir)
-	PYTHONPATH=$(ansible_repo_lib_dir) $(keyword_dumper) --template-dir=$(keyword_dumper_template_dir) --docs-source=$(keyword_dumper_desc_file) --output-dir=$(doc_gen_dir)/
-
-#staticmin:
-#	cat _themes/srtd/static/css/theme.css | sed -e 's/^[    ]*//g; s/[      ]*$$//g; s/\([:{;,]\) /\1/g; s/ {/{/g; s/\/\*.*\*\///g; /^$$/d' | sed -e :a -e '$$!N; s/\n\(.\)/\1/; ta' > _themes/srtd/static/css/theme.min.css
-
-$(doc_build_dir)/html/index.html: Makefile $(doc_dependent_files) $(doc_gen_dir)/list_of_all_modules.rst $(doc_gen_dir)/playbooks_keywords.rst
+$(doc_build_dir)/html/index.html: Makefile $(doc_dependent_files) $(doc_gen_dir)/list_of_all_modules.rst
 	rm -fv $@
 	mkdir -p $(doc_build_dir)
 	cp -v $(doc_copy_files) $(doc_gen_dir)/
 	$(sphinx) -b html $(sphinx_opts) $(doc_dir) $(doc_build_dir)/html
 	@echo "Done: Created the HTML pages with top level file: $@"
 
-$(doc_build_dir)/linkcheck/output.txt: Makefile $(doc_dependent_files) $(doc_gen_dir)/list_of_all_modules.rst $(doc_gen_dir)/playbooks_keywords.rst
+$(doc_build_dir)/linkcheck/output.txt: Makefile $(doc_dependent_files) $(doc_gen_dir)/list_of_all_modules.rst
 	$(sphinx) -b linkcheck $(sphinx_opts) $(doc_dir) $(doc_build_dir)/linkcheck
 	@echo
 	@echo "Done: Look for any errors in the above output or in: $@"
