@@ -72,11 +72,11 @@ Supported environments
 The Ansible modules in the zhmc-ansible-modules package are supported in these
 environments:
 
-* Ansible versions: 2.3 or higher
+* Ansible versions: 2.0 or higher
 
 * Operating systems running Ansible: Linux, OS-X
 
-* Machine generations: z13/z13s/Emperor/Rockhopper to z14
+* Machine generations: z13/z13s/Emperor/Rockhopper or higher
 
 
 .. _`Installation`:
