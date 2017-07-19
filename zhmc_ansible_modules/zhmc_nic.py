@@ -38,9 +38,9 @@ DOCUMENTATION = """
 ---
 module: zhmc_nic
 version_added: "0.0"
-short_description: Manages NICs in an existing partition
+short_description: Manages NICs in existing partitions
 description:
-  - Creates, updates, and deletes NICs in existing partitions.
+  - Creates, updates, and deletes NICs in existing partitions of a CPC.
   - The targeted CPC must be in the Dynamic Partition Manager (DPM) operational
     mode.
 notes:
@@ -51,7 +51,7 @@ author:
   - Juergen Leopold (@leopoldjuergen, leopoldj@de.ibm.com)
 requirements:
   - Network access to HMC
-  - zhmcclient >=0.13.0
+  - zhmcclient >=0.14.0
 options:
   hmc_host:
     description:
@@ -98,18 +98,19 @@ options:
          Key is the property name with underscores instead of hyphens, and
          value is the property value in YAML syntax. Will be ignored for
          C(state=absent)."
-      - "The possible input properties in this dictionary are:"
-      - "The properties defined as writeable in the data model for NIC
-         resources, where the property names contain underscores instead of
-         hyphens."
-      - "C(name): Cannot be specified because the name has already been
+      - "The possible input properties in this dictionary are the properties
+         defined as writeable in the data model for NIC resources (where the
+         property names contain underscores instead of hyphens), with the
+         following exceptions:"
+      - "* C(name): Cannot be specified because the name has already been
          specified in the C(name) module parameter."
-      - "C(network_adapter_port_uri) and C(virtual_switch_uri): Cannot be
-         specified because they are derived from the artificial properties
-         C(adapter_name) and C(adapter_port)."
-      - "C(adapter_name): The name of the adapter that has the port backing the
-         target NIC. Used for all adapter families (ROCE, OSA, Hipersockets)."
-      - "C(adapter_port): The port index of the adapter port backing the
+      - "* C(network_adapter_port_uri) and C(virtual_switch_uri): Cannot be
+         specified because this information is specified using the artificial
+         properties C(adapter_name) and C(adapter_port)."
+      - "* C(adapter_name): The name of the adapter that has the port backing
+         the target NIC. Used for all adapter families (ROCE, OSA,
+         Hipersockets)."
+      - "* C(adapter_port): The port index of the adapter port backing the
          target NIC. Used for all adapter families (ROCE, OSA, Hipersockets)."
       - "Properties omitted in this dictionary will remain unchanged when the
          NIC already exists, and will get the default value defined in the
@@ -157,14 +158,13 @@ EXAMPLES = """
 RETURN = """
 nic:
   description:
-    - "For C(state=absent), empty."
-    - "For C(state=present), the resource properties of the NIC (after changes,
-       if any)."
-    - "The dictionary keys are the exact property names as described in the
-       data model for the resource, i.e. they contain hyphens (-), not
-       underscores (_). The dictionary values are the property values using the
-       Python representations described in the documentation of the zhmcclient
-       Python package."
+    - "For C(state=absent), an empty dictionary."
+    - "For C(state=present), a dictionary with the resource properties of the
+       NIC (after changes, if any). The dictionary keys are the exact property
+       names as described in the data model for the resource, i.e. they contain
+       hyphens (-), not underscores (_). The dictionary values are the property
+       values using the Python representations described in the documentation
+       of the zhmcclient Python package."
   returned: success
   type: dict
   sample: |
@@ -172,7 +172,7 @@ nic:
       "name": "nic-1",
       "description": "NIC #1",
       "virtual-switch-uri': "/api/vswitches/...",
-      # . . .
+      ...
     })
 """
 

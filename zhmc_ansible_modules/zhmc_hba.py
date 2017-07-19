@@ -38,9 +38,9 @@ DOCUMENTATION = """
 ---
 module: zhmc_hba
 version_added: "0.0"
-short_description: Manages HBAs in an existing partition
+short_description: Manages HBAs in existing partitions
 description:
-  - Creates, updates, and deletes HBAs in existing partitions.
+  - Creates, updates, and deletes HBAs in existing partitions of a CPC.
   - The targeted CPC must be in the Dynamic Partition Manager (DPM) operational
     mode.
 notes:
@@ -51,7 +51,7 @@ author:
   - Juergen Leopold (@leopoldjuergen, leopoldj@de.ibm.com)
 requirements:
   - Network access to HMC
-  - zhmcclient >=0.13.0
+  - zhmcclient >=0.14.0
 options:
   hmc_host:
     description:
@@ -98,17 +98,18 @@ options:
          Key is the property name with underscores instead of hyphens, and
          value is the property value in YAML syntax. Will be ignored for
          C(state=absent)."
-      - "The possible input properties in this dictionary are:"
-      - "The properties defined as writeable in the data model for HBA
-         resources, where the property names contain underscores instead of
-         hyphens."
-      - "C(name): Cannot be specified because the name has already been
+      - "The possible input properties in this dictionary are the properties
+         defined as writeable in the data model for HBA resources (where the
+         property names contain underscores instead of hyphens), with the
+         following exceptions:"
+      - "* C(name): Cannot be specified because the name has already been
          specified in the C(name) module parameter."
-      - "C(adapter_port_uri): Cannot be specified because it is derived from
-         the artificial properties C(adapter_name) and C(adapter_port)."
-      - "C(adapter_name): The name of the adapter that has the port backing the
-         target HBA. Cannot be changed after the HBA exists."
-      - "C(adapter_port): The port index of the adapter port backing the
+      - "* C(adapter_port_uri): Cannot be specified because this information is
+         specified using the artificial properties C(adapter_name) and
+         C(adapter_port)."
+      - "* C(adapter_name): The name of the adapter that has the port backing
+         the target HBA. Cannot be changed after the HBA exists."
+      - "* C(adapter_port): The port index of the adapter port backing the
          target HBA. Cannot be changed after the HBA exists."
       - "Properties omitted in this dictionary will remain unchanged when the
          HBA already exists, and will get the default value defined in the
@@ -156,14 +157,13 @@ EXAMPLES = """
 RETURN = """
 hba:
   description:
-    - "For C(state=absent), empty."
-    - "For C(state=present), the resource properties of the HBA (after changes,
-       if any)."
-    - "The dictionary keys are the exact property names as described in the
-       data model for the resource, i.e. they contain hyphens (-), not
-       underscores (_). The dictionary values are the property values using the
-       Python representations described in the documentation of the zhmcclient
-       Python package."
+    - "For C(state=absent), an empty dictionary."
+    - "For C(state=present), a dictionary with the resource properties of the
+       HBA (after changes, if any). The dictionary keys are the exact property
+       names as described in the data model for the resource, i.e. they contain
+       hyphens (-), not underscores (_). The dictionary values are the property
+       values using the Python representations described in the documentation
+       of the zhmcclient Python package."
   returned: success
   type: dict
   sample: |
@@ -171,7 +171,7 @@ hba:
       "name": "hba-1",
       "description": "HBA #1",
       "adapter-port-uri": "/api/adapters/.../ports/...",
-      # . . .
+      ...
     })
 """
 
