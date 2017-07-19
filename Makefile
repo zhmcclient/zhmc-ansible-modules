@@ -54,12 +54,16 @@ else
   PLATFORM := $(shell uname -s)
 endif
 
-# Name of this package on Pypi and in Python
+# Name of this package on Pypi
+# Note: This must match the 'name' attribute specified in setup.cfg.
 # Note: Underscores in package names are automatically converted to dashes in
 #       the Pypi package name (see https://stackoverflow.com/q/19097057/1424462),
 #       so we specify dashes for the Pypi package name right away.
 package_name_pypi := zhmc-ansible-modules
+
+# Name of the Python package
 package_name_python := zhmc_ansible_modules
+package_name_python_dashes := $(subst _,-,$(package_name_python))
 
 # Package version (full version, including any pre-release suffixes, e.g. "0.2.1.dev42")
 package_version := $(shell $(PIP_CMD) show $(package_name_pypi) | grep "Version:" | sed -e 's/Version: *\(.*\)$$/\1/')
@@ -85,7 +89,7 @@ dist_build_dir := $(build_dir)/dist
 
 # Distribution archives (as built by setup.py)
 bdist_file := $(dist_build_dir)/$(package_name_python)-$(package_version)-py2.py3-none-any.whl
-sdist_file := $(dist_build_dir)/$(package_name_pypi)-$(package_version).tar.gz
+sdist_file := $(dist_build_dir)/$(package_name_python_dashes)-$(package_version).tar.gz
 
 # Files the distribution archive depends upon.
 dist_dependent_files := \
@@ -257,7 +261,7 @@ endif
 
 .PHONY: clobber
 clobber:
-	rm -Rf .cache $(package_name_python).egg-info .eggs $(build_dir) $(doc_gen_dir) htmlcov .tox
+	rm -Rf .cache $(package_name_pypi).egg-info .eggs $(build_dir) $(doc_gen_dir) htmlcov .tox
 	rm -f MANIFEST MANIFEST.in AUTHORS ChangeLog .coverage flake8_*.log test_*.log validate.log
 	find . -name "*.pyc" -delete -o -name "__pycache__" -delete -o -name "*.tmp" -delete -o -name "tmp_*" -delete
 	@echo 'Done: Removed all build products to get to a fresh state.'
@@ -265,7 +269,7 @@ clobber:
 
 $(bdist_file): Makefile $(dist_dependent_files)
 ifneq ($(PLATFORM),Windows)
-	rm -Rf $(package_name_python).egg-info .eggs
+	rm -Rf $(package_name_pypi).egg-info .eggs
 	mkdir -p $(dist_build_dir)
 	$(PYTHON_CMD) setup.py bdist_wheel -d $(dist_build_dir) --universal
 	@echo 'Done: Created distribution file: $@'
@@ -276,7 +280,7 @@ endif
 
 $(sdist_file): Makefile $(dist_dependent_files)
 ifneq ($(PLATFORM),Windows)
-	rm -Rf $(package_name_python).egg-info .eggs
+	rm -Rf $(package_name_pypi).egg-info .eggs
 	mkdir -p $(dist_build_dir)
 	$(PYTHON_CMD) setup.py sdist -d $(dist_build_dir)
 	@echo 'Done: Created distribution file: $@'
