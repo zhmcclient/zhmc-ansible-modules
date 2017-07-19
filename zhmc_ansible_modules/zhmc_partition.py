@@ -42,20 +42,20 @@ module: zhmc_partition
 version_added: "0.0"
 short_description: Manages partitions
 description:
-  - Creates, updates, deletes, starts, and stops partitions on z Systems and
-    LinuxONE machines that are in the Dynamic Partition Manager (DPM)
-    operational mode.
+  - Creates, updates, deletes, starts, and stops partitions in a CPC.
   - Child resources on partitions such as HBAs, NICs or virtual functions are
     managed by separate Ansible modules.
+  - The targeted CPC must be in the Dynamic Partition Manager (DPM) operational
+    mode.
 notes:
-  - See also Ansible modules zhmc_hba, zhmc_nic, zhmc_virtualfunction.
+  - See also Ansible modules zhmc_hba, zhmc_nic, zhmc_virtual_function.
 author:
   - Andreas Maier (@andy-maier, maiera@de.ibm.com)
   - Andreas Scheuring (@scheuran, scheuran@de.ibm.com)
   - Juergen Leopold (@leopoldjuergen, leopoldj@de.ibm.com)
 requirements:
   - Network access to HMC
-  - zhmcclient >=0.13.0
+  - zhmcclient >=0.14.0
 options:
   hmc_host:
     description:
@@ -100,31 +100,31 @@ options:
          C(state=stopped) and C(state=active). Key is the property name with
          underscores instead of hyphens, and value is the property value in
          YAML syntax. Will be ignored for C(state=absent)."
-      - "The possible input properties in this dictionary are:"
-      - "The properties defined as writeable in the data model for partition
-         resources, where the property names contain underscores instead of
-         hyphens."
-      - "C(name): Cannot be specified because the name has already been
+      - "The possible input properties in this dictionary are the properties
+         defined as writeable in the data model for Partition resources
+         (where the property names contain underscores instead of hyphens),
+         with the following exceptions:"
+      - "* C(name): Cannot be specified because the name has already been
          specified in the C(name) module parameter."
-      - "C(type): Cannot be changed once the partition exists, because updating
-         it is not supported."
-      - "C(boot_storage_device): Cannot be specified because it is derived from
-         the artificial property C(boot_storage_hba_name)."
-      - "C(boot_network_device): Cannot be specified because it is derived from
-         the artificial property C(boot_network_nic_name)."
-      - "C(boot_storage_hba_name): The name of the HBA whose URI is used to
+      - "* C(type): Cannot be changed once the partition exists, because
+         updating it is not supported."
+      - "* C(boot_storage_device): Cannot be specified because this information
+         is specified using the artificial property C(boot_storage_hba_name)."
+      - "* C(boot_network_device): Cannot be specified because this information
+         is specified using the artificial property C(boot_network_nic_name)."
+      - "* C(boot_storage_hba_name): The name of the HBA whose URI is used to
          construct C(boot_storage_device). Specifying it requires that the
          partition exists."
-      - "C(boot_network_nic_name): The name of the NIC whose URI is used to
+      - "* C(boot_network_nic_name): The name of the NIC whose URI is used to
          construct C(boot_network_device). Specifying it requires that the
          partition exists."
-      - "C(crypto_configuration): The crypto configuration for the partition,
-         in the format of the 'crypto-configuration' property of the
+      - "* C(crypto_configuration): The crypto configuration for the partition,
+         in the format of the C(crypto-configuration) property of the
          partition (see HMC API book for details), with the exception that
          adapters are specified with their names in field
-         'crypto_adapter_names' instead of their URIs in field
-         'crypto_adapter_uris'. If the 'crypto_adapter_names' field is null,
-         all crypto adapters of the CPC are used."
+         C(crypto_adapter_names) instead of their URIs in field
+         C(crypto_adapter_uris). If the C(crypto_adapter_names) field is null,
+         all crypto adapters of the CPC will be used."
       - "Properties omitted in this dictionary will remain unchanged when the
          partition already exists, and will get the default value defined in
          the data model for partitions in the HMC API book when the partition
@@ -213,14 +213,14 @@ EXAMPLES = """
 RETURN = """
 partition:
   description:
-    - "For C(state=absent), empty."
-    - "For C(state=stopped) and C(state=active), the resource properties of the
-       partition (after changes, if any)."
-    - "The dictionary keys are the exact property names as described in the
-       data model for the resource, i.e. they contain hyphens (-), not
-       underscores (_). The dictionary values are the property values using the
-       Python representations described in the documentation of the zhmcclient
-       Python package."
+    - "For C(state=absent), an empty dictionary."
+    - "For C(state=stopped) and C(state=active), a dictionary with the resource
+       properties of the partition (after changes, if any). The dictionary
+       keys are the exact property names as described in the data model for the
+       resource, i.e. they contain hyphens (-), not underscores (_). The
+       dictionary values are the property values using the Python
+       representations described in the documentation of the zhmcclient Python
+       package."
   returned: success
   type: dict
   sample: |
@@ -229,7 +229,7 @@ partition:
       "description": "partition #1",
       "status": "active",
       "boot-device": "storage-adapter",
-      # . . .
+      ...
     })
 """
 
