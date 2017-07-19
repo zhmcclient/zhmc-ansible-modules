@@ -13,7 +13,7 @@
 .. limitations under the License.
 ..
 
-zhmc_ansible_modules - Ansible modules for the z Systems HMC Web Services API
+zhmc-ansible-modules - Ansible modules for the z Systems HMC Web Services API
 =============================================================================
 
 
@@ -36,7 +36,7 @@ following an important principle for Ansible modules.
 
 The idempotency of a module allows Ansible playbooks to specify the desired end
 state for a resource, regardless of what the current state is. For example, a
-z Systems partition can be specified to have ``status=active`` which means that
+z Systems partition can be specified to have ``state=active`` which means that
 it must exist and be in the active operational status. Depending on the current
 state of the partition, actions will be taken by the module to reach this
 desired end state: If the partition does not exist, it will be created and
@@ -57,19 +57,17 @@ package.
 .. _Ansible: https://www.ansible.com/
 .. _z Systems: http://www.ibm.com/systems/z/
 .. _LinuxONE: http://www.ibm.com/systems/linuxone/
-.. _zhmcclient: http://python-zhmcclient.readthedocs.io/en/stable/
+.. _zhmcclient: https://github.com/zhmcclient/python-zhmcclient
 
 
 Quickstart
 ==========
 
-For installation instructions, see
-`Installation of zhmc-ansible-modules package`.
-
-.. _`Installation of zhmc-ansible-modules package`: http://zhmc-ansible-modules.readthedocs.io/en/stable/intro.html#installation
+For installation instructions, see `Installation of zhmc-ansible-modules package
+<http://zhmc-ansible-modules.readthedocs.io/en/stable/intro.html#installation>`_.
 
 After having installed the zhmc-ansible-modules package, you can download and
-run the example playbooks in `folder ``playbooks`` of the Git repository
+run the example playbooks in `folder 'playbooks' of the Git repository
 <https://github.com/zhmcclient/zhmc-ansible-modules/tree/master/playbooks>`_:
 
 * ``create_partition.yml`` creates a partition with a NIC, HBA and virtual
