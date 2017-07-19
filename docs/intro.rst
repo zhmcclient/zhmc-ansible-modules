@@ -40,7 +40,7 @@ following an important principle for Ansible modules.
 
 The idempotency of a module allows Ansible playbooks to specify the desired end
 state for a resource, regardless of what the current state is. For example, a
-z Systems partition can be specified to have ``status=active`` which means that
+z Systems partition can be specified to have ``state=active`` which means that
 it must exist and be in the active operational status. Depending on the current
 state of the partition, actions will be taken by the module to reach this
 desired end state: If the partition does not exist, it will be created and
