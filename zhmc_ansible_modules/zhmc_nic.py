@@ -31,7 +31,7 @@ ANSIBLE_METADATA = {
     'status': ['preview'],
     'supported_by': 'community',
     'shipped_by': 'other',
-    'other_repo_url': 'https://github.ibm.com/zhmcclient/zhmc-ansible-modules'
+    'other_repo_url': 'https://github.com/zhmcclient/zhmc-ansible-modules'
 }
 
 DOCUMENTATION = """
