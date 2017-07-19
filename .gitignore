@@ -7,7 +7,7 @@ env*
 /docs/gen/
 /build/
 /htmlcov/
-/tests/.coverage
+.coverage
 *.egg
 *.egg-info
 /_mailinglist
