@@ -100,7 +100,6 @@ dist_dependent_files := \
 # Directory for documentation (with Makefile)
 doc_dir := docs
 doc_gen_dir := $(doc_dir)/gen
-doc_template_dir := $(doc_dir)/templates
 
 # Directory for generated documentation
 doc_build_dir := $(build_dir)/docs
@@ -157,7 +156,7 @@ ansible_repo_rst_dir := $(ansible_repo_dir)/docs/docsite/rst
 
 # plugin_formatter tool from Ansible project
 plugin_formatter := $(ansible_repo_dir)/docs/bin/plugin_formatter.py
-plugin_formatter_template_file := $(doc_template_dir)/plugin.rst.j2
+plugin_formatter_template_file := $(ansible_repo_template_dir)/plugin.rst.j2
 plugin_formatter_template_dir := $(shell dirname $(plugin_formatter_template_file))
 
 # dump_keywords tool from Ansible project
