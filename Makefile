@@ -60,6 +60,7 @@ endif
 #       the Pypi package name (see https://stackoverflow.com/q/19097057/1424462),
 #       so we specify dashes for the Pypi package name right away.
 package_name_pypi := zhmc-ansible-modules
+package_name_pypi_under := $(subst -,_,$(package_name_pypi))
 
 # Name of the Python package
 package_name_python := zhmc_ansible_modules
@@ -261,7 +262,7 @@ endif
 
 .PHONY: clobber
 clobber:
-	rm -Rf .cache $(package_name_pypi).egg-info .eggs $(build_dir) $(doc_gen_dir) htmlcov .tox
+	rm -Rf .cache $(package_name_pypi_under).egg-info .eggs $(build_dir) $(doc_gen_dir) htmlcov .tox
 	rm -f MANIFEST MANIFEST.in AUTHORS ChangeLog .coverage flake8_*.log test_*.log validate.log
 	find . -name "*.pyc" -delete -o -name "__pycache__" -delete -o -name "*.tmp" -delete -o -name "tmp_*" -delete
 	@echo 'Done: Removed all build products to get to a fresh state.'
@@ -269,7 +270,7 @@ clobber:
 
 $(bdist_file): Makefile $(dist_dependent_files)
 ifneq ($(PLATFORM),Windows)
-	rm -Rf $(package_name_pypi).egg-info .eggs
+	rm -Rf $(package_name_pypi_under).egg-info .eggs
 	mkdir -p $(dist_build_dir)
 	$(PYTHON_CMD) setup.py bdist_wheel -d $(dist_build_dir) --universal
 	@echo 'Done: Created distribution file: $@'
@@ -280,7 +281,7 @@ endif
 
 $(sdist_file): Makefile $(dist_dependent_files)
 ifneq ($(PLATFORM),Windows)
-	rm -Rf $(package_name_pypi).egg-info .eggs
+	rm -Rf $(package_name_pypi_under).egg-info .eggs
 	mkdir -p $(dist_build_dir)
 	$(PYTHON_CMD) setup.py sdist -d $(dist_build_dir)
 	@echo 'Done: Created distribution file: $@'
