@@ -13,14 +13,15 @@
 .. limitations under the License.
 ..
 
-zhmc Ansible modules
-====================
+.. _`Change log`:
 
-.. toctree::
-   :maxdepth: 2
+Change log
+----------
 
-   intro
-   gen/list_of_all_modules
-   gen/common_return_values
-   development
-   changes
+
+Version 0.2.0
+^^^^^^^^^^^^^^
+
+Released: not yet
+
+This is the initial release.
