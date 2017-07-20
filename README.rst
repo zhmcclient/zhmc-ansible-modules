@@ -66,6 +66,194 @@ Documentation
 The full documentation for this project is on RTD:
 http://zhmc-ansible-modules.readthedocs.io/en/stable/
 
+Playbook examples
+=================
+
+Here are some examples for using the Ansible modules in this project:
+
+Create a stopped partition
+--------------------------
+
+This task ensures that a partition with this name exists, is in the stopped
+status and has certain property values.
+
+.. code-block:: yaml
+
+    ---
+    - hosts: localhost
+      tasks:
+      - name: Ensure a partition exists and is stopped
+        zhmc_partition:
+          hmc_host: "10.11.12.13"
+          hmc_auth: "{{ hmc_auth }}"
+          cpc_name: P000S67B
+          name: "my partition 1"
+          state: stopped
+          properties:
+            description: "zhmc Ansible modules: partition 1"
+            ifl_processors: 2
+            initial_memory: 1024
+            maximum_memory: 1024
+            minimum_ifl_processing_weight: 50
+            maximum_ifl_processing_weight: 800
+            initial_ifl_processing_weight: 200
+            ... # all partition properties are supported
+
+Start a partition
+-----------------
+
+If this task is run after the previous one shown above, no properties need to
+be specified. If it is possible that the partition first needs to be created,
+then properties would be specified, as above.
+
+.. code-block:: yaml
+
+    ---
+    - hosts: localhost
+      tasks:
+      - name: Ensure a partition exists and is active
+        zhmc_partition:
+          hmc_host: "10.11.12.13"
+          hmc_auth: "{{ hmc_auth }}"
+          cpc_name: P000S67B
+          name: "my partition 1"
+          state: active
+          properties:
+            ... # see above
+
+Delete a partition
+------------------
+
+This task ensures that a partition with this name does not exist. If it
+currently exists, it is stopped (if needed) and deleted.
+
+.. code-block:: yaml
+
+    ---
+    - hosts: localhost
+      tasks:
+      - name: Ensure a partition does not exist
+        zhmc_partition:
+          hmc_host: "10.11.12.13"
+          hmc_auth: "{{ hmc_auth }}"
+          cpc_name: P000S67B
+          name: "my partition 1"
+          state: absent
+
+Create an HBA in a partition
+----------------------------
+
+.. code-block:: yaml
+
+    ---
+    - hosts: localhost
+      tasks:
+      - name: Ensure HBA exists in the partition
+        zhmc_hba:
+          hmc_host: "10.11.12.13"
+          hmc_auth: "{{ hmc_auth }}"
+          cpc_name: P000S67B
+          partition_name: "my partition 1"
+          name: "hba 1"
+          state: present
+          properties:
+            adapter_name: "fcp 1"
+            adapter_port: 0
+            description: The HBA to our storage
+            device_number: "023F"
+            ... # all HBA properties are supported
+
+Create a NIC in a partition
+---------------------------
+
+.. code-block:: yaml
+
+    ---
+    - hosts: localhost
+      tasks:
+      - name: Ensure NIC exists in the partition
+        zhmc_nic:
+          hmc_host: "10.11.12.13"
+          hmc_auth: "{{ hmc_auth }}"
+          cpc_name: P000S67B
+          partition_name: "my partition 1"
+          name: "nic 1"
+          state: present
+          properties:
+            adapter_name: "osa 1"
+            adapter_port: 1
+            description: The NIC to our data network
+            device_number: "013F"
+            ... # all NIC properties are supported
+
+Create a Virtual Function in a partition
+----------------------------------------
+
+.. code-block:: yaml
+
+    ---
+    - hosts: localhost
+      tasks:
+      - name: Ensure virtual function for zEDC adapter exists in the partition
+        zhmc_virtual_function:
+          hmc_host: "10.11.12.13"
+          hmc_auth: "{{ hmc_auth }}"
+          cpc_name: P000S67B
+          partition_name: "my partition 1"
+          name: "vf 1"
+          state: present
+          properties:
+            adapter_name: "zedc 1"
+            description: The virtual function for our accelerator adapter
+            device_number: "043F"
+            ... # all VF properties are supported
+
+Configure partition for booting from FCP LUN
+--------------------------------------------
+
+.. code-block:: yaml
+
+    ---
+    - hosts: localhost
+      tasks:
+      - name: Configure partition for booting via HBA
+        zhmc_partition:
+          hmc_host: "10.11.12.13"
+          hmc_auth: "{{ hmc_auth }}"
+          cpc_name: P000S67B
+          name: "my partition 1"
+          state: stopped
+          properties:
+            boot_device: storage-adapter
+            boot_storage_hba_name: "hba 1"
+            boot_logical_unit_number: "0001"
+            boot_world_wide_port_name: "00cdef01abcdef01"
+
+Configure crypto config of a partition
+--------------------------------------
+
+.. code-block:: yaml
+
+    ---
+    - hosts: localhost
+      tasks:
+      - name: Ensure crypto config for partition
+        zhmc_partition:
+          hmc_host: "10.11.12.13"
+          hmc_auth: "{{ hmc_auth }}"
+          cpc_name: P000S67B
+          name: "my partition 1"
+          state: stopped
+          properties:
+            crypto_configuration:
+              crypto_adapter_names:
+                - "crypto 1"
+              crypto_domain_configurations:
+                - domain_index: 17
+                  access_mode: "control-usage"
+                - domain_index: 19
+                  access_mode: "control"
+
 
 Quickstart
 ==========
