@@ -31,7 +31,7 @@ The z Systems resources that can be managed include Partitions, HBAs, NICs, and
 Virtual Functions.
 
 The Ansible modules in the zhmc-ansible-modules package are fully
-`idempotent <http://docs.ansible.com/ansible/glossary.html#term-idempotency>`_,
+`idempotent <http://docs.ansible.com/ansible/latest/glossary.html#term-idempotency>`_,
 following an important principle for Ansible modules.
 
 The idempotency of a module allows Ansible playbooks to specify the desired end
