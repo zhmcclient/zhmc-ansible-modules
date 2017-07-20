@@ -13,8 +13,8 @@
 .. limitations under the License.
 ..
 
-Contributing to the zhmc-ansible-modules project
-================================================
+Contributing
+------------
 
 Third party contributions to this project are welcome!
 
@@ -46,36 +46,39 @@ For further discussion of good and bad practices regarding commits, see:
 .. _OpenStack Git Commit Good Practice: https://wiki.openstack.org/wiki/GitCommitMessages
 .. _How to Get Your Change Into the Linux Kernel: https://www.kernel.org/doc/Documentation/SubmittingPatches
 
-The `AUTHORS <AUTHORS>`_ file will be automatically updated with your name and
-email once your pull request has been merged.
-
-Development and test
---------------------
-
-See the `README.rst <README.rst>`_ file.
-
 Format of commit messages
--------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A commit message must start with a short summary line, followed by a blank
 line.
 
-It can include a more detailed description after that. This is where you
-explain why the change was done, and summarize what was done.
+Optionally, the summary line may start with an identifier that helps
+identifying the type of change or the component that is affected, followed by
+a colon.
+
+It can include a more detailed description after the summary line. This is
+where you explain why the change was done, and summarize what was done.
 
 It must end with the DCO (Developer Certificate of Origin) sign-off line in the
 format shown in the example below, using your name and a valid email address of
 yours. The DCO sign-off line certifies that you followed the rules stated in
-`DCO1.1.txt <DCO1.1.txt>`_. In short, you certify that you wrote the patch or
-otherwise have the right to pass it on as an open-source patch.
+`DCO 1.1`_. In short, you certify that you wrote the patch or otherwise have
+the right to pass it on as an open-source patch.
 
-We use GitCop to check whether the commit messages comply to this format.
+.. _DCO 1.1: https://raw.githubusercontent.com/zhmcclient/zhmc-ansible-modules/master/DCO1.1.txt
+
+We use `GitCop`_ during creation of a pull request to check whether the commit
+messages in the pull request comply to this format.
+If the commit messages do not comply, GitCop will add a comment to the pull
+request with a description of what was wrong.
+
+.. _GitCop: http://gitcop.com/
 
 Example commit message:
 
-::
+.. code-block:: text
 
-    Add support for delivering cookies
+    cookies: Add support for delivering cookies
 
     Cookies are important for many people. This change adds a pluggable API for
     delivering cookies to the user, and provides a default implementation.
@@ -83,3 +86,27 @@ Example commit message:
     Signed-off-by: Random J Developer <random@developer.org>
 
 Use ``git commit --amend`` to edit the commit message, if you need to.
+
+Use the ``--signoff`` (``-s``) option of ``git commit`` to append a sign-off
+line to the commit message with your name and email as known by Git.
+
+If you like filling out the commit message in an editor instead of using
+the ``-m`` option of ``git commit``, you can automate the presence of the
+sign-off line by using a commit template file:
+
+* Create a file outside of the repo (say, ``~/.git-signoff.template``)
+  that contains, for example:
+
+  .. code-block:: text
+
+      <one-line subject>
+
+      <detailed description>
+
+      Signed-off-by: Random J Developer <random@developer.org>
+
+* Configure Git to use that file as a commit template for your repo:
+
+  .. code-block:: text
+
+      git config commit.template ~/.git-signoff.template
