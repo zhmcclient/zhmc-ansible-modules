@@ -22,6 +22,6 @@ Change log
 Version 0.2.0
 ^^^^^^^^^^^^^^
 
-Released: not yet
+Released: 2017-07-20
 
 This is the initial release.
