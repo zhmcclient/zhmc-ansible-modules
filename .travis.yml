@@ -8,6 +8,7 @@ notifications:
 language: python
 
 # For Linux, we let Travis build the job matrix from these dimensions:
+sudo: required
 python:
   - "2.7"
   - "3.6"
