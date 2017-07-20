@@ -60,6 +60,13 @@ package.
 .. _zhmcclient: https://github.com/zhmcclient/python-zhmcclient
 
 
+Documentation
+=============
+
+The full documentation for this project is on RTD:
+http://zhmc-ansible-modules.readthedocs.io/en/stable/
+
+
 Quickstart
 ==========
 
