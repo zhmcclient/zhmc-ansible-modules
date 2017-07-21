@@ -82,6 +82,8 @@ install:
   - make install
   - $PIP_CMD install python-coveralls
   - $PIP_CMD list
+  - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then make doccheck; fi
+# Note: the module doc build generates different order of module suboptions on py2 and py3.
 
 # commands to run builds & tests
 script:
