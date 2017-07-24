@@ -105,6 +105,7 @@ dist_dependent_files := \
 # Directory for documentation (with Makefile)
 doc_dir := docs
 doc_gen_dir := $(doc_dir)/gen
+doc_check_dir := doc_check
 
 # Directory for generated documentation
 doc_build_dir := $(build_dir)/docs
@@ -185,7 +186,8 @@ help:
 	@echo '  setup      - Set up the development environment'
 	@echo '  dist       - Build the distribution files in: $(dist_build_dir)'
 	@echo '  docs       - Build the documentation in: $(doc_build_dir)'
-	@echo '  check      - Run Flake8 and Ansible validate-modules'
+	@echo '  doccheck   - Run check whether generated module docs are up to date'
+	@echo '  check      - Run all checks (flake8, validate-modules, doccheck)'
 	@echo '  test       - Run unit tests (and test coverage) and save results in: $(test_log_file)'
 	@echo '               Env.var TESTCASES can be used to specify a py.test expression for its -k option'
 	@echo '  all        - Do all of the above'
@@ -222,8 +224,13 @@ dist: $(bdist_file) $(sdist_file)
 docs: $(doc_build_dir)/html/index.html
 	@echo '$@ done.'
 
+.PHONY: doccheck
+doccheck: $(doc_check_dir)/list_of_all_modules.rst
+	bash -c 'diff --exclude=common_return_values.rst $(doc_gen_dir) $(doc_check_dir); if [[ "$$?" != "0" ]]; then echo "Error: Module documentation files are not up to date - run make docs and commit them."; false; fi'
+	@echo '$@ done.'
+
 .PHONY: check
-check: $(flake8_log_file) $(validate_modules_log_file)
+check: $(flake8_log_file) $(validate_modules_log_file) doccheck
 	@echo '$@ done.'
 
 .PHONY: test
@@ -262,7 +269,7 @@ endif
 
 .PHONY: clobber
 clobber:
-	rm -Rf .cache $(package_name_pypi_under).egg-info .eggs $(build_dir) $(doc_gen_dir) htmlcov .tox
+	rm -Rf .cache $(package_name_pypi_under).egg-info .eggs $(build_dir) $(doc_check_dir) htmlcov .tox
 	rm -f MANIFEST MANIFEST.in AUTHORS ChangeLog .coverage flake8_*.log test_*.log validate.log
 	find . -name "*.pyc" -delete -o -name "__pycache__" -delete -o -name "*.tmp" -delete -o -name "tmp_*" -delete
 	@echo 'Done: Removed all build products to get to a fresh state.'
@@ -298,10 +305,15 @@ $(ansible_repo_dir):
 	@echo 'Cloning our fork of the Ansible repo into: $@'
 	git clone https://github.com/andy-maier/ansible.git --branch zhmc-fixes $@
 
-$(doc_gen_dir)/list_of_all_modules.rst: $(plugin_formatter) $(plugin_formatter_template_file) $(module_py_files)
+$(doc_gen_dir)/list_of_all_modules.rst: Makefile $(plugin_formatter) $(plugin_formatter_template_file) $(module_py_files)
 	mkdir -p $(doc_gen_dir)
 	PYTHONPATH=$(ansible_repo_lib_dir) $(plugin_formatter) -vv --type=rst --template-dir=$(plugin_formatter_template_dir) --module-dir=$(module_src_dir) --output-dir=$(doc_gen_dir)/
 	rm -fv $(doc_gen_dir)/modules_by_category.rst $(doc_gen_dir)/list_of__modules.rst
+
+$(doc_check_dir)/list_of_all_modules.rst: Makefile $(plugin_formatter) $(plugin_formatter_template_file) $(module_py_files)
+	mkdir -p $(doc_check_dir)
+	PYTHONPATH=$(ansible_repo_lib_dir) $(plugin_formatter) -vv --type=rst --template-dir=$(plugin_formatter_template_dir) --module-dir=$(module_src_dir) --output-dir=$(doc_check_dir)/
+	rm -fv $(doc_check_dir)/modules_by_category.rst $(doc_check_dir)/list_of__modules.rst
 
 $(doc_build_dir)/html/index.html: Makefile $(doc_dependent_files) $(doc_gen_dir)/list_of_all_modules.rst
 	rm -fv $@

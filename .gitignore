@@ -4,7 +4,7 @@
 /env
 env*
 /venv
-/docs/gen/
+/doc_check/
 /build/
 /htmlcov/
 .coverage
