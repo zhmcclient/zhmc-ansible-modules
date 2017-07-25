@@ -44,5 +44,5 @@ requests>=2.12.4,!=2.17.1,!=2.17.2 # Apache-2.0, from zhmcclient
 six>=1.10.0 # MIT, from zhmcclient and others
 stomp.py>=4.1.15 # Apache, from zhmcclient
 tabulate>=0.7.7 # MIT, from zhmcclient
-urllib3>=1.21.1 # MIT, from requests
+urllib3>=1.21.1,<1.22 # MIT, from requests
 wcwidth>=0.1.7 # MIT, from prompt_toolkit
