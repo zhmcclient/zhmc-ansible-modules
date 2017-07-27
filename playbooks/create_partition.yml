@@ -92,8 +92,8 @@
           crypto_adapter_names:
             - "{{ crypto_adapter_name }}"
           crypto_domain_configurations:
-            - domain_index: 17
+            - domain_index: "17"
               access_mode: "control-usage"
-            - domain_index: 19
+            - domain_index: 20
               access_mode: "control"
     register: part1

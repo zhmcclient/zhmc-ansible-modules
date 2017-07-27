@@ -19,6 +19,29 @@ Change log
 ----------
 
 
+Version 0.3.0
+^^^^^^^^^^^^^
+
+Released: not yet
+
+**Incompatible changes:**
+
+**Deprecations:**
+
+**Bug fixes:**
+
+**Enhancements:**
+
+* Added support for specifying integer-typed properties of
+  partitions also as decimal strings inthe module input.
+
+**Known issues:**
+
+* See `list of open issues`_.
+
+.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
+
+
 Version 0.2.0
 ^^^^^^^^^^^^^^
 

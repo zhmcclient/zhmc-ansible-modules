@@ -136,7 +136,7 @@ Options
     <td>No input properties</td>
     <td></td>
     <td>
-        <div>Dictionary with input properties for the partition, for <code>state=stopped</code> and <code>state=active</code>. Key is the property name with underscores instead of hyphens, and value is the property value in YAML syntax. Will be ignored for <code>state=absent</code>.</div>
+        <div>Dictionary with input properties for the partition, for <code>state=stopped</code> and <code>state=active</code>. Key is the property name with underscores instead of hyphens, and value is the property value in YAML syntax. Integer properties may also be provided as decimal strings. Will be ignored for <code>state=absent</code>.</div>
         <div>The possible input properties in this dictionary are the properties defined as writeable in the data model for Partition resources (where the property names contain underscores instead of hyphens), with the following exceptions:</div>
         <div>* <code>name</code>: Cannot be specified because the name has already been specified in the <code>name</code> module parameter.</div>
         <div>* <code>type</code>: Cannot be changed once the partition exists, because updating it is not supported.</div>
