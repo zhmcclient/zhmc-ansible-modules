@@ -699,6 +699,48 @@ CRYPTO_CONFIG_SUCCESS_TESTCASES = [
         # exp_changed:
         True
     ),
+    (
+        "Check domain index numbers provided as strings",
+        # adapters:
+        [
+            FAKED_CRYPTO_ADAPTER_1,
+            FAKED_CRYPTO_ADAPTER_2,
+        ],
+        # initial_config:
+        {
+            'crypto-adapter-uris': [
+                FAKED_CRYPTO_ADAPTER_1['object-uri'],
+                FAKED_CRYPTO_ADAPTER_2['object-uri'],
+            ],
+            'crypto-domain-configurations': [
+                {'domain-index': 2, 'access-mode': 'control-usage'},
+                {'domain-index': 3, 'access-mode': 'control'},
+            ],
+        },
+        # input_props:
+        dict(
+            crypto_configuration=dict(
+                crypto_adapter_names=[
+                    FAKED_CRYPTO_ADAPTER_1['name'],
+                ],
+                crypto_domain_configurations=[
+                    # Here we provide the domain index as a string:
+                    dict(domain_index="2", access_mode='control-usage'),
+                ],
+            ),
+        ),
+        # exp_config:
+        {
+            'crypto-adapter-uris': [
+                FAKED_CRYPTO_ADAPTER_1['object-uri'],
+            ],
+            'crypto-domain-configurations': [
+                {'domain-index': 2, 'access-mode': 'control-usage'},
+            ],
+        },
+        # exp_changed:
+        True
+    ),
 ]
 
 
@@ -796,6 +838,13 @@ class TestPartition(object):
         "desired_state", ['absent', 'stopped', 'active'])
     @pytest.mark.parametrize(
         "properties, props_changed", [
+            # Note: properties is a dict of property values, with the property
+            # names as keys (with underscores, as needed for the 'properties'
+            # Ansible module input parameter). If a dict value is a tuple, its
+            # first item is the input value, and its second item is the
+            # expected value. Otherwise, the dict value is both input value and
+            # expected value.
+
             # Note: The required properties are always added if not specified.
 
             # special cases:
@@ -815,16 +864,24 @@ class TestPartition(object):
             ({'processor_management_enabled': True}, True),
             ({'ifl_absolute_processor_capping': True}, True),
             ({'ifl_absolute_processor_capping_value': 0.9}, True),
+            ({'ifl_absolute_processor_capping_value': ("0.9", 0.9)}, True),
             ({'ifl_processing_weight_capped': True}, True),
             ({'minimum_ifl_processing_weight': 10}, True),
+            ({'minimum_ifl_processing_weight': ("10", 10)}, True),
             ({'maximum_ifl_processing_weight': 200}, True),
+            ({'maximum_ifl_processing_weight': ("200", 200)}, True),
             ({'initial_ifl_processing_weight': 50}, True),
+            ({'initial_ifl_processing_weight': ("50", 50)}, True),
             ({'cp_absolute_processor_capping': True}, True),
             ({'cp_absolute_processor_capping_value': 0.9}, True),
+            ({'cp_absolute_processor_capping_value': ("0.9", 0.9)}, True),
             ({'cp_processing_weight_capped': True}, True),
             ({'minimum_cp_processing_weight': 10}, True),
+            ({'minimum_cp_processing_weight': ("10", 10)}, True),
             ({'maximum_cp_processing_weight': 200}, True),
+            ({'maximum_cp_processing_weight': ("200", 200)}, True),
             ({'initial_cp_processing_weight': 50}, True),
+            ({'initial_cp_processing_weight': ("50", 50)}, True),
             ({'boot_logical_unit_number': '0123'}, True),
             ({'boot_world_wide_port_name': '0123456789abcdef'}, True),
             ({'boot_os_specific_parameters': 'fake'}, True),
@@ -839,23 +896,28 @@ class TestPartition(object):
             ({'autogenerate_partition_id': False}, True),
             ({'ifl_processors': 1}, True),
             ({'ifl_processors': 2}, True),
+            ({'ifl_processors': ("3", 3)}, True),
             ({'cp_processors': 0}, True),
             ({'cp_processors': 10}, True),
+            ({'cp_processors': ("3", 3)}, True),
             ({'processor_mode': 'dedicated'}, True),
             ({'initial_memory': 2048}, True),
+            ({'initial_memory': ("2048", 2048)}, True),
             ({'maximum_memory': 4096}, True),
+            ({'maximum_memory': ("4096", 4096)}, True),
             ({'reserve_resources': True}, True),
             ({'boot_device': 'ftp'}, True),
             ({'boot_timeout': 120}, True),
+            ({'boot_timeout': ("120", 120)}, True),
             ({'boot_ftp_host': 'fake'}, True),
             ({'boot_ftp_username': 'fake'}, True),
             ({'boot_ftp_password': 'fake'}, True),
             ({'boot_ftp_insfile': 'fake'}, True),
             ({'boot_removable_media': 'fake'}, True),
             ({'boot_removable_media_type': 'fake'}, True),
-            ({'boot_configuration_selector': 'fake'}, True),
-            ({'boot_record_lba': 12}, True),
-
+            ({'boot_configuration_selector': 4}, True),
+            ({'boot_configuration_selector': ("4", 4)}, True),
+            ({'boot_record_lba': "12ff"}, True),
             ({'access_global_performance_data': True}, True),
             ({'permit_cross_partition_commands': True}, True),
             ({'access_basic_counter_set': True}, True),
@@ -896,14 +958,30 @@ class TestPartition(object):
         exp_changed = (initial_state != desired_state or
                        props_changed and desired_state != 'absent')
 
+        input_props = dict()
+        exp_props = dict()
+        for prop_name in properties:
+            hmc_prop_name = prop_name.replace('_', '-')
+            value = properties[prop_name]
+            if isinstance(value, tuple):
+                assert len(value) == 2
+                input_props[prop_name] = value[0]
+                exp_props[hmc_prop_name] = value[1]
+            else:
+                input_props[prop_name] = value
+                exp_props[hmc_prop_name] = value
+
         # Set up required input properties:
-        props = properties.copy()
-        if 'ifl_processors' not in props and 'cp_processors' not in props:
-            props['ifl_processors'] = 1
-        if 'initial_memory' not in props:
-            props['initial_memory'] = 512
-        if 'maximum_memory' not in props:
-            props['maximum_memory'] = 512
+        if 'ifl_processors' not in properties and \
+                'cp_processors' not in properties:
+            input_props['ifl_processors'] = 1
+            exp_props['ifl-processors'] = 1
+        if 'initial_memory' not in properties:
+            input_props['initial_memory'] = 512
+            exp_props['initial-memory'] = 512
+        if 'maximum_memory' not in properties:
+            input_props['maximum_memory'] = 512
+            exp_props['maximum-memory'] = 512
 
         # Prepare module input parameters
         params = {
@@ -913,7 +991,7 @@ class TestPartition(object):
             'cpc_name': self.cpc.name,
             'name': self.partition_name,
             'state': desired_state,
-            'properties': props,
+            'properties': input_props,
             'faked_session': self.session,
         }
 
@@ -938,12 +1016,11 @@ class TestPartition(object):
             if not check_mode:
                 assert part_props['status'] == exp_status
                 assert part_props['name'] == params['name']
-                if properties:
-                    for prop_name in properties:
-                        hmc_prop_name = prop_name.replace('_', '-')
+                if exp_props:
+                    for hmc_prop_name in exp_props:
                         assert part_props[hmc_prop_name] == \
-                            properties[prop_name], \
-                            "Property: {}".format(prop_name)
+                            exp_props[hmc_prop_name], \
+                            "Property: {}".format(hmc_prop_name)
         else:
             assert part_props == {}
 
@@ -957,11 +1034,10 @@ class TestPartition(object):
                 assert part.properties['status'] == exp_status
                 assert part.properties['name'] == params['name']
                 if properties:
-                    for prop_name in properties:
-                        hmc_prop_name = prop_name.replace('_', '-')
+                    for hmc_prop_name in exp_props:
                         assert part.properties[hmc_prop_name] == \
-                            properties[prop_name], \
-                            "Property: {}".format(prop_name)
+                            exp_props[hmc_prop_name], \
+                            "Property: {}".format(hmc_prop_name)
             else:
                 assert len(parts) == 0
 
