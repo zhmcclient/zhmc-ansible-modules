@@ -18,6 +18,7 @@ env*
 /.idea
 /.vagrant
 /try
+try_*
 /tmp
 tmp_*
 *.tmp
