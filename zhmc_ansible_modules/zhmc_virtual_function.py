@@ -53,6 +53,7 @@ author:
 requirements:
   - Network access to HMC
   - zhmcclient >=0.14.0
+  - ansible >=2.2.0.0
 options:
   hmc_host:
     description:

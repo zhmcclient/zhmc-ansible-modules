@@ -35,6 +35,10 @@ Released: not yet
 * Added support for specifying integer-typed properties of
   partitions also as decimal strings inthe module input.
 
+**Dependencies:**
+
+* Increased minimum Ansible release from 2.0.0.1 to 2.2.0.0.
+
 **Known issues:**
 
 * See `list of open issues`_.
