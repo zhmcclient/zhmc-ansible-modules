@@ -22,7 +22,7 @@ import zhmcclient
 
 from zhmc_ansible_modules.utils import Error, ParameterError, StatusError, \
     stop_partition, start_partition, wait_for_transition_completion, eq_hex, \
-    get_hmc_auth, get_session
+    get_hmc_auth, get_session, to_unicode
 
 # For information on the format of the ANSIBLE_METADATA, DOCUMENTATION,
 # EXAMPLES, and RETURN strings, see
@@ -236,7 +236,7 @@ partition:
 """
 
 # Dictionary of properties of partition resources, in this format:
-#   name: (allowed, create, update, update_while_active, eq_func)
+#   name: (allowed, create, update, update_while_active, eq_func, type_cast)
 # where:
 #   name: Name of the property according to the data model, with hyphens
 #     replaced by underscores (this is how it is or would be specified in
@@ -253,8 +253,9 @@ partition:
 #   eq_func: Equality test function for two values of the property; None means
 #     to use Python equality.
 #   type_cast: Type cast function for an input value of the property; None
-#     means to use it directly. This can be used to convert integers provides
-#     as strings back into integers.
+#     means to use it directly. This can be used for example to convert
+#     integers provided as strings by Ansible back into integers (that is a
+#     current deficiency of Ansible).
 ZHMC_PARTITION_PROPERTIES = {
 
     # create-only properties:
@@ -264,16 +265,14 @@ ZHMC_PARTITION_PROPERTIES = {
     'boot_network_device': (
         False, False, True, True, None, None),  # via boot_network_nic_name
     'boot_network_nic_name': (
-        True, False, True, True, None, None),  # artificial property
-    # type_cast is ignored (not needed for this property).
+        True, False, True, True, None, to_unicode),  # artificial property
     'boot_storage_device': (
         False, False, True, True, None, None),  # via boot_storage_hba_name
     'boot_storage_hba_name': (
-        True, False, True, True, None, None),  # artificial property
-    # type_cast is ignored (not needed for this property).
+        True, False, True, True, None, to_unicode),  # artificial property
     'crypto_configuration': (
-        True, False, False, None, None, None),  # artif. props inside
-    # type_cast is ignored (handled specifically for domain index).
+        True, False, False, None, None,
+        None),  # Contains artificial properties, type_cast ignored
     'acceptable_status': (True, False, True, True, None, None),
     'processor_management_enabled': (True, False, True, True, None, None),
     'ifl_absolute_processor_capping': (True, False, True, True, None, None),
@@ -292,14 +291,14 @@ ZHMC_PARTITION_PROPERTIES = {
     'initial_cp_processing_weight': (True, False, True, True, None, int),
     'boot_logical_unit_number': (True, False, True, True, eq_hex, None),
     'boot_world_wide_port_name': (True, False, True, True, eq_hex, None),
-    'boot_os_specific_parameters': (True, False, True, True, None, None),
-    'boot_iso_ins_file': (True, False, True, True, None, None),
+    'boot_os_specific_parameters': (True, False, True, True, None, to_unicode),
+    'boot_iso_ins_file': (True, False, True, True, None, to_unicode),
     'ssc_boot_selection': (True, False, True, True, None, None),
 
     # create+update properties:
     'name': (
         False, True, True, True, None, None),  # provided in 'name' module parm
-    'description': (True, True, True, True, None, None),
+    'description': (True, True, True, True, None, to_unicode),
     'short_name': (True, True, True, False, None, None),
     'partition_id': (True, True, True, False, None, None),
     'autogenerate_partition_id': (True, True, True, False, None, None),
@@ -311,11 +310,11 @@ ZHMC_PARTITION_PROPERTIES = {
     'reserve_resources': (True, True, True, True, None, None),
     'boot_device': (True, True, True, True, None, None),
     'boot_timeout': (True, True, True, True, None, int),
-    'boot_ftp_host': (True, True, True, True, None, None),
-    'boot_ftp_username': (True, True, True, True, None, None),
-    'boot_ftp_password': (True, True, True, True, None, None),
-    'boot_ftp_insfile': (True, True, True, True, None, None),
-    'boot_removable_media': (True, True, True, True, None, None),
+    'boot_ftp_host': (True, True, True, True, None, to_unicode),
+    'boot_ftp_username': (True, True, True, True, None, to_unicode),
+    'boot_ftp_password': (True, True, True, True, None, to_unicode),
+    'boot_ftp_insfile': (True, True, True, True, None, to_unicode),
+    'boot_removable_media': (True, True, True, True, None, to_unicode),
     'boot_removable_media_type': (True, True, True, True, None, None),
     'boot_configuration_selector': (True, True, True, True, None, int),
     'boot_record_lba': (True, True, True, True, None, None),
@@ -330,11 +329,11 @@ ZHMC_PARTITION_PROPERTIES = {
     'access_diagnostic_sampling': (True, True, True, True, None, None),
     'permit_des_key_import_functions': (True, True, True, True, None, None),
     'permit_aes_key_import_functions': (True, True, True, True, None, None),
-    'ssc_host_name': (True, True, True, True, None, None),
-    'ssc_ipv4_gateway': (True, True, True, True, None, None),
-    'ssc_dns_servers': (True, True, True, True, None, None),
-    'ssc_master_userid': (True, True, True, True, None, None),
-    'ssc_master_pw': (True, True, True, True, None, None),
+    'ssc_host_name': (True, True, True, True, None, to_unicode),
+    'ssc_ipv4_gateway': (True, True, True, True, None, to_unicode),
+    'ssc_dns_servers': (True, True, True, True, None, to_unicode),
+    'ssc_master_userid': (True, True, True, True, None, to_unicode),
+    'ssc_master_pw': (True, True, True, True, None, to_unicode),
 
     # read-only properties:
     'object_uri': (False, False, False, None, None, None),
@@ -414,7 +413,7 @@ def process_properties(cpc, partition, params):
     crypto_changes = None
 
     # handle 'name' property
-    part_name = params['name']
+    part_name = to_unicode(params['name'])
     create_props['name'] = part_name
     # We looked up the partition by name, so we will never have to update
     # the partition name
@@ -445,13 +444,18 @@ def process_properties(cpc, partition, params):
                 raise ParameterError(
                     "Artificial property {!r} can only be specified when the "
                     "partition previously exists.".format(prop_name))
+
             hba_name = input_props[prop_name]
+            if type_cast:
+                hba_name = type_cast(hba_name)
+
             try:
                 hba = partition.hbas.find(name=hba_name)
             except zhmcclient.NotFound:
                 raise ParameterError(
                     "Artificial property {!r} does not name an existing HBA: "
                     "{!r}".format(prop_name, hba_name))
+
             hmc_prop_name = 'boot-storage-device'
             if partition.properties.get(hmc_prop_name) != hba.uri:
                 update_props[hmc_prop_name] = hba.uri
@@ -464,13 +468,18 @@ def process_properties(cpc, partition, params):
                 raise ParameterError(
                     "Artificial property {!r} can only be specified when the "
                     "partition previously exists.".format(prop_name))
+
             nic_name = input_props[prop_name]
+            if type_cast:
+                nic_name = type_cast(nic_name)
+
             try:
                 nic = partition.nics.find(name=nic_name)
             except zhmcclient.NotFound:
                 raise ParameterError(
                     "Artificial property {!r} does not name an existing NIC: "
                     "{!r}".format(prop_name, nic_name))
+
             hmc_prop_name = 'boot-network-device'
             if partition.properties.get(hmc_prop_name) != nic.uri:
                 update_props[hmc_prop_name] = nic.uri
@@ -627,13 +636,12 @@ def process_properties(cpc, partition, params):
                 input_prop_value = type_cast(input_prop_value)
 
             if partition:
+                current_prop_value = partition.properties.get(hmc_prop_name)
                 if eq_func:
-                    equal = eq_func(partition.properties.get(hmc_prop_name),
-                                    input_prop_value,
+                    equal = eq_func(current_prop_value, input_prop_value,
                                     prop_name)
                 else:
-                    equal = (partition.properties.get(hmc_prop_name) ==
-                             input_prop_value)
+                    equal = (current_prop_value == input_prop_value)
                 if not equal and update:
                     update_props[hmc_prop_name] = input_prop_value
                     if not update_while_active:

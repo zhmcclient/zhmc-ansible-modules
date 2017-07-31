@@ -16,6 +16,8 @@
 Utility functions for use by more than one Ansible module.
 """
 
+from ansible.module_utils import six
+
 from zhmcclient import Session
 from zhmcclient_mock import FakedSession
 
@@ -281,3 +283,21 @@ def get_session(faked_session, host, userid, password):
         return faked_session
     else:
         return Session(host, userid, password)
+
+
+def to_unicode(value):
+    """
+    Return the input value as a unicode string.
+
+    The input value may be a binary string or a unicode string, or None.
+    If it is a binary string, it is encoded to a unicode string using UTF-8.
+    """
+    if isinstance(value, six.binary_type):
+        return value.decode('utf-8')
+    elif isinstance(value, six.text_type):
+        return value
+    elif value is None:
+        return None
+    else:
+        raise TypeError("Value is not a binary or unicode string: {!r} {}".
+                        format(value, type(value)))
