@@ -32,11 +32,13 @@ Released: not yet
 
 **Enhancements:**
 
-* Added support for specifying integer-typed properties of
-  partitions also as decimal strings inthe module input.
+* Added support for specifying integer-typed and float-typed
+  properties of Partitions, NICs, HBAs, and VFs also as decimal
+  strings in the module input.
 
-* Specifying input properties with Unicode characters no
-  longer performs unnecessary property update.
+* Specifying string typed properties of Partitions, NICs, HBAs,
+  and VFs with Unicode characters no longer performs an unnecessary
+  property update.
 
 **Dependencies:**
 

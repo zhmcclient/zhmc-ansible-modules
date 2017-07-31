@@ -20,7 +20,8 @@ import requests.packages.urllib3
 import zhmcclient
 
 from zhmc_ansible_modules.utils import Error, ParameterError, \
-    wait_for_transition_completion, eq_hex, get_hmc_auth, get_session
+    wait_for_transition_completion, eq_hex, get_hmc_auth, get_session, \
+    to_unicode
 
 # For information on the format of the ANSIBLE_METADATA, DOCUMENTATION,
 # EXAMPLES, and RETURN strings, see
@@ -97,7 +98,8 @@ options:
     description:
       - "Dictionary with input properties for the HBA, for C(state=present).
          Key is the property name with underscores instead of hyphens, and
-         value is the property value in YAML syntax. Will be ignored for
+         value is the property value in YAML syntax. Integer properties may
+         also be provided as decimal strings. Will be ignored for
          C(state=absent)."
       - "The possible input properties in this dictionary are the properties
          defined as writeable in the data model for HBA resources (where the
@@ -177,7 +179,7 @@ hba:
 """
 
 # Dictionary of properties of HBA resources, in this format:
-#   name: (allowed, create, update, update_while_active, eq_func)
+#   name: (allowed, create, update, update_while_active, eq_func, type_cast)
 # where:
 #   name: Name of the property according to the data model, with hyphens
 #     replaced by underscores (this is how it is or would be specified in
@@ -193,24 +195,34 @@ hba:
 #     means "not applicable" (i.e. update=False).
 #   eq_func: Equality test function for two values of the property; None means
 #     to use Python equality.
+#   type_cast: Type cast function for an input value of the property; None
+#     means to use it directly. This can be used for example to convert
+#     integers provided as strings by Ansible back into integers (that is a
+#     current deficiency of Ansible).
 ZHMC_HBA_PROPERTIES = {
 
     # create-only properties:
-    'adapter_port_uri': (False, True, False, None, None),  # via artif. props
-    'adapter_name': (True, True, False, None, None),  # artificial prop
-    'adapter_port': (True, True, False, None, None),  # artificial prop
+    'adapter_port_uri': (
+        False, True, False, None, None, None),  # via adapter_name/_port
+    'adapter_name': (
+        True, True, False, None, None,
+        None),  # artificial property, type_cast ignored
+    'adapter_port': (
+        True, True, False, None, None,
+        None),  # artificial property, type_cast ignored
 
     # create+update properties:
-    'name': (False, True, True, True, None),  # provided in 'name' module parm
-    'description': (True, True, True, True, None),
-    'device_number': (True, True, True, True, eq_hex),
+    'name': (
+        False, True, True, True, None, None),  # provided in 'name' module parm
+    'description': (True, True, True, True, None, to_unicode),
+    'device_number': (True, True, True, True, eq_hex, None),
 
     # read-only properties:
-    'element-uri': (False, False, False, None, None),
-    'element-id': (False, False, False, None, None),
-    'parent': (False, False, False, None, None),
-    'class': (False, False, False, None, None),
-    'wwpn': (False, False, False, None, None),
+    'element-uri': (False, False, False, None, None, None),
+    'element-id': (False, False, False, None, None, None),
+    'parent': (False, False, False, None, None, None),
+    'class': (False, False, False, None, None, None),
+    'wwpn': (False, False, False, None, None, None),
 }
 
 
@@ -258,7 +270,7 @@ def process_properties(partition, hba, params):
     stop = False
 
     # handle 'name' property
-    hba_name = params['name']
+    hba_name = to_unicode(params['name'])
     create_props['name'] = hba_name
     # We looked up the HBA by name, so we will never have to update its name
 
@@ -277,7 +289,7 @@ def process_properties(partition, hba, params):
                 "Property {!r} is not defined in the data model for "
                 "HBAs.".format(prop_name))
 
-        allowed, create, update, update_while_active, eq_func = \
+        allowed, create, update, update_while_active, eq_func, type_cast = \
             ZHMC_HBA_PROPERTIES[prop_name]
 
         if not allowed:
@@ -295,14 +307,15 @@ def process_properties(partition, hba, params):
         # Process a normal (= non-artificial) property
         hmc_prop_name = prop_name.replace('_', '-')
         input_prop_value = input_props[prop_name]
+        if type_cast:
+            input_prop_value = type_cast(input_prop_value)
         if hba:
+            current_prop_value = hba.properties.get(hmc_prop_name)
             if eq_func:
-                equal = eq_func(hba.properties.get(hmc_prop_name),
-                                input_prop_value,
+                equal = eq_func(current_prop_value, input_prop_value,
                                 prop_name)
             else:
-                equal = (hba.properties.get(hmc_prop_name) ==
-                         input_prop_value)
+                equal = (current_prop_value == input_prop_value)
             if not equal and update:
                 update_props[hmc_prop_name] = input_prop_value
                 if not update_while_active:
@@ -324,8 +337,8 @@ def process_properties(partition, hba, params):
             format(adapter_name_art_name, adapter_port_art_name))
     if adapter_name_art_name in input_props and \
             adapter_port_art_name in input_props:
-        adapter_name = input_props[adapter_name_art_name]
-        adapter_port_index = input_props[adapter_port_art_name]
+        adapter_name = to_unicode(input_props[adapter_name_art_name])
+        adapter_port_index = int(input_props[adapter_port_art_name])
         try:
             adapter = partition.manager.cpc.adapters.find(
                 name=adapter_name)
