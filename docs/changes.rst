@@ -22,7 +22,7 @@ Change log
 Version 0.3.0
 ^^^^^^^^^^^^^
 
-Released: not yet
+Released: 2017-08-16
 
 **Incompatible changes:**
 
@@ -45,12 +45,6 @@ Released: not yet
 * Increased minimum Ansible release from 2.0.0.1 to 2.2.0.0.
 
 * Upgraded zhmcclient requirement to 0.15.0
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 0.2.0
