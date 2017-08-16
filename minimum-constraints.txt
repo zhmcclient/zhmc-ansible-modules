@@ -22,7 +22,7 @@ wheel===0.29.0
 ansible===2.2.0.0
 pbr===1.10.0
 requests===2.12.4
-zhmcclient===0.14.0
+zhmcclient===0.15.0
 
 
 # Indirect dependencies for runtime (must be consistent with requirements.txt)

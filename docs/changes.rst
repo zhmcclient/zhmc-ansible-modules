@@ -44,6 +44,8 @@ Released: not yet
 
 * Increased minimum Ansible release from 2.0.0.1 to 2.2.0.0.
 
+* Upgraded zhmcclient requirement to 0.15.0
+
 **Known issues:**
 
 * See `list of open issues`_.
