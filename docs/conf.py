@@ -68,7 +68,7 @@ copyright = u'IBM'
 author = u'zhmcclient team'
 
 # The short description of the package.
-_short_description = u'Ansible modules for z Systems and LinuxONE'
+_short_description = u'Ansible modules for IBM Z and LinuxONE'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
