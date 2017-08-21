@@ -13,8 +13,8 @@
 .. limitations under the License.
 ..
 
-zhmc-ansible-modules - Ansible modules for the z Systems HMC Web Services API
-=============================================================================
+zhmc-ansible-modules - Ansible modules for the IBM Z HMC Web Services API
+=========================================================================
 
 .. image:: https://img.shields.io/pypi/v/zhmc-ansible-modules.svg
     :target: https://pypi.python.org/pypi/zhmc-ansible-modules/
@@ -39,13 +39,13 @@ Overview
 ========
 
 The zhmc-ansible-modules Python package contains `Ansible`_ modules that can
-manage platform resources on `z Systems`_ and `LinuxONE`_ machines that are in
+manage platform resources on `IBM Z`_ and `LinuxONE`_ machines that are in
 the Dynamic Partition Manager (DPM) operational mode.
 
 The goal of this package is to be able to utilize the power and ease of use
-of Ansible for the management of z Systems platform resources.
+of Ansible for the management of IBM Z platform resources.
 
-The z Systems resources that can be managed include Partitions, HBAs, NICs, and
+The IBM Z resources that can be managed include Partitions, HBAs, NICs, and
 Virtual Functions.
 
 The Ansible modules in the zhmc-ansible-modules package are fully
@@ -54,7 +54,7 @@ following an important principle for Ansible modules.
 
 The idempotency of a module allows Ansible playbooks to specify the desired end
 state for a resource, regardless of what the current state is. For example, a
-z Systems partition can be specified to have ``state=active`` which means that
+IBM Z partition can be specified to have ``state=active`` which means that
 it must exist and be in the active operational status. Depending on the current
 state of the partition, actions will be taken by the module to reach this
 desired end state: If the partition does not exist, it will be created and
@@ -73,7 +73,7 @@ of the machines to be managed, by using the API of the `zhmcclient`_ Python
 package.
 
 .. _Ansible: https://www.ansible.com/
-.. _z Systems: http://www.ibm.com/systems/z/
+.. _IBM Z: http://www.ibm.com/systems/z/
 .. _LinuxONE: http://www.ibm.com/systems/linuxone/
 .. _zhmcclient: https://github.com/zhmcclient/python-zhmcclient
 
