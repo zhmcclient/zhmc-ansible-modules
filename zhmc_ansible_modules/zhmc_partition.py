@@ -22,7 +22,7 @@ import zhmcclient
 
 from zhmc_ansible_modules.utils import Error, ParameterError, StatusError, \
     stop_partition, start_partition, wait_for_transition_completion, eq_hex, \
-    get_hmc_auth, get_session, to_unicode
+    get_hmc_auth, get_session, to_unicode, process_normal_property
 
 # For information on the format of the ANSIBLE_METADATA, DOCUMENTATION,
 # EXAMPLES, and RETURN strings, see
@@ -259,7 +259,7 @@ partition:
 ZHMC_PARTITION_PROPERTIES = {
 
     # create-only properties:
-    'type': (False, True, False, None, None, None),  # cannot change type
+    'type': (True, True, False, None, None, None),  # cannot change type
 
     # update-only properties:
     'boot_network_device': (
@@ -624,35 +624,12 @@ def process_properties(cpc, partition, params):
 
         else:
             # Process a normal (= non-artificial) property
-
-            # Double check that normal read-only properties are all marked as
-            # not allowed:
-            assert (create or update) is True
-
-            hmc_prop_name = prop_name.replace('_', '-')
-            input_prop_value = input_props[prop_name]
-
-            if type_cast:
-                input_prop_value = type_cast(input_prop_value)
-
-            if partition:
-                current_prop_value = partition.properties.get(hmc_prop_name)
-                if eq_func:
-                    equal = eq_func(current_prop_value, input_prop_value,
-                                    prop_name)
-                else:
-                    equal = (current_prop_value == input_prop_value)
-                if not equal and update:
-                    update_props[hmc_prop_name] = input_prop_value
-                    if not update_while_active:
-                        stop = True
-            else:
-                if update:
-                    update_props[hmc_prop_name] = input_prop_value
-                    if not update_while_active:
-                        stop = True
-                if create:
-                    create_props[hmc_prop_name] = input_prop_value
+            _create_props, _update_props, _stop = process_normal_property(
+                prop_name, ZHMC_PARTITION_PROPERTIES, input_props, partition)
+            create_props.update(_create_props)
+            update_props.update(_update_props)
+            if _stop:
+                stop = True
 
     return create_props, update_props, stop, crypto_changes
 
