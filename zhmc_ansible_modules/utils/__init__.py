@@ -289,18 +289,27 @@ def to_unicode(value):
     """
     Return the input value as a unicode string.
 
-    The input value may be a binary string or a unicode string, or None.
-    If it is a binary string, it is encoded to a unicode string using UTF-8.
+    The input value may be and will result in:
+    * None -> None
+    * binary string -> decoded using UTF-8 to unicode string
+    * unicode string -> unchanged
+    * list or tuple with items of any of the above -> list with converted items
     """
-    if isinstance(value, six.binary_type):
+    if isinstance(value, (list, tuple)):
+        list_uval = []
+        for val in value:
+            uval = to_unicode(val)
+            list_uval.append(uval)
+        return list_uval
+    elif isinstance(value, six.binary_type):
         return value.decode('utf-8')
     elif isinstance(value, six.text_type):
         return value
     elif value is None:
         return None
     else:
-        raise TypeError("Value is not a binary or unicode string: {!r} {}".
-                        format(value, type(value)))
+        raise TypeError("Value of {} cannot be converted to unicode: {!r}".
+                        format(type(value), value))
 
 
 def process_normal_property(

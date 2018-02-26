@@ -886,8 +886,7 @@ class TestPartition(object):
             ({'boot_world_wide_port_name': '0123456789abcdef'}, True),
             ({'boot_os_specific_parameters': u'fak\u00E9'}, True),
             ({'boot_iso_ins_file': u'fak\u00E9'}, True),
-            # TODO: Add tests for SSC properties:
-            # ({'ssc_boot_selection': 'fake'}, True),
+            ({'ssc_boot_selection': 'fake'}, True),
 
             # allowed create+update properties:
             ({'description': 'fake'}, True),
@@ -930,12 +929,11 @@ class TestPartition(object):
             ({'access_diagnostic_sampling': True}, True),
             ({'permit_des_key_import_functions': False}, True),
             ({'permit_aes_key_import_functions': False}, True),
-            # TODO: Add tests for SSC properties:
-            # ({'ssc_host_name': u'fak\u00E9'}, True),
-            # ({'ssc_ipv4_gateway': u'fak\u00E9'}, True),
-            # ({'ssc_dns_servers': u'fak\u00E9''}, True),
-            # ({'ssc_master_userid': u'fak\u00E9'}, True),
-            # ({'ssc_master_pw': u'fak\u00E9'}, True),
+            ({'ssc_host_name': u'fak\u00E9'}, True),
+            ({'ssc_ipv4_gateway': u'fak\u00E9'}, True),
+            ({'ssc_dns_servers': [u'fak\u00E9']}, True),
+            ({'ssc_master_userid': u'fak\u00E9'}, True),
+            ({'ssc_master_pw': u'fak\u00E9'}, True),
         ])
     @mock.patch("zhmc_ansible_modules.zhmc_partition.AnsibleModule",
                 autospec=True)
