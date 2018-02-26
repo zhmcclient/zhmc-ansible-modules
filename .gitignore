@@ -17,6 +17,7 @@ env*
 /.cache
 /.idea
 /.vagrant
+/.pytest_cache
 /try
 try_*
 /tmp
