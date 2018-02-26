@@ -30,6 +30,11 @@ Released: not yet
 
 **Bug fixes:**
 
+* Fixed the issue that a partition in "terminated" or "paused" status
+  could not be made absent (i.e. deleted). Now, the partition is
+  stopped which should bring it into "stopped" status, and then
+  deleted. (Issue #29).
+
 **Enhancements:**
 
 **Known issues:**
