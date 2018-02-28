@@ -781,6 +781,7 @@ class TestPartition(object):
             self.partition = partitions[0]
             if initial_state == 'active':
                 self.partition.start()
+            self.partition.pull_full_properties()
         else:
             self.faked_partition = None
             self.partition = None
@@ -794,7 +795,7 @@ class TestPartition(object):
         if self.partition:
             # Create the HBA
             self.faked_hba = self.faked_partition.hbas.add(FAKED_HBA_1)
-            hbas = self.partition.hbas.list()
+            hbas = self.partition.hbas.list(full_properties=True)
             assert len(hbas) == 1
             self.hba = hbas[0]
         else:
@@ -813,7 +814,7 @@ class TestPartition(object):
         if self.partition:
             # Create the NIC
             self.faked_nic = self.faked_partition.nics.add(FAKED_NIC_1)
-            nics = self.partition.nics.list()
+            nics = self.partition.nics.list(full_properties=True)
             assert len(nics) == 1
             self.nic = nics[0]
         else:
@@ -944,7 +945,7 @@ class TestPartition(object):
             initial_state, check_mode):
         """
         Tests for successful operations on partition, dependent on
-        parametrization.
+        parametrization. The fact gathering is not tested here.
         """
 
         # Prepare the initial partition before the test is run
@@ -1041,6 +1042,70 @@ class TestPartition(object):
                             "Property: {}".format(hmc_prop_name)
             else:
                 assert len(parts) == 0
+
+    @pytest.mark.parametrize(
+        "check_mode", [False, True])
+    @pytest.mark.parametrize(
+        "initial_state", ['stopped', 'active'])
+    @pytest.mark.parametrize(
+        "desired_state", ['facts'])
+    @mock.patch("zhmc_ansible_modules.zhmc_partition.AnsibleModule",
+                autospec=True)
+    def test_facts_success(
+            self, ansible_mod_cls, desired_state, initial_state, check_mode):
+        """
+        Tests for successful fact gathering on partitions, dependent on
+        parametrization.
+        """
+
+        # Prepare the initial partition before the test is run
+        self.setup_partition(initial_state)
+        self.setup_hba()
+        self.setup_nic()
+
+        # Prepare module input parameters
+        params = {
+            'hmc_host': 'fake-host',
+            'hmc_auth': dict(userid='fake-userid',
+                             password='fake-password'),
+            'cpc_name': self.cpc.name,
+            'name': self.partition_name,
+            'state': desired_state,
+            'faked_session': self.session,
+        }
+
+        # Prepare mocks for AnsibleModule object
+        mod_obj = mock_ansible_module(ansible_mod_cls, params, check_mode)
+
+        # Exercise the code to be tested
+        with pytest.raises(SystemExit) as exc_info:
+            zhmc_partition.main()
+        exit_code = exc_info.value.args[0]
+
+        # Assert module exit code
+        assert exit_code == 0, \
+            "Module unexpectedly failed with this message:\n{}". \
+            format(get_failure_msg(mod_obj))
+
+        # Assert module output
+        changed, part_props = get_module_output(mod_obj)
+        assert changed is False
+        assert isinstance(part_props, dict)
+        for pname in part_props:
+            pvalue = part_props[pname]
+            if pname == 'nics':
+                assert len(pvalue) == 1
+                nic_props = pvalue[0]
+                assert nic_props == self.nic.properties
+            elif pname == 'hbas':
+                assert len(pvalue) == 1
+                hba_props = pvalue[0]
+                assert hba_props == self.hba.properties
+            elif pname == 'virtual-functions':
+                assert len(pvalue) == 0
+            else:
+                exp_value = self.partition.properties[pname]
+                assert pvalue == exp_value
 
     @pytest.mark.parametrize(
         "check_mode", [False])

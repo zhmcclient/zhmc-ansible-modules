@@ -76,7 +76,7 @@ class TestZhmcPartitionMain(unittest.TestCase):
             cpc_name=dict(required=True, type='str'),
             name=dict(required=True, type='str'),
             state=dict(required=True, type='str',
-                       choices=['absent', 'stopped', 'active']),
+                       choices=['absent', 'stopped', 'active', 'facts']),
             properties=dict(required=False, type='dict', default={}),
             faked_session=dict(required=False, type='object'),
         )
