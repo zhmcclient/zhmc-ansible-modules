@@ -30,6 +30,11 @@ Released: not yet
 
 **Bug fixes:**
 
+* Fixed the bug that a TypeError was raised when setting the 'ssc_dns_servers'
+  property for a Partition. The property value is a list of strings, and
+  lists of values were not supported previously. Extended the function test
+  cases for partitions accordingly. (Issue #34).
+
 * Fixed that the "type" property for Partitions could not be specified.
   It is valid for Partition creation, and the only restriction is that
   its value cannot be changed once the Partition exists. Along with fixing
