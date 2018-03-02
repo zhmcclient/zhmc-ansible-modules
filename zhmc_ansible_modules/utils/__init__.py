@@ -45,10 +45,10 @@ class StatusError(Error):
 
 
 # Partition status values that may happen after Partition.start()
-STARTED_STATUSES = ('active', 'degraded', 'reservation-error')
+START_END_STATUSES = ('active', 'degraded', 'reservation-error')
 
 # Partition status values that may happen after Partition.stop()
-STOPPED_STATUSES = ('stopped', 'terminated', 'paused')
+STOP_END_STATUSES = ('stopped', 'terminated', 'paused')
 
 # Partition status values that indicate CPC issues
 BAD_STATUSES = ('communications-not-active', 'status-check')
@@ -142,13 +142,27 @@ def get_hmc_auth(hmc_auth):
     return userid, password
 
 
+def pull_partition_status(partition):
+    """
+    Retrieve the partition operational status as fast as possible and return
+    it.
+    """
+    parts = partition.manager.cpc.partitions.list(
+        filter_args={'name': partition.name})
+    assert len(parts) == 1
+    this_part = parts[0]
+    actual_status = this_part.get_property('status')
+    return actual_status
+
+
 def stop_partition(partition, check_mode):
     """
     Ensure that the partition is stopped, by influencing the operational
     status of the partition, regardless of what its current operational status
     is.
 
-    The resulting operational status will be one of STOPPED_STATUSES.
+    If this function returns, the operational status of the partition will be
+    'stopped'.
 
     Parameters:
       partition (zhmcclient.Partition): The partition (must exist, and its
@@ -161,7 +175,8 @@ def stop_partition(partition, check_mode):
       bool: Indicates whether the partition was changed.
 
     Raises:
-      StatusError: Partition is in one of BAD_STATUSES.
+      StatusError: Partition is in one of BAD_STATUSES or did not reach the
+        'stopped' status despite attempting it.
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
     changed = False
@@ -171,22 +186,50 @@ def stop_partition(partition, check_mode):
         raise StatusError(
             "Target CPC {!r} has issues; status of partition {!r} is: {!r}".
             format(partition.manager.cpc.name, partition.name, status))
+    elif status == 'stopped':
+        pass
     elif status == 'starting':
         if not check_mode:
             # Let it first finish the starting
-            partition.wait_for_status(STARTED_STATUSES)
+            partition.wait_for_status(START_END_STATUSES)
+            start_end_status = pull_partition_status(partition)
+            # Then stop it
             partition.stop()
+            status = pull_partition_status(partition)
+            if status != 'stopped':
+                raise StatusError(
+                    "Could not get partition {!r} from {!r} status into "
+                    "'stopped' status after waiting for its starting to "
+                    "complete; current status is: {!r}".
+                    format(partition.name, start_end_status, status))
         changed = True
     elif status == 'stopping':
         if not check_mode:
-            partition.wait_for_status(STOPPED_STATUSES)
-        changed = True
-    elif status in STARTED_STATUSES:
-        if not check_mode:
-            partition.stop()
+            # Let it finish the stopping
+            partition.wait_for_status(STOP_END_STATUSES)
+            stop_end_status = pull_partition_status(partition)
+            if stop_end_status != 'stopped':
+                # Make another attempt to stop it
+                partition.stop()
+                status = pull_partition_status(partition)
+                if status != 'stopped':
+                    raise StatusError(
+                        "Could not get partition {!r} from {!r} status into "
+                        "'stopped' status after waiting for its stopping to "
+                        "complete; current status is: {!r}".
+                        format(partition.name, stop_end_status, status))
         changed = True
     else:
-        assert status in STOPPED_STATUSES
+        if not check_mode:
+            previous_status = pull_partition_status(partition)
+            partition.stop()
+            status = pull_partition_status(partition)
+            if status != 'stopped':
+                raise StatusError(
+                    "Could not get partition {!r} from {!r} status into "
+                    "'stopped' status; current status is: {!r}".
+                    format(partition.name, previous_status, status))
+        changed = True
     return changed
 
 
@@ -196,7 +239,7 @@ def start_partition(partition, check_mode):
     status of the partition, regardless of what its current operational status
     is.
 
-    The resulting operational status will be one of STARTED_STATUSES.
+    The resulting operational status will be one of START_END_STATUSES.
 
     Parameters:
       partition (zhmcclient.Partition): The partition (must exist, and its
@@ -209,7 +252,8 @@ def start_partition(partition, check_mode):
       bool: Indicates whether the partition was changed.
 
     Raises:
-      StatusError: Partition is in one of BAD_STATUSES.
+      StatusError: Partition is in one of BAD_STATUSES or did not reach a
+        started status despite attempting it.
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
     changed = False
@@ -219,22 +263,39 @@ def start_partition(partition, check_mode):
         raise StatusError(
             "Target CPC {!r} has issues; status of partition {!r} is: {!r}".
             format(partition.manager.cpc.name, partition.name, status))
+    elif status in START_END_STATUSES:
+        pass
     elif status == 'stopping':
         if not check_mode:
             # Let it first finish the stopping
-            partition.wait_for_status(STOPPED_STATUSES)
+            partition.wait_for_status(STOP_END_STATUSES)
+            stop_end_status = pull_partition_status(partition)
+            # Then start it
             partition.start()
+            status = pull_partition_status(partition)
+            if status not in START_END_STATUSES:
+                raise StatusError(
+                    "Could not get partition {!r} from {!r} status into "
+                    "a started status after waiting for its stopping to "
+                    "complete; current status is: {!r}".
+                    format(partition.name, stop_end_status, status))
         changed = True
     elif status == 'starting':
         if not check_mode:
-            partition.wait_for_status(STARTED_STATUSES)
-        changed = True
-    elif status in STOPPED_STATUSES:
-        if not check_mode:
-            partition.start()
+            # Let it finish the starting
+            partition.wait_for_status(START_END_STATUSES)
         changed = True
     else:
-        assert status in STARTED_STATUSES
+        if not check_mode:
+            previous_status = pull_partition_status(partition)
+            partition.start()
+            status = pull_partition_status(partition)
+            if status not in START_END_STATUSES:
+                raise StatusError(
+                    "Could not get partition {!r} from {!r} status into "
+                    "a started status; current status is: {!r}".
+                    format(partition.name, previous_status, status))
+        changed = True
     return changed
 
 
@@ -243,8 +304,8 @@ def wait_for_transition_completion(partition):
     If the partition is in a transitional state, wait for completion of that
     transition. This is required for updating properties.
 
-    The resulting operational status will be one of STARTED_STATUSES or
-    STOPPED_STATUSES.
+    The resulting operational status will be one of START_END_STATUSES or
+    STOP_END_STATUSES.
 
     Parameters:
       partition (zhmcclient.Partition): The partition (must exist, and its
@@ -261,11 +322,11 @@ def wait_for_transition_completion(partition):
             "Target CPC {!r} has issues; status of partition {!r} is: {!r}".
             format(partition.manager.cpc.name, partition.name, status))
     elif status == 'stopping':
-        partition.wait_for_status(STOPPED_STATUSES)
+        partition.wait_for_status(STOP_END_STATUSES)
     elif status == 'starting':
-        partition.wait_for_status(STARTED_STATUSES)
+        partition.wait_for_status(START_END_STATUSES)
     else:
-        assert status in STARTED_STATUSES or status in STOPPED_STATUSES
+        assert status in START_END_STATUSES or status in STOP_END_STATUSES
 
 
 def get_session(faked_session, host, userid, password):
@@ -289,15 +350,108 @@ def to_unicode(value):
     """
     Return the input value as a unicode string.
 
-    The input value may be a binary string or a unicode string, or None.
-    If it is a binary string, it is encoded to a unicode string using UTF-8.
+    The input value may be and will result in:
+    * None -> None
+    * binary string -> decoded using UTF-8 to unicode string
+    * unicode string -> unchanged
+    * list or tuple with items of any of the above -> list with converted items
     """
-    if isinstance(value, six.binary_type):
+    if isinstance(value, (list, tuple)):
+        list_uval = []
+        for val in value:
+            uval = to_unicode(val)
+            list_uval.append(uval)
+        return list_uval
+    elif isinstance(value, six.binary_type):
         return value.decode('utf-8')
     elif isinstance(value, six.text_type):
         return value
     elif value is None:
         return None
     else:
-        raise TypeError("Value is not a binary or unicode string: {!r} {}".
-                        format(value, type(value)))
+        raise TypeError("Value of {} cannot be converted to unicode: {!r}".
+                        format(type(value), value))
+
+
+def process_normal_property(
+        prop_name, resource_properties, input_props, resource):
+    """
+    Process a normal (= non-artificial) property.
+
+    Parameters:
+
+      prop_name (string): Property name (using Ansible module names).
+
+      resource_properties (dict): Dictionary of property definitions for the
+        resource type (e.g. ZHMC_PARTITION_PROPERTIES).
+
+      input_props (dict): New properties.
+
+      resource: zhmcclient resource object (e.g. zhmcclient.Partition) with
+        all properties pulled.
+
+    Returns:
+
+      tuple of (create_props, update_props, stop), where:
+        * create_props: dict of properties for resource creation.
+        * update_props: dict of properties for resource update.
+        * stop (bool): Indicates whether some update properties require the
+          partition to be stopped when doing the update. Note that the
+          partition is either the resource being processed, or the partition
+          owning the resource being processed.
+
+    Raises:
+      ParameterError: An issue with the module parameters.
+    """
+
+    create_props = {}
+    update_props = {}
+    stop = False
+
+    allowed, create, update, update_while_active, eq_func, type_cast = \
+        resource_properties[prop_name]
+
+    # Double check that the property is not a read-only property
+    assert allowed
+    assert create or update
+
+    hmc_prop_name = prop_name.replace('_', '-')
+    input_prop_value = input_props[prop_name]
+
+    if type_cast:
+        input_prop_value = type_cast(input_prop_value)
+
+    if resource:
+        # Resource does exist.
+
+        current_prop_value = resource.properties.get(hmc_prop_name)
+
+        if eq_func:
+            equal = eq_func(current_prop_value, input_prop_value,
+                            prop_name)
+        else:
+            equal = (current_prop_value == input_prop_value)
+
+        if not equal:
+            if update:
+                update_props[hmc_prop_name] = input_prop_value
+                if not update_while_active:
+                    stop = True
+            else:
+                raise ParameterError(
+                    "Property {!r} can be set during {} "
+                    "creation but cannot be updated afterwards "
+                    "(from {!r} to {!r}).".
+                    format(prop_name, resource.__class__.__name__,
+                           current_prop_value, input_prop_value))
+    else:
+        # Resource does not exist.
+        # Prefer setting the property during resource creation.
+        if create:
+            create_props[hmc_prop_name] = input_prop_value
+        else:
+            update_props[hmc_prop_name] = input_prop_value
+            if not update_while_active:
+                stop = True
+
+    return create_props, update_props, stop
