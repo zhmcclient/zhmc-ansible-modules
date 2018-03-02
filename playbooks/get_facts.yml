@@ -1,0 +1,18 @@
+---
+- hosts: localhost
+  vars_files:
+    - vars.yml
+    - vault.yml
+  tasks:
+
+  - name: Get partition facts
+    zhmc_partition:
+      hmc_host: "{{ hmc_host }}"
+      hmc_auth: "{{ hmc_auth }}"
+      cpc_name: "{{ cpc_name }}"
+      name: "{{ partition_name }}"
+      state: facts
+    register: part1
+
+  - debug:
+      var: part1

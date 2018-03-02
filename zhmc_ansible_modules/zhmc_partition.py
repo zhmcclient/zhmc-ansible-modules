@@ -42,9 +42,11 @@ module: zhmc_partition
 version_added: "0.0"
 short_description: Manages partitions
 description:
-  - Creates, updates, deletes, starts, and stops partitions in a CPC.
-  - Child resources on partitions such as HBAs, NICs or virtual functions are
-    managed by separate Ansible modules.
+  - Gathers facts about a partition, including its child resources (HBAs, NICs
+    and virtual functions).
+  - Creates, updates, deletes, starts, and stops partitions in a CPC. The
+    child resources of the partition are are managed by separate Ansible
+    modules.
   - The targeted CPC must be in the Dynamic Partition Manager (DPM) operational
     mode.
 notes:
@@ -93,8 +95,11 @@ options:
       - "C(active): Ensures that the partition exists in the specified CPC,
          has the specified properties, and is in the 'active' or 'degraded'
          status."
+      - "C(facts): Does not change anything on the partition and returns
+         the partition properties and the properties of its child resources
+         (HBAs, NICs, and virtual functions)."
     required: true
-    choices: ['absent', 'stopped', 'active']
+    choices: ['absent', 'stopped', 'active', 'facts']
   properties:
     description:
       - "Dictionary with input properties for the partition, for
@@ -210,6 +215,15 @@ EXAMPLES = """
             access_mode: control
   register: part1
 
+- name: Gather facts about a partition
+  zhmc_partition:
+    hmc_host: "{{ my_hmc_host }}"
+    hmc_auth: "{{ my_hmc_auth }}"
+    cpc_name: "{{ my_cpc_name }}"
+    name: "{{ my_partition_name }}"
+    state: facts
+  register: part1
+
 """
 
 RETURN = """
@@ -223,6 +237,15 @@ partition:
        dictionary values are the property values using the Python
        representations described in the documentation of the zhmcclient Python
        package."
+    - "For C(state=facts), a dictionary with the resource properties of the
+       partition, including its child resources (HBAs, NICs, and virtual
+       functions). The dictionary keys are the exact property names as
+       described in the data model for the resource, i.e. they contain hyphens
+       (-), not underscores (_). The dictionary values are the property values
+       using the Python representations described in the documentation of the
+       zhmcclient Python package. The properties of the child resources are
+       represented in partition properties named 'hbas', 'nics', and
+       'virtual-functions', respectively."
   returned: success
   type: dict
   sample: |
@@ -896,6 +919,58 @@ def ensure_absent(params, check_mode):
         session.logoff()
 
 
+def facts(params, check_mode):
+    """
+    Return partition facts.
+
+    Raises:
+      ParameterError: An issue with the module parameters.
+      zhmcclient.Error: Any zhmcclient exception can happen.
+    """
+
+    host = params['hmc_host']
+    userid, password = get_hmc_auth(params['hmc_auth'])
+    cpc_name = params['cpc_name']
+    partition_name = params['name']
+    faked_session = params.get('faked_session', None)
+
+    changed = False
+    result = {}
+
+    try:
+        # The default exception handling is sufficient for this code
+
+        session = get_session(faked_session, host, userid, password)
+        client = zhmcclient.Client(session)
+        cpc = client.cpcs.find(name=cpc_name)
+
+        partition = cpc.partitions.find(name=partition_name)
+        partition.pull_full_properties()
+
+        # Get the child elements of the partition
+
+        hbas_prop = list()
+        for hba in partition.hbas.list(full_properties=True):
+            hbas_prop.append(hba.properties)
+        partition.properties['hbas'] = hbas_prop
+
+        nics_prop = list()
+        for nic in partition.nics.list(full_properties=True):
+            nics_prop.append(nic.properties)
+        partition.properties['nics'] = nics_prop
+
+        vf_prop = list()
+        for vf in partition.virtual_functions.list(full_properties=True):
+            vf_prop.append(vf.properties)
+        partition.properties['virtual-functions'] = vf_prop
+
+        result = partition.properties
+        return changed, result
+
+    finally:
+        session.logoff()
+
+
 def perform_task(params, check_mode):
     """
     Perform the task for this module, dependent on the 'state' module
@@ -913,6 +988,7 @@ def perform_task(params, check_mode):
         "absent": ensure_absent,
         "active": ensure_active,
         "stopped": ensure_stopped,
+        "facts": facts,
     }
     return actions[params['state']](params, check_mode)
 
@@ -927,7 +1003,7 @@ def main():
         cpc_name=dict(required=True, type='str'),
         name=dict(required=True, type='str'),
         state=dict(required=True, type='str',
-                   choices=['absent', 'stopped', 'active']),
+                   choices=['absent', 'stopped', 'active', 'facts']),
         properties=dict(required=False, type='dict', default={}),
         faked_session=dict(required=False, type='object'),
     )
