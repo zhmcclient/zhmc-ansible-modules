@@ -21,7 +21,7 @@ import zhmcclient
 
 from zhmc_ansible_modules.utils import Error, ParameterError, \
     wait_for_transition_completion, eq_hex, get_hmc_auth, get_session, \
-    to_unicode
+    to_unicode, process_normal_property
 
 # For information on the format of the ANSIBLE_METADATA, DOCUMENTATION,
 # EXAMPLES, and RETURN strings, see
@@ -297,36 +297,17 @@ def process_properties(partition, hba, params):
                 "Property {!r} is not allowed in the 'properties' module "
                 "parameter.".format(prop_name))
 
-        # Double check that read-only properties are all marked as not allowed:
-        assert (create or update) is True
-
         if prop_name in (adapter_name_art_name, adapter_port_art_name):
             # Artificial properties will be processed together after this loop
             continue
 
         # Process a normal (= non-artificial) property
-        hmc_prop_name = prop_name.replace('_', '-')
-        input_prop_value = input_props[prop_name]
-        if type_cast:
-            input_prop_value = type_cast(input_prop_value)
-        if hba:
-            current_prop_value = hba.properties.get(hmc_prop_name)
-            if eq_func:
-                equal = eq_func(current_prop_value, input_prop_value,
-                                prop_name)
-            else:
-                equal = (current_prop_value == input_prop_value)
-            if not equal and update:
-                update_props[hmc_prop_name] = input_prop_value
-                if not update_while_active:
-                    stop = True
-        else:
-            if update:
-                update_props[hmc_prop_name] = input_prop_value
-                if not update_while_active:
-                    stop = True
-            if create:
-                create_props[hmc_prop_name] = input_prop_value
+        _create_props, _update_props, _stop = process_normal_property(
+            prop_name, ZHMC_HBA_PROPERTIES, input_props, hba)
+        create_props.update(_create_props)
+        update_props.update(_update_props)
+        if _stop:
+            stop = True
 
     # Process artificial properties
     if (adapter_name_art_name in input_props) != \
