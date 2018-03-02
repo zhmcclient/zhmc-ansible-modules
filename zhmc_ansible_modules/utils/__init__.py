@@ -350,15 +350,108 @@ def to_unicode(value):
     """
     Return the input value as a unicode string.
 
-    The input value may be a binary string or a unicode string, or None.
-    If it is a binary string, it is encoded to a unicode string using UTF-8.
+    The input value may be and will result in:
+    * None -> None
+    * binary string -> decoded using UTF-8 to unicode string
+    * unicode string -> unchanged
+    * list or tuple with items of any of the above -> list with converted items
     """
-    if isinstance(value, six.binary_type):
+    if isinstance(value, (list, tuple)):
+        list_uval = []
+        for val in value:
+            uval = to_unicode(val)
+            list_uval.append(uval)
+        return list_uval
+    elif isinstance(value, six.binary_type):
         return value.decode('utf-8')
     elif isinstance(value, six.text_type):
         return value
     elif value is None:
         return None
     else:
-        raise TypeError("Value is not a binary or unicode string: {!r} {}".
-                        format(value, type(value)))
+        raise TypeError("Value of {} cannot be converted to unicode: {!r}".
+                        format(type(value), value))
+
+
+def process_normal_property(
+        prop_name, resource_properties, input_props, resource):
+    """
+    Process a normal (= non-artificial) property.
+
+    Parameters:
+
+      prop_name (string): Property name (using Ansible module names).
+
+      resource_properties (dict): Dictionary of property definitions for the
+        resource type (e.g. ZHMC_PARTITION_PROPERTIES).
+
+      input_props (dict): New properties.
+
+      resource: zhmcclient resource object (e.g. zhmcclient.Partition) with
+        all properties pulled.
+
+    Returns:
+
+      tuple of (create_props, update_props, stop), where:
+        * create_props: dict of properties for resource creation.
+        * update_props: dict of properties for resource update.
+        * stop (bool): Indicates whether some update properties require the
+          partition to be stopped when doing the update. Note that the
+          partition is either the resource being processed, or the partition
+          owning the resource being processed.
+
+    Raises:
+      ParameterError: An issue with the module parameters.
+    """
+
+    create_props = {}
+    update_props = {}
+    stop = False
+
+    allowed, create, update, update_while_active, eq_func, type_cast = \
+        resource_properties[prop_name]
+
+    # Double check that the property is not a read-only property
+    assert allowed
+    assert create or update
+
+    hmc_prop_name = prop_name.replace('_', '-')
+    input_prop_value = input_props[prop_name]
+
+    if type_cast:
+        input_prop_value = type_cast(input_prop_value)
+
+    if resource:
+        # Resource does exist.
+
+        current_prop_value = resource.properties.get(hmc_prop_name)
+
+        if eq_func:
+            equal = eq_func(current_prop_value, input_prop_value,
+                            prop_name)
+        else:
+            equal = (current_prop_value == input_prop_value)
+
+        if not equal:
+            if update:
+                update_props[hmc_prop_name] = input_prop_value
+                if not update_while_active:
+                    stop = True
+            else:
+                raise ParameterError(
+                    "Property {!r} can be set during {} "
+                    "creation but cannot be updated afterwards "
+                    "(from {!r} to {!r}).".
+                    format(prop_name, resource.__class__.__name__,
+                           current_prop_value, input_prop_value))
+    else:
+        # Resource does not exist.
+        # Prefer setting the property during resource creation.
+        if create:
+            create_props[hmc_prop_name] = input_prop_value
+        else:
+            update_props[hmc_prop_name] = input_prop_value
+            if not update_while_active:
+                stop = True
+
+    return create_props, update_props, stop

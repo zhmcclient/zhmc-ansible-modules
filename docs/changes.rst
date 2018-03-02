@@ -30,6 +30,24 @@ Released: not yet
 
 **Bug fixes:**
 
+* Fixed the bug that a TypeError was raised when setting the 'ssc_dns_servers'
+  property for a Partition. The property value is a list of strings, and
+  lists of values were not supported previously. Extended the function test
+  cases for partitions accordingly. (Issue #34).
+
+* Fixed that the "type" property for Partitions could not be specified.
+  It is valid for Partition creation, and the only restriction is that
+  its value cannot be changed once the Partition exists. Along with fixing
+  the logic for such create-only properties, the same issue was also fixed
+  for the adapter port related properties of HBAs. (Issue #31).
+
+* Improved the logic for handling create+update properties in case
+  the resource does not exist, such that they are no longer updated
+  in addition to being set during creation. The logic still supports 
+  updating as an alternative if the resource does not exist, for 
+  update-only properties (e.g. several properties in Partitions).
+  (Fixed as part of issue #31).
+
 * Fixed the issue that a partition in "terminated" or "paused" status
   could not be made absent (i.e. deleted). Now, the partition is
   stopped which should bring it into "stopped" status, and then
