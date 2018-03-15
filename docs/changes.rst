@@ -1,4 +1,4 @@
-.. Copyright 2017 IBM Corp. All Rights Reserved.
+.. Copyright 2017-2018 IBM Corp. All Rights Reserved.
 ..
 .. Licensed under the Apache License, Version 2.0 (the "License");
 .. you may not use this file except in compliance with the License.
@@ -22,11 +22,7 @@ Change log
 Version 0.4.0
 ^^^^^^^^^^^^^
 
-Released: not yet
-
-**Incompatible changes:**
-
-**Deprecations:**
+Released: 2018-03-15
 
 **Bug fixes:**
 
@@ -43,8 +39,8 @@ Released: not yet
 
 * Improved the logic for handling create+update properties in case
   the resource does not exist, such that they are no longer updated
-  in addition to being set during creation. The logic still supports 
-  updating as an alternative if the resource does not exist, for 
+  in addition to being set during creation. The logic still supports
+  updating as an alternative if the resource does not exist, for
   update-only properties (e.g. several properties in Partitions).
   (Fixed as part of issue #31).
 
@@ -55,11 +51,15 @@ Released: not yet
 
 **Enhancements:**
 
-**Known issues:**
+* Added get_facts.py script to examine usage of the Ansible 2.0 API.
 
-* See `list of open issues`_.
-
-  .. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
+* Added support for gathering partition and child facts.
+  The fact support is invoked by specifying state=facts.
+  The fact support is implemented by returning the partition properties
+  in the result. The returned partition properties are enriched by adding
+  properties 'hbas', 'nics', 'virtual-functions' that are a list
+  of the properties of the respective child elements of that partition.
+  (Issue #32).
 
 
 Version 0.3.0
