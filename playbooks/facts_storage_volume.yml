@@ -1,0 +1,21 @@
+---
+- hosts: localhost
+  connection: local
+  vars_files:
+    - vars.yml
+    - vault.yml
+  tasks:
+
+  - name: Get storage volume facts
+    zhmc_storage_volume:
+      hmc_host: "{{ hmc_host }}"
+      hmc_auth: "{{ hmc_auth }}"
+      cpc_name: "{{ cpc_name }}"
+      storage_group_name: "{{ sg_name }}"
+      name: "{{ sv_name }}"
+      state: facts
+    register: result
+
+  - name: Print the result
+    debug:
+      var: result

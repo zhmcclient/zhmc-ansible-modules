@@ -1,8 +1,8 @@
-.. _zhmc_hba:
+.. _zhmc_storage_group_attachment:
 
 
-zhmc_hba - Manages HBAs in existing partitions (without "dpm-storage-management" feature)
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+zhmc_storage_group_attachment - Manages the attachment of DPM storage groups to partitions (with "dpm-storage-management" feature)
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 
@@ -14,15 +14,15 @@ zhmc_hba - Manages HBAs in existing partitions (without "dpm-storage-management"
 Synopsis
 --------
 
-* Creates, updates, and deletes HBAs in existing partitions of a CPC.
-* The targeted CPC must be in the Dynamic Partition Manager (DPM) operational mode.
+* Gathers facts about the attachment of a storage group to a partition.
+* Attaches and detaches a storage group to and from a partition.
 
 
 Requirements (on host that executes module)
 -------------------------------------------
 
   * Network access to HMC
-  * zhmcclient >=0.14.0
+  * zhmcclient >=0.20.0
   * ansible >=2.2.0.0
 
 
@@ -47,7 +47,7 @@ Options
     <td></td>
     <td></td>
     <td>
-        <div>The name of the CPC with the partition containing the HBA.</div>
+        <div>The name of the CPC that has the partition and is associated with the storage group.</div>
     </td>
     </tr>
 
@@ -121,38 +121,12 @@ Options
     </tr>
 
     <tr>
-    <td>name<br/><div style="font-size: small;"></div></td>
-    <td>yes</td>
-    <td></td>
-    <td></td>
-    <td>
-        <div>The name of the target HBA that is managed. If the HBA needs to be created, this value becomes its name.</div>
-    </td>
-    </tr>
-
-    <tr>
     <td>partition_name<br/><div style="font-size: small;"></div></td>
     <td>yes</td>
     <td></td>
     <td></td>
     <td>
-        <div>The name of the partition containing the HBA.</div>
-    </td>
-    </tr>
-
-    <tr>
-    <td>properties<br/><div style="font-size: small;"></div></td>
-    <td>no</td>
-    <td>No input properties</td>
-    <td></td>
-    <td>
-        <div>Dictionary with input properties for the HBA, for <code>state=present</code>. Key is the property name with underscores instead of hyphens, and value is the property value in YAML syntax. Integer properties may also be provided as decimal strings. Will be ignored for <code>state=absent</code>.</div>
-        <div>The possible input properties in this dictionary are the properties defined as writeable in the data model for HBA resources (where the property names contain underscores instead of hyphens), with the following exceptions:</div>
-        <div>* <code>name</code>: Cannot be specified because the name has already been specified in the <code>name</code> module parameter.</div>
-        <div>* <code>adapter_port_uri</code>: Cannot be specified because this information is specified using the artificial properties <code>adapter_name</code> and <code>adapter_port</code>.</div>
-        <div>* <code>adapter_name</code>: The name of the adapter that has the port backing the target HBA. Cannot be changed after the HBA exists.</div>
-        <div>* <code>adapter_port</code>: The port index of the adapter port backing the target HBA. Cannot be changed after the HBA exists.</div>
-        <div>Properties omitted in this dictionary will remain unchanged when the HBA already exists, and will get the default value defined in the data model for HBAs when the HBA is being created.</div>
+        <div>The name of the partition for the attachment.</div>
     </td>
     </tr>
 
@@ -160,11 +134,22 @@ Options
     <td>state<br/><div style="font-size: small;"></div></td>
     <td>yes</td>
     <td></td>
-    <td><ul><li>absent</li><li>present</li></ul></td>
+    <td><ul><li>detached</li><li>attached</li><li>facts</li></ul></td>
     <td>
-        <div>The desired state for the target HBA:</div>
-        <div><code>absent</code>: Ensures that the HBA does not exist in the specified partition.</div>
-        <div><code>present</code>: Ensures that the HBA exists in the specified partition and has the specified properties.</div>
+        <div>The desired state for the attachment:</div>
+        <div>* <code>detached</code>: Ensures that the storage group is not attached to the partition. If the storage group is currently attached to the partition and the partition is currently active, the module will fail.</div>
+        <div>* <code>attached</code>: Ensures that the storage group is attached to the partition.</div>
+        <div>* <code>facts</code>: Does not change anything on the attachment and returns the attachment status.</div>
+    </td>
+    </tr>
+
+    <tr>
+    <td>storage_group_name<br/><div style="font-size: small;"></div></td>
+    <td>yes</td>
+    <td></td>
+    <td></td>
+    <td>
+        <div>The name of the storage group for the attachment.</div>
     </td>
     </tr>
 
@@ -182,29 +167,34 @@ Examples
     ---
     # Note: The following examples assume that some variables named 'my_*' are set.
     
-    - name: Ensure HBA exists in the partition
-      zhmc_partition:
+    - name: Gather facts about the attachment
+      zhmc_storage_group_attachment:
         hmc_host: "{{ my_hmc_host }}"
         hmc_auth: "{{ my_hmc_auth }}"
         cpc_name: "{{ my_cpc_name }}"
+        storage_group_name: "{{ my_storage_group_name }}"
         partition_name: "{{ my_partition_name }}"
-        name: "{{ my_hba_name }}"
-        state: present
-        properties:
-          adapter_name: FCP-1
-          adapter_port: 0
-          description: "The port to our V7K #1"
-          device_number: "123F"
-      register: hba1
+        state: facts
+      register: sga1
     
-    - name: Ensure HBA does not exist in the partition
-      zhmc_partition:
+    - name: Ensure the storage group is attached to the partition
+      zhmc_storage_group_attachment:
         hmc_host: "{{ my_hmc_host }}"
         hmc_auth: "{{ my_hmc_auth }}"
         cpc_name: "{{ my_cpc_name }}"
+        storage_group_name: "{{ my_storage_group_name }}"
         partition_name: "{{ my_partition_name }}"
-        name: "{{ my_hba_name }}"
-        state: absent
+        state: attached
+    
+    - name: "Ensure the storage group is not attached to the partition."
+      zhmc_storage_group_attachment:
+        hmc_host: "{{ my_hmc_host }}"
+        hmc_auth: "{{ my_hmc_auth }}"
+        cpc_name: "{{ my_cpc_name }}"
+        storage_group_name: "{{ my_storage_group_name }}"
+        partition_name: "{{ my_partition_name }}"
+        state: detached
+    
 
 Return Values
 -------------
@@ -224,19 +214,13 @@ Common return values are documented here :doc:`common_return_values`, the follow
     </tr>
 
     <tr>
-    <td>hba</td>
+    <td>storage_group_attachment</td>
     <td>
-        <div>For <code>state=absent</code>, an empty dictionary.</div>
-        <div>For <code>state=present</code>, a dictionary with the resource properties of the HBA (after changes, if any). The dictionary keys are the exact property names as described in the data model for the resource, i.e. they contain hyphens (-), not underscores (_). The dictionary values are the property values using the Python representations described in the documentation of the zhmcclient Python package.</div>
+        <div>A dictionary with a single key 'attached' whose boolean value indicates whether the storage group is now actually attached to the partition. If check mode was requested, the actual (i.e. not the desired) attachment state is returned.</div>
     </td>
     <td align=center>success</td>
     <td align=center>dict</td>
-    <td align=center><code>{
-      "name": "hba-1",
-      "description": "HBA #1",
-      "adapter-port-uri": "/api/adapters/.../ports/...",
-      ...
-    }</code>
+    <td align=center><code>{"attached": true}</code>
     </td>
     </tr>
 
@@ -248,7 +232,9 @@ Notes
 -----
 
 .. note::
-    - See also Ansible module zhmc_partition.
+    - The CPC that is associated with the target storage group must be in the Dynamic Partition Manager (DPM) operational mode and must have the "dpm-storage-management" firmware feature enabled. That feature has been introduced with the z14-ZR1 / Rockhopper II machine generation.
+    - This module performs actions only against the Z HMC regarding the attachment of storage group objects to partitions. This module does not perform any actions against storage subsystems or SAN switches.
+    - The Ansible module zhmc_hba is no longer used on CPCs that have the "dpm-storage-management" feature enabled.
 
 
 

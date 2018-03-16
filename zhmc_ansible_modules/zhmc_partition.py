@@ -468,6 +468,12 @@ def process_properties(cpc, partition, params):
                     "Artificial property {!r} can only be specified when the "
                     "partition previously exists.".format(prop_name))
 
+            if partition.hbas is None:
+                raise ParameterError(
+                    "Artificial property {!r} can only be specified when the "
+                    "'dpm-storage-management' feature is disabled.".
+                    format(prop_name))
+
             hba_name = input_props[prop_name]
             if type_cast:
                 hba_name = type_cast(hba_name)
@@ -950,8 +956,9 @@ def facts(params, check_mode):
         # Get the child elements of the partition
 
         hbas_prop = list()
-        for hba in partition.hbas.list(full_properties=True):
-            hbas_prop.append(hba.properties)
+        if partition.hbas is not None:
+            for hba in partition.hbas.list(full_properties=True):
+                hbas_prop.append(hba.properties)
         partition.properties['hbas'] = hbas_prop
 
         nics_prop = list()

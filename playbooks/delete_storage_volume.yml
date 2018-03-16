@@ -1,0 +1,16 @@
+---
+- hosts: localhost
+  connection: local
+  vars_files:
+    - vars.yml
+    - vault.yml
+  tasks:
+
+  - name: Ensure storage volume does not exist
+    zhmc_storage_volume:
+      hmc_host: "{{ hmc_host }}"
+      hmc_auth: "{{ hmc_auth }}"
+      cpc_name: "{{ cpc_name }}"
+      storage_group_name: "{{ sg_name }}"
+      name: "{{ sv_name }}"
+      state: absent

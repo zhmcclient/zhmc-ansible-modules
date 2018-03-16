@@ -15,3 +15,6 @@ nic_adapter_port: 0
 
 vfunction_name: vfunction-1
 vfunction_adapter_name: zEDC 0144 A13B-21
+
+sg_name: zhmc-sg2
+sg_partition_name: zhmc-sg-part2

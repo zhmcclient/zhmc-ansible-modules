@@ -383,7 +383,9 @@ def process_normal_property(
       prop_name (string): Property name (using Ansible module names).
 
       resource_properties (dict): Dictionary of property definitions for the
-        resource type (e.g. ZHMC_PARTITION_PROPERTIES).
+        resource type (e.g. ZHMC_PARTITION_PROPERTIES). Each value must be a
+        tuple (allowed, create, update, update_while_active, eq_func,
+        type_cast). For details, see the modules using this function.
 
       input_props (dict): New properties.
 
@@ -395,10 +397,9 @@ def process_normal_property(
       tuple of (create_props, update_props, stop), where:
         * create_props: dict of properties for resource creation.
         * update_props: dict of properties for resource update.
-        * stop (bool): Indicates whether some update properties require the
-          partition to be stopped when doing the update. Note that the
-          partition is either the resource being processed, or the partition
-          owning the resource being processed.
+        * deactivate (bool): Indicates whether the resource needs to be
+          deactivated because there are properties to be updated that
+          require that.
 
     Raises:
       ParameterError: An issue with the module parameters.
@@ -406,7 +407,7 @@ def process_normal_property(
 
     create_props = {}
     update_props = {}
-    stop = False
+    deactivate = False
 
     allowed, create, update, update_while_active, eq_func, type_cast = \
         resource_properties[prop_name]
@@ -436,7 +437,7 @@ def process_normal_property(
             if update:
                 update_props[hmc_prop_name] = input_prop_value
                 if not update_while_active:
-                    stop = True
+                    deactivate = True
             else:
                 raise ParameterError(
                     "Property {!r} can be set during {} "
@@ -452,6 +453,6 @@ def process_normal_property(
         else:
             update_props[hmc_prop_name] = input_prop_value
             if not update_while_active:
-                stop = True
+                deactivate = True
 
-    return create_props, update_props, stop
+    return create_props, update_props, deactivate

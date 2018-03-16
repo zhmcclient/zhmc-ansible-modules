@@ -39,7 +39,8 @@ DOCUMENTATION = """
 ---
 module: zhmc_hba
 version_added: "0.0"
-short_description: Manages HBAs in existing partitions
+short_description: Manages HBAs in existing partitions (without
+    "dpm-storage-management" feature)
 description:
   - Creates, updates, and deletes HBAs in existing partitions of a CPC.
   - The targeted CPC must be in the Dynamic Partition Manager (DPM) operational
