@@ -39,6 +39,10 @@ Released: not yet
 
 **Enhancements:**
 
+* Added support for DPM storage groups, attachments and volumes, by adding
+  new modules 'zhmc_storage_group', 'zhmc_storage_group_attachment', and
+  'zhmc_storage_volume'. Added several playbooks as examples.
+
 **Known issues:**
 
 * See `list of open issues`_.

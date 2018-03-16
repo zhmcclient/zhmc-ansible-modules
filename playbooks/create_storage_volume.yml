@@ -1,0 +1,24 @@
+---
+- hosts: localhost
+  connection: local
+  vars_files:
+    - vars.yml
+    - vault.yml
+  tasks:
+
+  - name: Ensure storage volume exists
+    zhmc_storage_volume:
+      hmc_host: "{{ hmc_host }}"
+      hmc_auth: "{{ hmc_auth }}"
+      cpc_name: "{{ cpc_name }}"
+      storage_group_name: "{{ sg_name }}"
+      name: "{{ sv_name }}"
+      properties:
+        description: "zhmcclient SG tests: Storage Volume {{ sv_name }}"
+        size: 1
+      state: present
+    register: result
+
+  - name: Print the result
+    debug:
+      var: result

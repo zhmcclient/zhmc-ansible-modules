@@ -1,0 +1,27 @@
+---
+- hosts: localhost
+  connection: local
+  vars_files:
+    - vars.yml
+    - vault.yml
+  tasks:
+
+  - name: Ensure storage group exists
+    zhmc_storage_group:
+      hmc_host: "{{ hmc_host }}"
+      hmc_auth: "{{ hmc_auth }}"
+      cpc_name: "{{ cpc_name }}"
+      name: "{{ sg_name }}"
+      properties:
+        description: "zhmcclient SG tests: Storage Group {{ sg_name }}"
+        type: fcp
+        shared: false
+        connectivity: 4
+        max-partitions: 1
+      state: present
+      expand: true
+    register: result
+
+  - name: Print the result
+    debug:
+      var: result
