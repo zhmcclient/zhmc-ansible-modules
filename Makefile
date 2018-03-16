@@ -67,7 +67,8 @@ package_name_python := zhmc_ansible_modules
 package_name_python_dashes := $(subst _,-,$(package_name_python))
 
 # Package version (full version, including any pre-release suffixes, e.g. "0.2.1.dev42")
-package_version := $(shell $(PIP_CMD) show $(package_name_pypi) | grep "Version:" | sed -e 's/Version: *\(.*\)$$/\1/')
+# package_version := $(shell $(PIP_CMD) show $(package_name_pypi) | grep "Version:" | sed -e 's/Version: *\(.*\)$$/\1/')
+package_version := $(shell $(PYTHON_CMD) -c "from pbr.version import VersionInfo; vi=VersionInfo('$(package_name_python)'); print(vi.release_string())" 2>/dev/null)
 
 # Python major version
 python_major_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('%s'%sys.version_info[0])")
@@ -202,6 +203,15 @@ help:
 	@echo '  PYTHON_CMD=... - Name of python command. Default: python'
 	@echo '  PIP_CMD=... - Name of pip command. Default: pip'
 
+.PHONY: _check_version
+_check_version:
+ifeq (,$(package_version))
+	@echo 'Error: Package version could not be determined; (requires pbr; run "make setup")'
+	@false
+else
+	@true
+endif
+
 .PHONY: _pip
 _pip:
 	@echo 'Installing/upgrading pip, setuptools and wheel with PACKAGE_LEVEL=$(PACKAGE_LEVEL)'
@@ -254,7 +264,7 @@ uninstall:
 	@echo '$@ done.'
 
 .PHONY: upload
-upload: $(bdist_file) $(sdist_file)
+upload: _check_version $(bdist_file) $(sdist_file)
 ifeq (,$(findstring .dev,$(package_version)))
 	@echo '==> This will upload $(package_name_pypi) version $(package_version) to PyPI!'
 	@echo -n '==> Continue? [yN] '
@@ -275,7 +285,7 @@ clobber:
 	@echo 'Done: Removed all build products to get to a fresh state.'
 	@echo '$@ done.'
 
-$(bdist_file): Makefile $(dist_dependent_files)
+$(bdist_file): _check_version Makefile $(dist_dependent_files)
 ifneq ($(PLATFORM),Windows)
 	rm -Rf $(package_name_pypi_under).egg-info .eggs
 	mkdir -p $(dist_build_dir)
@@ -286,7 +296,7 @@ else
 	@false
 endif
 
-$(sdist_file): Makefile $(dist_dependent_files)
+$(sdist_file): _check_version Makefile $(dist_dependent_files)
 ifneq ($(PLATFORM),Windows)
 	rm -Rf $(package_name_pypi_under).egg-info .eggs
 	mkdir -p $(dist_build_dir)
