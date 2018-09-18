@@ -184,7 +184,7 @@ help:
 	@echo 'Package version will be: $(package_version)'
 	@echo 'Currently active Python environment: Python $(python_mn_version)'
 	@echo 'Valid targets are:'
-	@echo '  setup      - Set up the development environment'
+	@echo '  develop    - Set up the development environment'
 	@echo '  dist       - Build the distribution files in: $(dist_build_dir)'
 	@echo '  docs       - Build the documentation in: $(doc_build_dir)'
 	@echo '  doccheck   - Run check whether generated module docs are up to date'
@@ -220,7 +220,7 @@ _pip:
 	$(PIP_CMD) install $(pip_level_opts) wheel
 
 .PHONY: setup
-setup: _pip requirements.txt dev-requirements.txt os_setup.sh $(ansible_repo_dir)
+develop: _pip requirements.txt dev-requirements.txt os_setup.sh $(ansible_repo_dir)
 	@echo 'Setting up the development environment with PACKAGE_LEVEL=$(PACKAGE_LEVEL)'
 	bash -c './os_setup.sh'
 	$(PIP_CMD) install $(pip_level_opts) -r dev-requirements.txt
@@ -248,7 +248,7 @@ test: $(test_log_file)
 	@echo '$@ done.'
 
 .PHONY: all
-all: setup dist docs check test
+all: develop dist docs check test
 	@echo '$@ done.'
 
 .PHONY: install
