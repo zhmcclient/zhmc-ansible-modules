@@ -78,7 +78,7 @@ install:
   - pwd
   - git clone https://github.com/andy-maier/ansible.git --branch zhmc-fixes --depth 1 ../ansible
   - $PIP_CMD list
-  - make setup
+  - make develop
   - make install
   - $PIP_CMD install python-coveralls
   - $PIP_CMD list
