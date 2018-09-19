@@ -254,7 +254,7 @@ all: develop dist docs check test
 .PHONY: install
 install: _pip requirements.txt setup.cfg setup.py
 	@echo 'Installing package $(package_name_pypi) and its requirements with PACKAGE_LEVEL=$(PACKAGE_LEVEL)'
-	$(PIP_CMD) install $(pip_level_opts) .
+	$(PIP_CMD) install $(pip_level_opts) -r requirements.txt .
 	@echo 'Done: Installed $(package_name_pypi) into current Python environment.'
 	@echo '$@ done.'
 
