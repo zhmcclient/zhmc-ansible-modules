@@ -236,7 +236,7 @@ docs: $(doc_build_dir)/html/index.html
 
 .PHONY: doccheck
 doccheck: $(doc_check_dir)/list_of_all_modules.rst
-	bash -c 'diff --exclude=common_return_values.rst $(doc_gen_dir) $(doc_check_dir); if [[ "$$?" != "0" ]]; then echo "Error: Module documentation files are not up to date - run make docs and commit them."; false; fi'
+	bash -c 'diff -bB --exclude=common_return_values.rst $(doc_gen_dir) $(doc_check_dir); if [[ "$$?" != "0" ]]; then echo "Error: Module documentation files are not up to date - run make docs and commit them."; false; fi'
 	@echo '$@ done.'
 
 .PHONY: check
