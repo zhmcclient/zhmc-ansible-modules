@@ -26,9 +26,16 @@ Released: not yet
 
 **Incompatible changes:**
 
+* Changed 'make setup' back to 'make develop' for consistency with the other
+  zhmcclient projects.
+
 **Deprecations:**
 
 **Bug fixes:**
+
+* Several fixes in the make process and package dependencies.
+
+* Synced package dependencies with zhmcclient project.
 
 **Enhancements:**
 
