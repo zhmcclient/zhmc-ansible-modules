@@ -214,10 +214,9 @@ endif
 
 .PHONY: _pip
 _pip:
-	@echo 'Installing/upgrading pip, setuptools and wheel with PACKAGE_LEVEL=$(PACKAGE_LEVEL)'
-	$(PIP_CMD) install $(pip_level_opts) pip
-	$(PIP_CMD) install $(pip_level_opts) setuptools
-	$(PIP_CMD) install $(pip_level_opts) wheel
+	$(PYTHON_CMD) remove_duplicate_setuptools.py
+	@echo 'Installing/upgrading pip, setuptools, wheel and pbr with PACKAGE_LEVEL=$(PACKAGE_LEVEL)'
+	$(PYTHON_CMD) -m pip install $(pip_level_opts) pip setuptools wheel pbr
 
 .PHONY: setup
 develop: _pip requirements.txt dev-requirements.txt os_setup.sh $(ansible_repo_dir)
