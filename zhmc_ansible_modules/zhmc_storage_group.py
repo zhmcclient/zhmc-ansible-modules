@@ -175,6 +175,10 @@ EXAMPLES = """
     expand: true
     properties:
       description: "Example storage group 1"
+      type: fcp
+      shared: false
+      connectivity: 4
+      max-partitions: 1
   register: sg1
 
 """

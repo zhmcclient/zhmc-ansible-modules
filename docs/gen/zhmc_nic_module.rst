@@ -181,7 +181,7 @@ Examples
     
     ---
     # Note: The following examples assume that some variables named 'my_*' are set.
-    
+
     - name: Ensure NIC exists in the partition
       zhmc_partition:
         hmc_host: "{{ my_hmc_host }}"
@@ -196,7 +196,7 @@ Examples
           description: "The port to our data network"
           device_number: "023F"
       register: nic1
-    
+
     - name: Ensure NIC does not exist in the partition
       zhmc_partition:
         hmc_host: "{{ my_hmc_host }}"
@@ -205,6 +205,7 @@ Examples
         partition_name: "{{ my_partition_name }}"
         name: "{{ my_nic_name }}"
         state: absent
+
 
 Return Values
 -------------
