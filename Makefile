@@ -184,58 +184,45 @@ help:
 	@echo 'Package version will be: $(package_version)'
 	@echo 'Currently active Python environment: Python $(python_mn_version)'
 	@echo 'Valid targets are:'
+	@echo '  install    - Install package (as editable) and its reqs into active Python environment'
 	@echo '  develop    - Set up the development environment'
-	@echo '  dist       - Build the distribution files in: $(dist_build_dir)'
 	@echo '  docs       - Build the documentation in: $(doc_build_dir)'
-	@echo '  doccheck   - Run check whether generated module docs are up to date'
 	@echo '  check      - Run all checks (flake8, validate-modules, doccheck)'
 	@echo '  test       - Run unit tests (and test coverage) and save results in: $(test_log_file)'
 	@echo '               Env.var TESTCASES can be used to specify a py.test expression for its -k option'
 	@echo '  all        - Do all of the above'
-	@echo '  install    - Install package in active Python environment'
-	@echo '  uninstall  - Uninstall package from active Python environment'
 	@echo '  upload     - Upload the package to PyPI'
+	@echo '  uninstall  - Uninstall package from active Python environment'
 	@echo '  clobber    - Remove any produced files'
-	@echo '  linkcheck  - Check links in documentation'
+	@echo '  doccheck   - Run check whether generated module docs are up to date'
+	@echo '  linkcheck  - Check links in documentation (does not work)'
+	@echo '  dist       - Build the distribution files in: $(dist_build_dir) (not used)'
 	@echo 'Environment variables:'
 	@echo '  PACKAGE_LEVEL="minimum" - Install minimum version of dependent Python packages'
 	@echo '  PACKAGE_LEVEL="latest" - Default: Install latest version of dependent Python packages'
 	@echo '  PYTHON_CMD=... - Name of python command. Default: python'
 	@echo '  PIP_CMD=... - Name of pip command. Default: pip'
+	@echo 'Invocation of ansible commands from within repo main directory:'
+	@echo '  export ANSIBLE_LIBRARY="$$(pwd)/$(module_src_dir);$$ANSIBLE_LIBRARY"'
+	@echo '  # currently: ANSIBLE_LIBRARY=$(ANSIBLE_LIBRARY)'
+	@echo '  ansible-playbook playbooks/....'
 
-.PHONY: _check_version
-_check_version:
-ifeq (,$(package_version))
-	@echo 'Error: Package version could not be determined; (requires pbr; run "make setup")'
-	@false
-else
-	@true
-endif
+.PHONY: install
+install: _pip requirements.txt setup.cfg setup.py
+	@echo 'Installing package (as editable) and its reqs with PACKAGE_LEVEL=$(PACKAGE_LEVEL) into current Python environment'
+	$(PIP_CMD) install $(pip_level_opts) -r requirements.txt
+	$(PIP_CMD) install $(pip_level_opts) -e .
+	@echo 'Done: Installed package and its reqs into current Python environment.'
 
-.PHONY: _pip
-_pip:
-	$(PYTHON_CMD) remove_duplicate_setuptools.py
-	@echo 'Installing/upgrading pip, setuptools, wheel and pbr with PACKAGE_LEVEL=$(PACKAGE_LEVEL)'
-	$(PYTHON_CMD) -m pip install $(pip_level_opts) pip setuptools wheel pbr
-
-.PHONY: setup
+.PHONY: develop
 develop: _pip requirements.txt dev-requirements.txt os_setup.sh $(ansible_repo_dir)
 	@echo 'Setting up the development environment with PACKAGE_LEVEL=$(PACKAGE_LEVEL)'
 	bash -c './os_setup.sh'
 	$(PIP_CMD) install $(pip_level_opts) -r dev-requirements.txt
 	@echo '$@ done.'
 
-.PHONY: dist
-dist: $(bdist_file) $(sdist_file)
-	@echo '$@ done.'
-
 .PHONY: docs
 docs: $(doc_build_dir)/html/index.html
-	@echo '$@ done.'
-
-.PHONY: doccheck
-doccheck: $(doc_check_dir)/list_of_all_modules.rst
-	bash -c 'diff -bB --exclude=common_return_values.rst $(doc_gen_dir) $(doc_check_dir); if [[ "$$?" != "0" ]]; then echo "Error: Module documentation files are not up to date - run make docs and commit them."; false; fi'
 	@echo '$@ done.'
 
 .PHONY: check
@@ -247,19 +234,7 @@ test: $(test_log_file)
 	@echo '$@ done.'
 
 .PHONY: all
-all: develop dist docs check test
-	@echo '$@ done.'
-
-.PHONY: install
-install: _pip requirements.txt setup.cfg setup.py
-	@echo 'Installing package $(package_name_pypi) and its requirements with PACKAGE_LEVEL=$(PACKAGE_LEVEL)'
-	$(PIP_CMD) install $(pip_level_opts) -r requirements.txt .
-	@echo 'Done: Installed $(package_name_pypi) into current Python environment.'
-	@echo '$@ done.'
-
-.PHONY: uninstall
-uninstall:
-	bash -c '$(PIP_CMD) show $(package_name_pypi) >/dev/null; rc=$$?; if [[ $$rc == 0 ]]; then $(PIP_CMD) uninstall -y $(package_name_pypi); fi'
+all: install develop docs check test
 	@echo '$@ done.'
 
 .PHONY: upload
@@ -276,6 +251,11 @@ else
 	@false
 endif
 
+.PHONY: uninstall
+uninstall:
+	bash -c '$(PIP_CMD) show $(package_name_pypi) >/dev/null; rc=$$?; if [[ $$rc == 0 ]]; then $(PIP_CMD) uninstall -y $(package_name_pypi); fi'
+	@echo '$@ done.'
+
 .PHONY: clobber
 clobber:
 	rm -Rf .cache $(package_name_pypi_under).egg-info .eggs $(build_dir) $(doc_check_dir) htmlcov .tox
@@ -283,6 +263,34 @@ clobber:
 	find . -name "*.pyc" -delete -o -name "__pycache__" -delete -o -name "*.tmp" -delete -o -name "tmp_*" -delete
 	@echo 'Done: Removed all build products to get to a fresh state.'
 	@echo '$@ done.'
+
+.PHONY: doccheck
+doccheck: $(doc_check_dir)/list_of_all_modules.rst
+	bash -c 'diff -bB --exclude=common_return_values.rst $(doc_gen_dir) $(doc_check_dir); if [[ "$$?" != "0" ]]; then echo "Error: Module documentation files are not up to date - run make docs and commit them."; false; fi'
+	@echo '$@ done.'
+
+.PHONY: linkcheck
+linkcheck: $(doc_build_dir)/linkcheck/output.txt
+	@echo '$@ done.'
+
+.PHONY: dist
+dist: $(bdist_file) $(sdist_file)
+	@echo '$@ done.'
+
+.PHONY: _check_version
+_check_version:
+ifeq (,$(package_version))
+	@echo 'Error: Package version could not be determined; (requires pbr; run "make setup")'
+	@false
+else
+	@true
+endif
+
+.PHONY: _pip
+_pip:
+	$(PYTHON_CMD) remove_duplicate_setuptools.py
+	@echo 'Installing/upgrading pip, setuptools, wheel and pbr with PACKAGE_LEVEL=$(PACKAGE_LEVEL)'
+	$(PYTHON_CMD) -m pip install $(pip_level_opts) pip setuptools wheel pbr
 
 $(bdist_file): _check_version Makefile $(dist_dependent_files)
 ifneq ($(PLATFORM),Windows)
@@ -305,10 +313,6 @@ else
 	@echo 'Error: Creating sdist distribution archive requires to run on Linux or OS-X'
 	@false
 endif
-
-.PHONY: linkcheck
-linkcheck: $(doc_build_dir)/linkcheck/output.txt
-	@echo '$@ done.'
 
 $(ansible_repo_dir):
 	@echo 'Cloning our fork of the Ansible repo into: $@'
