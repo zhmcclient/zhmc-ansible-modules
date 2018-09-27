@@ -16,6 +16,8 @@
 Utility functions for use by more than one Ansible module.
 """
 
+from datetime import datetime
+
 from ansible.module_utils import six
 
 from zhmcclient import Session
@@ -456,3 +458,26 @@ def process_normal_property(
                 deactivate = True
 
     return create_props, update_props, deactivate
+
+
+def log(msg, file='debug.log'):
+    """
+    Append a one-line message to a log file, adding some header info to the
+    begin of the line.
+
+    The header info that is added to each line, is:
+      yyyy-mm-dd hh:mm:ss.uuuuuu msg
+
+    Parameters:
+
+      msg (string): The message. Any newlines in the message are replaced by
+        blanks.
+
+      file (string): Path name of the log file to append the message to.
+    """
+    msg = msg.replace('\n', ' ') + '\n'
+    ts_dt = datetime.now()
+    ts_str = ts_dt.strftime('%Y-%m-%d %H:%M:%S.%f')
+    line = "{0} {1}".format(ts_str, msg)
+    with open(file, 'a') as fp:
+        fp.write(line)
