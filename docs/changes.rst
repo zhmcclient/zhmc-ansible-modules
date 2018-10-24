@@ -22,14 +22,12 @@ Change log
 Version 0.5.0
 ^^^^^^^^^^^^^
 
-Released: not yet
+Released: 2018-10-24
 
 **Incompatible changes:**
 
 * Changed 'make setup' back to 'make develop' for consistency with the other
   zhmcclient projects.
-
-**Deprecations:**
 
 **Bug fixes:**
 
@@ -42,12 +40,6 @@ Released: not yet
 * Added support for DPM storage groups, attachments and volumes, by adding
   new modules 'zhmc_storage_group', 'zhmc_storage_group_attachment', and
   'zhmc_storage_volume'. Added several playbooks as examples.
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 0.4.0
