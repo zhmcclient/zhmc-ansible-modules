@@ -16,9 +16,8 @@ ansible>=2.2.0.0 # GPLv3 + BSD
 pbr>=1.10.0 # Apache-2.0
 requests>=2.12.4,!=2.17.1,!=2.17.2 # Apache-2.0 (requests.packages.urllib3 and from zhmcclient)
 
-# TODO: Go back to using zhmcclient package once 0.20.0 is released.
-# zhmcclient>=0.20.0 # Apache-2.0
-git+https://github.com/zhmcclient/python-zhmcclient@master#egg=zhmcclient
+zhmcclient>=0.20.0 # Apache-2.0
+# git+https://github.com/zhmcclient/python-zhmcclient@master#egg=zhmcclient
 
 # Indirect dependencies (commented out, only listed to document their license):
 

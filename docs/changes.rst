@@ -30,6 +30,9 @@ Released: not yet
 
 **Bug fixes:**
 
+* Fixed dependency to zhmcclient package to be >=0.20.0, instead
+  of using its master branch from the github repo.
+
 **Enhancements:**
 
 **Known issues:**
