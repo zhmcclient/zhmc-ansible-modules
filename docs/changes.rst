@@ -30,13 +30,16 @@ Released: not yet
 
 **Bug fixes:**
 
+* Fixed dependency to zhmcclient package to be >=0.20.0, instead
+  of using its master branch from the github repo.
+
 **Enhancements:**
 
 **Known issues:**
 
 * See `list of open issues`_.
 
-.. _`list of open issues`: https://github.com/zhmcclient/python-zhmcclient/issues
+.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 0.5.0
