@@ -35,6 +35,9 @@ Released: not yet
 
 **Enhancements:**
 
+* Docs: Improved and fixed the documentation how to release a version
+  and how to start a new version.
+
 **Known issues:**
 
 * See `list of open issues`_.
