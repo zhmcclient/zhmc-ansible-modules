@@ -22,11 +22,7 @@ Change log
 Version 0.5.1
 ^^^^^^^^^^^^^
 
-Released: not yet
-
-**Incompatible changes:**
-
-**Deprecations:**
+Released: 2018-10-25
 
 **Bug fixes:**
 
@@ -37,12 +33,6 @@ Released: not yet
 
 * Docs: Improved and fixed the documentation how to release a version
   and how to start a new version.
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 0.5.0
