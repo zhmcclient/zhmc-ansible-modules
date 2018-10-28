@@ -1,0 +1,43 @@
+---
+- hosts: localhost
+  connection: local
+  vars_files:
+    - vars.yml
+    - vault.yml
+  tasks:
+
+  - name: Ensure domain 0 as usage domain on all adapters for partition 1
+    zhmc_crypto_attachment:
+      hmc_host: "{{ hmc_host }}"
+      hmc_auth: "{{ hmc_auth }}"
+      cpc_name: "{{ cpc_name }}"
+      partition_name: "{{ partition_name }}"
+      state: attached
+      crypto_type: ep11
+      adapter_count: -1
+      domain_range: 0,0
+      access_mode: usage
+      log_file: crypto.log
+    register: result
+
+  - name: Print the result
+    debug:
+      var: result
+
+  - name: Ensure domains 1-max as control domain on all adapters for partition 1
+    zhmc_crypto_attachment:
+      hmc_host: "{{ hmc_host }}"
+      hmc_auth: "{{ hmc_auth }}"
+      cpc_name: "{{ cpc_name }}"
+      partition_name: "{{ partition_name }}"
+      state: attached
+      crypto_type: ep11
+      adapter_count: -1
+      domain_range: 1,-1
+      access_mode: control
+      log_file: crypto.log
+    register: result
+
+  - name: Print the result
+    debug:
+      var: result

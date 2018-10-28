@@ -180,7 +180,7 @@ Examples
     
     ---
     # Note: The following examples assume that some variables named 'my_*' are set.
-
+    
     - name: Gather facts about a storage group
       zhmc_storage_group:
         hmc_host: "{{ my_hmc_host }}"
@@ -190,7 +190,7 @@ Examples
         state: facts
         expand: true
       register: sg1
-
+    
     - name: Ensure the storage group does not exist
       zhmc_storage_group:
         hmc_host: "{{ my_hmc_host }}"
@@ -198,7 +198,7 @@ Examples
         cpc_name: "{{ my_cpc_name }}"
         name: "{{ my_storage_group_name }}"
         state: absent
-
+    
     - name: Ensure the storage group exists
       zhmc_storage_group:
         hmc_host: "{{ my_hmc_host }}"
@@ -214,8 +214,7 @@ Examples
           connectivity: 4
           max-partitions: 1
       register: sg1
-
-
+    
 
 Return Values
 -------------

@@ -1,0 +1,49 @@
+---
+- hosts: localhost
+  connection: local
+  vars_files:
+    - vars.yml
+    - vault.yml
+  tasks:
+
+  - name: Get facts about crypto config of partition 1
+    zhmc_crypto_attachment:
+      hmc_host: "{{ hmc_host }}"
+      hmc_auth: "{{ hmc_auth }}"
+      cpc_name: "{{ cpc_name }}"
+      partition_name: "{{ partition_name }}"
+      state: facts
+      log_file: crypto.log
+    register: result
+
+  - name: Print the result
+    debug:
+      var: result
+
+  - name: Get facts about crypto config of partition 2
+    zhmc_crypto_attachment:
+      hmc_host: "{{ hmc_host }}"
+      hmc_auth: "{{ hmc_auth }}"
+      cpc_name: "{{ cpc_name }}"
+      partition_name: "{{ partition2_name }}"
+      state: facts
+      log_file: crypto.log
+    register: result
+
+  - name: Print the result
+    debug:
+      var: result
+
+  - name: Get facts about crypto config of partition 3
+    zhmc_crypto_attachment:
+      hmc_host: "{{ hmc_host }}"
+      hmc_auth: "{{ hmc_auth }}"
+      cpc_name: "{{ cpc_name }}"
+      partition_name: "{{ partition3_name }}"
+      state: facts
+      log_file: crypto.log
+    register: result
+
+  - name: Print the result
+    debug:
+      var: result
