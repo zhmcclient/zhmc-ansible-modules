@@ -181,7 +181,7 @@ Examples
     
     ---
     # Note: The following examples assume that some variables named 'my_*' are set.
-
+    
     - name: Ensure HBA exists in the partition
       zhmc_partition:
         hmc_host: "{{ my_hmc_host }}"
@@ -196,7 +196,7 @@ Examples
           description: "The port to our V7K #1"
           device_number: "123F"
       register: hba1
-
+    
     - name: Ensure HBA does not exist in the partition
       zhmc_partition:
         hmc_host: "{{ my_hmc_host }}"
@@ -205,7 +205,6 @@ Examples
         partition_name: "{{ my_partition_name }}"
         name: "{{ my_hba_name }}"
         state: absent
-
 
 Return Values
 -------------

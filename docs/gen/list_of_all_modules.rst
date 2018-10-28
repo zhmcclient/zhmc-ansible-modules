@@ -3,6 +3,7 @@ All Modules
 
 .. toctree:: :maxdepth: 1
 
+  zhmc_crypto_attachment - Manages the attachment of crypto adapters and domains to partitions. <zhmc_crypto_attachment_module>
   zhmc_hba - Manages HBAs in existing partitions (without "dpm-storage-management" feature) <zhmc_hba_module>
   zhmc_nic - Manages NICs in existing partitions <zhmc_nic_module>
   zhmc_partition - Manages partitions <zhmc_partition_module>
