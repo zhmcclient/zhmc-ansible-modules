@@ -22,24 +22,12 @@ Change log
 Version 0.5.2
 ^^^^^^^^^^^^^
 
-Released: not yet
-
-**Incompatible changes:**
-
-**Deprecations:**
+Released: 2018-10–31
 
 **Bug fixes:**
 
 * Updated the 'requests' package to 2.20.0 to fix the following vulnerability:
   https://nvd.nist.gov/vuln/detail/CVE-2018-18074
-
-**Enhancements:**
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 0.5.1
