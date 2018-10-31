@@ -30,6 +30,9 @@ Released: not yet
 
 **Bug fixes:**
 
+* Updated the 'requests' package to 2.20.0 to fix the following vulnerability:
+  https://nvd.nist.gov/vuln/detail/CVE-2018-18074
+
 **Enhancements:**
 
 **Known issues:**
