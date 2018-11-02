@@ -86,8 +86,8 @@ options:
     description:
       - "The desired state for the attachment:"
       - "* C(attached): Ensures that the specified number of crypto adapters
-         and the specified range of domain index numbers in the specified
-         access mode are attached to the partition."
+         of the specified crypto type, and the specified range of domain index
+         numbers in the specified access mode are attached to the partition."
       - "* C(detached): Ensures that no crypto adapter and no crypto domains
          are attached to the partition."
       - "* C(facts): Does not change anything on the attachment and returns
@@ -118,14 +118,6 @@ options:
     required: false
     default: 'usage'
     choices: ['usage', 'control']
-  force:
-    description:
-      - "Only for C(state=attach): Boolean controlling force mode.
-         In force mode, the attaching of domains will change their access mode,
-         if needed. In non-force mode, a change of access mode will be
-         rejected."
-    required: false
-    default: false
   crypto_type:
     description:
       - "Only for C(state=attach): The crypto type of the crypto adapters that
@@ -168,7 +160,6 @@ EXAMPLES = """
     cpc_name: "{{ my_cpc_name }}"
     partition_name: "{{ my_first_partition_name }}"
     state: attached
-    force: true
     crypto_type: ep11
     adapter_count: -1
     domain_range: 0,0
@@ -181,7 +172,6 @@ EXAMPLES = """
     cpc_name: "{{ my_cpc_name }}"
     partition_name: "{{ my_first_partition_name }}"
     state: attached
-    force: true
     crypto_type: ep11
     adapter_count: -1
     domain_range: 1,-1
@@ -290,7 +280,8 @@ def get_partition_config(partition, all_adapters):
     if partition_config:
         adapter_uris = partition_config['crypto-adapter-uris']
         adapter_names = []
-        for a in all_adapters:
+        for a_uri in all_adapters:
+            a = all_adapters[a_uri]
             if a.uri in adapter_uris:
                 adapter_names.append(a.name)
         domains_dict = dict()  # domain_index: access_mode
@@ -305,7 +296,8 @@ def get_partition_config(partition, all_adapters):
 
 def ensure_attached(params, check_mode):
     """
-    Ensure that the crypto adapter and domains are attached to the partition.
+    Ensure that the specified crypto adapters and crypto domains are attached
+    to the target partition.
 
     Raises:
       ParameterError: An issue with the module parameters.
@@ -322,7 +314,6 @@ def ensure_attached(params, check_mode):
     domain_range = params['domain_range']
     access_mode = params['access_mode']
     crypto_type = params['crypto_type']
-    force = params['force']
     log_file = params['log_file']
     faked_session = params.get('faked_session', None)  # No default specified
 
@@ -355,12 +346,29 @@ def ensure_attached(params, check_mode):
             'crypto-type': hmc_crypto_type,
         }
         all_adapters = cpc.adapters.list(filter_args=filter_args)
+        if not all_adapters:
+            raise Error("No crypto adapters of type {!r} found on CPC {!r} ".
+                        format(crypto_type, cpc_name))
 
         # All crypto adapters in a CPC have the same number of domains
         # (otherwise the concept of attaching domains across all attached
         # adapters cannot work). Therefore, the max number of domains can be
         # gathered from any adapter.
         max_domains = all_adapters[0].maximum_crypto_domains
+
+        # Convert the adapter list into a dict:
+        #   key: adapter URI
+        #   value: Adapter object
+        all_adapters = dict(zip([a.uri for a in all_adapters],
+                                all_adapters))
+
+        all_partitions = cpc.partitions.list()
+
+        # Convert the partition list into a dict:
+        #   key: partition URI
+        #   value: Partition object
+        all_partitions = dict(zip([p.uri for p in all_partitions],
+                                  all_partitions))
 
         if domain_range_hi == -1:
             domain_range_hi = max_domains - 1
@@ -382,32 +390,65 @@ def ensure_attached(params, check_mode):
         if adapter_count > len(all_adapters):
             raise ParameterError(
                 "The 'adapter_count' parameter must not exceed the number of "
-                "crypto adapters of type {!r} in CPC {!r} (={}), but is {}".
-                format(crypto_type, cpc_name, len(all_adapters),
+                "{} crypto adapters of type {!r} in CPC {!r}, but is {}".
+                format(len(all_adapters), crypto_type, cpc_name,
                        adapter_count))
 
-        # Get current crypto config of the partition
-        partition_config = partition.get_property('crypto-configuration')
-        # The 'crypto-configuration' property is None or:
-        # {
-        #   'crypto-adapter-uris': ['/api/...', ...],
-        #   'crypto-domain-configurations': [
-        #     {'domain-index': 15, 'access-mode': 'control-usage'},
-        #     ...
-        #   ]
-        # }
-        attached_domains_dict = dict()  # domain_index: access_mode
-        attached_adapter_uris = []
-        if partition_config:
-            attached_adapter_uris = partition_config['crypto-adapter-uris']
-            for dc in partition_config['crypto-domain-configurations']:
+        # Get current crypto config of the target partition.
+        attached_domains_dict = dict()  # Attached domains, with:
+        #   key: domain index
+        #   value: access mode
+        attached_adapter_uris = []  # URIs of attached adapters
+        p_config = partition.get_property('crypto-configuration')
+        if p_config:
+            attached_adapter_uris = p_config['crypto-adapter-uris']
+            for dc in p_config['crypto-domain-configurations']:
                 di = int(dc['domain-index'])
                 am = dc['access-mode']
                 attached_domains_dict[di] = am
-        attached_adapters = []  # attached to the partition
-        detached_adapters = []  # not attached to the partition
-        for a in all_adapters:
-            if a.uri in attached_adapter_uris:
+
+        # Get the current crypto config of all partitions of the CPC.
+        # This is needed because the determination of adapters for attachment
+        # to the target partition cannot be done based upon returned status.
+        # Reason being that a status indicating an attachment conflict is
+        # returned only when the partition is active, but not for inactive
+        # partitions.
+        #
+        all_crypto_config = dict()  # Crypto config of the CPC, with:
+        #   key: adapter URI
+        #   value: dict:
+        #     key: domain index (for attached domains)
+        #     value: list of tuple(access mode, partition URI)
+        for p_uri in all_partitions:
+            p = all_partitions[p_uri]
+            p_config = p.get_property('crypto-configuration')
+            # The 'crypto-configuration' property is None or:
+            # {
+            #   'crypto-adapter-uris': ['/api/...', ...],
+            #   'crypto-domain-configurations': [
+            #     {'domain-index': 15, 'access-mode': 'control-usage'},
+            #     ...
+            #   ]
+            # }
+            if p_config:
+                domains_dict = dict()
+                adapter_uris = p_config['crypto-adapter-uris']
+                for a_uri in adapter_uris:
+                    if a_uri not in all_crypto_config:
+                        all_crypto_config[a_uri] = dict()
+                for dc in p_config['crypto-domain-configurations']:
+                    di = int(dc['domain-index'])
+                    am = dc['access-mode']
+                    for a_uri in adapter_uris:
+                        domains_dict = all_crypto_config[a_uri]
+                        domains_dict[di] = (am, p.uri)
+
+        # Determine which adapters are attached to the partition
+        attached_adapters = []  # Adapter objects attached to the partition
+        detached_adapters = []  # Adapter objects not attached to the partition
+        for a_uri in all_adapters:
+            a = all_adapters[a_uri]
+            if a_uri in attached_adapter_uris:
                 log(log_file,
                     "Crypto adapter {!r} is already attached to target "
                     "partition {!r}".
@@ -415,15 +456,15 @@ def ensure_attached(params, check_mode):
                 attached_adapters.append(a)
             else:
                 log(log_file,
-                    "Found crypto adapter {!r} that is not attached to target "
+                    "Crypto adapter {!r} is not attached to target "
                     "partition {!r}".
                     format(a.name, partition.name))
                 detached_adapters.append(a)
 
-        # Determine the domains to be attached to or changed in the partition
-        add_domains = list()
-        change_domains = list()
-        for di in range(domain_range_lo, domain_range_hi + 1):
+        # Determine the domains to be attached to the partition
+        new_domains = list(range(domain_range_lo, domain_range_hi + 1))
+        add_domains = list()  # List of domain index numbers to be attached
+        for di in new_domains:
             if di not in attached_domains_dict:
                 # This domain is not attached to the target partition
                 add_domains.append(di)
@@ -431,15 +472,12 @@ def ensure_attached(params, check_mode):
                 # This domain is attached to the target partition but not in
                 # the desired access mode. It can be attached in only one
                 # access mode.
-                if force:
-                    change_domains.append(di)
-                else:
-                    raise Error(
-                        "Domain {} is already attached in {!r} mode to target "
-                        "partition {!r}; Not changing to {!r} mode".
-                        format(di,
-                               ACCESS_MODES_HMC2MOD[attached_domains_dict[di]],
-                               partition.name, access_mode))
+                raise Error(
+                    "Domain {} is attached in {!r} mode to target "
+                    "partition {!r}, but requested was {!r} mode".
+                    format(di,
+                           ACCESS_MODES_HMC2MOD[attached_domains_dict[di]],
+                           partition.name, access_mode))
             else:
                 # This domain is attached to the target partition in the
                 # desired access mode
@@ -452,6 +490,24 @@ def ensure_attached(params, check_mode):
             add_domain_config.append(
                 {'domain-index': di,
                  'access-mode': hmc_access_mode})
+
+        # Check that the domains to be attached to the partition are available
+        # on the currently attached adapters
+        for a in attached_adapters:
+            domains_dict = all_crypto_config[a.uri]
+            for di in add_domains:
+                if di in domains_dict:
+                    am, p_uri = domains_dict[di]
+                    p = all_partitions[p_uri]
+                    if am != 'control' and hmc_access_mode != 'control':
+                        # Multiple attachments conflict only when both are in
+                        # usage mode
+                        raise Error(
+                            "Domain {} cannot be attached in {!r} mode to "
+                            "target partition {!r} because it is already "
+                            "attached in {!r} mode to partition {!r}".
+                            format(di, access_mode, partition.name,
+                                   ACCESS_MODES_HMC2MOD[am], p.name))
 
         # Make sure the desired number of adapters is attached to the partition
         # and the desired domains are attached.
@@ -471,8 +527,8 @@ def ensure_attached(params, check_mode):
             # Adapters already sufficient, but domains to be attached
 
             log(log_file,
-                "Attaching crypto domains {!r} to target partition {!r}".
-                format(add_domains, partition.name))
+                "Attaching domains {!r} in {!r} mode to target partition {!r}".
+                format(add_domains, access_mode, partition.name))
 
             if not check_mode:
                 partition.increase_crypto_config([], add_domain_config)
@@ -485,23 +541,47 @@ def ensure_attached(params, check_mode):
                 if missing_count == 0:
                     break
 
+                # Check that the adapter has all needed domains available
+                conflicting_domains = dict()
+                if adapter.uri in all_crypto_config:
+                    domains_dict = all_crypto_config[adapter.uri]
+                    # log(log_file,
+                    #     "Debug: Checking adapter {!r} for availability of "
+                    #     "domains {!r}. Currently attached domains of that "
+                    #     "adapter: {!r}".
+                    #     format(adapter.name, new_domains, domains_dict))
+                    for di in new_domains:
+                        if di in domains_dict:
+                            # The domain is already attached to some partition
+                            # in some access mode
+                            am, p_uri = domains_dict[di]
+                            if am == 'control':
+                                # An attachment in control mode does not
+                                # prevent additional attachments
+                                continue
+                            if p_uri == partition.uri and am == hmc_access_mode:
+                                # This is our target partition, and the domain
+                                # is already attached in the desired mode.
+                                continue
+                            p = all_partitions[p_uri]
+                            conflicting_domains[di] = (am, p.name)
+
+                if conflicting_domains:
+                    log(log_file,
+                        "Skipping adapter {!r} because the following domains "
+                        "are already attached to other partitions: {!r}".
+                        format(adapter.name, conflicting_domains))
+                    continue
+
                 log(log_file,
-                    "Trying to attach adapter {!r} to target partition {!r}".
-                    format(adapter.name, partition.name))
+                    "Attaching adapter {!r} and domains {!r} in {!r} mode to "
+                    "target partition {!r}".
+                    format(adapter.name, add_domains, access_mode,
+                           partition.name))
 
                 if not check_mode:
-                    try:
-                        partition.increase_crypto_config(
-                            [adapter], add_domain_config)
-                    except zhmcclient.HTTPError as exc:
-                        if exc.reason == 112:
-                            log(log_file,
-                                "Skipping adapter {!r} because one or more "
-                                "specified domains on that adapter are "
-                                "already attached in usage mode to other "
-                                "partitions".format(adapter.name))
-                            continue
-                        raise
+                    partition.increase_crypto_config(
+                        [adapter], add_domain_config)
 
                 changed = True
                 result_changes['added-adapters'].append(adapter.name)
@@ -510,10 +590,6 @@ def ensure_attached(params, check_mode):
                 # Don't try to add again for next adapter:
                 add_domain_config = []
                 add_domains = []
-
-                log(log_file,
-                    "Attached adapter {!r} to target partition {!r}".
-                    format(adapter.name, partition.name))
 
                 missing_count -= 1
 
@@ -524,20 +600,6 @@ def ensure_attached(params, check_mode):
                     "Did not find enough crypto adapters with attachable "
                     "domains; Still missing: {}".
                     format(missing_count))
-
-        for di in change_domains:
-            # Force mode is already checked above
-            log(log_file,
-                "Force mode: Changing access mode of domain {} attached to "
-                "target partition {!r} to {!r} mode".
-                format(di, partition.name, access_mode))
-
-            if not check_mode:
-                partition.change_crypto_domain_config(di, hmc_access_mode)
-
-            changed = True
-
-        result_changes['changed-domains'] = change_domains
 
         if not check_mode:
             result.update(get_partition_config(partition, all_adapters))
@@ -583,6 +645,12 @@ def ensure_detached(params, check_mode):
         }
         all_adapters = cpc.adapters.list(filter_args=filter_args)
 
+        # Convert the adapter list into a dict:
+        #   key: adapter URI
+        #   value: Adapter object
+        all_adapters = dict(zip([a.uri for a in all_adapters],
+                                all_adapters))
+
         partition_config = partition.get_property('crypto-configuration')
         # The 'crypto-configuration' property is None or:
         # {
@@ -597,7 +665,8 @@ def ensure_detached(params, check_mode):
             attached_adapter_uris = partition_config['crypto-adapter-uris']
             remove_adapters = []
             remove_adapter_names = []
-            for a in all_adapters:
+            for a_uri in all_adapters:
+                a = all_adapters[a_uri]
                 if a.uri in attached_adapter_uris:
                     remove_adapters.append(a)
                     remove_adapter_names.append(a.name)
@@ -658,6 +727,12 @@ def facts(params, check_mode):
         }
         all_adapters = cpc.adapters.list(filter_args=filter_args)
 
+        # Convert the adapter list into a dict:
+        #   key: adapter URI
+        #   value: Adapter object
+        all_adapters = dict(zip([a.uri for a in all_adapters],
+                                all_adapters))
+
         result = get_partition_config(partition, all_adapters)
 
         return False, result, None
@@ -703,7 +778,6 @@ def main():
                          choices=['usage', 'control'], default='usage'),
         crypto_type=dict(required=False, type='str',
                          choices=['ep11', 'cca', 'acc'], default='ep11'),
-        force=dict(required=False, type='bool', default=False),
         log_file=dict(required=False, type='str', default=None),
         faked_session=dict(required=False, type='object'),
     )
