@@ -6,7 +6,7 @@
     - vault.yml
   tasks:
 
-  - name: Ensure domain 0-max as usage domain on 1 adapter for partition 3
+  - name: Ensure domains 1-max on 1 adapter are attached in usage mode to partition 3
     zhmc_crypto_attachment:
       hmc_host: "{{ hmc_host }}"
       hmc_auth: "{{ hmc_auth }}"
@@ -15,7 +15,7 @@
       state: attached
       crypto_type: ep11
       adapter_count: 1
-      domain_range: 0,-1
+      domain_range: 1,-1
       access_mode: usage
       log_file: crypto.log
     register: result

@@ -6,7 +6,7 @@
     - vault.yml
   tasks:
 
-  - name: Ensure domain 0 as usage domain on all adapters for partition 1
+  - name: Ensure domain 0 on all adapters is attached in usage mode to partition 1
     zhmc_crypto_attachment:
       hmc_host: "{{ hmc_host }}"
       hmc_auth: "{{ hmc_auth }}"
@@ -24,7 +24,7 @@
     debug:
       var: result
 
-  - name: Ensure domains 1-max as control domain on all adapters for partition 1
+  - name: Ensure domains 1-max on all adapters are attached in control mode to partition 1
     zhmc_crypto_attachment:
       hmc_host: "{{ hmc_host }}"
       hmc_auth: "{{ hmc_auth }}"
