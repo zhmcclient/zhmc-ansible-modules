@@ -5,56 +5,133 @@
 notifications:
   email: false
 
-language: python
-
-# For Linux, we let Travis build the job matrix from these dimensions:
 sudo: required
-python:
-  - "2.7"
-  - "3.6"
-os:
-  - linux
-env:
-  - PACKAGE_LEVEL=minimum
-  - PACKAGE_LEVEL=latest
 
-# For OS-X, we define the job matrix explicitly. These combinations
-# are added to the automatically built job matrix for Linux.
-# Reason is that Travis has half-baked support for Python that does not work,
-# so it needs to be invoked with language=generic and empty python in order to
-# prevent that Travis attempts to install Python.
+# We define the job matrix explicitly, in order to minimize the
+# combinations.
+# For OS-X, using an explicit matrix is required, because Travis at
+# this point only has half-baked support for Python on OS-X that does
+# not work. Also, on OS-X, it needs to be invoked with language=generic
+# and an empty 'python' variable in order to prevent that Travis attempts
+# to install Python.
 # TODO: Figure out how specific versions of Python 3.x can be used with OS-X
-# TODO: OS-X not supported in IBM Travis CI, Re-enable OS-X when moving to external Travis CI.
-#matrix:
-#  include:
-#    - os: osx
-#      sudo: required
-#      language: generic
-#      python:
+
+# When defining the job matrix explicitly, there are Travis environments
+# that produce an additional default job. See these Travis issues:
+#   https://github.com/travis-ci/travis-ci/issues/1228
+#   https://github.com/travis-ci/travis-ci/issues/4681
+#   https://github.com/travis-ci/travis-ci/issues/9843
+# The public Travis does not seem to have this issue anymore,
+# but Travis@IBM does have this issue (as of 9/2018). The workaround for
+# this issue is to define variables globally and to exclude this same
+# variable value in the matrix definition. Experiments have shown that
+# not all variable combinations work. Using a combination of 'language'
+# and 'os' set to the default values works.
+
+# See note about explicit job matrix, above.
+language: ruby
+os: linux
+
+matrix:
+
+  # See note about explicit job matrix, above.
+  exclude:
+    - language: ruby
+    - os: linux
+
+  include:
+#    - os: linux
+#      language: python
+#      python: "2.7"
 #      env:
 #        - PACKAGE_LEVEL=minimum
-#        - PYTHON=2
-#    - os: osx
+#      cache: pip
+    - os: linux
+      language: python
+      python: "2.7"
+      env:
+        - PACKAGE_LEVEL=latest
+      cache: pip
+    - os: linux
+      language: python
+      python: "3.5"
+      env:
+        - PACKAGE_LEVEL=minimum
+      cache: pip
+#    - os: linux
+#      language: python
+#      python: "3.5"
+#      env:
+#        - PACKAGE_LEVEL=latest
+#      cache: pip
+#    - os: linux
+#      language: python
+#      python: "3.6"
+#      env:
+#        - PACKAGE_LEVEL=minimum
+#      cache: pip
+#    - os: linux
+#      language: python
+#      python: "3.6"
+#      env:
+#        - PACKAGE_LEVEL=latest
+#      cache: pip
+#    - os: linux
+#      dist: xenial
 #      sudo: required
+#      language: python
+#      python: "3.7"
+#      env:
+#        - PACKAGE_LEVEL=minimum
+#      cache: pip
+    - os: linux
+      dist: xenial
+      sudo: required
+      language: python
+      python: "3.7"
+      env:
+        - PACKAGE_LEVEL=latest
+      cache: pip
+#    - os: linux
+#      language: python
+#      python: "pypy-5.3.1"  # Python 2.7.10
+#      env:
+#        - PACKAGE_LEVEL=minimum
+#      cache: pip
+#    - os: linux
+#      language: python
+#      python: "pypy-5.3.1"  # Python 2.7.10
+#      env:
+#        - PACKAGE_LEVEL=latest
+#      cache: pip
+    - os: osx
+      language: generic
+      python:
+      env:
+        - PACKAGE_LEVEL=minimum
+        - PYTHON=2
+      cache: pip
+#    - os: osx
 #      language: generic
 #      python:
 #      env:
 #        - PACKAGE_LEVEL=latest
 #        - PYTHON=2
+#      cache: pip
 #    - os: osx
-#      sudo: required
 #      language: generic
 #      python:
 #      env:
 #        - PACKAGE_LEVEL=minimum
 #        - PYTHON=3
-#    - os: osx
-#      sudo: required
-#      language: generic
-#      python:
-#      env:
-#        - PACKAGE_LEVEL=latest
-#        - PYTHON=3
+#      cache: pip
+    - os: osx
+      language: generic
+      python:
+      env:
+        - PACKAGE_LEVEL=latest
+        - PYTHON=3
+      cache: pip
 
 # commands to install dependencies
 install:
@@ -77,11 +154,11 @@ install:
   - id
   - pwd
   - git clone https://github.com/andy-maier/ansible.git --branch zhmc-fixes --depth 1 ../ansible
-  - $PIP_CMD list
+  - $PIP_CMD list --format columns
   - make develop
   - make install
   - $PIP_CMD install python-coveralls
-  - $PIP_CMD list
+  - $PIP_CMD list --format columns
   - if [[ $TRAVIS_PYTHON_VERSION == 2.7 && $PACKAGE_LEVEL == latest ]]; then make doccheck; fi
 # Note: the module doc build generates different order of module suboptions on py2 and py3.
 
