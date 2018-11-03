@@ -15,7 +15,7 @@
 # Direct dependencies:
 
 # Unit test (imports into testcases):
-pytest>=3.0.5 # MIT
+pytest>=3.2.0 # MIT
 
 # Unit test (no imports, invoked via py.test script):
 # TODO: Remove the pinning of the pytest-cov version again once issue
