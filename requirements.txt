@@ -21,14 +21,16 @@ zhmcclient>=0.20.0 # Apache-2.0
 
 # Indirect dependencies (commented out, only listed to document their license):
 
+# asn1crypto  # MIT, from cryptography -> ansible
 # bcrypt # Apache 2.0, from paramiko -> ansible
-# certifi # ISC, from requests>=2.20
+# certifi # ISC, from requests
 # cffi # MIT, from cryptography -> paramiko -> ansible
-# chardet # LGPL, from requests>=2.20
+# chardet # LGPL, from requests
 # cryptography # BSD, from paramiko -> ansible
 # decorator # new BSD, from zhmcclient
+# docopt # MIT, from stomp.py -> zhmcclient
 # enum34 # BSD, from cryptography -> paramiko -> ansible and flake8 for py<3.4
-# idna # BSD, from requests>=2.20
+# idna # BSD, from requests
 # ipaddress # PSF, from cryptography -> paramiko -> ansible
 # Jinja2 # BSD, from ansible
 # MarkupSafe # BSD, from Jinja2 -> ansible
@@ -41,4 +43,4 @@ zhmcclient>=0.20.0 # Apache-2.0
 # pytz # MIT, from zhmcclient and Babel -> Sphinx
 # six # MIT, from zhmcclient and others
 # stomp.py # Apache, from zhmcclient
-# urllib3 # MIT, from requests>=2.20
+# urllib3 # MIT, from requests

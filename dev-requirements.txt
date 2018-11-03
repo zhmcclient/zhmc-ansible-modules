@@ -50,6 +50,7 @@ voluptuous>=0.10.2 # BSD, from Ansible validate-modules
 # atomicwrites # MIT, from pytest
 # attrs # MIT, from pytest
 # Babel # BSD, from Sphinx
+# bleach # Apache, from readme-renderer -> twine
 # configparser # MIT, from flake8 for py<3.2
 # coverage # Apache-2.0, from pytest-cov
 # docutils # public domain | Python | 2-Clause BSD | GPL 3, from Sphinx
@@ -65,9 +66,11 @@ voluptuous>=0.10.2 # BSD, from Ansible validate-modules
 # pyflakes # MIT, from flake8
 # Pygments # BSD, from Sphinx
 # pyparsing # MIT, from Sphinx
+# readme-renderer # Apache 2.0, from twine
 # requests-toolbelt # Apache 2.0, from twine
 # scandir # BSD, from pathlib2 for py<3.5 -> pytest for py<3.6
 # snowballstemmer # BSD, from Sphinx
 # sphinxcontrib-websupport # BSD, from Sphinx
 # tqdm # MPL 2.0, MIT, from twine>=1.9.1
 # typing # PSFL, from Sphinx>=1.6.1 for py<3.5
+# webencodings # BSD, from bleach -> readme-renderer -> twine
