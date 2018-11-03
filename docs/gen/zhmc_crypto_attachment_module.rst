@@ -15,7 +15,8 @@ Synopsis
 --------
 
 * Gathers facts about the attachment of crypto adapters and domains to a partition.
-* Attaches crypto domains and crypto adapters to a partition.
+* Attaches a range of crypto domains and a number of crypto adapters to a partition.
+* Detaches all crypto domains and all crypto adapters from a partition.
 
 
 Requirements (on host that executes module)
@@ -47,7 +48,7 @@ Options
     <td>usage</td>
     <td><ul><li>usage</li><li>control</li></ul></td>
     <td>
-        <div>Only for <code>state=attach</code>: The access mode in which the crypto domains need to be attached.</div>
+        <div>Only for <code>state=attach</code>: The access mode in which the crypto domains specified in <code>domain_range</code> need to be attached.</div>
     </td>
     </tr>
 
@@ -87,7 +88,7 @@ Options
     <td>(0, -1)</td>
     <td></td>
     <td>
-        <div>Only for <code>state=attach</code>: The domain range the partition needs to have attached, as a tuple of integers (min, max) that specify the inclusive range of domain index numbers. The special value -1 for the max item means the maximum supported domain index number.</div>
+        <div>Only for <code>state=attach</code>: The domain range the partition needs to have attached, as a tuple of integers (min, max) that specify the inclusive range of domain index numbers. Other domains attached to the partition remain unchanged. The special value -1 for the max item means the maximum supported domain index number.</div>
     </td>
     </tr>
 
@@ -98,16 +99,6 @@ Options
     <td></td>
     <td>
         <div>A <code>zhmcclient_mock.FakedSession</code> object that has a mocked HMC set up. If provided, it will be used instead of connecting to a real HMC. This is used for testing purposes only.</div>
-    </td>
-    </tr>
-
-    <tr>
-    <td>force<br/><div style="font-size: small;"></div></td>
-    <td>no</td>
-    <td></td>
-    <td></td>
-    <td>
-        <div>Only for <code>state=attach</code>: Boolean controlling force mode. In force mode, the attaching of domains will change their access mode, if needed. In non-force mode, a change of access mode will be rejected.</div>
     </td>
     </tr>
 
@@ -197,7 +188,7 @@ Options
     <td><ul><li>attached</li><li>detached</li><li>facts</li></ul></td>
     <td>
         <div>The desired state for the attachment:</div>
-        <div>* <code>attached</code>: Ensures that the specified number of crypto adapters and the specified range of domain index numbers in the specified access mode are attached to the partition.</div>
+        <div>* <code>attached</code>: Ensures that the specified number of crypto adapters of the specified crypto type, and the specified range of domain index numbers in the specified access mode are attached to the partition.</div>
         <div>* <code>detached</code>: Ensures that no crypto adapter and no crypto domains are attached to the partition.</div>
         <div>* <code>facts</code>: Does not change anything on the attachment and returns the crypto configuration of the partition.</div>
     </td>
@@ -233,7 +224,6 @@ Examples
         cpc_name: "{{ my_cpc_name }}"
         partition_name: "{{ my_first_partition_name }}"
         state: attached
-        force: true
         crypto_type: ep11
         adapter_count: -1
         domain_range: 0,0
@@ -246,7 +236,6 @@ Examples
         cpc_name: "{{ my_cpc_name }}"
         partition_name: "{{ my_first_partition_name }}"
         state: attached
-        force: true
         crypto_type: ep11
         adapter_count: -1
         domain_range: 1,-1
@@ -285,18 +274,25 @@ Common return values are documented here :doc:`common_return_values`, the follow
     <tr>
     <td>crypto_configuration</td>
     <td>
-        <div>For <code>state=detached|attached|facts</code>, a dictionary with the crypto configuration of the partition after the changes applied by the module. Key is the partition name, and value is a dictionary with key 'adapters' which is a list of adapter names, and key 'domains' which is a dictionary of domain: access mode.</div>
+        <div>For <code>state=detached|attached|facts</code>, a dictionary with the crypto configuration of the partition after the changes applied by the module. Key is the partition name, and value is a dictionary with keys: - 'adapters': attached adapters, as a dict of key: adapter name, value: dict of adapter properties; - 'domain_config': attached domains, as a dict of key: domain index, value: access mode ('control' or 'usage'); - 'usage_domains': domains attached in usage mode, as a list of domain index numbers; - 'control_domains': domains attached in control mode, as a list of domain index numbers.</div>
     </td>
     <td align=center>success</td>
     <td align=center>dict</td>
     <td align=center><code>{
       "part-1": {
-        "adapters": ["adapter 1", "adapter 2"],
-        "domains": {
+        "adapters": {
+          "adapter 1": {
+            "type": "crypto",
+            ...
+          }
+        },
+        "domain_config": {
           "0": "usage",
           "1": "control",
-          ...
+          "2": "control"
         }
+        "usage_domains": [0],
+        "control_domains": [1, 2]
       }
     }</code>
     </td>
