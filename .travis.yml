@@ -133,21 +133,39 @@ matrix:
         - PYTHON=3
       cache: pip
 
-# Reason for setting up a Python virtualenv on OS-X:
-# Some Ansible scripts are invoked directly from the cloned Ansible repo
-# directory, so their hashbang is '/usr/bin/env python'. This requires
-# that the 'python' command and environment is the desired one. On OS-X,
-# when installing Python 3, only the 'python3' command invokes Python 3,
-# but the 'python' command invokes Python 2. Therefore, a virtualenv is
-# needed in which the desired Python version is available as the
-# 'python'. command. Travis does not set up a virtualenv on its OS-X
-# machines, so we need to do that here.
+before_install:
+  - env | sort
+
+  # The following statement is a workaround to leave an OS-X job
+  # when running on Linux. That happens on Travis@IBM which does not
+  # have OS-X support but still runs os=osx on Linux.
+  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$_system_type" == "Linux" ]]; then
+      echo "Exiting from OS-X job running on Linux";
+      exit;
+    fi
+
+  # The following statement is a safety net in case the matrix exclusion
+  # does not work for some reason.
+  - if [[ "$TRAVIS_LANGUAGE" == "ruby" ]]; then
+      echo "Exiting from unwanted default Ruby job";
+      exit;
+    fi
+
+  - if [[ "$TRAVIS_BRANCH" == "manual-ci-run" ]]; then
+      export _NEED_REBASE=true;
+    fi
+  - if [[ -n $_NEED_REBASE ]]; then git fetch origin master; fi
+  - if [[ -n $_NEED_REBASE ]]; then git branch master FETCH_HEAD; fi
+  - if [[ -n $_NEED_REBASE ]]; then git rebase master; fi
+  - git branch -av
 
 # commands to install dependencies
 install:
-  - env | sort
   - which python
   - python --version
+  - if [[ "$TRAVIS_BRANCH" == "manual-ci-run" || "$TRAVIS_PULL_REQUEST_BRANCH" == "manual-ci-run" ]]; then
+      export _MANUAL_CI_RUN=true;
+    fi
   - if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
       if [[ ${PYTHON:0:1} == '2' ]]; then
         OSX_PYTHON_PKG=python;
@@ -158,24 +176,43 @@ install:
       fi;
       which $OSX_PYTHON_CMD || brew install $OSX_PYTHON_PKG;
     fi
+
+  # Reason for setting up a Python virtualenv on OS-X:
+  # Some Ansible scripts are invoked directly from the cloned Ansible repo
+  # directory, so their hashbang is '/usr/bin/env python'. This requires
+  # that the 'python' command and environment is the desired one. On OS-X,
+  # when installing Python 3, only the 'python3' command invokes Python 3,
+  # but the 'python' command invokes Python 2. Therefore, a virtualenv is
+  # needed in which the desired Python version is available as the
+  # 'python'. command. Travis does not set up a virtualenv on its OS-X
+  # machines, so we need to do that here.
   - if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
       pip install virtualenv;
       VENV=$HOME/virtualenv/$OSX_PYTHON_CMD;
       virtualenv -p $OSX_PYTHON_CMD $VENV;
       source $VENV/bin/activate;
     fi
+
   - which python
   - python --version
   - which pip
   - pip --version
   - pip list
   - git clone https://github.com/andy-maier/ansible.git --branch zhmc-fixes --depth 1 ../ansible
-  - make develop
   - make install
+  - pip list
+  - make develop
+  - pip list
   - pip install python-coveralls
   - pip list
-  - if [[ $TRAVIS_PYTHON_VERSION == 2.7 && $PACKAGE_LEVEL == latest ]]; then make doccheck; fi
-# Note: the module doc build generates different order of module suboptions on py2 and py3.
+
+  # The module doc build (make docs) generates different order of module
+  # suboptions between Python 2 and Python 3. Because the docs is generated
+  # on Python 2 and then checked in to the repo, the make doccheck needs to be
+  # run on Python 2 only.
+  - if [[ $TRAVIS_PYTHON_VERSION == 2.7 && $PACKAGE_LEVEL == latest ]]; then
+      make doccheck;
+    fi
 
 # commands to run builds & tests
 script:
@@ -184,4 +221,6 @@ script:
   - make test
 
 after_success:
-  - if [[ $TRAVIS_PYTHON_VERSION == 2.7 && $PACKAGE_LEVEL == latest ]]; then coveralls; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_PYTHON_VERSION" == "2.7" && "$PACKAGE_LEVEL" == "latest" ]]; then
+      coveralls;
+    fi
