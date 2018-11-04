@@ -10,7 +10,7 @@
 
 # Direct dependencies (except pip, setuptools, wheel):
 
-ansible>=2.2.0.0 # GPLv3 + BSD
+ansible>=2.4.0.0 # GPLv3 + BSD
 # Note: The zhmc-ansible-modules only use ansible/module_utils/basic.py
 # of the ansible package, which is BSD licensed.
 pbr>=1.10.0 # Apache-2.0
@@ -37,7 +37,7 @@ zhmcclient>=0.20.0 # Apache-2.0
 # paramiko # LGPL, from ansible
 # pyasn1 # BSD, from paramiko -> ansible
 # pycparser # BSD, from cffi -> cryptography -> paramiko -> ansible
-# pycrypto # Public domain, from ansible
+# pycrypto # Public domain, from ansible<2.4
 # PyNaCl # Apache 2.0, from paramiko -> ansible
 # PyYAML # MIT, from ansible and zhmcclient
 # pytz # MIT, from zhmcclient and Babel -> Sphinx
