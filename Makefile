@@ -349,7 +349,7 @@ $(flake8_log_file): Makefile $(flake8_rc_file) $(check_py_files)
 $(validate_modules_log_file): Makefile $(module_py_files) $(validate_modules)
 	rm -f $@
 	bash -c 'PYTHONPATH=$(ansible_repo_lib_dir) $(validate_modules) $(module_py_files) 2>&1 |grep -v -E "$(validate_modules_exclude_pattern)" |tee $@.tmp'
-	if [[ -n "$$(cat $@.tmp)" ]]; then false; fi
+	bash -c 'if [[ -n "$$(cat $@.tmp)" ]]; then false; fi'
 	mv -f $@.tmp $@
 	@echo 'Done: Ansible validate-modules checker succeeded'
 
