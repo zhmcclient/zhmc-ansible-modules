@@ -187,7 +187,7 @@ help:
 	@echo '  install    - Install package (as editable) and its reqs into active Python environment'
 	@echo '  develop    - Set up the development environment'
 	@echo '  docs       - Build the documentation in: $(doc_build_dir)'
-	@echo '  check      - Run all checks (flake8, validate-modules, doccheck)'
+	@echo '  check      - Run all checks (flake8, validate-modules)'
 	@echo '  test       - Run unit tests (and test coverage) and save results in: $(test_log_file)'
 	@echo '               Env.var TESTCASES can be used to specify a py.test expression for its -k option'
 	@echo '  all        - Do all of the above'
@@ -226,7 +226,7 @@ docs: $(doc_build_dir)/html/index.html
 	@echo '$@ done.'
 
 .PHONY: check
-check: $(flake8_log_file) $(validate_modules_log_file) doccheck
+check: $(flake8_log_file) $(validate_modules_log_file)
 	@echo '$@ done.'
 
 .PHONY: test
