@@ -168,12 +168,12 @@ install:
   - python --version
   - which pip
   - pip --version
-  - pip list --format columns
+  - pip list
   - git clone https://github.com/andy-maier/ansible.git --branch zhmc-fixes --depth 1 ../ansible
   - make develop
   - make install
   - pip install python-coveralls
-  - pip list --format columns
+  - pip list
   - if [[ $TRAVIS_PYTHON_VERSION == 2.7 && $PACKAGE_LEVEL == latest ]]; then make doccheck; fi
 # Note: the module doc build generates different order of module suboptions on py2 and py3.
 
