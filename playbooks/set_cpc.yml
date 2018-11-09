@@ -1,0 +1,23 @@
+---
+- hosts: localhost
+  vars_files:
+    - vars.yml
+    - vault.yml
+  tasks:
+
+  - name: Set CPC description
+    zhmc_cpc:
+      hmc_host: "{{ hmc_host }}"
+      hmc_auth: "{{ hmc_auth }}"
+      name: "{{ cpc_name }}"
+      state: set
+      properties:
+        description: "This is CPC {{ cpc_name }}"
+      log_file: cpc.log
+    register: cpc1
+
+#  - debug:
+#      var: cpc1
+
+  - debug:
+      msg: "CPC description = '{{ cpc1['cpc']['description'] }}'"
