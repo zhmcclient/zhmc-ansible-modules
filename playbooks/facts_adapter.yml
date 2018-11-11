@@ -1,0 +1,21 @@
+---
+- hosts: localhost
+  vars_files:
+    - vars.yml
+    - vault.yml
+  tasks:
+
+  - name: Get adapter facts
+    zhmc_adapter:
+      hmc_host: "{{ hmc_host }}"
+      hmc_auth: "{{ hmc_auth }}"
+      cpc_name: "{{ cpc_name }}"
+      name: "{{ adapter_name }}"
+      state: facts
+    register: adapter1
+
+  - debug:
+      var: adapter1
+
+  - debug:
+      msg: "Adapter: description = '{{ adapter1['adapter']['description'] }}', name = '{{ adapter1['adapter']['name'] }}'"

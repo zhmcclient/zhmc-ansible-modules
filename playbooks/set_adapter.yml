@@ -1,0 +1,23 @@
+---
+- hosts: localhost
+  vars_files:
+    - vars.yml
+    - vault.yml
+  tasks:
+
+  - name: Ensure an existing adapter has the desired property values
+    zhmc_adapter:
+      hmc_host: "{{ hmc_host }}"
+      hmc_auth: "{{ hmc_auth }}"
+      cpc_name: "{{ cpc_name }}"
+      name: "{{ adapter_name }}"
+      state: set
+      properties:
+        description: "This is adapter {{ adapter_name }}"
+    register: adapter1
+
+  - debug:
+      var: adapter1
+
+  - debug:
+      msg: "Adapter: description = '{{ adapter1['adapter']['description'] }}', name = '{{ adapter1['adapter']['name'] }}'"
