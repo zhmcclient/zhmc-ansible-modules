@@ -154,6 +154,8 @@ Options
         <div>The parameter is a dictionary. The key of each dictionary item is the property name as specified in the data model for adapter resources, with underscores instead of hyphens. The value of each dictionary item is the property value (in YAML syntax). Integer properties may also be provided as decimal strings.</div>
         <div>The possible properties in this dictionary are the properties defined as writeable in the data model for adapter resources, with the following exceptions:</div>
         <div>* <code>name</code>: Cannot be specified as a property because the name has already been specified in the <code>name</code> module parameter.</div>
+        <div>* <code>type</code>: The desired adapter type can be specified in order to support adapters that can change their type (e.g. the FICON Express adapter can change its type between 'not-configured', 'fcp' and 'fc').</div>
+        <div>* <code>crypto_type</code>: The crypto type can be specified in order to support the ability of the Crypto Express adapters to change their crypto type. Valid values are 'ep11', 'cca' and 'acc'. Changing to 'acc' will zeroize the crypto adapter.</div>
     </td>
     </tr>
 
