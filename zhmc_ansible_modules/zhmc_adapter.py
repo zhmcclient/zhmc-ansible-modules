@@ -126,6 +126,14 @@ options:
          following exceptions:"
       - "* C(name): Cannot be specified as a property because the name has
          already been specified in the C(name) module parameter."
+      - "* C(type): The desired adapter type can be specified in order to
+         support adapters that can change their type (e.g. the FICON Express
+         adapter can change its type between 'not-configured', 'fcp' and
+         'fc')."
+      - "* C(crypto_type): The crypto type can be specified in order to support
+         the ability of the Crypto Express adapters to change their crypto
+         type. Valid values are 'ep11', 'cca' and 'acc'. Changing to 'acc'
+         will zeroize the crypto adapter."
     required: false
     default: No property changes (other than possibly C(name)).
   log_file:
@@ -298,6 +306,14 @@ ZHMC_ADAPTER_PROPERTIES = {
 }
 
 
+# Conversion of crypto types between module parameter values and HMC values
+CRYPTO_TYPES_MOD2HMC = {
+    'acc': 'accelerator',
+    'cca': 'cca-coprocessor',
+    'ep11': 'ep11-coprocessor',
+}
+
+
 def process_properties(adapter, params):
     """
     Process the properties specified in the 'properties' module parameter,
@@ -325,13 +341,20 @@ def process_properties(adapter, params):
         * update_props: dict of properties from params that may be specified
           in zhmcclient.Adapter.update_properties() (may overlap with
           create_props).
+        * change_adapter_type: String with new adapter type (i.e. input for
+          Change Adapter Type operation), or None if no change needed.
+        * change_crypto_type: String with new crypto type (i.e. input for
+          Change Crypto Type operation), or None if no change needed.
 
     Raises:
       ParameterError: An issue with the module parameters.
     """
 
+    # Prepare return values
     create_props = {}
     update_props = {}
+    change_adapter_type = None  # New adapter type, if needed
+    change_crypto_type = None  # New crypto type, if needed
 
     # handle the 'name' module parameter
     adapter_name = to_unicode(params['name'])
@@ -358,14 +381,27 @@ def process_properties(adapter, params):
                 "Invalid adapter property {!r} specified in the 'properties' "
                 "module parameter.".format(prop_name))
 
-        # Process a normal (= non-artificial) property
-        _create_props, _update_props, _stop = process_normal_property(
-            prop_name, ZHMC_ADAPTER_PROPERTIES, input_props, adapter)
-        create_props.update(_create_props)
-        update_props.update(_update_props)
-        assert _stop is False
+        if prop_name == 'type':
+            # Determine need to change the adapter type
+            _current_adapter_type = adapter.properties.get('type', None)
+            _input_adapter_type = input_props[prop_name]
+            if _input_adapter_type != _current_adapter_type:
+                change_adapter_type = _input_adapter_type
+        elif prop_name == 'crypto_type':
+            # Determine need to change the crypto type
+            _current_crypto_type = adapter.properties.get('crypto-type', None)
+            _input_crypto_type = CRYPTO_TYPES_MOD2HMC[input_props[prop_name]]
+            if _input_crypto_type != _current_crypto_type:
+                change_crypto_type = _input_crypto_type
+        else:
+            # Process a normal (= non-artificial) property
+            _create_props, _update_props, _stop = process_normal_property(
+                prop_name, ZHMC_ADAPTER_PROPERTIES, input_props, adapter)
+            create_props.update(_create_props)
+            update_props.update(_update_props)
+            assert _stop is False
 
-    return create_props, update_props
+    return create_props, update_props, change_adapter_type, change_crypto_type
 
 
 def log_init(log_file):
@@ -439,16 +475,35 @@ def ensure_set(params, check_mode):
         result = adapter.properties
 
         # It was identified by name or match properties, so it does exist.
-        # Update its properties, if needed.
-        create_props, update_props = process_properties(adapter, params)
+        # Update its properties and change adapter and crypto type, if
+        # needed.
+        create_props, update_props, chg_adapter_type, chg_crypto_type = \
+            process_properties(adapter, params)
+
         if update_props:
             if not check_mode:
                 adapter.update_properties(update_props)
-                adapter.pull_full_properties()
-                result = adapter.properties  # from actual values
             else:
                 result.update(update_props)  # from input values
             changed = True
+
+        if chg_adapter_type:
+            if not check_mode:
+                adapter.change_adapter_type(chg_adapter_type)
+            else:
+                result['type'] = chg_adapter_type
+            changed = True
+
+        if chg_crypto_type:
+            if not check_mode:
+                adapter.change_crypto_type(chg_crypto_type)
+            else:
+                result['crypto-type'] = chg_crypto_type
+            changed = True
+
+        if changed and not check_mode:
+            adapter.pull_full_properties()
+            result = adapter.properties  # from actual values
 
         ports = adapter.ports.list()
         result_ports = list()
@@ -533,7 +588,7 @@ def ensure_present(params, check_mode):
 
             # While the 'type' input property is required for verifying
             # the intention, it is not allowed as input for the
-            # Create Hipersocket operation.
+            # Create Hipersocket HMC operation.
             del create_props['type']
 
             if not check_mode:
@@ -547,18 +602,39 @@ def ensure_present(params, check_mode):
             changed = True
         else:
             # It does exist.
-            # Update its properties, if needed.
+            # Update its properties and change adapter and crypto type, if
+            # needed.
+
             adapter.pull_full_properties()
             result = adapter.properties
-            create_props, update_props = process_properties(adapter, params)
+
+            create_props, update_props, chg_adapter_type, chg_crypto_type = \
+                process_properties(adapter, params)
+
             if update_props:
                 if not check_mode:
                     adapter.update_properties(update_props)
-                    adapter.pull_full_properties()
-                    result = adapter.properties  # from actual values
                 else:
                     result.update(update_props)  # from input values
                 changed = True
+
+            if chg_adapter_type:
+                if not check_mode:
+                    adapter.change_adapter_type(chg_adapter_type)
+                else:
+                    result['type'] = chg_adapter_type
+                changed = True
+
+            if chg_crypto_type:
+                if not check_mode:
+                    adapter.change_crypto_type(chg_crypto_type)
+                else:
+                    result['crypto-type'] = chg_crypto_type
+                changed = True
+
+            if changed and not check_mode:
+                adapter.pull_full_properties()
+                result = adapter.properties  # from actual values
 
         if adapter:
             ports = adapter.ports.list()
