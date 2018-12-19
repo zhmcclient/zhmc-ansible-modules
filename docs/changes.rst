@@ -41,6 +41,10 @@ Released: not yet
 * Docs: Improved and fixed the documentation how to release a version
   and how to start a new version.
 
+* Added support for adjusting the value of the `ssc_ipv4_gateway` input property
+  for the `zhmc_partition` module to `None` if specified as the empty string.
+  This allows defaulting the value more easily in playbooks.
+
 **Known issues:**
 
 * See `list of open issues`_.
