@@ -653,6 +653,10 @@ def process_properties(cpc, partition, params):
 
         else:
             # Process a normal (= non-artificial) property
+            if prop_name == 'ssc_ipv4_gateway':
+                # Undo conversion from None to empty string in Ansible
+                if input_props[prop_name] == '':
+                    input_props[prop_name] = None
             _create_props, _update_props, _stop = process_normal_property(
                 prop_name, ZHMC_PARTITION_PROPERTIES, input_props, partition)
             create_props.update(_create_props)
