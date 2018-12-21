@@ -36,6 +36,12 @@ Released: not yet
 * Updated the 'requests' package to 2.20.0 to fix the following vulnerability:
   https://nvd.nist.gov/vuln/detail/CVE-2018-18074
 
+* The `crypto_number` property of Adapter is an integer property, and thus the
+  Ansible module `zhmc_adapter` needs to change the string passed by Ansible
+  back to an integer. It did that correctly but only for the `properties`
+  input parameter, and not for the `match` input parameter. The type conversions
+  are now applied for all properties of Adapter also for the `match` parameter.
+
 **Enhancements:**
 
 * Docs: Improved and fixed the documentation how to release a version
