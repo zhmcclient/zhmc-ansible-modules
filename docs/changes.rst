@@ -42,6 +42,11 @@ Released: not yet
   input parameter, and not for the `match` input parameter. The type conversions
   are now applied for all properties of Adapter also for the `match` parameter.
 
+* The dictionary to check input properties for the `zhmc_cpc` module had the
+  `acceptable_status` property written with a hyphen instead of underscore.
+  This had the effect that it was rejected as non-writeable when specifying
+  it as input.
+
 **Enhancements:**
 
 * Docs: Improved and fixed the documentation how to release a version

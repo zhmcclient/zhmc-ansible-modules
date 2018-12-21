@@ -200,7 +200,7 @@ ZHMC_CPC_PROPERTIES = {
 
     # update properties:
     'description': (True, None, True, True, None, to_unicode),
-    'acceptable-status': (True, None, True, True, None, None),
+    'acceptable_status': (True, None, True, True, None, None),
 
     # read-only properties (subset):
     'name': (False, None, False, None, None, None),  # provided in 'name' parm
