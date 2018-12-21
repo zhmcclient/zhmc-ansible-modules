@@ -437,7 +437,15 @@ def identify_adapter(cpc, name, match_props):
         match_props_hmc = dict()
         for prop_name in match_props:
             prop_name_hmc = prop_name.replace('_', '-')
-            match_props_hmc[prop_name_hmc] = match_props[prop_name]
+            match_value = match_props[prop_name]
+
+            # Apply type cast from property definition also to match values:
+            if prop_name in ZHMC_ADAPTER_PROPERTIES:
+                type_cast = ZHMC_ADAPTER_PROPERTIES[prop_name][5]
+                if type_cast:
+                    match_value = type_cast(match_value)
+
+            match_props_hmc[prop_name_hmc] = match_value
         adapter = cpc.adapters.find(**match_props_hmc)
     return adapter
 
