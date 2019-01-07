@@ -22,15 +22,11 @@ Change log
 Version 0.6.0
 ^^^^^^^^^^^^^
 
-Released: not yet
-
-**Incompatible changes:**
-
-**Deprecations:**
+Released: 2018-01-07
 
 **Bug fixes:**
 
-* Fixed dependency to zhmcclient package to be >=0.20.0, instead
+* Fixed dependency to zhmcclient package to be >=0.22.0, instead
   of using its master branch from the github repo.
 
 * Updated the 'requests' package to 2.20.0 to fix the following vulnerability:
