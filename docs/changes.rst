@@ -30,6 +30,8 @@ Released: not yet
 
 **Bug fixes:**
 
+* Docs: Fixed change log of 0.6.0 (see the 0.6.0 section below).
+
 **Enhancements:**
 
 **Known issues:**
@@ -42,15 +44,23 @@ Released: not yet
 Version 0.6.0
 ^^^^^^^^^^^^^
 
-Released: 2018-01-07
+Released: 2019-01-07
+
+Fixed this change log in 0.6.1 and 0.7.0
 
 **Bug fixes:**
 
-* Fixed dependency to zhmcclient package to be >=0.22.0, instead
+* Fixed dependency to zhmcclient package to be >=0.20.0, instead
   of using its master branch from the github repo.
 
 * Updated the 'requests' package to 2.20.0 to fix the following vulnerability:
   https://nvd.nist.gov/vuln/detail/CVE-2018-18074
+
+* Added support for Python 3.7. This required increasing the minimum version
+  of Ansible from 2.2.0.0 to 2.4.0.0.
+  This also removes the dependency on the 'pycrypto' package, which has
+  vulnerabilities and is no longer maintained since 2013. Ansible uses the
+  'cryptography' package, instead.  See issue #66.
 
 * The `crypto_number` property of Adapter is an integer property, and thus the
   Ansible module `zhmc_adapter` needs to change the string passed by Ansible
@@ -65,18 +75,30 @@ Released: 2018-01-07
 
 **Enhancements:**
 
-* Docs: Improved and fixed the documentation how to release a version
-  and how to start a new version.
+* Added support for managing CPCs by adding a `zhmc_cpc` Ansible module.
+  The module allows setting writeable properties of a CPC in an idempotent way,
+  and to gather facts for a CPC (i.e. all of its properties including a few
+  artificial ones). See issue #82.
+
+* Added support for managing adapters by adding a `zhmc_adapter` Ansible
+  module. The module allows setting writeable properties of an adapter,
+  changing the adapter type for FICON Express adapters, and changing the
+  crypto type for Crypto Express adapters, all in an idempotent way.
+  It also allows gathering facts for an adapter (i.e. all of its properties#
+  including a few artificial ones).
+  See issue #83.
+
+* Added a `zhmc_crypto_attachment` Ansible module, which manages the attachment
+  of crypto adapters and of crypto domains to partitions in an idempotent way.
+  This was already supported in a less flexible and non-idempotent way by the
+  `zhmc_partition` Ansible module.
 
 * Added support for adjusting the value of the `ssc_ipv4_gateway` input property
   for the `zhmc_partition` module to `None` if specified as the empty string.
   This allows defaulting the value more easily in playbooks.
 
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
+* Docs: Improved and fixed the documentation how to release a version
+  and how to start a new version.
 
 
 Version 0.5.0
