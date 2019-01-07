@@ -171,7 +171,7 @@ plugin_formatter_template_dir := $(shell dirname $(plugin_formatter_template_fil
 # validate-modules tool from Ansible project
 validate_modules := $(ansible_repo_dir)/test/sanity/validate-modules/validate-modules
 validate_modules_log_file := validate.log
-validate_modules_exclude_pattern := (E101|E105|E106)
+validate_modules_exclude_pattern := (E101|E105|E106|DeprecationWarning)
 
 # Documentation files from Ansible repo to copy to $(doc_gen_dir)
 doc_copy_files := \
@@ -261,7 +261,7 @@ uninstall:
 .PHONY: clobber
 clobber:
 	rm -Rf .cache $(package_name_pypi_under).egg-info .eggs $(build_dir) $(doc_check_dir) htmlcov .tox
-	rm -f MANIFEST MANIFEST.in AUTHORS ChangeLog .coverage flake8_*.log test_*.log validate.log
+	rm -f MANIFEST MANIFEST.in AUTHORS ChangeLog .coverage flake8_*.log test_*.log $(validate_modules_log_file)
 	find . -name "*.pyc" -delete -o -name "__pycache__" -delete -o -name "*.tmp" -delete -o -name "tmp_*" -delete
 	@echo 'Done: Removed all build products to get to a fresh state.'
 	@echo '$@ done.'
