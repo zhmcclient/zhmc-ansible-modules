@@ -639,8 +639,9 @@ def ensure_attached(params, check_mode):
                 # are not enough adapters
                 raise Error(
                     "Did not find enough crypto adapters with attachable "
-                    "domains; Still missing: {}".
-                    format(missing_count))
+                    "domains - missing adapters: {}; Requested domains: {}, "
+                    "Access mode: {}".
+                    format(missing_count, new_domains, access_mode))
 
         if not check_mode:
             # This is not optimal because it does not produce a result
