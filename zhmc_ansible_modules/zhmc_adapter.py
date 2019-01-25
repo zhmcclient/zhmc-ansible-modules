@@ -516,7 +516,9 @@ def ensure_set(params, check_mode):
         ports = adapter.ports.list()
         result_ports = list()
         for port in ports:
-            port.pull_full_properties()
+            # TODO: Disabling the following line mitigates the recent issue
+            #       with HTTP error 404,4 when retrieving port properties.
+            # port.pull_full_properties()
             result_ports.append(port.properties)
         result['ports'] = result_ports
 
