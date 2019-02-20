@@ -6,40 +6,12 @@
     - vault.yml
   tasks:
 
-  - name: Ensure partition 1 has all crypto adapters and domains detached
+  - name: "Ensure partition {{ partition_name }} has all crypto adapters and domains detached"
     zhmc_crypto_attachment:
       hmc_host: "{{ hmc_host }}"
       hmc_auth: "{{ hmc_auth }}"
       cpc_name: "{{ cpc_name }}"
       partition_name: "{{ partition_name }}"
-      state: detached
-      log_file: crypto.log
-    register: result
-
-  - name: Print the result
-    debug:
-      var: result
-
-  - name: Ensure partition 2 has all crypto adapters and domains detached
-    zhmc_crypto_attachment:
-      hmc_host: "{{ hmc_host }}"
-      hmc_auth: "{{ hmc_auth }}"
-      cpc_name: "{{ cpc_name }}"
-      partition_name: "{{ partition2_name }}"
-      state: detached
-      log_file: crypto.log
-    register: result
-
-  - name: Print the result
-    debug:
-      var: result
-
-  - name: Ensure partition 3 has all crypto adapters and domains detached
-    zhmc_crypto_attachment:
-      hmc_host: "{{ hmc_host }}"
-      hmc_auth: "{{ hmc_auth }}"
-      cpc_name: "{{ cpc_name }}"
-      partition_name: "{{ partition3_name }}"
       state: detached
       log_file: crypto.log
     register: result
