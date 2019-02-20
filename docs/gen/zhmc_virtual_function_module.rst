@@ -121,6 +121,16 @@ Options
     </tr>
 
     <tr>
+    <td>log_file<br/><div style="font-size: small;"></div></td>
+    <td>no</td>
+    <td></td>
+    <td></td>
+    <td>
+        <div>File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.</div>
+    </td>
+    </tr>
+
+    <tr>
     <td>name<br/><div style="font-size: small;"></div></td>
     <td>yes</td>
     <td></td>
@@ -180,7 +190,7 @@ Examples
     
     ---
     # Note: The following examples assume that some variables named 'my_*' are set.
-    
+
     - name: Ensure virtual function exists in the partition
       zhmc_partition:
         hmc_host: "{{ my_hmc_host }}"
@@ -194,7 +204,7 @@ Examples
           description: "The accelerator adapter"
           device_number: "033F"
       register: vfunction1
-    
+
     - name: Ensure virtual function does not exist in the partition
       zhmc_partition:
         hmc_host: "{{ my_hmc_host }}"
@@ -203,6 +213,7 @@ Examples
         partition_name: "{{ my_partition_name }}"
         name: "{{ my_vfunction_name }}"
         state: absent
+
 
 Return Values
 -------------

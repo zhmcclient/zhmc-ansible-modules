@@ -121,6 +121,16 @@ Options
     </tr>
 
     <tr>
+    <td>log_file<br/><div style="font-size: small;"></div></td>
+    <td>no</td>
+    <td></td>
+    <td></td>
+    <td>
+        <div>File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.</div>
+    </td>
+    </tr>
+
+    <tr>
     <td>name<br/><div style="font-size: small;"></div></td>
     <td>yes</td>
     <td></td>
@@ -179,7 +189,7 @@ Examples
     
     ---
     # Note: The following examples assume that some variables named 'my_*' are set.
-    
+
     - name: Gather facts about a storage volume
       zhmc_storage_volume:
         hmc_host: "{{ my_hmc_host }}"
@@ -189,7 +199,7 @@ Examples
         name: "{{ my_storage_volume_name }}"
         state: facts
       register: sv1
-    
+
     - name: Ensure the storage volume does not exist
       zhmc_storage_volume:
         hmc_host: "{{ my_hmc_host }}"
@@ -198,7 +208,7 @@ Examples
         storage_group_name: "{{ my_storage_group_name }}"
         name: "{{ my_storage_volume_name }}"
         state: absent
-    
+
     - name: Ensure the storage volume exists
       zhmc_storage_volume:
         hmc_host: "{{ my_hmc_host }}"
@@ -211,7 +221,8 @@ Examples
           description: "Example storage volume 1"
           size: 1
       register: sv1
-    
+
+
 
 Return Values
 -------------

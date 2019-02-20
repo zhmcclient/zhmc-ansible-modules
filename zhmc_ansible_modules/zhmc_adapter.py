@@ -20,8 +20,8 @@ from ansible.module_utils.basic import AnsibleModule
 import requests.packages.urllib3
 import zhmcclient
 
-from zhmc_ansible_modules.utils import Error, ParameterError, get_hmc_auth, \
-    get_session, to_unicode, process_normal_property, eq_hex
+from zhmc_ansible_modules.utils import log_init, Error, ParameterError, \
+    get_hmc_auth, get_session, to_unicode, process_normal_property, eq_hex
 
 # For information on the format of the ANSIBLE_METADATA, DOCUMENTATION,
 # EXAMPLES, and RETURN strings, see
@@ -139,7 +139,8 @@ options:
   log_file:
     description:
       - "File path of a log file to which the logic flow of this module as well
-         as interactions with the HMC are logged."
+         as interactions with the HMC are logged. If null, logging will be
+         propagated to the Python root logger."
     required: false
     default: null
   faked_session:
@@ -244,6 +245,8 @@ cpc:
 # Python logger name for this module
 LOGGER_NAME = 'zhmc_adapter'
 
+LOGGER = logging.getLogger(LOGGER_NAME)
+
 # Dictionary of properties of adapter resources, in this format:
 #   name: (allowed, create, update, eq_func, type_cast)
 # where:
@@ -282,7 +285,7 @@ ZHMC_ADAPTER_PROPERTIES = {
     'description': (True, True, True, True, None, to_unicode),
     'maximum_transmission_unit_size': (True, True, True, True, None, int),
     'type': (True, True, True, True, None, None),
-    # type: used for Create Hipersockets and for Change Adapter Type
+    # type used for Create Hipersockets and for Change Adapter Type
 
     # read-only properties:
     'object_uri': (False, None, False, None, None, None),
@@ -404,26 +407,6 @@ def process_properties(adapter, params):
     return create_props, update_props, change_adapter_type, change_crypto_type
 
 
-def log_init(log_file):
-    if log_file:
-        handler = logging.FileHandler(log_file)
-        format_string = '%(asctime)s %(name)s %(message)s'
-        handler.setFormatter(logging.Formatter(format_string))
-
-        logger = logging.getLogger('zhmcclient.hmc')
-        logger.addHandler(handler)
-        logger.setLevel(logging.DEBUG)
-
-        logger = logging.getLogger(LOGGER_NAME)
-        logger.addHandler(handler)
-        logger.setLevel(logging.DEBUG)
-
-
-def log(log_file, msg):
-    logger = logging.getLogger(LOGGER_NAME)
-    logger.debug(msg)
-
-
 def identify_adapter(cpc, name, match_props):
     """
     Identify the target adapter based on its name, or if an adapter with that
@@ -467,7 +450,6 @@ def ensure_set(params, check_mode):
     cpc_name = params['cpc_name']
     adapter_name = params['name']
     adapter_match = params['match']
-    # log_file = params['log_file']
     faked_session = params.get('faked_session', None)  # No default specified
 
     changed = False
@@ -544,7 +526,6 @@ def ensure_present(params, check_mode):
     userid, password = get_hmc_auth(params['hmc_auth'])
     cpc_name = params['cpc_name']
     adapter_name = params['name']
-    # log_file = params['log_file']
     faked_session = params.get('faked_session', None)  # No default specified
 
     changed = False
@@ -678,7 +659,6 @@ def ensure_absent(params, check_mode):
     userid, password = get_hmc_auth(params['hmc_auth'])
     cpc_name = params['cpc_name']
     adapter_name = params['name']
-    # log_file = params['log_file']
     faked_session = params.get('faked_session', None)  # No default specified
 
     changed = False
@@ -719,7 +699,6 @@ def facts(params, check_mode):
     userid, password = get_hmc_auth(params['hmc_auth'])
     cpc_name = params['cpc_name']
     adapter_name = params['name']
-    # log_file = params['log_file']
     faked_session = params.get('faked_session', None)  # No default specified
 
     try:
@@ -788,11 +767,11 @@ def main():
         supports_check_mode=True)
 
     log_file = module.params['log_file']
-    log_init(log_file)
-    if log_file:
-        _params = dict(module.params)
-        del _params['hmc_auth']
-        log(log_file, "Module entry: params: {!r}".format(_params))
+    log_init(LOGGER_NAME, log_file)
+
+    _params = dict(module.params)
+    del _params['hmc_auth']
+    LOGGER.debug("Module entry: params: {!r}".format(_params))
 
     try:
 
@@ -803,14 +782,14 @@ def main():
         # input. They have a proper message that stands on its own, so we
         # simply pass that message on and will not need a traceback.
         msg = "{}: {}".format(exc.__class__.__name__, exc)
-        log(log_file,
+        LOGGER.debug(
             "Module exit (failure): msg: {!r}".
             format(msg))
         module.fail_json(msg=msg)
     # Other exceptions are considered module errors and are handled by Ansible
     # by showing the traceback.
 
-    log(log_file,
+    LOGGER.debug(
         "Module exit (success): changed: {!r}, adapter: {!r}".
         format(changed, result))
     module.exit_json(

@@ -116,7 +116,7 @@ Options
     <td></td>
     <td></td>
     <td>
-        <div>File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged.</div>
+        <div>File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.</div>
     </td>
     </tr>
 

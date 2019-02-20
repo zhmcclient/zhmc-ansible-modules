@@ -45,6 +45,7 @@ class TestZhmcPartitionMain(unittest.TestCase):
             'cpc_name': 'fake-cpc-name',
             'name': 'fake-name',
             'state': 'absent',
+            'log_file': None,
         }
         check_mode = False
 
@@ -78,6 +79,7 @@ class TestZhmcPartitionMain(unittest.TestCase):
             state=dict(required=True, type='str',
                        choices=['absent', 'stopped', 'active', 'facts']),
             properties=dict(required=False, type='dict', default={}),
+            log_file=dict(required=False, type='str', default=None),
             faked_session=dict(required=False, type='object'),
         )
         assert(ansible_mod_cls.call_args ==
@@ -113,6 +115,7 @@ class TestZhmcPartitionMain(unittest.TestCase):
             'cpc_name': 'fake-cpc-name',
             'name': 'fake-name',
             'state': 'absent',
+            'log_file': None,
         }
         check_mode = False
 
@@ -167,6 +170,7 @@ class TestZhmcPartitionPerformTask(unittest.TestCase):
         # Prepare input arguments
         params = {
             'state': 'active',
+            'log_file': None,
         }
         check_mode = True
 
@@ -210,6 +214,7 @@ class TestZhmcPartitionPerformTask(unittest.TestCase):
         # Prepare input arguments
         params = {
             'state': 'stopped',
+            'log_file': None,
         }
         check_mode = True
 
@@ -253,6 +258,7 @@ class TestZhmcPartitionPerformTask(unittest.TestCase):
         # Prepare input arguments
         params = {
             'state': 'absent',
+            'log_file': None,
         }
         check_mode = False
 

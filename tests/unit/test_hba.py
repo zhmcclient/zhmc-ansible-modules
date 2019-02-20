@@ -49,6 +49,7 @@ class TestZhmcHbaMain(object):
             'partition_name': 'fake-partition-name',
             'name': 'fake-hba-name',
             'state': 'absent',
+            'log_file': None,
         }
 
         # Return values of perform_task()
@@ -82,6 +83,7 @@ class TestZhmcHbaMain(object):
             state=dict(required=True, type='str',
                        choices=['absent', 'present']),
             properties=dict(required=False, type='dict', default={}),
+            log_file=dict(required=False, type='str', default=None),
             faked_session=dict(required=False, type='object'),
         )
         assert(ansible_mod_cls.call_args ==
@@ -121,6 +123,7 @@ class TestZhmcHbaMain(object):
             'partition_name': 'fake-partition-name',
             'name': 'fake-hba-name',
             'state': 'absent',
+            'log_file': None,
         }
 
         # Exception raised by perform_task()
@@ -174,6 +177,7 @@ class TestZhmcHbaPerformTask(object):
         # Prepare input arguments
         params = {
             'state': 'present',
+            'log_file': None,
         }
 
         # Prepare return values
@@ -215,6 +219,7 @@ class TestZhmcHbaPerformTask(object):
         # Prepare input arguments
         params = {
             'state': 'absent',
+            'log_file': None,
         }
 
         # Prepare return values

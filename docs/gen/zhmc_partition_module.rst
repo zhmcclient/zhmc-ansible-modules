@@ -122,6 +122,16 @@ Options
     </tr>
 
     <tr>
+    <td>log_file<br/><div style="font-size: small;"></div></td>
+    <td>no</td>
+    <td></td>
+    <td></td>
+    <td>
+        <div>File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.</div>
+    </td>
+    </tr>
+
+    <tr>
     <td>name<br/><div style="font-size: small;"></div></td>
     <td>yes</td>
     <td></td>
@@ -177,7 +187,7 @@ Examples
     
     ---
     # Note: The following examples assume that some variables named 'my_*' are set.
-    
+
     # Because configuring LUN masking in the SAN requires the host WWPN, and the
     # host WWPN is automatically assigned and will be known only after an HBA has
     # been added to the partition, the partition needs to be created in stopped
@@ -196,7 +206,7 @@ Examples
           initial_memory: 1024
           maximum_memory: 1024
       register: part1
-    
+
     # After an HBA has been added (see Ansible module zhmc_hba), and LUN masking
     # has been configured in the SAN, and a bootable image is available at the
     # configured LUN and target WWPN, the partition can be configured for boot
@@ -214,7 +224,7 @@ Examples
           boot_logical_unit_number: 00000000001
           boot_world_wide_port_name: abcdefabcdef
       register: part1
-    
+
     - name: Ensure the partition does not exist
       zhmc_partition:
         hmc_host: "{{ my_hmc_host }}"
@@ -222,7 +232,7 @@ Examples
         cpc_name: "{{ my_cpc_name }}"
         name: "{{ my_partition_name }}"
         state: absent
-    
+
     - name: Define crypto configuration
       zhmc_partition:
         hmc_host: "{{ my_hmc_host }}"
@@ -241,7 +251,7 @@ Examples
               - domain_index: 1
                 access_mode: control
       register: part1
-    
+
     - name: Gather facts about a partition
       zhmc_partition:
         hmc_host: "{{ my_hmc_host }}"
@@ -250,7 +260,8 @@ Examples
         name: "{{ my_partition_name }}"
         state: facts
       register: part1
-    
+
+
 
 Return Values
 -------------
