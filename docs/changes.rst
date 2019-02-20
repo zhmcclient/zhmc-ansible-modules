@@ -22,11 +22,12 @@ Change log
 Version 0.7.0
 ^^^^^^^^^^^^^
 
-Released: not yet
+Released: 2019-02-20
 
 **Incompatible changes:**
 
-**Deprecations:**
+* Temporarily disabled the retrieval of full properties in the result data
+  of the zhmc_adapter module.
 
 **Bug fixes:**
 
@@ -34,11 +35,11 @@ Released: not yet
 
 **Enhancements:**
 
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
+* Renovated the logging:
+  - Added support for the log_file parameter to all modules.
+  - Changed the format of the log lines.
+  - Set log level also when no log_file is specified, causing
+    the logs to be propagated to the root logger.
 
 
 Version 0.6.0
