@@ -20,8 +20,8 @@ from ansible.module_utils.basic import AnsibleModule
 import requests.packages.urllib3
 import zhmcclient
 
-from zhmc_ansible_modules.utils import Error, ParameterError, get_hmc_auth, \
-    get_session
+from zhmc_ansible_modules.utils import log_init, Error, ParameterError, \
+    get_hmc_auth, get_session
 
 # For information on the format of the ANSIBLE_METADATA, DOCUMENTATION,
 # EXAMPLES, and RETURN strings, see
@@ -131,7 +131,8 @@ options:
   log_file:
     description:
       - "File path of a log file to which the logic flow of this module as well
-         as interactions with the HMC are logged."
+         as interactions with the HMC are logged. If null, logging will be
+         propagated to the Python root logger."
     required: false
     default: null
   faked_session:
@@ -242,6 +243,11 @@ changes:
     })
 """
 
+# Python logger name for this module
+LOGGER_NAME = 'zhmc_crypto_attachment'
+
+LOGGER = logging.getLogger(LOGGER_NAME)
+
 # Conversion of crypto types between module parameter values and HMC values
 CRYPTO_TYPES_MOD2HMC = {
     'acc': 'accelerator',
@@ -258,34 +264,6 @@ ACCESS_MODES_HMC2MOD = {
     'control-usage': 'usage',
     'control': 'control',
 }
-
-# Python logger name for this module
-LOGGER_NAME = 'zhmc_crypto_attachment'
-
-
-def log_init(log_file):
-    if log_file:
-        handler = logging.FileHandler(log_file)
-        format_string = '%(asctime)s %(name)s %(message)s'
-        handler.setFormatter(logging.Formatter(format_string))
-
-        logger = logging.getLogger('zhmcclient.hmc')
-        logger.addHandler(handler)
-        logger.setLevel(logging.DEBUG)
-
-        if False:  # Too much gorp, disabled for now
-            logger = logging.getLogger('zhmcclient.api')
-            logger.addHandler(handler)
-            logger.setLevel(logging.DEBUG)
-
-        logger = logging.getLogger(LOGGER_NAME)
-        logger.addHandler(handler)
-        logger.setLevel(logging.DEBUG)
-
-
-def log(log_file, msg):
-    logger = logging.getLogger(LOGGER_NAME)
-    logger.debug(msg)
 
 
 def get_partition_config(partition, all_adapters):
@@ -355,7 +333,6 @@ def ensure_attached(params, check_mode):
     domain_range = params['domain_range']
     access_mode = params['access_mode']
     crypto_type = params['crypto_type']
-    log_file = params['log_file']
     faked_session = params.get('faked_session', None)  # No default specified
 
     try:
@@ -492,13 +469,13 @@ def ensure_attached(params, check_mode):
         for a_uri in all_adapters:
             a = all_adapters[a_uri]
             if a_uri in attached_adapter_uris:
-                log(log_file,
+                LOGGER.debug(
                     "Crypto adapter {!r} is already attached to target "
                     "partition {!r}".
                     format(a.name, partition.name))
                 attached_adapters.append(a)
             else:
-                log(log_file,
+                LOGGER.debug(
                     "Crypto adapter {!r} is not attached to target "
                     "partition {!r}".
                     format(a.name, partition.name))
@@ -524,7 +501,7 @@ def ensure_attached(params, check_mode):
             else:
                 # This domain is attached to the target partition in the
                 # desired access mode
-                log(log_file,
+                LOGGER.debug(
                     "Domain {} is already attached in {!r} mode to target "
                     "partition {!r}".
                     format(di, access_mode, partition.name))
@@ -571,7 +548,7 @@ def ensure_attached(params, check_mode):
         if missing_count <= 0 and add_domain_config:
             # Adapters already sufficient, but domains to be attached
 
-            log(log_file,
+            LOGGER.debug(
                 "Attaching domains {!r} in {!r} mode to target partition {!r}".
                 format(add_domains, access_mode, partition.name))
 
@@ -608,13 +585,13 @@ def ensure_attached(params, check_mode):
                             conflicting_domains[di] = (am, p.name)
 
                 if conflicting_domains:
-                    log(log_file,
+                    LOGGER.debug(
                         "Skipping adapter {!r} because the following domains "
                         "are already attached to other partitions: {!r}".
                         format(adapter.name, conflicting_domains))
                     continue
 
-                log(log_file,
+                LOGGER.debug(
                     "Attaching adapter {!r} and domains {!r} in {!r} mode to "
                     "target partition {!r}".
                     format(adapter.name, add_domains, access_mode,
@@ -671,7 +648,6 @@ def ensure_detached(params, check_mode):
     userid, password = get_hmc_auth(params['hmc_auth'])
     cpc_name = params['cpc_name']
     partition_name = params['partition_name']
-    log_file = params['log_file']
     faked_session = params.get('faked_session', None)  # No default specified
 
     changed = False
@@ -723,7 +699,7 @@ def ensure_detached(params, check_mode):
                 di = dc['domain-index']
                 remove_domains.append(di)
 
-            log(log_file,
+            LOGGER.debug(
                 "Detaching domains {} and adapters {!r} from target partition "
                 "{!r}".
                 format(remove_domains, remove_adapter_names, partition.name))
@@ -762,7 +738,6 @@ def facts(params, check_mode):
     userid, password = get_hmc_auth(params['hmc_auth'])
     cpc_name = params['cpc_name']
     partition_name = params['partition_name']
-    # log_file = params['log_file']
     faked_session = params.get('faked_session', None)  # No default specified
 
     try:
@@ -839,11 +814,11 @@ def main():
         supports_check_mode=True)
 
     log_file = module.params['log_file']
-    log_init(log_file)
-    if log_file:
-        _params = dict(module.params)
-        del _params['hmc_auth']
-        log(log_file, "Module entry: params: {!r}".format(_params))
+    log_init(LOGGER_NAME, log_file)
+
+    _params = dict(module.params)
+    del _params['hmc_auth']
+    LOGGER.debug("Module entry: params: {!r}".format(_params))
 
     try:
 
@@ -855,14 +830,14 @@ def main():
         # input. They have a proper message that stands on its own, so we
         # simply pass that message on and will not need a traceback.
         msg = "{}: {}".format(exc.__class__.__name__, exc)
-        log(log_file,
+        LOGGER.debug(
             "Module exit (failure): msg: {!r}".
             format(msg))
         module.fail_json(msg=msg)
     # Other exceptions are considered module errors and are handled by Ansible
     # by showing the traceback.
 
-    log(log_file,
+    LOGGER.debug(
         "Module exit (success): changed: {!r}, crypto_configuration: {!r}, "
         "changes: {!r}".format(changed, result, changes))
     module.exit_json(

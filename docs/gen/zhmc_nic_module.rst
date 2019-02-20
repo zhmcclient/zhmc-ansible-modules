@@ -121,6 +121,16 @@ Options
     </tr>
 
     <tr>
+    <td>log_file<br/><div style="font-size: small;"></div></td>
+    <td>no</td>
+    <td></td>
+    <td></td>
+    <td>
+        <div>File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.</div>
+    </td>
+    </tr>
+
+    <tr>
     <td>name<br/><div style="font-size: small;"></div></td>
     <td>yes</td>
     <td></td>
@@ -181,7 +191,7 @@ Examples
     
     ---
     # Note: The following examples assume that some variables named 'my_*' are set.
-    
+
     - name: Ensure NIC exists in the partition
       zhmc_partition:
         hmc_host: "{{ my_hmc_host }}"
@@ -196,7 +206,7 @@ Examples
           description: "The port to our data network"
           device_number: "023F"
       register: nic1
-    
+
     - name: Ensure NIC does not exist in the partition
       zhmc_partition:
         hmc_host: "{{ my_hmc_host }}"
@@ -205,6 +215,7 @@ Examples
         partition_name: "{{ my_partition_name }}"
         name: "{{ my_nic_name }}"
         state: absent
+
 
 Return Values
 -------------

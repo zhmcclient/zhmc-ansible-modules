@@ -16,7 +16,7 @@
 Utility functions for use by more than one Ansible module.
 """
 
-from datetime import datetime
+import logging
 
 from ansible.module_utils import six
 
@@ -460,24 +460,57 @@ def process_normal_property(
     return create_props, update_props, deactivate
 
 
-def log(msg, file='debug.log'):
+def log_init(logger_name, log_file=None):
     """
-    Append a one-line message to a log file, adding some header info to the
-    begin of the line.
+    Set up logging for the loggers of the current Ansible module, and for the
+    loggers of the underlying zhmcclient package.
 
-    The header info that is added to each line, is:
-      yyyy-mm-dd hh:mm:ss.uuuuuu msg
+    The log level of these loggers is set to debug.
+
+    If a log file is specified, a log file handler for that log file (with a
+    log formatter) is created and attached to these loggers.
 
     Parameters:
 
-      msg (string): The message. Any newlines in the message are replaced by
-        blanks.
+        logger_name (string): Name of the logger to be used for the current
+          Ansible module.
 
-      file (string): Path name of the log file to append the message to.
+        log_file (string): Path name of a log file to log to, or `None`.
+          If `None`, logging will be propagated to the Python root logger.
     """
-    msg = msg.replace('\n', ' ') + '\n'
-    ts_dt = datetime.now()
-    ts_str = ts_dt.strftime('%Y-%m-%d %H:%M:%S.%f')
-    line = "{0} {1}".format(ts_str, msg)
-    with open(file, 'a') as fp:
-        fp.write(line)
+
+    # The datefmt parameter of logging.Formatter() supports the datetime
+    # formatting placeholders of time.strftime(). Unfortunately, the %f
+    # placeholder for microseconds is not supported by time.strftime().
+    # If datefmt=None, the milliseconds are added manually by the
+    # logging.Formatter() class. So this is a choice between precision and
+    # indicating the timezone offset.
+    # The time is in the local timezone.
+    #
+    DATEFMT = '%Y-%m-%dT%H:%M:%S%z'  # 2019-02-20T10:54:26+0100
+    # DATEFMT = None  # 2019-02-20 10:54:26,123 (= local time)
+
+    if log_file:
+        handler = logging.FileHandler(log_file)
+        fmt = logging.Formatter(
+            fmt='%(asctime)s %(levelname)s %(name)s %(process)d %(message)s',
+            datefmt=DATEFMT)
+        handler.setFormatter(fmt)
+    else:
+        handler = None
+
+    logger = logging.getLogger(logger_name)
+    logger.setLevel(logging.DEBUG)
+    if handler:
+        logger.addHandler(handler)
+
+    logger = logging.getLogger('zhmcclient.hmc')
+    logger.setLevel(logging.DEBUG)
+    if handler:
+        logger.addHandler(handler)
+
+    if False:  # Too much gorp, disabled for now
+        logger = logging.getLogger('zhmcclient.api')
+        logger.setLevel(logging.DEBUG)
+        if handler:
+            logger.addHandler(handler)

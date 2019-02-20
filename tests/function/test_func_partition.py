@@ -992,6 +992,7 @@ class TestPartition(object):
             'name': self.partition_name,
             'state': desired_state,
             'properties': input_props,
+            'log_file': None,
             'faked_session': self.session,
         }
 
@@ -1069,6 +1070,7 @@ class TestPartition(object):
             'cpc_name': self.cpc.name,
             'name': self.partition_name,
             'state': desired_state,
+            'log_file': None,
             'faked_session': self.session,
         }
 
@@ -1196,6 +1198,7 @@ class TestPartition(object):
             'name': self.partition_name,
             'state': desired_state,
             'properties': props,
+            'log_file': None,
             'faked_session': self.session,
         }
 
@@ -1263,6 +1266,7 @@ class TestPartition(object):
             'name': self.partition_name,
             'state': desired_state,
             'properties': properties,
+            'log_file': None,
             'faked_session': self.session,
         }
 
@@ -1341,6 +1345,7 @@ class TestPartition(object):
             'name': self.partition_name,
             'state': desired_state,
             'properties': properties,
+            'log_file': None,
             'faked_session': self.session,
         }
 
@@ -1404,6 +1409,7 @@ class TestPartition(object):
             'name': self.partition_name,
             'state': desired_state,
             'properties': properties,
+            'log_file': None,
             'faked_session': self.session,
         }
 
@@ -1480,6 +1486,7 @@ class TestPartition(object):
             'name': self.partition_name,
             'state': desired_state,
             'properties': properties,
+            'log_file': None,
             'faked_session': self.session,
         }
 
@@ -1555,6 +1562,7 @@ class TestPartition(object):
             'name': self.partition_name,
             'state': desired_state,
             'properties': properties,
+            'log_file': None,
             'faked_session': self.session,
         }
 
@@ -1740,6 +1748,7 @@ class TestPartition(object):
             'name': self.partition_name,
             'state': desired_state,
             'properties': input_props,
+            'log_file': None,
             'faked_session': self.session,
         }
 

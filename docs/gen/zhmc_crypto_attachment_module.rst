@@ -167,7 +167,7 @@ Options
     <td></td>
     <td></td>
     <td>
-        <div>File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged.</div>
+        <div>File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.</div>
     </td>
     </tr>
 
@@ -207,7 +207,7 @@ Examples
     
     ---
     # Note: The following examples assume that some variables named 'my_*' are set.
-    
+
     - name: Gather facts about the crypto configuration of a partition
       zhmc_crypto_attachment:
         hmc_host: "{{ my_hmc_host }}"
@@ -216,7 +216,7 @@ Examples
         partition_name: "{{ my_partition_name }}"
         state: facts
       register: crypto1
-    
+
     - name: Ensure domain 0 on all ep11 adapters is attached in usage mode
       zhmc_crypto_attachment:
         hmc_host: "{{ my_hmc_host }}"
@@ -228,7 +228,7 @@ Examples
         adapter_count: -1
         domain_range: 0,0
         access_mode: usage
-    
+
     - name: Ensure domains 1-max on all ep11 adapters are attached in control mode
       zhmc_crypto_attachment:
         hmc_host: "{{ my_hmc_host }}"
@@ -240,7 +240,7 @@ Examples
         adapter_count: -1
         domain_range: 1,-1
         access_mode: control
-    
+
     - name: Ensure domains 0-max on 1 ep11 adapter are attached to in usage mode
       zhmc_crypto_attachment:
         hmc_host: "{{ my_hmc_host }}"
@@ -252,7 +252,8 @@ Examples
         adapter_count: 1
         domain_range: 0,-1
         access_mode: usage
-    
+
+
 
 Return Values
 -------------

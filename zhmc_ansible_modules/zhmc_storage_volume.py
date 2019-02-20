@@ -15,13 +15,13 @@
 
 from __future__ import absolute_import, print_function
 
+import logging
 from ansible.module_utils.basic import AnsibleModule
 import requests.packages.urllib3
 import zhmcclient
 
-from zhmc_ansible_modules.utils import Error, ParameterError, \
-    eq_hex, \
-    get_hmc_auth, get_session, to_unicode, process_normal_property
+from zhmc_ansible_modules.utils import log_init, Error, ParameterError, \
+    eq_hex, get_hmc_auth, get_session, to_unicode, process_normal_property
 
 # For information on the format of the ANSIBLE_METADATA, DOCUMENTATION,
 # EXAMPLES, and RETURN strings, see
@@ -127,6 +127,13 @@ options:
          storage volume is being created."
     required: false
     default: No properties.
+  log_file:
+    description:
+      - "File path of a log file to which the logic flow of this module as well
+         as interactions with the HMC are logged. If null, logging will be
+         propagated to the Python root logger."
+    required: false
+    default: null
   faked_session:
     description:
       - "A C(zhmcclient_mock.FakedSession) object that has a mocked HMC set up.
@@ -198,6 +205,11 @@ storage_volume:
       ...
     })
 """
+
+# Python logger name for this module
+LOGGER_NAME = 'zhmc_storage_volume'
+
+LOGGER = logging.getLogger(LOGGER_NAME)
 
 # Dictionary of properties of storage volume resources, in this format:
 #   name: (allowed, create, update, update_while_active, eq_func, type_cast)
@@ -592,12 +604,20 @@ def main():
         state=dict(required=True, type='str',
                    choices=['absent', 'present', 'facts']),
         properties=dict(required=False, type='dict', default={}),
+        log_file=dict(required=False, type='str', default=None),
         faked_session=dict(required=False, type='object'),
     )
 
     module = AnsibleModule(
         argument_spec=argument_spec,
         supports_check_mode=True)
+
+    log_file = module.params['log_file']
+    log_init(LOGGER_NAME, log_file)
+
+    _params = dict(module.params)
+    del _params['hmc_auth']
+    LOGGER.debug("Module entry: params: {!r}".format(_params))
 
     try:
 
@@ -608,10 +628,16 @@ def main():
         # input. They have a proper message that stands on its own, so we
         # simply pass that message on and will not need a traceback.
         msg = "{}: {}".format(exc.__class__.__name__, exc)
+        LOGGER.debug(
+            "Module exit (failure): msg: {!r}".
+            format(msg))
         module.fail_json(msg=msg)
     # Other exceptions are considered module errors and are handled by Ansible
     # by showing the traceback.
 
+    LOGGER.debug(
+        "Module exit (success): changed: {!r}, cpc: {!r}".
+        format(changed, result))
     module.exit_json(changed=changed, storage_volume=result)
 
 
