@@ -30,7 +30,13 @@ Released: not yet
 
 **Bug fixes:**
 
+* Fixed an issue in the zhmc_crypto_attachment module where the incorrect
+  crypto adapter was picked, leading to a subsequent crypto conflict
+  when starting the partition. See issue #112.
+
 **Enhancements:**
+
+* Improved the quaity of error messages in the zhmc_crypto_attachment module.
 
 **Known issues:**
 
