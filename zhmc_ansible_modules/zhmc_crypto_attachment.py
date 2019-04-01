@@ -422,19 +422,23 @@ def ensure_attached(params, check_mode):
             for dc in cc['crypto-domain-configurations']:
                 di = int(dc['domain-index'])
                 am = dc['access-mode']
+                LOGGER.debug(
+                    "Crypto config of partition {!r}: "
+                    "Domain {} is attached in {!r} mode".
+                    format(partition.name, di, am))
                 attached_domains[di] = am
         for a in all_adapters:
             if a.uri in _attached_adapter_uris:
                 LOGGER.debug(
-                    "Crypto adapter {!r} is currently attached to target "
-                    "partition {!r}".
-                    format(a.name, partition.name))
+                    "Crypto config of partition {!r}: "
+                    "Adapter {!r} is attached".
+                    format(partition.name, a.name))
                 attached_adapters.append(a)
             else:
                 LOGGER.debug(
-                    "Crypto adapter {!r} is not currently attached to target "
-                    "partition {!r}".
-                    format(a.name, partition.name))
+                    "Crypto config of partition {!r}: "
+                    "Adapter {!r} is not attached".
+                    format(partition.name, a.name))
                 detached_adapters.append(a)
         del _attached_adapter_uris
 
@@ -480,7 +484,10 @@ def ensure_attached(params, check_mode):
                     for a_uri in _adapter_uris:
                         if a_uri not in all_crypto_config:
                             all_crypto_config[a_uri] = dict()
-                        all_crypto_config[a_uri][di] = (am, p.uri)
+                        domains_dict = all_crypto_config[a_uri]  # mutable
+                        if di not in domains_dict:
+                            domains_dict[di] = list()
+                        domains_dict[di].append((am, p.uri))
 
         #
         # Determine the domains to be attached to the target partition
@@ -494,8 +501,9 @@ def ensure_attached(params, check_mode):
                 add_domains.append(di)
             elif attached_domains[di] != hmc_access_mode:
                 # This domain is attached to the target partition but not in
-                # the desired access mode. It can be attached in only one
-                # access mode.
+                # the desired access mode. The access mode could be extended
+                # from control to control+usage, but that is not implemented
+                # by this code here.
                 raise Error(
                     "Domain {} is currently attached in {!r} mode to target "
                     "partition {!r}, but requested was {!r} mode".
@@ -505,10 +513,8 @@ def ensure_attached(params, check_mode):
             else:
                 # This domain is attached to the target partition in the
                 # desired access mode
-                LOGGER.debug(
-                    "Domain {} is currently attached in {!r} mode to target "
-                    "partition {!r}".
-                    format(di, access_mode, partition.name))
+                pass
+
         # Create the domain config structure for the domains to be attached
         add_domain_config = list()
         for di in add_domains:
@@ -522,17 +528,17 @@ def ensure_attached(params, check_mode):
             domains_dict = all_crypto_config[a.uri]
             for di in add_domains:
                 if di in domains_dict:
-                    am, p_uri = domains_dict[di]
-                    p = all_partitions[p_uri]
-                    if am != 'control' and hmc_access_mode != 'control':
-                        # Multiple attachments conflict only when both are in
-                        # usage mode
-                        raise Error(
-                            "Domain {} cannot be attached in {!r} mode to "
-                            "target partition {!r} because it is already "
-                            "attached in {!r} mode to partition {!r}".
-                            format(di, access_mode, partition.name,
-                                   ACCESS_MODES_HMC2MOD[am], p.name))
+                    for am, p_uri in domains_dict[di]:
+                        if am != 'control' and hmc_access_mode != 'control':
+                            # Multiple attachments conflict only when both are
+                            # in usage mode
+                            p = all_partitions[p_uri]
+                            raise Error(
+                                "Domain {} cannot be attached in {!r} mode to "
+                                "target partition {!r} because it is already "
+                                "attached in {!r} mode to partition {!r}".
+                                format(di, access_mode, partition.name,
+                                       ACCESS_MODES_HMC2MOD[am], p.name))
 
         # Make sure the desired number of adapters is attached to the partition
         # and the desired domains are attached.
@@ -546,15 +552,16 @@ def ensure_attached(params, check_mode):
         # first domain(s) need to be attached at the same time.
         result_changes['added-adapters'] = []
         result_changes['added-domains'] = []
-        missing_count = adapter_count - len(attached_adapters)
+        missing_count = max(0, adapter_count - len(attached_adapters))
         assert missing_count <= len(detached_adapters), \
             "missing_count={}, len(detached_adapters)={}".\
             format(missing_count, len(detached_adapters))
-        if missing_count <= 0 and add_domain_config:
+        if missing_count == 0 and add_domain_config:
             # Adapters already sufficient, but domains to be attached
 
             LOGGER.debug(
-                "Attaching domains {!r} in {!r} mode to target partition {!r}".
+                "Adapters sufficient - attaching domains {!r} in {!r} mode to "
+                "target partition {!r}".
                 format(add_domains, access_mode, partition.name))
 
             if not check_mode:
@@ -582,25 +589,27 @@ def ensure_attached(params, check_mode):
                     domains_dict = all_crypto_config[adapter.uri]
                     for di in desired_domains:
                         if di in domains_dict:
-                            # The domain is already attached to some partition
-                            # in some access mode
-                            am, p_uri = domains_dict[di]
-                            if am == 'control':
-                                # An attachment in control mode does not
-                                # prevent additional attachments
-                                continue
-                            if p_uri == partition.uri and \
-                                    am == hmc_access_mode:
-                                # This is our target partition, and the domain
-                                # is already attached in the desired mode.
-                                continue
-                            p = all_partitions[p_uri]
-                            conflicting_domains[di] = (am, p.name)
+                            # The domain is already attached to some
+                            # partition(s) in some access mode
+                            for am, p_uri in domains_dict[di]:
+                                if am == 'control':
+                                    # An attachment in control mode does not
+                                    # prevent additional attachments
+                                    continue
+                                if p_uri == partition.uri and \
+                                        am == hmc_access_mode:
+                                    # This is our target partition, and the
+                                    # domain is already attached in the desired
+                                    # mode.
+                                    continue
+                                p = all_partitions[p_uri]
+                                conflicting_domains[di] = (am, p.name)
 
                 if conflicting_domains:
                     LOGGER.debug(
-                        "Skipping adapter {!r} because the following domains "
-                        "are currently attached to other partitions: {!r}".
+                        "Skipping adapter {!r} because the following of its "
+                        "domains are already attached to other partitions: "
+                        "{!r}".
                         format(adapter.name, conflicting_domains))
                     continue
 
