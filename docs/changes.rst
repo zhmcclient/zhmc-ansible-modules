@@ -22,11 +22,7 @@ Change log
 Version 0.8.0
 ^^^^^^^^^^^^^
 
-Released: not yet
-
-**Incompatible changes:**
-
-**Deprecations:**
+Released: 2019-04-02
 
 **Bug fixes:**
 
@@ -37,12 +33,6 @@ Released: not yet
 **Enhancements:**
 
 * Improved the quaity of error messages in the zhmc_crypto_attachment module.
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 0.7.0
