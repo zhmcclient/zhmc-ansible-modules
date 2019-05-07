@@ -1,0 +1,20 @@
+---
+- hosts: localhost
+  connection: local
+  vars_files:
+    - vars.yml
+    - vault.yml
+  tasks:
+
+  - name: Get user facts
+    zhmc_user:
+      hmc_host: "{{ hmc_host }}"
+      hmc_auth: "{{ hmc_auth }}"
+      name: "{{ user_name }}"
+      state: facts
+      expand: true
+    register: result
+
+  - name: Print the result
+    debug:
+      var: result

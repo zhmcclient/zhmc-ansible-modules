@@ -12,6 +12,7 @@ All Modules
   zhmc_storage_group - Manages DPM storage groups (with "dpm-storage-management" feature) <zhmc_storage_group_module>
   zhmc_storage_group_attachment - Manages the attachment of DPM storage groups to partitions (with "dpm-storage-management" feature) <zhmc_storage_group_attachment_module>
   zhmc_storage_volume - Manages DPM storage volumes in existing storage groups (with "dpm-storage-management" feature) <zhmc_storage_volume_module>
+  zhmc_user - Manages users defined on the HMC <zhmc_user_module>
   zhmc_virtual_function - Manages virtual functions in existing partitions <zhmc_virtual_function_module>
 
 

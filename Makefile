@@ -158,11 +158,7 @@ check_py_files := \
 # Test log file
 test_log_file := test_$(python_mn_version).log
 
-ifdef TESTCASES
-pytest_opts := -k $(TESTCASES)
-else
-pytest_opts :=
-endif
+pytest_opts := $(TESTOPTS)
 
 # Location of local clone of Ansible project's Git repository.
 # Note: For now, that location must have checked out the 'zhmc-fixes' branch
@@ -215,6 +211,7 @@ help:
 	@echo 'Environment variables:'
 	@echo '  TESTHMC=... - Nickname of HMC to be used in end2end tests. Default: $(default_test_hmc)'
 	@echo '  TESTHMCDIR=... - Path name of directory with hmc_definitions.yaml file. Default: $(default_test_hmc_dir)'
+	@echo '  TESTOPTS=... - Additional options for py.test (e.g. "-k test_module.py")'
 	@echo '  PACKAGE_LEVEL="minimum" - Install minimum version of dependent Python packages'
 	@echo '  PACKAGE_LEVEL="latest" - Default: Install latest version of dependent Python packages'
 	@echo '  PYTHON_CMD=... - Name of python command. Default: python'
@@ -378,5 +375,5 @@ $(test_log_file): Makefile $(check_py_files)
 
 .PHONY:	end2end
 end2end:
-	bash -c 'TESTHMCDIR=$(TESTHMCDIR) TESTHMC=$(TESTHMC) py.test $(pytest_no_log_opt) -s $(test_dir)/end2end $(pytest_opts)'
+	bash -c 'PYTHONWARNINGS=default TESTHMCDIR=$(TESTHMCDIR) TESTHMC=$(TESTHMC) py.test -s -v $(pytest_opts) $(test_dir)/end2end'
 	@echo '$@ done.'
