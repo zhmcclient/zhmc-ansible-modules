@@ -30,7 +30,15 @@ Released: not yet
 
 **Bug fixes:**
 
+* Increased minimum version of flake8 to 3.7.0 due to difficulties with
+  recognizing certain 'noqa' statements. This required explicitly specifying
+  its dependent pycodestyle and pyflakes packages with their minimum versions,
+  because the dependency management did not work with our minimum
+  package versions.
+
 **Enhancements:**
+
+* Added end2end test support, against real HMCs.
 
 **Known issues:**
 
