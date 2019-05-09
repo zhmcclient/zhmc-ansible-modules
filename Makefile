@@ -88,6 +88,18 @@ module_py_files := $(wildcard $(module_src_dir)/zhmc_*.py)
 # Directory with test source files
 test_dir = tests
 
+# Directory with hmc_definitions.yaml file for end2end tests
+default_test_hmc_dir := ../python-zhmcclient/tests
+ifndef TESTHMCDIR
+  TESTHMCDIR := $(default_test_hmc_dir)
+endif
+
+# Nickname of test HMC in hmc_definitions.yaml file for end2end tests
+default_test_hmc := default
+ifndef TESTHMC
+  TESTHMC := $(default_test_hmc)
+endif
+
 # Directory for the generated distribution files
 dist_build_dir := $(build_dir)/dist
 
@@ -193,6 +205,7 @@ help:
 	@echo '  test       - Run unit tests (and test coverage) and save results in: $(test_log_file)'
 	@echo '               Env.var TESTCASES can be used to specify a py.test expression for its -k option'
 	@echo '  all        - Do all of the above'
+	@echo '  end2end    - Run end2end tests'
 	@echo '  upload     - Upload the package to PyPI'
 	@echo '  uninstall  - Uninstall package from active Python environment'
 	@echo '  clobber    - Remove any produced files'
@@ -200,6 +213,8 @@ help:
 	@echo '  linkcheck  - Check links in documentation (does not work)'
 	@echo '  dist       - Build the distribution files in: $(dist_build_dir) (not used)'
 	@echo 'Environment variables:'
+	@echo '  TESTHMC=... - Nickname of HMC to be used in end2end tests. Default: $(default_test_hmc)'
+	@echo '  TESTHMCDIR=... - Path name of directory with hmc_definitions.yaml file. Default: $(default_test_hmc_dir)'
 	@echo '  PACKAGE_LEVEL="minimum" - Install minimum version of dependent Python packages'
 	@echo '  PACKAGE_LEVEL="latest" - Default: Install latest version of dependent Python packages'
 	@echo '  PYTHON_CMD=... - Name of python command. Default: python'
@@ -357,6 +372,11 @@ $(validate_modules_log_file): Makefile $(module_py_files) $(validate_modules)
 
 $(test_log_file): Makefile $(check_py_files)
 	rm -f $@
-	bash -c 'set -o pipefail; PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_src_dir) PYTHONPATH=. py.test -s --cov $(module_src_dir) --cov-config .coveragerc --cov-report=html:htmlcov $(pytest_opts) $(test_dir) 2>&1 |tee $@.tmp'
+	bash -c 'set -o pipefail; PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_src_dir) PYTHONPATH=. py.test -s --cov $(module_src_dir) --cov-config .coveragerc --cov-report=html:htmlcov $(pytest_opts) $(test_dir)/unit $(test_dir)/function 2>&1 |tee $@.tmp'
 	mv -f $@.tmp $@
 	@echo 'Done: Created test log file: $@'
+
+.PHONY:	end2end
+end2end:
+	bash -c 'TESTHMCDIR=$(TESTHMCDIR) TESTHMC=$(TESTHMC) py.test $(pytest_no_log_opt) -s $(test_dir)/end2end $(pytest_opts)'
+	@echo '$@ done.'
