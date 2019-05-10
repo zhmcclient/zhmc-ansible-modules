@@ -25,7 +25,7 @@ import zhmcclient
 from zhmcclient.testutils.hmc_definition_fixtures import hmc_definition, hmc_session  # noqa: F401, E501
 
 from zhmc_ansible_modules import zhmc_partition
-from .utils import mock_ansible_module, get_failure_msg, get_module_output
+from .utils import mock_ansible_module, get_failure_msg
 
 requests.packages.urllib3.disable_warnings()
 
@@ -38,6 +38,25 @@ PARTITION_CONDITIONAL_PROPS = (
     'boot-storage-hba-name',
     'ssc-master-pw',
 )
+
+
+def get_module_output(mod_obj):
+    """
+    Return the module output as a tuple (changed, partition_properties) (i.e.
+    the arguments of the call to exit_json()).
+    If the module failed, return None.
+    """
+
+    def func(changed, partition):
+        return changed, partition
+
+    if not mod_obj.exit_json.called:
+        return None
+    call_args = mod_obj.exit_json.call_args
+
+    # The following makes sure we get the arguments regardless of whether they
+    # were specified as positional or keyword arguments:
+    return func(*call_args[0], **call_args[1])
 
 
 def assert_partition_props(partition_props):
