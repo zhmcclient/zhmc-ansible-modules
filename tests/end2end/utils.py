@@ -47,22 +47,3 @@ def get_failure_msg(mod_obj):
     # The following makes sure we get the arguments regardless of whether they
     # were specified as positional or keyword arguments:
     return func(*call_args[0], **call_args[1])
-
-
-def get_module_output(mod_obj):
-    """
-    Return the module output as a tuple (changed, partition_properties) (i.e.
-    the arguments of the call to exit_json()).
-    If the module failed, return None.
-    """
-
-    def func(changed, partition):
-        return changed, partition
-
-    if not mod_obj.exit_json.called:
-        return None
-    call_args = mod_obj.exit_json.call_args
-
-    # The following makes sure we get the arguments regardless of whether they
-    # were specified as positional or keyword arguments:
-    return func(*call_args[0], **call_args[1])
