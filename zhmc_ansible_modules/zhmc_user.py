@@ -97,6 +97,15 @@ options:
       - "* C(name): Cannot be specified because the name has already been
          specified in the C(name) module parameter."
       - "* C(type): Cannot be changed once the user exists."
+      - "* C(user-pattern-uri): Cannot be set directly, but indirectly via
+         the artificial property C(user-pattern-name)."
+      - "* C(password-rule-uri): Cannot be set directly, but indirectly via
+         the artificial property C(password-rule-name)."
+      - "* C(ldap-server-definition-uri): Cannot be set directly, but
+         indirectly via the artificial property
+         C(ldap-server-definition-name)."
+      - "* C(default-group-uri): Cannot be set directly, but indirectly via
+         the artificial property C(default-group-name)."
       - "Properties omitted in this dictionary will remain unchanged when the
          user already exists, and will get the default value defined
          in the data model for users in the HMC API book when the
@@ -139,7 +148,7 @@ EXAMPLES = """
     name: "{{ my_user_name }}"
     state: facts
     expand: true
-  register: sg1
+  register: user1
 
 - name: Ensure the user does not exist
   zhmc_user:
@@ -157,11 +166,8 @@ EXAMPLES = """
     expand: true
     properties:
       description: "Example user 1"
-      type: fcp
-      shared: false
-      connectivity: 4
-      max-partitions: 1
-  register: sg1
+      type: standard
+  register: user1
 
 """
 
@@ -179,33 +185,19 @@ user:
        Python representations described in the documentation of the zhmcclient
        Python package.
        The additional artificial properties are:"
-    - "* C(attached-partition-names): List of partition names to which the
-       user is attached."
-    - "* C(cpc-name): Name of the CPC that is associated to this storage
-       group."
-    - "* C(candidate-adapter-ports) (only if expand was requested):
-       List of candidate adapter ports of the user. Each port is
-       represented as a dictionary of its properties; in addition each port has
-       an artificial property C(parent-adapter) which represents the adapter of
-       the port. Each adapter is represented as a dictionary of its
-       properties."
-    - "* C(storage-volumes) (only if expand was requested):
-       List of storage volumes of the user. Each storage volume is
-       represented as a dictionary of its properties."
-    - "* C(virtual-storage-resources) (only if expand was requested):
-       List of virtual storage resources of the user. Each virtual
-       storage resource is represented as a dictionary of its properties."
-    - "* C(attached-partitions) (only if expand was requested):
-       List of partitions to which the user is attached. Each
-       partition is represented as a dictionary of its properties."
-    - "* C(cpc) (only if expand was requested): The CPC that is associated to
-       this user. The CPC is represented as a dictionary of its
-       properties."
+    - "* C(user-pattern-name): Name of the user pattern referenced by
+       property C(user-pattern-uri)."
+    - "* C(password-rule-name): Name of the password rule referenced by
+       property C(password-rule-uri)."
+    - "* C(ldap-server-definition-name): Name of the LDAP server definition
+       referenced by property C(ldap-server-definition-uri)."
+    - "* C(default-group-name): Name of the group referenced by property
+       C(default-group-uri)."
   returned: success
   type: dict
   sample: |
     C({
-      "name": "sg-1",
+      "name": "user-1",
       "description": "user #1",
       ...
     })

@@ -150,6 +150,10 @@ Options
         <div>The possible input properties in this dictionary are the properties defined as writeable in the data model for User resources (where the property names contain underscores instead of hyphens), with the following exceptions:</div>
         <div>* <code>name</code>: Cannot be specified because the name has already been specified in the <code>name</code> module parameter.</div>
         <div>* <code>type</code>: Cannot be changed once the user exists.</div>
+        <div>* <code>user-pattern-uri</code>: Cannot be set directly, but indirectly via the artificial property <code>user-pattern-name</code>.</div>
+        <div>* <code>password-rule-uri</code>: Cannot be set directly, but indirectly via the artificial property <code>password-rule-name</code>.</div>
+        <div>* <code>ldap-server-definition-uri</code>: Cannot be set directly, but indirectly via the artificial property <code>ldap-server-definition-name</code>.</div>
+        <div>* <code>default-group-uri</code>: Cannot be set directly, but indirectly via the artificial property <code>default-group-name</code>.</div>
         <div>Properties omitted in this dictionary will remain unchanged when the user already exists, and will get the default value defined in the data model for users in the HMC API book when the user is being created.</div>
     </td>
     </tr>
@@ -188,7 +192,7 @@ Examples
         name: "{{ my_user_name }}"
         state: facts
         expand: true
-      register: sg1
+      register: user1
 
     - name: Ensure the user does not exist
       zhmc_user:
@@ -206,11 +210,8 @@ Examples
         expand: true
         properties:
           description: "Example user 1"
-          type: fcp
-          shared: false
-          connectivity: 4
-          max-partitions: 1
-      register: sg1
+          type: standard
+      register: user1
 
 
 
@@ -236,18 +237,15 @@ Common return values are documented here :doc:`common_return_values`, the follow
     <td>
         <div>For <code>state=absent</code>, an empty dictionary.</div>
         <div>For <code>state=present|facts</code>, a dictionary with the resource properties of the target user, plus additional artificial properties as described in the following list items. The dictionary keys are the exact property names as described in the data model for the resource, i.e. they contain hyphens (-), not underscores (_). The dictionary values are the property values using the Python representations described in the documentation of the zhmcclient Python package. The additional artificial properties are:</div>
-        <div>* <code>attached-partition-names</code>: List of partition names to which the user is attached.</div>
-        <div>* <code>cpc-name</code>: Name of the CPC that is associated to this storage group.</div>
-        <div>* <code>candidate-adapter-ports</code> (only if expand was requested): List of candidate adapter ports of the user. Each port is represented as a dictionary of its properties; in addition each port has an artificial property <code>parent-adapter</code> which represents the adapter of the port. Each adapter is represented as a dictionary of its properties.</div>
-        <div>* <code>storage-volumes</code> (only if expand was requested): List of storage volumes of the user. Each storage volume is represented as a dictionary of its properties.</div>
-        <div>* <code>virtual-storage-resources</code> (only if expand was requested): List of virtual storage resources of the user. Each virtual storage resource is represented as a dictionary of its properties.</div>
-        <div>* <code>attached-partitions</code> (only if expand was requested): List of partitions to which the user is attached. Each partition is represented as a dictionary of its properties.</div>
-        <div>* <code>cpc</code> (only if expand was requested): The CPC that is associated to this user. The CPC is represented as a dictionary of its properties.</div>
+        <div>* <code>user-pattern-name</code>: Name of the user pattern referenced by property <code>user-pattern-uri</code>.</div>
+        <div>* <code>password-rule-name</code>: Name of the password rule referenced by property <code>password-rule-uri</code>.</div>
+        <div>* <code>ldap-server-definition-name</code>: Name of the LDAP server definition referenced by property <code>ldap-server-definition-uri</code>.</div>
+        <div>* <code>default-group-name</code>: Name of the group referenced by property <code>default-group-uri</code>.</div>
     </td>
     <td align=center>success</td>
     <td align=center>dict</td>
     <td align=center><code>{
-      "name": "sg-1",
+      "name": "user-1",
       "description": "user #1",
       ...
     }</code>

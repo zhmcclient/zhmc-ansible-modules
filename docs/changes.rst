@@ -40,6 +40,8 @@ Released: not yet
 
 * Added end2end test support, against real HMCs.
 
+* Added a new module `zhmc_user` for managing users on the HMC.
+
 **Known issues:**
 
 * See `list of open issues`_.
