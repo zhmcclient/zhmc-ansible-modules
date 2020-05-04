@@ -36,6 +36,9 @@ Released: not yet
   because the dependency management did not work with our minimum
   package versions.
 
+* Fixed issues with parameters in exception messages raised in
+  zhmc_storage_group and zhmc_user.
+
 **Enhancements:**
 
 * Added end2end test support, against real HMCs.

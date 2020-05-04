@@ -399,7 +399,7 @@ def ensure_present(params, check_mode):
         if sg_cpc.uri != cpc.uri:
             raise ParameterError(
                 "Storage group {!r} is not associated with the specified "
-                "CPC %r, but with CPC %r.".
+                "CPC {!r}, but with CPC {!r}.".
                 format(storage_group_name, cpc.name, sg_cpc.name))
 
         try:
@@ -496,7 +496,7 @@ def ensure_absent(params, check_mode):
         if sg_cpc.uri != cpc.uri:
             raise ParameterError(
                 "Storage group {!r} is not associated with the specified "
-                "CPC %r, but with CPC %r.".
+                "CPC {!r}, but with CPC {!r}.".
                 format(storage_group_name, cpc.name, sg_cpc.name))
 
         try:
@@ -550,7 +550,7 @@ def facts(params, check_mode):
         if sg_cpc.uri != cpc.uri:
             raise ParameterError(
                 "Storage group {!r} is not associated with the specified "
-                "CPC %r, but with CPC %r.".
+                "CPC {!r}, but with CPC {!r}.".
                 format(storage_group_name, cpc.name, sg_cpc.name))
 
         try:
