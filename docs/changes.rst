@@ -52,6 +52,9 @@ Released: not yet
 
 * Updated maintainer list.
 
+* Promoted package from Alpha to Beta and status of modules from preview to
+  stable.
+
 **Known issues:**
 
 * See `list of open issues`_.
