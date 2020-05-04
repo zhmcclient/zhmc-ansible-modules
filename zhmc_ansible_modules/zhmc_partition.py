@@ -65,27 +65,33 @@ options:
   hmc_host:
     description:
       - The hostname or IP address of the HMC.
+    type: str
     required: true
   hmc_auth:
     description:
       - The authentication credentials for the HMC.
+    type: dict
     required: true
     suboptions:
       userid:
         description:
           - The userid (username) for authenticating with the HMC.
+        type: str
         required: true
       password:
         description:
           - The password for authenticating with the HMC.
+        type: str
         required: true
   cpc_name:
     description:
       - The name of the CPC with the target partition.
+    type: str
     required: true
   name:
     description:
       - The name of the target partition.
+    type: str
     required: true
   state:
     description:
@@ -100,6 +106,7 @@ options:
       - "C(facts): Does not change anything on the partition and returns
          the partition properties and the properties of its child resources
          (HBAs, NICs, and virtual functions)."
+    type: str
     required: true
     choices: ['absent', 'stopped', 'active', 'facts']
   properties:
@@ -138,6 +145,7 @@ options:
          partition already exists, and will get the default value defined in
          the data model for partitions in the HMC API book when the partition
          is being created."
+    type: dict
     required: false
     default: No input properties
   log_file:
@@ -145,6 +153,7 @@ options:
       - "File path of a log file to which the logic flow of this module as well
          as interactions with the HMC are logged. If null, logging will be
          propagated to the Python root logger."
+    type: str
     required: false
     default: null
   faked_session:

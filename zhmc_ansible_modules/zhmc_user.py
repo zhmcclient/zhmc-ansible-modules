@@ -54,24 +54,29 @@ options:
   hmc_host:
     description:
       - The hostname or IP address of the HMC.
+    type: str
     required: true
   hmc_auth:
     description:
       - The authentication credentials for the HMC.
+    type: dict
     required: true
     suboptions:
       userid:
         description:
           - The userid (username) for authenticating with the HMC.
+        type: str
         required: true
       password:
         description:
           - The password for authenticating with the HMC.
+        type: str
         required: true
   name:
     description:
       - The userid of the target user (i.e. the 'name' property of the User
         object).
+    type: str
     required: true
   state:
     description:
@@ -81,6 +86,7 @@ options:
          properties."
       - "* C(facts): Does not change anything on the user and returns
          the user properties."
+    type: str
     required: true
     choices: ['absent', 'present', 'facts']
   properties:
@@ -110,6 +116,7 @@ options:
          user already exists, and will get the default value defined
          in the data model for users in the HMC API book when the
          user is being created."
+    type: dict
     required: false
     default: No properties.
   expand:
@@ -118,14 +125,15 @@ options:
          additional artificial properties that expand certain URI or name
          properties to the full set of resource properties (see description of
          return values of this module)."
-    required: false
     type: bool
+    required: false
     default: false
   log_file:
     description:
       - "File path of a log file to which the logic flow of this module as well
          as interactions with the HMC are logged. If null, logging will be
          propagated to the Python root logger."
+    type: str
     required: false
     default: null
   faked_session:

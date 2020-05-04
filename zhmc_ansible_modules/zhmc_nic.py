@@ -59,32 +59,39 @@ options:
   hmc_host:
     description:
       - The hostname or IP address of the HMC.
+    type: str
     required: true
   hmc_auth:
     description:
       - The authentication credentials for the HMC.
+    type: dict
     required: true
     suboptions:
       userid:
         description:
           - The userid (username) for authenticating with the HMC.
+        type: str
         required: true
       password:
         description:
           - The password for authenticating with the HMC.
+        type: str
         required: true
   cpc_name:
     description:
       - The name of the CPC with the partition containing the NIC.
+    type: str
     required: true
   partition_name:
     description:
       - The name of the partition containing the NIC.
+    type: str
     required: true
   name:
     description:
       - The name of the target NIC that is managed. If the NIC needs to be
         created, this value becomes its name.
+    type: str
     required: true
   state:
     description:
@@ -93,6 +100,7 @@ options:
          partition."
       - "C(present): Ensures that the NIC exists in the specified partition
          and has the specified properties."
+    type: str
     required: true
     choices: ["absent", "present"]
   properties:
@@ -119,6 +127,7 @@ options:
       - "Properties omitted in this dictionary will remain unchanged when the
          NIC already exists, and will get the default value defined in the
          data model for NICs when the NIC is being created."
+    type: dict
     required: false
     default: No input properties
   log_file:
@@ -126,6 +135,7 @@ options:
       - "File path of a log file to which the logic flow of this module as well
          as interactions with the HMC are logged. If null, logging will be
          propagated to the Python root logger."
+    type: str
     required: false
     default: null
   faked_session:

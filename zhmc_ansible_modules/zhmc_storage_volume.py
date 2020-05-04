@@ -70,32 +70,39 @@ options:
   hmc_host:
     description:
       - The hostname or IP address of the HMC.
+    type: str
     required: true
   hmc_auth:
     description:
       - The authentication credentials for the HMC.
+    type: dict
     required: true
     suboptions:
       userid:
         description:
           - The userid (username) for authenticating with the HMC.
+        type: str
         required: true
       password:
         description:
           - The password for authenticating with the HMC.
+        type: str
         required: true
   cpc_name:
     description:
       - The name of the CPC associated with the storage group containing the
         target storage volume.
+    type: str
     required: true
   storage_group_name:
     description:
       - The name of the storage group containing the target storage volume.
+    type: str
     required: true
   name:
     description:
       - The name of the target storage volume.
+    type: str
     required: true
   state:
     description:
@@ -106,6 +113,7 @@ options:
          storage group, and has the specified properties."
       - "* C(facts): Does not change anything on the storage volume and returns
          the storage volume properties."
+    type: str
     required: true
     choices: ['absent', 'present', 'facts']
   properties:
@@ -125,6 +133,7 @@ options:
          storage volume already exists, and will get the default value defined
          in the data model for storage volumes in the HMC API book when the
          storage volume is being created."
+    type: dict
     required: false
     default: No properties.
   log_file:
@@ -132,6 +141,7 @@ options:
       - "File path of a log file to which the logic flow of this module as well
          as interactions with the HMC are logged. If null, logging will be
          propagated to the Python root logger."
+    type: str
     required: false
     default: null
   faked_session:

@@ -55,24 +55,29 @@ options:
   hmc_host:
     description:
       - The hostname or IP address of the HMC.
+    type: str
     required: true
   hmc_auth:
     description:
       - The authentication credentials for the HMC.
+    type: dict
     required: true
     suboptions:
       userid:
         description:
           - The userid (username) for authenticating with the HMC.
+        type: str
         required: true
       password:
         description:
           - The password for authenticating with the HMC.
+        type: str
         required: true
   name:
     description:
       - The name of the target adapter. In case of renaming an adapter, this is
         the new name of the adapter.
+    type: str
     required: true
   match:
     description:
@@ -96,6 +101,7 @@ options:
          https://python-zhmcclient.readthedocs.io/en/stable/concepts.html#filtering"
       - "The possible match properties are all properties in the data model for
          adapter resources, including C(name)."
+    type: str
     required: false
     default: No match properties
   state:
@@ -108,6 +114,7 @@ options:
       - "* C(absent): Ensures that a Hipersockets adapter does not exist."
       - "* C(facts): Does not change anything on the adapter and returns
          the adapter properties including its ports."
+    type: str
     required: true
     choices: ['set', 'present', 'absent', 'facts']
   properties:
@@ -134,6 +141,7 @@ options:
          the ability of the Crypto Express adapters to change their crypto
          type. Valid values are 'ep11', 'cca' and 'acc'. Changing to 'acc'
          will zeroize the crypto adapter."
+    type: dict
     required: false
     default: No property changes (other than possibly C(name)).
   log_file:
@@ -141,6 +149,7 @@ options:
       - "File path of a log file to which the logic flow of this module as well
          as interactions with the HMC are logged. If null, logging will be
          propagated to the Python root logger."
+    type: str
     required: false
     default: null
   faked_session:
