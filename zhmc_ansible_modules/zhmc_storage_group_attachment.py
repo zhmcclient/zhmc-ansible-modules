@@ -68,32 +68,39 @@ options:
   hmc_host:
     description:
       - The hostname or IP address of the HMC.
+    type: str
     required: true
   hmc_auth:
     description:
       - The authentication credentials for the HMC.
+    type: dict
     required: true
     suboptions:
       userid:
         description:
           - The userid (username) for authenticating with the HMC.
+        type: str
         required: true
       password:
         description:
           - The password for authenticating with the HMC.
+        type: str
         required: true
   cpc_name:
     description:
       - The name of the CPC that has the partition and is associated with the
         storage group.
+    type: str
     required: true
   storage_group_name:
     description:
       - The name of the storage group for the attachment.
+    type: str
     required: true
   partition_name:
     description:
       - The name of the partition for the attachment.
+    type: str
     required: true
   state:
     description:
@@ -105,6 +112,7 @@ options:
          partition."
       - "* C(facts): Does not change anything on the attachment and returns
          the attachment status."
+    type: str
     required: true
     choices: ['detached', 'attached', 'facts']
   log_file:
@@ -112,6 +120,7 @@ options:
       - "File path of a log file to which the logic flow of this module as well
          as interactions with the HMC are logged. If null, logging will be
          propagated to the Python root logger."
+    type: str
     required: false
     default: null
   faked_session:

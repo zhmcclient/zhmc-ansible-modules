@@ -61,28 +61,34 @@ options:
   hmc_host:
     description:
       - The hostname or IP address of the HMC.
+    type: str
     required: true
   hmc_auth:
     description:
       - The authentication credentials for the HMC.
+    type: dict
     required: true
     suboptions:
       userid:
         description:
           - The userid (username) for authenticating with the HMC.
+        type: str
         required: true
       password:
         description:
           - The password for authenticating with the HMC.
+        type: str
         required: true
   cpc_name:
     description:
       - The name of the CPC that has the partition and the crypto adapters.
+    type: str
     required: true
   partition_name:
     description:
       - The name of the partition to which the crypto domains and crypto
         adapters are attached.
+    type: str
     required: true
   state:
     description:
@@ -94,6 +100,7 @@ options:
          are attached to the partition."
       - "* C(facts): Does not change anything on the attachment and returns
          the crypto configuration of the partition."
+    type: str
     required: true
     choices: ['attached', 'detached', 'facts']
   adapter_count:
@@ -102,6 +109,7 @@ options:
          needs to have attached.
          The special value -1 means all adapters of the desired crypto type in
          the CPC."
+    type: int
     required: false
     default: -1
   domain_range:
@@ -112,12 +120,14 @@ options:
          Other domains attached to the partition remain unchanged.
          The special value -1 for the max item means the maximum supported
          domain index number."
+    type: list
     required: false
     default: (0, -1)
   access_mode:
     description:
       - "Only for C(state=attach): The access mode in which the crypto domains
          specified in C(domain_range) need to be attached."
+    type: str
     required: false
     default: 'usage'
     choices: ['usage', 'control']
@@ -125,6 +135,7 @@ options:
     description:
       - "Only for C(state=attach): The crypto type of the crypto adapters that
          will be considered for attaching."
+    type: str
     required: false
     default: 'ep11'
     choices: ['ep11', 'cca', 'acc']
@@ -133,6 +144,7 @@ options:
       - "File path of a log file to which the logic flow of this module as well
          as interactions with the HMC are logged. If null, logging will be
          propagated to the Python root logger."
+    type: str
     required: false
     default: null
   faked_session:
