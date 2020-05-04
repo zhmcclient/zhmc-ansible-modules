@@ -22,5 +22,7 @@ zhmc Ansible modules
    intro
    gen/list_of_all_modules
    gen/common_return_values
+   gen/modules_support
    development
+   appendix
    changes
