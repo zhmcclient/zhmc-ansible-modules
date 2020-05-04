@@ -57,7 +57,7 @@ else
 endif
 
 # Name of this package on Pypi
-# Note: This must match the 'name' attribute specified in setup.cfg.
+# Note: This must match the 'name' attribute specified in setup.py.
 # Note: Underscores in package names are automatically converted to dashes in
 #       the Pypi package name (see https://stackoverflow.com/q/19097057/1424462),
 #       so we specify dashes for the Pypi package name right away.
@@ -68,9 +68,9 @@ package_name_pypi_under := $(subst -,_,$(package_name_pypi))
 package_name_python := zhmc_ansible_modules
 package_name_python_dashes := $(subst _,-,$(package_name_python))
 
-# Package version (full version, including any pre-release suffixes, e.g. "0.2.1.dev42")
-# package_version := $(shell $(PIP_CMD) show $(package_name_pypi) | grep "Version:" | sed -e 's/Version: *\(.*\)$$/\1/')
-package_version := $(shell $(PYTHON_CMD) -c "from pbr.version import VersionInfo; vi=VersionInfo('$(package_name_python)'); print(vi.release_string())" 2>/dev/null)
+# Package version (full version, including any pre-release suffixes, e.g. "0.1.0.dev1")
+# Note: The package version is defined in zhmc_ansible_modules/_version.py.
+package_version := $(shell $(PYTHON_CMD) setup.py --version)
 
 # Python major version
 python_major_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('%s'%sys.version_info[0])")
@@ -109,7 +109,7 @@ sdist_file := $(dist_build_dir)/$(package_name_python_dashes)-$(package_version)
 
 # Files the distribution archive depends upon.
 dist_dependent_files := \
-    setup.py setup.cfg \
+    setup.py \
     README.rst \
     requirements.txt \
     $(wildcard *.py) \
@@ -139,7 +139,7 @@ doc_dependent_files := \
     $(wildcard $(module_src_dir)/*/*/*.py) \
 
 # Flake8 config file
-flake8_rc_file := setup.cfg
+flake8_rc_file := .flake8
 
 # FLake8 log file
 flake8_log_file := flake8_$(python_mn_version).log
@@ -222,7 +222,7 @@ help:
 	@echo '  ansible-playbook playbooks/....'
 
 .PHONY: install
-install: _pip requirements.txt setup.cfg setup.py
+install: _pip requirements.txt setup.py
 	@echo 'Installing package (as editable) and its reqs with PACKAGE_LEVEL=$(PACKAGE_LEVEL) into current Python environment'
 	$(PIP_CMD) install $(pip_level_opts) $(pip_level_opts_new) -r requirements.txt
 	$(PIP_CMD) install -e .
@@ -294,7 +294,7 @@ dist: $(bdist_file) $(sdist_file)
 .PHONY: _check_version
 _check_version:
 ifeq (,$(package_version))
-	@echo 'Error: Package version could not be determined; (requires pbr; run "make setup")'
+	@echo 'Error: Package version could not be determined'
 	@false
 else
 	@true
@@ -303,8 +303,8 @@ endif
 .PHONY: _pip
 _pip:
 	$(PYTHON_CMD) remove_duplicate_setuptools.py
-	@echo 'Installing/upgrading pip, setuptools, wheel and pbr with PACKAGE_LEVEL=$(PACKAGE_LEVEL)'
-	$(PYTHON_CMD) -m pip install $(pip_level_opts) pip setuptools wheel pbr
+	@echo 'Installing/upgrading pip, setuptools, and wheel with PACKAGE_LEVEL=$(PACKAGE_LEVEL)'
+	$(PYTHON_CMD) -m pip install $(pip_level_opts) pip setuptools wheel
 
 $(bdist_file): _check_version Makefile $(dist_dependent_files)
 ifneq ($(PLATFORM),Windows)

@@ -20,7 +20,6 @@ wheel===0.29.0
 ## Direct dependencies for runtime (must be consistent with requirements.txt)
 
 ansible===2.4.0.0
-pbr===1.10.0
 requests===2.20.0
 
 # TODO: Fall back to using the official 0.24.0 release once available.
