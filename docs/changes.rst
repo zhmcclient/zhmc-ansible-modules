@@ -50,6 +50,8 @@ Released: not yet
 * Added support for Python 3.7 and 3.8, dropped support for Python 3.4.
   Removed old circumventions for Travis issues.
 
+* Updated maintainer list.
+
 **Known issues:**
 
 * See `list of open issues`_.
