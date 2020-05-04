@@ -29,7 +29,7 @@ from zhmc_ansible_modules.utils import log_init, Error, \
 
 ANSIBLE_METADATA = {
     'metadata_version': '1.1',
-    'status': ['preview'],
+    'status': ['stableinterface'],
     'supported_by': 'community',
     'shipped_by': 'other',
     'other_repo_url': 'https://github.com/zhmcclient/zhmc-ansible-modules'
