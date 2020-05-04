@@ -362,7 +362,7 @@ def process_properties(cpc, storage_group, params):
         if sg_cpc.uri != cpc.uri:
             raise ParameterError(
                 "Storage group {!r} is not associated with the specified "
-                "CPC %r, but with CPC %r.".
+                "CPC {!r}, but with CPC {!r}.".
                 format(sg_name, cpc.name, sg_cpc.name))
 
     # handle the other properties
@@ -599,7 +599,7 @@ def ensure_absent(params, check_mode):
         if sg_cpc.uri != cpc.uri:
             raise ParameterError(
                 "Storage group {!r} is not associated with the specified "
-                "CPC %r, but with CPC %r.".
+                "CPC {!r}, but with CPC {!r}.".
                 format(storage_group_name, cpc.name, sg_cpc.name))
 
         if not check_mode:
@@ -652,7 +652,7 @@ def facts(params, check_mode):
         if sg_cpc.uri != cpc.uri:
             raise ParameterError(
                 "Storage group {!r} is not associated with the specified "
-                "CPC %r, but with CPC %r.".
+                "CPC {!r}, but with CPC {!r}.".
                 format(storage_group_name, cpc.name, sg_cpc.name))
 
         add_artificial_properties(storage_group, expand)

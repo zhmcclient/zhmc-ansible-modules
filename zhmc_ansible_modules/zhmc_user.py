@@ -818,7 +818,7 @@ def main():
     # by showing the traceback.
 
     LOGGER.debug(
-        "Module exit (success): changed: {!r}".
+        "Module exit (success): changed: {!r}, user: {!r}".
         format(changed, result))
     module.exit_json(changed=changed, user=result)
 
