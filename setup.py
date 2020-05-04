@@ -99,8 +99,8 @@ setuptools.setup(
     license='Apache License, Version 2.0',
     author='Andreas Scheuring, Juergen Leopold, Andreas Maier',
     author_email='scheuran@de.ibm.com, leopoldj@de.ibm.com, maiera@de.ibm.com',
-    maintainer='Andreas Scheuring, Andreas Maier',
-    maintainer_email='scheuran@de.ibm.com, maiera@de.ibm.com',
+    maintainer='Andreas Maier',
+    maintainer_email='maiera@de.ibm.com',
     url='https://github.com/zhmcclient/zhmc-ansible-modules',
     project_urls={
         'Bug Tracker':
