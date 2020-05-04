@@ -47,6 +47,9 @@ Released: not yet
 
 * Dropped the use of pbr for this package.
 
+* Added support for Python 3.7 and 3.8, dropped support for Python 3.4.
+  Removed old circumventions for Travis issues.
+
 **Known issues:**
 
 * See `list of open issues`_.
