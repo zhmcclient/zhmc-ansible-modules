@@ -160,10 +160,9 @@ test_log_file := test_$(python_mn_version).log
 
 pytest_opts := $(TESTOPTS)
 
-# Location of local clone of Ansible project's Git repository.
-# Note: For now, that location must have checked out the 'zhmc-fixes' branch
-# from our fork of the Ansible repo. Create that with:
-# git clone https://github.com/andy-maier/ansible.git --branch zhmc-fixes ../ansible
+# Location of local clone of Ansible project's Git repository, with the
+# 'devel' branch checked out. Create that with:
+# git clone https://github.com/ansible/ansible.git --branch devel ../ansible
 ansible_repo_dir := ../ansible
 
 # Documentation-related directories from Ansible project
@@ -172,18 +171,19 @@ ansible_repo_lib_dir := $(ansible_repo_dir)/lib
 ansible_repo_rst_dir := $(ansible_repo_dir)/docs/docsite/rst
 
 # plugin_formatter tool from Ansible project
-plugin_formatter := $(ansible_repo_dir)/docs/bin/plugin_formatter.py
+plugin_formatter := $(ansible_repo_dir)/hacking/build-ansible.py document-plugins
 plugin_formatter_template_file := $(ansible_repo_template_dir)/plugin.rst.j2
 plugin_formatter_template_dir := $(shell dirname $(plugin_formatter_template_file))
 
 # validate-modules tool from Ansible project
-validate_modules := $(ansible_repo_dir)/test/sanity/validate-modules/validate-modules
+validate_modules := $(ansible_repo_dir)/bin/ansible-test sanity --test validate-modules
 validate_modules_log_file := validate.log
 validate_modules_exclude_pattern := (E101|E105|E106|DeprecationWarning)
 
 # Documentation files from Ansible repo to copy to $(doc_gen_dir)
 doc_copy_files := \
-    $(ansible_repo_rst_dir)/common_return_values.rst \
+    $(ansible_repo_rst_dir)/reference_appendices/common_return_values.rst \
+    $(ansible_repo_rst_dir)/user_guide/modules_support.rst \
 
 # No built-in rules needed:
 .SUFFIXES:
@@ -229,10 +229,16 @@ install: _pip requirements.txt setup.py
 	@echo 'Done: Installed package and its reqs into current Python environment.'
 
 .PHONY: develop
-develop: _pip requirements.txt dev-requirements.txt os_setup.sh $(ansible_repo_dir)
+develop: _pip requirements.txt dev-requirements.txt os_setup.sh $(ansible_repo_dir) develop_ansible
 	@echo 'Setting up the development environment with PACKAGE_LEVEL=$(PACKAGE_LEVEL)'
 	bash -c './os_setup.sh'
 	$(PIP_CMD) install $(pip_level_opts) $(pip_level_opts_new) -r dev-requirements.txt
+	@echo '$@ done.'
+
+.PHONY: develop_ansible
+develop_ansible: _pip $(ansible_repo_dir) $(ansible_repo_dir)/docs/docsite/requirements.txt
+	@echo 'Setting up the development environment for Ansible tools'
+	$(PIP_CMD) install $(pip_level_opts) $(pip_level_opts_new) -r $(ansible_repo_dir)/docs/docsite/requirements.txt
 	@echo '$@ done.'
 
 .PHONY: docs
@@ -240,7 +246,7 @@ docs: $(doc_build_dir)/html/index.html
 	@echo '$@ done.'
 
 .PHONY: check
-check: $(flake8_log_file) $(validate_modules_log_file)
+check: $(flake8_log_file)  # $(validate_modules_log_file)
 	@echo '$@ done.'
 
 .PHONY: test
@@ -280,7 +286,7 @@ clobber:
 
 .PHONY: doccheck
 doccheck: $(doc_check_dir)/list_of_all_modules.rst
-	bash -c 'diff -bB --exclude=common_return_values.rst $(doc_gen_dir) $(doc_check_dir); if [[ "$$?" != "0" ]]; then echo "Error: Module documentation files are not up to date - run make docs and commit them."; false; fi'
+	bash -c 'diff -bB --exclude=common_return_values.rst --exclude=modules_support.rst $(doc_gen_dir) $(doc_check_dir); if [[ "$$?" != "0" ]]; then echo "Error: Module documentation files are not up to date - run make docs and commit them."; false; fi'
 	@echo '$@ done.'
 
 .PHONY: linkcheck
@@ -330,14 +336,14 @@ endif
 
 $(ansible_repo_dir):
 	@echo 'Cloning our fork of the Ansible repo into: $@'
-	git clone https://github.com/andy-maier/ansible.git --branch zhmc-fixes $@
+	git clone https://github.com/ansible/ansible.git --branch devel $@
 
-$(doc_gen_dir)/list_of_all_modules.rst: Makefile $(plugin_formatter) $(plugin_formatter_template_file) $(module_py_files)
+$(doc_gen_dir)/list_of_all_modules.rst: Makefile $(module_py_files) $(ansible_repo_dir)
 	mkdir -p $(doc_gen_dir)
 	PYTHONPATH=$(ansible_repo_lib_dir) $(plugin_formatter) -vv --type=rst --template-dir=$(plugin_formatter_template_dir) --module-dir=$(module_src_dir) --output-dir=$(doc_gen_dir)/
 	rm -fv $(doc_gen_dir)/modules_by_category.rst $(doc_gen_dir)/list_of__modules.rst
 
-$(doc_check_dir)/list_of_all_modules.rst: Makefile $(plugin_formatter) $(plugin_formatter_template_file) $(module_py_files)
+$(doc_check_dir)/list_of_all_modules.rst: Makefile $(module_py_files) $(ansible_repo_dir)
 	mkdir -p $(doc_check_dir)
 	PYTHONPATH=$(ansible_repo_lib_dir) $(plugin_formatter) -vv --type=rst --template-dir=$(plugin_formatter_template_dir) --module-dir=$(module_src_dir) --output-dir=$(doc_check_dir)/
 	rm -fv $(doc_check_dir)/modules_by_category.rst $(doc_check_dir)/list_of__modules.rst
@@ -360,7 +366,7 @@ $(flake8_log_file): Makefile $(flake8_rc_file) $(check_py_files)
 	mv -f $@.tmp $@
 	@echo 'Done: Flake8 checker succeeded'
 
-$(validate_modules_log_file): Makefile $(module_py_files) $(validate_modules)
+$(validate_modules_log_file): Makefile $(module_py_files) $(ansible_repo_dir)
 	rm -f $@
 	bash -c 'PYTHONPATH=$(ansible_repo_lib_dir) $(validate_modules) $(module_py_files) 2>&1 |grep -v -E "$(validate_modules_exclude_pattern)" |tee $@.tmp'
 	bash -c 'if [[ -n "$$(cat $@.tmp)" ]]; then false; fi'
