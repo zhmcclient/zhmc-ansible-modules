@@ -13,7 +13,6 @@
 ansible>=2.4.0.0 # GPLv3 + BSD
 # Note: The zhmc-ansible-modules only use ansible/module_utils/basic.py
 # of the ansible package, which is BSD licensed.
-pbr>=1.10.0 # Apache-2.0
 requests>=2.20.0 # Apache-2.0 (requests.packages.urllib3 and from zhmcclient)
 
 # TODO: Fall back to using the official 0.24.0 release once available.

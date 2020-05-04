@@ -250,9 +250,6 @@ has the remote name ``origin`` in your local clone.
 
 11. Tag the version:
 
-    Important: This is the basis on which 'pbr' determines the package version. The tag
-    string must be exactly the version string ``M.N.U``.
-
     Create a tag for the new version and push the tag addition upstream:
 
     .. code-block:: text
@@ -290,16 +287,7 @@ has the remote name ``origin`` in your local clone.
 
     You can see the tags in GitHub via Code -> Releases -> Tags.
 
-14. Do a fresh install of this version in your active Python environment. This ensures
-    that 'pbr' determines the correct version. Otherwise, it may determine some development
-    version.
-
-    .. code-block:: text
-
-        make clobber install
-        make help    # Double check that it shows version ``M.N.U``
-
-15. Upload the package to PyPI:
+14. Upload the package to PyPI:
 
     .. code-block:: text
 
@@ -316,7 +304,7 @@ has the remote name ``origin`` in your local clone.
     Verify that the released version arrived on PyPI:
     https://pypi.python.org/pypi/zhmc-ansible-modules/
 
-16. If you released the master branch, it needs a new fix stream.
+15. If you released the master branch, it needs a new fix stream.
 
     Create a branch for its fix stream and push it upstream:
 

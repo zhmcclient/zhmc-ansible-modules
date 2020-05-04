@@ -45,6 +45,8 @@ Released: not yet
 
 * Added a new module `zhmc_user` for managing users on the HMC.
 
+* Dropped the use of pbr for this package.
+
 **Known issues:**
 
 * See `list of open issues`_.
