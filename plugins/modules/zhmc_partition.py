@@ -31,25 +31,25 @@ ANSIBLE_METADATA = {
 DOCUMENTATION = """
 ---
 module: zhmc_partition
-short_description: Manages partitions
+short_description: Manages partitions of Z systems.
 description:
-  - Gathers facts about a partition, including its child resources (HBAs, NICs
-    and virtual functions).
-  - Creates, updates, deletes, starts, and stops partitions in a CPC. The
-    child resources of the partition are are managed by separate Ansible
-    modules.
-  - The targeted CPC must be in the Dynamic Partition Manager (DPM) operational
-    mode.
-notes:
-  - See also Ansible modules zhmc_hba, zhmc_nic, zhmc_virtual_function.
+  - Gather facts about a partition of a CPC (Z system), including its HBAs,
+    NICs, and virtual functions.
+  - Create, update, or delete a partition. The HBAs, NICs, and virtual
+   functions of the partition are are managed by separate Ansible modules.
+  - Start or stop a partition.
+seealso:
+  - module: zhmc_hba
+  - module: zhmc_nic
+  - module: zhmc_virtual_function
 author:
   - Andreas Maier (@andy-maier)
   - Andreas Scheuring (@scheuran)
   - Juergen Leopold (@leopoldjuergen)
 requirements:
-  - Network access to HMC
-  - zhmcclient >=0.14.0
-  - ansible >=2.2.0.0
+  - Access to the WS API of the HMC of the targeted Z system. The targeted Z
+    system must be in the Dynamic Partition Manager (DPM) operational mode.
+  - Python package zhmcclient >=0.14.0
 options:
   hmc_host:
     description:
@@ -58,7 +58,8 @@ options:
     required: true
   hmc_auth:
     description:
-      - The authentication credentials for the HMC.
+      - The authentication credentials for the HMC, as a dictionary of userid,
+        password.
     type: dict
     required: true
     suboptions:
@@ -148,10 +149,11 @@ options:
   faked_session:
     description:
       - "A C(zhmcclient_mock.FakedSession) object that has a mocked HMC set up.
-         If provided, it will be used instead of connecting to a real HMC. This
-         is used for testing purposes only."
+         If not null, this session will be used instead of connecting to the
+         HMC specified in C(hmc_host). This is used for testing purposes only."
     required: false
     type: raw
+    default: null
 """
 
 EXAMPLES = """

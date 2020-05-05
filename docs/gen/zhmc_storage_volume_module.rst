@@ -5,8 +5,8 @@
 .. _zhmc_storage_volume_module:
 
 
-zhmc_storage_volume -- Manages DPM storage volumes in existing storage groups (with "dpm-storage-management" feature)
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+zhmc_storage_volume -- Manages storage volumes of Z systems
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 .. contents::
@@ -16,8 +16,8 @@ zhmc_storage_volume -- Manages DPM storage volumes in existing storage groups (w
 
 Synopsis
 --------
-- Gathers facts about a storage volume in a storage group associated with a CPC.
-- Creates, deletes and updates a storage volume in a storage group associated with a CPC.
+- Gather facts about a storage volume in a storage group associated with a CPC (Z system).
+- Create, delete, or update a storage volume in a storage group associated with a CPC.
 
 
 
@@ -25,9 +25,9 @@ Requirements
 ------------
 The below requirements are needed on the host that executes this module.
 
-- Network access to HMC
-- zhmcclient >=0.20.0
-- ansible >=2.2.0.0
+- Access to the WS API of the HMC of the targeted Z system. The targeted Z system must be in the Dynamic Partition Manager (DPM) operational mode.
+- The Z system must be of generation z14 or later, to have the "dpm-storage-management" firmware feature.
+- Python package zhmcclient >=0.20.0
 
 
 Parameters
@@ -66,9 +66,10 @@ Parameters
                                                                     </div>
                                     </td>
                                 <td>
-                                                                                                                                                            </td>
+                                                                                                                                                                    <b>Default:</b><br/><div style="color: blue">null</div>
+                                    </td>
                                                                 <td>
-                                            <div>A <code>zhmcclient_mock.FakedSession</code> object that has a mocked HMC set up. If provided, it will be used instead of connecting to a real HMC. This is used for testing purposes only.</div>
+                                            <div>A <code>zhmcclient_mock.FakedSession</code> object that has a mocked HMC set up. If not null, this session will be used instead of connecting to the HMC specified in <code>hmc_host</code>. This is used for testing purposes only.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -83,7 +84,7 @@ Parameters
                                 <td>
                                                                                                                                                             </td>
                                                                 <td>
-                                            <div>The authentication credentials for the HMC.</div>
+                                            <div>The authentication credentials for the HMC, as a dictionary of <code>userid</code>, <code>password</code>.</div>
                                                         </td>
             </tr>
                                                             <tr>
@@ -230,9 +231,7 @@ Notes
 -----
 
 .. note::
-   - The CPC that is associated with the storage group must be in the Dynamic Partition Manager (DPM) operational mode and must have the "dpm-storage-management" firmware feature enabled. That feature has been introduced with the z14-ZR1 / Rockhopper II machine generation.
-   - This module performs actions only against the Z HMC regarding the definition of storage volume objects within storage group objects. This module does not perform any actions against storage subsystems or SAN switches.
-   - The Ansible module zhmc_hba is no longer used on CPCs that have the "dpm-storage-management" feature enabled.
+   - This module manages only the knowledge of the Z system about its storage, but does not perform any actions against the storage subsystems or SAN switches attached to the Z system.
 
 
 

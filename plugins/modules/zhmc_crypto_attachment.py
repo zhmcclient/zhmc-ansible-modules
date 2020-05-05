@@ -32,24 +32,21 @@ DOCUMENTATION = """
 ---
 module: zhmc_crypto_attachment
 version_added: "0.6"
-short_description: Manages the attachment of crypto adapters and domains to
-    partitions.
+short_description: Manages the attachment of crypto resources to partitions of
+    Z systems.
 description:
-  - Gathers facts about the attachment of crypto adapters and domains to a
+  - Gather facts about the attachment of crypto adapters and crypto domains to
+    a partition of a CPC (Z system).
+  - Attach a range of crypto domains and a number of crypto adapters to a
     partition.
-  - Attaches a range of crypto domains and a number of crypto adapters to a
-    partition.
-  - Detaches all crypto domains and all crypto adapters from a partition.
-notes:
-  - The CPC of the target partition must be in the
-    Dynamic Partition Manager (DPM) operational mode.
+  - Detach all crypto domains and all crypto adapters from a partition.
 author:
   - Andreas Maier (@andy-maier)
   - Andreas Scheuring (@scheuran)
 requirements:
-  - Network access to HMC
-  - zhmcclient >=0.20.0
-  - ansible >=2.2.0.0
+  - Access to the WS API of the HMC of the targeted Z system. The targeted Z
+    system must be in the Dynamic Partition Manager (DPM) operational mode.
+  - Python package zhmcclient >=0.20.0
 options:
   hmc_host:
     description:
@@ -58,7 +55,8 @@ options:
     required: true
   hmc_auth:
     description:
-      - The authentication credentials for the HMC.
+      - The authentication credentials for the HMC, as a dictionary of
+        C(userid), C(password).
     type: dict
     required: true
     suboptions:
@@ -144,10 +142,11 @@ options:
   faked_session:
     description:
       - "A C(zhmcclient_mock.FakedSession) object that has a mocked HMC set up.
-         If provided, it will be used instead of connecting to a real HMC. This
-         is used for testing purposes only."
+         If not null, this session will be used instead of connecting to the
+         HMC specified in C(hmc_host). This is used for testing purposes only."
     required: false
     type: raw
+    default: null
 """
 
 EXAMPLES = """

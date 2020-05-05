@@ -31,22 +31,20 @@ ANSIBLE_METADATA = {
 DOCUMENTATION = """
 ---
 module: zhmc_virtual_function
-short_description: Manages virtual functions in existing partitions
+short_description: Manages virtual functions in partitions of Z systems.
 description:
-  - Creates, updates, and deletes virtual functions in existing partitions of a
-    CPC.
-  - The targeted CPC must be in the Dynamic Partition Manager (DPM) operational
-    mode.
-notes:
-  - See also Ansible module zhmc_partition.
+  - Create, update, or delete a virtual function in a partition of a CPC
+    (Z system).
+  - Note that the Ansible module zhmc_partition can be used to gather facts
+    about existing virtual functions of a partition.
 author:
   - Andreas Maier (@andy-maier)
   - Andreas Scheuring (@scheuran)
   - Juergen Leopold (@leopoldjuergen)
 requirements:
-  - Network access to HMC
-  - zhmcclient >=0.14.0
-  - ansible >=2.2.0.0
+  - Access to the WS API of the HMC of the targeted Z system. The targeted Z
+    system must be in the Dynamic Partition Manager (DPM) operational mode.
+  - Python package zhmcclient >=0.14.0
 options:
   hmc_host:
     description:
@@ -55,7 +53,8 @@ options:
     required: true
   hmc_auth:
     description:
-      - The authentication credentials for the HMC.
+      - The authentication credentials for the HMC, as a dictionary of
+        C(userid), C(password).
     type: dict
     required: true
     suboptions:
@@ -130,10 +129,11 @@ options:
   faked_session:
     description:
       - "A C(zhmcclient_mock.FakedSession) object that has a mocked HMC set up.
-         If provided, it will be used instead of connecting to a real HMC. This
-         is used for testing purposes only."
+         If not null, this session will be used instead of connecting to the
+         HMC specified in C(hmc_host). This is used for testing purposes only."
     required: false
     type: raw
+    default: null
 """
 
 EXAMPLES = """

@@ -5,8 +5,8 @@
 .. _zhmc_user_module:
 
 
-zhmc_user -- Manages users defined on the HMC
-+++++++++++++++++++++++++++++++++++++++++++++
+zhmc_user -- Manages users defined on the HMC of Z systems
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 .. contents::
@@ -16,8 +16,8 @@ zhmc_user -- Manages users defined on the HMC
 
 Synopsis
 --------
-- Gathers facts about a user on the HMC.
-- Creates, deletes and updates a user on the HMC.
+- Gather facts about a user on an HMC of a Z system.
+- Create, delete, or update a user on an HMC.
 
 
 
@@ -25,9 +25,8 @@ Requirements
 ------------
 The below requirements are needed on the host that executes this module.
 
-- Network access to HMC
-- zhmcclient >=0.23.0
-- ansible >=2.2.0.0
+- Access to the WS API of the HMC of the targeted Z system. The targeted Z system can be in any operational mode (classic, DPM)
+- Python package zhmcclient >=0.23.0
 
 
 Parameters
@@ -70,9 +69,10 @@ Parameters
                                                                     </div>
                                     </td>
                                 <td>
-                                                                                                                                                            </td>
+                                                                                                                                                                    <b>Default:</b><br/><div style="color: blue">null</div>
+                                    </td>
                                                                 <td>
-                                            <div>A <code>zhmcclient_mock.FakedSession</code> object that has a mocked HMC set up. If provided, it will be used instead of connecting to a real HMC. This is used for testing purposes only.</div>
+                                            <div>A <code>zhmcclient_mock.FakedSession</code> object that has a mocked HMC set up. If not null, this session will be used instead of connecting to the HMC specified in <code>hmc_host</code>. This is used for testing purposes only.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -87,7 +87,7 @@ Parameters
                                 <td>
                                                                                                                                                             </td>
                                                                 <td>
-                                            <div>The authentication credentials for the HMC.</div>
+                                            <div>The authentication credentials for the HMC, as a dictionary of <code>userid</code>, <code>password</code>.</div>
                                                         </td>
             </tr>
                                                             <tr>
