@@ -68,8 +68,10 @@ package.
 Documentation
 =============
 
-The full documentation for this project is on RTD:
-<http://zhmc-ansible-modules.readthedocs.io/en/stable/>
+* `Documentation for latest released version
+  <http://zhmc-ansible-modules.readthedocs.io/en/stable/>`_
+* `Documentation for development version (master branch)
+  <http://zhmc-ansible-modules.readthedocs.io/en/latest/>`_
 
 Playbook examples
 =================
