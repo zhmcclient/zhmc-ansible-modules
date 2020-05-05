@@ -5,8 +5,8 @@
 .. _zhmc_crypto_attachment_module:
 
 
-zhmc_crypto_attachment -- Manages the attachment of crypto adapters and domains to partitions
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+zhmc_crypto_attachment -- Manages the attachment of crypto resources to partitions of Z systems
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 .. contents::
@@ -16,9 +16,9 @@ zhmc_crypto_attachment -- Manages the attachment of crypto adapters and domains 
 
 Synopsis
 --------
-- Gathers facts about the attachment of crypto adapters and domains to a partition.
-- Attaches a range of crypto domains and a number of crypto adapters to a partition.
-- Detaches all crypto domains and all crypto adapters from a partition.
+- Gather facts about the attachment of crypto adapters and crypto domains to a partition of a CPC (Z system).
+- Attach a range of crypto domains and a number of crypto adapters to a partition.
+- Detach all crypto domains and all crypto adapters from a partition.
 
 
 
@@ -26,9 +26,8 @@ Requirements
 ------------
 The below requirements are needed on the host that executes this module.
 
-- Network access to HMC
-- zhmcclient >=0.20.0
-- ansible >=2.2.0.0
+- Access to the WS API of the HMC of the targeted Z system. The targeted Z system must be in the Dynamic Partition Manager (DPM) operational mode.
+- Python package zhmcclient >=0.20.0
 
 
 Parameters
@@ -138,9 +137,10 @@ Parameters
                                                                     </div>
                                     </td>
                                 <td>
-                                                                                                                                                            </td>
+                                                                                                                                                                    <b>Default:</b><br/><div style="color: blue">null</div>
+                                    </td>
                                                                 <td>
-                                            <div>A <code>zhmcclient_mock.FakedSession</code> object that has a mocked HMC set up. If provided, it will be used instead of connecting to a real HMC. This is used for testing purposes only.</div>
+                                            <div>A <code>zhmcclient_mock.FakedSession</code> object that has a mocked HMC set up. If not null, this session will be used instead of connecting to the HMC specified in <code>hmc_host</code>. This is used for testing purposes only.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -155,7 +155,7 @@ Parameters
                                 <td>
                                                                                                                                                             </td>
                                                                 <td>
-                                            <div>The authentication credentials for the HMC.</div>
+                                            <div>The authentication credentials for the HMC, as a dictionary of <code>userid</code>, <code>password</code>.</div>
                                                         </td>
             </tr>
                                                             <tr>
@@ -263,12 +263,6 @@ Parameters
                         </table>
     <br/>
 
-
-Notes
------
-
-.. note::
-   - The CPC of the target partition must be in the Dynamic Partition Manager (DPM) operational mode.
 
 
 

@@ -32,18 +32,17 @@ DOCUMENTATION = """
 ---
 module: zhmc_adapter
 version_added: "0.6"
-short_description: Manages an adapter in a CPC.
+short_description: Manages adapters of Z systems.
 description:
-  - Gathers facts about the adapter including its ports.
-  - Updates the properties of an adapter.
-notes:
+  - Gather facts about an adapter of a CPC (Z system), including its ports.
+  - Update the properties of an adapter.
 author:
   - Andreas Maier (@andy-maier)
   - Andreas Scheuring (@scheuran)
 requirements:
-  - Network access to HMC
-  - zhmcclient >=0.20.0
-  - ansible >=2.2.0.0
+  - Access to the WS API of the HMC of the targeted Z system. The targeted Z
+    system must be in the Dynamic Partition Manager (DPM) operational mode.
+  - Python package zhmcclient >=0.20.0
 options:
   hmc_host:
     description:
@@ -52,7 +51,8 @@ options:
     required: true
   hmc_auth:
     description:
-      - The authentication credentials for the HMC.
+      - The authentication credentials for the HMC, as a dictionary of
+        C(userid), C(password).
     type: dict
     required: true
     suboptions:
@@ -153,10 +153,11 @@ options:
   faked_session:
     description:
       - "A C(zhmcclient_mock.FakedSession) object that has a mocked HMC set up.
-         If provided, it will be used instead of connecting to a real HMC. This
-         is used for testing purposes only."
+         If not null, this session will be used instead of connecting to the
+         HMC specified in C(hmc_host). This is used for testing purposes only."
     type: raw
     required: false
+    default: null
 """
 
 EXAMPLES = """

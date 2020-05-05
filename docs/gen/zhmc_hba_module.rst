@@ -5,8 +5,8 @@
 .. _zhmc_hba_module:
 
 
-zhmc_hba -- Manages HBAs in existing partitions (without "dpm-storage-management" feature)
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+zhmc_hba -- Manages HBAs in partitions of Z systems
++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 .. contents::
@@ -16,8 +16,8 @@ zhmc_hba -- Manages HBAs in existing partitions (without "dpm-storage-management
 
 Synopsis
 --------
-- Creates, updates, and deletes HBAs in existing partitions of a CPC.
-- The targeted CPC must be in the Dynamic Partition Manager (DPM) operational mode.
+- Create, update, or delete an HBA (virtual Host Bus Adapter) in a partition of a CPC (Z system).
+- Note that the Ansible module zhmc_partition can be used to gather facts about existing HBAs of a partition.
 
 
 
@@ -25,9 +25,9 @@ Requirements
 ------------
 The below requirements are needed on the host that executes this module.
 
-- Network access to HMC
-- zhmcclient >=0.14.0
-- ansible >=2.2.0.0
+- Access to the WS API of the HMC of the targeted Z system. The targeted Z system must be in the Dynamic Partition Manager (DPM) operational mode.
+- The targeted Z system must be a z13 generation. The z14 and later generations manage HBAs automatically via the "dpm-storage-management" firmware feature.
+- Python package zhmcclient >=0.14.0
 
 
 Parameters
@@ -66,9 +66,10 @@ Parameters
                                                                     </div>
                                     </td>
                                 <td>
-                                                                                                                                                            </td>
+                                                                                                                                                                    <b>Default:</b><br/><div style="color: blue">null</div>
+                                    </td>
                                                                 <td>
-                                            <div>A <code>zhmcclient_mock.FakedSession</code> object that has a mocked HMC set up. If provided, it will be used instead of connecting to a real HMC. This is used for testing purposes only.</div>
+                                            <div>A <code>zhmcclient_mock.FakedSession</code> object that has a mocked HMC set up. If not null, this session will be used instead of connecting to the HMC specified in <code>hmc_host</code>. This is used for testing purposes only.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -83,7 +84,7 @@ Parameters
                                 <td>
                                                                                                                                                             </td>
                                                                 <td>
-                                            <div>The authentication credentials for the HMC.</div>
+                                            <div>The authentication credentials for the HMC, as a dictionary of <code>userid</code>, <code>password</code>.</div>
                                                         </td>
             </tr>
                                                             <tr>
@@ -226,12 +227,6 @@ Parameters
                         </table>
     <br/>
 
-
-Notes
------
-
-.. note::
-   - See also Ansible module zhmc_partition.
 
 
 

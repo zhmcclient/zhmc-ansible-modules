@@ -32,31 +32,26 @@ DOCUMENTATION = """
 ---
 module: zhmc_storage_group_attachment
 version_added: "0.5"
-short_description: Manages the attachment of DPM storage groups to
-    partitions (with "dpm-storage-management" feature)
+short_description: Manages the attachment of storage groups to partitions of
+    Z systems.
 description:
-  - Gathers facts about the attachment of a storage group to a partition.
-  - Attaches and detaches a storage group to and from a partition.
+  - Gather facts about the attachment of a storage group to a partition of a
+    CPC (Z system).
+  - Attach and detach a storage group to and from a partition.
 notes:
-  - The CPC that is associated with the target storage group must be in the
-    Dynamic Partition Manager (DPM) operational mode and must have the
-    "dpm-storage-management" firmware feature enabled.
-    That feature has been introduced with the z14-ZR1 / Rockhopper II machine
-    generation.
-  - This module performs actions only against the Z HMC regarding the
-    attachment of storage group objects to partitions.
-    This module does not perform any actions against storage subsystems or
-    SAN switches.
-  - The Ansible module zhmc_hba is no longer used on CPCs that have the
-    "dpm-storage-management" feature enabled.
+  - This module manages only the knowledge of the Z system about its storage,
+    but does not perform any actions against the storage subsystems or
+    SAN switches attached to the Z system.
 author:
   - Andreas Maier (@andy-maier)
   - Andreas Scheuring (@scheuran)
   - Juergen Leopold (@leopoldjuergen)
 requirements:
-  - Network access to HMC
-  - zhmcclient >=0.20.0
-  - ansible >=2.2.0.0
+  - Access to the WS API of the HMC of the targeted Z system. The targeted Z
+    system must be in the Dynamic Partition Manager (DPM) operational mode.
+  - The Z system must be of generation z14 or later, to have the
+    "dpm-storage-management" firmware feature.
+  - Python package zhmcclient >=0.20.0
 options:
   hmc_host:
     description:
@@ -65,7 +60,8 @@ options:
     required: true
   hmc_auth:
     description:
-      - The authentication credentials for the HMC.
+      - The authentication credentials for the HMC, as a dictionary of
+        C(userid), C(password).
     type: dict
     required: true
     suboptions:
@@ -119,10 +115,11 @@ options:
   faked_session:
     description:
       - "A C(zhmcclient_mock.FakedSession) object that has a mocked HMC set up.
-         If provided, it will be used instead of connecting to a real HMC. This
-         is used for testing purposes only."
+         If not null, this session will be used instead of connecting to the
+         HMC specified in C(hmc_host). This is used for testing purposes only."
     required: false
     type: raw
+    default: null
 """
 
 EXAMPLES = """

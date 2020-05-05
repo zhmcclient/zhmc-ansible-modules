@@ -32,16 +32,16 @@ DOCUMENTATION = """
 ---
 module: zhmc_user
 version_added: "0.9"
-short_description: Manages users defined on the HMC
+short_description: Manages users defined on the HMC of Z systems.
 description:
-  - Gathers facts about a user on the HMC.
-  - Creates, deletes and updates a user on the HMC.
+  - Gather facts about a user on an HMC of a Z system.
+  - Create, delete, or update a user on an HMC.
 author:
   - Andreas Maier (@andy-maier)
 requirements:
-  - Network access to HMC
-  - zhmcclient >=0.23.0
-  - ansible >=2.2.0.0
+  - Access to the WS API of the HMC of the targeted Z system. The targeted Z
+    system can be in any operational mode (classic, DPM)
+  - Python package zhmcclient >=0.23.0
 options:
   hmc_host:
     description:
@@ -50,7 +50,8 @@ options:
     required: true
   hmc_auth:
     description:
-      - The authentication credentials for the HMC.
+      - The authentication credentials for the HMC, as a dictionary of
+        C(userid), C(password).
     type: dict
     required: true
     suboptions:
@@ -131,10 +132,11 @@ options:
   faked_session:
     description:
       - "A C(zhmcclient_mock.FakedSession) object that has a mocked HMC set up.
-         If provided, it will be used instead of connecting to a real HMC. This
-         is used for testing purposes only."
+         If not null, this session will be used instead of connecting to the
+         HMC specified in C(hmc_host). This is used for testing purposes only."
     required: false
     type: raw
+    default: null
 """
 
 EXAMPLES = """
