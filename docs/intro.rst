@@ -255,7 +255,7 @@ All commands shown are to be executed in a bash shell on the control system.
 
    .. code-block:: bash
 
-      (myenv)$ pip install zhmc-ansible-modules
+      (myenv)# pip install zhmc-ansible-modules
 
    This will also install its dependent Python packages.
 

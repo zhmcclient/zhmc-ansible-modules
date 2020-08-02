@@ -100,9 +100,7 @@ Released: 2019-02-20
 * Renovated the logging:
   - Added support for the log_file parameter to all modules.
   - Changed the format of the log lines.
-  - Set log level also when no log_file is specified, causing
-    the logs to be propagated to the root logger.
-
+  - Set log level also when no log_file is specified, causing the logs to be propagated to the root logger.
 
 Version 0.6.0
 ^^^^^^^^^^^^^

@@ -16,7 +16,8 @@
 End2end tests for zhmc_user module.
 """
 
-from __future__ import absolute_import, print_function
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 import uuid
 import pytest
@@ -27,7 +28,7 @@ from pprint import pformat
 import zhmcclient
 from zhmcclient.testutils.hmc_definition_fixtures import hmc_definition, hmc_session  # noqa: F401, E501
 
-from zhmc_ansible_modules import zhmc_user
+from plugins.modules import zhmc_user
 from .utils import mock_ansible_module, get_failure_msg
 
 requests.packages.urllib3.disable_warnings()
@@ -136,7 +137,7 @@ def updated_copy(dict1, dict2):
 
 
 def new_user_name():
-    user_name = 'test_{}'.format(uuid.uuid4())
+    user_name = 'test_{0}'.format(uuid.uuid4())
     return user_name
 
 
@@ -205,7 +206,7 @@ def assert_user_props(user_props, expand):
     "check_mode", [True, False])
 @pytest.mark.parametrize(
     "expand", [False, True])
-@mock.patch("zhmc_ansible_modules.zhmc_user.AnsibleModule", autospec=True)
+@mock.patch("plugins.modules.zhmc_user.AnsibleModule", autospec=True)
 def test_user_facts(ansible_mod_cls, expand, check_mode, hmc_session):  # noqa: F811, E501
     """
     Test fact gathering on all users of the HMC.
@@ -242,7 +243,7 @@ def test_user_facts(ansible_mod_cls, expand, check_mode, hmc_session):  # noqa: 
 
         # Assert module exit code
         assert exit_code == 0, \
-            "Module unexpectedly failed with this message:\n{}". \
+            "Module unexpectedly failed with this message:\n{0}". \
             format(get_failure_msg(mod_obj))
 
         # Assert module output
@@ -325,7 +326,7 @@ USER_ABSENT_PRESENT_TESTCASES = [
     "desc, initial_user_props, initial_related_names, input_state, "
     "input_props, exp_user_props, exp_changed",
     USER_ABSENT_PRESENT_TESTCASES)
-@mock.patch("zhmc_ansible_modules.zhmc_user.AnsibleModule", autospec=True)
+@mock.patch("plugins.modules.zhmc_user.AnsibleModule", autospec=True)
 def test_user_absent_present(
         ansible_mod_cls,
         desc, initial_user_props, initial_related_names, input_state,
@@ -388,7 +389,7 @@ def test_user_absent_present(
         exit_code = exc_info.value.args[0]
 
         assert exit_code == 0, \
-            "Module unexpectedly failed with this message:\n{}". \
+            "Module unexpectedly failed with this message:\n{0}". \
             format(get_failure_msg(mod_obj))
 
         changed, output_props = get_module_output(mod_obj)
@@ -403,10 +404,10 @@ def test_user_absent_present(
                 OrderedDict(sorted(output_props.items(), key=lambda x: x[0])) \
                 if output_props is not None else None
             raise AssertionError(
-                "Unexpected change flag returned: actual: {}, expected: {}\n"
-                "Initial user properties:\n{}\n"
-                "Module input properties:\n{}\n"
-                "Resulting user properties:\n{}".
+                "Unexpected change flag returned: actual: {0}, expected: {1}\n"
+                "Initial user properties:\n{2}\n"
+                "Module input properties:\n{3}\n"
+                "Resulting user properties:\n{4}".
                 format(changed, exp_changed,
                        pformat(user_props_sorted.items(), indent=2),
                        pformat(input_props_sorted.items(), indent=2),

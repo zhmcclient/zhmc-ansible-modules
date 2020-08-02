@@ -17,25 +17,21 @@
 Setup script for zhmc-ansible-modules project.
 """
 
-import os
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
+
 import re
 import setuptools
+import yaml
 
 
 def get_version(version_file):
     """
-    Execute the specified version file and return the value of the __version__
-    global variable that is set in the version file.
-
-    Note: Make sure the version file does not depend on any packages in the
-    requirements list of this package (otherwise it cannot be executed in
-    a fresh Python environment).
+    Get the version from the collection manifest.
     """
-    with open(version_file, 'r') as fp:
-        version_source = fp.read()
-    _globals = {}
-    exec(version_source, _globals)  # pylint: disable=exec-used
-    return _globals['__version__']
+    with open(version_file, 'r') as f_p:
+        manifest = yaml.safe_load(f_p)
+    return manifest['version']
 
 
 def get_requirements(requirements_file):
@@ -44,8 +40,8 @@ def get_requirements(requirements_file):
     non-comment lines. The returned lines are without any trailing newline
     characters.
     """
-    with open(requirements_file, 'r') as fp:
-        lines = fp.readlines()
+    with open(requirements_file, 'r') as f_p:
+        lines = f_p.readlines()
     reqs = []
     for line in lines:
         line = line.strip('\n')
@@ -58,8 +54,8 @@ def read_file(a_file):
     """
     Read the specified file and return its content as one string.
     """
-    with open(a_file, 'r') as fp:
-        content = fp.read()
+    with open(a_file, 'r') as f_p:
+        content = f_p.read()
     return content
 
 
@@ -69,8 +65,7 @@ install_requires = [req for req in requirements
                     if req and not re.match(r'[^:]+://', req)]
 dependency_links = [req for req in requirements
                     if req and re.match(r'[^:]+://', req)]
-package_version = get_version(
-    os.path.join('zhmc_ansible_modules', '__init__.py'))
+package_version = get_version('galaxy.yml')
 
 # Docs on setup():
 # * https://docs.python.org/2.7/distutils/apiref.html?
@@ -86,15 +81,18 @@ package_version = get_version(
 setuptools.setup(
     name='zhmc-ansible-modules',
     version=package_version,
+    package_dir={'zhmc-ansible-modules': 'plugins'},
     packages=[
-        'zhmc_ansible_modules',
+        'zhmc-ansible-modules',
+        'zhmc-ansible-modules.module_utils',
+        'zhmc-ansible-modules.modules'
     ],
     install_requires=install_requires,
     dependency_links=dependency_links,
 
     description=''
     'Ansible modules managing a IBM Z via the HMC Web Services API.',
-    long_description=read_file('README.rst'),
+    long_description=read_file('README.md'),
     long_description_content_type='text/x-rst',
     license='Apache License, Version 2.0',
     author='Andreas Scheuring, Juergen Leopold, Andreas Maier',

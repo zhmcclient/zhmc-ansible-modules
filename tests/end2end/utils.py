@@ -17,6 +17,9 @@
 Utility functions for end2end testing.
 """
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
+
 
 def mock_ansible_module(ansible_mod_cls, params, check_mode):
     """

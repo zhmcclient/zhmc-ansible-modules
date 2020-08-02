@@ -62,12 +62,11 @@ Parameters
                     <b>faked_session</b>
                     <a class="ansibleOptionLink" href="#parameter-faked_session" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">raw</span>
                                                                     </div>
                                     </td>
                                 <td>
-                                                                                                                                                                    <b>Default:</b><br/><div style="color: blue">"Real HMC will be used."</div>
-                                    </td>
+                                                                                                                                                            </td>
                                                                 <td>
                                             <div>A <code>zhmcclient_mock.FakedSession</code> object that has a mocked HMC set up. If provided, it will be used instead of connecting to a real HMC. This is used for testing purposes only.</div>
                                                         </td>
@@ -191,7 +190,7 @@ Parameters
                                                                     </div>
                                     </td>
                                 <td>
-                                                                                                                                                                    <b>Default:</b><br/><div style="color: blue">"No input properties"</div>
+                                                                                                                                                                    <b>Default:</b><br/><div style="color: blue">null</div>
                                     </td>
                                                                 <td>
                                             <div>Dictionary with input properties for the virtual function, for <code>state=present</code>. Key is the property name with underscores instead of hyphens, and value is the property value in YAML syntax. Integer properties may also be provided as decimal strings. Will be ignored for <code>state=absent</code>.</div>
@@ -327,9 +326,9 @@ Status
 Authors
 ~~~~~~~
 
-- Andreas Maier (@andy-maier, maiera@de.ibm.com)
-- Andreas Scheuring (@scheuran, scheuran@de.ibm.com)
-- Juergen Leopold (@leopoldjuergen, leopoldj@de.ibm.com)
+- Andreas Maier (@andy-maier)
+- Andreas Scheuring (@scheuran)
+- Juergen Leopold (@leopoldjuergen)
 
 
 .. hint::

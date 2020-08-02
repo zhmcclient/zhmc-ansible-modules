@@ -1,0 +1,65 @@
+namespace: ibm
+
+name: zhmc
+
+version: 0.9.0.dev1
+
+readme: README.md
+
+authors:
+  - Andy Maier (@andy-maier)
+  - Juergen Leopold (@leopoldjuergen)
+  - Andreas Scheuring (@scheuran)
+  - Kathiravan Velusamy (@vkahir)
+  - Adilet Sabyrbaev (@sabyadi)
+
+description: The zhmc-ansible-modules Python package contains Ansible modules that can manage platform resources on IBM Z and LinuxONE machines that are in the Dynamic Partition Manager (DPM) operational mode.
+
+license:
+  - "Apache-2.0"
+
+tags:
+  [
+    ibm,
+    z,
+    dpm,
+    hmc
+  ]
+
+# The URL of the originating SCM repository
+repository: https://github.com/zhmcclient/zhmc-ansible-modules
+
+# The URL to any online docs
+documentation: http://zhmc-ansible-modules.readthedocs.io/en/stable/
+
+# The URL to the homepage of the collection/project
+homepage: http://zhmc-ansible-modules.readthedocs.io/en/stable/
+
+# The URL to the collection issue tracker
+issues: https://github.com/zhmcclient/zhmc-ansible-modules/issues
+
+# Ignore files and directories matching the following patterns
+build_ignore:
+  - '*.tar.gz'
+  - .DS_Store
+  - .coveragerc
+  - .flake8
+  - .gitignore
+  - .travis.yml
+  - CODE_OF_CONDUCT.md
+  - CONTRIBUTING.rst
+  - DCO1.1.txt
+  - LICENSE
+  - Makefile
+  - README.md
+  - Vagrantfile
+  - dev-requirements.yml
+  - galaxy.yml
+  - get_facts.py
+  - ibm-ibm_zhmc_client-0.1beta.tar.gz
+  - minimum-constraints.txt
+  - os_setup.sh
+  - provision.yml
+  - remove_duplicate_setuptools.py
+  - requirements.txt
+  - setup.py

@@ -17,6 +17,9 @@
 Function tests for the 'zhmc_partition' Ansible module.
 """
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
+
 import pytest
 import mock
 import re
@@ -24,7 +27,7 @@ import re
 from zhmcclient import Client
 from zhmcclient_mock import FakedSession
 
-from zhmc_ansible_modules import zhmc_partition
+from plugins.modules import zhmc_partition
 
 from .func_utils import mock_ansible_module
 
@@ -936,7 +939,7 @@ class TestPartition(object):
             ({'ssc_master_userid': u'fak\u00E9'}, True),
             ({'ssc_master_pw': u'fak\u00E9'}, True),
         ])
-    @mock.patch("zhmc_ansible_modules.zhmc_partition.AnsibleModule",
+    @mock.patch("plugins.modules.zhmc_partition.AnsibleModule",
                 autospec=True)
     def test_success(
             self, ansible_mod_cls, properties, props_changed, desired_state,
@@ -1006,7 +1009,7 @@ class TestPartition(object):
 
         # Assert module exit code
         assert exit_code == 0, \
-            "Module unexpectedly failed with this message:\n{}". \
+            "Module unexpectedly failed with this message:\n{0}". \
             format(get_failure_msg(mod_obj))
 
         # Assert module output
@@ -1021,7 +1024,7 @@ class TestPartition(object):
                     for hmc_prop_name in exp_props:
                         assert part_props[hmc_prop_name] == \
                             exp_props[hmc_prop_name], \
-                            "Property: {}".format(hmc_prop_name)
+                            "Property: {0}".format(hmc_prop_name)
         else:
             assert part_props == {}
 
@@ -1038,7 +1041,7 @@ class TestPartition(object):
                     for hmc_prop_name in exp_props:
                         assert part.properties[hmc_prop_name] == \
                             exp_props[hmc_prop_name], \
-                            "Property: {}".format(hmc_prop_name)
+                            "Property: {0}".format(hmc_prop_name)
             else:
                 assert len(parts) == 0
 
@@ -1048,7 +1051,7 @@ class TestPartition(object):
         "initial_state", ['stopped', 'active'])
     @pytest.mark.parametrize(
         "desired_state", ['facts'])
-    @mock.patch("zhmc_ansible_modules.zhmc_partition.AnsibleModule",
+    @mock.patch("plugins.modules.zhmc_partition.AnsibleModule",
                 autospec=True)
     def test_facts_success(
             self, ansible_mod_cls, desired_state, initial_state, check_mode):
@@ -1084,7 +1087,7 @@ class TestPartition(object):
 
         # Assert module exit code
         assert exit_code == 0, \
-            "Module unexpectedly failed with this message:\n{}". \
+            "Module unexpectedly failed with this message:\n{0}". \
             format(get_failure_msg(mod_obj))
 
         # Assert module output
@@ -1153,7 +1156,7 @@ class TestPartition(object):
             ({'nic_uris': ['/api/fake-nic-uri']}, True, True),
             ({'hba_uris': ['/api/fake-hba-uri']}, True, True),
         ])
-    @mock.patch("zhmc_ansible_modules.zhmc_partition.AnsibleModule",
+    @mock.patch("plugins.modules.zhmc_partition.AnsibleModule",
                 autospec=True)
     def test_error_properties(
             self, ansible_mod_cls, properties, test_when_created,
@@ -1226,7 +1229,7 @@ class TestPartition(object):
         "initial_state", ['stopped', 'active'])
     @pytest.mark.parametrize(
         "desired_state", ['stopped', 'active'])
-    @mock.patch("zhmc_ansible_modules.zhmc_partition.AnsibleModule",
+    @mock.patch("plugins.modules.zhmc_partition.AnsibleModule",
                 autospec=True)
     def test_boot_storage_success(
             self, ansible_mod_cls, desired_state, initial_state, check_mode):
@@ -1280,7 +1283,7 @@ class TestPartition(object):
 
         # Assert module exit code
         assert exit_code == 0, \
-            "Module unexpectedly failed with this message:\n{}". \
+            "Module unexpectedly failed with this message:\n{0}". \
             format(get_failure_msg(mod_obj))
 
         # Assert module output
@@ -1294,7 +1297,7 @@ class TestPartition(object):
                 hmc_prop_name = prop_name.replace('_', '-')
                 assert part_props[hmc_prop_name] == \
                     exp_properties[prop_name], \
-                    "Property: {}".format(prop_name)
+                    "Property: {0}".format(prop_name)
 
         # Assert the partition resource
         if not check_mode:
@@ -1308,7 +1311,7 @@ class TestPartition(object):
                 hmc_prop_name = prop_name.replace('_', '-')
                 assert part.properties[hmc_prop_name] == \
                     exp_properties[prop_name], \
-                    "Property: {}".format(prop_name)
+                    "Property: {0}".format(prop_name)
 
     @pytest.mark.parametrize(
         "check_mode", [False, True])
@@ -1316,7 +1319,7 @@ class TestPartition(object):
         "initial_state", ['stopped', 'active'])
     @pytest.mark.parametrize(
         "desired_state", ['stopped', 'active'])
-    @mock.patch("zhmc_ansible_modules.zhmc_partition.AnsibleModule",
+    @mock.patch("plugins.modules.zhmc_partition.AnsibleModule",
                 autospec=True)
     def test_boot_storage_error_hba_not_found(
             self, ansible_mod_cls, desired_state, initial_state, check_mode):
@@ -1373,7 +1376,7 @@ class TestPartition(object):
         "initial_state", ['stopped', 'active'])
     @pytest.mark.parametrize(
         "desired_state", ['stopped', 'active'])
-    @mock.patch("zhmc_ansible_modules.zhmc_partition.AnsibleModule",
+    @mock.patch("plugins.modules.zhmc_partition.AnsibleModule",
                 autospec=True)
     def test_boot_network_success(
             self, ansible_mod_cls, desired_state, initial_state, check_mode):
@@ -1423,7 +1426,7 @@ class TestPartition(object):
 
         # Assert module exit code
         assert exit_code == 0, \
-            "Module unexpectedly failed with this message:\n{}". \
+            "Module unexpectedly failed with this message:\n{0}". \
             format(get_failure_msg(mod_obj))
 
         # Assert module output
@@ -1437,7 +1440,7 @@ class TestPartition(object):
                 hmc_prop_name = prop_name.replace('_', '-')
                 assert part_props[hmc_prop_name] == \
                     exp_properties[prop_name], \
-                    "Property: {}".format(prop_name)
+                    "Property: {0}".format(prop_name)
 
         # Assert the partition resource
         if not check_mode:
@@ -1451,7 +1454,7 @@ class TestPartition(object):
                 hmc_prop_name = prop_name.replace('_', '-')
                 assert part.properties[hmc_prop_name] == \
                     exp_properties[prop_name], \
-                    "Property: {}".format(prop_name)
+                    "Property: {0}".format(prop_name)
 
     @pytest.mark.parametrize(
         "check_mode", [False, True])
@@ -1459,7 +1462,7 @@ class TestPartition(object):
         "initial_state", ['stopped', 'active'])
     @pytest.mark.parametrize(
         "desired_state", ['stopped', 'active'])
-    @mock.patch("zhmc_ansible_modules.zhmc_partition.AnsibleModule",
+    @mock.patch("plugins.modules.zhmc_partition.AnsibleModule",
                 autospec=True)
     def test_boot_network_error_hba_not_found(
             self, ansible_mod_cls, desired_state, initial_state, check_mode):
@@ -1501,7 +1504,7 @@ class TestPartition(object):
         # Assert module exit code
         assert exit_code == 1, \
             "Module unexpectedly succeeded with this output:\n" \
-            "changed: {!r}, partition: {!r}". \
+            "changed: {0!r}, partition: {1!r}". \
             format(*get_module_output(mod_obj))
 
         # Assert the failure message
@@ -1520,7 +1523,7 @@ class TestPartition(object):
     @pytest.mark.parametrize(
         "desc, adapters, initial_config, input_props, exp_config, exp_changed",
         CRYPTO_CONFIG_SUCCESS_TESTCASES)
-    @mock.patch("zhmc_ansible_modules.zhmc_partition.AnsibleModule",
+    @mock.patch("plugins.modules.zhmc_partition.AnsibleModule",
                 autospec=True)
     def test_crypto_config_success(
             self, ansible_mod_cls, desc, adapters, initial_config, input_props,
@@ -1576,7 +1579,7 @@ class TestPartition(object):
 
         # Assert module exit code
         assert exit_code == 0, \
-            "Module unexpectedly failed with this message:\n{}". \
+            "Module unexpectedly failed with this message:\n{0}". \
             format(get_failure_msg(mod_obj))
 
         # Assert module output
@@ -1600,7 +1603,7 @@ class TestPartition(object):
                 result_property = part_props[hmc_prop_name]
                 exp_property = exp_properties[prop_name]
                 assert result_property == exp_property, \
-                    "Property: {}".format(prop_name)
+                    "Property: {0}".format(prop_name)
 
         # Assert the partition resource
         if not check_mode:
@@ -1624,7 +1627,7 @@ class TestPartition(object):
                 part_property = part.properties[hmc_prop_name]
                 exp_property = exp_properties[prop_name]
                 assert part_property == exp_property, \
-                    "Property: {}".format(prop_name)
+                    "Property: {0}".format(prop_name)
 
     @pytest.mark.parametrize(
         "check_mode", [False, True])
@@ -1724,7 +1727,7 @@ class TestPartition(object):
                 "ParameterError: .*access_mode.*",
             ),
         ])
-    @mock.patch("zhmc_ansible_modules.zhmc_partition.AnsibleModule",
+    @mock.patch("plugins.modules.zhmc_partition.AnsibleModule",
                 autospec=True)
     def test_crypto_config_parm_errors(
             self, ansible_mod_cls, input_props, error_msg_pattern, adapters,
@@ -1763,10 +1766,10 @@ class TestPartition(object):
         # Assert module exit code
         assert exit_code == 1, \
             "Module unexpectedly succeeded with this output:\n" \
-            "changed: {!r}, partition: {!r}". \
+            "changed: {0!r}, partition: {1!r}". \
             format(*get_module_output(mod_obj))
 
         # Assert the failure message
         msg = get_failure_msg(mod_obj)
-        pattern = r'^{}$'.format(error_msg_pattern)
+        pattern = r'^{0}$'.format(error_msg_pattern)
         assert re.match(pattern, msg)

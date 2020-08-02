@@ -16,7 +16,8 @@
 End2end tests for zhmc_partition module.
 """
 
-from __future__ import absolute_import, print_function
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 import pytest
 import mock
@@ -24,7 +25,7 @@ import requests.packages.urllib3
 import zhmcclient
 from zhmcclient.testutils.hmc_definition_fixtures import hmc_definition, hmc_session  # noqa: F401, E501
 
-from zhmc_ansible_modules import zhmc_partition
+from plugins.modules import zhmc_partition
 from .utils import mock_ansible_module, get_failure_msg
 
 requests.packages.urllib3.disable_warnings()
@@ -100,7 +101,7 @@ def assert_partition_props(partition_props):
 
 @pytest.mark.parametrize(
     "check_mode", [False, True])
-@mock.patch("zhmc_ansible_modules.zhmc_partition.AnsibleModule", autospec=True)
+@mock.patch("plugins.modules.zhmc_partition.AnsibleModule", autospec=True)
 def test_partition_facts(ansible_mod_cls, check_mode, hmc_session):  # noqa: F811, E501
     """
     Test fact gathering on a partition.
@@ -142,7 +143,7 @@ def test_partition_facts(ansible_mod_cls, check_mode, hmc_session):  # noqa: F81
 
     # Assert module exit code
     assert exit_code == 0, \
-        "Module unexpectedly failed with this message:\n{}". \
+        "Module unexpectedly failed with this message:\n{0}". \
         format(get_failure_msg(mod_obj))
 
     # Assert module output

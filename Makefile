@@ -82,7 +82,7 @@ python_mn_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('%s%
 build_dir = build
 
 # Directory with the source code of our Ansible module source files
-module_src_dir := $(package_name_python)
+module_src_dir := plugins/modules
 module_py_files := $(wildcard $(module_src_dir)/zhmc_*.py)
 
 # Directory with test source files
@@ -202,6 +202,7 @@ help:
 	@echo '               Env.var TESTCASES can be used to specify a py.test expression for its -k option'
 	@echo '  all        - Do all of the above'
 	@echo '  end2end    - Run end2end tests'
+	@echo '  sanity     - Run ansible sanity tests'
 	@echo '  upload     - Upload the package to PyPI'
 	@echo '  uninstall  - Uninstall package from active Python environment'
 	@echo '  clobber    - Remove any produced files'
@@ -336,7 +337,9 @@ endif
 
 $(ansible_repo_dir):
 	@echo 'Cloning our fork of the Ansible repo into: $@'
-	git clone https://github.com/ansible/ansible.git --branch devel $@
+# pinned to a fixed version since the doc generation process has been changed
+# in 2.10 (ansibull). TODO: Adapt doc generation.
+	git clone https://github.com/ansible/ansible.git --branch v2.9.12 $@
 
 $(doc_gen_dir)/list_of_all_modules.rst: Makefile $(module_py_files) $(ansible_repo_dir)
 	mkdir -p $(doc_gen_dir)
@@ -375,11 +378,23 @@ $(validate_modules_log_file): Makefile $(module_py_files) $(ansible_repo_dir)
 
 $(test_log_file): Makefile $(check_py_files)
 	rm -f $@
-	bash -c 'set -o pipefail; PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_src_dir) PYTHONPATH=. py.test -s --cov $(module_src_dir) --cov-config .coveragerc --cov-report=html:htmlcov $(pytest_opts) $(test_dir)/unit $(test_dir)/function 2>&1 |tee $@.tmp'
+	bash -c 'set -o pipefail; PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_src_dir) PYTHONPATH=. pytest -s --cov $(module_src_dir) --cov-config .coveragerc --cov-report=html:htmlcov $(pytest_opts) $(test_dir)/unit $(test_dir)/function 2>&1 |tee $@.tmp'
 	mv -f $@.tmp $@
 	@echo 'Done: Created test log file: $@'
 
 .PHONY:	end2end
 end2end:
 	bash -c 'PYTHONWARNINGS=default TESTHMCDIR=$(TESTHMCDIR) TESTHMC=$(TESTHMC) py.test -s -v $(pytest_opts) $(test_dir)/end2end'
+	@echo '$@ done.'
+
+.PHONY:	sanity
+sanity:
+	@echo 'Starting sanity tests...'
+	rm -rf ../ansible
+	ansible-test sanity --docker
+	# then uninstall 2.9 and install 2.10 (ansible-base)
+	pip uninstall -y ansible
+	pip install ansible-base
+	# and run the sanity tests with 2.10
+	ansible-test sanity --docker
 	@echo '$@ done.'

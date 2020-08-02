@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # Copyright 2018 IBM Corp. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,15 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import, print_function
-
-import logging
-from ansible.module_utils.basic import AnsibleModule
-import requests.packages.urllib3
-import zhmcclient
-
-from zhmc_ansible_modules.utils import log_init, Error, ParameterError, \
-    get_hmc_auth, get_session
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 # For information on the format of the ANSIBLE_METADATA, DOCUMENTATION,
 # EXAMPLES, and RETURN strings, see
@@ -51,8 +44,8 @@ notes:
   - The CPC of the target partition must be in the
     Dynamic Partition Manager (DPM) operational mode.
 author:
-  - Andreas Maier (@andy-maier, maiera@de.ibm.com)
-  - Andreas Scheuring (@scheuran, scheuran@de.ibm.com)
+  - Andreas Maier (@andy-maier)
+  - Andreas Scheuring (@scheuran)
 requirements:
   - Network access to HMC
   - zhmcclient >=0.20.0
@@ -121,8 +114,9 @@ options:
          The special value -1 for the max item means the maximum supported
          domain index number."
     type: list
+    elements: int
     required: false
-    default: (0, -1)
+    default: [0,-1]
   access_mode:
     description:
       - "Only for C(state=attach): The access mode in which the crypto domains
@@ -153,7 +147,7 @@ options:
          If provided, it will be used instead of connecting to a real HMC. This
          is used for testing purposes only."
     required: false
-    default: Real HMC will be used.
+    type: raw
 """
 
 EXAMPLES = """
@@ -255,6 +249,29 @@ changes:
     })
 """
 
+import logging  # noqa: E402
+import traceback  # noqa: E402
+from ansible.module_utils.basic import AnsibleModule  # noqa: E402
+
+from ..module_utils.common import log_init, Error, ParameterError, \
+    get_hmc_auth, get_session, missing_required_lib  # noqa: E402
+
+
+try:
+    import requests.packages.urllib3
+    IMP_URLLIB3 = True
+except ImportError:
+    IMP_URLLIB3 = False
+    IMP_URLLIB3_ERR = traceback.format_exc()
+
+try:
+    import zhmcclient
+    IMP_ZHMCCLIENT = True
+except ImportError:
+    IMP_ZHMCCLIENT = False
+    IMP_ZHMCCLIENT_ERR = traceback.format_exc()
+
+
 # Python logger name for this module
 LOGGER_NAME = 'zhmc_crypto_attachment'
 
@@ -310,8 +327,8 @@ def get_partition_config(partition, all_adapters):
             if am == 'control':
                 control_domains.append(di)
             else:
-                assert am == 'usage', \
-                    "am={}".format(am)
+                if am != 'usage':
+                    raise AssertionError("am={0}".format(am))
                 usage_domains.append(di)
 
     result = dict()
@@ -347,14 +364,16 @@ def ensure_attached(params, check_mode):
     faked_session = params.get('faked_session', None)  # No default specified
 
     try:
-        assert len(domain_range) == 2, \
-            "len(domain_range)={}".format(len(domain_range))
+        if len(domain_range) != 2:
+            raise AssertionError("len(domain_range)={0}".
+                                 format(len(domain_range)))
+
         domain_range_lo = int(domain_range[0])
         domain_range_hi = int(domain_range[1])
     except (ValueError, AssertionError):
         raise ParameterError(
             "The 'domain_range' parameter must be a list containing two "
-            "integer numbers, but is: {!r}".format(domain_range))
+            "integer numbers, but is: {0!r}".format(domain_range))
 
     hmc_crypto_type = CRYPTO_TYPES_MOD2HMC[crypto_type]
     hmc_access_mode = ACCESS_MODES_MOD2HMC[access_mode]
@@ -378,7 +397,7 @@ def ensure_attached(params, check_mode):
         all_adapters = cpc.adapters.list(filter_args=filter_args,
                                          full_properties=True)
         if not all_adapters:
-            raise Error("No crypto adapters of type {!r} found on CPC {!r} ".
+            raise Error("No crypto adapters of type {0!r} found on CPC {1!r} ".
                         format(crypto_type, cpc_name))
 
         # All crypto adapters in a CPC have the same number of domains
@@ -393,8 +412,8 @@ def ensure_attached(params, check_mode):
             domain_range_hi = max_domains - 1
         if domain_range_lo > domain_range_hi:
             raise ParameterError(
-                "In the 'domain_range' parameter, the lower boundary (={}) "
-                "of the range must be less than the higher boundary (={})".
+                "In the 'domain_range' parameter, the lower boundary (={0}) "
+                "of the range must be less than the higher boundary (={1})".
                 format(domain_range_lo, domain_range_hi))
 
         # Parameter checking on adapter count.
@@ -403,12 +422,12 @@ def ensure_attached(params, check_mode):
             adapter_count = len(all_adapters)
         if adapter_count < 1:
             raise ParameterError(
-                "The 'adapter_count' parameter must be at least 1, but is: {}".
-                format(adapter_count))
+                "The 'adapter_count' parameter must be at least 1, "
+                "but is: {0}".format(adapter_count))
         if adapter_count > len(all_adapters):
             raise ParameterError(
                 "The 'adapter_count' parameter must not exceed the number of "
-                "{} crypto adapters of type {!r} in CPC {!r}, but is {}".
+                "{0} crypto adapters of type {1!r} in CPC {2!r}, but is {3}".
                 format(len(all_adapters), crypto_type, cpc_name,
                        adapter_count))
 
@@ -435,22 +454,19 @@ def ensure_attached(params, check_mode):
                 di = int(dc['domain-index'])
                 am = dc['access-mode']
                 LOGGER.debug(
-                    "Crypto config of partition {!r}: "
-                    "Domain {} is attached in {!r} mode".
-                    format(partition.name, di, am))
+                    "Crypto config of partition %r: "
+                    "Domain %r is attached in %r mode", partition.name, di, am)
                 attached_domains[di] = am
         for a in all_adapters:
             if a.uri in _attached_adapter_uris:
                 LOGGER.debug(
-                    "Crypto config of partition {!r}: "
-                    "Adapter {!r} is attached".
-                    format(partition.name, a.name))
+                    "Crypto config of partition %r: "
+                    "Adapter %r is attached", partition.name, a.name)
                 attached_adapters.append(a)
             else:
                 LOGGER.debug(
-                    "Crypto config of partition {!r}: "
-                    "Adapter {!r} is not attached".
-                    format(partition.name, a.name))
+                    "Crypto config of partition %r: "
+                    "Adapter %r is not attached", partition.name, a.name)
                 detached_adapters.append(a)
         del _attached_adapter_uris
 
@@ -517,8 +533,8 @@ def ensure_attached(params, check_mode):
                 # from control to control+usage, but that is not implemented
                 # by this code here.
                 raise Error(
-                    "Domain {} is currently attached in {!r} mode to target "
-                    "partition {!r}, but requested was {!r} mode".
+                    "Domain {0} is currently attached in {1!r} mode to target "
+                    "partition {2!r}, but requested was for mode {3!r}".
                     format(di,
                            ACCESS_MODES_HMC2MOD[attached_domains[di]],
                            partition.name, access_mode))
@@ -546,11 +562,12 @@ def ensure_attached(params, check_mode):
                             # in usage mode
                             p = all_partitions[p_uri]
                             raise Error(
-                                "Domain {} cannot be attached in {!r} mode to "
-                                "target partition {!r} because it is already "
-                                "attached in {!r} mode to partition {!r}".
-                                format(di, access_mode, partition.name,
-                                       ACCESS_MODES_HMC2MOD[am], p.name))
+                                "Domain {0} cannot be attached in {1!r} mode "
+                                "to target partition {2!r} because it is "
+                                "already attached in {3!r} mode to partition "
+                                "{4!r}".format(di, access_mode, partition.name,
+                                               ACCESS_MODES_HMC2MOD[am],
+                                               p.name))
 
         # Make sure the desired number of adapters is attached to the partition
         # and the desired domains are attached.
@@ -565,24 +582,25 @@ def ensure_attached(params, check_mode):
         result_changes['added-adapters'] = []
         result_changes['added-domains'] = []
         missing_count = max(0, adapter_count - len(attached_adapters))
-        assert missing_count <= len(detached_adapters), \
-            "missing_count={}, len(detached_adapters)={}".\
-            format(missing_count, len(detached_adapters))
+        if missing_count > len(detached_adapters):
+            raise AssertionError(
+                "missing_count={0}, len(detached_adapters)={1}".
+                format(missing_count, len(detached_adapters)))
         if missing_count == 0 and add_domain_config:
             # Adapters already sufficient, but domains to be attached
 
             LOGGER.debug(
-                "Adapters sufficient - attaching domains {!r} in {!r} mode to "
-                "target partition {!r}".
-                format(add_domains, access_mode, partition.name))
+                "Adapters sufficient - attaching domains %r in %r mode to "
+                "target partition %r", add_domains, access_mode,
+                partition.name)
 
             if not check_mode:
                 try:
                     partition.increase_crypto_config([], add_domain_config)
                 except zhmcclient.Error as exc:
                     raise Error(
-                        "Attaching domains {!r} in {!r} mode to target "
-                        "partition {!r} failed: {}".
+                        "Attaching domains {0!r} in {1!r} mode to target "
+                        "partition {2!r} failed: {3}".
                         format(add_domains, access_mode, partition.name, exc))
 
             changed = True
@@ -619,17 +637,15 @@ def ensure_attached(params, check_mode):
 
                 if conflicting_domains:
                     LOGGER.debug(
-                        "Skipping adapter {!r} because the following of its "
+                        "Skipping adapter %r because the following of its "
                         "domains are already attached to other partitions: "
-                        "{!r}".
-                        format(adapter.name, conflicting_domains))
+                        "%r", adapter.name, conflicting_domains)
                     continue
 
                 LOGGER.debug(
-                    "Attaching adapter {!r} and domains {!r} in {!r} mode to "
-                    "target partition {!r}".
-                    format(adapter.name, add_domains, access_mode,
-                           partition.name))
+                    "Attaching adapter %r and domains %r in %r mode to "
+                    "target partition %r", adapter.name, add_domains,
+                    access_mode, partition.name)
 
                 if not check_mode:
                     try:
@@ -637,10 +653,10 @@ def ensure_attached(params, check_mode):
                             [adapter], add_domain_config)
                     except zhmcclient.Error as exc:
                         raise Error(
-                            "Attaching adapter {!r} and domains {!r} in {!r} "
-                            "mode to target partition {!r} failed: {}".
-                            format(adapter.name, add_domains, access_mode,
-                                   partition.name, exc))
+                            "Attaching adapter {0!r} and domains {1!r} "
+                            "in {2!r} mode to target partition {3!r} failed:"
+                            " {4}".format(adapter.name, add_domains,
+                                          access_mode, partition.name, exc))
 
                 changed = True
                 result_changes['added-adapters'].append(adapter.name)
@@ -657,8 +673,8 @@ def ensure_attached(params, check_mode):
                 # are not enough adapters
                 raise Error(
                     "Did not find enough crypto adapters with attachable "
-                    "domains - missing adapters: {}; Requested domains: {}, "
-                    "Access mode: {}".
+                    "domains - missing adapters: {0}; Requested domains: {1}, "
+                    "Access mode: {2}".
                     format(missing_count, desired_domains, access_mode))
 
         if not check_mode:
@@ -733,9 +749,9 @@ def ensure_detached(params, check_mode):
                 remove_domains.append(di)
 
             LOGGER.debug(
-                "Detaching adapters {!r} and domains {!r} from target "
-                "partition {!r}".
-                format(remove_adapter_names, remove_domains, partition.name))
+                "Detaching adapters %r and domains %r from target "
+                "partition %r", remove_adapter_names, remove_domains,
+                partition.name)
 
             if not check_mode:
                 try:
@@ -743,8 +759,8 @@ def ensure_detached(params, check_mode):
                         remove_adapters, remove_domains)
                 except zhmcclient.Error as exc:
                     raise Error(
-                        "Detaching adapters {!r} and domains {!r} from "
-                        "target partition {!r} failed: {}".
+                        "Detaching adapters {0!r} and domains {1!r} from "
+                        "target partition {2!r} failed: {3}".
                         format(remove_adapter_names, remove_domains,
                                partition.name, exc))
 
@@ -834,25 +850,36 @@ def main():
         state=dict(required=True, type='str',
                    choices=['attached', 'detached', 'facts']),
         adapter_count=dict(required=False, type='int', default=-1),
-        domain_range=dict(required=False, type='list', default=[0, -1]),
+        domain_range=dict(required=False, type='list', default=[0, -1],
+                          elements='int'),
         access_mode=dict(required=False, type='str',
                          choices=['usage', 'control'], default='usage'),
         crypto_type=dict(required=False, type='str',
                          choices=['ep11', 'cca', 'acc'], default='ep11'),
         log_file=dict(required=False, type='str', default=None),
-        faked_session=dict(required=False, type='object'),
+        faked_session=dict(required=False, type='raw'),
     )
 
     module = AnsibleModule(
         argument_spec=argument_spec,
         supports_check_mode=True)
 
+    if not IMP_URLLIB3:
+        module.fail_json(msg=missing_required_lib("requests"),
+                         exception=IMP_URLLIB3_ERR)
+
+    requests.packages.urllib3.disable_warnings()
+
+    if not IMP_ZHMCCLIENT:
+        module.fail_json(msg=missing_required_lib("zhmcclient"),
+                         exception=IMP_ZHMCCLIENT_ERR)
+
     log_file = module.params['log_file']
     log_init(LOGGER_NAME, log_file)
 
     _params = dict(module.params)
     del _params['hmc_auth']
-    LOGGER.debug("Module entry: params: {!r}".format(_params))
+    LOGGER.debug("Module entry: params: %r", _params)
 
     try:
 
@@ -863,21 +890,18 @@ def main():
         # These exceptions are considered errors in the environment or in user
         # input. They have a proper message that stands on its own, so we
         # simply pass that message on and will not need a traceback.
-        msg = "{}: {}".format(exc.__class__.__name__, exc)
-        LOGGER.debug(
-            "Module exit (failure): msg: {!r}".
-            format(msg))
+        msg = "{0}: {1}".format(exc.__class__.__name__, exc)
+        LOGGER.debug("Module exit (failure): msg: %s", msg)
         module.fail_json(msg=msg)
     # Other exceptions are considered module errors and are handled by Ansible
     # by showing the traceback.
 
     LOGGER.debug(
-        "Module exit (success): changed: {!r}, crypto_configuration: {!r}, "
-        "changes: {!r}".format(changed, result, changes))
+        "Module exit (success): changed: %r, crypto_configuration: %r, "
+        "changes: %r", changed, result, changes)
     module.exit_json(
         changed=changed, crypto_configuration=result, changes=changes)
 
 
 if __name__ == '__main__':
-    requests.packages.urllib3.disable_warnings()
     main()

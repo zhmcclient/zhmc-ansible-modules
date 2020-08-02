@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # Copyright 2017 IBM Corp. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,16 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import, print_function
-
-import logging
-from ansible.module_utils.basic import AnsibleModule
-import requests.packages.urllib3
-import zhmcclient
-
-from zhmc_ansible_modules.utils import log_init, Error, ParameterError, \
-    wait_for_transition_completion, eq_hex, eq_mac, get_hmc_auth, \
-    get_session, to_unicode, process_normal_property
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 # For information on the format of the ANSIBLE_METADATA, DOCUMENTATION,
 # EXAMPLES, and RETURN strings, see
@@ -38,19 +30,19 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = """
 ---
-module: zhmc_nic
-version_added: "0.0"
-short_description: Manages NICs in existing partitions
+module: zhmc_hba
+short_description: Manages HBAs in existing partitions (without
+    "dpm-storage-management" feature)
 description:
-  - Creates, updates, and deletes NICs in existing partitions of a CPC.
+  - Creates, updates, and deletes HBAs in existing partitions of a CPC.
   - The targeted CPC must be in the Dynamic Partition Manager (DPM) operational
     mode.
 notes:
   - See also Ansible module zhmc_partition.
 author:
-  - Andreas Maier (@andy-maier, maiera@de.ibm.com)
-  - Andreas Scheuring (@scheuran, scheuran@de.ibm.com)
-  - Juergen Leopold (@leopoldjuergen, leopoldj@de.ibm.com)
+  - Andreas Maier (@andy-maier)
+  - Andreas Scheuring (@scheuran)
+  - Juergen Leopold (@leopoldjuergen)
 requirements:
   - Network access to HMC
   - zhmcclient >=0.14.0
@@ -79,57 +71,56 @@ options:
         required: true
   cpc_name:
     description:
-      - The name of the CPC with the partition containing the NIC.
+      - The name of the CPC with the partition containing the HBA.
     type: str
     required: true
   partition_name:
     description:
-      - The name of the partition containing the NIC.
+      - The name of the partition containing the HBA.
     type: str
     required: true
   name:
     description:
-      - The name of the target NIC that is managed. If the NIC needs to be
+      - The name of the target HBA that is managed. If the HBA needs to be
         created, this value becomes its name.
     type: str
     required: true
   state:
     description:
-      - "The desired state for the target NIC:"
-      - "C(absent): Ensures that the NIC does not exist in the specified
+      - "The desired state for the target HBA:"
+      - "C(absent): Ensures that the HBA does not exist in the specified
          partition."
-      - "C(present): Ensures that the NIC exists in the specified partition
+      - "C(present): Ensures that the HBA exists in the specified partition
          and has the specified properties."
     type: str
     required: true
     choices: ["absent", "present"]
   properties:
     description:
-      - "Dictionary with input properties for the NIC, for C(state=present).
+      - "Dictionary with input properties for the HBA, for C(state=present).
          Key is the property name with underscores instead of hyphens, and
          value is the property value in YAML syntax. Integer properties may
          also be provided as decimal strings. Will be ignored for
          C(state=absent)."
       - "The possible input properties in this dictionary are the properties
-         defined as writeable in the data model for NIC resources (where the
+         defined as writeable in the data model for HBA resources (where the
          property names contain underscores instead of hyphens), with the
          following exceptions:"
       - "* C(name): Cannot be specified because the name has already been
          specified in the C(name) module parameter."
-      - "* C(network_adapter_port_uri) and C(virtual_switch_uri): Cannot be
-         specified because this information is specified using the artificial
-         properties C(adapter_name) and C(adapter_port)."
+      - "* C(adapter_port_uri): Cannot be specified because this information is
+         specified using the artificial properties C(adapter_name) and
+         C(adapter_port)."
       - "* C(adapter_name): The name of the adapter that has the port backing
-         the target NIC. Used for all adapter families (ROCE, OSA,
-         Hipersockets)."
+         the target HBA. Cannot be changed after the HBA exists."
       - "* C(adapter_port): The port index of the adapter port backing the
-         target NIC. Used for all adapter families (ROCE, OSA, Hipersockets)."
+         target HBA. Cannot be changed after the HBA exists."
       - "Properties omitted in this dictionary will remain unchanged when the
-         NIC already exists, and will get the default value defined in the
-         data model for NICs when the NIC is being created."
+         HBA already exists, and will get the default value defined in the
+         data model for HBAs when the HBA is being created."
     type: dict
     required: false
-    default: No input properties
+    default: null
   log_file:
     description:
       - "File path of a log file to which the logic flow of this module as well
@@ -144,44 +135,44 @@ options:
          If provided, it will be used instead of connecting to a real HMC. This
          is used for testing purposes only."
     required: false
-    default: Real HMC will be used.
+    type: raw
 """
 
 EXAMPLES = """
 ---
 # Note: The following examples assume that some variables named 'my_*' are set.
 
-- name: Ensure NIC exists in the partition
+- name: Ensure HBA exists in the partition
   zhmc_partition:
     hmc_host: "{{ my_hmc_host }}"
     hmc_auth: "{{ my_hmc_auth }}"
     cpc_name: "{{ my_cpc_name }}"
     partition_name: "{{ my_partition_name }}"
-    name: "{{ my_nic_name }}"
+    name: "{{ my_hba_name }}"
     state: present
     properties:
-      adapter_name: "OSD 0128 A13B-13"
+      adapter_name: FCP-1
       adapter_port: 0
-      description: "The port to our data network"
-      device_number: "023F"
-  register: nic1
+      description: "The port to our V7K #1"
+      device_number: "123F"
+  register: hba1
 
-- name: Ensure NIC does not exist in the partition
+- name: Ensure HBA does not exist in the partition
   zhmc_partition:
     hmc_host: "{{ my_hmc_host }}"
     hmc_auth: "{{ my_hmc_auth }}"
     cpc_name: "{{ my_cpc_name }}"
     partition_name: "{{ my_partition_name }}"
-    name: "{{ my_nic_name }}"
+    name: "{{ my_hba_name }}"
     state: absent
 """
 
 RETURN = """
-nic:
+hba:
   description:
     - "For C(state=absent), an empty dictionary."
     - "For C(state=present), a dictionary with the resource properties of the
-       NIC (after changes, if any). The dictionary keys are the exact property
+       HBA (after changes, if any). The dictionary keys are the exact property
        names as described in the data model for the resource, i.e. they contain
        hyphens (-), not underscores (_). The dictionary values are the property
        values using the Python representations described in the documentation
@@ -190,19 +181,42 @@ nic:
   type: dict
   sample: |
     C({
-      "name": "nic-1",
-      "description": "NIC #1",
-      "virtual-switch-uri': "/api/vswitches/...",
+      "name": "hba-1",
+      "description": "HBA #1",
+      "adapter-port-uri": "/api/adapters/.../ports/...",
       ...
     })
 """
 
+import logging  # noqa: E402
+import traceback  # noqa: E402
+from ansible.module_utils.basic import AnsibleModule  # noqa: E402
+
+from ..module_utils.common import log_init, Error, ParameterError, \
+    wait_for_transition_completion, eq_hex, get_hmc_auth, get_session, \
+    to_unicode, process_normal_property, missing_required_lib  # noqa: E402
+
+try:
+    import requests.packages.urllib3
+    IMP_URLLIB3 = True
+except ImportError:
+    IMP_URLLIB3 = False
+    IMP_URLLIB3_ERR = traceback.format_exc()
+
+try:
+    import zhmcclient
+    IMP_ZHMCCLIENT = True
+except ImportError:
+    IMP_ZHMCCLIENT = False
+    IMP_ZHMCCLIENT_ERR = traceback.format_exc()
+
+
 # Python logger name for this module
-LOGGER_NAME = 'zhmc_nic'
+LOGGER_NAME = 'zhmc_hba'
 
 LOGGER = logging.getLogger(LOGGER_NAME)
 
-# Dictionary of properties of NIC resources, in this format:
+# Dictionary of properties of HBA resources, in this format:
 #   name: (allowed, create, update, update_while_active, eq_func, type_cast)
 # where:
 #   name: Name of the property according to the data model, with hyphens
@@ -210,12 +224,12 @@ LOGGER = logging.getLogger(LOGGER_NAME)
 #     the 'properties' module parameter).
 #   allowed: Indicates whether it is allowed in the 'properties' module
 #     parameter.
-#   create: Indicates whether it can be specified for the "Create NIC"
+#   create: Indicates whether it can be specified for the "Create HBA"
 #     operation.
-#   update: Indicates whether it can be specified for the "Update NIC
+#   update: Indicates whether it can be specified for the "Update HBA
 #     Properties" operation (at all).
 #   update_while_active: Indicates whether it can be specified for the "Update
-#     NIC Properties" operation while the partition of the NIC is active. None
+#     HBA Properties" operation while the partition of the HBA is active. None
 #     means "not applicable" (i.e. update=False).
 #   eq_func: Equality test function for two values of the property; None means
 #     to use Python equality.
@@ -223,40 +237,34 @@ LOGGER = logging.getLogger(LOGGER_NAME)
 #     means to use it directly. This can be used for example to convert
 #     integers provided as strings by Ansible back into integers (that is a
 #     current deficiency of Ansible).
-ZHMC_NIC_PROPERTIES = {
+ZHMC_HBA_PROPERTIES = {
+
+    # create-only properties:
+    'adapter_port_uri': (
+        False, True, False, None, None, None),  # via adapter_name/_port
+    'adapter_name': (
+        True, True, False, None, None,
+        None),  # artificial property, type_cast ignored
+    'adapter_port': (
+        True, True, False, None, None,
+        None),  # artificial property, type_cast ignored
 
     # create+update properties:
     'name': (
         False, True, True, True, None, None),  # provided in 'name' module parm
     'description': (True, True, True, True, None, to_unicode),
     'device_number': (True, True, True, True, eq_hex, None),
-    'network_adapter_port_uri': (
-        False, True, True, True, None, None),  # via adapter_name/_port
-    'virtual_switch_uri': (
-        False, True, True, True, None, None),  # via adapter_name/_port
-    'adapter_name': (
-        True, True, True, True, None,
-        None),  # artificial property, type_cast ignored
-    'adapter_port': (
-        True, True, True, True, None,
-        None),  # artificial property, type_cast ignored
-    'ssc_management_nic': (True, True, True, True, None, None),
-    'ssc_ip_address_type': (True, True, True, True, None, None),
-    'ssc_ip_address': (True, True, True, True, None, None),
-    'ssc_mask_prefix': (True, True, True, True, None, None),
-    'vlan_id': (True, True, True, True, None, int),
 
     # read-only properties:
     'element-uri': (False, False, False, None, None, None),
     'element-id': (False, False, False, None, None, None),
     'parent': (False, False, False, None, None, None),
     'class': (False, False, False, None, None, None),
-    'type': (False, False, False, None, None, None),
-    'mac_address': (False, False, False, None, eq_mac, None),
+    'wwpn': (False, False, False, None, None, None),
 }
 
 
-def process_properties(partition, nic, params):
+def process_properties(partition, hba, params):
     """
     Process the properties specified in the 'properties' module parameter,
     and return two dictionaries (create_props, update_props) that contain
@@ -275,10 +283,10 @@ def process_properties(partition, nic, params):
 
     Parameters:
 
-      partition (zhmcclient.Partition): Partition containing the NIC. Must
+      partition (zhmcclient.Partition): Partition containing the HBA. Must
         exist.
 
-      nic (zhmcclient.Nic): NIC to be updated with the full set of current
+      hba (zhmcclient.Hba): HBA to be updated with the full set of current
         properties, or `None` if it did not previously exist.
 
       params (dict): Module input parameters.
@@ -286,11 +294,11 @@ def process_properties(partition, nic, params):
     Returns:
       tuple of (create_props, update_props, stop), where:
         * create_props: dict of properties for
-          zhmcclient.NicManager.create()
+          zhmcclient.HbaManager.create()
         * update_props: dict of properties for
-          zhmcclient.Nic.update_properties()
+          zhmcclient.Hba.update_properties()
         * stop (bool): Indicates whether some update properties require the
-          partition containg the NIC to be stopped when doing the update.
+          partition containg the HBA to be stopped when doing the update.
 
     Raises:
       ParameterError: An issue with the module parameters.
@@ -300,9 +308,9 @@ def process_properties(partition, nic, params):
     stop = False
 
     # handle 'name' property
-    nic_name = to_unicode(params['name'])
-    create_props['name'] = nic_name
-    # We looked up the NIC by name, so we will never have to update its name
+    hba_name = to_unicode(params['name'])
+    create_props['name'] = hba_name
+    # We looked up the HBA by name, so we will never have to update its name
 
     # Names of the artificial properties
     adapter_name_art_name = 'adapter_name'
@@ -314,17 +322,17 @@ def process_properties(partition, nic, params):
         input_props = {}
     for prop_name in input_props:
 
-        if prop_name not in ZHMC_NIC_PROPERTIES:
+        if prop_name not in ZHMC_HBA_PROPERTIES:
             raise ParameterError(
-                "Property {!r} is not defined in the data model for "
-                "NICs.".format(prop_name))
+                "Property {0!r} is not defined in the data model for "
+                "HBAs.".format(prop_name))
 
         allowed, create, update, update_while_active, eq_func, type_cast = \
-            ZHMC_NIC_PROPERTIES[prop_name]
+            ZHMC_HBA_PROPERTIES[prop_name]
 
         if not allowed:
             raise ParameterError(
-                "Property {!r} is not allowed in the 'properties' module "
+                "Property {0!r} is not allowed in the 'properties' module "
                 "parameter.".format(prop_name))
 
         if prop_name in (adapter_name_art_name, adapter_port_art_name):
@@ -333,7 +341,7 @@ def process_properties(partition, nic, params):
 
         # Process a normal (= non-artificial) property
         _create_props, _update_props, _stop = process_normal_property(
-            prop_name, ZHMC_NIC_PROPERTIES, input_props, nic)
+            prop_name, ZHMC_HBA_PROPERTIES, input_props, hba)
         create_props.update(_create_props)
         update_props.update(_update_props)
         if _stop:
@@ -343,7 +351,7 @@ def process_properties(partition, nic, params):
     if (adapter_name_art_name in input_props) != \
             (adapter_port_art_name in input_props):
         raise ParameterError(
-            "Artificial properties {!r} and {!r} must either both be "
+            "Artificial properties {0!r} and {1!r} must either both be "
             "specified or both be omitted.".
             format(adapter_name_art_name, adapter_port_art_name))
     if adapter_name_art_name in input_props and \
@@ -355,70 +363,33 @@ def process_properties(partition, nic, params):
                 name=adapter_name)
         except zhmcclient.NotFound:
             raise ParameterError(
-                "Artificial property {!r} does not specify the name of an "
-                "existing adapter: {!r}".
+                "Artificial property {0!r} does not specify the name of an "
+                "existing adapter: {1!r}".
                 format(adapter_name_art_name, adapter_name))
         try:
             port = adapter.ports.find(index=adapter_port_index)
         except zhmcclient.NotFound:
             raise ParameterError(
-                "Artificial property {!r} does not specify the index of an "
-                "existing port on adapter {!r}: {!r}".
+                "Artificial property {0!r} does not specify the index of an "
+                "existing port on adapter {1!r}: {2!r}".
                 format(adapter_port_art_name, adapter_name,
                        adapter_port_index))
-
-        # The rest of it depends on the network adapter family:
-        adapter_family = adapter.get_property('adapter-family')
-        if adapter_family == 'roce':
-            # Here we perform the same logic as in the property loop, just now
-            # simplified by the knowledge about the property flags (create,
-            # update, etc.).
-            hmc_prop_name = 'network-adapter-port-uri'
-            input_prop_value = port.uri
-            if nic:
-                if nic.properties.get(hmc_prop_name) != input_prop_value:
-                    update_props[hmc_prop_name] = input_prop_value
-            else:
-                update_props[hmc_prop_name] = input_prop_value
-            create_props[hmc_prop_name] = input_prop_value
-        elif adapter_family in ('osa', 'hipersockets'):
-            vswitches = partition.manager.cpc.virtual_switches.findall(
-                **{'backing-adapter-uri': adapter.uri})
-            # Adapters of this family always have a vswitch (one for each
-            # port), so we assert that we can find one or more:
-            assert vswitches
-            found_vswitch = None
-            for vswitch in vswitches:
-                if vswitch.get_property('port') == adapter_port_index:
-                    found_vswitch = vswitch
-                    break
-            # Because we already checked for the existence of the specified
-            # port index, we can now assert that we found the vswitch for that
-            # port:
-            assert found_vswitch
-            # Here we perform the same logic as in the property loop, just now
-            # simplified by the knowledge about the property flags (create,
-            # update, etc.).
-            hmc_prop_name = 'virtual-switch-uri'
-            input_prop_value = found_vswitch.uri
-            if nic:
-                if nic.properties.get(hmc_prop_name) != input_prop_value:
-                    update_props[hmc_prop_name] = input_prop_value
-            else:
-                update_props[hmc_prop_name] = input_prop_value
-            create_props[hmc_prop_name] = input_prop_value
-        else:
-            raise ParameterError(
-                "Artificial property {!r} specifies the name of a non-network "
-                "adapter of family {!r}: {!r}".
-                format(adapter_name_art_name, adapter_family, adapter_name))
+        hmc_prop_name = 'adapter-port-uri'
+        if hba:
+            existing_port_uri = hba.get_property(hmc_prop_name)
+            if port.uri != existing_port_uri:
+                raise ParameterError(
+                    "Artificial properties {0!r} and {1!r} cannot be used to "
+                    "change the adapter port of an existing HBA".
+                    format(adapter_name_art_name, adapter_port_art_name))
+        create_props[hmc_prop_name] = port.uri
 
     return create_props, update_props, stop
 
 
 def ensure_present(params, check_mode):
     """
-    Ensure that the NIC exists and has the specified properties.
+    Ensure that the HBA exists and has the specified properties.
 
     Raises:
       ParameterError: An issue with the module parameters.
@@ -430,7 +401,7 @@ def ensure_present(params, check_mode):
     userid, password = get_hmc_auth(params['hmc_auth'])
     cpc_name = params['cpc_name']
     partition_name = params['partition_name']
-    nic_name = params['name']
+    hba_name = params['name']
     faked_session = params.get('faked_session', None)
 
     changed = False
@@ -446,63 +417,65 @@ def ensure_present(params, check_mode):
             partition = cpc.partitions.find(name=partition_name)
         except zhmcclient.NotFound:
             if check_mode:
-                # Once the partition is created, the NIC will also need to be
+                # Once the partition is created, the HBA will also need to be
                 # created. Therefore, we set changed.
                 changed = True
                 return changed, result
             raise
 
         try:
-            nic = partition.nics.find(name=nic_name)
-            nic.pull_full_properties()
+            hba = partition.hbas.find(name=hba_name)
+            hba.pull_full_properties()
         except zhmcclient.NotFound:
-            nic = None
+            hba = None
 
-        if not nic:
+        if not hba:
             # It does not exist. Create it and update it if there are
             # update-only properties.
             if not check_mode:
                 create_props, update_props, stop = process_properties(
-                    partition, nic, params)
-                nic = partition.nics.create(create_props)
+                    partition, hba, params)
+                hba = partition.hbas.create(create_props)
                 update2_props = {}
                 for name in update_props:
                     if name not in create_props:
                         update2_props[name] = update_props[name]
                 if update2_props:
-                    nic.update_properties(update2_props)
+                    hba.update_properties(update2_props)
                 # We refresh the properties after the update, in case an
                 # input property value gets changed (for example, the
                 # partition does that with memory properties).
-                nic.pull_full_properties()
+                hba.pull_full_properties()
             else:
                 # TODO: Show props in module result also in check mode.
                 pass
             changed = True
         else:
-            # It exists. Stop the partition if needed due to the NIC property
+            # It exists. Stop the partition if needed due to the HBA property
             # update requirements, or wait for an updateable partition status,
-            # and update the NIC properties.
+            # and update the HBA properties.
             create_props, update_props, stop = process_properties(
-                partition, nic, params)
+                partition, hba, params)
             if update_props:
                 if not check_mode:
-                    # NIC properties can all be updated while the partition is
+                    # HBA properties can all be updated while the partition is
                     # active, therefore:
-                    assert not stop
+                    if stop:
+                        raise AssertionError()
+
                     wait_for_transition_completion(partition)
-                    nic.update_properties(update_props)
+                    hba.update_properties(update_props)
                     # We refresh the properties after the update, in case an
                     # input property value gets changed (for example, the
                     # partition does that with memory properties).
-                    nic.pull_full_properties()
+                    hba.pull_full_properties()
                 else:
                     # TODO: Show updated props in mod.result also in chk.mode
                     pass
                 changed = True
 
-        if nic:
-            result = nic.properties
+        if hba:
+            result = hba.properties
 
         return changed, result
 
@@ -512,7 +485,7 @@ def ensure_present(params, check_mode):
 
 def ensure_absent(params, check_mode):
     """
-    Ensure that the NIC does not exist.
+    Ensure that the HBA does not exist.
 
     Raises:
       ParameterError: An issue with the module parameters.
@@ -524,7 +497,7 @@ def ensure_absent(params, check_mode):
     userid, password = get_hmc_auth(params['hmc_auth'])
     cpc_name = params['cpc_name']
     partition_name = params['partition_name']
-    nic_name = params['name']
+    hba_name = params['name']
     faked_session = params.get('faked_session', None)
 
     changed = False
@@ -538,12 +511,12 @@ def ensure_absent(params, check_mode):
         # The default exception handling is sufficient for the above.
 
         try:
-            nic = partition.nics.find(name=nic_name)
+            hba = partition.hbas.find(name=hba_name)
         except zhmcclient.NotFound:
             return changed, result
 
         if not check_mode:
-            nic.delete()
+            hba.delete()
         changed = True
 
         return changed, result
@@ -586,19 +559,29 @@ def main():
                    choices=['absent', 'present']),
         properties=dict(required=False, type='dict', default={}),
         log_file=dict(required=False, type='str', default=None),
-        faked_session=dict(required=False, type='object'),
+        faked_session=dict(required=False, type='raw'),
     )
 
     module = AnsibleModule(
         argument_spec=argument_spec,
         supports_check_mode=True)
 
+    if not IMP_URLLIB3:
+        module.fail_json(msg=missing_required_lib("requests"),
+                         exception=IMP_URLLIB3_ERR)
+
+    requests.packages.urllib3.disable_warnings()
+
+    if not IMP_ZHMCCLIENT:
+        module.fail_json(msg=missing_required_lib("zhmcclient"),
+                         exception=IMP_ZHMCCLIENT_ERR)
+
     log_file = module.params['log_file']
     log_init(LOGGER_NAME, log_file)
 
     _params = dict(module.params)
     del _params['hmc_auth']
-    LOGGER.debug("Module entry: params: {!r}".format(_params))
+    LOGGER.debug("Module entry: params: %r", _params)
 
     try:
 
@@ -608,20 +591,17 @@ def main():
         # These exceptions are considered errors in the environment or in user
         # input. They have a proper message that stands on its own, so we
         # simply pass that message on and will not need a traceback.
-        msg = "{}: {}".format(exc.__class__.__name__, exc)
+        msg = "{0}: {1}".format(exc.__class__.__name__, exc)
         LOGGER.debug(
-            "Module exit (failure): msg: {!r}".
-            format(msg))
+            "Module exit (failure): msg: %r", msg)
         module.fail_json(msg=msg)
     # Other exceptions are considered module errors and are handled by Ansible
     # by showing the traceback.
 
     LOGGER.debug(
-        "Module exit (success): changed: {!r}, cpc: {!r}".
-        format(changed, result))
-    module.exit_json(changed=changed, nic=result)
+        "Module exit (success): changed: %r, cpc: %r", changed, result)
+    module.exit_json(changed=changed, hba=result)
 
 
 if __name__ == '__main__':
-    requests.packages.urllib3.disable_warnings()
     main()
