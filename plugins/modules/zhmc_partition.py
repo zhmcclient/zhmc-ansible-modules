@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # Copyright 2017 IBM Corp. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,18 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import, print_function
-
-import logging
-from ansible.module_utils.basic import AnsibleModule
-from operator import itemgetter
-import requests.packages.urllib3
-import zhmcclient
-
-from zhmc_ansible_modules.utils import log_init, Error, ParameterError, \
-    StatusError, stop_partition, start_partition, \
-    wait_for_transition_completion, eq_hex, get_hmc_auth, get_session, \
-    to_unicode, process_normal_property
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 # For information on the format of the ANSIBLE_METADATA, DOCUMENTATION,
 # EXAMPLES, and RETURN strings, see
@@ -41,7 +31,6 @@ ANSIBLE_METADATA = {
 DOCUMENTATION = """
 ---
 module: zhmc_partition
-version_added: "0.0"
 short_description: Manages partitions
 description:
   - Gathers facts about a partition, including its child resources (HBAs, NICs
@@ -54,9 +43,9 @@ description:
 notes:
   - See also Ansible modules zhmc_hba, zhmc_nic, zhmc_virtual_function.
 author:
-  - Andreas Maier (@andy-maier, maiera@de.ibm.com)
-  - Andreas Scheuring (@scheuran, scheuran@de.ibm.com)
-  - Juergen Leopold (@leopoldjuergen, leopoldj@de.ibm.com)
+  - Andreas Maier (@andy-maier)
+  - Andreas Scheuring (@scheuran)
+  - Juergen Leopold (@leopoldjuergen)
 requirements:
   - Network access to HMC
   - zhmcclient >=0.14.0
@@ -147,7 +136,7 @@ options:
          is being created."
     type: dict
     required: false
-    default: No input properties
+    default: null
   log_file:
     description:
       - "File path of a log file to which the logic flow of this module as well
@@ -162,7 +151,7 @@ options:
          If provided, it will be used instead of connecting to a real HMC. This
          is used for testing purposes only."
     required: false
-    default: Real HMC will be used.
+    type: raw
 """
 
 EXAMPLES = """
@@ -275,6 +264,30 @@ partition:
       ...
     })
 """
+
+import logging  # noqa: E402
+import traceback  # noqa: E402
+from ansible.module_utils.basic import AnsibleModule  # noqa: E402
+from operator import itemgetter  # noqa: E402
+
+from ..module_utils.common import log_init, Error, ParameterError, \
+    StatusError, stop_partition, start_partition, \
+    wait_for_transition_completion, eq_hex, get_hmc_auth, get_session, \
+    to_unicode, process_normal_property, missing_required_lib  # noqa: E402
+
+try:
+    import requests.packages.urllib3
+    IMP_URLLIB3 = True
+except ImportError:
+    IMP_URLLIB3 = False
+    IMP_URLLIB3_ERR = traceback.format_exc()
+
+try:
+    import zhmcclient
+    IMP_ZHMCCLIENT = True
+except ImportError:
+    IMP_ZHMCCLIENT = False
+    IMP_ZHMCCLIENT_ERR = traceback.format_exc()
 
 # Python logger name for this module
 LOGGER_NAME = 'zhmc_partition'
@@ -472,7 +485,7 @@ def process_properties(cpc, partition, params):
 
         if prop_name not in ZHMC_PARTITION_PROPERTIES:
             raise ParameterError(
-                "Property {!r} is not defined in the data model for "
+                "Property {0!r} is not defined in the data model for "
                 "partitions.".format(prop_name))
 
         allowed, create, update, update_while_active, eq_func, type_cast = \
@@ -480,7 +493,7 @@ def process_properties(cpc, partition, params):
 
         if not allowed:
             raise ParameterError(
-                "Property {!r} is not allowed in the 'properties' module "
+                "Property {0!r} is not allowed in the 'properties' module "
                 "parameter.".format(prop_name))
 
         if prop_name == 'boot_storage_hba_name':
@@ -488,12 +501,12 @@ def process_properties(cpc, partition, params):
 
             if not partition:
                 raise ParameterError(
-                    "Artificial property {!r} can only be specified when the "
+                    "Artificial property {0!r} can only be specified when the "
                     "partition previously exists.".format(prop_name))
 
             if partition.hbas is None:
                 raise ParameterError(
-                    "Artificial property {!r} can only be specified when the "
+                    "Artificial property {0!r} can only be specified when the "
                     "'dpm-storage-management' feature is disabled.".
                     format(prop_name))
 
@@ -505,20 +518,21 @@ def process_properties(cpc, partition, params):
                 hba = partition.hbas.find(name=hba_name)
             except zhmcclient.NotFound:
                 raise ParameterError(
-                    "Artificial property {!r} does not name an existing HBA: "
-                    "{!r}".format(prop_name, hba_name))
+                    "Artificial property {0!r} does not name an existing HBA: "
+                    "{1!r}".format(prop_name, hba_name))
 
             hmc_prop_name = 'boot-storage-device'
             if partition.properties.get(hmc_prop_name) != hba.uri:
                 update_props[hmc_prop_name] = hba.uri
-                assert update_while_active
+                if not update_while_active:
+                    raise AssertionError()
 
         elif prop_name == 'boot_network_nic_name':
             # Process this artificial property
 
             if not partition:
                 raise ParameterError(
-                    "Artificial property {!r} can only be specified when the "
+                    "Artificial property {0!r} can only be specified when the "
                     "partition previously exists.".format(prop_name))
 
             nic_name = input_props[prop_name]
@@ -529,13 +543,14 @@ def process_properties(cpc, partition, params):
                 nic = partition.nics.find(name=nic_name)
             except zhmcclient.NotFound:
                 raise ParameterError(
-                    "Artificial property {!r} does not name an existing NIC: "
-                    "{!r}".format(prop_name, nic_name))
+                    "Artificial property {0!r} does not name an existing NIC: "
+                    "{1!r}".format(prop_name, nic_name))
 
             hmc_prop_name = 'boot-network-device'
             if partition.properties.get(hmc_prop_name) != nic.uri:
                 update_props[hmc_prop_name] = nic.uri
-                assert update_while_active
+                if not update_while_active:
+                    raise AssertionError()
 
         elif prop_name == 'crypto_configuration':
             # Process this artificial property
@@ -544,7 +559,7 @@ def process_properties(cpc, partition, params):
 
             if not isinstance(crypto_config, dict):
                 raise ParameterError(
-                    "Artificial property {!r} is not a dictionary: {!r}.".
+                    "Artificial property {0!r} is not a dictionary: {1!r}.".
                     format(prop_name, crypto_config))
 
             if partition:
@@ -559,8 +574,8 @@ def process_properties(cpc, partition, params):
                 adapter_names = crypto_config[adapter_field_name]
             except KeyError:
                 raise ParameterError(
-                    "Artificial property {!r} does not have required field "
-                    "{!r}.".format(prop_name, adapter_field_name))
+                    "Artificial property {0!r} does not have required field "
+                    "{1!r}.".format(prop_name, adapter_field_name))
             adapter_uris = set()
             adapter_dict = {}  # adapters by uri
             if adapter_names is None:
@@ -576,9 +591,9 @@ def process_properties(cpc, partition, params):
                                                     type='crypto')
                     except zhmcclient.NotFound:
                         raise ParameterError(
-                            "Artificial property {!r} does not specify the "
-                            "name of an existing crypto adapter in its {!r} "
-                            "field: {!r}".
+                            "Artificial property {0!r} does not specify the "
+                            "name of an existing crypto adapter in its {1!r} "
+                            "field: {2!r}".
                             format(prop_name, adapter_field_name,
                                    adapter_name))
                     adapter_dict[adapter.uri] = adapter
@@ -612,8 +627,8 @@ def process_properties(cpc, partition, params):
                 domain_configs = crypto_config[config_field_name]
             except KeyError:
                 raise ParameterError(
-                    "Artificial property {!r} does not have required field "
-                    "{!r}.".format(prop_name, config_field_name))
+                    "Artificial property {0!r} does not have required field "
+                    "{1!r}.".format(prop_name, config_field_name))
             di_field_name = 'domain_index'
             am_field_name = 'access_mode'
             domain_indexes = set()
@@ -624,8 +639,8 @@ def process_properties(cpc, partition, params):
                     domain_index = int(dc[di_field_name])
                 except KeyError:
                     raise ParameterError(
-                        "Artificial property {!r} does not have required "
-                        "sub-field {!r} in one of its {!r} fields.".
+                        "Artificial property {0!r} does not have required "
+                        "sub-field {1!r} in one of its {2!r} fields.".
                         format(prop_name, di_field_name, config_field_name))
                 domain_indexes.add(domain_index)
             current_access_mode_dict = {}  # dict: acc.mode by dom.index
@@ -640,7 +655,7 @@ def process_properties(cpc, partition, params):
                     current_access_mode_dict[dc[di_prop_name]] = \
                         dc[am_prop_name]
             current_domain_indexes = \
-                set([di for di in current_access_mode_dict])
+                set(current_access_mode_dict)
             # Result: List of domain indexes to be removed:
             remove_domain_indexes = \
                 list(current_domain_indexes - domain_indexes)
@@ -656,8 +671,8 @@ def process_properties(cpc, partition, params):
                     access_mode = dc[am_field_name]
                 except KeyError:
                     raise ParameterError(
-                        "Artificial property {!r} does not have required "
-                        "sub-field {!r} in one of its {!r} fields.".
+                        "Artificial property {0!r} does not have required "
+                        "sub-field {1!r} in one of its {2!r} fields.".
                         format(prop_name, am_field_name, config_field_name))
                 hmc_domain_config = {
                     'domain-index': domain_index,
@@ -821,8 +836,8 @@ def ensure_active(params, check_mode):
             status = partition.get_property('status')
             if status not in ('active', 'degraded'):
                 raise StatusError(
-                    "Could not get partition {!r} into an active state, "
-                    "status is: {!r}".format(partition.name, status))
+                    "Could not get partition {0!r} into an active state, "
+                    "status is: {1!r}".format(partition.name, status))
 
         if partition:
             result = partition.properties
@@ -899,8 +914,8 @@ def ensure_stopped(params, check_mode):
             status = partition.get_property('status')
             if status not in ('stopped'):
                 raise StatusError(
-                    "Could not get partition {!r} into a stopped state, "
-                    "status is: {!r}".format(partition.name, status))
+                    "Could not get partition {0!r} into a stopped state, "
+                    "status is: {1!r}".format(partition.name, status))
 
         if partition:
             result = partition.properties
@@ -1040,19 +1055,29 @@ def main():
                    choices=['absent', 'stopped', 'active', 'facts']),
         properties=dict(required=False, type='dict', default={}),
         log_file=dict(required=False, type='str', default=None),
-        faked_session=dict(required=False, type='object'),
+        faked_session=dict(required=False, type='raw'),
     )
 
     module = AnsibleModule(
         argument_spec=argument_spec,
         supports_check_mode=True)
 
+    if not IMP_URLLIB3:
+        module.fail_json(msg=missing_required_lib("requests"),
+                         exception=IMP_URLLIB3_ERR)
+
+    requests.packages.urllib3.disable_warnings()
+
+    if not IMP_ZHMCCLIENT:
+        module.fail_json(msg=missing_required_lib("zhmcclient"),
+                         exception=IMP_ZHMCCLIENT_ERR)
+
     log_file = module.params['log_file']
     log_init(LOGGER_NAME, log_file)
 
     _params = dict(module.params)
     del _params['hmc_auth']
-    LOGGER.debug("Module entry: params: {!r}".format(_params))
+    LOGGER.debug("Module entry: params: %r", _params)
 
     try:
 
@@ -1062,20 +1087,17 @@ def main():
         # These exceptions are considered errors in the environment or in user
         # input. They have a proper message that stands on its own, so we
         # simply pass that message on and will not need a traceback.
-        msg = "{}: {}".format(exc.__class__.__name__, exc)
+        msg = "{0}: {1}".format(exc.__class__.__name__, exc)
         LOGGER.debug(
-            "Module exit (failure): msg: {!r}".
-            format(msg))
+            "Module exit (failure): msg: %s", msg)
         module.fail_json(msg=msg)
     # Other exceptions are considered module errors and are handled by Ansible
     # by showing the traceback.
 
     LOGGER.debug(
-        "Module exit (success): changed: {!r}, cpc: {!r}".
-        format(changed, result))
+        "Module exit (success): changed: %r, cpc: %r", changed, result)
     module.exit_json(changed=changed, partition=result)
 
 
 if __name__ == '__main__':
-    requests.packages.urllib3.disable_warnings()
     main()

@@ -47,12 +47,11 @@ Parameters
                     <b>faked_session</b>
                     <a class="ansibleOptionLink" href="#parameter-faked_session" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">raw</span>
                                                                     </div>
                                     </td>
                                 <td>
-                                                                                                                                                                    <b>Default:</b><br/><div style="color: blue">"Real HMC will be used."</div>
-                                    </td>
+                                                                                                                                                            </td>
                                                                 <td>
                                             <div>A <code>zhmcclient_mock.FakedSession</code> object that has a mocked HMC set up. If provided, it will be used instead of connecting to a real HMC. This is used for testing purposes only.</div>
                                                         </td>
@@ -161,7 +160,7 @@ Parameters
                                                                     </div>
                                     </td>
                                 <td>
-                                                                                                                                                                    <b>Default:</b><br/><div style="color: blue">"No property changes."</div>
+                                                                                                                                                                    <b>Default:</b><br/><div style="color: blue">null</div>
                                     </td>
                                                                 <td>
                                             <div>Only for <code>state=set</code>: New values for the properties of the CPC. Properties omitted in this dictionary will remain unchanged. This parameter will be ignored for <code>state=facts</code>.</div>
@@ -299,8 +298,8 @@ Status
 Authors
 ~~~~~~~
 
-- Andreas Maier (@andy-maier, maiera@de.ibm.com)
-- Andreas Scheuring (@scheuran, scheuran@de.ibm.com)
+- Andreas Maier (@andy-maier)
+- Andreas Scheuring (@scheuran)
 
 
 .. hint::

@@ -119,10 +119,10 @@ Parameters
                     <a class="ansibleOptionLink" href="#parameter-domain_range" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">list</span>
-                                                                    </div>
+                         / <span style="color: purple">elements=integer</span>                                            </div>
                                     </td>
                                 <td>
-                                                                                                                                                                    <b>Default:</b><br/><div style="color: blue">"(0, -1)"</div>
+                                                                                                                                                                    <b>Default:</b><br/><div style="color: blue">[0, -1]</div>
                                     </td>
                                                                 <td>
                                             <div>Only for <code>state=attach</code>: The domain range the partition needs to have attached, as a tuple of integers (min, max) that specify the inclusive range of domain index numbers. Other domains attached to the partition remain unchanged. The special value -1 for the max item means the maximum supported domain index number.</div>
@@ -134,12 +134,11 @@ Parameters
                     <b>faked_session</b>
                     <a class="ansibleOptionLink" href="#parameter-faked_session" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">raw</span>
                                                                     </div>
                                     </td>
                                 <td>
-                                                                                                                                                                    <b>Default:</b><br/><div style="color: blue">"Real HMC will be used."</div>
-                                    </td>
+                                                                                                                                                            </td>
                                                                 <td>
                                             <div>A <code>zhmcclient_mock.FakedSession</code> object that has a mocked HMC set up. If provided, it will be used instead of connecting to a real HMC. This is used for testing purposes only.</div>
                                                         </td>
@@ -418,8 +417,8 @@ Status
 Authors
 ~~~~~~~
 
-- Andreas Maier (@andy-maier, maiera@de.ibm.com)
-- Andreas Scheuring (@scheuran, scheuran@de.ibm.com)
+- Andreas Maier (@andy-maier)
+- Andreas Scheuring (@scheuran)
 
 
 .. hint::

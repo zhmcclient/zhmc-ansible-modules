@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # Copyright 2018 IBM Corp. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,15 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import, print_function
-
-import logging
-from ansible.module_utils.basic import AnsibleModule
-import requests.packages.urllib3
-import zhmcclient
-
-from zhmc_ansible_modules.utils import log_init, Error, ParameterError, \
-    get_hmc_auth, get_session, to_unicode, process_normal_property
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 # For information on the format of the ANSIBLE_METADATA, DOCUMENTATION,
 # EXAMPLES, and RETURN strings, see
@@ -60,9 +53,9 @@ notes:
   - The Ansible module zhmc_hba is no longer used on CPCs that have the
     "dpm-storage-management" feature enabled.
 author:
-  - Andreas Maier (@andy-maier, maiera@de.ibm.com)
-  - Andreas Scheuring (@scheuran, scheuran@de.ibm.com)
-  - Juergen Leopold (@leopoldjuergen, leopoldj@de.ibm.com)
+  - Andreas Maier (@andy-maier)
+  - Andreas Scheuring (@scheuran)
+  - Juergen Leopold (@leopoldjuergen)
 requirements:
   - Network access to HMC
   - zhmcclient >=0.20.0
@@ -133,7 +126,7 @@ options:
          storage group is being created."
     type: dict
     required: false
-    default: No properties.
+    default: null
   expand:
     description:
       - "Boolean that controls whether the returned storage group contains
@@ -157,7 +150,7 @@ options:
          If provided, it will be used instead of connecting to a real HMC. This
          is used for testing purposes only."
     required: false
-    default: Real HMC will be used.
+    type: raw
 """
 
 EXAMPLES = """
@@ -245,6 +238,29 @@ storage_group:
       ...
     })
 """
+
+import logging  # noqa: E402
+import traceback  # noqa: E402
+from ansible.module_utils.basic import AnsibleModule  # noqa: E402
+
+from ..module_utils.common import log_init, Error, ParameterError, \
+    get_hmc_auth, get_session, to_unicode, process_normal_property, \
+    missing_required_lib  # noqa: E402
+
+try:
+    import requests.packages.urllib3
+    IMP_URLLIB3 = True
+except ImportError:
+    IMP_URLLIB3 = False
+    IMP_URLLIB3_ERR = traceback.format_exc()
+
+try:
+    import zhmcclient
+    IMP_ZHMCCLIENT = True
+except ImportError:
+    IMP_ZHMCCLIENT = False
+    IMP_ZHMCCLIENT_ERR = traceback.format_exc()
+
 
 # Python logger name for this module
 LOGGER_NAME = 'zhmc_storage_group'
@@ -370,8 +386,8 @@ def process_properties(cpc, storage_group, params):
         sg_cpc = storage_group.cpc
         if sg_cpc.uri != cpc.uri:
             raise ParameterError(
-                "Storage group {!r} is not associated with the specified "
-                "CPC {!r}, but with CPC {!r}.".
+                "Storage group {0!r} is not associated with the specified "
+                "CPC {1!r}, but with CPC {2!r}.".
                 format(sg_name, cpc.name, sg_cpc.name))
 
     # handle the other properties
@@ -382,7 +398,7 @@ def process_properties(cpc, storage_group, params):
 
         if prop_name not in ZHMC_STORAGE_GROUP_PROPERTIES:
             raise ParameterError(
-                "Property {!r} is not defined in the data model for "
+                "Property {0!r} is not defined in the data model for "
                 "storage groups.".format(prop_name))
 
         allowed, create, update, update_while_active, eq_func, type_cast = \
@@ -390,7 +406,7 @@ def process_properties(cpc, storage_group, params):
 
         if not allowed:
             raise ParameterError(
-                "Property {!r} is not allowed in the 'properties' module "
+                "Property {0!r} is not allowed in the 'properties' module "
                 "parameter.".format(prop_name))
 
         # Process a normal (= non-artificial) property
@@ -399,7 +415,8 @@ def process_properties(cpc, storage_group, params):
             storage_group)
         create_props.update(_create_props)
         update_props.update(_update_props)
-        assert _stop is False
+        if _stop:
+            raise AssertionError()
 
     return create_props, update_props
 
@@ -549,8 +566,9 @@ def ensure_present(params, check_mode):
             storage_group.pull_full_properties()
             create_props, update_props = \
                 process_properties(cpc, storage_group, params)
-            assert not create_props, \
-                "Unexpected create_props: %r" % create_props
+            if create_props:
+                raise AssertionError("Unexpected "
+                                     "create_props: %r" % create_props)
             if update_props:
                 if not check_mode:
                     storage_group.update_properties(update_props)
@@ -563,7 +581,8 @@ def ensure_present(params, check_mode):
                 changed = True
 
         if not check_mode:
-            assert storage_group
+            if not storage_group:
+                raise AssertionError()
             add_artificial_properties(storage_group, expand)
             result = storage_group.properties
 
@@ -607,8 +626,8 @@ def ensure_absent(params, check_mode):
         sg_cpc = storage_group.cpc
         if sg_cpc.uri != cpc.uri:
             raise ParameterError(
-                "Storage group {!r} is not associated with the specified "
-                "CPC {!r}, but with CPC {!r}.".
+                "Storage group {0!r} is not associated with the specified "
+                "CPC {1!r}, but with CPC {2!r}.".
                 format(storage_group_name, cpc.name, sg_cpc.name))
 
         if not check_mode:
@@ -660,8 +679,8 @@ def facts(params, check_mode):
         sg_cpc = storage_group.cpc
         if sg_cpc.uri != cpc.uri:
             raise ParameterError(
-                "Storage group {!r} is not associated with the specified "
-                "CPC {!r}, but with CPC {!r}.".
+                "Storage group {0!r} is not associated with the specified "
+                "CPC {1!r}, but with CPC {2!r}.".
                 format(storage_group_name, cpc.name, sg_cpc.name))
 
         add_artificial_properties(storage_group, expand)
@@ -707,19 +726,29 @@ def main():
         properties=dict(required=False, type='dict', default={}),
         expand=dict(required=False, type='bool', default=False),
         log_file=dict(required=False, type='str', default=None),
-        faked_session=dict(required=False, type='object'),
+        faked_session=dict(required=False, type='raw'),
     )
 
     module = AnsibleModule(
         argument_spec=argument_spec,
         supports_check_mode=True)
 
+    if not IMP_URLLIB3:
+        module.fail_json(msg=missing_required_lib("requests"),
+                         exception=IMP_URLLIB3_ERR)
+
+    requests.packages.urllib3.disable_warnings()
+
+    if not IMP_ZHMCCLIENT:
+        module.fail_json(msg=missing_required_lib("zhmcclient"),
+                         exception=IMP_ZHMCCLIENT_ERR)
+
     log_file = module.params['log_file']
     log_init(LOGGER_NAME, log_file)
 
     _params = dict(module.params)
     del _params['hmc_auth']
-    LOGGER.debug("Module entry: params: {!r}".format(_params))
+    LOGGER.debug("Module entry: params: %r", _params)
 
     try:
 
@@ -729,20 +758,17 @@ def main():
         # These exceptions are considered errors in the environment or in user
         # input. They have a proper message that stands on its own, so we
         # simply pass that message on and will not need a traceback.
-        msg = "{}: {}".format(exc.__class__.__name__, exc)
+        msg = "{0}: {1}".format(exc.__class__.__name__, exc)
         LOGGER.debug(
-            "Module exit (failure): msg: {!r}".
-            format(msg))
+            "Module exit (failure): msg: %s", msg)
         module.fail_json(msg=msg)
     # Other exceptions are considered module errors and are handled by Ansible
     # by showing the traceback.
 
     LOGGER.debug(
-        "Module exit (success): changed: {!r}, cpc: {!r}".
-        format(changed, result))
+        "Module exit (success): changed: %r, cpc: %r", changed, result)
     module.exit_json(changed=changed, storage_group=result)
 
 
 if __name__ == '__main__':
-    requests.packages.urllib3.disable_warnings()
     main()

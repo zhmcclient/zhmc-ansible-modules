@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # Copyright 2018 IBM Corp. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,15 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import, print_function
-
-import logging
-from ansible.module_utils.basic import AnsibleModule
-import requests.packages.urllib3
-import zhmcclient
-
-from zhmc_ansible_modules.utils import log_init, Error, ParameterError, \
-    get_hmc_auth, get_session, to_unicode, process_normal_property, eq_hex
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 # For information on the format of the ANSIBLE_METADATA, DOCUMENTATION,
 # EXAMPLES, and RETURN strings, see
@@ -45,8 +38,8 @@ description:
   - Updates the properties of an adapter.
 notes:
 author:
-  - Andreas Maier (@andy-maier, maiera@de.ibm.com)
-  - Andreas Scheuring (@scheuran, scheuran@de.ibm.com)
+  - Andreas Maier (@andy-maier)
+  - Andreas Scheuring (@scheuran)
 requirements:
   - Network access to HMC
   - zhmcclient >=0.20.0
@@ -79,6 +72,11 @@ options:
         the new name of the adapter.
     type: str
     required: true
+  cpc_name:
+    description:
+      - The name of the target CPC.
+    type: str
+    required: true
   match:
     description:
       - "Only for C(state=set): Match properties for identifying the
@@ -101,9 +99,9 @@ options:
          https://python-zhmcclient.readthedocs.io/en/stable/concepts.html#filtering"
       - "The possible match properties are all properties in the data model for
          adapter resources, including C(name)."
-    type: str
+    type: dict
     required: false
-    default: No match properties
+    default: null
   state:
     description:
       - "The desired state for the attachment:"
@@ -143,7 +141,7 @@ options:
          will zeroize the crypto adapter."
     type: dict
     required: false
-    default: No property changes (other than possibly C(name)).
+    default: null
   log_file:
     description:
       - "File path of a log file to which the logic flow of this module as well
@@ -157,8 +155,8 @@ options:
       - "A C(zhmcclient_mock.FakedSession) object that has a mocked HMC set up.
          If provided, it will be used instead of connecting to a real HMC. This
          is used for testing purposes only."
+    type: raw
     required: false
-    default: Real HMC will be used.
 """
 
 EXAMPLES = """
@@ -250,6 +248,28 @@ cpc:
       ]
     })
 """
+
+import logging  # noqa: E402
+import traceback  # noqa: E402
+from ansible.module_utils.basic import AnsibleModule  # noqa: E402
+
+from ..module_utils.common import log_init,\
+    Error, ParameterError, get_hmc_auth, get_session, to_unicode, \
+    process_normal_property, eq_hex, missing_required_lib  # noqa: E402
+
+try:
+    import requests.packages.urllib3
+    IMP_URLLIB3 = True
+except ImportError:
+    IMP_URLLIB3 = False
+    IMP_URLLIB3_ERR = traceback.format_exc()
+
+try:
+    import zhmcclient
+    IMP_ZHMCCLIENT = True
+except ImportError:
+    IMP_ZHMCCLIENT = False
+    IMP_ZHMCCLIENT_ERR = traceback.format_exc()
 
 # Python logger name for this module
 LOGGER_NAME = 'zhmc_adapter'
@@ -390,7 +410,7 @@ def process_properties(adapter, params):
 
         if not allowed:
             raise ParameterError(
-                "Invalid adapter property {!r} specified in the 'properties' "
+                "Invalid adapter property {0!r} specified in the 'properties' "
                 "module parameter.".format(prop_name))
 
         if adapter and prop_name == 'type':
@@ -411,7 +431,8 @@ def process_properties(adapter, params):
                 prop_name, ZHMC_ADAPTER_PROPERTIES, input_props, adapter)
             create_props.update(_create_props)
             update_props.update(_update_props)
-            assert _stop is False
+            if _stop:
+                raise AssertionError()
 
     return create_props, update_props, change_adapter_type, change_crypto_type
 
@@ -564,12 +585,13 @@ def ensure_present(params, check_mode):
             if adapter_type is None:
                 raise ParameterError(
                     "Input property 'type' missing when creating "
-                    "Hipersockets adapter {!r} (must specify 'hipersockets')".
+                    "Hipersockets adapter {0!r} (must specify 'hipersockets')".
                     format(adapter_name))
             if adapter_type != 'hipersockets':
                 raise ParameterError(
-                    "Input property 'type' specifies {!r} when creating "
-                    "Hipersockets adapter {!r} (must specify 'hipersockets').".
+                    "Input property 'type' specifies {0!r} when creating "
+                    "Hipersockets adapter {1!r} "
+                    "(must specify 'hipersockets').".
                     format(adapter_type, adapter_name))
 
             create_props, update_props, _, _ = \
@@ -584,7 +606,7 @@ def ensure_present(params, check_mode):
             if invalid_update_props:
                 raise ParameterError(
                     "Invalid input properties specified when creating "
-                    "Hipersockets adapter {!r}: {!r}".
+                    "Hipersockets adapter {0!r}: {1!r}".
                     format(adapter_name, invalid_update_props))
 
             # While the 'type' input property is required for verifying
@@ -769,19 +791,29 @@ def main():
                    choices=['set', 'present', 'absent', 'facts']),
         properties=dict(required=False, type='dict', default={}),
         log_file=dict(required=False, type='str', default=None),
-        faked_session=dict(required=False, type='object'),
+        faked_session=dict(required=False, type='raw'),
     )
 
     module = AnsibleModule(
         argument_spec=argument_spec,
         supports_check_mode=True)
 
+    if not IMP_URLLIB3:
+        module.fail_json(msg=missing_required_lib("requests"),
+                         exception=IMP_URLLIB3_ERR)
+
+    requests.packages.urllib3.disable_warnings()
+
+    if not IMP_ZHMCCLIENT:
+        module.fail_json(msg=missing_required_lib("zhmcclient"),
+                         exception=IMP_ZHMCCLIENT_ERR)
+
     log_file = module.params['log_file']
     log_init(LOGGER_NAME, log_file)
 
     _params = dict(module.params)
     del _params['hmc_auth']
-    LOGGER.debug("Module entry: params: {!r}".format(_params))
+    LOGGER.debug("Module entry: params: %r", _params)
 
     try:
 
@@ -791,21 +823,18 @@ def main():
         # These exceptions are considered errors in the environment or in user
         # input. They have a proper message that stands on its own, so we
         # simply pass that message on and will not need a traceback.
-        msg = "{}: {}".format(exc.__class__.__name__, exc)
+        msg = "{0}: {1}".format(exc.__class__.__name__, exc)
         LOGGER.debug(
-            "Module exit (failure): msg: {!r}".
-            format(msg))
+            "Module exit (failure): msg: %s", msg)
         module.fail_json(msg=msg)
     # Other exceptions are considered module errors and are handled by Ansible
     # by showing the traceback.
 
     LOGGER.debug(
-        "Module exit (success): changed: {!r}, adapter: {!r}".
-        format(changed, result))
+        "Module exit (success): changed: %r, adapter: %r", changed, result)
     module.exit_json(
         changed=changed, adapter=result)
 
 
 if __name__ == '__main__':
-    requests.packages.urllib3.disable_warnings()
     main()

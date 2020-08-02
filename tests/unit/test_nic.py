@@ -17,10 +17,14 @@
 Unit tests for the 'zhmc_nic' Ansible module.
 """
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
+
 import pytest
 import mock
 
-from zhmc_ansible_modules import zhmc_nic, utils
+from plugins.modules import zhmc_nic
+from plugins.module_utils import common as module_utils
 
 
 class TestZhmcNicMain(object):
@@ -30,9 +34,9 @@ class TestZhmcNicMain(object):
 
     @pytest.mark.parametrize(
         "check_mode", [False, True])
-    @mock.patch("zhmc_ansible_modules.zhmc_nic.perform_task",
+    @mock.patch("plugins.modules.zhmc_nic.perform_task",
                 autospec=True)
-    @mock.patch("zhmc_ansible_modules.zhmc_nic.AnsibleModule",
+    @mock.patch("plugins.modules.zhmc_nic.AnsibleModule",
                 autospec=True)
     def test_main_success(
             self, ansible_mod_cls, perform_task_func, check_mode):
@@ -84,7 +88,7 @@ class TestZhmcNicMain(object):
                        choices=['absent', 'present']),
             properties=dict(required=False, type='dict', default={}),
             log_file=dict(required=False, type='str', default=None),
-            faked_session=dict(required=False, type='object'),
+            faked_session=dict(required=False, type='raw'),
         )
         assert(ansible_mod_cls.call_args ==
                mock.call(argument_spec=expected_argument_spec,
@@ -104,9 +108,9 @@ class TestZhmcNicMain(object):
 
     @pytest.mark.parametrize(
         "check_mode", [False, True])
-    @mock.patch("zhmc_ansible_modules.zhmc_nic.perform_task",
+    @mock.patch("plugins.modules.zhmc_nic.perform_task",
                 autospec=True)
-    @mock.patch("zhmc_ansible_modules.zhmc_nic.AnsibleModule",
+    @mock.patch("plugins.modules.zhmc_nic.AnsibleModule",
                 autospec=True)
     def test_main_param_error(
             self, ansible_mod_cls, perform_task_func, check_mode):
@@ -127,7 +131,7 @@ class TestZhmcNicMain(object):
         }
 
         # Exception raised by perform_task()
-        perform_task_exc = utils.ParameterError("fake message")
+        perform_task_exc = module_utils.ParameterError("fake message")
 
         # Prepare mocks
         mod_obj = ansible_mod_cls.return_value
@@ -164,9 +168,9 @@ class TestZhmcNicPerformTask(object):
 
     @pytest.mark.parametrize(
         "check_mode", [False, True])
-    @mock.patch("zhmc_ansible_modules.zhmc_nic.ensure_absent",
+    @mock.patch("plugins.modules.zhmc_nic.ensure_absent",
                 autospec=True)
-    @mock.patch("zhmc_ansible_modules.zhmc_nic.ensure_present",
+    @mock.patch("plugins.modules.zhmc_nic.ensure_present",
                 autospec=True)
     def test_pt_present(
             self, ensure_present_func, ensure_absent_func, check_mode):
@@ -206,9 +210,9 @@ class TestZhmcNicPerformTask(object):
 
     @pytest.mark.parametrize(
         "check_mode", [False, True])
-    @mock.patch("zhmc_ansible_modules.zhmc_nic.ensure_absent",
+    @mock.patch("plugins.modules.zhmc_nic.ensure_absent",
                 autospec=True)
-    @mock.patch("zhmc_ansible_modules.zhmc_nic.ensure_present",
+    @mock.patch("plugins.modules.zhmc_nic.ensure_present",
                 autospec=True)
     def test_pt_absent(
             self, ensure_present_func, ensure_absent_func, check_mode):

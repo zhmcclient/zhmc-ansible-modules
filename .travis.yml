@@ -143,6 +143,16 @@ jobs:
 #      cache: pip
 
 before_install:
+  # Since running 'ansible-test sanity' requires the collection to be tested
+  # to be located in {...}/collections/ansible_collections/{namespace}/{name},
+  # we have to move the checked out repo into the required folder structure and
+  # work from there.
+  - touch workspace.tar
+  - tar -cf workspace.tar --exclude=workspace.tar .
+  - mkdir -p ansible/collections/ansible_collections/ibm/zhmc
+  - tar -xf workspace.tar --directory ansible/collections/ansible_collections/ibm/zhmc
+  - cd ansible/collections/ansible_collections/ibm/zhmc
+
   - env | sort
 
   - if [[ "$TRAVIS_BRANCH" == "manual-ci-run" ]]; then
@@ -152,6 +162,7 @@ before_install:
   - if [[ -n $_NEED_REBASE ]]; then git branch master FETCH_HEAD; fi
   - if [[ -n $_NEED_REBASE ]]; then git rebase master; fi
   - git branch -av
+
 
 # commands to install dependencies
 install:
@@ -208,6 +219,11 @@ script:
     fi
   - make check
   - make test
+  # sanity tests will run for all ansible-supported python versions in a
+  # docker container, so its enough to run them once
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.8 && $PACKAGE_LEVEL == latest ]]; then
+      make sanity;
+    fi
 
 after_success:
   - if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_PYTHON_VERSION" == "3.8" && "$PACKAGE_LEVEL" == "latest" ]]; then

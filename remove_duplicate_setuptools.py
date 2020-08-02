@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/usr/bin/python
 """
 This script removes duplicated dist-info directories of setuptools, which
 happen to exist on the Travis CI in their Ubuntu 14.04 (trusty) distro:
@@ -6,6 +6,9 @@ happen to exist on the Travis CI in their Ubuntu 14.04 (trusty) distro:
   site-packages/setuptools-36.0.1.dist-info <- duplicate to be removed
   site-packages/setuptools-36.3.0.dist-info
 """
+
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 import sys
 import os
@@ -18,41 +21,41 @@ import shutil
 def remove_duplicate_metadata_dirs(package_name):
     """Remove duplicate metadata directories of a package."""
 
-    print("Removing duplicate metadata directories of package: {}".
+    print("Removing duplicate metadata directories of package: {0}".
           format(package_name))
 
     module = importlib.import_module(package_name)
 
     py_mn = "{}.{}".format(*sys.version_info[0:2])
-    print("Current Python version: {}".format(py_mn))
+    print("Current Python version: {0}".format(py_mn))
 
     version = module.__version__
-    print("Version of imported {} package: {}".format(package_name, version))
+    print("Version of imported {0} package: {1}".format(package_name, version))
 
     site_dir = os.path.dirname(os.path.dirname(module.__file__))
-    print("Site packages directory of imported package: {}".format(site_dir))
+    print("Site packages directory of imported package: {0}".format(site_dir))
 
     metadata_dirs = []
     metadata_dirs.extend(glob.glob(os.path.join(
-        site_dir, '{}-*.dist-info'.format(package_name))))
+        site_dir, '{0}-*.dist-info'.format(package_name))))
     metadata_dirs.extend(glob.glob(os.path.join(
-        site_dir, '{}-*-py{}.egg-info'.format(package_name, py_mn))))
+        site_dir, '{0}-*-py{1}.egg-info'.format(package_name, py_mn))))
 
     for d in metadata_dirs:
 
-        m = re.search(r'/{}-([0-9.]+)(\.di|-py)'.format(package_name), d)
+        m = re.search(r'/{0}-([0-9.]+)(\.di|-py)'.format(package_name), d)
 
         if not m:
-            print("Warning: Could not parse metadata directory: {}".format(d))
+            print("Warning: Could not parse metadata directory: {0}".format(d))
             continue
 
         d_version = m.group(1)
 
         if d_version == version:
-            print("Found matching metadata directory: {}".format(d))
+            print("Found matching metadata directory: {0}".format(d))
             continue
 
-        print("Removing duplicate metadata directory: {}".format(d))
+        print("Removing duplicate metadata directory: {0}".format(d))
         shutil.rmtree(d)
 
 

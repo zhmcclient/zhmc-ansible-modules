@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # Copyright 2018 IBM Corp. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,15 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import, print_function
-
-import logging
-from ansible.module_utils.basic import AnsibleModule
-import requests.packages.urllib3
-import zhmcclient
-
-from zhmc_ansible_modules.utils import log_init, Error, \
-    get_hmc_auth, get_session
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 # For information on the format of the ANSIBLE_METADATA, DOCUMENTATION,
 # EXAMPLES, and RETURN strings, see
@@ -57,9 +50,9 @@ notes:
   - The Ansible module zhmc_hba is no longer used on CPCs that have the
     "dpm-storage-management" feature enabled.
 author:
-  - Andreas Maier (@andy-maier, maiera@de.ibm.com)
-  - Andreas Scheuring (@scheuran, scheuran@de.ibm.com)
-  - Juergen Leopold (@leopoldjuergen, leopoldj@de.ibm.com)
+  - Andreas Maier (@andy-maier)
+  - Andreas Scheuring (@scheuran)
+  - Juergen Leopold (@leopoldjuergen)
 requirements:
   - Network access to HMC
   - zhmcclient >=0.20.0
@@ -129,7 +122,7 @@ options:
          If provided, it will be used instead of connecting to a real HMC. This
          is used for testing purposes only."
     required: false
-    default: Real HMC will be used.
+    type: raw
 """
 
 EXAMPLES = """
@@ -179,6 +172,27 @@ storage_group_attachment:
     C({"attached": true})
 """
 
+import logging  # noqa: E402
+import traceback  # noqa: E402
+from ansible.module_utils.basic import AnsibleModule  # noqa: E402
+
+from ..module_utils.common import log_init, Error, \
+    get_hmc_auth, get_session, missing_required_lib  # noqa: E402
+
+try:
+    import requests.packages.urllib3
+    IMP_URLLIB3 = True
+except ImportError:
+    IMP_URLLIB3 = False
+    IMP_URLLIB3_ERR = traceback.format_exc()
+
+try:
+    import zhmcclient
+    IMP_ZHMCCLIENT = True
+except ImportError:
+    IMP_ZHMCCLIENT = False
+    IMP_ZHMCCLIENT_ERR = traceback.format_exc()
+
 # Python logger name for this module
 LOGGER_NAME = 'zhmc_storage_group_attachment'
 
@@ -225,8 +239,10 @@ def ensure_attached(params, check_mode):
             changed = True
         else:
             # The storage group is already attached to the partition
-            assert len(attached_partitions) == 1
-            assert attached_partitions[0].name == partition_name
+            if len(attached_partitions) != 1:
+                raise AssertionError()
+            if attached_partitions[0].name != partition_name:
+                raise AssertionError()
             attached = True
 
         result = dict(attached=attached)
@@ -270,8 +286,10 @@ def ensure_detached(params, check_mode):
 
         if attached_partitions:
             # The storage group is attached to the partition
-            assert len(attached_partitions) == 1
-            assert attached_partitions[0].name == partition_name
+            if len(attached_partitions) != 1:
+                raise AssertionError()
+            if attached_partitions[0].name != partition_name:
+                raise AssertionError()
             attached = True
             if not check_mode:
                 partition.detach_storage_group(storage_group)
@@ -322,8 +340,10 @@ def facts(params, check_mode):
 
         if attached_partitions:
             # The storage group is attached to the partition
-            assert len(attached_partitions) == 1
-            assert attached_partitions[0].name == partition_name
+            if len(attached_partitions) != 1:
+                raise AssertionError()
+            if attached_partitions[0].name != partition_name:
+                raise AssertionError()
             attached = True
         else:
             # The storage group is not attached to the partition
@@ -370,19 +390,29 @@ def main():
         state=dict(required=True, type='str',
                    choices=['detached', 'attached', 'facts']),
         log_file=dict(required=False, type='str', default=None),
-        faked_session=dict(required=False, type='object'),
+        faked_session=dict(required=False, type='raw'),
     )
 
     module = AnsibleModule(
         argument_spec=argument_spec,
         supports_check_mode=True)
 
+    if not IMP_URLLIB3:
+        module.fail_json(msg=missing_required_lib("requests"),
+                         exception=IMP_URLLIB3_ERR)
+
+    requests.packages.urllib3.disable_warnings()
+
+    if not IMP_ZHMCCLIENT:
+        module.fail_json(msg=missing_required_lib("zhmcclient"),
+                         exception=IMP_ZHMCCLIENT_ERR)
+
     log_file = module.params['log_file']
     log_init(LOGGER_NAME, log_file)
 
     _params = dict(module.params)
     del _params['hmc_auth']
-    LOGGER.debug("Module entry: params: {!r}".format(_params))
+    LOGGER.debug("Module entry: params: %r", _params)
 
     try:
 
@@ -392,20 +422,17 @@ def main():
         # These exceptions are considered errors in the environment or in user
         # input. They have a proper message that stands on its own, so we
         # simply pass that message on and will not need a traceback.
-        msg = "{}: {}".format(exc.__class__.__name__, exc)
+        msg = "{0}: {1}".format(exc.__class__.__name__, exc)
         LOGGER.debug(
-            "Module exit (failure): msg: {!r}".
-            format(msg))
+            "Module exit (failure): msg: %s", msg)
         module.fail_json(msg=msg)
     # Other exceptions are considered module errors and are handled by Ansible
     # by showing the traceback.
 
     LOGGER.debug(
-        "Module exit (success): changed: {!r}, cpc: {!r}".
-        format(changed, result))
+        "Module exit (success): changed: %r, cpc: %r", changed, result)
     module.exit_json(changed=changed, storage_group_attachment=result)
 
 
 if __name__ == '__main__':
-    requests.packages.urllib3.disable_warnings()
     main()

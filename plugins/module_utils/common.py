@@ -16,12 +16,29 @@
 Utility functions for use by more than one Ansible module.
 """
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
+
 import logging
+import traceback
+import platform
+import sys
 
 from ansible.module_utils import six
 
-from zhmcclient import Session
-from zhmcclient_mock import FakedSession
+try:
+    from zhmcclient import Session
+    IMP_ZHMCCLIENT = True
+except ImportError:
+    IMP_ZHMCCLIENT = False
+    IMP_ZHMCCLIENT_ERR = traceback.format_exc()
+
+try:
+    from zhmcclient_mock import FakedSession
+    IMP_ZHMCCLIENT_MOCK = True
+except ImportError:
+    IMP_ZHMCCLIENT_MOCK = False
+    IMP_ZHMCCLIENT_ERR_MOCK = traceback.format_exc()
 
 
 class Error(Exception):
@@ -56,6 +73,22 @@ STOP_END_STATUSES = ('stopped', 'terminated', 'paused')
 BAD_STATUSES = ('communications-not-active', 'status-check')
 
 
+def missing_required_lib(library, reason=None, url=None):
+    hostname = platform.node()
+    msg = "Failed to import the required Python library " \
+          "(%s) on %s's Python %s." % (library, hostname, sys.executable)
+    if reason:
+        msg += " This is required %s." % reason
+    if url:
+        msg += " See %s for more info." % url
+
+    msg += (" Please read module documentation and install in the appropriate "
+            "location. If the required library is installed, but Ansible is "
+            "using the wrong Python interpreter, please consult the "
+            "documentation on ansible_python_interpreter")
+    return msg
+
+
 def eq_hex(hex_actual, hex_new, prop_name):
     """
     Test two hex string values of a property for equality.
@@ -65,9 +98,8 @@ def eq_hex(hex_actual, hex_new, prop_name):
             int_actual = int(hex_actual, 16)
         except ValueError:
             raise ParameterError(
-                "Unexpected: Actual value of property {!r} is not a valid hex "
-                "number: {!r}".
-                format(prop_name, hex_actual))
+                "Unexpected: Actual value of property {0!r} is not a valid  "
+                "hex number: {1!r}".format(prop_name, hex_actual))
     else:
         int_actual = None
     if hex_new:
@@ -75,8 +107,8 @@ def eq_hex(hex_actual, hex_new, prop_name):
             int_new = int(hex_new, 16)
         except ValueError:
             raise ParameterError(
-                "New value for property {!r} is not a valid hex number: {!r}".
-                format(prop_name, hex_new))
+                "New value for property {0!r} is not a valid "
+                "hex number: {1!r}".format(prop_name, hex_new))
     else:
         int_new = None
     return int_actual == int_new
@@ -98,9 +130,8 @@ def eq_mac(mac_actual, mac_new, prop_name):
             mac_actual = _normalized_mac(mac_actual)
         except ValueError:
             raise ParameterError(
-                "Unexpected: Actual value of property {!r} is not a valid MAC "
-                "address: {!r}".
-                format(prop_name, mac_actual))
+                "Unexpected: Actual value of property {0!r} is not a valid "
+                "MAC address: {1!r}".format(prop_name, mac_actual))
     else:
         mac_actual = None
     if mac_new:
@@ -108,8 +139,8 @@ def eq_mac(mac_actual, mac_new, prop_name):
             mac_new = _normalized_mac(mac_new)
         except ValueError:
             raise ParameterError(
-                "New value for property {!r} is not a valid MAC address: {!r}".
-                format(prop_name, mac_new))
+                "New value for property {0!r} is not a valid "
+                "MAC address: {1!r}".format(prop_name, mac_new))
     else:
         mac_new = None
     return mac_actual == mac_new
@@ -151,7 +182,8 @@ def pull_partition_status(partition):
     """
     parts = partition.manager.cpc.partitions.list(
         filter_args={'name': partition.name})
-    assert len(parts) == 1
+    if len(parts) != 1:
+        raise AssertionError()
     this_part = parts[0]
     actual_status = this_part.get_property('status')
     return actual_status
@@ -186,7 +218,7 @@ def stop_partition(partition, check_mode):
     status = partition.get_property('status')
     if status in BAD_STATUSES:
         raise StatusError(
-            "Target CPC {!r} has issues; status of partition {!r} is: {!r}".
+            "Target CPC {0!r} has issues; status of partition {1!r} is: {2!r}".
             format(partition.manager.cpc.name, partition.name, status))
     elif status == 'stopped':
         pass
@@ -200,9 +232,9 @@ def stop_partition(partition, check_mode):
             status = pull_partition_status(partition)
             if status != 'stopped':
                 raise StatusError(
-                    "Could not get partition {!r} from {!r} status into "
+                    "Could not get partition {0!r} from {1!r} status into "
                     "'stopped' status after waiting for its starting to "
-                    "complete; current status is: {!r}".
+                    "complete; current status is: {2!r}".
                     format(partition.name, start_end_status, status))
         changed = True
     elif status == 'stopping':
@@ -216,9 +248,9 @@ def stop_partition(partition, check_mode):
                 status = pull_partition_status(partition)
                 if status != 'stopped':
                     raise StatusError(
-                        "Could not get partition {!r} from {!r} status into "
+                        "Could not get partition {0!r} from {1!r} status into "
                         "'stopped' status after waiting for its stopping to "
-                        "complete; current status is: {!r}".
+                        "complete; current status is: {2!r}".
                         format(partition.name, stop_end_status, status))
         changed = True
     else:
@@ -228,8 +260,8 @@ def stop_partition(partition, check_mode):
             status = pull_partition_status(partition)
             if status != 'stopped':
                 raise StatusError(
-                    "Could not get partition {!r} from {!r} status into "
-                    "'stopped' status; current status is: {!r}".
+                    "Could not get partition {0!r} from {1!r} status into "
+                    "'stopped' status; current status is: {2!r}".
                     format(partition.name, previous_status, status))
         changed = True
     return changed
@@ -263,7 +295,7 @@ def start_partition(partition, check_mode):
     status = partition.get_property('status')
     if status in BAD_STATUSES:
         raise StatusError(
-            "Target CPC {!r} has issues; status of partition {!r} is: {!r}".
+            "Target CPC {0!r} has issues; status of partition {1!r} is: {2!r}".
             format(partition.manager.cpc.name, partition.name, status))
     elif status in START_END_STATUSES:
         pass
@@ -277,9 +309,9 @@ def start_partition(partition, check_mode):
             status = pull_partition_status(partition)
             if status not in START_END_STATUSES:
                 raise StatusError(
-                    "Could not get partition {!r} from {!r} status into "
+                    "Could not get partition {0!r} from {1!r} status into "
                     "a started status after waiting for its stopping to "
-                    "complete; current status is: {!r}".
+                    "complete; current status is: {2!r}".
                     format(partition.name, stop_end_status, status))
         changed = True
     elif status == 'starting':
@@ -294,8 +326,8 @@ def start_partition(partition, check_mode):
             status = pull_partition_status(partition)
             if status not in START_END_STATUSES:
                 raise StatusError(
-                    "Could not get partition {!r} from {!r} status into "
-                    "a started status; current status is: {!r}".
+                    "Could not get partition {0!r} from {1!r} status into "
+                    "a started status; current status is: {2!r}".
                     format(partition.name, previous_status, status))
         changed = True
     return changed
@@ -321,14 +353,15 @@ def wait_for_transition_completion(partition):
     status = partition.get_property('status')
     if status in BAD_STATUSES:
         raise StatusError(
-            "Target CPC {!r} has issues; status of partition {!r} is: {!r}".
+            "Target CPC {0!r} has issues; status of partition {1!r} is: {2!r}".
             format(partition.manager.cpc.name, partition.name, status))
     elif status == 'stopping':
         partition.wait_for_status(STOP_END_STATUSES)
     elif status == 'starting':
         partition.wait_for_status(START_END_STATUSES)
     else:
-        assert status in START_END_STATUSES or status in STOP_END_STATUSES
+        if not (status in START_END_STATUSES or status in STOP_END_STATUSES):
+            raise AssertionError()
 
 
 def get_session(faked_session, host, userid, password):
@@ -371,7 +404,7 @@ def to_unicode(value):
     elif value is None:
         return None
     else:
-        raise TypeError("Value of {} cannot be converted to unicode: {!r}".
+        raise TypeError("Value of {0} cannot be converted to unicode: {1!r}".
                         format(type(value), value))
 
 
@@ -415,8 +448,10 @@ def process_normal_property(
         resource_properties[prop_name]
 
     # Double check that the property is not a read-only property
-    assert allowed
-    assert create or update
+    if not allowed:
+        raise AssertionError()
+    if not (create or update):
+        raise AssertionError()
 
     hmc_prop_name = prop_name.replace('_', '-')
     input_prop_value = input_props[prop_name]
@@ -442,9 +477,9 @@ def process_normal_property(
                     deactivate = True
             else:
                 raise ParameterError(
-                    "Property {!r} can be set during {} "
+                    "Property {0!r} can be set during {1} "
                     "creation but cannot be updated afterwards "
-                    "(from {!r} to {!r}).".
+                    "(from {2!r} to {3!r}).".
                     format(prop_name, resource.__class__.__name__,
                            current_prop_value, input_prop_value))
     else:
@@ -508,9 +543,3 @@ def log_init(logger_name, log_file=None):
     logger.setLevel(logging.DEBUG)
     if handler:
         logger.addHandler(handler)
-
-    if False:  # Too much gorp, disabled for now
-        logger = logging.getLogger('zhmcclient.api')
-        logger.setLevel(logging.DEBUG)
-        if handler:
-            logger.addHandler(handler)

@@ -43,16 +43,30 @@ Parameters
         </tr>
                     <tr>
                                                                 <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="parameter-cpc_name"></div>
+                    <b>cpc_name</b>
+                    <a class="ansibleOptionLink" href="#parameter-cpc_name" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                                                 / <span style="color: red">required</span>                    </div>
+                                    </td>
+                                <td>
+                                                                                                                                                            </td>
+                                                                <td>
+                                            <div>The name of the target CPC.</div>
+                                                        </td>
+            </tr>
+                                <tr>
+                                                                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-faked_session"></div>
                     <b>faked_session</b>
                     <a class="ansibleOptionLink" href="#parameter-faked_session" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">raw</span>
                                                                     </div>
                                     </td>
                                 <td>
-                                                                                                                                                                    <b>Default:</b><br/><div style="color: blue">"Real HMC will be used."</div>
-                                    </td>
+                                                                                                                                                            </td>
                                                                 <td>
                                             <div>A <code>zhmcclient_mock.FakedSession</code> object that has a mocked HMC set up. If provided, it will be used instead of connecting to a real HMC. This is used for testing purposes only.</div>
                                                         </td>
@@ -142,11 +156,11 @@ Parameters
                     <b>match</b>
                     <a class="ansibleOptionLink" href="#parameter-match" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">string</span>
+                        <span style="color: purple">dictionary</span>
                                                                     </div>
                                     </td>
                                 <td>
-                                                                                                                                                                    <b>Default:</b><br/><div style="color: blue">"No match properties"</div>
+                                                                                                                                                                    <b>Default:</b><br/><div style="color: blue">null</div>
                                     </td>
                                                                 <td>
                                             <div>Only for <code>state=set</code>: Match properties for identifying the target adapter in the set of adapters in the CPC, if an adapter with the name specified in the <code>name</code> module parameter does not exist in that set. This parameter will be ignored otherwise.</div>
@@ -181,7 +195,7 @@ Parameters
                                                                     </div>
                                     </td>
                                 <td>
-                                                                                                                                                                    <b>Default:</b><br/><div style="color: blue">"No property changes (other than possibly C(name))."</div>
+                                                                                                                                                                    <b>Default:</b><br/><div style="color: blue">null</div>
                                     </td>
                                                                 <td>
                                             <div>Only for <code>state=set|present</code>: New values for the properties of the adapter. Properties omitted in this dictionary will remain unchanged. This parameter will be ignored for other states.</div>
@@ -356,8 +370,8 @@ Status
 Authors
 ~~~~~~~
 
-- Andreas Maier (@andy-maier, maiera@de.ibm.com)
-- Andreas Scheuring (@scheuran, scheuran@de.ibm.com)
+- Andreas Maier (@andy-maier)
+- Andreas Scheuring (@scheuran)
 
 
 .. hint::

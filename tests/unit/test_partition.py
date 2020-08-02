@@ -17,10 +17,14 @@
 Unit tests for the 'zhmc_partition' Ansible module.
 """
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
+
 import unittest
 import mock
 
-from zhmc_ansible_modules import zhmc_partition, utils
+from plugins.modules import zhmc_partition
+from plugins.module_utils import common as module_utils
 
 
 class TestZhmcPartitionMain(unittest.TestCase):
@@ -28,9 +32,9 @@ class TestZhmcPartitionMain(unittest.TestCase):
     Unit tests for the main() function.
     """
 
-    @mock.patch("zhmc_ansible_modules.zhmc_partition.perform_task",
+    @mock.patch("plugins.modules.zhmc_partition.perform_task",
                 autospec=True)
-    @mock.patch("zhmc_ansible_modules.zhmc_partition.AnsibleModule",
+    @mock.patch("plugins.modules.zhmc_partition.AnsibleModule",
                 autospec=True)
     def test_main_success(self, ansible_mod_cls, perform_task_func):
         """
@@ -80,7 +84,7 @@ class TestZhmcPartitionMain(unittest.TestCase):
                        choices=['absent', 'stopped', 'active', 'facts']),
             properties=dict(required=False, type='dict', default={}),
             log_file=dict(required=False, type='str', default=None),
-            faked_session=dict(required=False, type='object'),
+            faked_session=dict(required=False, type='raw'),
         )
         assert(ansible_mod_cls.call_args ==
                mock.call(argument_spec=expected_argument_spec,
@@ -98,9 +102,9 @@ class TestZhmcPartitionMain(unittest.TestCase):
         # Assert no call to fail_json()
         assert(mod_obj.fail_json.called is False)
 
-    @mock.patch("zhmc_ansible_modules.zhmc_partition.perform_task",
+    @mock.patch("plugins.modules.zhmc_partition.perform_task",
                 autospec=True)
-    @mock.patch("zhmc_ansible_modules.zhmc_partition.AnsibleModule",
+    @mock.patch("plugins.modules.zhmc_partition.AnsibleModule",
                 autospec=True)
     def test_main_param_error(self, ansible_mod_cls, perform_task_func):
         """
@@ -120,7 +124,7 @@ class TestZhmcPartitionMain(unittest.TestCase):
         check_mode = False
 
         # Exception raised by perform_task()
-        perform_task_exc = utils.ParameterError("fake message")
+        perform_task_exc = module_utils.ParameterError("fake message")
 
         # Prepare mocks
         mod_obj = ansible_mod_cls.return_value
@@ -155,11 +159,11 @@ class TestZhmcPartitionPerformTask(unittest.TestCase):
     Unit tests for the perform_task() function.
     """
 
-    @mock.patch("zhmc_ansible_modules.zhmc_partition.ensure_absent",
+    @mock.patch("plugins.modules.zhmc_partition.ensure_absent",
                 autospec=True)
-    @mock.patch("zhmc_ansible_modules.zhmc_partition.ensure_active",
+    @mock.patch("plugins.modules.zhmc_partition.ensure_active",
                 autospec=True)
-    @mock.patch("zhmc_ansible_modules.zhmc_partition.ensure_stopped",
+    @mock.patch("plugins.modules.zhmc_partition.ensure_stopped",
                 autospec=True)
     def test_pt_active(self, ensure_stopped_func, ensure_active_func,
                        ensure_absent_func):
@@ -199,11 +203,11 @@ class TestZhmcPartitionPerformTask(unittest.TestCase):
         assert(ensure_stopped_func.called is False)
         assert(ensure_absent_func.called is False)
 
-    @mock.patch("zhmc_ansible_modules.zhmc_partition.ensure_absent",
+    @mock.patch("plugins.modules.zhmc_partition.ensure_absent",
                 autospec=True)
-    @mock.patch("zhmc_ansible_modules.zhmc_partition.ensure_active",
+    @mock.patch("plugins.modules.zhmc_partition.ensure_active",
                 autospec=True)
-    @mock.patch("zhmc_ansible_modules.zhmc_partition.ensure_stopped",
+    @mock.patch("plugins.modules.zhmc_partition.ensure_stopped",
                 autospec=True)
     def test_pt_stopped(self, ensure_stopped_func, ensure_active_func,
                         ensure_absent_func):
@@ -243,11 +247,11 @@ class TestZhmcPartitionPerformTask(unittest.TestCase):
         assert(ensure_active_func.called is False)
         assert(ensure_absent_func.called is False)
 
-    @mock.patch("zhmc_ansible_modules.zhmc_partition.ensure_absent",
+    @mock.patch("plugins.modules.zhmc_partition.ensure_absent",
                 autospec=True)
-    @mock.patch("zhmc_ansible_modules.zhmc_partition.ensure_active",
+    @mock.patch("plugins.modules.zhmc_partition.ensure_active",
                 autospec=True)
-    @mock.patch("zhmc_ansible_modules.zhmc_partition.ensure_stopped",
+    @mock.patch("plugins.modules.zhmc_partition.ensure_stopped",
                 autospec=True)
     def test_pt_absent(self, ensure_stopped_func, ensure_active_func,
                        ensure_absent_func):

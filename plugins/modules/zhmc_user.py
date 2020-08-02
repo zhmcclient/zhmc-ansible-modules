@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # Copyright 2019 IBM Corp. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,16 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import, print_function
-
-import uuid
-import logging
-from ansible.module_utils.basic import AnsibleModule
-import requests.packages.urllib3
-import zhmcclient
-
-from zhmc_ansible_modules.utils import log_init, Error, ParameterError, \
-    get_hmc_auth, get_session, to_unicode, process_normal_property
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 # For information on the format of the ANSIBLE_METADATA, DOCUMENTATION,
 # EXAMPLES, and RETURN strings, see
@@ -45,7 +37,7 @@ description:
   - Gathers facts about a user on the HMC.
   - Creates, deletes and updates a user on the HMC.
 author:
-  - Andreas Maier (@andy-maier, maiera@de.ibm.com)
+  - Andreas Maier (@andy-maier)
 requirements:
   - Network access to HMC
   - zhmcclient >=0.23.0
@@ -118,7 +110,7 @@ options:
          user is being created."
     type: dict
     required: false
-    default: No properties.
+    default: null
   expand:
     description:
       - "Boolean that controls whether the returned user contains
@@ -142,7 +134,7 @@ options:
          If provided, it will be used instead of connecting to a real HMC. This
          is used for testing purposes only."
     required: false
-    default: Real HMC will be used.
+    type: raw
 """
 
 EXAMPLES = """
@@ -211,6 +203,29 @@ user:
     })
 """
 
+import uuid  # noqa: E402
+import logging  # noqa: E402
+import traceback  # noqa: E402
+from ansible.module_utils.basic import AnsibleModule  # noqa: E402
+
+from ..module_utils.common import log_init, Error, ParameterError, \
+    get_hmc_auth, get_session, to_unicode, process_normal_property, \
+    missing_required_lib  # noqa: E402
+
+try:
+    import requests.packages.urllib3
+    IMP_URLLIB3 = True
+except ImportError:
+    IMP_URLLIB3 = False
+    IMP_URLLIB3_ERR = traceback.format_exc()
+
+try:
+    import zhmcclient
+    IMP_ZHMCCLIENT = True
+except ImportError:
+    IMP_ZHMCCLIENT = False
+    IMP_ZHMCCLIENT_ERR = traceback.format_exc()
+
 # Python logger name for this module
 LOGGER_NAME = 'zhmc_user'
 
@@ -224,10 +239,10 @@ LOGGER = logging.getLogger(LOGGER_NAME)
 #     the 'properties' module parameter).
 #   allowed: Indicates whether it is allowed in the 'properties' module
 #     parameter.
-#   create: Indicates whether it can be specified for the "Create Storage
-#     Group" operation.
-#   update: Indicates whether it can be specified for the "Modify Storage
-#     Group Properties" operation (at all).
+#   create: Indicates whether it can be specified for the "Create User"
+#    operation.
+#   update: Indicates whether it can be specified for the "Modify User
+#     Properties" operation (at all).
 #   update_while_active: Indicates whether it can be specified for the "Modify
 #     User Properties" operation while the user is attached
 #     to any partition. None means "not applicable" (used for update=False).
@@ -362,21 +377,21 @@ def process_properties(console, user, params):
     for prop_name in ('type', 'authentication_type'):
         if prop_name not in input_props:
             raise ParameterError(
-                "Property {!r} is required but is missing in the module "
+                "Property {0!r} is required but is missing in the module "
                 "input parameters.".format(prop_name))
     auth_type = input_props['authentication_type']
     if auth_type == 'local':
         for prop_name in ('password_rule_name', 'password'):
             if prop_name not in input_props:
                 raise ParameterError(
-                    "Property {!r} is required for "
+                    "Property {0!r} is required for "
                     "authentication_type='local' but is missing in the "
                     "module input parameters.".format(prop_name))
     if auth_type == 'ldap':
         for prop_name in ('ldap_server_definition_name', ):
             if prop_name not in input_props:
                 raise ParameterError(
-                    "Property {!r} is required for "
+                    "Property {0!r} is required for "
                     "authentication_type='ldap' but is missing in the "
                     "module input parameters.".format(prop_name))
 
@@ -384,7 +399,7 @@ def process_properties(console, user, params):
 
         if prop_name not in ZHMC_USER_PROPERTIES:
             raise ParameterError(
-                "Property {!r} is not defined in the data model for "
+                "Property {0!r} is not defined in the data model for "
                 "users.".format(prop_name))
 
         allowed, create, update, update_while_active, eq_func, type_cast = \
@@ -392,7 +407,7 @@ def process_properties(console, user, params):
 
         if not allowed:
             raise ParameterError(
-                "Property {!r} is not allowed in the 'properties' module "
+                "Property {0!r} is not allowed in the 'properties' module "
                 "parameter.".format(prop_name))
 
         # Process artificial properties allowed in input parameters
@@ -443,7 +458,7 @@ def process_properties(console, user, params):
             default_group_name = input_props[prop_name]
             # TODO: Add support for Group objects to zhmcclient
             # default_group = console.groups.find_by_name(default_group_name)
-            default_group_uri = 'fake-uri-{}'.format(default_group_name)
+            default_group_uri = 'fake-uri-{0}'.format(default_group_name)
             if user is None:
                 create_props['default-group-uri'] = default_group_uri
             elif user.prop('default-group-uri') != default_group_uri:
@@ -455,8 +470,8 @@ def process_properties(console, user, params):
             prop_name, ZHMC_USER_PROPERTIES, input_props, user)
         create_props.update(_create_props)
         update_props.update(_update_props)
-        assert _stop is False
-
+        if _stop:
+            raise AssertionError()
     return create_props, update_props
 
 
@@ -518,7 +533,8 @@ def add_artificial_properties(console, user, expand, check_mode):
         # For that type, the property exists, but may be null.
         # Note: For other types, the property does not exist.
         user_pattern_uri = user.properties['user-pattern-uri']
-        assert user_pattern_uri is not None
+        if user_pattern_uri is None:
+            raise AssertionError()
         user_pattern = console.user_patterns.resource_object(user_pattern_uri)
         if check_mode:
             user.properties['user-pattern-name'] = user_pattern.oid
@@ -534,7 +550,8 @@ def add_artificial_properties(console, user, expand, check_mode):
         # For that auth type, the property exists and is non-null.
         # Note: For other auth types, the property does not exist.
         password_rule_uri = user.properties['password-rule-uri']
-        assert password_rule_uri is not None
+        if password_rule_uri is None:
+            raise AssertionError()
         password_rule = console.password_rules.resource_object(
             password_rule_uri)
         if check_mode:
@@ -552,7 +569,8 @@ def add_artificial_properties(console, user, expand, check_mode):
         # For that auth type, the property exists and is non-null.
         # Note: For other auth types, the property exists and is null.
         ldap_srv_def_uri = user.properties['ldap-server-definition-uri']
-        assert ldap_srv_def_uri is not None
+        if ldap_srv_def_uri is None:
+            raise AssertionError()
         ldap_srv_def = console.ldap_srv_defs.resource_object(ldap_srv_def_uri)
         if check_mode:
             user.properties['ldap-server-definition-name'] = ldap_srv_def.oid
@@ -588,7 +606,7 @@ def create_check_mode_user(console, create_props, update_props):
 
     # Defaults for some read-only properties
     if type_ == 'pattern-based':
-        props['user-pattern-uri'] = 'fake-uri-{}'.format(uuid.uuid4())
+        props['user-pattern-uri'] = 'fake-uri-{0}'.format(uuid.uuid4())
     props['password-expires'] = -1
     props['user-roles'] = []
     props['replication-overwrite-possible'] = False
@@ -596,7 +614,7 @@ def create_check_mode_user(console, create_props, update_props):
     props.update(create_props)
     props.update(update_props)
 
-    user_oid = 'fake-{}'.format(uuid.uuid4())
+    user_oid = 'fake-{0}'.format(uuid.uuid4())
     user = console.users.resource_object(user_oid, props=props)
 
     return user
@@ -605,9 +623,6 @@ def create_check_mode_user(console, create_props, update_props):
 def ensure_present(params, check_mode):
     """
     Ensure that the user exists and has the specified properties.
-
-    Storage volumes are not subject of this function, they are handled by the
-    zhmc_storage_volume.py module.
 
     Raises:
       ParameterError: An issue with the module parameters.
@@ -660,12 +675,13 @@ def ensure_present(params, check_mode):
             user.pull_full_properties()
             create_props, update_props = process_properties(
                 console, user, params)
-            assert not create_props, \
-                "Unexpected create_props: %r" % create_props
+            if create_props:
+                raise AssertionError("Unexpected "
+                                     "create_props: %r" % create_props)
             if update_props:
                 LOGGER.debug(
-                    "Existing user {!r} needs to get properties updated: {!r}".
-                    format(user_name, update_props))
+                    "Existing user %r needs to get properties updated: %r",
+                    user_name, update_props)
                 if not check_mode:
                     user.update_properties(update_props)
                     # We refresh the properties after the update, in case an
@@ -676,7 +692,8 @@ def ensure_present(params, check_mode):
                     user.properties.update(update_props)
                 changed = True
 
-        assert user
+        if not user:
+            raise AssertionError()
         add_artificial_properties(console, user, expand, check_mode)
         result = user.properties
 
@@ -726,8 +743,7 @@ def ensure_absent(params, check_mode):
 
 def facts(params, check_mode):
     """
-    Return facts about a user and its storage volumes and virtual
-    storage resources.
+    Return facts about a user.
 
     Raises:
       ParameterError: An issue with the module parameters.
@@ -795,19 +811,29 @@ def main():
         properties=dict(required=False, type='dict', default={}),
         expand=dict(required=False, type='bool', default=False),
         log_file=dict(required=False, type='str', default=None),
-        faked_session=dict(required=False, type='object'),
+        faked_session=dict(required=False, type='raw'),
     )
 
     module = AnsibleModule(
         argument_spec=argument_spec,
         supports_check_mode=True)
 
+    if not IMP_URLLIB3:
+        module.fail_json(msg=missing_required_lib("requests"),
+                         exception=IMP_URLLIB3_ERR)
+
+    requests.packages.urllib3.disable_warnings()
+
+    if not IMP_ZHMCCLIENT:
+        module.fail_json(msg=missing_required_lib("zhmcclient"),
+                         exception=IMP_ZHMCCLIENT_ERR)
+
     log_file = module.params['log_file']
     log_init(LOGGER_NAME, log_file)
 
     _params = dict(module.params)
     del _params['hmc_auth']
-    LOGGER.debug("Module entry: params: {!r}".format(_params))
+    LOGGER.debug("Module entry: params: %r", _params)
 
     try:
 
@@ -817,20 +843,17 @@ def main():
         # These exceptions are considered errors in the environment or in user
         # input. They have a proper message that stands on its own, so we
         # simply pass that message on and will not need a traceback.
-        msg = "{}: {}".format(exc.__class__.__name__, exc)
+        msg = "{0}: {1}".format(exc.__class__.__name__, exc)
         LOGGER.debug(
-            "Module exit (failure): msg: {!r}".
-            format(msg))
+            "Module exit (failure): msg: %s", msg)
         module.fail_json(msg=msg)
     # Other exceptions are considered module errors and are handled by Ansible
     # by showing the traceback.
 
     LOGGER.debug(
-        "Module exit (success): changed: {!r}, user: {!r}".
-        format(changed, result))
+        "Module exit (success): changed: %r, user: %r", changed, result)
     module.exit_json(changed=changed, user=result)
 
 
 if __name__ == '__main__':
-    requests.packages.urllib3.disable_warnings()
     main()
