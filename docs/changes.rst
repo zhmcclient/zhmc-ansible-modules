@@ -30,6 +30,9 @@ Released: not yet
 
 **Bug fixes:**
 
+* Fixed AttributeError when using the zhmc_adapter module to create a
+  HiperSockets adapter. (see issue #141)
+
 **Enhancements:**
 
 **Known issues:**

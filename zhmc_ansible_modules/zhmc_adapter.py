@@ -384,13 +384,13 @@ def process_properties(adapter, params):
                 "Invalid adapter property {!r} specified in the 'properties' "
                 "module parameter.".format(prop_name))
 
-        if prop_name == 'type':
+        if adapter and prop_name == 'type':
             # Determine need to change the adapter type
             _current_adapter_type = adapter.properties.get('type', None)
             _input_adapter_type = input_props[prop_name]
             if _input_adapter_type != _current_adapter_type:
                 change_adapter_type = _input_adapter_type
-        elif prop_name == 'crypto_type':
+        elif adapter and prop_name == 'crypto_type':
             # Determine need to change the crypto type
             _current_crypto_type = adapter.properties.get('crypto-type', None)
             _input_crypto_type = CRYPTO_TYPES_MOD2HMC[input_props[prop_name]]
@@ -563,7 +563,8 @@ def ensure_present(params, check_mode):
                     "Hipersockets adapter {!r} (must specify 'hipersockets').".
                     format(adapter_type, adapter_name))
 
-            create_props, update_props = process_properties(adapter, params)
+            create_props, update_props, _, _ = \
+                process_properties(adapter, params)
 
             # This is specific to Hipersockets: There are no update-only
             # properties, so any remaining such property is an input error
