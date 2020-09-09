@@ -39,6 +39,9 @@ Released: not yet
 * Fixed issues with parameters in exception messages raised in
   zhmc_storage_group and zhmc_user.
 
+* Fixed AttributeError when using the zhmc_adapter module to create a
+  HiperSockets adapter. (see issue #141)
+
 **Enhancements:**
 
 * Added end2end test support, against real HMCs.
