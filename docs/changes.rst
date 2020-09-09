@@ -19,27 +19,15 @@ Change log
 ----------
 
 
-Version 0.8.1.dev1
-^^^^^^^^^^^^^^^^^^
+Version 0.8.1
+^^^^^^^^^^^^^
 
-Released: not yet
-
-**Incompatible changes:**
-
-**Deprecations:**
+Released: 2020-09-09
 
 **Bug fixes:**
 
 * Fixed AttributeError when using the zhmc_adapter module to create a
   HiperSockets adapter. (see issue #141)
-
-**Enhancements:**
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 0.8.0
