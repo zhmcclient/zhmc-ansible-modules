@@ -39,6 +39,9 @@ Released: not yet
 * Fixed issues with parameters in exception messages raised in
   zhmc_storage_group and zhmc_user.
 
+* Test: Fixed dependency issues with 'pyrsistent' package (used by jupyter
+  notebook) on Python 2.7 and Python 3.4.
+
 **Enhancements:**
 
 * Added end2end test support, against real HMCs.
