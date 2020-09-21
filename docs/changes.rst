@@ -30,6 +30,8 @@ Released: not yet
 
 **Bug fixes:**
 
+* Fixed ParameterError raised when creating NICs on CNA adapter ports.
+
 **Enhancements:**
 
 **Known issues:**
