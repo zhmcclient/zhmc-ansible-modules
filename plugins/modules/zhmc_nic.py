@@ -384,7 +384,7 @@ def process_properties(partition, nic, params):
 
         # The rest of it depends on the network adapter family:
         adapter_family = adapter.get_property('adapter-family')
-        if adapter_family == 'roce':
+        if adapter_family in ('roce', 'cna'):
             # Here we perform the same logic as in the property loop, just now
             # simplified by the knowledge about the property flags (create,
             # update, etc.).
