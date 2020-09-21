@@ -594,7 +594,7 @@ def ensure_present(params, check_mode):
                     "(must specify 'hipersockets').".
                     format(adapter_type, adapter_name))
 
-            create_props, update_props, _, _ = \
+            create_props, update_props, _chg_adapter_type, _chg_crypto_type = \
                 process_properties(adapter, params)
 
             # This is specific to Hipersockets: There are no update-only
