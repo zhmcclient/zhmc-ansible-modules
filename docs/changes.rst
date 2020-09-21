@@ -42,6 +42,8 @@ Released: not yet
 * Fixed AttributeError when using the zhmc_adapter module to create a
   HiperSockets adapter. (see issue #141)
 
+* Fixed ParameterError raised when creating NICs on CNA adapter ports.
+
 **Enhancements:**
 
 * Added end2end test support, against real HMCs.
