@@ -238,6 +238,9 @@ LOGGER = logging.getLogger(LOGGER_NAME)
 #     means to use it directly. This can be used for example to convert
 #     integers provided as strings by Ansible back into integers (that is a
 #     current deficiency of Ansible).
+# Note: This should always represent the latest version of the HMC/SE.
+# Attempts to set a property that does not exist or that is not writeable in
+# the target HMC will be handled by the HMC rejecting the operation.
 ZHMC_NIC_PROPERTIES = {
 
     # create+update properties:
@@ -255,11 +258,22 @@ ZHMC_NIC_PROPERTIES = {
     'adapter_port': (
         True, True, True, True, None,
         None),  # artificial property, type_cast ignored
+    # The ssc-*, vlan-id and mac-address properties were introduced in
+    # API version 2.2 (an update of SE 2.13.1).
+    # The mac-address property was changed to be writeable in API version 2.20
+    # (SE 2.14.0).
     'ssc_management_nic': (True, True, True, True, None, None),
     'ssc_ip_address_type': (True, True, True, True, None, None),
     'ssc_ip_address': (True, True, True, True, None, None),
     'ssc_mask_prefix': (True, True, True, True, None, None),
     'vlan_id': (True, True, True, True, None, int),
+    'mac_address': (True, True, True, None, eq_mac, None),
+    # The vlan-type property was introduced in API version 2.20 (SE 2.14.0).
+    'vlan_type': (True, True, True, True, None, None),
+    # The function-* properties were introduced in API version 3.4
+    # (SE 2.15 GA2).
+    'function_number': (True, True, True, True, None, int),
+    'function_range': (True, True, True, True, None, int),
 
     # read-only properties:
     'element-uri': (False, False, False, None, None, None),
@@ -267,7 +281,6 @@ ZHMC_NIC_PROPERTIES = {
     'parent': (False, False, False, None, None, None),
     'class': (False, False, False, None, None, None),
     'type': (False, False, False, None, None, None),
-    'mac_address': (False, False, False, None, eq_mac, None),
 }
 
 
