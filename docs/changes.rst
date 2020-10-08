@@ -32,6 +32,10 @@ Released: not yet
 
 **Enhancements:**
 
+* In the zhmc_nic module, updated the definition of NIC properties to the z15
+  machine generation. This makes the 'mac_address' property writeable, and adds
+  the 'vlan_type', 'function_number' and 'function_range' properties.
+
 **Known issues:**
 
 * See `list of open issues`_.
