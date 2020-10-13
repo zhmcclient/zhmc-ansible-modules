@@ -84,22 +84,22 @@ Options
         </tr>
 
         <tr>
-        <td>password<br/><div style="font-size: small;"></div></td>
-        <td>yes</td>
-        <td></td>
-        <td></td>
-        <td>
-            <div>The password for authenticating with the HMC.</div>
-        </td>
-        </tr>
-
-        <tr>
         <td>userid<br/><div style="font-size: small;"></div></td>
         <td>yes</td>
         <td></td>
         <td></td>
         <td>
             <div>The userid (username) for authenticating with the HMC.</div>
+        </td>
+        </tr>
+
+        <tr>
+        <td>password<br/><div style="font-size: small;"></div></td>
+        <td>yes</td>
+        <td></td>
+        <td></td>
+        <td>
+            <div>The password for authenticating with the HMC.</div>
         </td>
         </tr>
 
@@ -243,9 +243,9 @@ Common return values are documented here :doc:`common_return_values`, the follow
     <td align=center>success</td>
     <td align=center>dict</td>
     <td align=center><code>{
-      "name": "hba-1",
-      "description": "HBA #1",
-      "adapter-port-uri": "/api/adapters/.../ports/...",
+      &quot;name&quot;: &quot;hba-1&quot;,
+      &quot;description&quot;: &quot;HBA #1&quot;,
+      &quot;adapter-port-uri&quot;: &quot;/api/adapters/.../ports/...&quot;,
       ...
     }</code>
     </td>

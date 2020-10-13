@@ -74,22 +74,22 @@ Options
         </tr>
 
         <tr>
-        <td>password<br/><div style="font-size: small;"></div></td>
-        <td>yes</td>
-        <td></td>
-        <td></td>
-        <td>
-            <div>The password for authenticating with the HMC.</div>
-        </td>
-        </tr>
-
-        <tr>
         <td>userid<br/><div style="font-size: small;"></div></td>
         <td>yes</td>
         <td></td>
         <td></td>
         <td>
             <div>The userid (username) for authenticating with the HMC.</div>
+        </td>
+        </tr>
+
+        <tr>
+        <td>password<br/><div style="font-size: small;"></div></td>
+        <td>yes</td>
+        <td></td>
+        <td></td>
+        <td>
+            <div>The password for authenticating with the HMC.</div>
         </td>
         </tr>
 
@@ -209,26 +209,26 @@ Common return values are documented here :doc:`common_return_values`, the follow
     <tr>
     <td>cpc</td>
     <td>
-        <div>For <code>state=set|facts</code>, a dictionary with the properties of the CPC. The properties contain these additional artificial properties for listing its child resources: - 'partitions': The defined partitions of the CPC, as a dict of key: partition name, value: dict of a subset of the partition properties (name, status, object_uri). - 'adapters': The adapters of the CPC, as a dict of key: adapter name, value: dict of a subset of the adapter properties (name, status, object_uri).</div>
+        <div>For <code>state=set|facts</code>, a dictionary with the properties of the CPC. The properties contain these additional artificial properties for listing its child resources: - &#x27;partitions&#x27;: The defined partitions of the CPC, as a dict of key: partition name, value: dict of a subset of the partition properties (name, status, object_uri). - &#x27;adapters&#x27;: The adapters of the CPC, as a dict of key: adapter name, value: dict of a subset of the adapter properties (name, status, object_uri).</div>
     </td>
     <td align=center>success</td>
     <td align=center>dict</td>
     <td align=center><code>{
-      "name": "CPCA",
-      "description": "CPC A",
-      "status": "active",
-      "acceptable_status": [ "active" ],
+      &quot;name&quot;: &quot;CPCA&quot;,
+      &quot;description&quot;: &quot;CPC A&quot;,
+      &quot;status&quot;: &quot;active&quot;,
+      &quot;acceptable_status&quot;: [ &quot;active&quot; ],
       ...
-      "partitions": [
+      &quot;partitions&quot;: [
         {
-          "name": "part-1",
+          &quot;name&quot;: &quot;part-1&quot;,
           ...
         },
         ...
       ],
-      "adapters": [
+      &quot;adapters&quot;: [
         {
-          "name": "adapter-1",
+          &quot;name&quot;: &quot;adapter-1&quot;,
           ...
         },
         ...

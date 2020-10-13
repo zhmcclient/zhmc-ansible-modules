@@ -84,22 +84,22 @@ Options
         </tr>
 
         <tr>
-        <td>password<br/><div style="font-size: small;"></div></td>
-        <td>yes</td>
-        <td></td>
-        <td></td>
-        <td>
-            <div>The password for authenticating with the HMC.</div>
-        </td>
-        </tr>
-
-        <tr>
         <td>userid<br/><div style="font-size: small;"></div></td>
         <td>yes</td>
         <td></td>
         <td></td>
         <td>
             <div>The userid (username) for authenticating with the HMC.</div>
+        </td>
+        </tr>
+
+        <tr>
+        <td>password<br/><div style="font-size: small;"></div></td>
+        <td>yes</td>
+        <td></td>
+        <td></td>
+        <td>
+            <div>The password for authenticating with the HMC.</div>
         </td>
         </tr>
 
@@ -241,9 +241,9 @@ Common return values are documented here :doc:`common_return_values`, the follow
     <td align=center>success</td>
     <td align=center>dict</td>
     <td align=center><code>{
-      "name": "vfunction-1",
-      "description": "virtual function #1",
-      "adapter-uri': "/api/adapters/...",
+      &quot;name&quot;: &quot;vfunction-1&quot;,
+      &quot;description&quot;: &quot;virtual function #1&quot;,
+      &quot;adapter-uri&#x27;: &quot;/api/adapters/...&quot;,
       ...
     }</code>
     </td>

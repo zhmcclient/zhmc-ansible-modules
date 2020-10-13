@@ -84,22 +84,22 @@ Options
         </tr>
 
         <tr>
-        <td>password<br/><div style="font-size: small;"></div></td>
-        <td>yes</td>
-        <td></td>
-        <td></td>
-        <td>
-            <div>The password for authenticating with the HMC.</div>
-        </td>
-        </tr>
-
-        <tr>
         <td>userid<br/><div style="font-size: small;"></div></td>
         <td>yes</td>
         <td></td>
         <td></td>
         <td>
             <div>The userid (username) for authenticating with the HMC.</div>
+        </td>
+        </tr>
+
+        <tr>
+        <td>password<br/><div style="font-size: small;"></div></td>
+        <td>yes</td>
+        <td></td>
+        <td></td>
+        <td>
+            <div>The password for authenticating with the HMC.</div>
         </td>
         </tr>
 
@@ -227,11 +227,11 @@ Common return values are documented here :doc:`common_return_values`, the follow
     <tr>
     <td>storage_group_attachment</td>
     <td>
-        <div>A dictionary with a single key 'attached' whose boolean value indicates whether the storage group is now actually attached to the partition. If check mode was requested, the actual (i.e. not the desired) attachment state is returned.</div>
+        <div>A dictionary with a single key &#x27;attached&#x27; whose boolean value indicates whether the storage group is now actually attached to the partition. If check mode was requested, the actual (i.e. not the desired) attachment state is returned.</div>
     </td>
     <td align=center>success</td>
     <td align=center>dict</td>
-    <td align=center><code>{"attached": true}</code>
+    <td align=center><code>{&quot;attached&quot;: true}</code>
     </td>
     </tr>
 

@@ -94,22 +94,22 @@ Options
         </tr>
 
         <tr>
-        <td>password<br/><div style="font-size: small;"></div></td>
-        <td>yes</td>
-        <td></td>
-        <td></td>
-        <td>
-            <div>The password for authenticating with the HMC.</div>
-        </td>
-        </tr>
-
-        <tr>
         <td>userid<br/><div style="font-size: small;"></div></td>
         <td>yes</td>
         <td></td>
         <td></td>
         <td>
             <div>The userid (username) for authenticating with the HMC.</div>
+        </td>
+        </tr>
+
+        <tr>
+        <td>password<br/><div style="font-size: small;"></div></td>
+        <td>yes</td>
+        <td></td>
+        <td></td>
+        <td>
+            <div>The password for authenticating with the HMC.</div>
         </td>
         </tr>
 
@@ -260,8 +260,8 @@ Common return values are documented here :doc:`common_return_values`, the follow
     <td align=center>success</td>
     <td align=center>dict</td>
     <td align=center><code>{
-      "name": "sg-1",
-      "description": "storage group #1",
+      &quot;name&quot;: &quot;sg-1&quot;,
+      &quot;description&quot;: &quot;storage group #1&quot;,
       ...
     }</code>
     </td>
