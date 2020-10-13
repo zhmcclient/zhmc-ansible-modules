@@ -125,22 +125,22 @@ Options
         </tr>
 
         <tr>
-        <td>password<br/><div style="font-size: small;"></div></td>
-        <td>yes</td>
-        <td></td>
-        <td></td>
-        <td>
-            <div>The password for authenticating with the HMC.</div>
-        </td>
-        </tr>
-
-        <tr>
         <td>userid<br/><div style="font-size: small;"></div></td>
         <td>yes</td>
         <td></td>
         <td></td>
         <td>
             <div>The userid (username) for authenticating with the HMC.</div>
+        </td>
+        </tr>
+
+        <tr>
+        <td>password<br/><div style="font-size: small;"></div></td>
+        <td>yes</td>
+        <td></td>
+        <td></td>
+        <td>
+            <div>The password for authenticating with the HMC.</div>
         </td>
         </tr>
 
@@ -275,25 +275,25 @@ Common return values are documented here :doc:`common_return_values`, the follow
     <tr>
     <td>crypto_configuration</td>
     <td>
-        <div>For <code>state=detached|attached|facts</code>, a dictionary with the crypto configuration of the partition after the changes applied by the module. Key is the partition name, and value is a dictionary with keys: - 'adapters': attached adapters, as a dict of key: adapter name, value: dict of adapter properties; - 'domain_config': attached domains, as a dict of key: domain index, value: access mode ('control' or 'usage'); - 'usage_domains': domains attached in usage mode, as a list of domain index numbers; - 'control_domains': domains attached in control mode, as a list of domain index numbers.</div>
+        <div>For <code>state=detached|attached|facts</code>, a dictionary with the crypto configuration of the partition after the changes applied by the module. Key is the partition name, and value is a dictionary with keys: - &#x27;adapters&#x27;: attached adapters, as a dict of key: adapter name, value: dict of adapter properties; - &#x27;domain_config&#x27;: attached domains, as a dict of key: domain index, value: access mode (&#x27;control&#x27; or &#x27;usage&#x27;); - &#x27;usage_domains&#x27;: domains attached in usage mode, as a list of domain index numbers; - &#x27;control_domains&#x27;: domains attached in control mode, as a list of domain index numbers.</div>
     </td>
     <td align=center>success</td>
     <td align=center>dict</td>
     <td align=center><code>{
-      "part-1": {
-        "adapters": {
-          "adapter 1": {
-            "type": "crypto",
+      &quot;part-1&quot;: {
+        &quot;adapters&quot;: {
+          &quot;adapter 1&quot;: {
+            &quot;type&quot;: &quot;crypto&quot;,
             ...
           }
         },
-        "domain_config": {
-          "0": "usage",
-          "1": "control",
-          "2": "control"
+        &quot;domain_config&quot;: {
+          &quot;0&quot;: &quot;usage&quot;,
+          &quot;1&quot;: &quot;control&quot;,
+          &quot;2&quot;: &quot;control&quot;
         }
-        "usage_domains": [0],
-        "control_domains": [1, 2]
+        &quot;usage_domains&quot;: [0],
+        &quot;control_domains&quot;: [1, 2]
       }
     }</code>
     </td>
@@ -307,8 +307,8 @@ Common return values are documented here :doc:`common_return_values`, the follow
     <td align=center>success</td>
     <td align=center>dict</td>
     <td align=center><code>{
-      "added-adapters": ["adapter 1", "adapter 2"],
-      "added-domains": ["0", "1"]
+      &quot;added-adapters&quot;: [&quot;adapter 1&quot;, &quot;adapter 2&quot;],
+      &quot;added-domains&quot;: [&quot;0&quot;, &quot;1&quot;]
     }</code>
     </td>
     </tr>

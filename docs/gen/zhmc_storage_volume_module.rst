@@ -84,22 +84,22 @@ Options
         </tr>
 
         <tr>
-        <td>password<br/><div style="font-size: small;"></div></td>
-        <td>yes</td>
-        <td></td>
-        <td></td>
-        <td>
-            <div>The password for authenticating with the HMC.</div>
-        </td>
-        </tr>
-
-        <tr>
         <td>userid<br/><div style="font-size: small;"></div></td>
         <td>yes</td>
         <td></td>
         <td></td>
         <td>
             <div>The userid (username) for authenticating with the HMC.</div>
+        </td>
+        </tr>
+
+        <tr>
+        <td>password<br/><div style="font-size: small;"></div></td>
+        <td>yes</td>
+        <td></td>
+        <td></td>
+        <td>
+            <div>The password for authenticating with the HMC.</div>
         </td>
         </tr>
 
@@ -246,13 +246,13 @@ Common return values are documented here :doc:`common_return_values`, the follow
     <td>
         <div>For <code>state=absent</code>, an empty dictionary.</div>
         <div>For <code>state=present|facts</code>, a dictionary with the resource properties of the storage volume, indicating the state after changes from this module (if any) have been applied. The dictionary keys are the exact property names as described in the data model for the resource, i.e. they contain hyphens (-), not underscores (_). The dictionary values are the property values using the Python representations described in the documentation of the zhmcclient Python package. The additional artificial properties are:</div>
-        <div>* <code>type</code>: Type of the storage volume ('fc' or 'fcp'), as defined in its storage group.</div>
+        <div>* <code>type</code>: Type of the storage volume (&#x27;fc&#x27; or &#x27;fcp&#x27;), as defined in its storage group.</div>
     </td>
     <td align=center>success</td>
     <td align=center>dict</td>
     <td align=center><code>{
-      "name": "sv-1",
-      "description": "storage volume #1",
+      &quot;name&quot;: &quot;sv-1&quot;,
+      &quot;description&quot;: &quot;storage volume #1&quot;,
       ...
     }</code>
     </td>

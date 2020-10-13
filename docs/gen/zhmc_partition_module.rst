@@ -85,22 +85,22 @@ Options
         </tr>
 
         <tr>
-        <td>password<br/><div style="font-size: small;"></div></td>
-        <td>yes</td>
-        <td></td>
-        <td></td>
-        <td>
-            <div>The password for authenticating with the HMC.</div>
-        </td>
-        </tr>
-
-        <tr>
         <td>userid<br/><div style="font-size: small;"></div></td>
         <td>yes</td>
         <td></td>
         <td></td>
         <td>
             <div>The userid (username) for authenticating with the HMC.</div>
+        </td>
+        </tr>
+
+        <tr>
+        <td>password<br/><div style="font-size: small;"></div></td>
+        <td>yes</td>
+        <td></td>
+        <td></td>
+        <td>
+            <div>The password for authenticating with the HMC.</div>
         </td>
         </tr>
 
@@ -168,8 +168,8 @@ Options
     <td>
         <div>The desired state for the target partition:</div>
         <div><code>absent</code>: Ensures that the partition does not exist in the specified CPC.</div>
-        <div><code>stopped</code>: Ensures that the partition exists in the specified CPC, has the specified properties, and is in the 'stopped' status.</div>
-        <div><code>active</code>: Ensures that the partition exists in the specified CPC, has the specified properties, and is in the 'active' or 'degraded' status.</div>
+        <div><code>stopped</code>: Ensures that the partition exists in the specified CPC, has the specified properties, and is in the &#x27;stopped&#x27; status.</div>
+        <div><code>active</code>: Ensures that the partition exists in the specified CPC, has the specified properties, and is in the &#x27;active&#x27; or &#x27;degraded&#x27; status.</div>
         <div><code>facts</code>: Does not change anything on the partition and returns the partition properties and the properties of its child resources (HBAs, NICs, and virtual functions).</div>
     </td>
     </tr>
@@ -285,15 +285,15 @@ Common return values are documented here :doc:`common_return_values`, the follow
     <td>
         <div>For <code>state=absent</code>, an empty dictionary.</div>
         <div>For <code>state=stopped</code> and <code>state=active</code>, a dictionary with the resource properties of the partition (after changes, if any). The dictionary keys are the exact property names as described in the data model for the resource, i.e. they contain hyphens (-), not underscores (_). The dictionary values are the property values using the Python representations described in the documentation of the zhmcclient Python package.</div>
-        <div>For <code>state=facts</code>, a dictionary with the resource properties of the partition, including its child resources (HBAs, NICs, and virtual functions). The dictionary keys are the exact property names as described in the data model for the resource, i.e. they contain hyphens (-), not underscores (_). The dictionary values are the property values using the Python representations described in the documentation of the zhmcclient Python package. The properties of the child resources are represented in partition properties named 'hbas', 'nics', and 'virtual-functions', respectively.</div>
+        <div>For <code>state=facts</code>, a dictionary with the resource properties of the partition, including its child resources (HBAs, NICs, and virtual functions). The dictionary keys are the exact property names as described in the data model for the resource, i.e. they contain hyphens (-), not underscores (_). The dictionary values are the property values using the Python representations described in the documentation of the zhmcclient Python package. The properties of the child resources are represented in partition properties named &#x27;hbas&#x27;, &#x27;nics&#x27;, and &#x27;virtual-functions&#x27;, respectively.</div>
     </td>
     <td align=center>success</td>
     <td align=center>dict</td>
     <td align=center><code>{
-      "name": "part-1",
-      "description": "partition #1",
-      "status": "active",
-      "boot-device": "storage-adapter",
+      &quot;name&quot;: &quot;part-1&quot;,
+      &quot;description&quot;: &quot;partition #1&quot;,
+      &quot;status&quot;: &quot;active&quot;,
+      &quot;boot-device&quot;: &quot;storage-adapter&quot;,
       ...
     }</code>
     </td>

@@ -74,22 +74,22 @@ Options
         </tr>
 
         <tr>
-        <td>password<br/><div style="font-size: small;"></div></td>
-        <td>yes</td>
-        <td></td>
-        <td></td>
-        <td>
-            <div>The password for authenticating with the HMC.</div>
-        </td>
-        </tr>
-
-        <tr>
         <td>userid<br/><div style="font-size: small;"></div></td>
         <td>yes</td>
         <td></td>
         <td></td>
         <td>
             <div>The userid (username) for authenticating with the HMC.</div>
+        </td>
+        </tr>
+
+        <tr>
+        <td>password<br/><div style="font-size: small;"></div></td>
+        <td>yes</td>
+        <td></td>
+        <td></td>
+        <td>
+            <div>The password for authenticating with the HMC.</div>
         </td>
         </tr>
 
@@ -154,8 +154,8 @@ Options
         <div>The parameter is a dictionary. The key of each dictionary item is the property name as specified in the data model for adapter resources, with underscores instead of hyphens. The value of each dictionary item is the property value (in YAML syntax). Integer properties may also be provided as decimal strings.</div>
         <div>The possible properties in this dictionary are the properties defined as writeable in the data model for adapter resources, with the following exceptions:</div>
         <div>* <code>name</code>: Cannot be specified as a property because the name has already been specified in the <code>name</code> module parameter.</div>
-        <div>* <code>type</code>: The desired adapter type can be specified in order to support adapters that can change their type (e.g. the FICON Express adapter can change its type between 'not-configured', 'fcp' and 'fc').</div>
-        <div>* <code>crypto_type</code>: The crypto type can be specified in order to support the ability of the Crypto Express adapters to change their crypto type. Valid values are 'ep11', 'cca' and 'acc'. Changing to 'acc' will zeroize the crypto adapter.</div>
+        <div>* <code>type</code>: The desired adapter type can be specified in order to support adapters that can change their type (e.g. the FICON Express adapter can change its type between &#x27;not-configured&#x27;, &#x27;fcp&#x27; and &#x27;fc&#x27;).</div>
+        <div>* <code>crypto_type</code>: The crypto type can be specified in order to support the ability of the Crypto Express adapters to change their crypto type. Valid values are &#x27;ep11&#x27;, &#x27;cca&#x27; and &#x27;acc&#x27;. Changing to &#x27;acc&#x27; will zeroize the crypto adapter.</div>
     </td>
     </tr>
 
@@ -265,19 +265,19 @@ Common return values are documented here :doc:`common_return_values`, the follow
     <td>cpc</td>
     <td>
         <div>For <code>state=absent</code>, an empty dictionary.</div>
-        <div>For <code>state=set|present|facts</code>, a dictionary with the properties of the adapter. The properties contain these additional artificial properties for listing its child resources: - 'ports': The ports of the adapter, as a dict of key: port name, value: dict of a subset of the port properties (name, status, element_uri).</div>
+        <div>For <code>state=set|present|facts</code>, a dictionary with the properties of the adapter. The properties contain these additional artificial properties for listing its child resources: - &#x27;ports&#x27;: The ports of the adapter, as a dict of key: port name, value: dict of a subset of the port properties (name, status, element_uri).</div>
     </td>
     <td align=center>success</td>
     <td align=center>dict</td>
     <td align=center><code>{
-      "name": "adapter-1",
-      "description": "Adapter 1",
-      "status": "active",
-      "acceptable_status": [ "active" ],
+      &quot;name&quot;: &quot;adapter-1&quot;,
+      &quot;description&quot;: &quot;Adapter 1&quot;,
+      &quot;status&quot;: &quot;active&quot;,
+      &quot;acceptable_status&quot;: [ &quot;active&quot; ],
       ...
-      "ports": [
+      &quot;ports&quot;: [
         {
-          "name": "Port 0",
+          &quot;name&quot;: &quot;Port 0&quot;,
           ...
         },
         ...
