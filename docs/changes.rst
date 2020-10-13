@@ -39,6 +39,31 @@ Released: not yet
   machine generation. This makes the 'mac_address' property writeable, and adds
   the 'vlan_type', 'function_number' and 'function_range' properties.
 
+* zhmc_cpc: Added an artificial property 'storage-groups' to the output
+  that shows the storage groups attached to the partition, with only a subset
+  of their properties.
+
+* zhmc_partition: Added an artificial property 'storage-groups' to the output
+  that shows the storage groups attached to the partition, with all of their
+  properties and artificial properties as in the result of zhmc_storage_group.
+  This is enabled by the new boolean input parameter 'expand_storage_groups'.
+
+* zhmc_partition: Added an artificial property 'crypto-adapters' to the
+  'crypto-configuration' property, showing the adapter properties of the
+  crypto adapters attached to the partition, with all of their properties and
+  artificial properties as in the result of zhmc_adapter. This is enabled by
+  the new boolean input parameter 'expand_crypto_adapters'.
+
+* zhmc_partition: Added artificial properties to the 'nics' property:
+
+  * 'adapter-name': Name of the adapter backing the NIC
+  * 'adapter-port': Port index on the adapter backing the NIC
+  * 'adapter-id': Adapter ID (PCHID) of the adapter backing the NIC
+
+* Examples: Added an example playbook 'get_cpc_io.yml' which retrieves
+  information about a CPC in DPM mode and its I/O configuration and
+  creates a markdown file showing the result.
+
 **Known issues:**
 
 * See `list of open issues`_.

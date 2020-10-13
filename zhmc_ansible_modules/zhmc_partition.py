@@ -16,6 +16,7 @@
 from __future__ import absolute_import, print_function
 
 import logging
+from collections import OrderedDict
 from ansible.module_utils.basic import AnsibleModule
 from operator import itemgetter
 import requests.packages.urllib3
@@ -140,6 +141,25 @@ options:
          is being created."
     required: false
     default: No input properties
+  expand_storage_groups:
+    description:
+      - "Boolean that controls whether the returned partition contains
+         an additional artificial property 'storage-groups' that is the list
+         of storage groups attached to the partition, with properties as
+         described for the zhmc_storage_group module with expand=true."
+    required: false
+    type: bool
+    default: false
+  expand_crypto_adapters:
+    description:
+      - "Boolean that controls whether the returned partition contains
+         an additional artificial property 'crypto-adapters' in its
+         'crypto-configuration' property that is the list
+         of crypto adapters attached to the partition, with properties as
+         described for the zhmc_adapter module."
+    required: false
+    type: bool
+    default: false
   log_file:
     description:
       - "File path of a log file to which the logic flow of this module as well
@@ -231,6 +251,8 @@ EXAMPLES = """
     cpc_name: "{{ my_cpc_name }}"
     name: "{{ my_partition_name }}"
     state: facts
+    expand_storage_groups: true
+    expand_crypto_adapters: true
   register: part1
 
 """
@@ -254,7 +276,8 @@ partition:
        using the Python representations described in the documentation of the
        zhmcclient Python package. The properties of the child resources are
        represented in partition properties named 'hbas', 'nics', and
-       'virtual-functions', respectively."
+       'virtual-functions', respectively. The NIC properties are amended by
+       artificial properties 'adapter-name', 'adapter-port', 'adapter-id'."
   returned: success
   type: dict
   sample: |
@@ -724,6 +747,149 @@ def change_crypto_config(partition, crypto_changes, check_mode):
     return changed
 
 
+def add_artificial_properties(
+        partition, expand_storage_groups, expand_crypto_adapters):
+    """
+    Add artificial properties to the partition object.
+
+    Upon return, the properties of the partition object have been
+    extended by these artificial properties:
+
+    * 'hbas': List of Hba objects of the partition.
+
+    * 'nics': List of Nic objects of the partition, with their properties
+      and these artificial properties:
+
+        * 'adapter-name'
+        * 'adapter-port'
+        * 'adapter-id'
+
+    * 'virtual-functions': List of VirtualFunction objects of the partition.
+
+    and if expand_storage_groups is True:
+
+    * 'storage-groups': List of StorageGroup objects representing the
+      storage groups attached to the partition, with their properties
+      and these artificial properties:
+
+        * 'candidate-adapter-ports': List of Port objects representing the
+          candidate adapter ports of the storage group, with their properties
+          and these artificial properties:
+
+            - 'parent-adapter': Adapter object of the port.
+
+        * 'storage-volumes': List of StorageVolume objects of the storage
+          group.
+
+        * 'virtual-storage-resources': List of VirtualStorageResource objects
+          of the storage group.
+
+    and if expand_crypto_adapters is True:
+
+    * 'crypto-adapters' in 'crypto-configuration': List of Adapter objects
+      representing the crypto adapters assigned to the partition.
+    """
+    cpc = partition.manager.cpc
+    console = cpc.manager.console
+    session = cpc.manager.client.session
+
+    # Get the HBA child elements of the partition
+    hbas_prop = list()
+    if partition.hbas is not None:
+        for hba in partition.hbas.list(full_properties=True):
+            hbas_prop.append(hba.properties)
+    partition.properties['hbas'] = hbas_prop
+
+    # Get the NIC child elements of the partition
+    nics_prop = list()
+    for nic in partition.nics.list(full_properties=True):
+        nic_props = OrderedDict()
+        nic_props.update(nic.properties)
+        # Add artificial properties adapter-name/-port/-id:
+        vswitch_uri = nic.prop("virtual-switch-uri", None)
+        if vswitch_uri:
+            # OSA, Hipersockets
+            vswitch = cpc.virtual_switches.find(**{'object-uri': vswitch_uri})
+            adapter_uri = vswitch.get_property('backing-adapter-uri')
+            adapter_port = vswitch.get_property('port')
+            adapter = cpc.adapters.find(**{'object-uri': adapter_uri})
+            nic_props['adapter-name'] = adapter.name
+            nic_props['adapter-port'] = adapter_port
+            nic_props['adapter-id'] = adapter.get_property('adapter-id')
+        else:
+            # RoCE, CNA
+            port_uri = nic.prop("network-adapter-port-uri", None)
+            assert port_uri
+            port_props = session.get(port_uri)
+            adapter_uri = port_props['parent']
+            adapter = cpc.adapters.find(**{'object-uri': adapter_uri})
+            nic_props['adapter-name'] = adapter.name
+            nic_props['adapter-port'] = port_props['index']
+            nic_props['adapter-id'] = adapter.get_property('adapter-id')
+        nics_prop.append(nic_props)
+    partition.properties['nics'] = nics_prop
+
+    # Get the VF child elements of the partition
+    vf_prop = list()
+    for vf in partition.virtual_functions.list(full_properties=True):
+        vf_prop.append(vf.properties)
+    partition.properties['virtual-functions'] = vf_prop
+
+    if expand_storage_groups:
+        sg_prop = list()
+        for sg_uri in partition.properties['storage-group-uris']:
+            storage_group = console.storage_groups.resource_object(sg_uri)
+            storage_group.pull_full_properties()
+            sg_prop.append(storage_group.properties)
+
+            # Candidate adapter ports and their adapters (full set of props)
+            caps_prop = list()
+            for cap in storage_group.list_candidate_adapter_ports(
+                    full_properties=True):
+                adapter = cap.manager.adapter
+                adapter.pull_full_properties()
+                cap.properties['parent-adapter'] = adapter.properties
+                caps_prop.append(cap.properties)
+            storage_group.properties['candidate-adapter-ports'] = caps_prop
+
+            # Storage volumes (full set of properties).
+            # Note: We create the storage volumes from the
+            # 'storage-volume-uris' property, because the 'List Storage
+            # Volumes of a Storage Group' operation returns an empty list for
+            # auto-discovered volumes.
+            svs_prop = list()
+            sv_uris = storage_group.get_property('storage-volume-uris')
+            for sv_uri in sv_uris:
+                sv = storage_group.storage_volumes.resource_object(sv_uri)
+                sv.pull_full_properties()
+                svs_prop.append(sv.properties)
+            storage_group.properties['storage-volumes'] = svs_prop
+
+            # Virtual storage resources (full set of properties).
+            vsrs_prop = list()
+            vsr_uris = storage_group.get_property(
+                'virtual-storage-resource-uris')
+            for vsr_uri in vsr_uris:
+                vsr = storage_group.virtual_storage_resources.resource_object(
+                    vsr_uri)
+                vsr.pull_full_properties()
+                vsrs_prop.append(vsr.properties)
+            storage_group.properties['virtual-storage-resources'] = vsrs_prop
+
+        partition.properties['storage-groups'] = sg_prop
+
+    if expand_crypto_adapters:
+
+        cc = partition.properties['crypto-configuration']
+        if cc:
+            ca_prop = list()
+            for ca_uri in cc['crypto-adapter-uris']:
+                ca = cpc.adapters.resource_object(ca_uri)
+                ca.pull_full_properties()
+                ca_prop.append(ca.properties)
+            cc['crypto-adapters'] = ca_prop
+
+
 def ensure_active(params, check_mode):
     """
     Ensure that the partition exists, is active or degraded, and has the
@@ -739,6 +905,8 @@ def ensure_active(params, check_mode):
     userid, password = get_hmc_auth(params['hmc_auth'])
     cpc_name = params['cpc_name']
     partition_name = params['name']
+    expand_storage_groups = params['expand_storage_groups']
+    expand_crypto_adapters = params['expand_crypto_adapters']
     faked_session = params.get('faked_session', None)
 
     changed = False
@@ -816,6 +984,8 @@ def ensure_active(params, check_mode):
                     "status is: {!r}".format(partition.name, status))
 
         if partition:
+            add_artificial_properties(
+                partition, expand_storage_groups, expand_crypto_adapters)
             result = partition.properties
 
         return changed, result
@@ -839,6 +1009,8 @@ def ensure_stopped(params, check_mode):
     userid, password = get_hmc_auth(params['hmc_auth'])
     cpc_name = params['cpc_name']
     partition_name = params['name']
+    expand_storage_groups = params['expand_storage_groups']
+    expand_crypto_adapters = params['expand_crypto_adapters']
     faked_session = params.get('faked_session', None)
 
     changed = False
@@ -894,6 +1066,8 @@ def ensure_stopped(params, check_mode):
                     "status is: {!r}".format(partition.name, status))
 
         if partition:
+            add_artificial_properties(
+                partition, expand_storage_groups, expand_crypto_adapters)
             result = partition.properties
 
         return changed, result
@@ -956,6 +1130,8 @@ def facts(params, check_mode):
     userid, password = get_hmc_auth(params['hmc_auth'])
     cpc_name = params['cpc_name']
     partition_name = params['name']
+    expand_storage_groups = params['expand_storage_groups']
+    expand_crypto_adapters = params['expand_crypto_adapters']
     faked_session = params.get('faked_session', None)
 
     changed = False
@@ -971,24 +1147,8 @@ def facts(params, check_mode):
         partition = cpc.partitions.find(name=partition_name)
         partition.pull_full_properties()
 
-        # Get the child elements of the partition
-
-        hbas_prop = list()
-        if partition.hbas is not None:
-            for hba in partition.hbas.list(full_properties=True):
-                hbas_prop.append(hba.properties)
-        partition.properties['hbas'] = hbas_prop
-
-        nics_prop = list()
-        for nic in partition.nics.list(full_properties=True):
-            nics_prop.append(nic.properties)
-        partition.properties['nics'] = nics_prop
-
-        vf_prop = list()
-        for vf in partition.virtual_functions.list(full_properties=True):
-            vf_prop.append(vf.properties)
-        partition.properties['virtual-functions'] = vf_prop
-
+        add_artificial_properties(
+            partition, expand_storage_groups, expand_crypto_adapters)
         result = partition.properties
         return changed, result
 
@@ -1030,6 +1190,9 @@ def main():
         state=dict(required=True, type='str',
                    choices=['absent', 'stopped', 'active', 'facts']),
         properties=dict(required=False, type='dict', default={}),
+        expand_storage_groups=dict(required=False, type='bool', default=False),
+        expand_crypto_adapters=dict(required=False, type='bool',
+                                    default=False),
         log_file=dict(required=False, type='str', default=None),
         faked_session=dict(required=False, type='object'),
     )
