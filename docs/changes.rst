@@ -30,6 +30,9 @@ Released: not yet
 
 **Bug fixes:**
 
+* Fixed percent-encoding in the 'zhmc_storage_group' and 'zhmc_storage_volume'
+  modules.
+
 **Enhancements:**
 
 * In the zhmc_nic module, updated the definition of NIC properties to the z15
