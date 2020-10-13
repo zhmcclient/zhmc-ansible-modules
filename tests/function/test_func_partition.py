@@ -36,6 +36,17 @@ FAKED_SESSION_KWARGS = dict(
     api_version='1.8'
 )
 
+# Faked Console that is used for all tests
+# (with property names as specified in HMC data model)
+FAKED_CONSOLE_URI = '/api/console'
+FAKED_CONSOLE = {
+    'object-uri': FAKED_CONSOLE_URI,
+    'class': 'console',
+    'name': 'hmc-1',
+    'description': 'Console HMC1',
+    'version': '2.13.0',
+}
+
 # Faked CPC in DPM mode that is used for all tests
 # (with property names as specified in HMC data model)
 FAKED_CPC_1_OID = 'fake-cpc-1'
@@ -134,6 +145,7 @@ FAKED_PARTITION_1 = {
     'virtual-function-uris': [],
     'nic-uris': [],
     'hba-uris': [],
+    'storage-group-uris': [],
     'crypto-configuration': None,
 
     # SSC-only properties; they are not present for type='linux'
@@ -166,6 +178,8 @@ FAKED_HBA_1 = {
 FAKED_ADAPTER_1_NAME = 'osa adapter #1'
 FAKED_ADAPTER_1_OID = 'fake-osa-adapter-1'
 FAKED_ADAPTER_1_URI = '/api/adapters/' + FAKED_ADAPTER_1_OID
+FAKED_ADAPTER_1_ID = '110'
+FAKED_PORT_1_INDEX = 0
 FAKED_PORT_1_NAME = 'Port #1'
 FAKED_PORT_1_OID = 'fake-port-1'
 FAKED_PORT_1_URI = '/api/adapters/' + FAKED_ADAPTER_1_OID + '/ports/' + \
@@ -184,6 +198,7 @@ FAKED_ADAPTER_1 = {
     'adapter-family': 'osa',
     'port-count': 1,
     'network-port-uris': [FAKED_PORT_1_URI],
+    'adapter-id': FAKED_ADAPTER_1_ID,
 }
 FAKED_PORT_1 = {
     'element-id': FAKED_PORT_1_OID,
@@ -192,7 +207,7 @@ FAKED_PORT_1 = {
     'class': 'network-port',
     'name': FAKED_PORT_1_NAME,
     'description': 'Port #1 of OSA adapter #1',
-    'index': 0,
+    'index': FAKED_PORT_1_INDEX,
 }
 FAKED_VSWITCH_1 = {
     'object-id': FAKED_VSWITCH_1_OID,
@@ -202,6 +217,8 @@ FAKED_VSWITCH_1 = {
     'name': FAKED_VSWITCH_1_NAME,
     'description': 'vswitch for OSA adapter #1',
     'type': 'osd',
+    'backing-adapter-uri': FAKED_ADAPTER_1_URI,
+    'port': FAKED_PORT_1_INDEX,
 }
 
 # Faked OSA NIC that is used for these tests (for partition boot from storage).
@@ -756,6 +773,7 @@ class TestPartition(object):
         """
         self.session = FakedSession(**FAKED_SESSION_KWARGS)
         self.client = Client(self.session)
+        self.console = self.session.hmc.consoles.add(FAKED_CONSOLE)
         self.faked_cpc = self.session.hmc.cpcs.add(FAKED_CPC_1)
         cpcs = self.client.cpcs.list()
         assert len(cpcs) == 1
@@ -992,6 +1010,8 @@ class TestPartition(object):
             'name': self.partition_name,
             'state': desired_state,
             'properties': input_props,
+            'expand_storage_groups': False,
+            'expand_crypto_adapters': False,
             'log_file': None,
             'faked_session': self.session,
         }
@@ -1048,10 +1068,15 @@ class TestPartition(object):
         "initial_state", ['stopped', 'active'])
     @pytest.mark.parametrize(
         "desired_state", ['facts'])
+    @pytest.mark.parametrize(
+        "expand_storage_groups", [False, True])
+    @pytest.mark.parametrize(
+        "expand_crypto_adapters", [False, True])
     @mock.patch("zhmc_ansible_modules.zhmc_partition.AnsibleModule",
                 autospec=True)
     def test_facts_success(
-            self, ansible_mod_cls, desired_state, initial_state, check_mode):
+            self, ansible_mod_cls, expand_crypto_adapters,
+            expand_storage_groups, desired_state, initial_state, check_mode):
         """
         Tests for successful fact gathering on partitions, dependent on
         parametrization.
@@ -1070,6 +1095,8 @@ class TestPartition(object):
             'cpc_name': self.cpc.name,
             'name': self.partition_name,
             'state': desired_state,
+            'expand_storage_groups': expand_storage_groups,
+            'expand_crypto_adapters': expand_crypto_adapters,
             'log_file': None,
             'faked_session': self.session,
         }
@@ -1091,19 +1118,42 @@ class TestPartition(object):
         changed, part_props = get_module_output(mod_obj)
         assert changed is False
         assert isinstance(part_props, dict)
+        assert 'nics' in part_props
+        assert 'hbas' in part_props
+        assert 'virtual-functions' in part_props
+        if expand_storage_groups:
+            assert 'storage-groups' in part_props
+        else:
+            assert 'storage-groups' not in part_props
+        if part_props['crypto-configuration']:
+            if expand_crypto_adapters:
+                assert 'crypto-adapters' in part_props['crypto-configuration']
+            else:
+                assert 'crypto-adapters' not in \
+                    part_props['crypto-configuration']
         for pname in part_props:
             pvalue = part_props[pname]
             if pname == 'nics':
                 assert len(pvalue) == 1
                 nic_props = pvalue[0]
-                assert nic_props == self.nic.properties
+                exp_nic_props = dict(self.nic.properties)
+                exp_nic_props['adapter-name'] = FAKED_ADAPTER_1_NAME
+                exp_nic_props['adapter-port'] = FAKED_PORT_1_INDEX
+                exp_nic_props['adapter-id'] = FAKED_ADAPTER_1_ID
+                assert nic_props == exp_nic_props
             elif pname == 'hbas':
                 assert len(pvalue) == 1
                 hba_props = pvalue[0]
                 assert hba_props == self.hba.properties
             elif pname == 'virtual-functions':
                 assert len(pvalue) == 0
+            elif pname == 'storage-groups':
+                assert len(pvalue) == 0  # Not set up
             else:
+                if pname == 'crypto-configuration' and pvalue and \
+                        'crypto-adapters' in pvalue:
+                    ca_value = pvalue['crypto-adapters']
+                    assert len(ca_value) == 0  # Not set up
                 exp_value = self.partition.properties[pname]
                 assert pvalue == exp_value
 
@@ -1198,6 +1248,8 @@ class TestPartition(object):
             'name': self.partition_name,
             'state': desired_state,
             'properties': props,
+            'expand_storage_groups': False,
+            'expand_crypto_adapters': False,
             'log_file': None,
             'faked_session': self.session,
         }
@@ -1266,6 +1318,8 @@ class TestPartition(object):
             'name': self.partition_name,
             'state': desired_state,
             'properties': properties,
+            'expand_storage_groups': False,
+            'expand_crypto_adapters': False,
             'log_file': None,
             'faked_session': self.session,
         }
@@ -1345,6 +1399,8 @@ class TestPartition(object):
             'name': self.partition_name,
             'state': desired_state,
             'properties': properties,
+            'expand_storage_groups': False,
+            'expand_crypto_adapters': False,
             'log_file': None,
             'faked_session': self.session,
         }
@@ -1409,6 +1465,8 @@ class TestPartition(object):
             'name': self.partition_name,
             'state': desired_state,
             'properties': properties,
+            'expand_storage_groups': False,
+            'expand_crypto_adapters': False,
             'log_file': None,
             'faked_session': self.session,
         }
@@ -1486,6 +1544,8 @@ class TestPartition(object):
             'name': self.partition_name,
             'state': desired_state,
             'properties': properties,
+            'expand_storage_groups': False,
+            'expand_crypto_adapters': False,
             'log_file': None,
             'faked_session': self.session,
         }
@@ -1562,6 +1622,8 @@ class TestPartition(object):
             'name': self.partition_name,
             'state': desired_state,
             'properties': properties,
+            'expand_storage_groups': False,
+            'expand_crypto_adapters': False,
             'log_file': None,
             'faked_session': self.session,
         }
@@ -1748,6 +1810,8 @@ class TestPartition(object):
             'name': self.partition_name,
             'state': desired_state,
             'properties': input_props,
+            'expand_storage_groups': False,
+            'expand_crypto_adapters': False,
             'log_file': None,
             'faked_session': self.session,
         }

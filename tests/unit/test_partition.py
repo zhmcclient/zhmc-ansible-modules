@@ -45,6 +45,8 @@ class TestZhmcPartitionMain(unittest.TestCase):
             'cpc_name': 'fake-cpc-name',
             'name': 'fake-name',
             'state': 'absent',
+            'expand_storage_groups': False,
+            'expand_crypto_adapters': False,
             'log_file': None,
         }
         check_mode = False
@@ -79,6 +81,10 @@ class TestZhmcPartitionMain(unittest.TestCase):
             state=dict(required=True, type='str',
                        choices=['absent', 'stopped', 'active', 'facts']),
             properties=dict(required=False, type='dict', default={}),
+            expand_storage_groups=dict(required=False, type='bool',
+                                       default=False),
+            expand_crypto_adapters=dict(required=False, type='bool',
+                                        default=False),
             log_file=dict(required=False, type='str', default=None),
             faked_session=dict(required=False, type='object'),
         )
@@ -115,6 +121,8 @@ class TestZhmcPartitionMain(unittest.TestCase):
             'cpc_name': 'fake-cpc-name',
             'name': 'fake-name',
             'state': 'absent',
+            'expand_storage_groups': False,
+            'expand_crypto_adapters': False,
             'log_file': None,
         }
         check_mode = False
