@@ -187,6 +187,24 @@ cpc:
             object_uri:
               description: "Canonical URI of the adapter"
               type: str
+    storage-groups:
+      description: "Artificial property for the storage groups associated with
+        the CPC, with a subset of its properties."
+      type: dict
+      contains:
+        "{name}":
+          description: "Storage group name"
+          type: dict
+          contains:
+            name:
+              description: "Storage group name"
+              type: str
+            fulfillment-status:
+              description: "Fulfillment status of the storage group"
+              type: str
+            object_uri:
+              description: "Canonical URI of the storage group"
+              type: str
 """
 
 import logging  # noqa: E402
@@ -306,6 +324,34 @@ def process_properties(cpc, params):
     return update_props
 
 
+def add_artificial_properties(cpc):
+    """
+    Add artificial properties to the CPC object.
+
+    Upon return, the properties of the cpc object have been
+    extended by these artificial properties:
+
+    * 'partitions': List of partitions of the CPC, with the list subset of
+      their properties.
+
+    * 'adapters': List of adapters of the CPC, with the list subset of their
+      properties.
+
+    * 'storage-groups': List of storage groups attached to the partition, with
+      the list subset of their properties.
+    """
+    partitions = cpc.partitions.list()
+    cpc.properties['partitions'] = [p.properties for p in partitions]
+
+    adapters = cpc.adapters.list()
+    cpc.properties['adapters'] = [a.properties for a in adapters]
+
+    storage_groups = cpc.manager.console.storage_groups.list(
+        filter_args={'cpc-uri': cpc.uri})
+    cpc.properties['storage-groups'] = [sg.properties
+                                        for sg in storage_groups]
+
+
 def ensure_set(params, check_mode):
     """
     Identify the target CPC and ensure that the specified properties are set on
@@ -332,7 +378,6 @@ def ensure_set(params, check_mode):
         # The default exception handling is sufficient for the above.
 
         cpc.pull_full_properties()
-        result = cpc.properties
         update_props = process_properties(cpc, params)
         if update_props:
             if not check_mode:
@@ -342,15 +387,12 @@ def ensure_set(params, check_mode):
             # second retrieval).
             # Therefore, we construct the modified result based upon the input
             # changes, and not based upon newly retrieved properties.
-            result.update(update_props)
+            cpc.properties.update(update_props)
             changed = True
 
-        partitions = cpc.partitions.list()
-        adapters = cpc.adapters.list()
+        add_artificial_properties(cpc)
 
-        result['partitions'] = [p.properties for p in partitions]
-        result['adapters'] = [a.properties for a in adapters]
-
+        result = cpc.properties
         return changed, result
 
     finally:
@@ -379,14 +421,10 @@ def facts(params, check_mode):
         # The default exception handling is sufficient for the above.
 
         cpc.pull_full_properties()
+
+        add_artificial_properties(cpc)
+
         result = cpc.properties
-
-        partitions = cpc.partitions.list()
-        adapters = cpc.adapters.list()
-
-        result['partitions'] = [p.properties for p in partitions]
-        result['adapters'] = [a.properties for a in adapters]
-
         return False, result
 
     finally:
