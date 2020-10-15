@@ -19,12 +19,23 @@ Change log
 ----------
 
 
-Version 0.9.0
-^^^^^^^^^^^^^
+Version 1.0.0.dev1
+^^^^^^^^^^^^^^^^^^
+
+This version contains all fixes up to version 0.8.x.
 
 Released: not yet
 
 **Incompatible changes:**
+
+* The zhmc Ansible modules are no longer distributed as a Python package named
+  'zhmc-ansble-modules' on Pypi, but as a collection named 'ibm.zhmc' on
+  Ansible Galaxy. The installation of the zhmc Ansible modules is now done
+  with:
+
+    ansible-galaxy collection install ibm.zhmc
+
+  Playbooks using the zhmc Ansible modules do not need to be changed.
 
 **Deprecations:**
 
