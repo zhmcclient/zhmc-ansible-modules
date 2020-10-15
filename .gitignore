@@ -28,3 +28,4 @@ tmp_*
 vars.yml
 vault.yml
 /python-zhmcclient
+/docs/build/

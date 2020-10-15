@@ -112,4 +112,9 @@ readme-renderer>=23.0,<25.0; python_version == '3.4'
 readme-renderer>=23.0; python_version >= '3.5'
 
 
+# ansible-doc-extractor and it's dependent theme for docs generation (no imports, invoked via script):
+ansible-doc-extractor>=0.1.4
+sphinx-rtd-theme>=0.5.0
+
+
 # Indirect dependencies are not specified in this file unless constraints are needed.

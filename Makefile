@@ -78,8 +78,12 @@ python_major_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('
 # Python major+minor version
 python_mn_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('%s%s'%(sys.version_info[0],sys.version_info[1]))")
 
+
+
 # Build directory
 build_dir = build
+
+
 
 # Directory with the source code of our Ansible module source files
 module_src_dir := plugins/modules
@@ -119,24 +123,18 @@ dist_dependent_files := \
 
 # Directory for documentation (with Makefile)
 doc_dir := docs
-doc_gen_dir := $(doc_dir)/gen
+doc_gen_dir := $(doc_dir)/source
 doc_check_dir := doc_check
 
 # Directory for generated documentation
-doc_build_dir := $(build_dir)/docs
+doc_build_dir := $(doc_dir)/build
 
-# Documentation generator command
-sphinx := sphinx-build
-sphinx_conf_dir := $(doc_dir)
-sphinx_opts := -v -d $(doc_build_dir)/doctrees -c $(sphinx_conf_dir)
-
-# Dependents for Sphinx documentation build
-doc_dependent_files := \
-    $(sphinx_conf_dir)/conf.py \
-    $(wildcard $(doc_dir)/*.rst) \
-    $(wildcard $(module_src_dir)/*.py) \
-    $(wildcard $(module_src_dir)/*/*.py) \
-    $(wildcard $(module_src_dir)/*/*/*.py) \
+# You can set these variables from the command line, and also
+# from the environment for the first two.
+SPHINXOPTS    ?=
+SPHINXBUILD   ?= sphinx-build
+SOURCEDIR     = $(doc_gen_dir)
+BUILDDIR      = $(doc_build_dir)
 
 # Flake8 config file
 flake8_rc_file := .flake8
@@ -161,8 +159,7 @@ test_log_file := test_$(python_mn_version).log
 pytest_opts := $(TESTOPTS)
 
 # Location of local clone of Ansible project's Git repository, with the
-# 'devel' branch checked out. Create that with:
-# git clone https://github.com/ansible/ansible.git --branch devel ../ansible
+# 'devel' branch checked out. Will be cloned automatically.
 ansible_repo_dir := ../ansible
 
 # Documentation-related directories from Ansible project
@@ -243,7 +240,7 @@ develop_ansible: _pip $(ansible_repo_dir) $(ansible_repo_dir)/docs/docsite/requi
 	@echo '$@ done.'
 
 .PHONY: docs
-docs: $(doc_build_dir)/html/index.html
+docs: $(doc_build_dir)/html/index.html 
 	@echo '$@ done.'
 
 .PHONY: check
@@ -282,6 +279,8 @@ clobber:
 	rm -Rf .cache $(package_name_pypi_under).egg-info .eggs $(build_dir) $(doc_check_dir) htmlcov .tox
 	rm -f MANIFEST MANIFEST.in AUTHORS ChangeLog .coverage flake8_*.log test_*.log $(validate_modules_log_file)
 	find . -name "*.pyc" -delete -o -name "__pycache__" -delete -o -name "*.tmp" -delete -o -name "tmp_*" -delete
+	rm -rf $(doc_build_dir)
+
 	@echo 'Done: Removed all build products to get to a fresh state.'
 	@echo '$@ done.'
 
@@ -339,7 +338,7 @@ $(ansible_repo_dir):
 	@echo 'Cloning our fork of the Ansible repo into: $@'
 # pinned to a fixed version since the doc generation process has been changed
 # in 2.10 (ansibull). TODO: Adapt doc generation.
-	git clone https://github.com/ansible/ansible.git --branch v2.9.12 $@
+	git clone https://github.com/ansible/ansible.git --branch stable-2.10 $@
 
 $(doc_gen_dir)/list_of_all_modules.rst: Makefile $(module_py_files) $(ansible_repo_dir)
 	mkdir -p $(doc_gen_dir)
@@ -351,11 +350,13 @@ $(doc_check_dir)/list_of_all_modules.rst: Makefile $(module_py_files) $(ansible_
 	PYTHONPATH=$(ansible_repo_lib_dir) $(plugin_formatter) -vv --type=rst --template-dir=$(plugin_formatter_template_dir) --module-dir=$(module_src_dir) --output-dir=$(doc_check_dir)/
 	rm -fv $(doc_check_dir)/modules_by_category.rst $(doc_check_dir)/list_of__modules.rst
 
-$(doc_build_dir)/html/index.html: Makefile $(doc_dependent_files) $(doc_gen_dir)/list_of_all_modules.rst
-	rm -fv $@
-	mkdir -p $(doc_build_dir)
-	cp -v $(doc_copy_files) $(doc_gen_dir)/
-	$(sphinx) -b html $(sphinx_opts) $(doc_dir) $(doc_build_dir)/html
+$(doc_build_dir)/html/index.html: 
+	mkdir -p $(doc_dir)/build
+	mv plugins/modules/__init__.py plugins/modules/__init__.py.skip
+	ansible-doc-extractor $(doc_dir)/source/modules plugins/modules/*.py
+	echo "Completed restructured text generation"
+	@$(SPHINXBUILD) -M html "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) -Q $(O)
+	mv plugins/modules/__init__.py.skip plugins/modules/__init__.py
 	@echo "Done: Created the HTML pages with top level file: $@"
 
 $(doc_build_dir)/linkcheck/output.txt: Makefile $(doc_dependent_files) $(doc_gen_dir)/list_of_all_modules.rst

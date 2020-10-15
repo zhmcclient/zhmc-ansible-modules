@@ -76,8 +76,7 @@ pip==9.0.1; python_version <= '3.5'
 pip==18.0; python_version == '3.6'
 pip==18.1; python_version == '3.7'
 pip==19.3.1; python_version >= '3.8'
-setuptools==39.0.1; python_version <= '3.6'
-setuptools==40.6.0; python_version == '3.7'
+setuptools==40.6.0; python_version <= '3.7'
 setuptools==41.5.0; python_version >= '3.8'
 wheel==0.30.0; python_version <= '3.6'
 wheel==0.32.0; python_version == '3.7'
@@ -165,6 +164,9 @@ functools32==3.2.3.post2; python_version == '2.7'  # technically: python_version
 twine==1.8.1
 readme-renderer==23.0
 
+# ansible-doc-extractor and it's dependent theme for docs generation (no imports, invoked via script):
+ansible-doc-extractor==0.1.4
+sphinx-rtd-theme==0.5.0
 
 # Indirect dependencies (not in requirements.txt or dev-requirements.txt)
 
