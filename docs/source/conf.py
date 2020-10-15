@@ -17,8 +17,8 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'zhmc Ansible modules'
-copyright = '2020, IBM'
+project = 'ibm.zhmc Ansible modules'
+copyright = '2016-2020, IBM'
 author = 'IBM'
 
 # The full version, including alpha/beta/rc tags

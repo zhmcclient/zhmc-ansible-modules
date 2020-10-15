@@ -1,4 +1,5 @@
 .. _common_return_values:
+.. _return_values:
 
 Return Values
 -------------

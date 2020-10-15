@@ -115,11 +115,6 @@ its ``-k`` option. Invoke ``py.test --help`` for details on the expression
 syntax of its ``-k`` option.
 
 
-.. _`Contributing`:
-
-.. include:: CONTRIBUTING.rst
-
-
 .. _`Releasing a version`:
 
 Releasing a version
