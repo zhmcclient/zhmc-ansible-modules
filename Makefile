@@ -78,7 +78,9 @@ python_major_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('
 # Python major+minor version
 python_mn_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('%s%s'%(sys.version_info[0],sys.version_info[1]))")
 
-
+# Flag indicating whether docs can be built
+# Keep in sync with Sphinx & ansible-doc-extractor install in minimum-constraints.txt and dev-requirements.txt
+doc_build := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('true' if sys.version_info[0:2]>=(3,6) else 'false')")
 
 # Build directory
 build_dir = build
@@ -235,12 +237,16 @@ develop: _pip requirements.txt dev-requirements.txt os_setup.sh $(ansible_repo_d
 
 .PHONY: develop_ansible
 develop_ansible: _pip $(ansible_repo_dir) $(ansible_repo_dir)/docs/docsite/requirements.txt
+ifneq ($(doc_build),true)
+	@echo "makefile: Warning: Skipping target develop_ansible on Python $(python_mn_version)"
+else
 	@echo 'Setting up the development environment for Ansible tools'
 	$(PIP_CMD) install $(pip_level_opts) $(pip_level_opts_new) -r $(ansible_repo_dir)/docs/docsite/requirements.txt
 	@echo '$@ done.'
+endif
 
 .PHONY: docs
-docs: $(doc_build_dir)/html/index.html 
+docs: $(doc_build_dir)/html/index.html
 	@echo '$@ done.'
 
 .PHONY: check
@@ -350,14 +356,17 @@ $(doc_check_dir)/list_of_all_modules.rst: Makefile $(module_py_files) $(ansible_
 	PYTHONPATH=$(ansible_repo_lib_dir) $(plugin_formatter) -vv --type=rst --template-dir=$(plugin_formatter_template_dir) --module-dir=$(module_src_dir) --output-dir=$(doc_check_dir)/
 	rm -fv $(doc_check_dir)/modules_by_category.rst $(doc_check_dir)/list_of__modules.rst
 
-$(doc_build_dir)/html/index.html: 
+$(doc_build_dir)/html/index.html:
+ifneq ($(doc_build),true)
+	@echo "makefile: Warning: Skipping doc build on Python $(python_mn_version)"
+else
 	mkdir -p $(doc_dir)/build
 	mv plugins/modules/__init__.py plugins/modules/__init__.py.skip
 	ansible-doc-extractor $(doc_dir)/source/modules plugins/modules/*.py
-	echo "Completed restructured text generation"
-	@$(SPHINXBUILD) -M html "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) -Q $(O)
+	$(SPHINXBUILD) -M html "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) -Q $(O)
 	mv plugins/modules/__init__.py.skip plugins/modules/__init__.py
 	@echo "Done: Created the HTML pages with top level file: $@"
+endif
 
 $(doc_build_dir)/linkcheck/output.txt: Makefile $(doc_dependent_files) $(doc_gen_dir)/list_of_all_modules.rst
 	$(sphinx) -b linkcheck $(sphinx_opts) $(doc_dir) $(doc_build_dir)/linkcheck
