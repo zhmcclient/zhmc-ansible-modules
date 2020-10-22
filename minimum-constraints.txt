@@ -135,12 +135,20 @@ dparse==0.4.1
 tox==2.5.0
 
 # Sphinx (no imports, invoked via sphinx-build script):
-Sphinx==1.7.6
-sphinx-git==10.1.1
-GitPython==2.1.1
-sphinxcontrib-fulltoc==1.2.0
-sphinxcontrib-websupport==1.1.2
-Pygments==2.1.3
+# Note: Ansible 2.10 requires sphinx==2.12 which does no longer support
+#       Python 2.7, so we can no longer build the docs on Python 2.7.
+# Note: The docs build tools from Ansible 2.10 (in ../ansible) require
+#       antsibull, which supports only py>=3.6.
+Sphinx==1.7.6; python_version >= '3.6'
+sphinx-git==10.1.1; python_version >= '3.6'
+GitPython==2.1.1; python_version >= '3.6'
+sphinxcontrib-fulltoc==1.2.0; python_version >= '3.6'
+sphinxcontrib-websupport==1.1.2; python_version >= '3.6'
+Pygments==2.1.3; python_version >= '3.6'
+
+# ansible-doc-extractor and it's dependent theme for docs generation (no imports, invoked via script):
+ansible-doc-extractor==0.1.4; python_version >= '3.6'
+sphinx-rtd-theme==0.5.0; python_version >= '3.6'
 
 # PyLint (no imports, invoked via pylint script) - does not support py3:
 pylint==1.6.4; python_version == '2.7'
@@ -163,10 +171,6 @@ functools32==3.2.3.post2; python_version == '2.7'  # technically: python_version
 # Twine (no imports, invoked via twine script):
 twine==1.8.1
 readme-renderer==23.0
-
-# ansible-doc-extractor and it's dependent theme for docs generation (no imports, invoked via script):
-ansible-doc-extractor==0.1.4
-sphinx-rtd-theme==0.5.0
 
 # Indirect dependencies (not in requirements.txt or dev-requirements.txt)
 
