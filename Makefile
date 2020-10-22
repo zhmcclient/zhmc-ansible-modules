@@ -78,14 +78,15 @@ python_major_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('
 # Python major+minor version
 python_mn_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('%s%s'%(sys.version_info[0],sys.version_info[1]))")
 
+# Python major.minor version
+python_m_n_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('%s.%s'%(sys.version_info[0],sys.version_info[1]))")
+
 # Flag indicating whether docs can be built
 # Keep in sync with Sphinx & ansible-doc-extractor install in minimum-constraints.txt and dev-requirements.txt
 doc_build := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('true' if sys.version_info[0:2]>=(3,6) else 'false')")
 
 # Build directory
 build_dir = build
-
-
 
 # Directory with the source code of our Ansible module source files
 module_src_dir := plugins/modules
@@ -105,6 +106,10 @@ default_test_hmc := default
 ifndef TESTHMC
   TESTHMC := $(default_test_hmc)
 endif
+
+# Sanity test directory
+sanity_dir := tmp_sanity/collections/ansible_collections/ibm/zhmc
+sanity_dir1 := tmp_sanity
 
 # Directory for the generated distribution files
 dist_build_dir := $(build_dir)/dist
@@ -284,6 +289,7 @@ uninstall:
 clobber:
 	rm -Rf .cache $(package_name_pypi_under).egg-info .eggs $(build_dir) $(doc_check_dir) htmlcov .tox
 	rm -f MANIFEST MANIFEST.in AUTHORS ChangeLog .coverage flake8_*.log test_*.log $(validate_modules_log_file)
+	rm -rf $(sanity_dir1)
 	find . -name "*.pyc" -delete -o -name "__pycache__" -delete -o -name "*.tmp" -delete -o -name "tmp_*" -delete
 	rm -rf $(doc_build_dir)
 
@@ -399,12 +405,11 @@ end2end:
 
 .PHONY:	sanity
 sanity:
-	@echo 'Starting sanity tests...'
-	rm -rf ../ansible
-	ansible-test sanity --docker
-	# then uninstall 2.9 and install 2.10 (ansible-base)
-	pip uninstall -y ansible
-	pip install ansible-base
-	# and run the sanity tests with 2.10
-	ansible-test sanity --docker
+# Note: 'ansible-test sanity' requires the collection to be tested to be
+#       located in {...}/collections/ansible_collections/{namespace}/{name}.
+#       The .git subtree must be present.
+	tar -rf tmp_workspace.tar --exclude=tmp_workspace.tar --exclude=$(doc_build_dir) --exclude=$(sanity_dir1) .
+	mkdir -p $(sanity_dir)
+	tar -xf tmp_workspace.tar --directory $(sanity_dir)
+	sh -c "cd $(sanity_dir); ansible-test sanity --local --python $(python_m_n_version)"
 	@echo '$@ done.'

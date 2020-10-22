@@ -53,6 +53,10 @@ PyYAML>=5.1; python_version == '2.7'
 PyYAML>=5.1,<5.3; python_version == '3.4'
 PyYAML>=5.1; python_version > '3.4'
 
+# ansible-test
+yamllint>=1.25.0
+pathspec>=0.8.0
+
 # Safety CI by pyup.io
 safety>=1.8.4
 # dparse 0.5.0 has an infinite recursion issue on Python 2.7,

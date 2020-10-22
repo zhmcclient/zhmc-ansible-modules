@@ -19,3 +19,9 @@ plugins/modules/zhmc_storage_group.py validate-modules:module-invalid-version-ad
 plugins/modules/zhmc_storage_group_attachment.py validate-modules:module-invalid-version-added # Cannot change historical versions
 plugins/modules/zhmc_storage_volume.py validate-modules:module-invalid-version-added # Cannot change historical versions
 plugins/modules/zhmc_user.py validate-modules:module-invalid-version-added # Cannot change historical versions
+plugins/module_utils/common.py pylint:raise-missing-from
+plugins/modules/zhmc_crypto_attachment.py pylint:raise-missing-from
+plugins/modules/zhmc_hba.py pylint:raise-missing-from
+plugins/modules/zhmc_nic.py pylint:raise-missing-from
+plugins/modules/zhmc_partition.py pylint:raise-missing-from
+plugins/modules/zhmc_virtual_function.py pylint:raise-missing-from
