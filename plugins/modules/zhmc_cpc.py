@@ -140,40 +140,53 @@ EXAMPLES = """
 
 RETURN = """
 cpc:
-  description:
-    - "For C(state=set|facts), a
-       dictionary with the properties of the CPC. The properties contain
-       these additional artificial properties for listing its child resources:
-       - 'partitions': The defined partitions of the CPC, as a dict of key:
-         partition name, value: dict of a subset of the partition properties
-         (name, status, object_uri).
-       - 'adapters': The adapters of the CPC, as a dict of key:
-         adapter name, value: dict of a subset of the adapter properties
-         (name, status, object_uri)."
+  description: "A dictionary with the properties of the CPC, including
+    additional artificial properties as described below."
   returned: success
   type: dict
-  sample: |
-    C({
-      "name": "CPCA",
-      "description": "CPC A",
-      "status": "active",
-      "acceptable_status": [ "active" ],
-      ...
-      "partitions": [
-        {
-          "name": "part-1",
-          ...
-        },
-        ...
-      ],
-      "adapters": [
-        {
-          "name": "adapter-1",
-          ...
-        },
-        ...
-      ],
-    })
+  contains:
+    name:
+      description: "CPC name"
+      type: str
+    "{property}":
+      description: "Additional properties of the CPC, as described in the
+        HMC WS-API book (using hyphens (-) in the property names)."
+    partitions:
+      description: "Artificial property for the defined partitions of the CPC,
+        with a subset of its properties."
+      type: dict
+      contains:
+        "{name}":
+          description: "Partition name"
+          type: dict
+          contains:
+            name:
+              description: "Partition name"
+              type: str
+            status:
+              description: "Status of the partition"
+              type: str
+            object_uri:
+              description: "Canonical URI of the partition"
+              type: str
+    adapters:
+      description: "Artificial property for the adapters of the CPC,
+        with a subset of its properties."
+      type: dict
+      contains:
+        "{name}":
+          description: "Adapter name"
+          type: dict
+          contains:
+            name:
+              description: "Adapter name"
+              type: str
+            status:
+              description: "Status of the adapter"
+              type: str
+            object_uri:
+              description: "Canonical URI of the adapter"
+              type: str
 """
 
 import logging  # noqa: E402

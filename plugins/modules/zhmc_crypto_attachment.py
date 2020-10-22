@@ -203,49 +203,67 @@ EXAMPLES = """
 RETURN = """
 crypto_configuration:
   description:
-    - "For C(state=detached|attached|facts), a
-       dictionary with the crypto configuration of the partition after the
-       changes applied by the module. Key is the partition name, and value
-       is a dictionary with keys:
-       - 'adapters': attached adapters, as a dict of key: adapter name, value:
-         dict of adapter properties;
-       - 'domain_config': attached domains, as a dict of key: domain index,
-         value: access mode ('control' or 'usage');
-       - 'usage_domains': domains attached in usage mode, as a list of domain
-         index numbers;
-       - 'control_domains': domains attached in control mode, as a list of
-         domain index numbers."
+    - "For C(state=detached|attached|facts), the crypto configuration of the
+      partition after the changes performed by the module."
   returned: success
   type: dict
-  sample: |
-    C({
-      "part-1": {
-        "adapters": {
-          "adapter 1": {
-            "type": "crypto",
-            ...
-          }
-        },
-        "domain_config": {
-          "0": "usage",
-          "1": "control",
-          "2": "control"
-        }
-        "usage_domains": [0],
-        "control_domains": [1, 2]
-      }
-    })
+  contains:
+    "{name}":
+      description: "Partition name"
+      type: dict
+      contains:
+        adapters:
+          description: "Attached adapters"
+          type: dict
+          contains:
+            "{name}":
+              description: "Adapter name"
+              type: dict
+              contains:
+                name:
+                  description: "Adapter name"
+                  type: str
+                "{property}":
+                  description: "Additional properties of the adapter,
+                    as described in the HMC WS-API book
+                    (using hyphens (-) in the property names)."
+        domain_config:
+          description: "Attached crypto domains"
+          type: dict
+          contains:
+            "{index}":
+              description: "Crypto domain index"
+              type: dict
+              contains:
+                "{access_mode}":
+                  description: "Access mode ('control' or 'usage')."
+                  type: str
+        usage_domains:
+          description: "Domain index numbers of the crypto domains attached
+            in usage mode"
+          type: list
+          elements: str
+        control_domains:
+          description: "Domain index numbers of the crypto domains attached
+            in control mode"
+          type: list
+          elements: str
 changes:
   description:
     - "For C(state=detached|attached|facts), a dictionary with the changes
        performed."
   returned: success
   type: dict
-  sample: |
-    C({
-      "added-adapters": ["adapter 1", "adapter 2"],
-      "added-domains": ["0", "1"]
-    })
+  contains:
+    added-adapters:
+      description: "Names of the adapters that were added to the partition"
+      type: list
+      elements: str
+    added-domains:
+      description: "Domain index numbers of the crypto domains that were added
+        to the partition"
+      type: list
+      elements: str
 """
 
 import logging  # noqa: E402

@@ -143,23 +143,35 @@ Examples
 Return Values
 -------------
 
-user (success, dict, C({
-  "name": "user-1",
-  "description": "user #1",
-  ...
-})
-)
+user (success, dict, )
   For ``state=absent``, an empty dictionary.
 
-  For ``state=present|facts``, a dictionary with the resource properties of the target user, plus additional artificial properties as described in the following list items. The dictionary keys are the exact property names as described in the data model for the resource, i.e. they contain hyphens (-), not underscores (_). The dictionary values are the property values using the Python representations described in the documentation of the zhmcclient Python package. The additional artificial properties are:
+  For ``state=present|facts``, a dictionary with the resource properties of the target user, plus additional artificial properties as described in the following list items.
 
-  * ``user-pattern-name``: Name of the user pattern referenced by property ``user-pattern-uri``.
 
-  * ``password-rule-name``: Name of the password rule referenced by property ``password-rule-uri``.
+  name (, str, )
+    User name
 
-  * ``ldap-server-definition-name``: Name of the LDAP server definition referenced by property ``ldap-server-definition-uri``.
 
-  * ``default-group-name``: Name of the group referenced by property ``default-group-uri``.
+  {property} (, any, )
+    Additional properties of the user, as described in the HMC WS-API book (using hyphens (-) in the property names).
+
+
+  user-pattern-name (, str, )
+    Name of the user pattern referenced by property ``user-pattern-uri``.
+
+
+  password-rule-name (, str, )
+    Name of the password rule referenced by property ``password-rule-uri``.
+
+
+  ldap-server-definition-name (, str, )
+    Name of the LDAP server definition referenced by property ``ldap-server-definition-uri``.
+
+
+  default-group-name (, str, )
+    Name of the group referenced by property ``default-group-uri``.
+
 
 
 

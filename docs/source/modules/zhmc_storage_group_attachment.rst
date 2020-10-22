@@ -133,9 +133,13 @@ Examples
 Return Values
 -------------
 
-storage_group_attachment (success, dict, C({"attached": true})
-)
-  A dictionary with a single key 'attached' whose boolean value indicates whether the storage group is now actually attached to the partition. If check mode was requested, the actual (i.e. not the desired) attachment state is returned.
+storage_group_attachment (success, dict, )
+  Attachment state of the storage group. If no check mode was requested, the attachment state after any changes is returned. If check mode was requested, the actual attachment state is returned.
+
+
+  attached (, bool, )
+    Attachment state of the storage group: Indicates whether the storage group is attached to the partition.
+
 
 
 

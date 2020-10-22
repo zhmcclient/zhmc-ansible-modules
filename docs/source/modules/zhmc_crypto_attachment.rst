@@ -158,33 +158,67 @@ Examples
 Return Values
 -------------
 
-crypto_configuration (success, dict, C({
-  "part-1": {
-    "adapters": {
-      "adapter 1": {
-        "type": "crypto",
-        ...
-      }
-    },
-    "domain_config": {
-      "0": "usage",
-      "1": "control",
-      "2": "control"
-    }
-    "usage_domains": [0],
-    "control_domains": [1, 2]
-  }
-})
-)
-  For ``state=detached|attached|facts``, a dictionary with the crypto configuration of the partition after the changes applied by the module. Key is the partition name, and value is a dictionary with keys: - 'adapters': attached adapters, as a dict of key: adapter name, value: dict of adapter properties; - 'domain_config': attached domains, as a dict of key: domain index, value: access mode ('control' or 'usage'); - 'usage_domains': domains attached in usage mode, as a list of domain index numbers; - 'control_domains': domains attached in control mode, as a list of domain index numbers.
+crypto_configuration (success, dict, )
+  For ``state=detached|attached|facts``, the crypto configuration of the partition after the changes performed by the module.
 
 
-changes (success, dict, C({
-  "added-adapters": ["adapter 1", "adapter 2"],
-  "added-domains": ["0", "1"]
-})
-)
+  {name} (, dict, )
+    Partition name
+
+
+    adapters (, dict, )
+      Attached adapters
+
+
+      {name} (, dict, )
+        Adapter name
+
+
+        name (, str, )
+          Adapter name
+
+
+        {property} (, any, )
+          Additional properties of the adapter, as described in the HMC WS-API book (using hyphens (-) in the property names).
+
+
+
+
+    domain_config (, dict, )
+      Attached crypto domains
+
+
+      {index} (, dict, )
+        Crypto domain index
+
+
+        {access_mode} (, str, )
+          Access mode ('control' or 'usage').
+
+
+
+
+    usage_domains (, list, )
+      Domain index numbers of the crypto domains attached in usage mode
+
+
+    control_domains (, list, )
+      Domain index numbers of the crypto domains attached in control mode
+
+
+
+
+changes (success, dict, )
   For ``state=detached|attached|facts``, a dictionary with the changes performed.
+
+
+  added-adapters (, list, )
+    Names of the adapters that were added to the partition
+
+
+  added-domains (, list, )
+    Domain index numbers of the crypto domains that were added to the partition
+
 
 
 

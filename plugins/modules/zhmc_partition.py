@@ -240,31 +240,51 @@ partition:
   description:
     - "For C(state=absent), an empty dictionary."
     - "For C(state=stopped) and C(state=active), a dictionary with the resource
-       properties of the partition (after changes, if any). The dictionary
-       keys are the exact property names as described in the data model for the
-       resource, i.e. they contain hyphens (-), not underscores (_). The
-       dictionary values are the property values using the Python
-       representations described in the documentation of the zhmcclient Python
-       package."
+       properties of the partition after changes, if any."
     - "For C(state=facts), a dictionary with the resource properties of the
-       partition, including its child resources (HBAs, NICs, and virtual
-       functions). The dictionary keys are the exact property names as
-       described in the data model for the resource, i.e. they contain hyphens
-       (-), not underscores (_). The dictionary values are the property values
-       using the Python representations described in the documentation of the
-       zhmcclient Python package. The properties of the child resources are
-       represented in partition properties named 'hbas', 'nics', and
-       'virtual-functions', respectively."
+       partition, including its child resources as described below."
   returned: success
   type: dict
-  sample: |
-    C({
-      "name": "part-1",
-      "description": "partition #1",
-      "status": "active",
-      "boot-device": "storage-adapter",
-      ...
-    })
+  contains:
+    name:
+      description: "Partition name"
+      type: str
+    "{property}":
+      description: "Additional properties of the partition, as described in the
+        HMC WS-API book (using hyphens (-) in the property names)."
+    hbas:
+      description: "HBAs of the partition (for C(state=facts))."
+      type: list
+      elements: dict
+      contains:
+        name:
+          description: "HBA name"
+          type: str
+        "{property}":
+          description: "Additional properties of the HBA, as described in the
+            HMC WS-API book (using hyphens (-) in the property names)."
+    nics:
+      description: "NICs of the partition (for C(state=facts))."
+      type: list
+      elements: dict
+      contains:
+        name:
+          description: "NIC name"
+          type: str
+        "{property}":
+          description: "Additional properties of the NIC, as described in the
+            HMC WS-API book (using hyphens (-) in the property names)."
+    virtual-functions:
+      description: "Virtual functions of the partition (for C(state=facts))."
+      type: list
+      elements: dict
+      contains:
+        name:
+          description: "VF name"
+          type: str
+        "{property}":
+          description: "Additional properties of the VF, as described in the
+            HMC WS-API book (using hyphens (-) in the property names)."
 """
 
 import logging  # noqa: E402

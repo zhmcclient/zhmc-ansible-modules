@@ -133,16 +133,19 @@ Examples
 Return Values
 -------------
 
-virtual_function (success, dict, C({
-  "name": "vfunction-1",
-  "description": "virtual function #1",
-  "adapter-uri': "/api/adapters/...",
-  ...
-})
-)
+virtual_function (success, dict, )
   For ``state=absent``, an empty dictionary.
 
-  For ``state=present``, a dictionary with the resource properties of the virtual function (after changes, if any). The dictionary keys are the exact property names as described in the data model for the resource, i.e. they contain hyphens (-), not underscores (_). The dictionary values are the property values using the Python representations described in the documentation of the zhmcclient Python package.
+  For ``state=present``, a dictionary with the resource properties of the virtual function (after changes, if any).
+
+
+  name (, str, )
+    Virtual function name
+
+
+  {property} (, any, )
+    Additional properties of the virtual function, as described in the HMC WS-API book (using hyphens (-) in the property names).
+
 
 
 

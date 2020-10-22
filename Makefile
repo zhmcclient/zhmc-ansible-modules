@@ -362,14 +362,14 @@ $(doc_check_dir)/list_of_all_modules.rst: Makefile $(module_py_files) $(ansible_
 	PYTHONPATH=$(ansible_repo_lib_dir) $(plugin_formatter) -vv --type=rst --template-dir=$(plugin_formatter_template_dir) --module-dir=$(module_src_dir) --output-dir=$(doc_check_dir)/
 	rm -fv $(doc_check_dir)/modules_by_category.rst $(doc_check_dir)/list_of__modules.rst
 
-$(doc_build_dir)/html/index.html:
+$(doc_build_dir)/html/index.html: Makefile $(module_py_files)
 ifneq ($(doc_build),true)
 	@echo "makefile: Warning: Skipping doc build on Python $(python_mn_version)"
 else
 	mkdir -p $(doc_dir)/build
 	mv plugins/modules/__init__.py plugins/modules/__init__.py.skip
 	ansible-doc-extractor $(doc_dir)/source/modules plugins/modules/*.py
-	$(SPHINXBUILD) -M html "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) -Q $(O)
+	$(SPHINXBUILD) -M html "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS)
 	mv plugins/modules/__init__.py.skip plugins/modules/__init__.py
 	@echo "Done: Created the HTML pages with top level file: $@"
 endif

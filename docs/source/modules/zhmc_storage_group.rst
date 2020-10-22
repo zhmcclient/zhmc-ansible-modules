@@ -152,29 +152,97 @@ Examples
 Return Values
 -------------
 
-storage_group (success, dict, C({
-  "name": "sg-1",
-  "description": "storage group #1",
-  ...
-})
-)
+storage_group (success, dict, )
   For ``state=absent``, an empty dictionary.
 
-  For ``state=present|facts``, a dictionary with the resource properties of the target storage group, plus additional artificial properties as described in the following list items. The dictionary keys are the exact property names as described in the data model for the resource, i.e. they contain hyphens (-), not underscores (_). The dictionary values are the property values using the Python representations described in the documentation of the zhmcclient Python package. The additional artificial properties are:
+  For ``state=present|facts``, a dictionary with the resource properties of the target storage group, plus additional artificial properties as described below.
 
-  * ``attached-partition-names``: List of partition names to which the storage group is attached.
 
-  * ``cpc-name``: Name of the CPC that is associated to this storage group.
+  name (, str, )
+    Storage group name
 
-  * ``candidate-adapter-ports`` (only if expand was requested): List of candidate adapter ports of the storage group. Each port is represented as a dictionary of its properties; in addition each port has an artificial property ``parent-adapter`` which represents the adapter of the port. Each adapter is represented as a dictionary of its properties.
 
-  * ``storage-volumes`` (only if expand was requested): List of storage volumes of the storage group. Each storage volume is represented as a dictionary of its properties.
+  {property} (, any, )
+    Additional properties of the storage group, as described in the HMC WS-API book (using hyphens (-) in the property names).
 
-  * ``virtual-storage-resources`` (only if expand was requested): List of virtual storage resources of the storage group. Each virtual storage resource is represented as a dictionary of its properties.
 
-  * ``attached-partitions`` (only if expand was requested): List of partitions to which the storage group is attached. Each partition is represented as a dictionary of its properties.
+  attached-partition-names (, list, )
+    Names of the partitions to which the storage group is attached.
 
-  * ``cpc`` (only if expand was requested): The CPC that is associated to this storage group. The CPC is represented as a dictionary of its properties.
+
+  cpc-name (, str, )
+    Name of the CPC that is associated to this storage group.
+
+
+  candidate-adapter-ports (success+expand, list, )
+    Only if expand was requested: List of candidate storage adapter ports of the storage group.
+
+
+    name (, str, )
+      Storage port name
+
+
+    index (, int, )
+      Storage port index
+
+
+    {property} (, any, )
+      Additional properties of the storage port, as described in the HMC WS-API book (using hyphens (-) in the property names).
+
+
+    parent-adapter (, dict, )
+      Storage adapter of the port.
+
+
+      name (, str, )
+        Storage adapter name
+
+
+      {property} (, any, )
+        Additional properties of the storage adapter, as described in the HMC WS-API book (using hyphens (-) in the property names).
+
+
+
+
+  storage-volumes (success+expand, list, )
+    Only if expand was requested: List of storage volumes of the storage group.
+
+
+    name (, str, )
+      Storage volume name
+
+
+    {property} (, any, )
+      Additional properties of the storage volume, as described in the HMC WS-API book (using hyphens (-) in the property names).
+
+
+
+  virtual-storage-resources (success+expand, list, )
+    Only if expand was requested: List of virtual storage resources of the storage group.
+
+
+    {property} (, any, )
+      Properties of the virtual storage resource, as described in the HMC WS-API book (using hyphens (-) in the property names).
+
+
+
+  attached-partitions (success+expand, list, )
+    Only if expand was requested: List of partitions to which the storage group is attached.
+
+
+    {property} (, any, )
+      Properties of the partition, as described in the HMC WS-API book (using hyphens (-) in the property names).
+
+
+
+  cpc (success+expand, list, )
+    Only if expand was requested: The CPC that is associated to this storage group.
+
+
+    {property} (, any, )
+      Properties of the CPC, as described in the HMC WS-API book (using hyphens (-) in the property names).
+
+
 
 
 

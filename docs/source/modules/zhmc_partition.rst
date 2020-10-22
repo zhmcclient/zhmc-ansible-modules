@@ -205,19 +205,60 @@ Examples
 Return Values
 -------------
 
-partition (success, dict, C({
-  "name": "part-1",
-  "description": "partition #1",
-  "status": "active",
-  "boot-device": "storage-adapter",
-  ...
-})
-)
+partition (success, dict, )
   For ``state=absent``, an empty dictionary.
 
-  For ``state=stopped`` and ``state=active``, a dictionary with the resource properties of the partition (after changes, if any). The dictionary keys are the exact property names as described in the data model for the resource, i.e. they contain hyphens (-), not underscores (_). The dictionary values are the property values using the Python representations described in the documentation of the zhmcclient Python package.
+  For ``state=stopped`` and ``state=active``, a dictionary with the resource properties of the partition after changes, if any.
 
-  For ``state=facts``, a dictionary with the resource properties of the partition, including its child resources (HBAs, NICs, and virtual functions). The dictionary keys are the exact property names as described in the data model for the resource, i.e. they contain hyphens (-), not underscores (_). The dictionary values are the property values using the Python representations described in the documentation of the zhmcclient Python package. The properties of the child resources are represented in partition properties named 'hbas', 'nics', and 'virtual-functions', respectively.
+  For ``state=facts``, a dictionary with the resource properties of the partition, including its child resources as described below.
+
+
+  name (, str, )
+    Partition name
+
+
+  {property} (, any, )
+    Additional properties of the partition, as described in the HMC WS-API book (using hyphens (-) in the property names).
+
+
+  hbas (, list, )
+    HBAs of the partition (for ``state=facts``).
+
+
+    name (, str, )
+      HBA name
+
+
+    {property} (, any, )
+      Additional properties of the HBA, as described in the HMC WS-API book (using hyphens (-) in the property names).
+
+
+
+  nics (, list, )
+    NICs of the partition (for ``state=facts``).
+
+
+    name (, str, )
+      NIC name
+
+
+    {property} (, any, )
+      Additional properties of the NIC, as described in the HMC WS-API book (using hyphens (-) in the property names).
+
+
+
+  virtual-functions (, list, )
+    Virtual functions of the partition (for ``state=facts``).
+
+
+    name (, str, )
+      VF name
+
+
+    {property} (, any, )
+      Additional properties of the VF, as described in the HMC WS-API book (using hyphens (-) in the property names).
+
+
 
 
 
