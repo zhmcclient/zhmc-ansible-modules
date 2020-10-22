@@ -175,20 +175,16 @@ hba:
   description:
     - "For C(state=absent), an empty dictionary."
     - "For C(state=present), a dictionary with the resource properties of the
-       HBA (after changes, if any). The dictionary keys are the exact property
-       names as described in the data model for the resource, i.e. they contain
-       hyphens (-), not underscores (_). The dictionary values are the property
-       values using the Python representations described in the documentation
-       of the zhmcclient Python package."
+       HBA after changes, if any."
   returned: success
   type: dict
-  sample: |
-    C({
-      "name": "hba-1",
-      "description": "HBA #1",
-      "adapter-port-uri": "/api/adapters/.../ports/...",
-      ...
-    })
+  contains:
+    name:
+      description: "HBA name"
+      type: str
+    "{property}":
+      description: "Additional properties of the HBA, as described in the
+        HMC WS-API book (using hyphens (-) in the property names)."
 """
 
 import logging  # noqa: E402

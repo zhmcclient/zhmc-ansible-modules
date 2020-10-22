@@ -192,46 +192,101 @@ RETURN = """
 storage_group:
   description:
     - "For C(state=absent), an empty dictionary."
-    - "For C(state=present|facts), a
-       dictionary with the resource properties of the target storage group,
-       plus additional artificial properties as described in the following
-       list items.
-       The dictionary keys are the exact property names as described in the
-       data model for the resource, i.e. they contain hyphens (-), not
-       underscores (_). The dictionary values are the property values using the
-       Python representations described in the documentation of the zhmcclient
-       Python package.
-       The additional artificial properties are:"
-    - "* C(attached-partition-names): List of partition names to which the
-       storage group is attached."
-    - "* C(cpc-name): Name of the CPC that is associated to this storage
-       group."
-    - "* C(candidate-adapter-ports) (only if expand was requested):
-       List of candidate adapter ports of the storage group. Each port is
-       represented as a dictionary of its properties; in addition each port has
-       an artificial property C(parent-adapter) which represents the adapter of
-       the port. Each adapter is represented as a dictionary of its
-       properties."
-    - "* C(storage-volumes) (only if expand was requested):
-       List of storage volumes of the storage group. Each storage volume is
-       represented as a dictionary of its properties."
-    - "* C(virtual-storage-resources) (only if expand was requested):
-       List of virtual storage resources of the storage group. Each virtual
-       storage resource is represented as a dictionary of its properties."
-    - "* C(attached-partitions) (only if expand was requested):
-       List of partitions to which the storage group is attached. Each
-       partition is represented as a dictionary of its properties."
-    - "* C(cpc) (only if expand was requested): The CPC that is associated to
-       this storage group. The CPC is represented as a dictionary of its
-       properties."
+    - "For C(state=present|facts), a dictionary with the resource properties
+       of the target storage group, plus additional artificial properties as
+       described below."
   returned: success
   type: dict
-  sample: |
-    C({
-      "name": "sg-1",
-      "description": "storage group #1",
-      ...
-    })
+  contains:
+    name:
+      description: "Storage group name"
+      type: str
+    "{property}":
+      description: "Additional properties of the storage group, as described
+        in the HMC WS-API book (using hyphens (-) in the property names)."
+    attached-partition-names:
+      description: "Names of the partitions to which the storage group is
+        attached."
+      type: list
+      elements: str
+    cpc-name:
+      description: "Name of the CPC that is associated to this storage
+        group."
+      type: str
+    candidate-adapter-ports:
+      description: "Only if expand was requested: List of candidate storage
+        adapter ports of the storage group."
+      returned: "success+expand"
+      type: list
+      elements: dict
+      contains:
+        name:
+          description: "Storage port name"
+          type: str
+        index:
+          description: "Storage port index"
+          type: int
+        "{property}":
+          description: "Additional properties of the storage port, as described
+            in the HMC WS-API book (using hyphens (-) in the property names)."
+        parent-adapter:
+          description: "Storage adapter of the port."
+          type: dict
+          contains:
+            name:
+              description: "Storage adapter name"
+              type: str
+            "{property}":
+              description: "Additional properties of the storage adapter, as
+                described in the HMC WS-API book (using hyphens (-) in the
+                property names)."
+    storage-volumes:
+      description: "Only if expand was requested: List of storage volumes of
+        the storage group."
+      returned: "success+expand"
+      type: list
+      elements: dict
+      contains:
+        name:
+          description: "Storage volume name"
+          type: str
+        "{property}":
+          description: "Additional properties of the storage volume, as
+            described in the HMC WS-API book (using hyphens (-) in the
+            property names)."
+    virtual-storage-resources:
+      description: "Only if expand was requested: List of virtual storage
+        resources of the storage group."
+      returned: "success+expand"
+      type: list
+      elements: dict
+      contains:
+        "{property}":
+          description: "Properties of the virtual storage resource,
+            as described in the HMC WS-API book (using hyphens (-) in the
+            property names)."
+    attached-partitions:
+      description: "Only if expand was requested: List of partitions to which
+        the storage group is attached."
+      returned: "success+expand"
+      type: list
+      elements: dict
+      contains:
+        "{property}":
+          description: "Properties of the partition,
+            as described in the HMC WS-API book (using hyphens (-) in the
+            property names)."
+    cpc:
+      description: "Only if expand was requested: The CPC that is associated to
+         this storage group."
+      returned: "success+expand"
+      type: list
+      elements: dict
+      contains:
+        "{property}":
+          description: "Properties of the CPC,
+            as described in the HMC WS-API book (using hyphens (-) in the
+            property names)."
 """
 
 import logging  # noqa: E402

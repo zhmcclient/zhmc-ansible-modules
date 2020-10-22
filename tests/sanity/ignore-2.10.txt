@@ -25,3 +25,13 @@ plugins/modules/zhmc_hba.py pylint:raise-missing-from
 plugins/modules/zhmc_nic.py pylint:raise-missing-from
 plugins/modules/zhmc_partition.py pylint:raise-missing-from
 plugins/modules/zhmc_virtual_function.py pylint:raise-missing-from
+plugins/modules/zhmc_adapter.py validate-modules:return-syntax-error  # Missing type on generic {property}
+plugins/modules/zhmc_cpc.py validate-modules:return-syntax-error  # Missing type on generic {property}
+plugins/modules/zhmc_crypto_attachment.py validate-modules:return-syntax-error  # Missing type on generic {property}
+plugins/modules/zhmc_hba.py validate-modules:return-syntax-error  # Missing type on generic {property}
+plugins/modules/zhmc_nic.py validate-modules:return-syntax-error  # Missing type on generic {property}
+plugins/modules/zhmc_partition.py validate-modules:return-syntax-error  # Missing type on generic {property}
+plugins/modules/zhmc_storage_group.py validate-modules:return-syntax-error  # Missing type on generic {property}
+plugins/modules/zhmc_storage_volume.py validate-modules:return-syntax-error  # Missing type on generic {property}
+plugins/modules/zhmc_user.py validate-modules:return-syntax-error  # Missing type on generic {property}
+plugins/modules/zhmc_virtual_function.py validate-modules:return-syntax-error  # Missing type on generic {property}

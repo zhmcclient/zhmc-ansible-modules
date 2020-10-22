@@ -169,20 +169,16 @@ virtual_function:
   description:
     - "For C(state=absent), an empty dictionary."
     - "For C(state=present), a dictionary with the resource properties of the
-       virtual function (after changes, if any). The dictionary keys are the
-       exact property names as described in the data model for the resource,
-       i.e. they contain hyphens (-), not underscores (_). The dictionary
-       values are the property values using the Python representations
-       described in the documentation of the zhmcclient Python package."
+       virtual function (after changes, if any)."
   returned: success
   type: dict
-  sample: |
-    C({
-      "name": "vfunction-1",
-      "description": "virtual function #1",
-      "adapter-uri': "/api/adapters/...",
-      ...
-    })
+  contains:
+    name:
+      description: "Virtual function name"
+      type: str
+    "{property}":
+      description: "Additional properties of the virtual function, as described
+        in the HMC WS-API book (using hyphens (-) in the property names)."
 """
 
 import logging  # noqa: E402

@@ -180,29 +180,32 @@ user:
     - "For C(state=present|facts), a
        dictionary with the resource properties of the target user,
        plus additional artificial properties as described in the following
-       list items.
-       The dictionary keys are the exact property names as described in the
-       data model for the resource, i.e. they contain hyphens (-), not
-       underscores (_). The dictionary values are the property values using the
-       Python representations described in the documentation of the zhmcclient
-       Python package.
-       The additional artificial properties are:"
-    - "* C(user-pattern-name): Name of the user pattern referenced by
-       property C(user-pattern-uri)."
-    - "* C(password-rule-name): Name of the password rule referenced by
-       property C(password-rule-uri)."
-    - "* C(ldap-server-definition-name): Name of the LDAP server definition
-       referenced by property C(ldap-server-definition-uri)."
-    - "* C(default-group-name): Name of the group referenced by property
-       C(default-group-uri)."
+       list items."
   returned: success
   type: dict
-  sample: |
-    C({
-      "name": "user-1",
-      "description": "user #1",
-      ...
-    })
+  contains:
+    name:
+      description: "User name"
+      type: str
+    "{property}":
+      description: "Additional properties of the user, as described
+        in the HMC WS-API book (using hyphens (-) in the property names)."
+    user-pattern-name:
+      description: "Name of the user pattern referenced by property
+        C(user-pattern-uri)."
+      type: str
+    password-rule-name:
+      description: "Name of the password rule referenced by property
+        C(password-rule-uri)."
+      type: str
+    ldap-server-definition-name:
+      description: "Name of the LDAP server definition referenced by property
+        C(ldap-server-definition-uri)."
+      type: str
+    default-group-name:
+      description: "Name of the group referenced by property
+        C(default-group-uri)."
+      type: str
 """
 
 import uuid  # noqa: E402

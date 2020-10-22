@@ -178,24 +178,41 @@ Examples
 Return Values
 -------------
 
-cpc (success, dict, C({
-  "name": "adapter-1",
-  "description": "Adapter 1",
-  "status": "active",
-  "acceptable_status": [ "active" ],
-  ...
-  "ports": [
-    {
-      "name": "Port 0",
-      ...
-    },
-    ...
-  ]
-})
-)
+cpc (success, dict, )
   For ``state=absent``, an empty dictionary.
 
-  For ``state=set|present|facts``, a dictionary with the properties of the adapter. The properties contain these additional artificial properties for listing its child resources: - 'ports': The ports of the adapter, as a dict of key: port name, value: dict of a subset of the port properties (name, status, element_uri).
+  For ``state=set|present|facts``, a dictionary with the properties of the adapter, including additional artificial properties as described below.
+
+
+  name (, str, )
+    Adapter name
+
+
+  {property} (, any, )
+    Additional properties of the adapter, as described in the HMC WS-API book (using hyphens (-) in the property names).
+
+
+  ports (, dict, )
+    Artificial property for the ports of the adapter, with a subset of its properties.
+
+
+    {name} (, dict, )
+      Port name
+
+
+      name (, str, )
+        Port name
+
+
+      status (, str, )
+        Status of the port
+
+
+      element_uri (, str, )
+        Canonical URI of the port
+
+
+
 
 
 

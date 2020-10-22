@@ -158,15 +158,16 @@ EXAMPLES = """
 
 RETURN = """
 storage_group_attachment:
-  description:
-    - "A dictionary with a single key 'attached' whose boolean value indicates
-       whether the storage group is now actually attached to the partition.
-       If check mode was requested, the actual (i.e. not the desired)
-       attachment state is returned."
+  description: "Attachment state of the storage group. If no check mode was
+    requested, the attachment state after any changes is returned. If check
+    mode was requested, the actual attachment state is returned."
   returned: success
   type: dict
-  sample: |
-    C({"attached": true})
+  contains:
+    attached:
+      description: "Attachment state of the storage group: Indicates whether
+        the storage group is attached to the partition."
+      type: bool
 """
 
 import logging  # noqa: E402

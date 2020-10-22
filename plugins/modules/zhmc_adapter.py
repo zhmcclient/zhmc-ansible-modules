@@ -226,28 +226,34 @@ cpc:
   description:
     - "For C(state=absent), an empty dictionary."
     - "For C(state=set|present|facts), a dictionary with the properties of the
-       adapter. The properties contain these additional artificial properties
-       for listing its child resources:
-       - 'ports': The ports of the adapter, as a dict of key:
-         port name, value: dict of a subset of the port properties
-         (name, status, element_uri)."
+       adapter, including additional artificial properties as described below."
   returned: success
   type: dict
-  sample: |
-    C({
-      "name": "adapter-1",
-      "description": "Adapter 1",
-      "status": "active",
-      "acceptable_status": [ "active" ],
-      ...
-      "ports": [
-        {
-          "name": "Port 0",
-          ...
-        },
-        ...
-      ]
-    })
+  contains:
+    name:
+      description: "Adapter name"
+      type: str
+    "{property}":
+      description: "Additional properties of the adapter, as described in the
+        HMC WS-API book (using hyphens (-) in the property names)."
+    ports:
+      description: "Artificial property for the ports of the adapter,
+        with a subset of its properties."
+      type: dict
+      contains:
+        "{name}":
+          description: "Port name"
+          type: dict
+          contains:
+            name:
+              description: "Port name"
+              type: str
+            status:
+              description: "Status of the port"
+              type: str
+            element_uri:
+              description: "Canonical URI of the port"
+              type: str
 """
 
 import logging  # noqa: E402

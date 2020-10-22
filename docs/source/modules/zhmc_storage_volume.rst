@@ -147,17 +147,23 @@ Examples
 Return Values
 -------------
 
-storage_volume (success, dict, C({
-  "name": "sv-1",
-  "description": "storage volume #1",
-  ...
-})
-)
+storage_volume (success, dict, )
   For ``state=absent``, an empty dictionary.
 
-  For ``state=present|facts``, a dictionary with the resource properties of the storage volume, indicating the state after changes from this module (if any) have been applied. The dictionary keys are the exact property names as described in the data model for the resource, i.e. they contain hyphens (-), not underscores (_). The dictionary values are the property values using the Python representations described in the documentation of the zhmcclient Python package. The additional artificial properties are:
+  For ``state=present|facts``, a dictionary with the resource properties of the storage volume, indicating the state after changes from this module (if any) have been applied.
 
-  * ``type``: Type of the storage volume ('fc' or 'fcp'), as defined in its storage group.
+
+  name (, str, )
+    Storage volume name
+
+
+  {property} (, any, )
+    Additional properties of the storage volume, as described in the HMC WS-API book (using hyphens (-) in the property names).
+
+
+  type (, str, )
+    Type of the storage volume ('fc' or 'fcp'), as defined in its storage group.
+
 
 
 
