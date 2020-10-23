@@ -191,6 +191,7 @@ install:
   - which pip
   - pip --version
   - pip list
+  - python tools/remove_duplicate_setuptools.py
   - make install
   - pip list
   - make develop
@@ -199,19 +200,9 @@ install:
 
 # commands to run builds & tests
 script:
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.8 && $PACKAGE_LEVEL == latest ]]; then
-      make docs;
-    fi
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.8 && $PACKAGE_LEVEL == latest ]]; then
-      make doccheck || true;
-    fi
-  - make check
+  - make docs
   - make test
-  # sanity tests will run for all ansible-supported python versions in a
-  # docker container, so its enough to run them once
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.8 && $PACKAGE_LEVEL == latest ]]; then
-      make sanity;
-    fi
+  - make sanity
 
 after_success:
   - if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_PYTHON_VERSION" == "3.8" && "$PACKAGE_LEVEL" == "latest" ]]; then

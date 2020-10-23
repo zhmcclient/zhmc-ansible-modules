@@ -10,6 +10,7 @@ env*
 .coverage
 /AUTHORS
 /ChangeLog
+/dist
 *.egg
 *.egg-info
 /_mailinglist
@@ -25,6 +26,7 @@ tmp_*
 *.tmp
 *.log
 *.retry
+/*.done
 vars.yml
 vault.yml
 /python-zhmcclient

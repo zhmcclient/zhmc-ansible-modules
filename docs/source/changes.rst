@@ -106,6 +106,9 @@ Released: not yet
   information about a CPC in DPM mode and its I/O configuration and
   creates a markdown file showing the result.
 
+* Dev: Changed make targets and adjusted to directory structure compatible with
+  Ansible collections, and for publishing on Ansible Galaxy.
+
 **Known issues:**
 
 * See `list of open issues`_.

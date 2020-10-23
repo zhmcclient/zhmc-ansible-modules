@@ -15,10 +15,10 @@
 
 # Ansible validate-modules (no imports, invoked via validate-modules script)
 mock>=2.0.0
-voluptuous>=0.10.2
+voluptuous>=0.11.7
 
 # Unit test (imports into testcases):
-packaging>=17.0
+# packaging is specified in requirements.txt
 funcsigs>=1.0.2; python_version < '3.3'
 # pytest 5.0.0 has removed support for Python < 3.5
 # pytest 4.3.1 solves an issue on Python 3 with minimum package levels
@@ -48,14 +48,12 @@ coverage>=4.5.2,<5.0
 # python-coveralls 2.9.2 no longer has requirement coverage==4.0.3.
 python-coveralls>=2.9.2
 pytest-cov>=2.7.0
-# PyYAML is pulled in by python-coveralls and PyYAML 5.3 has removed support for Python 3.4
-PyYAML>=5.1; python_version == '2.7'
-PyYAML>=5.1,<5.3; python_version == '3.4'
-PyYAML>=5.1; python_version > '3.4'
+# PyYAML is pulled in by python-coveralls and is specified in requirements.txt
 
 # ansible-test
 yamllint>=1.25.0
 pathspec>=0.8.0
+rstcheck>=3.3.1
 
 # Safety CI by pyup.io
 safety>=1.8.4
@@ -72,7 +70,7 @@ tox>=2.5.0
 #       Python 2.7, so we can no longer build the docs on Python 2.7.
 # Note: The docs build tools from Ansible 2.10 (in ../ansible) require
 #       antsibull, which supports only py>=3.6.
-Sphinx>=1.7.6; python_version >= '3.6'
+Sphinx>=3.0.0; python_version >= '3.6'
 sphinx-git>=10.1.1; python_version >= '3.6'
 GitPython>=2.1.1; python_version >= '3.6'
 sphinxcontrib-fulltoc>=1.2.0; python_version >= '3.6'

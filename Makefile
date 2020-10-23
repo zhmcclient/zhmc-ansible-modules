@@ -9,19 +9,12 @@
 #   These commands on all OS platforms:
 #     make (GNU make)
 #     bash
-#     rm, mv, find, tee, which
+#     rm, find
 #   These commands on all OS platforms in the active Python environment:
 #     python (or python3 on OS-X)
 #     pip (or pip3 on OS-X)
-#     twine
 #   These commands on Linux and OS-X:
 #     uname
-# Environment variables:
-#   PYTHON_CMD: Python command to use (OS-X needs to distinguish Python 2/3)
-#   PIP_CMD: Pip command to use (OS-X needs to distinguish Python 2/3)
-#   PACKAGE_LEVEL: minimum/latest - Level of Python dependent packages to use
-# Additional prerequisites for running this Makefile are installed by running:
-#   make develop
 # ------------------------------------------------------------------------------
 
 # Python / Pip commands
@@ -56,44 +49,42 @@ else
   PLATFORM := $(shell uname -s)
 endif
 
-# Name of this package on Pypi
-# Note: This must match the 'name' attribute specified in setup.py.
-# Note: Underscores in package names are automatically converted to dashes in
-#       the Pypi package name (see https://stackoverflow.com/q/19097057/1424462),
-#       so we specify dashes for the Pypi package name right away.
-package_name_pypi := zhmc-ansible-modules
-package_name_pypi_under := $(subst -,_,$(package_name_pypi))
+# Namespace and name of this collection
+# TODO: Check out whether this needs to match the 'name' attribute specified in setup.py.
+collection_namespace := ibm
+collection_name := zhmc
+collection_full_name := $(collection_namespace).$(collection_name)
 
-# Name of the Python package
-package_name_python := zhmc_ansible_modules
-package_name_python_dashes := $(subst _,-,$(package_name_python))
+# Collection version (full version, e.g. "1.0.0")
+# Note: The collection version is defined in galaxy.yml
+collection_version := $(shell $(PYTHON_CMD) setup.py --version)
 
-# Package version (full version, including any pre-release suffixes, e.g. "0.1.0.dev1")
-# Note: The package version is defined in zhmc_ansible_modules/_version.py.
-package_version := $(shell $(PYTHON_CMD) setup.py --version)
-
-# Python major version
+# Python versions
 python_major_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('%s'%sys.version_info[0])")
-
-# Python major+minor version
-python_mn_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('%s%s'%(sys.version_info[0],sys.version_info[1]))")
-
-# Python major.minor version
 python_m_n_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('%s.%s'%(sys.version_info[0],sys.version_info[1]))")
+pymn := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('py%s%s'%(sys.version_info[0],sys.version_info[1]))")
 
 # Flag indicating whether docs can be built
 # Keep in sync with Sphinx & ansible-doc-extractor install in minimum-constraints.txt and dev-requirements.txt
 doc_build := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('true' if sys.version_info[0:2]>=(3,6) else 'false')")
 
-# Build directory
-build_dir = build
+# The Python source files that are Ansible modules
+module_py_dir := plugins/modules
+module_py_files := $(wildcard $(module_py_dir)/zhmc_*.py)
 
-# Directory with the source code of our Ansible module source files
-module_src_dir := plugins/modules
-module_py_files := $(wildcard $(module_src_dir)/zhmc_*.py)
+# All Python source files (including Ansible modules)
+src_py_dir := plugins
+src_py_files := \
+    $(wildcard $(src_py_dir)/*.py) \
+		$(wildcard $(src_py_dir)/*/*.py) \
+		$(wildcard $(src_py_dir)/*/*/*.py) \
 
-# Directory with test source files
-test_dir = tests
+# All Python test source files
+test_dir := tests
+test_py_files := \
+    $(wildcard $(test_dir)/*.py) \
+    $(wildcard $(test_dir)/*/*.py) \
+    $(wildcard $(test_dir)/*/*/*.py) \
 
 # Directory with hmc_definitions.yaml file for end2end tests
 default_test_hmc_dir := ../python-zhmcclient/tests
@@ -108,111 +99,70 @@ ifndef TESTHMC
 endif
 
 # Sanity test directory
+# Note: 'ansible-test sanity' requires the collection to be tested to be
+#       located in {...}/collections/ansible_collections/{namespace}/{name}.
+#       The .git subtree must also be present.
+#       There is issue https://github.com/ansible/ansible/issues/60215 that
+#       discusses improving that.
+#       We copy most of the repo directory into sanity_dir to establish the
+#       required directory structure.
 sanity_dir := tmp_sanity/collections/ansible_collections/ibm/zhmc
 sanity_dir1 := tmp_sanity
+sanity_tar_file := tmp_workspace.tar
 
-# Directory for the generated distribution files
-dist_build_dir := $(build_dir)/dist
+# Directories for documentation
+doc_source_dir := docs/source
+doc_build_dir := docs/build
 
-# Distribution archives (as built by setup.py)
-bdist_file := $(dist_build_dir)/$(package_name_python)-$(package_version)-py2.py3-none-any.whl
-sdist_file := $(dist_build_dir)/$(package_name_python_dashes)-$(package_version).tar.gz
+# All documentation RST files (including module RST files)
+doc_rst_files := \
+    $(wildcard $(doc_source_dir)/*.rst) \
+		$(wildcard $(doc_source_dir)/*/*.rst) \
+		$(wildcard $(doc_source_dir)/*/*/*.rst) \
 
-# Files the distribution archive depends upon.
+# Module RST files
+module_rst_dir := $(doc_source_dir)/modules
+module_rst_files := $(patsubst $(module_py_dir)/%.py,$(module_rst_dir)/%.rst,$(module_py_files))
+
+# The Ansible Galaxy distribution archive
+dist_dir := dist
+dist_file := $(dist_dir)/$(collection_namespace)-$(collection_name)-$(collection_version).tar.gz
 dist_dependent_files := \
     setup.py \
-    README.rst \
+    README.md \
     requirements.txt \
     $(wildcard *.py) \
-    $(wildcard $(module_src_dir)/*.py) \
-    $(wildcard $(module_src_dir)/*/*.py) \
-    $(wildcard $(module_src_dir)/*/*/*.py) \
+    $(src_py_files) \
+		$(test_py_files) \
+		$(doc_rst_files) \
 
-# Directory for documentation (with Makefile)
-doc_dir := docs
-doc_gen_dir := $(doc_dir)/source
-doc_check_dir := doc_check
+# Sphinx options (besides -M)
+sphinx_opts :=
 
-# Directory for generated documentation
-doc_build_dir := $(doc_dir)/build
-
-# You can set these variables from the command line, and also
-# from the environment for the first two.
-SPHINXOPTS    ?=
-SPHINXBUILD   ?= sphinx-build
-SOURCEDIR     = $(doc_gen_dir)
-BUILDDIR      = $(doc_build_dir)
-
-# Flake8 config file
-flake8_rc_file := .flake8
-
-# FLake8 log file
-flake8_log_file := flake8_$(python_mn_version).log
-
-# Source files for check (with Flake8)
-check_py_files := \
-    setup.py \
-    $(wildcard $(module_src_dir)/*.py) \
-    $(wildcard $(module_src_dir)/*/*.py) \
-    $(wildcard $(module_src_dir)/*/*/*.py) \
-    $(wildcard $(test_dir)/*.py) \
-    $(wildcard $(test_dir)/*/*.py) \
-    $(wildcard $(test_dir)/*/*/*.py) \
-    $(wildcard tools/*.py) \
-
-# Test log file
-test_log_file := test_$(python_mn_version).log
-
-pytest_opts := $(TESTOPTS)
-
-# Location of local clone of Ansible project's Git repository, with the
-# 'devel' branch checked out. Will be cloned automatically.
-ansible_repo_dir := ../ansible
-
-# Documentation-related directories from Ansible project
-ansible_repo_template_dir := $(ansible_repo_dir)/docs/templates
-ansible_repo_lib_dir := $(ansible_repo_dir)/lib
-ansible_repo_rst_dir := $(ansible_repo_dir)/docs/docsite/rst
-
-# plugin_formatter tool from Ansible project
-plugin_formatter := $(ansible_repo_dir)/hacking/build-ansible.py document-plugins
-plugin_formatter_template_file := $(ansible_repo_template_dir)/plugin.rst.j2
-plugin_formatter_template_dir := $(shell dirname $(plugin_formatter_template_file))
-
-# validate-modules tool from Ansible project
-validate_modules := $(ansible_repo_dir)/bin/ansible-test sanity --test validate-modules
-validate_modules_log_file := validate.log
-validate_modules_exclude_pattern := (E101|E105|E106|DeprecationWarning)
-
-# Documentation files from Ansible repo to copy to $(doc_gen_dir)
-doc_copy_files := \
-    $(ansible_repo_rst_dir)/reference_appendices/common_return_values.rst \
-    $(ansible_repo_rst_dir)/user_guide/modules_support.rst \
+# Pytest options
+pytest_opts := $(TESTOPTS) -s
 
 # No built-in rules needed:
 .SUFFIXES:
+.SUFFIXES: .py .rst
 
 .PHONY: help
 help:
-	@echo 'Makefile for $(package_name_pypi) project'
-	@echo 'Package version will be: $(package_version)'
-	@echo 'Currently active Python environment: Python $(python_mn_version)'
+	@echo 'Makefile for Ansible collection:     $(collection_full_name)'
+	@echo 'Collection version will be:          $(collection_version)'
+	@echo 'Currently active Python environment: Python $(python_m_n_version)'
 	@echo 'Valid targets are:'
-	@echo '  install    - Install package (as editable) and its reqs into active Python environment'
 	@echo '  develop    - Set up the development environment'
+	@echo '  install    - Install collection and its dependent Python packages'
 	@echo '  docs       - Build the documentation in: $(doc_build_dir)'
-	@echo '  check      - Run all checks (flake8, validate-modules)'
-	@echo '  test       - Run unit tests (and test coverage) and save results in: $(test_log_file)'
-	@echo '               Env.var TESTCASES can be used to specify a py.test expression for its -k option'
+	@echo '  linkcheck  - Check links in documentation'
+	@echo '  test       - Run unit and function tests with test coverage'
+	@echo '  sanity     - Run Ansible sanity tests (includes flake8, pylint, validate-modules)'
 	@echo '  all        - Do all of the above'
 	@echo '  end2end    - Run end2end tests'
-	@echo '  sanity     - Run ansible sanity tests'
-	@echo '  upload     - Upload the package to PyPI'
-	@echo '  uninstall  - Uninstall package from active Python environment'
+	@echo '  dist       - Build the collection distribution archive in: $(dist_dir)'
+	@echo '  upload     - Publish the collection to Ansible Galaxy'
 	@echo '  clobber    - Remove any produced files'
-	@echo '  doccheck   - Run check whether generated module docs are up to date'
-	@echo '  linkcheck  - Check links in documentation (does not work)'
-	@echo '  dist       - Build the distribution files in: $(dist_build_dir) (not used)'
 	@echo 'Environment variables:'
 	@echo '  TESTHMC=... - Nickname of HMC to be used in end2end tests. Default: $(default_test_hmc)'
 	@echo '  TESTHMCDIR=... - Path name of directory with hmc_definitions.yaml file. Default: $(default_test_hmc_dir)'
@@ -222,194 +172,112 @@ help:
 	@echo '  PYTHON_CMD=... - Name of python command. Default: python'
 	@echo '  PIP_CMD=... - Name of pip command. Default: pip'
 	@echo 'Invocation of ansible commands from within repo main directory:'
-	@echo '  export ANSIBLE_LIBRARY="$$(pwd)/$(module_src_dir);$$ANSIBLE_LIBRARY"'
+	@echo '  export ANSIBLE_LIBRARY="$$(pwd)/$(module_py_dir);$$ANSIBLE_LIBRARY"'
 	@echo '  # currently: ANSIBLE_LIBRARY=$(ANSIBLE_LIBRARY)'
 	@echo '  ansible-playbook playbooks/....'
 
+.PHONY: all
+all: develop install docs linkcheck test sanity
+	@echo '$@ done.'
+
 .PHONY: install
-install: _pip requirements.txt setup.py
-	@echo 'Installing package (as editable) and its reqs with PACKAGE_LEVEL=$(PACKAGE_LEVEL) into current Python environment'
-	$(PIP_CMD) install $(pip_level_opts) $(pip_level_opts_new) -r requirements.txt
-	$(PIP_CMD) install -e .
-	@echo 'Done: Installed package and its reqs into current Python environment.'
+install: _check_version install_$(pymn).done
+	@echo '$@ done.'
 
 .PHONY: develop
-develop: _pip requirements.txt dev-requirements.txt tools/os_setup.sh $(ansible_repo_dir) develop_ansible
-	@echo 'Setting up the development environment with PACKAGE_LEVEL=$(PACKAGE_LEVEL)'
-	bash -c 'tools/os_setup.sh'
-	$(PIP_CMD) install $(pip_level_opts) $(pip_level_opts_new) -r dev-requirements.txt
+develop: _check_version develop_$(pymn).done
 	@echo '$@ done.'
-
-.PHONY: develop_ansible
-develop_ansible: _pip $(ansible_repo_dir) $(ansible_repo_dir)/docs/docsite/requirements.txt
-ifneq ($(doc_build),true)
-	@echo "makefile: Warning: Skipping target develop_ansible on Python $(python_mn_version)"
-else
-	@echo 'Setting up the development environment for Ansible tools'
-	$(PIP_CMD) install $(pip_level_opts) $(pip_level_opts_new) -r $(ansible_repo_dir)/docs/docsite/requirements.txt
-	@echo '$@ done.'
-endif
 
 .PHONY: docs
-docs: $(doc_build_dir)/html/index.html
-	@echo '$@ done.'
-
-.PHONY: check
-check: $(flake8_log_file)  # $(validate_modules_log_file)
-	@echo '$@ done.'
-
-.PHONY: test
-test: $(test_log_file)
-	@echo '$@ done.'
-
-.PHONY: all
-all: install develop docs check test
-	@echo '$@ done.'
-
-.PHONY: upload
-upload: _check_version $(bdist_file) $(sdist_file)
-ifeq (,$(findstring .dev,$(package_version)))
-	@echo '==> This will upload $(package_name_pypi) version $(package_version) to PyPI!'
-	@echo -n '==> Continue? [yN] '
-	@bash -c 'read answer; if [[ "$$answer" != "y" ]]; then echo "Aborted."; false; fi'
-	twine upload $(bdist_file) $(sdist_file)
-	@echo 'Done: Uploaded $(package_name_pypi) version to PyPI: $(package_version)'
-	@echo '$@ done.'
-else
-	@echo 'Error: A development version $(package_version) of $(package_name_pypi) cannot be uploaded to PyPI!'
-	@false
-endif
-
-.PHONY: uninstall
-uninstall:
-	bash -c '$(PIP_CMD) show $(package_name_pypi) >/dev/null; rc=$$?; if [[ $$rc == 0 ]]; then $(PIP_CMD) uninstall -y $(package_name_pypi); fi'
-	@echo '$@ done.'
-
-.PHONY: clobber
-clobber:
-	rm -Rf .cache .pytest_cache $(package_name_pypi_under).egg-info .eggs $(build_dir) $(doc_build_dir) $(doc_check_dir) htmlcov .tox
-	rm -f MANIFEST MANIFEST.in AUTHORS ChangeLog .coverage flake8_*.log test_*.log $(validate_modules_log_file)
-	rm -rf $(sanity_dir1)
-	find . -name "*.pyc" -delete -o -name "__pycache__" -delete -o -name "*.tmp" -delete -o -name "tmp_*" -delete
-	rm -rf $(doc_build_dir)
-
-	@echo 'Done: Removed all build products to get to a fresh state.'
-	@echo '$@ done.'
-
-.PHONY: doccheck
-doccheck: $(doc_check_dir)/list_of_all_modules.rst
-	bash -c 'diff -bB --exclude=common_return_values.rst --exclude=modules_support.rst $(doc_gen_dir) $(doc_check_dir); if [[ "$$?" != "0" ]]; then echo "Error: Module documentation files are not up to date - run make docs and commit them."; false; fi'
+docs: _check_version develop_$(pymn).done $(doc_build_dir)/html/index.html
 	@echo '$@ done.'
 
 .PHONY: linkcheck
-linkcheck: $(doc_build_dir)/linkcheck/output.txt
+linkcheck: _check_version develop_$(pymn).done $(doc_rst_files)
+	-sphinx-build -b linkcheck $(sphinx_opts) $(doc_source_dir) $(doc_build_dir)/linkcheck
+	@echo '$@ done.'
+
+.PHONY: test
+test: _check_version develop_$(pymn).done
+	bash -c 'PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. pytest --cov $(module_py_dir) --cov-config .coveragerc --cov-report=html:htmlcov $(pytest_opts) $(test_dir)/unit $(test_dir)/function'
+	@echo '$@ done.'
+
+.PHONY:	sanity
+sanity: _check_version develop_$(pymn).done
+	tar -rf $(sanity_tar_file) --exclude=tmp_workspace.tar --exclude=$(doc_build_dir) --exclude=$(sanity_dir1) .
+	mkdir -p $(sanity_dir)
+	tar -xf $(sanity_tar_file) --directory $(sanity_dir)
+	sh -c "cd $(sanity_dir); ansible-test sanity --local --python $(python_m_n_version)"
+	@echo '$@ done.'
+
+.PHONY:	end2end
+end2end: _check_version develop_$(pymn).done
+	bash -c 'PYTHONWARNINGS=default TESTHMCDIR=$(TESTHMCDIR) TESTHMC=$(TESTHMC) py.test -v $(pytest_opts) $(test_dir)/end2end'
+	@echo '$@ done.'
+
+.PHONY: upload
+upload: _check_version $(dist_file)
+ifeq (,$(findstring .dev,$(collection_version)))
+	@echo '==> This will publish collection $(collection_full_name) version $(collection_version) on Ansible Galaxy!'
+	@echo -n '==> Continue? [yN] '
+	@bash -c 'read answer; if [[ "$$answer" != "y" ]]; then echo "Aborted."; false; fi'
+	ansible-galaxy collection publish $(dist_file)
+	@echo 'Done: Published collection $(collection_full_name) version $(collection_version) on Ansible Galaxy'
+	@echo '$@ done.'
+else
+	$(error Error: A development version $(collection_version) of collection $(collection_full_name) cannot be published on Ansible Galaxy!)
+endif
+
+.PHONY: clobber
+clobber:
+	rm -Rf .cache .pytest_cache $(doc_build_dir) $(sanity_dir1) $(sanity_tar_file) htmlcov .tox
+	rm -f MANIFEST MANIFEST.in AUTHORS ChangeLog .coverage *.done
+	find . -name "*.pyc" -delete -o -name "__pycache__" -delete -o -name "*.tmp" -delete -o -name "tmp_*" -delete
 	@echo '$@ done.'
 
 .PHONY: dist
-dist: $(bdist_file) $(sdist_file)
+dist: _check_version $(dist_file)
 	@echo '$@ done.'
 
 .PHONY: _check_version
 _check_version:
-ifeq (,$(package_version))
-	@echo 'Error: Package version could not be determined'
-	@false
+ifeq (,$(collection_version))
+	$(error Error: Collection version could not be determined)
 else
-	@true
+	@true >/dev/null
 endif
 
-.PHONY: _pip
-_pip:
-	$(PYTHON_CMD) tools/remove_duplicate_setuptools.py
-	@echo 'Installing/upgrading pip, setuptools, and wheel with PACKAGE_LEVEL=$(PACKAGE_LEVEL)'
+install_$(pymn).done: Makefile develop_$(pymn).done $(dist_file) requirements.txt
+	$(PIP_CMD) install $(pip_level_opts) $(pip_level_opts_new) -r requirements.txt
+	ansible-galaxy collection install --force $(dist_file)
+	echo "done" >$@
+
+develop_$(pymn).done: Makefile install_pip_$(pymn).done tools/os_setup.sh dev-requirements.txt
+	bash -c 'tools/os_setup.sh'
+	$(PIP_CMD) install $(pip_level_opts) $(pip_level_opts_new) -r dev-requirements.txt
+	echo "done" >$@
+
+install_pip_$(pymn).done: Makefile
 	$(PYTHON_CMD) -m pip install $(pip_level_opts) pip setuptools wheel
+	echo "done" >$@
 
-$(bdist_file): _check_version Makefile $(dist_dependent_files)
-ifneq ($(PLATFORM),Windows)
-	rm -Rf $(package_name_pypi_under).egg-info .eggs
-	mkdir -p $(dist_build_dir)
-	$(PYTHON_CMD) setup.py bdist_wheel -d $(dist_build_dir) --universal
-	@echo 'Done: Created distribution file: $@'
-else
-	@echo 'Error: Creating bdist_wheel distribution archive requires to run on Linux or OS-X'
-	@false
-endif
+$(dist_file): $(dist_dependent_files)
+	mkdir -p $(dist_dir)
+	ansible-galaxy collection build --output-path=$(dist_dir) --force .
 
-$(sdist_file): _check_version Makefile $(dist_dependent_files)
-ifneq ($(PLATFORM),Windows)
-	rm -Rf $(package_name_pypi_under).egg-info .eggs
-	mkdir -p $(dist_build_dir)
-	$(PYTHON_CMD) setup.py sdist -d $(dist_build_dir)
-	@echo 'Done: Created distribution file: $@'
-else
-	@echo 'Error: Creating sdist distribution archive requires to run on Linux or OS-X'
-	@false
-endif
+$(module_rst_dir):
+	mkdir -p $(module_rst_dir)
 
-$(ansible_repo_dir):
-	@echo 'Cloning our fork of the Ansible repo into: $@'
-# pinned to a fixed version since the doc generation process has been changed
-# in 2.10 (ansibull). TODO: Adapt doc generation.
-	git clone https://github.com/ansible/ansible.git --branch stable-2.10 $@
-
-$(doc_gen_dir)/list_of_all_modules.rst: Makefile $(module_py_files) $(ansible_repo_dir)
-	mkdir -p $(doc_gen_dir)
-	PYTHONPATH=$(ansible_repo_lib_dir) $(plugin_formatter) -vv --type=rst --template-dir=$(plugin_formatter_template_dir) --module-dir=$(module_src_dir) --output-dir=$(doc_gen_dir)/
-	rm -fv $(doc_gen_dir)/modules_by_category.rst $(doc_gen_dir)/list_of__modules.rst
-
-$(doc_check_dir)/list_of_all_modules.rst: Makefile $(module_py_files) $(ansible_repo_dir)
-	mkdir -p $(doc_check_dir)
-	PYTHONPATH=$(ansible_repo_lib_dir) $(plugin_formatter) -vv --type=rst --template-dir=$(plugin_formatter_template_dir) --module-dir=$(module_src_dir) --output-dir=$(doc_check_dir)/
-	rm -fv $(doc_check_dir)/modules_by_category.rst $(doc_check_dir)/list_of__modules.rst
-
-$(doc_build_dir)/html/index.html: Makefile $(module_py_files)
+$(module_rst_dir)/%.rst: $(module_py_dir)/%.py $(module_rst_dir)
 ifneq ($(doc_build),true)
-	@echo "makefile: Warning: Skipping doc build on Python $(python_mn_version)"
+	@echo "makefile: Warning: Skipping module docs extraction on Python $(python_m_n_version)"
 else
-	mkdir -p $(doc_dir)/build
-	mv plugins/modules/__init__.py plugins/modules/__init__.py.skip
-	ansible-doc-extractor $(doc_dir)/source/modules plugins/modules/*.py
-	$(SPHINXBUILD) -M html "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS)
-	mv plugins/modules/__init__.py.skip plugins/modules/__init__.py
-	@echo "Done: Created the HTML pages with top level file: $@"
+	ansible-doc-extractor $(module_rst_dir) $<
 endif
 
-$(doc_build_dir)/linkcheck/output.txt: Makefile $(doc_dependent_files) $(doc_gen_dir)/list_of_all_modules.rst
-	$(sphinx) -b linkcheck $(sphinx_opts) $(doc_dir) $(doc_build_dir)/linkcheck
-	@echo
-	@echo "Done: Look for any errors in the above output or in: $@"
-
-$(flake8_log_file): Makefile $(flake8_rc_file) $(check_py_files)
-	rm -f $@
-	bash -c 'set -o pipefail; flake8 $(check_py_files) 2>&1 |tee $@.tmp'
-	mv -f $@.tmp $@
-	@echo 'Done: Flake8 checker succeeded'
-
-$(validate_modules_log_file): Makefile $(module_py_files) $(ansible_repo_dir)
-	rm -f $@
-	bash -c 'PYTHONPATH=$(ansible_repo_lib_dir) $(validate_modules) $(module_py_files) 2>&1 |grep -v -E "$(validate_modules_exclude_pattern)" |tee $@.tmp'
-	bash -c 'if [[ -n "$$(cat $@.tmp)" ]]; then false; fi'
-	mv -f $@.tmp $@
-	@echo 'Done: Ansible validate-modules checker succeeded'
-
-$(test_log_file): Makefile $(check_py_files)
-	rm -f $@
-	bash -c 'set -o pipefail; PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_src_dir) PYTHONPATH=. pytest -s --cov $(module_src_dir) --cov-config .coveragerc --cov-report=html:htmlcov $(pytest_opts) $(test_dir)/unit $(test_dir)/function 2>&1 |tee $@.tmp'
-	mv -f $@.tmp $@
-	@echo 'Done: Created test log file: $@'
-
-.PHONY:	end2end
-end2end:
-	bash -c 'PYTHONWARNINGS=default TESTHMCDIR=$(TESTHMCDIR) TESTHMC=$(TESTHMC) py.test -s -v $(pytest_opts) $(test_dir)/end2end'
-	@echo '$@ done.'
-
-.PHONY:	sanity
-sanity:
-# Note: 'ansible-test sanity' requires the collection to be tested to be
-#       located in {...}/collections/ansible_collections/{namespace}/{name}.
-#       The .git subtree must be present.
-	tar -rf tmp_workspace.tar --exclude=tmp_workspace.tar --exclude=$(doc_build_dir) --exclude=$(sanity_dir1) .
-	mkdir -p $(sanity_dir)
-	tar -xf tmp_workspace.tar --directory $(sanity_dir)
-	sh -c "cd $(sanity_dir); ansible-test sanity --local --python $(python_m_n_version)"
-	@echo '$@ done.'
+$(doc_build_dir)/html/index.html: $(doc_rst_files)
+ifneq ($(doc_build),true)
+	@echo "makefile: Warning: Skipping docs build on Python $(python_m_n_version)"
+else
+	sphinx-build -M html $(sphinx_opts) $(doc_source_dir) $(doc_build_dir)
+endif

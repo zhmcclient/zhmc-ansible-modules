@@ -22,7 +22,7 @@ copyright = '2016-2020, IBM'
 author = 'IBM'
 
 # The full version, including alpha/beta/rc tags
-release = '0.8.3'
+release = '1.0.0'
 
 
 # -- General configuration ---------------------------------------------------
