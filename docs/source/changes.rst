@@ -75,6 +75,12 @@ Released: not yet
   machine generation. This makes the 'mac_address' property writeable, and adds
   the 'vlan_type', 'function_number' and 'function_range' properties.
 
+**Cleanup:**
+
+* Removed the page describing common return values, because all return values
+  are specifically described on the module pages without referencing any
+  common return value type.
+
 **Known issues:**
 
 * See `list of open issues`_.
