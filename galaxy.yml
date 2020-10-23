@@ -42,6 +42,7 @@ issues: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 build_ignore:
   - '*.tar.gz'
   - .DS_Store
+  - .pytest_cache
   - .coveragerc
   - .flake8
   - .gitignore
@@ -52,14 +53,10 @@ build_ignore:
   - LICENSE
   - Makefile
   - README.md
-  - Vagrantfile
-  - dev-requirements.yml
   - galaxy.yml
-  - get_facts.py
-  - ibm-ibm_zhmc_client-0.1beta.tar.gz
+  - dev-requirements.yml
   - minimum-constraints.txt
-  - os_setup.sh
-  - provision.yml
-  - remove_duplicate_setuptools.py
   - requirements.txt
   - setup.py
+  - tools/os_setup.sh
+  - tools/remove_duplicate_setuptools.py

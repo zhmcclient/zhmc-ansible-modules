@@ -234,9 +234,9 @@ install: _pip requirements.txt setup.py
 	@echo 'Done: Installed package and its reqs into current Python environment.'
 
 .PHONY: develop
-develop: _pip requirements.txt dev-requirements.txt os_setup.sh $(ansible_repo_dir) develop_ansible
+develop: _pip requirements.txt dev-requirements.txt tools/os_setup.sh $(ansible_repo_dir) develop_ansible
 	@echo 'Setting up the development environment with PACKAGE_LEVEL=$(PACKAGE_LEVEL)'
-	bash -c './os_setup.sh'
+	bash -c 'tools/os_setup.sh'
 	$(PIP_CMD) install $(pip_level_opts) $(pip_level_opts_new) -r dev-requirements.txt
 	@echo '$@ done.'
 
@@ -287,7 +287,7 @@ uninstall:
 
 .PHONY: clobber
 clobber:
-	rm -Rf .cache $(package_name_pypi_under).egg-info .eggs $(build_dir) $(doc_check_dir) htmlcov .tox
+	rm -Rf .cache .pytest_cache $(package_name_pypi_under).egg-info .eggs $(build_dir) $(doc_build_dir) $(doc_check_dir) htmlcov .tox
 	rm -f MANIFEST MANIFEST.in AUTHORS ChangeLog .coverage flake8_*.log test_*.log $(validate_modules_log_file)
 	rm -rf $(sanity_dir1)
 	find . -name "*.pyc" -delete -o -name "__pycache__" -delete -o -name "*.tmp" -delete -o -name "tmp_*" -delete
@@ -320,7 +320,7 @@ endif
 
 .PHONY: _pip
 _pip:
-	$(PYTHON_CMD) remove_duplicate_setuptools.py
+	$(PYTHON_CMD) tools/remove_duplicate_setuptools.py
 	@echo 'Installing/upgrading pip, setuptools, and wheel with PACKAGE_LEVEL=$(PACKAGE_LEVEL)'
 	$(PYTHON_CMD) -m pip install $(pip_level_opts) pip setuptools wheel
 
