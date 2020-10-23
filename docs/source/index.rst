@@ -6,7 +6,6 @@ ibm.zhmc Ansible modules
    :maxdepth: 2
    :name: mastertoc
 
-   intro
    all_modules
    modules_support
    development

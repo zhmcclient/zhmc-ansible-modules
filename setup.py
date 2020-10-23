@@ -22,16 +22,23 @@ __metaclass__ = type
 
 import re
 import setuptools
-import yaml
 
 
 def get_version(version_file):
     """
     Get the version from the collection manifest.
+
+    In order to avoid the dependency to a yaml package, this is done by
+    parsing the file with a regular expression.
     """
-    with open(version_file, 'r') as f_p:
-        manifest = yaml.safe_load(f_p)
-    return manifest['version']
+    with open(version_file, 'r') as fp:
+        ftext = fp.read()
+    m = re.search(r"^version: *([0-9.a-z]+) *$", ftext, re.MULTILINE)
+    if not m:
+        raise ValueError("No version found in collection manifest: {0}".
+                         format(version_file))
+    version = m.group(1)
+    return version
 
 
 def get_requirements(requirements_file):
