@@ -8,7 +8,6 @@ ibm.zhmc Ansible modules
 
    intro
    all_modules
-   return_values
    modules_support
    development
    CONTRIBUTING
