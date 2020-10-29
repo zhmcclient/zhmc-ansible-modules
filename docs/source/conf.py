@@ -17,6 +17,26 @@ __metaclass__ = type
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
+import os
+import re
+
+
+def get_version(galaxy_file):
+    """
+    Get the version from the collection manifest file (galaxy.yml).
+
+    In order to avoid the dependency to a yaml package, this is done by
+    parsing the file with a regular expression.
+    """
+    with open(galaxy_file, 'r') as fp:
+        ftext = fp.read()
+    m = re.search(r"^version: *([0-9.a-z]+) *$", ftext, re.MULTILINE)
+    if not m:
+        raise ValueError("No version found in collection manifest file: {0}".
+                         format(galaxy_file))
+    version = m.group(1)
+    return version
+
 
 # -- Project information -----------------------------------------------------
 
@@ -24,8 +44,12 @@ project = 'ibm.zhmc Ansible modules'
 copyright = '2016-2020, IBM'
 author = 'IBM'
 
+_version_file = '../../galaxy.yml'  # relative to the dir of this file
+_version_file = os.path.relpath(os.path.join(
+    os.path.dirname(__file__), _version_file))
+
 # The full version, including alpha/beta/rc tags
-release = '1.0.0'
+release = get_version(_version_file)
 
 
 # -- General configuration ---------------------------------------------------

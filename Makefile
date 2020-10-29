@@ -275,7 +275,7 @@ else
 	ansible-doc-extractor $(module_rst_dir) $<
 endif
 
-$(doc_build_dir)/html/index.html: $(doc_rst_files)
+$(doc_build_dir)/html/index.html: $(doc_rst_files) $(doc_source_dir)/conf.py
 ifneq ($(doc_build),true)
 	@echo "makefile: Warning: Skipping docs build on Python $(python_m_n_version)"
 else
