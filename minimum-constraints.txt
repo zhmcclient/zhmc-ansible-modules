@@ -92,7 +92,7 @@ zhmcclient==0.26.0
 
 # Indirect dependencies for installation (must be consistent with requirements.txt)
 
-cryptography==3.0
+cryptography==3.2
 packaging==20.0
 PyYAML==5.3; python_version == '2.7'  # PyYAML 5.3 fixes narrow build error
 PyYAML==5.1; python_version >= '3.4' and python_version < '3.8'
