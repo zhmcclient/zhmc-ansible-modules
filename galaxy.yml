@@ -30,10 +30,10 @@ tags:
 repository: https://github.com/zhmcclient/zhmc-ansible-modules
 
 # The URL to any online docs
-documentation: http://zhmc-ansible-modules.readthedocs.io/en/stable/
+documentation: https://zhmcclient.github.io/zhmc-ansible-modules/
 
 # The URL to the homepage of the collection/project
-homepage: http://zhmc-ansible-modules.readthedocs.io/en/stable/
+homepage: https://github.com/zhmcclient/zhmc-ansible-modules
 
 # The URL to the collection issue tracker
 issues: https://github.com/zhmcclient/zhmc-ansible-modules/issues
@@ -52,11 +52,9 @@ build_ignore:
   - DCO1.1.txt
   - LICENSE
   - Makefile
-  - README.md
-  - galaxy.yml
   - dev-requirements.yml
   - minimum-constraints.txt
   - requirements.txt
   - setup.py
-  - tools/os_setup.sh
-  - tools/remove_duplicate_setuptools.py
+  - tools/
+  - venv
