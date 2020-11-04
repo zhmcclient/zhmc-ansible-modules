@@ -31,3 +31,4 @@ vars.yml
 vault.yml
 /python-zhmcclient
 /docs/build/
+/tests/output/

@@ -8,7 +8,6 @@ ibm.zhmc Ansible Galaxy collection
 
    intro
    all_modules
-   modules_support
    development
    CONTRIBUTING
    appendix
