@@ -77,6 +77,9 @@ Released: not yet
   machine generation. This makes the 'mac_address' property writeable, and adds
   the 'vlan_type', 'function_number' and 'function_range' properties.
 
+* Added support in the zhmc_crypto_attachment module for specifying crypto
+  adapters by name instead of just their count. (See issue #187)
+
 **Cleanup:**
 
 * Removed the page describing common return values, because all return values

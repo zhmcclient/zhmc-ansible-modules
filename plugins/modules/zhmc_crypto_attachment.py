@@ -99,10 +99,24 @@ options:
       - "Only for C(state=attach): The number of crypto adapters the partition
          needs to have attached.
          The special value -1 means all adapters of the desired crypto type in
-         the CPC."
+         the CPC.
+         The C(adapter_names) and C(adapter_count) parameters are mutually
+         exclusive; if neither is specified the default for C(adapter_count)
+         applies."
     type: int
     required: false
     default: -1
+  adapter_names:
+    description:
+      - "Only for C(state=attach): The names of the crypto adapters the
+         partition needs to have attached.
+         The C(adapter_names) and C(adapter_count) parameters are mutually
+         exclusive; if neither is specified the default for C(adapter_count)
+         applies."
+    type: list
+    elements: str
+    required: false
+    default: []
   domain_range:
     description:
       - "Only for C(state=attach): The domain range the partition needs to have
@@ -195,6 +209,18 @@ EXAMPLES = """
     state: attached
     crypto_type: ep11
     adapter_count: 1
+    domain_range: 0,-1
+    access_mode: usage
+
+- name: Ensure domains 0-max on two specific ep11 adapters are attached
+  zhmc_crypto_attachment:
+    hmc_host: "{{ my_hmc_host }}"
+    hmc_auth: "{{ my_hmc_auth }}"
+    cpc_name: "{{ my_cpc_name }}"
+    partition_name: "{{ my_second_partition_name }}"
+    state: attached
+    crypto_type: ep11
+    adapter_names: [CRYP00, CRYP01]
     domain_range: 0,-1
     access_mode: usage
 
@@ -358,6 +384,38 @@ def get_partition_config(partition, all_adapters):
     return result
 
 
+def get_conflicting_domains(
+        desired_domains, hmc_access_mode, adapter, partition,
+        all_crypto_config, all_partitions):
+    """
+    Internal function that determines those domains from the desired domains
+    on a particular adapter that cannot be attached to a particular partition
+    in the desired mode because they are already attached to other partitions
+    in a mode that prevents that.
+    """
+    conflicting_domains = dict()
+    if adapter.uri in all_crypto_config:
+        domains_dict = all_crypto_config[adapter.uri]
+        for di in desired_domains:
+            if di in domains_dict:
+                # The domain is already attached to some
+                # partition(s) in some access mode
+                for am, p_uri in domains_dict[di]:
+                    if am == 'control':
+                        # An attachment in control mode does not
+                        # prevent additional attachments
+                        continue
+                    if p_uri == partition.uri and \
+                            am == hmc_access_mode:
+                        # This is our target partition, and the
+                        # domain is already attached in the desired
+                        # mode.
+                        continue
+                    p = all_partitions[p_uri]
+                    conflicting_domains[di] = (am, p.name)
+    return conflicting_domains
+
+
 def ensure_attached(params, check_mode):
     """
     Ensure that the specified crypto adapters and crypto domains are attached
@@ -374,7 +432,8 @@ def ensure_attached(params, check_mode):
     userid, password = get_hmc_auth(params['hmc_auth'])
     cpc_name = params['cpc_name']
     partition_name = params['partition_name']
-    adapter_count = params['adapter_count']
+    adapter_count = params.get('adapter_count', None)  # No default specified
+    adapter_names = params.get('adapter_names', None)  # No default specified
     domain_range = params['domain_range']
     access_mode = params['access_mode']
     crypto_type = params['crypto_type']
@@ -433,20 +492,48 @@ def ensure_attached(params, check_mode):
                 "of the range must be less than the higher boundary (={1})".
                 format(domain_range_lo, domain_range_hi))
 
-        # Parameter checking on adapter count.
+        # Parameter checking on adapter count and adapter names.
         # (can be done only now because it requires the number of adapters).
-        if adapter_count == -1:
-            adapter_count = len(all_adapters)
-        if adapter_count < 1:
-            raise ParameterError(
-                "The 'adapter_count' parameter must be at least 1, "
-                "but is: {0}".format(adapter_count))
-        if adapter_count > len(all_adapters):
-            raise ParameterError(
-                "The 'adapter_count' parameter must not exceed the number of "
-                "{0} crypto adapters of type {1!r} in CPC {2!r}, but is {3}".
-                format(len(all_adapters), crypto_type, cpc_name,
-                       adapter_count))
+        if adapter_count is None and adapter_names is None:
+            adapter_count == -1
+        if adapter_count is not None:
+            if adapter_names is not None:
+                raise ParameterError(
+                    "The 'adapter_count' and 'adapter_names' parameters are "
+                    "mutually exclusive, but both have been specified: "
+                    "adapter_count={0!r}, adapter_names={1!r}".
+                    format(adapter_count, adapter_names))
+            if adapter_count == -1:
+                adapter_count = len(all_adapters)
+            elif adapter_count < 1:
+                raise ParameterError(
+                    "The 'adapter_count' parameter must be at least 1, but "
+                    "is: {0}".
+                    format(adapter_count))
+            elif adapter_count > len(all_adapters):
+                raise ParameterError(
+                    "The 'adapter_count' parameter must not exceed the "
+                    "number of {0} crypto adapters of type {1!r} in CPC "
+                    "{2!r}, but is {3}".
+                    format(len(all_adapters), crypto_type, cpc_name,
+                           adapter_count))
+        else:
+            adapter_count = len(adapter_names)
+
+        # Verify the specified adapters exist
+        if adapter_names is not None:
+            all_adapter_names = [a.name for a in all_adapters]
+            for aname in adapter_names:
+                if aname not in all_adapter_names:
+                    raise ParameterError(
+                        "The 'adapter_name' parameter specifies an adapter "
+                        "named {0!r} that does not exist in CPC {1!r}".
+                        format(aname, cpc_name))
+
+        # At this point, we have:
+        # - adapter_count is a valid number 1..max in all cases.
+        # - adapter_names is None if the adapters do not matter or is a
+        #   list of existing adapter names of length adapter_count.
 
         #
         # Get current crypto config of the target partition.
@@ -586,7 +673,7 @@ def ensure_attached(params, check_mode):
                                                ACCESS_MODES_HMC2MOD[am],
                                                p.name))
 
-        # Make sure the desired number of adapters is attached to the partition
+        # Make sure the desired adapters are attached to the partition
         # and the desired domains are attached.
         # The HMC enforces the following for non-empty crypto configurations of
         # a partition:
@@ -598,101 +685,159 @@ def ensure_attached(params, check_mode):
         # first domain(s) need to be attached at the same time.
         result_changes['added-adapters'] = []
         result_changes['added-domains'] = []
-        missing_count = max(0, adapter_count - len(attached_adapters))
-        if missing_count > len(detached_adapters):
-            raise AssertionError(
-                "missing_count={0}, len(detached_adapters)={1}".
-                format(missing_count, len(detached_adapters)))
-        if missing_count == 0 and add_domain_config:
-            # Adapters already sufficient, but domains to be attached
 
-            LOGGER.debug(
-                "Adapters sufficient - attaching domains %r in %r mode to "
-                "target partition %r", add_domains, access_mode,
-                partition.name)
+        if adapter_names is None:
 
-            if not check_mode:
-                try:
-                    partition.increase_crypto_config([], add_domain_config)
-                except zhmcclient.Error as exc:
-                    raise Error(
-                        "Attaching domains {0!r} in {1!r} mode to target "
-                        "partition {2!r} failed: {3}".
-                        format(add_domains, access_mode, partition.name, exc))
+            # Only the number of adapters was specified so it can be any
+            # adapter. We accept any already attached adapter.
 
-            changed = True
-            result_changes['added-domains'].extend(add_domains)
-
-        elif missing_count > 0:
-            # Adapters need to be attached
-
-            for adapter in detached_adapters:
-                if missing_count == 0:
-                    break
-
-                # Check that the adapter has all needed domains available
-                conflicting_domains = dict()
-                if adapter.uri in all_crypto_config:
-                    domains_dict = all_crypto_config[adapter.uri]
-                    for di in desired_domains:
-                        if di in domains_dict:
-                            # The domain is already attached to some
-                            # partition(s) in some access mode
-                            for am, p_uri in domains_dict[di]:
-                                if am == 'control':
-                                    # An attachment in control mode does not
-                                    # prevent additional attachments
-                                    continue
-                                if p_uri == partition.uri and \
-                                        am == hmc_access_mode:
-                                    # This is our target partition, and the
-                                    # domain is already attached in the desired
-                                    # mode.
-                                    continue
-                                p = all_partitions[p_uri]
-                                conflicting_domains[di] = (am, p.name)
-
-                if conflicting_domains:
-                    LOGGER.debug(
-                        "Skipping adapter %r because the following of its "
-                        "domains are already attached to other partitions: "
-                        "%r", adapter.name, conflicting_domains)
-                    continue
+            missing_count = max(0, adapter_count - len(attached_adapters))
+            assert missing_count <= len(detached_adapters), \
+                "missing_count={}, len(detached_adapters)={}".\
+                format(missing_count, len(detached_adapters))
+            if missing_count == 0 and add_domain_config:
+                # Adapters already sufficient, but domains need to be attached
 
                 LOGGER.debug(
-                    "Attaching adapter %r and domains %r in %r mode to "
-                    "target partition %r", adapter.name, add_domains,
-                    access_mode, partition.name)
+                    "Adapters sufficient - attaching domains {0!r} in {1!r} "
+                    "mode to target partition {2!r}".
+                    format(add_domains, access_mode, partition.name))
+
+                if not check_mode:
+                    try:
+                        partition.increase_crypto_config([], add_domain_config)
+                    except zhmcclient.Error as exc:
+                        raise Error(
+                            "Attaching domains {0!r} in {1!r} mode to target "
+                            "partition {2!r} failed: {3}".
+                            format(add_domains, access_mode, partition.name,
+                                   exc))
+
+                changed = True
+                result_changes['added-domains'].extend(add_domains)
+
+            elif missing_count > 0:
+                # Adapters need to be attached
+
+                for adapter in detached_adapters:
+                    if missing_count == 0:
+                        break
+
+                    # Check that the adapter has all needed domains available
+                    conflicting_domains = get_conflicting_domains(
+                        desired_domains, hmc_access_mode, adapter, partition,
+                        all_crypto_config, all_partitions)
+
+                    if conflicting_domains:
+                        LOGGER.debug(
+                            "Skipping adapter {0!r} because the following of "
+                            "its domains are already attached to other "
+                            "partitions: {1!r}".
+                            format(adapter.name, conflicting_domains))
+                        continue
+
+                    LOGGER.debug(
+                        "Attaching adapter {0!r} and domains {1!r} in {2!r} "
+                        "mode to target partition {3!r}".
+                        format(adapter.name, add_domains, access_mode,
+                               partition.name))
+
+                    if not check_mode:
+                        try:
+                            partition.increase_crypto_config(
+                                [adapter], add_domain_config)
+                        except zhmcclient.Error as exc:
+                            raise Error(
+                                "Attaching adapter {0!r} and domains {1!r} in "
+                                "{2!r} mode to target partition {3!r} "
+                                "failed: {4}".
+                                format(adapter.name, add_domains, access_mode,
+                                       partition.name, exc))
+
+                    changed = True
+                    result_changes['added-adapters'].append(adapter.name)
+                    result_changes['added-domains'].extend(add_domains)
+
+                    # Don't try to add domains again for next adapter:
+                    add_domain_config = []
+                    add_domains = []
+
+                    missing_count -= 1
+
+                if missing_count > 0:
+                    # Because adapters may be skipped, it is possible that
+                    # there are not enough adapters
+                    raise Error(
+                        "Did not find enough crypto adapters with attachable "
+                        "domains - missing adapters: {0}; Requested domains: "
+                        "{1}, Access mode: {2}".
+                        format(missing_count, desired_domains, access_mode))
+
+        else:  # adapter_names is not None
+
+            # Specific adapters need to be attached. We check already attached
+            # adapters and add the missing ones. We do not detach adapters
+            # that are currently attached but not in the input list.
+
+            attached_adapter_names = [a.name for a in attached_adapters]
+            for aname in adapter_names:
+                if aname not in attached_adapter_names:
+
+                    # Check that the adapter has all needed domains available
+                    conflicting_domains = get_conflicting_domains(
+                        desired_domains, hmc_access_mode, adapter, partition,
+                        all_crypto_config, all_partitions)
+                    if conflicting_domains:
+                        raise Error(
+                            "Crypto adapter {0!r} cannot be attached to "
+                            "partition {1!r} because the following of "
+                            "its domains are already attached to other "
+                            "partitions in conflicting modes: {2!r}".
+                            format(adapter.name, partition.name,
+                                   conflicting_domains))
+
+                    if not check_mode:
+                        try:
+                            partition.increase_crypto_config(
+                                [adapter], add_domain_config)
+                        except zhmcclient.Error as exc:
+                            raise Error(
+                                "Attaching adapter {0!r} and domains {1!r} in "
+                                "{2!r} mode to target partition {3!r} "
+                                "failed: {4}".
+                                format(adapter.name, add_domains, access_mode,
+                                       partition.name, exc))
+
+                    changed = True
+                    result_changes['added-adapters'].append(adapter.name)
+                    result_changes['added-domains'].extend(add_domains)
+
+                    # Don't try to add domains again for next adapter:
+                    add_domain_config = []
+                    add_domains = []
+
+            if add_domain_config:
+                # The desired adapters were already attached so the additional
+                # domains need to be added to the crypto config.
+
+                LOGGER.debug(
+                    "Adapters were already attached to target partition {0!r} "
+                    "- attaching domains {1!r} in {2!r} mode".
+                    format(partition.name, add_domains, access_mode))
 
                 if not check_mode:
                     try:
                         partition.increase_crypto_config(
-                            [adapter], add_domain_config)
+                            [], add_domain_config)
                     except zhmcclient.Error as exc:
                         raise Error(
-                            "Attaching adapter {0!r} and domains {1!r} "
-                            "in {2!r} mode to target partition {3!r} failed:"
-                            " {4}".format(adapter.name, add_domains,
-                                          access_mode, partition.name, exc))
+                            "Attaching domains {0!r} in {1!r} mode to "
+                            "target partition {2!r} failed: {3}".
+                            format(add_domains, access_mode, partition.name,
+                                   exc))
 
                 changed = True
-                result_changes['added-adapters'].append(adapter.name)
                 result_changes['added-domains'].extend(add_domains)
-
-                # Don't try to add again for next adapter:
-                add_domain_config = []
-                add_domains = []
-
-                missing_count -= 1
-
-            if missing_count > 0:
-                # Because adapters may be skipped, it is possible that there
-                # are not enough adapters
-                raise Error(
-                    "Did not find enough crypto adapters with attachable "
-                    "domains - missing adapters: {0}; Requested domains: {1}, "
-                    "Access mode: {2}".
-                    format(missing_count, desired_domains, access_mode))
 
         if not check_mode:
             # This is not optimal because it does not produce a result
@@ -866,9 +1011,9 @@ def main():
         partition_name=dict(required=True, type='str'),
         state=dict(required=True, type='str',
                    choices=['attached', 'detached', 'facts']),
-        adapter_count=dict(required=False, type='int', default=-1),
-        domain_range=dict(required=False, type='list', default=[0, -1],
-                          elements='int'),
+        adapter_count=dict(required=False, type='int', default=None),
+        adapter_names=dict(required=False, type='list', default=None),
+        domain_range=dict(required=False, type='list', default=[0, -1]),
         access_mode=dict(required=False, type='str',
                          choices=['usage', 'control'], default='usage'),
         crypto_type=dict(required=False, type='str',
