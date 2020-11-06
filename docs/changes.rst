@@ -67,6 +67,9 @@ Released: not yet
   information about a CPC in DPM mode and its I/O configuration and
   creates a markdown file showing the result.
 
+* Added support in the zhmc_crypto_attachment module for specifying crypto
+  adapters by name instead of just their count. (See issue #187)
+
 **Known issues:**
 
 * See `list of open issues`_.
