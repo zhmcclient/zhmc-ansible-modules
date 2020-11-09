@@ -1,5 +1,5 @@
 <!---
-Copyright 2017 IBM Corp. All Rights Reserved.
+Copyright 2017-2020 IBM Corp. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -13,73 +13,63 @@ limitations under the License.
 -->
 
 
-zhmc-ansible-modules - Ansible modules for the IBM Z HMC Web Services API
-=========================================================================
+# ibm.zhmc Ansible Galaxy collection
 
-![image](https://img.shields.io/pypi/v/zhmc-ansible-modules.svg%0A%20:target:%20https://pypi.python.org/pypi/zhmc-ansible-modules/%0A%20:alt:%20Version%20on%20Pypi)
+[![Github Release](https://img.shields.io/github/v/release/zhmcclient/zhmc-ansible-modules)](https://github.com/zhmcclient/zhmc-ansible-modules/releases)
+[![Ansible Galaxy](https://img.shields.io/badge/galaxy-ibm.zhmc-660198.svg?style=flat)](https://galaxy.ansible.com/ibm/zhmc/)
+[![Travis Result](https://api.travis-ci.org/zhmcclient/zhmc-ansible-modules.svg?branch=master)](https://travis-ci.com/github/zhmcclient/zhmc-ansible-modules/branches)
+[![Coveralls Result](https://img.shields.io/coveralls/zhmcclient/zhmc-ansible-modules.svg)](https://coveralls.io/github/zhmcclient/zhmc-ansible-modules)
 
-![image](https://travis-ci.org/zhmcclient/zhmc-ansible-modules.svg?branch=master%0A%20:target:%20https://travis-ci.org/zhmcclient/zhmc-ansible-modules%0A%20:alt:%20Travis%20test%20status%20(master))
 
-![image](https://readthedocs.org/projects/zhmc-ansible-modules/badge/?version=latest%0A%20:target:%20http://zhmc-ansible-modules.readthedocs.io/en/latest/%0A%20:alt:%20Docs%20build%20status%20(latest))
+## Overview
 
-![image](https://img.shields.io/coveralls/zhmcclient/zhmc-ansible-modules.svg%0A%20:target:%20https://coveralls.io/r/zhmcclient/zhmc-ansible-modules%0A%20:alt:%20Test%20coverage%20(master))
-
-Overview
-========
-
-The zhmc-ansible-modules Python package contains
+The ibm.zhmc Ansible Galaxy collection contains
 [Ansible](https://www.ansible.com/) modules that can manage platform
 resources on [IBM Z](http://www.ibm.com/systems/z/) and
-[LinuxONE](http://www.ibm.com/systems/linuxone/) machines that are in
-the Dynamic Partition Manager (DPM) operational mode.
+[LinuxONE](http://www.ibm.com/systems/linuxone/) machines.
 
-The goal of this package is to be able to utilize the power and ease of
-use of Ansible for the management of IBM Z platform resources.
+The goal of this collection is to be able to utilize the power and ease of use
+of Ansible for the management of IBM Z platform resources.
 
-The IBM Z resources that can be managed include Partitions, HBAs, NICs,
-and Virtual Functions.
+The IBM Z resources that can be managed include for example partitions, adapters,
+the Z system itself, or various resources on its Hardware Management Console
+(HMC).
 
-The Ansible modules in the zhmc-ansible-modules package are fully
+The Ansible modules in this collection are fully
 [idempotent](http://docs.ansible.com/ansible/latest/glossary.html#term-idempotency),
 following an important principle for Ansible modules.
+The idempotency of a module allows Ansible playbooks to specify the desired end
+state for a resource, regardless of what the current state is. For example, an
+IBM Z partition can be specified to have ``state=active`` which means that
+it must exist and be in the active operational status. Depending on the current
+state of the partition, actions will be taken by the module to reach this
+desired end state: If the partition does not exist, it will be created and
+started. If it exists but is not active, it will be started. If it is already
+active, nothing will be done. Other initial states including transitional
+states such as starting or stopping also will be taken care of.
+The idempotency of modules makes Ansible playbooks restartable: If an error
+happens and some things have been changed already, the playbook can simply be
+re-run and will automatically do the right thing, because the initial state
+does not matter for reaching the desired end state.
 
-The idempotency of a module allows Ansible playbooks to specify the
-desired end state for a resource, regardless of what the current state
-is. For example, a IBM Z partition can be specified to have
-`state=active` which means that it must exist and be in the active
-operational status. Depending on the current state of the partition,
-actions will be taken by the module to reach this desired end state: If
-the partition does not exist, it will be created and started. If it
-exists but is not active, it will be started. If it is already active,
-nothing will be done. Other initial states including transitional states
-such as starting or stopping also will be taken care of.
+The Ansible modules in this collection are written in Python
+and interact with the Web Services API of the Hardware Management Console (HMC)
+of the machines to be managed, by using the API of the
+[zhmcclient](https://github.com/zhmcclient/python-zhmcclient)
+Python package.
 
-The idempotency of modules makes Ansible playbooks restartable: If an
-error happens and some things have been changed already, the playbook
-can simply be re-run and will automatically do the right thing, because
-the initial state does not matter for reaching the desired end state.
 
-The Ansible modules in the zhmc-ansible-modules package are written in
-Python and interact with the Web Services API of the Hardware Management
-Console (HMC) of the machines to be managed, by using the API of the
-[zhmcclient](https://github.com/zhmcclient/python-zhmcclient) Python
-package.
+## Documentation
 
-Documentation
-=============
+* [Documentation](https://zhmcclient.github.io/zhmc-ansible-modules/)
+* [Change log](https://zhmcclient.github.io/zhmc-ansible-modules/changes.html)
 
-* `Documentation for latest released version
-  <http://zhmc-ansible-modules.readthedocs.io/en/stable/>`_
-* `Documentation for development version (master branch)
-  <http://zhmc-ansible-modules.readthedocs.io/en/latest/>`_
 
-Playbook examples
-=================
+## Playbook examples
 
 Here are some examples for using the Ansible modules in this project:
 
-Create a stopped partition
---------------------------
+### Create a stopped partition
 
 This task ensures that a partition with this name exists, is in the
 stopped status and has certain property values.
@@ -106,8 +96,7 @@ stopped status and has certain property values.
         ... # all partition properties are supported
 ```
 
-Start a partition
------------------
+### Start a partition
 
 If this task is run after the previous one shown above, no properties
 need to be specified. If it is possible that the partition first needs
@@ -128,8 +117,7 @@ to be created, then properties would be specified, as above.
         ... # see above
 ```
 
-Delete a partition
-------------------
+### Delete a partition
 
 This task ensures that a partition with this name does not exist. If it
 currently exists, it is stopped (if needed) and deleted.
@@ -147,31 +135,7 @@ currently exists, it is stopped (if needed) and deleted.
       state: absent
 ```
 
-Create an HBA in a partition
-----------------------------
-
-``` {.sourceCode .yaml}
----
-- hosts: localhost
-  tasks:
-  - name: Ensure HBA exists in the partition
-    zhmc_hba:
-      hmc_host: "10.11.12.13"
-      hmc_auth: "{{ hmc_auth }}"
-      cpc_name: P000S67B
-      partition_name: "my partition 1"
-      name: "hba 1"
-      state: present
-      properties:
-        adapter_name: "fcp 1"
-        adapter_port: 0
-        description: The HBA to our storage
-        device_number: "023F"
-        ... # all HBA properties are supported
-```
-
-Create a NIC in a partition
----------------------------
+### Create a NIC in a partition
 
 ``` {.sourceCode .yaml}
 ---
@@ -193,30 +157,7 @@ Create a NIC in a partition
         ... # all NIC properties are supported
 ```
 
-Create a Virtual Function in a partition
-----------------------------------------
-
-``` {.sourceCode .yaml}
----
-- hosts: localhost
-  tasks:
-  - name: Ensure virtual function for zEDC adapter exists in the partition
-    zhmc_virtual_function:
-      hmc_host: "10.11.12.13"
-      hmc_auth: "{{ hmc_auth }}"
-      cpc_name: P000S67B
-      partition_name: "my partition 1"
-      name: "vf 1"
-      state: present
-      properties:
-        adapter_name: "zedc 1"
-        description: The virtual function for our accelerator adapter
-        device_number: "043F"
-        ... # all VF properties are supported
-```
-
-Configure partition for booting from FCP LUN
---------------------------------------------
+### Configure partition for booting from FCP LUN
 
 ``` {.sourceCode .yaml}
 ---
@@ -236,8 +177,7 @@ Configure partition for booting from FCP LUN
         boot_world_wide_port_name: "00cdef01abcdef01"
 ```
 
-Configure crypto config of a partition
---------------------------------------
+### Configure crypto config of a partition
 
 ``` {.sourceCode .yaml}
 ---
@@ -261,27 +201,31 @@ Configure crypto config of a partition
               access_mode: "control"
 ```
 
-Quickstart
-==========
+## Quick start
 
-For installation instructions, see [Installation of zhmc-ansible-modules
-package](http://zhmc-ansible-modules.readthedocs.io/en/stable/intro.html#installation).
+For installation instructions, see
+[Installation](https://zhmcclient.github.io/zhmc-ansible-modules/intro.html#installation).
 
-After having installed the zhmc-ansible-modules package, you can
-download and run the example playbooks in [folder 'playbooks' of the Git
-repository](https://github.com/zhmcclient/zhmc-ansible-modules/tree/master/playbooks):
+After having installed the ibm.zhmc Ansible Galaxy collection, you find the
+example playbooks in folder ``ibm/zhmc/playbooks/`` of your local Ansible
+collection directory (e.g. ``$HOME/.ansible/collections/ansible_collections/``),
+for example:
 
--   `create_partition.yml` creates a partition with a NIC, HBA and
-    virtual function to an accelerator adapter.
--   `delete_partition.yml` deletes a partition.
--   `vars_example.yml` is an example variable file defining variables
-    such as CPC name, partition name, etc.
--   `vault_example.yml` is an example password vault file defining
-    variables for authenticating with the HMC.
+- `create_partition.yml` creates a partition with a NIC, HBA and
+  virtual function to an accelerator adapter.
 
-Before you run a playbook, copy `vars_example.yml` to `vars.yml` and
-`vault_example.yml` to `vault.yml` and change the variables in those
-files as needed.
+- `delete_partition.yml` deletes a partition.
+
+These example playbooks include two other files for defining credentials
+and other variables:
+
+- `vars.yml` defines variables such as CPC name, partition name, etc. It
+  does not exist in that directory but can be copied from `vars_example.yml`,
+  changing the variables to your needs.
+
+- `vault_example.yml` is a password vault file defining variables for
+  authenticating with the HMC. It does not exist in that directory but can be
+  copied from `vault_example.yml`, changing the variables to your needs.
 
 Then, run the example playbooks:
 
