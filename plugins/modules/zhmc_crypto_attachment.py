@@ -476,6 +476,8 @@ def ensure_attached(params, check_mode):
             raise Error("No crypto adapters of type {0!r} found on CPC {1!r} ".
                         format(crypto_type, cpc_name))
 
+        all_adapters_dict = {(a.name, a) for a in all_adapters}
+
         # All crypto adapters in a CPC have the same number of domains
         # (otherwise the concept of attaching domains across all attached
         # adapters cannot work). Therefore, the max number of domains can be
@@ -522,9 +524,8 @@ def ensure_attached(params, check_mode):
 
         # Verify the specified adapters exist
         if adapter_names is not None:
-            all_adapter_names = [a.name for a in all_adapters]
             for aname in adapter_names:
-                if aname not in all_adapter_names:
+                if aname not in all_adapters_dict:
                     raise ParameterError(
                         "The 'adapter_name' parameter specifies an adapter "
                         "named {0!r} that does not exist in CPC {1!r}".
@@ -782,6 +783,7 @@ def ensure_attached(params, check_mode):
             attached_adapter_names = [a.name for a in attached_adapters]
             for aname in adapter_names:
                 if aname not in attached_adapter_names:
+                    adapter = all_adapters_dict[aname]
 
                     # Check that the adapter has all needed domains available
                     conflicting_domains = get_conflicting_domains(
