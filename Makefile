@@ -112,6 +112,7 @@ sanity_tar_file := tmp_workspace.tar
 
 # Directories for documentation
 doc_source_dir := docs_source
+doc_linkcheck_dir := docs_linkcheck
 doc_build_dir := docs
 
 # All documentation RST files (including module RST files)
@@ -189,12 +190,12 @@ develop: _check_version develop_$(pymn).done
 	@echo '$@ done.'
 
 .PHONY: docs
-docs: _check_version develop_$(pymn).done $(doc_build_dir)/html/index.html
+docs: _check_version develop_$(pymn).done $(doc_build_dir)/index.html
 	@echo '$@ done.'
 
 .PHONY: linkcheck
 linkcheck: _check_version develop_$(pymn).done $(doc_rst_files)
-	-sphinx-build -b linkcheck $(sphinx_opts) $(doc_source_dir) $(doc_build_dir)/linkcheck
+	-sphinx-build -b linkcheck $(sphinx_opts) $(doc_source_dir) $(doc_linkcheck_dir)
 	@echo '$@ done.'
 
 .PHONY: test
@@ -231,7 +232,7 @@ endif
 
 .PHONY: clobber
 clobber:
-	rm -Rf .cache .pytest_cache $(doc_build_dir) $(sanity_dir1) $(sanity_tar_file) htmlcov .tox
+	rm -Rf .cache .pytest_cache $(sanity_dir1) $(sanity_tar_file) htmlcov .tox
 	rm -f MANIFEST MANIFEST.in AUTHORS ChangeLog .coverage *.done
 	find . -name "*.pyc" -delete -o -name "__pycache__" -delete -o -name "*.tmp" -delete -o -name "tmp_*" -delete
 	@echo '$@ done.'
@@ -276,7 +277,7 @@ else
 	ansible-doc-extractor $(module_rst_dir) $<
 endif
 
-$(doc_build_dir)/html/index.html: $(doc_rst_files) $(doc_source_dir)/conf.py
+$(doc_build_dir)/index.html: $(doc_rst_files) $(doc_source_dir)/conf.py
 ifneq ($(doc_build),true)
 	@echo "makefile: Warning: Skipping docs build on Python $(python_m_n_version)"
 else
