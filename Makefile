@@ -204,7 +204,7 @@ test: _check_version develop_$(pymn).done
 
 .PHONY:	sanity
 sanity: _check_version develop_$(pymn).done
-	tar -rf $(sanity_tar_file) --exclude=tmp_workspace.tar --exclude=$(doc_build_dir) --exclude=$(sanity_dir1) .
+	tar -rf $(sanity_tar_file) --exclude=tmp_workspace.tar --exclude=$(sanity_dir1) .
 	mkdir -p $(sanity_dir)
 	tar -xf $(sanity_tar_file) --directory $(sanity_dir)
 	sh -c "cd $(sanity_dir); ansible-test sanity --local --python $(python_m_n_version)"
