@@ -1,4 +1,4 @@
-.. Copyright 2017 IBM Corp. All Rights Reserved.
+.. Copyright 2017-2020 IBM Corp. All Rights Reserved.
 ..
 .. Licensed under the Apache License, Version 2.0 (the "License");
 .. you may not use this file except in compliance with the License.
@@ -18,10 +18,10 @@
 Development
 ===========
 
-This section only needs to be read by developers of the zhmc-ansible-modules
-project. People that want to make a fix or develop some extension, and people
-that want to test the project are also considered developers for the purpose of
-this section.
+This section only needs to be read by developers of the ibm.zhmc Ansible Galaxy
+collection project. People that want to make a fix or develop some extension,
+and people that want to test the project are also considered developers for
+the purpose of this section.
 
 
 .. _`Repository`:
@@ -29,7 +29,7 @@ this section.
 Repository
 ----------
 
-The repository for the zhmc-ansible-modules project is on GitHub:
+The repository for the ibm.zhmc Ansible Galaxy collection project is on GitHub:
 
 https://github.com/zhmcclient/zhmc-ansible-modules
 
@@ -48,13 +48,13 @@ Besides having a supported operating system with a supported Python version
 .. _virtual Python environment: http://docs.python-guide.org/en/latest/dev/virtualenvs/
 
 Then, with a virtual Python environment active, clone the Git repo of this
-project and prepare the development environment with ``make setup``:
+project and prepare the development environment with ``make develop``:
 
 .. code-block:: text
 
     $ git clone git@github.com:zhmcclient/zhmc-ansible-modules.git
     $ cd zhmc-ansible-modules
-    $ make setup
+    $ make develop
 
 This will install all prerequisites the project needs for its development.
 
@@ -68,11 +68,13 @@ list of valid Make targets and a short description of what each target does.
 Building the documentation
 --------------------------
 
-The ReadTheDocs (RTD) site is used to publish the documentation for the
-zhmc-ansible-modules project at http://zhmc-ansible-modules.readthedocs.io/
+The documentation for the ibm.zhmc Ansible Galaxy collection is published
+on GitHub pages at https://zhmcclient.github.io/zhmc-ansible-modules/.
 
-This page automatically gets updated whenever the ``master`` branch of the
+That page automatically gets updated whenever the ``master`` branch of the
 Git repo for this package changes.
+
+**TBD: Verify the statement above.**
 
 In order to build the documentation locally from the Git work directory, issue:
 
@@ -80,8 +82,7 @@ In order to build the documentation locally from the Git work directory, issue:
 
     $ make docs
 
-The top-level document to open with a web browser will be
-``build/docs/html/index.html``.
+The top-level document to open with a web browser will be ``docs/index.html``.
 
 
 .. _`Testing`:
@@ -89,30 +90,24 @@ The top-level document to open with a web browser will be
 Testing
 -------
 
-To run unit tests in the currently active Python environment, issue one of
-these example variants of ``make test``:
+Again, an invocation of Make runs against the currently active Python environment.
+
+There are four kinds of tests currently, available as make targets:
+
+* ``make linkcheck`` - Check links in documentation
+* ``make test`` - Run unit and function tests with test coverage
+* ``make sanity`` - Run Ansible sanity tests (includes flake8, pylint, validate-modules)
+* ``make end2end`` - Run end2end tests (against a real environment)
+
+For the unit and function tests, the testcases and options for pytest
+can be specified via the environment variable ``TESTOPTS``, as shown in these
+examples:
 
 .. code-block:: text
 
-    $ make test                                  # Run all unit tests
-    $ TESTCASES=test_resource.py make test       # Run only this test source file
-    $ TESTCASES=TestInit make test               # Run only this test class
-    $ TESTCASES="TestInit or TestSet" make test  # py.test -k expressions are possible
-
-To run the unit tests and some more commands that verify the project is in good
-shape in all supported Python environments, use Tox:
-
-.. code-block:: text
-
-    $ tox                              # Run all tests on all supported Python versions
-    $ tox -e py27                      # Run all tests on Python 2.7
-    $ tox -e py27 test_resource.py     # Run only this test source file on Python 2.7
-    $ tox -e py27 TestInit             # Run only this test class on Python 2.7
-    $ tox -e py27 TestInit or TestSet  # py.test -k expressions are possible
-
-The positional arguments of the ``tox`` command are passed to ``py.test`` using
-its ``-k`` option. Invoke ``py.test --help`` for details on the expression
-syntax of its ``-k`` option.
+    $ make test                                      # Run all unit and function tests
+    $ TESTOPTS='-vv' make test                       # Specify -vv verbosity for pytest
+    $ TESTOPTS='-k test_partition.py' make test      # Run only this test source file
 
 
 .. _`Releasing a version`:
@@ -120,8 +115,8 @@ syntax of its ``-k`` option.
 Releasing a version
 -------------------
 
-This section shows the steps for releasing a version to `PyPI
-<https://pypi.python.org/>`_.
+This section shows the steps for releasing a version to `Ansible Galaxy
+<https://galaxy.ansible.com/>`_.
 
 It covers all variants of versions that can be released:
 
@@ -142,20 +137,20 @@ has the remote name ``origin`` in your local clone.
     * ``MN`` - Major and minor version numbers M.N of that full version
     * ``BRANCH`` - Name of the branch to be released
 
-    When releasing the master branch (e.g. as version ``0.6.0``):
+    When releasing the master branch (e.g. as version ``1.0.0``):
 
     .. code-block:: text
 
-        MNU=0.6.0
-        MN=0.6
+        MNU=1.0.0
+        MN=1.0
         BRANCH=master
 
-    When releasing a stable branch (e.g. as version ``0.5.1``):
+    When releasing a stable branch (e.g. as version ``0.8.1``):
 
     .. code-block:: text
 
-        MNU=0.5.1
-        MN=0.5
+        MNU=0.8.1
+        MN=0.8
         BRANCH=stable_$MN
 
 3.  Check out the branch to be released, make sure it is up to date with upstream, and
@@ -172,42 +167,56 @@ has the remote name ``origin`` in your local clone.
 
     .. code-block:: text
 
-        vi docs/changes.rst
+        vi docs_source/changes.rst
 
     and make the following changes in the section of the version to be released:
 
     * Finalize the version to the version to be released.
-    * Remove the statement that the version is in development.
-    * Change the release date to today´s date.
+    * Change the release date to today's date.
     * Make sure that all changes are described.
     * Make sure the items shown in the change log are relevant for and understandable
       by users.
-    * In the "Known issues" list item, remove the link to the issue tracker and add
-      text for any known issues you want users to know about.
-    * Remove all empty list items in that section.
+    * In the "Known issues" list item, remove the link to the issue tracker and
+      add text for any known issues you want users to know about.
+    * Remove all empty list items in the section of the version to be released.
 
-5.  Commit your changes and push them upstream:
+5.  Edit the Galaxy metadata file:
 
     .. code-block:: text
 
-        git add docs/changes.rst
+        vi galaxy.yml
+
+    and verify that the version is set to the version to be released:
+
+    .. code-block:: text
+
+        version: M.N.U
+
+    Note: The version in galaxy.yml cannot have a suffix of ".devX", so it
+    should already have had the version to be released.
+
+6.  Commit your changes and push them upstream:
+
+    .. code-block:: text
+
+        git add docs_source/changes.rst
         git commit -sm "Release $MNU"
         git push --set-upstream origin release_$MNU
 
-6.  On GitHub, create a Pull Request for branch ``release_$MNU``. This will trigger the
-    CI runs in Travis and Appveyor.
+7.  On GitHub, create a Pull Request for branch ``release_$MNU``. This will trigger the
+    CI runs in Travis.
 
     Important: When creating Pull Requests, GitHub by default targets the ``master``
     branch. If you are releasing a stable branch, you need to change the target branch
     of the Pull Request to ``stable_M.N``.
 
-7.  On GitHub, close milestone ``M.N.U``.
+8.  On GitHub, close milestone ``M.N.U``.
 
-8.  Perform a complete test:
+9.  Perform a complete test in your preferred Python environment:
 
     .. code-block:: text
 
-        tox
+        make clobber all
 
     This should not fail because the same tests have already been run in the
     Travis CI. However, run it for additional safety before the release.
@@ -223,18 +232,20 @@ has the remote name ``origin`` in your local clone.
 
       Wait for the automatic tests to show success for this change.
 
-9.  On GitHub, once the checks for this Pull Request succeed:
+10. On GitHub, once the checks for this Pull Request succeed:
 
     * Merge the Pull Request (no review is needed).
 
-      Because this updates the ``stable_M.N`` branch, it triggers an RTD docs build of
+      Because this updates the ``stable_M.N`` branch, it triggers a docs build of
       its stable version. However, because the git tag for this version is not assigned
-      yet, this RTD build will show an incorrect version (a dev version based on the
+      yet, this docs build will show an incorrect version (a dev version based on the
       previous version tag). This will be fixed in a subsequent step.
+
+      **TBD: Verify the above on GitHub pages once established**
 
     * Delete the branch of the Pull Request (``release_M.N.U``)
 
-10. Checkout the branch you are releasing, update it from upstream, and delete the local
+11. Checkout the branch you are releasing, update it from upstream, and delete the local
     topic branch you created:
 
     .. code-block:: text
@@ -243,7 +254,7 @@ has the remote name ``origin`` in your local clone.
         git pull
         git branch -d release_$MNU
 
-11. Tag the version:
+12. Tag the version:
 
     Create a tag for the new version and push the tag addition upstream:
 
@@ -253,8 +264,10 @@ has the remote name ``origin`` in your local clone.
         git tag $MNU
         git push --tags
 
-    The pushing of the tag triggers another RTD docs build of its stable version, this time
+    The pushing of the tag triggers another docs build of its stable version, this time
     with the correct version as defined in the tag.
+
+    **TBD: Verify the above on GitHub pages once established**
 
     If the previous commands fail because this tag already exists for some reason, delete
     the tag locally and remotely:
@@ -266,23 +279,18 @@ has the remote name ``origin`` in your local clone.
 
     and try again.
 
-12. On RTD, verify that it shows the correct version for its stable version:
+13. On GitHub pages, verify that it shows the correct version for its stable version:
 
-    RTD stable version: https://zhmc-ansible-modules.readthedocs.io/en/stable.
+    https://github.io/zhmc-ansible-modules
 
-    If it does not, trigger a build of RTD version "stable" on the RTD project
-    page:
+    **TBD: Verify the above on GitHub pages once established**
 
-    RTD build page: https://readthedocs.org/projects/zhmc-ansible-modules/builds/
-
-    Once that build is complete, verify again.
-
-13. On GitHub, edit the new tag ``M.N.U``, and create a release description on it. This
+14. On GitHub, edit the new tag ``M.N.U``, and create a release description on it. This
     will cause it to appear in the Release tab.
 
     You can see the tags in GitHub via Code -> Releases -> Tags.
 
-14. Upload the package to PyPI:
+15. Publish the collection to Ansible Galaxy:
 
     .. code-block:: text
 
@@ -294,12 +302,13 @@ has the remote name ``origin`` in your local clone.
     without any development suffix) is shown.
 
     **Attention!!** This only works once for each version. You cannot
-    re-release the same version to PyPI, or otherwise update it.
+    re-release the same version to Ansible Galaxy, or otherwise update it.
 
-    Verify that the released version arrived on PyPI:
-    https://pypi.python.org/pypi/zhmc-ansible-modules/
+    Verify that the released version arrived on Ansible Galaxy:
 
-15. If you released the master branch, it needs a new fix stream.
+    **TBD: Add link to ibm.zhmc collection on Ansible Galaxy**
+
+16. If you released the master branch, it needs a new fix stream.
 
     Create a branch for its fix stream and push it upstream:
 
@@ -308,11 +317,6 @@ has the remote name ``origin`` in your local clone.
         git status    # Double check the branch to be released is checked out
         git checkout -b stable_$MN
         git push --set-upstream origin stable_$MN
-
-    Log on to the
-    `RTD project zhmc-ansible-modules <https://readthedocs.org/projects/zhmc-ansible-modules/versions>`_
-    and activate the new version (=branch) ``stable_M.N`` as a version to be
-    built.
 
 
 .. _`Starting a new version`:
@@ -343,20 +347,20 @@ has the remote name ``origin`` in your local clone.
     * ``MN`` - Major and minor version numbers M.N of that full version
     * ``BRANCH`` - Name of the branch the new version is based upon
 
-    When starting a (major or minor) version (e.g. ``0.6.0``) based on the master branch:
+    When starting a (major or minor) version (e.g. ``1.1.0``) based on the master branch:
 
     .. code-block:: text
 
-        MNU=0.6.0
-        MN=0.6
+        MNU=1.1.0
+        MN=1.0
         BRANCH=master
 
-    When starting an update (=fix) version (e.g. ``0.5.1``) based on a stable branch:
+    When starting an update (=fix) version (e.g. ``0.8.2``) based on a stable branch:
 
     .. code-block:: text
 
-        MNU=0.5.1
-        MN=0.5
+        MNU=0.8.2
+        MN=0.8
         BRANCH=stable_$MN
 
 3.  Check out the branch the new version is based on, make sure it is up to
@@ -373,13 +377,13 @@ has the remote name ``origin`` in your local clone.
 
     .. code-block:: text
 
-        vi docs/changes.rst
+        vi docs_source/changes.rst
 
     and insert the following section before the top-most section:
 
     .. code-block:: text
 
-        Version 0.6.0
+        Version 1.1.0
         ^^^^^^^^^^^^^
 
         Released: not yet
@@ -392,13 +396,27 @@ has the remote name ``origin`` in your local clone.
 
         **Enhancements:**
 
+        **Cleanup:**
+
         **Known issues:**
 
         * See `list of open issues`_.
 
         .. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
-5.  Commit your changes and push them upstream:
+5.  Edit the Galaxy metadata file:
+
+    .. code-block:: text
+
+        vi galaxy.yml
+
+    and update the version to the new version:
+
+    .. code-block:: text
+
+        version: M.N.U
+
+6.  Commit your changes and push them upstream:
 
     .. code-block:: text
 
@@ -406,27 +424,27 @@ has the remote name ``origin`` in your local clone.
         git commit -sm "Start $MNU"
         git push --set-upstream origin start_$MNU
 
-6.  On GitHub, create a Pull Request for branch ``start_M.N.U``.
+7.  On GitHub, create a Pull Request for branch ``start_M.N.U``.
 
     Important: When creating Pull Requests, GitHub by default targets the ``master``
     branch. If you are starting based on a stable branch, you need to change the
     target branch of the Pull Request to ``stable_M.N``.
 
-7.  On GitHub, create a milestone for the new version ``M.N.U``.
+8.  On GitHub, create a milestone for the new version ``M.N.U``.
 
     You can create a milestone in GitHub via Issues -> Milestones -> New
     Milestone.
 
-8.  On GitHub, go through all open issues and pull requests that still have
+9.  On GitHub, go through all open issues and pull requests that still have
     milestones for previous releases set, and either set them to the new
     milestone, or to have no milestone.
 
-9.  On GitHub, once the checks for this Pull Request succeed:
+10. On GitHub, once the checks for this Pull Request succeed:
 
     * Merge the Pull Request (no review is needed)
     * Delete the branch of the Pull Request (``start_M.N.U``)
 
-10. Checkout the branch the new version is based on, update it from upstream, and
+11. Checkout the branch the new version is based on, update it from upstream, and
     delete the local topic branch you created:
 
     .. code-block:: text
