@@ -1,0 +1,294 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Module Maintenance &amp; Support &mdash; zHMC Ansible modules 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Development" href="development.html" />
+    <link rel="prev" title="zhmc_virtual_function – Manages virtual functions in partitions of Z systems." href="modules/zhmc_virtual_function.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> zHMC Ansible modules
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="all_modules.html">All modules</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Module Maintenance &amp; Support</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#maintenance">Maintenance</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#core">Core</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#network">Network</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#certified">Certified</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#community">Community</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#issue-reporting">Issue Reporting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#support">Support</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CONTRIBUTING.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix.html">Appendix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Change log</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">zHMC Ansible modules</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Module Maintenance &amp; Support</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-maintenance-support">
+<span id="modules-support"></span><h1>Module Maintenance &amp; Support<a class="headerlink" href="#module-maintenance-support" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#maintenance" id="id3">Maintenance</a></p>
+<ul>
+<li><p><a class="reference internal" href="#core" id="id4">Core</a></p></li>
+<li><p><a class="reference internal" href="#network" id="id5">Network</a></p></li>
+<li><p><a class="reference internal" href="#certified" id="id6">Certified</a></p></li>
+<li><p><a class="reference internal" href="#community" id="id7">Community</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#issue-reporting" id="id8">Issue Reporting</a></p></li>
+<li><p><a class="reference internal" href="#support" id="id9">Support</a></p></li>
+</ul>
+</div>
+<div class="section" id="maintenance">
+<h2><a class="toc-backref" href="#id3">Maintenance</a><a class="headerlink" href="#maintenance" title="Permalink to this headline">¶</a></h2>
+<p>To clarify who maintains each included module, adding features and fixing bugs, each included module now has associated metadata that provides information about maintenance.</p>
+<div class="section" id="core">
+<h3><a class="toc-backref" href="#id4">Core</a><a class="headerlink" href="#core" title="Permalink to this headline">¶</a></h3>
+<p><span class="xref std std-ref">Core Maintained</span> modules are maintained by the Ansible Engineering Team.
+These modules are integral to the basic foundations of the Ansible distribution.</p>
+</div>
+<div class="section" id="network">
+<h3><a class="toc-backref" href="#id5">Network</a><a class="headerlink" href="#network" title="Permalink to this headline">¶</a></h3>
+<p><span class="xref std std-ref">Network Maintained</span> modules are are maintained by the Ansible Network Team. Please note there are additional networking modules that are categorized as Certified or Community not maintained by Ansible.</p>
+</div>
+<div class="section" id="certified">
+<h3><a class="toc-backref" href="#id6">Certified</a><a class="headerlink" href="#certified" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="https://access.redhat.com/articles/3642632">Certified</a> modules are maintained by Ansible Partners.</p>
+</div>
+<div class="section" id="community">
+<h3><a class="toc-backref" href="#id7">Community</a><a class="headerlink" href="#community" title="Permalink to this headline">¶</a></h3>
+<p><span class="xref std std-ref">Community Maintained</span> modules are submitted and maintained by the Ansible community.  These modules are not maintained by Ansible, and are included as a convenience.</p>
+</div>
+</div>
+<div class="section" id="issue-reporting">
+<h2><a class="toc-backref" href="#id8">Issue Reporting</a><a class="headerlink" href="#issue-reporting" title="Permalink to this headline">¶</a></h2>
+<p>If you believe you have found a bug in a module and are already running the latest stable or development version of Ansible, first look at the <a class="reference external" href="https://github.com/ansible/ansible/issues">issue tracker in the Ansible repo</a> to see if an issue has already been filed. If not, please file one.</p>
+<p>Should you have a question rather than a bug report, inquiries are welcome on the <a class="reference external" href="https://groups.google.com/forum/#%21forum/ansible-project">ansible-project Google group</a> or on Ansible’s “#ansible” channel, located on irc.freenode.net.</p>
+<p>For development-oriented topics, use the <a class="reference external" href="https://groups.google.com/forum/#%21forum/ansible-devel">ansible-devel Google group</a> or Ansible’s #ansible and #ansible-devel channels, located on irc.freenode.net. You should also read the <a class="reference internal" href="appendix.html#ansible-community-guide"><span class="std std-ref">Community Guide</span></a>, <a class="reference internal" href="appendix.html#developing-testing"><span class="std std-ref">Testing Ansible</span></a>, and the <a class="reference internal" href="appendix.html#developer-guide"><span class="std std-ref">Developer Guide</span></a>.</p>
+<p>The modules are hosted on GitHub in a subdirectory of the <a class="reference external" href="https://github.com/ansible/ansible/tree/devel/lib/ansible/modules">Ansible</a> repo.</p>
+<p>NOTE: If you have a Red Hat Ansible Automation product subscription, please follow the standard issue reporting process via the <a class="reference external" href="https://access.redhat.com/">Red Hat Customer Portal</a>.</p>
+</div>
+<div class="section" id="support">
+<h2><a class="toc-backref" href="#id9">Support</a><a class="headerlink" href="#support" title="Permalink to this headline">¶</a></h2>
+<p>For more information on how included Ansible modules are supported by Red Hat,
+please refer to the following <a class="reference external" href="https://access.redhat.com/articles/3166901">knowledge base article</a> as well as other resources on the <a class="reference external" href="https://access.redhat.com/">Red Hat Customer Portal.</a></p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><span class="xref std std-ref">Module index</span></dt><dd><p>A complete list of all available modules.</p>
+</dd>
+<dt><span class="xref std std-ref">intro_adhoc</span></dt><dd><p>Examples of using modules in /usr/bin/ansible</p>
+</dd>
+<dt><span class="xref std std-ref">working_with_playbooks</span></dt><dd><p>Examples of using modules with /usr/bin/ansible-playbook</p>
+</dd>
+<dt><span class="xref std std-ref">developing_modules</span></dt><dd><p>How to write your own modules</p>
+</dd>
+<dt><a class="reference external" href="https://access.redhat.com/articles/3642632">List of Ansible Certified Modules</a></dt><dd><p>High level list of Ansible certified modules from Partners</p>
+</dd>
+<dt><a class="reference external" href="https://groups.google.com/group/ansible-project">Mailing List</a></dt><dd><p>Questions? Help? Ideas?  Stop by the list on Google Groups</p>
+</dd>
+<dt><a class="reference external" href="http://irc.freenode.net">irc.freenode.net</a></dt><dd><p>#ansible IRC chat channel</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="development.html" class="btn btn-neutral float-right" title="Development" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="modules/zhmc_virtual_function.html" class="btn btn-neutral float-left" title="zhmc_virtual_function – Manages virtual functions in partitions of Z systems." accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2016-2020, IBM
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

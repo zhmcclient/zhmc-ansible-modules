@@ -111,8 +111,8 @@ sanity_dir1 := tmp_sanity
 sanity_tar_file := tmp_workspace.tar
 
 # Directories for documentation
-doc_source_dir := docs/source
-doc_build_dir := docs/build
+doc_source_dir := docs_source
+doc_build_dir := docs
 
 # All documentation RST files (including module RST files)
 doc_rst_files := \
@@ -204,7 +204,8 @@ test: _check_version develop_$(pymn).done
 
 .PHONY:	sanity
 sanity: _check_version develop_$(pymn).done
-	tar -rf $(sanity_tar_file) --exclude=tmp_workspace.tar --exclude=$(sanity_dir1) .
+	tar -rf $(sanity_tar_file) --exclude=tmp_workspace.tar --exclude=$(doc_build_dir) --exclude=$(sanity_dir1) .
+	rm -rf $(sanity_dir)
 	mkdir -p $(sanity_dir)
 	tar -xf $(sanity_tar_file) --directory $(sanity_dir)
 	sh -c "cd $(sanity_dir); ansible-test sanity --local --python $(python_m_n_version)"
@@ -280,4 +281,10 @@ ifneq ($(doc_build),true)
 	@echo "makefile: Warning: Skipping docs build on Python $(python_m_n_version)"
 else
 	sphinx-build -M html $(sphinx_opts) $(doc_source_dir) $(doc_build_dir)
+	# move the files one level up for the GitHub pages
+	rm -rf $(doc_build_dir)/doctrees
+	cp -R $(doc_build_dir)/html/* $(doc_build_dir)/
+	rm -rf $(doc_build_dir)/html
+	# disable GitHub pages jekyll pre-processing
+	touch $(doc_build_dir)/.nojekyll
 endif
