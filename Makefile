@@ -138,7 +138,7 @@ dist_dependent_files := \
 		$(doc_rst_files) \
 
 # Sphinx options (besides -M)
-sphinx_opts :=
+sphinx_opts := -v
 
 # Pytest options
 pytest_opts := $(TESTOPTS) -s
@@ -277,15 +277,12 @@ else
 	ansible-doc-extractor $(module_rst_dir) $<
 endif
 
+# .nojekyll file disables GitHub pages jekyll pre-processing
 $(doc_build_dir)/index.html: $(doc_rst_files) $(doc_source_dir)/conf.py
 ifneq ($(doc_build),true)
 	@echo "makefile: Warning: Skipping docs build on Python $(python_m_n_version)"
 else
-	sphinx-build -M html $(sphinx_opts) $(doc_source_dir) $(doc_build_dir)
-	# move the files one level up for the GitHub pages
-	rm -rf $(doc_build_dir)/doctrees
-	cp -R $(doc_build_dir)/html/* $(doc_build_dir)/
-	rm -rf $(doc_build_dir)/html
-	# disable GitHub pages jekyll pre-processing
+	sphinx-build -b html $(sphinx_opts) $(doc_source_dir) $(doc_build_dir)
 	touch $(doc_build_dir)/.nojekyll
+	rm -rf $(doc_build_dir)/.buildinfo $(doc_build_dir)/.doctrees
 endif
