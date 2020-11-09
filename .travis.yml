@@ -63,9 +63,37 @@ jobs:
 #        - PACKAGE_LEVEL=minimum
 #      cache: pip
 
+#    - os: linux
+#      language: python
+#      python: "3.7"
+#      env:
+#        - PACKAGE_LEVEL=latest
+#      cache: pip
+
+#    - os: linux
+#      language: python
+#      python: "3.8"
+#      env:
+#        - PACKAGE_LEVEL=minimum
+#      cache: pip
+
+#    - os: linux
+#      language: python
+#      python: "3.8"
+#      env:
+#        - PACKAGE_LEVEL=latest
+#      cache: pip
+
     - os: linux
       language: python
-      python: "3.7"
+      python: "3.9"
+      env:
+        - PACKAGE_LEVEL=minimum
+      cache: pip
+
+    - os: linux
+      language: python
+      python: "3.9"
       env:
         - PACKAGE_LEVEL=latest
       cache: pip
@@ -196,6 +224,6 @@ script:
   - make test
 
 after_success:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_PYTHON_VERSION" == "2.7" && "$PACKAGE_LEVEL" == "latest" ]]; then
+  - if [[ "$TRAVIS_OS_NAME" == "linux" && "$PACKAGE_LEVEL" == "latest" ]]; then
       coveralls;
     fi
