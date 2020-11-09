@@ -25,6 +25,9 @@ tmp_*
 *.tmp
 *.log
 *.retry
+*.done
+/dist/
+/docs_linkcheck/
 vars.yml
 vault.yml
 /python-zhmcclient
