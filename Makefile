@@ -263,7 +263,7 @@ install_pip_$(pymn).done: Makefile
 	$(PYTHON_CMD) -m pip install $(pip_level_opts) pip setuptools wheel
 	echo "done" >$@
 
-$(dist_file): $(dist_dependent_files)
+$(dist_file): $(dist_dependent_files) galaxy.yml
 	mkdir -p $(dist_dir)
 	ansible-galaxy collection build --output-path=$(dist_dir) --force .
 
