@@ -13,7 +13,7 @@ authors:
   - Kathiravan Velusamy (@vkahir)
   - Adilet Sabyrbaev (@sabyadi)
 
-description: The zhmc-ansible-modules Python package contains Ansible modules that can manage platform resources on IBM Z and LinuxONE machines that are in the Dynamic Partition Manager (DPM) operational mode.
+description: This collection can manage platform resources on IBM Z and LinuxONE machines, for example partitions, adapters, the Z system itself, or various resources on its Hardware Management Console (HMC).
 
 license:
   - "Apache-2.0"
