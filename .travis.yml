@@ -70,10 +70,26 @@ jobs:
 #        - PACKAGE_LEVEL=latest
 #      cache: pip
 
+#    - os: linux
+#      dist: xenial
+#      language: python
+#      python: "3.8"
+#      env:
+#        - PACKAGE_LEVEL=minimum
+#      cache: pip
+
+#    - os: linux
+#      dist: xenial
+#      language: python
+#      python: "3.8"
+#      env:
+#        - PACKAGE_LEVEL=latest
+#      cache: pip
+
     - os: linux
       dist: xenial
       language: python
-      python: "3.8"
+      python: "3.9"
       env:
         - PACKAGE_LEVEL=minimum
       cache: pip
@@ -81,7 +97,7 @@ jobs:
     - os: linux
       dist: xenial
       language: python
-      python: "3.8"
+      python: "3.9"
       env:
         - PACKAGE_LEVEL=latest
       cache: pip
@@ -208,12 +224,13 @@ install:
   - pip list
 
 # commands to run builds & tests
+# Note: make sanity is excluded on Ansible 2.9 and Python 3.9 (or higher) because it is not supported.
 script:
   - make docs
   - make test
-  - make sanity
+  - if [[ "$PACKAGE_LEVEL" == "latest" || $(python --version 2>&1) =~ ([[:space:]])(2\.7|3\.[45678])(\.[0-9]) ]]; then make sanity; fi
 
 after_success:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_PYTHON_VERSION" == "3.8" && "$PACKAGE_LEVEL" == "latest" ]]; then
+  - if [[ "$TRAVIS_OS_NAME" == "linux" && "$PACKAGE_LEVEL" == "latest" ]]; then
       coveralls;
     fi
