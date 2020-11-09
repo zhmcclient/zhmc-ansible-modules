@@ -74,6 +74,8 @@ environments:
 
 * Ansible versions: 2.0 or higher
 
+* Python versions: 2.7, 3.4 or higher
+
 * Operating systems running Ansible: Linux, OS-X
 
 * Machine generations: z13/z13s/Emperor/Rockhopper or higher
