@@ -40,23 +40,42 @@ issues: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 # Ignore files and directories matching the following patterns
 build_ignore:
-  - '*.tar.gz'
-  - .DS_Store
+  # Ignore items from .gitignore:
+  - '*.DS_Store'
+  - '*.pyc'
+  - '*.pyo'
+  - '*.egg'
+  - '*.egg-info'
+  - '*.done'
+  - '*.log'
+  - '*.retry'
+  - '*.tmp'
+  - 'vars.yml'
+  - 'vault.yml'
+  - try
+  - 'try_*'
+  - tmp
+  - 'tmp_*'
+  - .coverage
   - .pytest_cache
-  - .coveragerc
-  - .flake8
+  - venv
+  - htmlcov
+  - docs_linkcheck
+  - dist
+  # Other ignore items:
+  - galaxy.yml
   - .gitignore
+  - .coveragerc
+  - .flake8  # only in older branches
   - .travis.yml
   - CODE_OF_CONDUCT.md
-  - CONTRIBUTING.rst
+  - CONTRIBUTING.rst  # only in older branches
   - DCO1.1.txt
   - LICENSE
   - Makefile
-  - dev-requirements.yml
+  - README.md
+  # requirements.txt is intentionally included for dependent install
+  - dev-requirements.txt
   - minimum-constraints.txt
-  - requirements.txt
   - setup.py
-  - tools/
-  - venv
-  - docs
-  - docs_source
+  - tools
