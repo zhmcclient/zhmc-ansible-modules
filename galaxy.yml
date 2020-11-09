@@ -58,3 +58,5 @@ build_ignore:
   - setup.py
   - tools/
   - venv
+  - docs
+  - docs_source

@@ -44,7 +44,7 @@ project = 'ibm.zhmc Ansible Galaxy collection'
 copyright = '2016-2020, IBM'
 author = 'IBM'
 
-_version_file = '../../galaxy.yml'  # relative to the dir of this file
+_version_file = '../galaxy.yml'  # relative to the dir of this file
 _version_file = os.path.relpath(os.path.join(
     os.path.dirname(__file__), _version_file))
 
@@ -80,4 +80,10 @@ html_theme = 'sphinx_rtd_theme'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-# html_static_path = ['_static']
+html_static_path = ['_static']
+
+# do not copy the source RST files into the generated content
+html_copy_source = False
+
+# and do not show the links to the originals
+html_show_sourcelink = False
