@@ -28,12 +28,14 @@ zhmcclient===0.20.0
 
 # Indirect dependencies for runtime (must be consistent with requirements.txt)
 
+cryptography==3.0; python_version <= '3.5'
+cryptography==3.2; python_version >= '3.6'
+packaging==20.0
 asn1crypto===0.23.0
 bcrypt===3.0.0
 certifi===2016.9.26
 cffi===1.7.0
 chardet===3.0.3
-cryptography===2.0
 decorator===4.0.10
 docopt===0.6.2
 enum34===1.1.6
