@@ -1,4 +1,4 @@
-.. Copyright 2017 IBM Corp. All Rights Reserved.
+.. Copyright 2017-2020 IBM Corp. All Rights Reserved.
 ..
 .. Licensed under the Apache License, Version 2.0 (the "License");
 .. you may not use this file except in compliance with the License.
@@ -24,22 +24,21 @@ Introduction
 What this package provides
 --------------------------
 
-The zhmc-ansible-modules Python package contains `Ansible`_ modules that can
-manage platform resources on `IBM Z`_ and `LinuxONE`_ machines that are in
-the Dynamic Partition Manager (DPM) operational mode.
+The `Ansible`_ `Galaxy`_ collection named "ibm.zhmc" provides Ansible modules that
+can manage platform resources on `IBM Z`_ and `LinuxONE`_ machines.
 
-The goal of this package is to be able to utilize the power and ease of use
+The goal of this collection is to be able to utilize the power and ease of use
 of Ansible for the management of IBM Z platform resources.
 
-The IBM Z resources that can be managed include Partitions, HBAs, NICs, and
-Virtual Functions.
+The IBM Z resources that can be managed include for example partitions, adapters,
+the Z system itself, or various resources on its Hardware Management Console
+(HMC).
 
-The Ansible modules in the zhmc-ansible-modules package are fully
+The Ansible modules in this collection are fully
 `idempotent <http://docs.ansible.com/ansible/latest/glossary.html#term-idempotency>`_,
 following an important principle for Ansible modules.
-
 The idempotency of a module allows Ansible playbooks to specify the desired end
-state for a resource, regardless of what the current state is. For example, a
+state for a resource, regardless of what the current state is. For example, an
 IBM Z partition can be specified to have ``state=active`` which means that
 it must exist and be in the active operational status. Depending on the current
 state of the partition, actions will be taken by the module to reach this
@@ -47,18 +46,18 @@ desired end state: If the partition does not exist, it will be created and
 started. If it exists but is not active, it will be started. If it is already
 active, nothing will be done. Other initial states including transitional
 states such as starting or stopping also will be taken care of.
-
 The idempotency of modules makes Ansible playbooks restartable: If an error
 happens and some things have been changed already, the playbook can simply be
 re-run and will automatically do the right thing, because the initial state
 does not matter for reaching the desired end state.
 
-The Ansible modules in the zhmc-ansible-modules package are written in Python
+The Ansible modules in this collection are written in Python
 and interact with the Web Services API of the Hardware Management Console (HMC)
 of the machines to be managed, by using the API of the `zhmcclient`_ Python
 package.
 
 .. _Ansible: https://www.ansible.com/
+.. _Galaxy: https://galaxy.ansible.com/
 .. _IBM Z: http://www.ibm.com/systems/z/
 .. _LinuxONE: http://www.ibm.com/systems/linuxone/
 .. _zhmcclient: http://python-zhmcclient.readthedocs.io/en/stable/
@@ -69,14 +68,33 @@ package.
 Supported environments
 ----------------------
 
-The Ansible modules in the zhmc-ansible-modules package are supported in these
-environments:
+The following versions of Python are currently supported:
 
-* Ansible versions: 2.0 or higher
+- Python 2.7
+- Python 3.5
+- Python 3.6
+- Python 3.7
+- Python 3.8
 
-* Operating systems running Ansible: Linux, OS-X
+Higher versions of Python 3.x have not been tested at this point, but are
+expected to work.
 
-* Machine generations: z13/z13s/Emperor/Rockhopper or higher
+The following operating systems are supported:
+
+- Linux
+- macOS (OS-X)
+- Windows
+
+The following versions of Ansible are supported:
+
+- Ansible 2.9
+- Ansible 2.10
+
+The following Z and LinuxONE machine generations are supported:
+
+- z13 / z13s / Emperor / Rockhopper
+- z14 / Emperor II / Rockhopper II
+- z15 / LinuxONE III
 
 
 .. _`Installation`:
@@ -87,14 +105,14 @@ Installation
 The system Ansible is installed on is called the "control system". This is
 where Ansible commands (such as ``ansible-playbook``) are invoked.
 
-Ansible is written in Python and invokes Ansible modules always as executables,
+Ansible is written in Python but invokes Ansible modules always as executables,
 even when they are also written in Python. Therefore, Ansible modules
 implemented in Python are run as Python scripts and are not imported as Python
 modules.
 
 The standard installation is that Ansible is installed as an operating system
-package and uses the existing system Python (version 2). The Ansible modules
-then also use the system Python.
+package and uses the existing system Python. The Ansible modules then also use
+the system Python.
 
 As an alternative to the standard installation, it is possible to use a
 `virtual Python environment`_ for Ansible itself and for Ansible modules
@@ -113,66 +131,47 @@ The following sections describe these two installation methods.
 Standard installation with system Python
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-All commands shown are to be executed in a bash shell on the control system.
+All commands shown are to be executed in a terminal or command prompt on the
+control system. The instructions are written for a bash shell.
 
 .. _`Installing the Control Machine`: http://docs.ansible.com/ansible/latest/intro_installation.html#installing-the-control-machine
 
 
-1. Install Ansible as an operating system package on the control system.
+1.  Install Ansible as an operating system package on the control system.
 
-   For details, see `Installing the Control Machine`_.
+    For details, see `Installing the Control Machine`_.
 
-2. Install the zhmc-ansible-modules package into the system Python:
+2.  Install the ibm.zhmc Ansible Galaxy collection:
 
-   .. code-block:: bash
+    .. code-block:: bash
 
-      $ sudo pip install zhmc-ansible-modules
+        $ ansible-galaxy collection install ibm.zhmc
 
-   This will also install its dependent Python packages.
+    This will install the collection to your local Ansible collections tree,
+    which is by default ``$HOME/.ansible/collections``. It does not install
+    any dependent Python packages.
 
-3. Set up the Ansible module search path
+3.  Install the dependent Python packages into your system Python:
 
-   Find out the install location of the zhmc-ansible-modules package:
+    Double check where the ibm.zhmc Ansible Galaxy collection got installed:
 
-   .. code-block:: bash
+    .. code-block:: bash
 
-      $ pip show zhmc-ansible-modules | grep Location
-      Location: /usr/local/lib/python2.7/dist-packages
+        $ ansible-galaxy collection list ibm.zhmc
+        # /Users/johndoe/.ansible/collections/ansible_collections
+        Collection Version
+        ---------- -------
+        ibm.zhmc   1.0.0
 
-   The Ansible module search path is the ``zhmc_ansible_modules`` directory in
-   the location shown:
+        $ anco_dir=/Users/johndoe/.ansible/collections/ansible_collections
 
-   .. code-block:: text
+    Using the provided requirements.txt file in the installation of the
+    ibm.zhmc Ansible Galaxy collection, install dependent Python packages
+    into your system Python:
 
-      /usr/local/lib/python2.7/dist-packages/zhmc_ansible_modules
+    .. code-block:: bash
 
-   Note that the Python package name is ``zhmc-ansible-modules`` while the
-   package directory is ``zhmc_ansible_modules``.
-
-   Set the Ansible module search path using one of these options:
-
-   a) via the Ansible config file:
-
-      Edit the Ansible config file ``/etc/ansible/ansible.cfg`` to contain the
-      following line:
-
-      .. code-block:: text
-
-         library = /usr/local/lib/python2.7/dist-packages/zhmc_ansible_modules
-
-   b) via an environment variable:
-
-      Edit your ``~/.bashrc`` file to contain the following line:
-
-      .. code-block:: text
-
-         export ANSIBLE_LIBRARY=/usr/local/lib/python2.7/dist-packages/zhmc_ansible_modules
-
-      and source the file to set it in your current shell:
-
-      .. code-block:: bash
-
-         $ . ~/.bashrc
+        $ sudo pip install -r $anco_dir/ibm/zhmc/requirements.txt
 
 
 Alternative installation with virtual Python environment
@@ -180,102 +179,104 @@ Alternative installation with virtual Python environment
 
 .. _virtualenv: https://virtualenv.pypa.io/
 
-This section describes the installation of Ansible and the Ansible modules in
-the zhmc-ansible-modules package into a virtual Python environment that is set
+This section describes the installation of Ansible and the ibm.zhmc Ansible
+Galaxy collection into a virtual Python environment that is set
 up using `virtualenv`_.
 
 This installation method utilizes the ability of Ansible to configure the
 Python environment it uses, and configures it to use the active Python (which
 can be a virtual Python environment or the system Python).
 
-All commands shown are to be executed in a bash shell on the control system.
+All commands shown are to be executed in a terminal or command prompt on the
+control system. The instructions are written for a bash shell.
 
-1. Install Ansible as an operating system package on the control system.
+1.  Create a virtual Python environment and activate it:
 
-   For details, see `Installing the Control Machine`_.
+    .. code-block:: bash
 
-2. Create a shell script that invokes the active Python.
+        $ mkvirtualenv myenv
 
-   Adjust the file name and path for the shell script in the ``python_script``
-   variable as needed, the only requirement is that the shell script must be
-   found in the PATH:
+    Note: Using the command shown requires the ``virtualenvwrapper`` package.
 
-   .. code-block:: bash
+    For details, see `virtualenv`_.
 
-      $ python_script=$HOME/local/bin/env_python
+2.  Install Ansible as a Python package on the control system:
 
-      $ cat >$python_script <<'EOT'
-      #!/bin/bash
-      py=$(which python)
-      $py "$@"
-      EOT
+    .. code-block:: bash
 
-      $ chmod 755 $python_script
+        $ pip install ansible
 
-3. Configure Ansible to invoke Python via the new shell script (using the
-   ``python_script`` variable from the previous step):
+    This will install Ansible into the active Python, i.e. into the virtual
+    Python environment. Note that an OS-level Ansible and a Python-level
+    Ansible have shared configuration files, e.g. in ``/etc/ansible``.
 
-   .. code-block:: bash
+3.  Create a shell script that invokes the active Python.
 
-      $ sudo tee -a /etc/ansible/hosts >/dev/null <<EOT
-      [local:vars]
-      ansible_python_interpreter=$python_script
-      EOT
+    Adjust the file name and path for the shell script in the ``python_script``
+    variable as needed, the only requirement is that the shell script must be
+    found in the PATH:
 
-4. Create a shell script that sets the ``ANSIBLE_LIBRARY`` environment
-   variable to the location of the zhmc-ansible-modules package found in the
-   active Python environment.
+    .. code-block:: bash
 
-   Adjust the file name and path for the shell script in the ``library_script``
-   variable as needed, the only requirement is that the shell script must be
-   found in the PATH:
+        $ python_script=$HOME/local/bin/env_python
 
-   .. code-block:: bash
+        $ cat >$python_script <<'EOT'
+        #!/bin/bash
+        py=$(which python)
+        $py "$@"
+        EOT
 
-      $ library_script=$HOME/local/bin/setup_ansible_library
+        $ chmod 755 $python_script
 
-      $ cat >$library_script <<'EOT'
-      #!/bin/bash
-      zhmc_dir=$(dirname $(python -c "import zhmc_ansible_modules as m; print(m.__file__)"))
-      export ANSIBLE_LIBRARY=$zhmc_dir
-      EOT
+4.  Configure Ansible to invoke Python via the new shell script (using the
+    ``python_script`` variable from the previous step):
 
-      $ chmod 755 $library_script
+    .. code-block:: bash
 
-5. Create a virtual Python environment for Python 2.7 and activate it.
+        $ sudo tee -a /etc/ansible/hosts >/dev/null <<EOT
+        [local:vars]
+        ansible_python_interpreter=$python_script
+        EOT
 
-   .. code-block:: bash
+5.  Install the ibm.zhmc Ansible Galaxy collection:
 
-      $ mkvirtualenv myenv
+    .. code-block:: bash
 
-   Note: Using the command shown requires the ``virtualenvwrapper`` package.
+        $ ansible-galaxy collection install ibm.zhmc
 
-6. Install the zhmc-ansible-modules Python package into the active virtual
-   Python environment:
+    This will install the collection to your local Ansible collections tree,
+    which is by default ``$HOME/.ansible/collections``. It does not install
+    any dependent Python packages.
 
-   .. code-block:: bash
+6.  Install the dependent Python packages into the active Python:
 
-      (myenv)# pip install zhmc-ansible-modules
+    Double check where the ibm.zhmc Ansible Galaxy collection got installed:
 
-   This will also install its dependent Python packages.
+    .. code-block:: bash
 
-5. Set the ANSIBLE_LIBRARY environment variable by sourcing the script created
-   in step 4:
+        $ ansible-galaxy collection list ibm.zhmc
+        # /Users/johndoe/.ansible/collections/ansible_collections
+        Collection Version
+        ---------- -------
+        ibm.zhmc   1.0.0
 
-   .. code-block:: bash
+        $ anco_dir=/Users/johndoe/.ansible/collections/ansible_collections
 
-      $ . setup_ansible_library
+    Using the provided requirements.txt file in the installation of the
+    ibm.zhmc Ansible Galaxy collection, install dependent Python packages
+    into your system Python:
 
-   This must be done after each switch (or deactivation) of the active Python
-   environment and before any Ansible command (that uses these modules) is
-   invoked.
+    .. code-block:: bash
+
+        $ sudo pip install -r $anco_dir/ibm/zhmc/requirements.txt
 
 
 Verification of the installation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You can verify that the zhmc-ansible-modules package and its dependent packages
-are installed correctly by running an example playbook in check mode:
+You can verify that the ibm.zhmc Ansible Galaxy collection and its dependent
+Python packages are installed correctly by running an example playbook in
+check mode:
 
 .. code-block:: bash
 
@@ -310,9 +311,10 @@ are installed correctly by running an example playbook in check mode:
 Example playbooks
 -----------------
 
-After having installed the zhmc-ansible-modules package, you can download and
-run the example playbooks in `folder ``playbooks`` of the Git repository
-<https://github.com/zhmcclient/zhmc-ansible-modules/tree/master/playbooks>`_:
+The ibm.zhmc Ansible Galaxy collection includes example playbooks, which can
+be found in directory
+``$HOME/.ansible/collections/ansible_collections/ibm/zhmc/playbooks``. Some
+of them are:
 
 * ``create_partition.yml`` creates a partition with a NIC, HBA and virtual
   function to an accelerator adapter.
@@ -377,11 +379,10 @@ Then, run the playbooks:
 Versioning
 ----------
 
-This documentation applies to version |release| of the zhmc-ansible-modules
-package. You can also see that version in the top left corner of this page.
+This documentation applies to version |release| of the ibm.zhmc
+Ansible Galaxy collection.
 
-The zhmc-ansible-modules package uses the rules of `Semantic Versioning 2.0.0`_
-for its version.
+This collection uses the rules of `Semantic Versioning 2.0.0`_ for its version.
 
 .. _Semantic Versioning 2.0.0: http://semver.org/spec/v2.0.0.html
 
@@ -396,17 +397,17 @@ Compatibility
 -------------
 
 For Ansible modules, compatibility is always seen from the perspective of an
-Ansible playbook using it. Thus, a backwards compatible new version of the
-zhmc-ansible-modules package means that the user can safely upgrade to that new
+Ansible playbook using it. Thus, a backwards compatible new version of an
+Ansible Galaxy collection means that the user can safely upgrade to that new
 version without encountering compatibility issues in any Ansible playbooks
-using these modules.
+using the modules in the collection.
 
-This package uses the rules of `Semantic Versioning 2.0.0`_ for compatibility
+This collection uses the rules of `Semantic Versioning 2.0.0`_ for compatibility
 between package versions, and for :ref:`deprecations <Deprecations>`.
 
-The public interface of this package that is subject to the semantic versioning
-rules (and specificically to its compatibility rules) are the Ansible module
-interfaces described in this documentation.
+The public interface of the collection that is subject to the semantic
+versioning rules (and specificically to its compatibility rules) are the Ansible
+module interfaces described in this documentation.
 
 Violations of these compatibility rules are described in section
 :ref:`Change log`.
@@ -426,11 +427,11 @@ Deprecated functionality is marked accordingly in this documentation and in the
 Reporting issues
 ----------------
 
-If you encounter any problem with this package, or if you have questions of any
-kind related to this package (even when they are not about a problem), please
-open an issue in the `zhmc-ansible-modules issue tracker`_.
+If you encounter any problem with this collection, or if you have questions of
+any kind related to this collection (even when they are not about a problem),
+please open an issue in the `ibm.zhmc collection issue tracker`_.
 
-.. _`zhmc-ansible-modules issue tracker`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
+.. _`ibm.zhmc collection issue tracker`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 .. _`License`:

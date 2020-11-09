@@ -40,7 +40,7 @@ def get_version(galaxy_file):
 
 # -- Project information -----------------------------------------------------
 
-project = 'ibm.zhmc Ansible modules'
+project = 'ibm.zhmc Ansible Galaxy collection'
 copyright = '2016-2020, IBM'
 author = 'IBM'
 
