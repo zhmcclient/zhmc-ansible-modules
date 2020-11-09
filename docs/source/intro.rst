@@ -311,25 +311,26 @@ check mode:
 Example playbooks
 -----------------
 
-The ibm.zhmc Ansible Galaxy collection includes example playbooks, which can
-be found in directory
-``$HOME/.ansible/collections/ansible_collections/ibm/zhmc/playbooks``. Some
-of them are:
+After having installed the ibm.zhmc Ansible Galaxy collection, you find the
+example playbooks in folder ``ibm/zhmc/playbooks/`` of your local Ansible
+collection directory (e.g. ``$HOME/.ansible/collections/ansible_collections/``),
+for example:
 
 * ``create_partition.yml`` creates a partition with a NIC, HBA and virtual
   function to an accelerator adapter.
 
 * ``delete_partition.yml`` deletes a partition.
 
-* ``vars_example.yml`` is an example variable file defining variables such as
-  CPC name, partition name, etc.
+These example playbooks include two other files for defining credentials and
+other variables:
 
-* ``vault_example.yml`` is an example password vault file defining variables
-  for authenticating with the HMC.
+* ``vars.yml`` defines variables such as CPC name, partition name, etc. It does
+  not exist in that directory but can be copied from ``vars_example.yml``,
+  changing the variables to your needs.
 
-Before you run a playbook, copy ``vars_example.yml`` to ``vars.yml`` and
-``vault_example.yml`` to ``vault.yml`` and change the variables in those files
-as needed.
+* ``vault.yml`` is a password vault file defining variables for authenticating
+  with the HMC. It does not exist in that directory but can be copied from
+  ``vault_example.yml``, changing the variables to your needs.
 
 Then, run the playbooks:
 
