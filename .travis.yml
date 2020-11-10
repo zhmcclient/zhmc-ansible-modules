@@ -98,18 +98,27 @@ jobs:
 #      env:
 #        - PACKAGE_LEVEL=latest
 
+# Disabled for now.
+# This fails because cryptography complains about usage of OpenSSL 1.0.2;
+# see https://travis-ci.com/github/zhmcclient/zhmc-ansible-modules/jobs/431432869
 #    - os: linux
 #      language: python
 #      python: "pypy3"  # currently Python 3.6.1, PyPy 7.1.1-beta0
 #      env:
 #        - PACKAGE_LEVEL=minimum
 
+# Disabled for now.
+# This fails because cryptography complains about usage of OpenSSL 1.0.2;
+# see https://travis-ci.com/github/zhmcclient/zhmc-ansible-modules/jobs/431432870
 #    - os: linux
 #      language: python
 #      python: "pypy3"  # currently Python 3.6.1, PyPy 7.1.1-beta0
 #      env:
 #        - PACKAGE_LEVEL=latest
 
+# Disabled for now.
+# This fails in the Ansible sanity test;
+# see https://travis-ci.com/github/zhmcclient/zhmc-ansible-modules/jobs/431432871
 #    - os: osx
 #      language: generic
 #      python:
