@@ -206,14 +206,6 @@ install:
   - pip install python-coveralls
   - pip list
 
-  # The module doc build (make docs) generates different order of module
-  # suboptions between Python 2 and Python 3. Because the docs is generated
-  # on Python 2 and then checked in to the repo, the make doccheck needs to be
-  # run on Python 2 only.
-  - if [[ $TRAVIS_PYTHON_VERSION == 2.7 && $PACKAGE_LEVEL == latest ]]; then
-      make doccheck;
-    fi
-
 # commands to run builds & tests
 script:
   - make docs
