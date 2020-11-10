@@ -33,6 +33,9 @@ Released: not yet
 * Fixed percent-encoding in the 'zhmc_storage_group' and 'zhmc_storage_volume'
   modules.
 
+* Docs: Increased supported Ansible versions from 2.0 or higher to be 2.4 or
+  higher. This is what is currently tested. See issue #209.
+
 **Enhancements:**
 
 * In the zhmc_nic module, updated the definition of NIC properties to the z15
