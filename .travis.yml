@@ -100,14 +100,14 @@ jobs:
 
 #    - os: linux
 #      language: python
-#      python: "pypy-5.3.1"  # Python 2.7.10
+#      python: "pypy"
 #      env:
 #        - PACKAGE_LEVEL=minimum
 #      cache: pip
 
 #    - os: linux
 #      language: python
-#      python: "pypy-5.3.1"  # Python 2.7.10
+#      python: "pypy"
 #      env:
 #        - PACKAGE_LEVEL=latest
 #      cache: pip
