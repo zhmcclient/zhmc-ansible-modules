@@ -72,7 +72,7 @@ Supported environments
 The Ansible modules in the zhmc-ansible-modules package are supported in these
 environments:
 
-* Ansible versions: 2.0 or higher
+* Ansible versions: 2.4 or higher
 
 * Python versions: 2.7, 3.4 or higher
 
