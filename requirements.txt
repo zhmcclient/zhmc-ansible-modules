@@ -24,11 +24,21 @@ zhmcclient>=0.20.0 # Apache-2.0
 # cryptography 3.1 has deprecated Python 3.5 support and issues a deprecation
 # warning that causes ansible-test to fail
 # cryptography 3.2 addresses a dependabot security issue
-cryptography==3.0,<3.1; python_version <= '3.5'  # BSD, from paramiko -> ansible
-cryptography==3.2; python_version >= '3.6'  # BSD, from paramiko -> ansible
+cryptography>=3.0,<3.1; python_version <= '3.5'  # BSD, from paramiko -> ansible
+cryptography>=3.2; python_version >= '3.6'  # BSD, from paramiko -> ansible
+packaging>=20.0
+# PyYAML 5.3 has removed support for Python 3.4
+PyYAML>=5.1; python_version == '2.7'
+PyYAML>=5.1,<5.3; python_version == '3.4'
+PyYAML>=5.1; python_version >= '3.5' and python_version <= '3.7'
+PyYAML>=5.1.2; python_version >= '3.8'
+
+# bcrypt is used by paramiko -> ansible
+# bcrypt 3.2.0 removed support for Python 2.7, 3.4, 3.5
+bcrypt>=3.0.0,<3.2.0; python_version <= '3.5'
+bcrypt>=3.2.0; python_version >= '3.6'
 
 # asn1crypto  # MIT, from cryptography -> ansible
-# bcrypt # Apache 2.0, from paramiko -> ansible
 # certifi # ISC, from requests
 # cffi # MIT, from cryptography -> paramiko -> ansible
 # chardet # LGPL, from requests

@@ -15,20 +15,26 @@
 # Direct dependencies:
 
 # Unit test (imports into testcases):
-pytest>=3.2.0 # MIT
+# pytest 5.0.0 has removed support for Python < 3.5
+# pytest 4.3.1 solves an issue on Python 3 with minimum package levels
+# pytest==6.0.0 causes pylint to report "not-callable" issues
+# pytest>=6.0.0 causes pylint to report "abstract-method" issues
+# For both, see https://github.com/pytest-dev/pytest/issues/7591
+pytest>=4.3.1,<5.0.0; python_version < '3.5'
+pytest>=4.3.1,<6.0.0; python_version >= '3.5' and python_version <= '3.6'
+pytest>=4.4.0,<6.0.0; python_version >= '3.7'
+# Pluggy 0.12.0 has a bug causing pytest plugins to fail loading on py38
+pluggy>=0.7.1; python_version >= '2.7' and python_version <= '3.6'
+pluggy>=0.13.0; python_version >= '3.7'
 
 # Unit test (no imports, invoked via py.test script):
-# TODO: Remove the pinning of the pytest-cov version again once issue
-#       https://github.com/z4r/python-coveralls/issues/66
-#       is resolved.
-#       Background: pytest-cov 2.6.0 has increased the version
-#       requirement for the coverage package from >=3.7.1 to
-#       >=4.4, which is in conflict with the version requirement
-#       defined by the python-coveralls package for coverage==4.0.3.
-pytest-cov>=2.4.0,<2.6 # BSD
 
 # Coverage reporting (no imports, invoked via coveralls script):
-python-coveralls>=2.9.0 # Apache-2.0
+# coverage 5.0 has removed support for py34
+coverage>=4.5.2,<5.0
+# python-coveralls 2.9.2 no longer has requirement coverage==4.0.3.
+python-coveralls>=2.9.2
+pytest-cov>=2.7.0
 
 # Sphinx (no imports, invoked via sphinx-build script):
 Sphinx>=1.7.6 # BSD
@@ -52,7 +58,6 @@ voluptuous>=0.10.2 # BSD, from Ansible validate-modules
 # Babel # BSD, from Sphinx
 # bleach # Apache, from readme-renderer -> twine
 # configparser # MIT, from flake8 for py<3.2
-# coverage # Apache-2.0, from pytest-cov
 # docutils # public domain | Python | 2-Clause BSD | GPL 3, from Sphinx
 # funcsigs # Apache, from mock for py<3.3
 # imagesize # MIT, from Sphinx
