@@ -5,105 +5,85 @@
 notifications:
   email: false
 
-sudo: required
+language: python
 
-# We define the job matrix explicitly, in order to minimize the
-# combinations.
-# For OS-X, using an explicit matrix is required, because Travis at
-# this point only has half-baked support for Python on OS-X that does
-# not work. Also, on OS-X, it needs to be invoked with language=generic
-# and an empty 'python' variable in order to prevent that Travis attempts
-# to install Python.
-# TODO: Figure out how specific versions of Python 3.x can be used with OS-X
-
-# When defining the job matrix explicitly, there are Travis environments
-# that produce an additional default job. See these Travis issues:
-#   https://github.com/travis-ci/travis-ci/issues/1228
-#   https://github.com/travis-ci/travis-ci/issues/4681
-#   https://github.com/travis-ci/travis-ci/issues/9843
-# The public Travis does not seem to have this issue anymore,
-# but Travis@IBM does have this issue (as of 9/2018). The workaround for
-# this issue is to define variables globally and to exclude this same
-# variable value in the matrix definition. Experiments have shown that
-# not all variable combinations work. Using a combination of 'language'
-# and 'os' set to the default values works.
-
-# See note about explicit job matrix, above.
-language: ruby
-os: linux
-
-matrix:
-
-  # See note about explicit job matrix, above.
-  exclude:
-    - language: ruby
-    - os: linux
+# We define the job matrix explicitly, in order to have a minimum number of
+# useful combinations. The disabled combinations will be enabled in a specific
+# branch that does not run for every change.
+jobs:
 
   include:
+
 #    - os: linux
 #      language: python
 #      python: "2.7"
 #      env:
 #        - PACKAGE_LEVEL=minimum
 #      cache: pip
+
     - os: linux
       language: python
       python: "2.7"
       env:
         - PACKAGE_LEVEL=latest
       cache: pip
+
     - os: linux
       language: python
       python: "3.5"
       env:
         - PACKAGE_LEVEL=minimum
       cache: pip
+
 #    - os: linux
 #      language: python
 #      python: "3.5"
 #      env:
 #        - PACKAGE_LEVEL=latest
 #      cache: pip
+
 #    - os: linux
 #      language: python
 #      python: "3.6"
 #      env:
 #        - PACKAGE_LEVEL=minimum
 #      cache: pip
+
 #    - os: linux
 #      language: python
 #      python: "3.6"
 #      env:
 #        - PACKAGE_LEVEL=latest
 #      cache: pip
+
 #    - os: linux
-#      dist: xenial
-#      sudo: required
 #      language: python
 #      python: "3.7"
 #      env:
 #        - PACKAGE_LEVEL=minimum
 #      cache: pip
+
     - os: linux
-      dist: xenial
-      sudo: required
       language: python
       python: "3.7"
       env:
         - PACKAGE_LEVEL=latest
       cache: pip
+
 #    - os: linux
 #      language: python
 #      python: "pypy-5.3.1"  # Python 2.7.10
 #      env:
 #        - PACKAGE_LEVEL=minimum
 #      cache: pip
+
 #    - os: linux
 #      language: python
 #      python: "pypy-5.3.1"  # Python 2.7.10
 #      env:
 #        - PACKAGE_LEVEL=latest
 #      cache: pip
+
     - os: osx
       language: generic
       python:
@@ -111,6 +91,7 @@ matrix:
         - PACKAGE_LEVEL=minimum
         - PYTHON=2
       cache: pip
+
 #    - os: osx
 #      language: generic
 #      python:
@@ -118,6 +99,7 @@ matrix:
 #        - PACKAGE_LEVEL=latest
 #        - PYTHON=2
 #      cache: pip
+
 #    - os: osx
 #      language: generic
 #      python:
@@ -125,6 +107,7 @@ matrix:
 #        - PACKAGE_LEVEL=minimum
 #        - PYTHON=3
 #      cache: pip
+
 #    - os: osx
 #      language: generic
 #      python:
