@@ -732,7 +732,7 @@ def ensure_attached(params, check_mode):
             # adapters and add the missing ones. We do not detach adapters
             # that are currently attached but not in the input list.
 
-            attached_adapter_names = [a.name for a in attached_adapters]
+            attached_adapter_names = {a.name for a in attached_adapters}
             for aname in adapter_names:
                 if aname not in attached_adapter_names:
                     adapter = all_adapters_dict[aname]
