@@ -18,6 +18,14 @@
 Introduction
 ============
 
+Moving to Ansible Galaxy
+------------------------
+
+Starting with version 1.0.0, the zhmc Ansible modules are no longer distributed
+as the
+`zhmc-ansible-modules package on Pypi <https://pypi.org/project/zhmc-ansible-modules/>`_,
+but as the
+`ibm.zhmc collection on Galaxy <https://galaxy.ansible.com/ibm/zhmc/>`_.
 
 .. _`What this package provides`:
 
