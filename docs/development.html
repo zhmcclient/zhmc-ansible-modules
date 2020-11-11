@@ -193,9 +193,9 @@ list of valid Make targets and a short description of what each target does.</p>
 <span id="id4"></span><h2>Building the documentation<a class="headerlink" href="#building-the-documentation" title="Permalink to this headline">¶</a></h2>
 <p>The documentation for the ibm.zhmc Ansible Galaxy collection is published
 on GitHub pages at <a class="reference external" href="https://zhmcclient.github.io/zhmc-ansible-modules/">https://zhmcclient.github.io/zhmc-ansible-modules/</a>.</p>
-<p>That page automatically gets updated whenever the <code class="docutils literal notranslate"><span class="pre">master</span></code> branch of the
-Git repo for this package changes.</p>
-<p><strong>TBD: Verify the statement above.</strong></p>
+<p>That page represents the <code class="docutils literal notranslate"><span class="pre">master</span></code> branch of the Git repo for this collection
+and automatically gets updated whenever the <code class="docutils literal notranslate"><span class="pre">master</span></code> branch of the Git repo
+changes.</p>
 <p>In order to build the documentation locally from the Git work directory, issue:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ make docs
 </pre></div>
@@ -324,14 +324,8 @@ git push
 </ul>
 </li>
 <li><p>On GitHub, once the checks for this Pull Request succeed:</p>
-<ul>
-<li><p>Merge the Pull Request (no review is needed).</p>
-<p>Because this updates the <code class="docutils literal notranslate"><span class="pre">stable_M.N</span></code> branch, it triggers a docs build of
-its stable version. However, because the git tag for this version is not assigned
-yet, this docs build will show an incorrect version (a dev version based on the
-previous version tag). This will be fixed in a subsequent step.</p>
-<p><strong>TBD: Verify the above on GitHub pages once established</strong></p>
-</li>
+<ul class="simple">
+<li><p>Merge the Pull Request (no review is needed).</p></li>
 <li><p>Delete the branch of the Pull Request (<code class="docutils literal notranslate"><span class="pre">release_M.N.U</span></code>)</p></li>
 </ul>
 </li>
@@ -350,9 +344,6 @@ git tag $MNU
 git push --tags
 </pre></div>
 </div>
-<p>The pushing of the tag triggers another docs build of its stable version, this time
-with the correct version as defined in the tag.</p>
-<p><strong>TBD: Verify the above on GitHub pages once established</strong></p>
 <p>If the previous commands fail because this tag already exists for some reason, delete
 the tag locally and remotely:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>git tag --delete $MNU
@@ -360,10 +351,6 @@ git push --delete origin $MNU
 </pre></div>
 </div>
 <p>and try again.</p>
-</li>
-<li><p>On GitHub pages, verify that it shows the correct version for its stable version:</p>
-<p><a class="reference external" href="https://github.io/zhmc-ansible-modules">https://github.io/zhmc-ansible-modules</a></p>
-<p><strong>TBD: Verify the above on GitHub pages once established</strong></p>
 </li>
 <li><p>On GitHub, edit the new tag <code class="docutils literal notranslate"><span class="pre">M.N.U</span></code>, and create a release description on it. This
 will cause it to appear in the Release tab.</p>
@@ -378,8 +365,8 @@ will cause it to appear in the Release tab.</p>
 without any development suffix) is shown.</p>
 <p><strong>Attention!!</strong> This only works once for each version. You cannot
 re-release the same version to Ansible Galaxy, or otherwise update it.</p>
-<p>Verify that the released version arrived on Ansible Galaxy:</p>
-<p><strong>TBD: Add link to ibm.zhmc collection on Ansible Galaxy</strong></p>
+<p>Verify that the released version arrived on Ansible Galaxy at
+<a class="reference external" href="https://galaxy.ansible.com/ibm/zhmc/">https://galaxy.ansible.com/ibm/zhmc/</a></p>
 </li>
 <li><p>If you released the master branch, it needs a new fix stream.</p>
 <p>Create a branch for its fix stream and push it upstream:</p>
