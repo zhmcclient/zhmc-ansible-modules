@@ -68,7 +68,11 @@ Parameters
 
 
   adapter_count (False, int, -1)
-    Only for ``state=attach``: The number of crypto adapters the partition needs to have attached. The special value -1 means all adapters of the desired crypto type in the CPC.
+    Only for ``state=attach``: The number of crypto adapters the partition needs to have attached. The special value -1 means all adapters of the desired crypto type in the CPC. The ``adapter_names`` and ``adapter_count`` parameters are mutually exclusive; if neither is specified the default for ``adapter_count`` applies.
+
+
+  adapter_names (False, list, [])
+    Only for ``state=attach``: The names of the crypto adapters the partition needs to have attached. The ``adapter_names`` and ``adapter_count`` parameters are mutually exclusive; if neither is specified the default for ``adapter_count`` applies.
 
 
   domain_range (False, list, [0, -1])
@@ -149,6 +153,18 @@ Examples
         state: attached
         crypto_type: ep11
         adapter_count: 1
+        domain_range: 0,-1
+        access_mode: usage
+
+    - name: Ensure domains 0-max on two specific ep11 adapters are attached
+      zhmc_crypto_attachment:
+        hmc_host: "{{ my_hmc_host }}"
+        hmc_auth: "{{ my_hmc_auth }}"
+        cpc_name: "{{ my_cpc_name }}"
+        partition_name: "{{ my_second_partition_name }}"
+        state: attached
+        crypto_type: ep11
+        adapter_names: [CRYP00, CRYP01]
         domain_range: 0,-1
         access_mode: usage
 

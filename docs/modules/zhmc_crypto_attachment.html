@@ -229,7 +229,9 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">facts</span></code>: Does not change anything on the attachment and returns the crypto configuration of the partition.</p></li>
 </ul>
 </dd>
-<dt>adapter_count (False, int, -1)</dt><dd><p>Only for <code class="docutils literal notranslate"><span class="pre">state=attach</span></code>: The number of crypto adapters the partition needs to have attached. The special value -1 means all adapters of the desired crypto type in the CPC.</p>
+<dt>adapter_count (False, int, -1)</dt><dd><p>Only for <code class="docutils literal notranslate"><span class="pre">state=attach</span></code>: The number of crypto adapters the partition needs to have attached. The special value -1 means all adapters of the desired crypto type in the CPC. The <code class="docutils literal notranslate"><span class="pre">adapter_names</span></code> and <code class="docutils literal notranslate"><span class="pre">adapter_count</span></code> parameters are mutually exclusive; if neither is specified the default for <code class="docutils literal notranslate"><span class="pre">adapter_count</span></code> applies.</p>
+</dd>
+<dt>adapter_names (False, list, [])</dt><dd><p>Only for <code class="docutils literal notranslate"><span class="pre">state=attach</span></code>: The names of the crypto adapters the partition needs to have attached. The <code class="docutils literal notranslate"><span class="pre">adapter_names</span></code> and <code class="docutils literal notranslate"><span class="pre">adapter_count</span></code> parameters are mutually exclusive; if neither is specified the default for <code class="docutils literal notranslate"><span class="pre">adapter_count</span></code> applies.</p>
 </dd>
 <dt>domain_range (False, list, [0, -1])</dt><dd><p>Only for <code class="docutils literal notranslate"><span class="pre">state=attach</span></code>: The domain range the partition needs to have attached, as a tuple of integers (min, max) that specify the inclusive range of domain index numbers. Other domains attached to the partition remain unchanged. The special value -1 for the max item means the maximum supported domain index number.</p>
 </dd>
@@ -291,6 +293,18 @@
     <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">attached</span>
     <span class="nt">crypto_type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ep11</span>
     <span class="nt">adapter_count</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
+    <span class="nt">domain_range</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0,-1</span>
+    <span class="nt">access_mode</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">usage</span>
+
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Ensure domains 0-max on two specific ep11 adapters are attached</span>
+  <span class="nt">zhmc_crypto_attachment</span><span class="p">:</span>
+    <span class="nt">hmc_host</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">hmc_auth</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">cpc_name</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">partition_name</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_second_partition_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">attached</span>
+    <span class="nt">crypto_type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ep11</span>
+    <span class="nt">adapter_names</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">CRYP00</span><span class="p p-Indicator">,</span> <span class="nv">CRYP01</span><span class="p p-Indicator">]</span>
     <span class="nt">domain_range</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0,-1</span>
     <span class="nt">access_mode</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">usage</span>
 </pre></div>
