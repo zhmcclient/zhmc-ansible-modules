@@ -20,3 +20,6 @@ tmp_*
 /dist/
 /docs_linkcheck/
 /tests/output/
+/AUTHORS
+/ChangeLog
+/build/
