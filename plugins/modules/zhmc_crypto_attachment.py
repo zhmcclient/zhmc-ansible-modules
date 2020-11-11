@@ -432,8 +432,8 @@ def ensure_attached(params, check_mode):
     userid, password = get_hmc_auth(params['hmc_auth'])
     cpc_name = params['cpc_name']
     partition_name = params['partition_name']
-    adapter_count = params.get('adapter_count', None)  # No default specified
-    adapter_names = params.get('adapter_names', None)  # No default specified
+    adapter_count = params['adapter_count']
+    adapter_names = params['adapter_names']
     domain_range = params['domain_range']
     access_mode = params['access_mode']
     crypto_type = params['crypto_type']
@@ -496,17 +496,17 @@ def ensure_attached(params, check_mode):
 
         # Parameter checking on adapter count and adapter names.
         # (can be done only now because it requires the number of adapters).
-        if adapter_count is None and adapter_names is None:
-            adapter_count == -1
-        if adapter_count is not None:
-            if adapter_names is not None:
+        if adapter_count != -1:
+            # The adapter_count parameter was specified.
+            # Note: Specifying it with its default value counts as not
+            # specified!
+            if not adapter_names:
+                # The adapter_names parameter was also specified.
                 raise ParameterError(
                     "The 'adapter_count' and 'adapter_names' parameters are "
                     "mutually exclusive, but both have been specified: "
                     "adapter_count={0!r}, adapter_names={1!r}".
                     format(adapter_count, adapter_names))
-            if adapter_count == -1:
-                adapter_count = len(all_adapters)
             elif adapter_count < 1:
                 raise ParameterError(
                     "The 'adapter_count' parameter must be at least 1, but "
@@ -519,22 +519,26 @@ def ensure_attached(params, check_mode):
                     "{2!r}, but is {3}".
                     format(len(all_adapters), crypto_type, cpc_name,
                            adapter_count))
-        else:
+        elif adapter_names:
+            # Only the adapter_names parameter was specified.
             adapter_count = len(adapter_names)
-
-        # Verify the specified adapters exist
-        if adapter_names is not None:
-            for aname in adapter_names:
-                if aname not in all_adapters_dict:
-                    raise ParameterError(
-                        "The 'adapter_name' parameter specifies an adapter "
-                        "named {0!r} that does not exist in CPC {1!r}".
-                        format(aname, cpc_name))
+        else:
+            # Neither of the adapter_count and adapter_names parameters were
+            # specified.
+            adapter_count = len(all_adapters)
 
         # At this point, we have:
         # - adapter_count is a valid number 1..max in all cases.
-        # - adapter_names is None if the adapters do not matter or is a
+        # - adapter_names is [] if the adapters do not matter or is a
         #   list of existing adapter names of length adapter_count.
+
+        # Verify the specified adapters exist
+        for aname in adapter_names:
+            if aname not in all_adapters_dict:
+                raise ParameterError(
+                    "The 'adapter_name' parameter specifies an adapter "
+                    "named {0!r} that does not exist in CPC {1!r}".
+                    format(aname, cpc_name))
 
         #
         # Get current crypto config of the target partition.
@@ -687,22 +691,18 @@ def ensure_attached(params, check_mode):
         result_changes['added-adapters'] = []
         result_changes['added-domains'] = []
 
-        if adapter_names is None:
-
+        if not adapter_names:
             # Only the number of adapters was specified so it can be any
             # adapter. We accept any already attached adapter.
 
             missing_count = max(0, adapter_count - len(attached_adapters))
-            assert missing_count <= len(detached_adapters), \
-                "missing_count={}, len(detached_adapters)={}".\
-                format(missing_count, len(detached_adapters))
             if missing_count == 0 and add_domain_config:
                 # Adapters already sufficient, but domains need to be attached
 
                 LOGGER.debug(
-                    "Adapters sufficient - attaching domains {0!r} in {1!r} "
-                    "mode to target partition {2!r}".
-                    format(add_domains, access_mode, partition.name))
+                    "Adapters sufficient - attaching domains %r in %r mode to "
+                    "target partition %r",
+                    add_domains, access_mode, partition.name)
 
                 if not check_mode:
                     try:
@@ -731,17 +731,16 @@ def ensure_attached(params, check_mode):
 
                     if conflicting_domains:
                         LOGGER.debug(
-                            "Skipping adapter {0!r} because the following of "
+                            "Skipping adapter %r because the following of "
                             "its domains are already attached to other "
-                            "partitions: {1!r}".
-                            format(adapter.name, conflicting_domains))
+                            "partitions: %r",
+                            adapter.name, conflicting_domains)
                         continue
 
                     LOGGER.debug(
-                        "Attaching adapter {0!r} and domains {1!r} in {2!r} "
-                        "mode to target partition {3!r}".
-                        format(adapter.name, add_domains, access_mode,
-                               partition.name))
+                        "Attaching adapter %r and domains %r in %r mode to "
+                        "target partition %r",
+                        adapter.name, add_domains, access_mode, partition.name)
 
                     if not check_mode:
                         try:
@@ -774,8 +773,7 @@ def ensure_attached(params, check_mode):
                         "{1}, Access mode: {2}".
                         format(missing_count, desired_domains, access_mode))
 
-        else:  # adapter_names is not None
-
+        else:
             # Specific adapters need to be attached. We check already attached
             # adapters and add the missing ones. We do not detach adapters
             # that are currently attached but not in the input list.
@@ -823,9 +821,9 @@ def ensure_attached(params, check_mode):
                 # domains need to be added to the crypto config.
 
                 LOGGER.debug(
-                    "Adapters were already attached to target partition {0!r} "
-                    "- attaching domains {1!r} in {2!r} mode".
-                    format(partition.name, add_domains, access_mode))
+                    "Adapters were already attached to target partition %r "
+                    "- attaching domains %r in %r mode",
+                    partition.name, add_domains, access_mode)
 
                 if not check_mode:
                     try:
@@ -1013,9 +1011,11 @@ def main():
         partition_name=dict(required=True, type='str'),
         state=dict(required=True, type='str',
                    choices=['attached', 'detached', 'facts']),
-        adapter_count=dict(required=False, type='int', default=None),
-        adapter_names=dict(required=False, type='list', default=None),
-        domain_range=dict(required=False, type='list', default=[0, -1]),
+        adapter_count=dict(required=False, type='int', default=-1),
+        adapter_names=dict(required=False, type='list', elements='str',
+                           default=[]),
+        domain_range=dict(required=False, type='list', elements='int',
+                          default=[0, -1]),
         access_mode=dict(required=False, type='str',
                          choices=['usage', 'control'], default='usage'),
         crypto_type=dict(required=False, type='str',
