@@ -202,7 +202,7 @@
 <h2><a class="toc-backref" href="#id2">Requirements</a><a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
 <p>The below requirements are needed on the host that executes this module.</p>
 <ul class="simple">
-<li><p>Access to the WS API of the HMC of the targeted Z system. The targeted Z system must be in the Dynamic Partition Manager (DPM) operational mode.</p></li>
+<li><p>Access to the WS API of the HMC of the targeted Z system (see <a class="reference internal" href="../appendix.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a>). The targeted Z system must be in the Dynamic Partition Manager (DPM) operational mode.</p></li>
 <li><p>Python package zhmcclient &gt;=0.14.0</p></li>
 </ul>
 </div>
@@ -239,9 +239,9 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">boot_network_device</span></code>: Cannot be specified because this information is specified using the artificial property <code class="docutils literal notranslate"><span class="pre">boot_network_nic_name</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">boot_storage_hba_name</span></code>: The name of the HBA whose URI is used to construct <code class="docutils literal notranslate"><span class="pre">boot_storage_device</span></code>. Specifying it requires that the partition exists.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">boot_network_nic_name</span></code>: The name of the NIC whose URI is used to construct <code class="docutils literal notranslate"><span class="pre">boot_network_device</span></code>. Specifying it requires that the partition exists.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">crypto_configuration</span></code>: The crypto configuration for the partition, in the format of the <code class="docutils literal notranslate"><span class="pre">crypto-configuration</span></code> property of the partition (see HMC API book for details), with the exception that adapters are specified with their names in field <code class="docutils literal notranslate"><span class="pre">crypto_adapter_names</span></code> instead of their URIs in field <code class="docutils literal notranslate"><span class="pre">crypto_adapter_uris</span></code>. If the <code class="docutils literal notranslate"><span class="pre">crypto_adapter_names</span></code> field is null, all crypto adapters of the CPC will be used.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">crypto_configuration</span></code>: The crypto configuration for the partition, in the format of the <code class="docutils literal notranslate"><span class="pre">crypto-configuration</span></code> property of the partition (see <a class="reference internal" href="../appendix.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> for details), with the exception that adapters are specified with their names in field <code class="docutils literal notranslate"><span class="pre">crypto_adapter_names</span></code> instead of their URIs in field <code class="docutils literal notranslate"><span class="pre">crypto_adapter_uris</span></code>. If the <code class="docutils literal notranslate"><span class="pre">crypto_adapter_names</span></code> field is null, all crypto adapters of the CPC will be used.</p></li>
 </ul>
-<p>Properties omitted in this dictionary will remain unchanged when the partition already exists, and will get the default value defined in the data model for partitions in the HMC API book when the partition is being created.</p>
+<p>Properties omitted in this dictionary will remain unchanged when the partition already exists, and will get the default value defined in the data model for partitions in the <a class="reference internal" href="../appendix.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> when the partition is being created.</p>
 </dd>
 <dt>expand_storage_groups (False, bool, False)</dt><dd><p>Boolean that controls whether the returned partition contains an additional artificial property ‘storage-groups’ that is the list of storage groups attached to the partition, with properties as described for the zhmc_storage_group module with expand=true.</p>
 </dd>
@@ -359,13 +359,13 @@
 <dl>
 <dt>name (, str, )</dt><dd><p>Partition name</p>
 </dd>
-<dt>{property} (, any, )</dt><dd><p>Additional properties of the partition, as described in the HMC WS-API book (using hyphens (-) in the property names).</p>
+<dt>{property} (, any, )</dt><dd><p>Additional properties of the partition, as described in the <a class="reference internal" href="../appendix.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> (using hyphens (-) in the property names).</p>
 </dd>
 <dt>hbas (, list, )</dt><dd><p>HBAs of the partition (for <code class="docutils literal notranslate"><span class="pre">state=facts</span></code>).</p>
 <dl class="simple">
 <dt>name (, str, )</dt><dd><p>HBA name</p>
 </dd>
-<dt>{property} (, any, )</dt><dd><p>Additional properties of the HBA, as described in the HMC WS-API book (using hyphens (-) in the property names).</p>
+<dt>{property} (, any, )</dt><dd><p>Additional properties of the HBA, as described in the <a class="reference internal" href="../appendix.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> (using hyphens (-) in the property names).</p>
 </dd>
 </dl>
 </dd>
@@ -373,7 +373,7 @@
 <dl class="simple">
 <dt>name (, str, )</dt><dd><p>NIC name</p>
 </dd>
-<dt>{property} (, any, )</dt><dd><p>Additional properties of the NIC, as described in the HMC WS-API book (using hyphens (-) in the property names).</p>
+<dt>{property} (, any, )</dt><dd><p>Additional properties of the NIC, as described in the <a class="reference internal" href="../appendix.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> (using hyphens (-) in the property names).</p>
 </dd>
 </dl>
 </dd>
@@ -381,7 +381,7 @@
 <dl class="simple">
 <dt>name (, str, )</dt><dd><p>VF name</p>
 </dd>
-<dt>{property} (, any, )</dt><dd><p>Additional properties of the VF, as described in the HMC WS-API book (using hyphens (-) in the property names).</p>
+<dt>{property} (, any, )</dt><dd><p>Additional properties of the VF, as described in the <a class="reference internal" href="../appendix.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> (using hyphens (-) in the property names).</p>
 </dd>
 </dl>
 </dd>

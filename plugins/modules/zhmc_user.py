@@ -39,8 +39,9 @@ description:
 author:
   - Andreas Maier (@andy-maier)
 requirements:
-  - Access to the WS API of the HMC of the targeted Z system. The targeted Z
-    system can be in any operational mode (classic, DPM)
+  - Access to the WS API of the HMC of the targeted Z system
+    (see :term:`HMC API`). The targeted Z system can be in any operational
+    mode (classic, DPM)
   - Python package zhmcclient >=0.23.0
 options:
   hmc_host:
@@ -107,7 +108,7 @@ options:
          the artificial property C(default-group-name)."
       - "Properties omitted in this dictionary will remain unchanged when the
          user already exists, and will get the default value defined
-         in the data model for users in the HMC API book when the
+         in the data model for users in the :term:`HMC API` when the
          user is being created."
     type: dict
     required: false
@@ -189,7 +190,7 @@ user:
       type: str
     "{property}":
       description: "Additional properties of the user, as described
-        in the HMC WS-API book (using hyphens (-) in the property names)."
+        in the :term:`HMC API` (using hyphens (-) in the property names)."
     user-pattern-name:
       description: "Name of the user pattern referenced by property
         C(user-pattern-uri)."

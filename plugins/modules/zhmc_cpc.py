@@ -40,8 +40,9 @@ author:
   - Andreas Maier (@andy-maier)
   - Andreas Scheuring (@scheuran)
 requirements:
-  - Access to the WS API of the HMC of the targeted Z system. The targeted Z
-    system must be in the Dynamic Partition Manager (DPM) operational mode.
+  - Access to the WS API of the HMC of the targeted Z system
+    (see :term:`HMC API`). The targeted Z system must be in the Dynamic
+    Partition Manager (DPM) operational mode
   - Python package zhmcclient >=0.20.0
 options:
   hmc_host:
@@ -150,7 +151,7 @@ cpc:
       type: str
     "{property}":
       description: "Additional properties of the CPC, as described in the
-        HMC WS-API book (using hyphens (-) in the property names)."
+       :term:`HMC API` (using hyphens (-) in the property names)."
     partitions:
       description: "Artificial property for the defined partitions of the CPC,
         with a subset of its properties."
@@ -266,6 +267,8 @@ ZHMC_CPC_PROPERTIES = {
     'object_id': (False, None, False, None, None, None),
     'parent': (False, None, False, None, None, None),
     'class': (False, None, False, None, None, None),
+
+    # The properties not specified here default to allow=False.
 }
 
 

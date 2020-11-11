@@ -22,7 +22,7 @@ Requirements
 ------------
 The below requirements are needed on the host that executes this module.
 
-- Access to the WS API of the HMC of the targeted Z system. The targeted Z system must be in the Dynamic Partition Manager (DPM) operational mode.
+- Access to the WS API of the HMC of the targeted Z system (see :term:`HMC API`). The targeted Z system must be in the Dynamic Partition Manager (DPM) operational mode.
 - Python package zhmcclient >=0.14.0
 
 
@@ -144,7 +144,7 @@ virtual_function (success, dict, )
 
 
   {property} (, any, )
-    Additional properties of the virtual function, as described in the HMC WS-API book (using hyphens (-) in the property names).
+    Additional properties of the virtual function, as described in the :term:`HMC API` (using hyphens (-) in the property names).
 
 
 

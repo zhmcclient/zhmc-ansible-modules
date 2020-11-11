@@ -24,7 +24,7 @@ Requirements
 ------------
 The below requirements are needed on the host that executes this module.
 
-- Access to the WS API of the HMC of the targeted Z system. The targeted Z system must be in the Dynamic Partition Manager (DPM) operational mode.
+- Access to the WS API of the HMC of the targeted Z system (see :term:`HMC API`). The targeted Z system must be in the Dynamic Partition Manager (DPM) operational mode.
 - Python package zhmcclient >=0.14.0
 
 
@@ -86,9 +86,9 @@ Parameters
 
     * ``boot_network_nic_name``: The name of the NIC whose URI is used to construct ``boot_network_device``. Specifying it requires that the partition exists.
 
-    * ``crypto_configuration``: The crypto configuration for the partition, in the format of the ``crypto-configuration`` property of the partition (see HMC API book for details), with the exception that adapters are specified with their names in field ``crypto_adapter_names`` instead of their URIs in field ``crypto_adapter_uris``. If the ``crypto_adapter_names`` field is null, all crypto adapters of the CPC will be used.
+    * ``crypto_configuration``: The crypto configuration for the partition, in the format of the ``crypto-configuration`` property of the partition (see :term:`HMC API` for details), with the exception that adapters are specified with their names in field ``crypto_adapter_names`` instead of their URIs in field ``crypto_adapter_uris``. If the ``crypto_adapter_names`` field is null, all crypto adapters of the CPC will be used.
 
-    Properties omitted in this dictionary will remain unchanged when the partition already exists, and will get the default value defined in the data model for partitions in the HMC API book when the partition is being created.
+    Properties omitted in this dictionary will remain unchanged when the partition already exists, and will get the default value defined in the data model for partitions in the :term:`HMC API` when the partition is being created.
 
 
   expand_storage_groups (False, bool, False)
@@ -228,7 +228,7 @@ partition (success, dict, )
 
 
   {property} (, any, )
-    Additional properties of the partition, as described in the HMC WS-API book (using hyphens (-) in the property names).
+    Additional properties of the partition, as described in the :term:`HMC API` (using hyphens (-) in the property names).
 
 
   hbas (, list, )
@@ -240,7 +240,7 @@ partition (success, dict, )
 
 
     {property} (, any, )
-      Additional properties of the HBA, as described in the HMC WS-API book (using hyphens (-) in the property names).
+      Additional properties of the HBA, as described in the :term:`HMC API` (using hyphens (-) in the property names).
 
 
 
@@ -253,7 +253,7 @@ partition (success, dict, )
 
 
     {property} (, any, )
-      Additional properties of the NIC, as described in the HMC WS-API book (using hyphens (-) in the property names).
+      Additional properties of the NIC, as described in the :term:`HMC API` (using hyphens (-) in the property names).
 
 
 
@@ -266,7 +266,7 @@ partition (success, dict, )
 
 
     {property} (, any, )
-      Additional properties of the VF, as described in the HMC WS-API book (using hyphens (-) in the property names).
+      Additional properties of the VF, as described in the :term:`HMC API` (using hyphens (-) in the property names).
 
 
 
