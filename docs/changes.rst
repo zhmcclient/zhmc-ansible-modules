@@ -29,14 +29,10 @@ but as the
 `ibm.zhmc collection on Galaxy <https://galaxy.ansible.com/ibm/zhmc/>`_.
 
 
-Version 0.8.3.dev1
-^^^^^^^^^^^^^^^^^^
+Version 0.8.3
+^^^^^^^^^^^^^
 
-Released: not yet
-
-**Incompatible changes:**
-
-**Deprecations:**
+Released: 2020-11-11
 
 **Bug fixes:**
 
@@ -79,12 +75,6 @@ Released: not yet
 
 * Added support in the zhmc_crypto_attachment module for specifying crypto
   adapters by name instead of just their count. (See issue #187)
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 0.8.2
