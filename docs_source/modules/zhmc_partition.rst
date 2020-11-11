@@ -91,6 +91,14 @@ Parameters
     Properties omitted in this dictionary will remain unchanged when the partition already exists, and will get the default value defined in the data model for partitions in the HMC API book when the partition is being created.
 
 
+  expand_storage_groups (False, bool, False)
+    Boolean that controls whether the returned partition contains an additional artificial property 'storage-groups' that is the list of storage groups attached to the partition, with properties as described for the zhmc_storage_group module with expand=true.
+
+
+  expand_crypto_adapters (False, bool, False)
+    Boolean that controls whether the returned partition contains an additional artificial property 'crypto-adapters' in its 'crypto-configuration' property that is the list of crypto adapters attached to the partition, with properties as described for the zhmc_adapter module.
+
+
   log_file (False, str, None)
     File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.
 
@@ -197,6 +205,8 @@ Examples
         cpc_name: "{{ my_cpc_name }}"
         name: "{{ my_partition_name }}"
         state: facts
+        expand_storage_groups: true
+        expand_crypto_adapters: true
       register: part1
 
 
