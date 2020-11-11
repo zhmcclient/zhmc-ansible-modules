@@ -156,8 +156,8 @@ control system. The instructions are written for a bash shell.
         $ ansible-galaxy collection install ibm.zhmc
 
     This will install the collection to your local Ansible collections tree,
-    which is by default ``$HOME/.ansible/collections``. It does not install
-    any dependent Python packages.
+    which is by default ``$HOME/.ansible/collections/ansible_collections``.
+    It does not install any dependent Python packages.
 
 3.  Install the dependent Python packages into your system Python:
 
@@ -253,8 +253,8 @@ control system. The instructions are written for a bash shell.
         $ ansible-galaxy collection install ibm.zhmc
 
     This will install the collection to your local Ansible collections tree,
-    which is by default ``$HOME/.ansible/collections``. It does not install
-    any dependent Python packages.
+    which is by default ``$HOME/.ansible/collections/ansible_collections``.
+    It does not install any dependent Python packages.
 
 6.  Install the dependent Python packages into the active Python:
 
@@ -288,7 +288,7 @@ check mode:
 
 .. code-block:: bash
 
-    $ ansible-playbook playbooks/create_partition.yml --check
+    $ ansible-playbook $anco_dir/ibm/zhmc/playbooks/create_partition.yml --check
 
     PLAY [localhost] ***********************************************************
 
@@ -344,7 +344,7 @@ Then, run the playbooks:
 
 .. code-block:: text
 
-    $ ansible-playbook create_partition.yml
+    $ ansible-playbook $anco_dir/ibm/zhmc/playbooks/create_partition.yml
 
     PLAY [localhost] **********************************************************
 
@@ -369,7 +369,7 @@ Then, run the playbooks:
     PLAY RECAP ****************************************************************
     127.0.0.1                  : ok=6    changed=5    unreachable=0    failed=0
 
-    $ ansible-playbook delete_partition.yml
+    $ ansible-playbook $anco_dir/ibm/zhmc/playbooks/delete_partition.yml
 
     PLAY [localhost] **********************************************************
 
