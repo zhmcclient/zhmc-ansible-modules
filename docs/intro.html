@@ -268,8 +268,8 @@ control system. The instructions are written for a bash shell.</p>
 </pre></div>
 </div>
 <p>This will install the collection to your local Ansible collections tree,
-which is by default <code class="docutils literal notranslate"><span class="pre">$HOME/.ansible/collections</span></code>. It does not install
-any dependent Python packages.</p>
+which is by default <code class="docutils literal notranslate"><span class="pre">$HOME/.ansible/collections/ansible_collections</span></code>.
+It does not install any dependent Python packages.</p>
 </li>
 <li><p>Install the dependent Python packages into your system Python:</p>
 <p>Double check where the ibm.zhmc Ansible Galaxy collection got installed:</p>
@@ -347,8 +347,8 @@ $ chmod <span class="m">755</span> <span class="nv">$python_script</span>
 </pre></div>
 </div>
 <p>This will install the collection to your local Ansible collections tree,
-which is by default <code class="docutils literal notranslate"><span class="pre">$HOME/.ansible/collections</span></code>. It does not install
-any dependent Python packages.</p>
+which is by default <code class="docutils literal notranslate"><span class="pre">$HOME/.ansible/collections/ansible_collections</span></code>.
+It does not install any dependent Python packages.</p>
 </li>
 <li><p>Install the dependent Python packages into the active Python:</p>
 <p>Double check where the ibm.zhmc Ansible Galaxy collection got installed:</p>
@@ -375,7 +375,7 @@ into your system Python:</p>
 <p>You can verify that the ibm.zhmc Ansible Galaxy collection and its dependent
 Python packages are installed correctly by running an example playbook in
 check mode:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ ansible-playbook playbooks/create_partition.yml --check
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ ansible-playbook <span class="nv">$anco_dir</span>/ibm/zhmc/playbooks/create_partition.yml --check
 
 PLAY <span class="o">[</span>localhost<span class="o">]</span> ***********************************************************
 
@@ -425,7 +425,7 @@ with the HMC. It does not exist in that directory but can be copied from
 <code class="docutils literal notranslate"><span class="pre">vault_example.yml</span></code>, changing the variables to your needs.</p></li>
 </ul>
 <p>Then, run the playbooks:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ ansible-playbook create_partition.yml
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ ansible-playbook $anco_dir/ibm/zhmc/playbooks/create_partition.yml
 
 PLAY [localhost] **********************************************************
 
@@ -450,7 +450,7 @@ changed: [127.0.0.1]
 PLAY RECAP ****************************************************************
 127.0.0.1                  : ok=6    changed=5    unreachable=0    failed=0
 
-$ ansible-playbook delete_partition.yml
+$ ansible-playbook $anco_dir/ibm/zhmc/playbooks/delete_partition.yml
 
 PLAY [localhost] **********************************************************
 
