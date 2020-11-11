@@ -71,10 +71,9 @@ Building the documentation
 The documentation for the ibm.zhmc Ansible Galaxy collection is published
 on GitHub pages at https://zhmcclient.github.io/zhmc-ansible-modules/.
 
-That page automatically gets updated whenever the ``master`` branch of the
-Git repo for this package changes.
-
-**TBD: Verify the statement above.**
+That page represents the ``master`` branch of the Git repo for this collection
+and automatically gets updated whenever the ``master`` branch of the Git repo
+changes.
 
 In order to build the documentation locally from the Git work directory, issue:
 
@@ -236,13 +235,6 @@ has the remote name ``origin`` in your local clone.
 
     * Merge the Pull Request (no review is needed).
 
-      Because this updates the ``stable_M.N`` branch, it triggers a docs build of
-      its stable version. However, because the git tag for this version is not assigned
-      yet, this docs build will show an incorrect version (a dev version based on the
-      previous version tag). This will be fixed in a subsequent step.
-
-      **TBD: Verify the above on GitHub pages once established**
-
     * Delete the branch of the Pull Request (``release_M.N.U``)
 
 11. Checkout the branch you are releasing, update it from upstream, and delete the local
@@ -264,11 +256,6 @@ has the remote name ``origin`` in your local clone.
         git tag $MNU
         git push --tags
 
-    The pushing of the tag triggers another docs build of its stable version, this time
-    with the correct version as defined in the tag.
-
-    **TBD: Verify the above on GitHub pages once established**
-
     If the previous commands fail because this tag already exists for some reason, delete
     the tag locally and remotely:
 
@@ -279,18 +266,12 @@ has the remote name ``origin`` in your local clone.
 
     and try again.
 
-13. On GitHub pages, verify that it shows the correct version for its stable version:
-
-    https://github.io/zhmc-ansible-modules
-
-    **TBD: Verify the above on GitHub pages once established**
-
-14. On GitHub, edit the new tag ``M.N.U``, and create a release description on it. This
+13. On GitHub, edit the new tag ``M.N.U``, and create a release description on it. This
     will cause it to appear in the Release tab.
 
     You can see the tags in GitHub via Code -> Releases -> Tags.
 
-15. Publish the collection to Ansible Galaxy:
+14. Publish the collection to Ansible Galaxy:
 
     .. code-block:: text
 
@@ -304,11 +285,10 @@ has the remote name ``origin`` in your local clone.
     **Attention!!** This only works once for each version. You cannot
     re-release the same version to Ansible Galaxy, or otherwise update it.
 
-    Verify that the released version arrived on Ansible Galaxy:
+    Verify that the released version arrived on Ansible Galaxy at
+    https://galaxy.ansible.com/ibm/zhmc/
 
-    **TBD: Add link to ibm.zhmc collection on Ansible Galaxy**
-
-16. If you released the master branch, it needs a new fix stream.
+15. If you released the master branch, it needs a new fix stream.
 
     Create a branch for its fix stream and push it upstream:
 
