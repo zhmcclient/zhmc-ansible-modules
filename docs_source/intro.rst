@@ -24,7 +24,7 @@ Introduction
 What this package provides
 --------------------------
 
-The `Ansible`_ `Galaxy`_ collection named "ibm.zhmc" provides Ansible modules that
+The `ibm.zhmc collection on Galaxy`_ provides Ansible modules that
 can manage platform resources on `IBM Z`_ and `LinuxONE`_ machines.
 
 The goal of this collection is to be able to utilize the power and ease of use
@@ -56,6 +56,13 @@ and interact with the Web Services API of the Hardware Management Console (HMC)
 of the machines to be managed, by using the API of the `zhmcclient`_ Python
 package.
 
+Note: Before version 1.0.0, the Ansible modules in this collection have been
+distributed as the `zhmc-ansible-modules package on Pypi`_.
+Starting with version 1.0.0, the Ansible modules are no longer distributed on
+Pypi, but as the `ibm.zhmc collection on Galaxy`_.
+
+.. _ibm.zhmc collection on Galaxy: https://galaxy.ansible.com/ibm/zhmc/
+.. _zhmc-ansible-modules package on Pypi: https://pypi.org/project/zhmc-ansible-modules/
 .. _Ansible: https://www.ansible.com/
 .. _Galaxy: https://galaxy.ansible.com/
 .. _IBM Z: http://www.ibm.com/systems/z/

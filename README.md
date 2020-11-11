@@ -23,8 +23,8 @@ limitations under the License.
 
 ## Overview
 
-The ibm.zhmc Ansible Galaxy collection contains
-[Ansible](https://www.ansible.com/) modules that can manage platform
+The [ibm.zhmc collection on Ansible Galaxy](https://galaxy.ansible.com/ibm/zhmc/)
+contains [Ansible](https://www.ansible.com/) modules that can manage platform
 resources on [IBM Z](http://www.ibm.com/systems/z/) and
 [LinuxONE](http://www.ibm.com/systems/linuxone/) machines.
 
@@ -58,6 +58,12 @@ of the machines to be managed, by using the API of the
 [zhmcclient](https://github.com/zhmcclient/python-zhmcclient)
 Python package.
 
+Note: Before version 1.0.0, the Ansible modules in this collection have been
+distributed as the
+[zhmc-ansible-modules package on Pypi](https://pypi.org/project/zhmc-ansible-modules/).
+Starting with version 1.0.0, the Ansible modules are no longer distributed on
+Pypi, but as the
+[ibm.zhmc collection on Galaxy](https://galaxy.ansible.com/ibm/zhmc/).
 
 ## Documentation
 

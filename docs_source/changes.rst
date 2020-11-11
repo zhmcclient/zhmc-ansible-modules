@@ -28,10 +28,12 @@ Released: not yet
 
 **Incompatible changes:**
 
-* The zhmc Ansible modules are no longer distributed as a Python package named
-  'zhmc-ansble-modules' on Pypi, but as a collection named 'ibm.zhmc' on
-  Ansible Galaxy. The installation of the zhmc Ansible modules is now done
-  with:
+* Starting with version 1.0.0, the zhmc Ansible modules are no longer distributed
+  as the
+  `zhmc-ansible-modules package on Pypi <https://pypi.org/project/zhmc-ansible-modules/>`_,
+  but as the
+  `ibm.zhmc collection on Galaxy <https://galaxy.ansible.com/ibm/zhmc/>`_.
+  The installation of the zhmc Ansible modules is now done with::
 
     ansible-galaxy collection install ibm.zhmc
 
