@@ -172,6 +172,28 @@ cpc (success, dict, )
 
 
 
+  storage-groups (, dict, )
+    Artificial property for the storage groups associated with the CPC, with a subset of its properties.
+
+
+    {name} (, dict, )
+      Storage group name
+
+
+      name (, str, )
+        Storage group name
+
+
+      fulfillment-status (, str, )
+        Fulfillment status of the storage group
+
+
+      object_uri (, str, )
+        Canonical URI of the storage group
+
+
+
+
 
 
 

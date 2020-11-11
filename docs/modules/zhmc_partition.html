@@ -243,6 +243,10 @@
 </ul>
 <p>Properties omitted in this dictionary will remain unchanged when the partition already exists, and will get the default value defined in the data model for partitions in the HMC API book when the partition is being created.</p>
 </dd>
+<dt>expand_storage_groups (False, bool, False)</dt><dd><p>Boolean that controls whether the returned partition contains an additional artificial property ‘storage-groups’ that is the list of storage groups attached to the partition, with properties as described for the zhmc_storage_group module with expand=true.</p>
+</dd>
+<dt>expand_crypto_adapters (False, bool, False)</dt><dd><p>Boolean that controls whether the returned partition contains an additional artificial property ‘crypto-adapters’ in its ‘crypto-configuration’ property that is the list of crypto adapters attached to the partition, with properties as described for the zhmc_adapter module.</p>
+</dd>
 <dt>log_file (False, str, None)</dt><dd><p>File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.</p>
 </dd>
 <dt>faked_session (False, raw, None)</dt><dd><p>A <code class="docutils literal notranslate"><span class="pre">zhmcclient_mock.FakedSession</span></code> object that has a mocked HMC set up. If not null, this session will be used instead of connecting to the HMC specified in <code class="docutils literal notranslate"><span class="pre">hmc_host</span></code>. This is used for testing purposes only.</p>
@@ -340,6 +344,8 @@
     <span class="nt">cpc_name</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
     <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_partition_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
     <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">facts</span>
+    <span class="nt">expand_storage_groups</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+    <span class="nt">expand_crypto_adapters</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
   <span class="nt">register</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">part1</span>
 </pre></div>
 </div>
