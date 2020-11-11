@@ -162,13 +162,13 @@
             
   <div class="section" id="development">
 <span id="id1"></span><h1>Development<a class="headerlink" href="#development" title="Permalink to this headline">¶</a></h1>
-<p>This section only needs to be read by developers of the zhmc-ansible-modules
-project. People that want to make a fix or develop some extension, and people
-that want to test the project are also considered developers for the purpose of
-this section.</p>
+<p>This section only needs to be read by developers of the ibm.zhmc Ansible Galaxy
+collection project. People that want to make a fix or develop some extension,
+and people that want to test the project are also considered developers for
+the purpose of this section.</p>
 <div class="section" id="repository">
 <span id="id2"></span><h2>Repository<a class="headerlink" href="#repository" title="Permalink to this headline">¶</a></h2>
-<p>The repository for the zhmc-ansible-modules project is on GitHub:</p>
+<p>The repository for the ibm.zhmc Ansible Galaxy collection project is on GitHub:</p>
 <p><a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules">https://github.com/zhmcclient/zhmc-ansible-modules</a></p>
 </div>
 <div class="section" id="setting-up-the-development-environment">
@@ -178,10 +178,10 @@ this section.</p>
 (see <a class="reference internal" href="intro.html#supported-environments"><span class="std std-ref">Supported environments</span></a>), it is recommended that you set up a
 <a class="reference external" href="http://docs.python-guide.org/en/latest/dev/virtualenvs/">virtual Python environment</a>.</p>
 <p>Then, with a virtual Python environment active, clone the Git repo of this
-project and prepare the development environment with <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">setup</span></code>:</p>
+project and prepare the development environment with <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">develop</span></code>:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ git clone git@github.com:zhmcclient/zhmc-ansible-modules.git
 $ cd zhmc-ansible-modules
-$ make setup
+$ make develop
 </pre></div>
 </div>
 <p>This will install all prerequisites the project needs for its development.</p>
@@ -191,43 +191,39 @@ list of valid Make targets and a short description of what each target does.</p>
 </div>
 <div class="section" id="building-the-documentation">
 <span id="id4"></span><h2>Building the documentation<a class="headerlink" href="#building-the-documentation" title="Permalink to this headline">¶</a></h2>
-<p>The ReadTheDocs (RTD) site is used to publish the documentation for the
-zhmc-ansible-modules project at <a class="reference external" href="http://zhmc-ansible-modules.readthedocs.io/">http://zhmc-ansible-modules.readthedocs.io/</a></p>
-<p>This page automatically gets updated whenever the <code class="docutils literal notranslate"><span class="pre">master</span></code> branch of the
+<p>The documentation for the ibm.zhmc Ansible Galaxy collection is published
+on GitHub pages at <a class="reference external" href="https://zhmcclient.github.io/zhmc-ansible-modules/">https://zhmcclient.github.io/zhmc-ansible-modules/</a>.</p>
+<p>That page automatically gets updated whenever the <code class="docutils literal notranslate"><span class="pre">master</span></code> branch of the
 Git repo for this package changes.</p>
+<p><strong>TBD: Verify the statement above.</strong></p>
 <p>In order to build the documentation locally from the Git work directory, issue:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ make docs
 </pre></div>
 </div>
-<p>The top-level document to open with a web browser will be
-<code class="docutils literal notranslate"><span class="pre">build/docs/html/index.html</span></code>.</p>
+<p>The top-level document to open with a web browser will be <code class="docutils literal notranslate"><span class="pre">docs/index.html</span></code>.</p>
 </div>
 <div class="section" id="testing">
 <span id="id5"></span><h2>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h2>
-<p>To run unit tests in the currently active Python environment, issue one of
-these example variants of <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">test</span></code>:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ make test                                  # Run all unit tests
-$ TESTCASES=test_resource.py make test       # Run only this test source file
-$ TESTCASES=TestInit make test               # Run only this test class
-$ TESTCASES=&quot;TestInit or TestSet&quot; make test  # py.test -k expressions are possible
+<p>Again, an invocation of Make runs against the currently active Python environment.</p>
+<p>There are four kinds of tests currently, available as make targets:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">linkcheck</span></code> - Check links in documentation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">test</span></code> - Run unit and function tests with test coverage</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">sanity</span></code> - Run Ansible sanity tests (includes flake8, pylint, validate-modules)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">end2end</span></code> - Run end2end tests (against a real environment)</p></li>
+</ul>
+<p>For the unit and function tests, the testcases and options for pytest
+can be specified via the environment variable <code class="docutils literal notranslate"><span class="pre">TESTOPTS</span></code>, as shown in these
+examples:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ make test                                      # Run all unit and function tests
+$ TESTOPTS=&#39;-vv&#39; make test                       # Specify -vv verbosity for pytest
+$ TESTOPTS=&#39;-k test_partition.py&#39; make test      # Run only this test source file
 </pre></div>
 </div>
-<p>To run the unit tests and some more commands that verify the project is in good
-shape in all supported Python environments, use Tox:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ tox                              # Run all tests on all supported Python versions
-$ tox -e py27                      # Run all tests on Python 2.7
-$ tox -e py27 test_resource.py     # Run only this test source file on Python 2.7
-$ tox -e py27 TestInit             # Run only this test class on Python 2.7
-$ tox -e py27 TestInit or TestSet  # py.test -k expressions are possible
-</pre></div>
-</div>
-<p>The positional arguments of the <code class="docutils literal notranslate"><span class="pre">tox</span></code> command are passed to <code class="docutils literal notranslate"><span class="pre">py.test</span></code> using
-its <code class="docutils literal notranslate"><span class="pre">-k</span></code> option. Invoke <code class="docutils literal notranslate"><span class="pre">py.test</span> <span class="pre">--help</span></code> for details on the expression
-syntax of its <code class="docutils literal notranslate"><span class="pre">-k</span></code> option.</p>
 </div>
 <div class="section" id="releasing-a-version">
 <span id="id6"></span><h2>Releasing a version<a class="headerlink" href="#releasing-a-version" title="Permalink to this headline">¶</a></h2>
-<p>This section shows the steps for releasing a version to <a class="reference external" href="https://pypi.python.org/">PyPI</a>.</p>
+<p>This section shows the steps for releasing a version to <a class="reference external" href="https://galaxy.ansible.com/">Ansible Galaxy</a>.</p>
 <p>It covers all variants of versions that can be released:</p>
 <ul class="simple">
 <li><p>Releasing the master branch as a new major or minor version (M+1.0.0 or M.N+1.0)</p></li>
@@ -246,15 +242,15 @@ directory.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">MN</span></code> - Major and minor version numbers M.N of that full version</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">BRANCH</span></code> - Name of the branch to be released</p></li>
 </ul>
-<p>When releasing the master branch (e.g. as version <code class="docutils literal notranslate"><span class="pre">0.6.0</span></code>):</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>MNU=0.6.0
-MN=0.6
+<p>When releasing the master branch (e.g. as version <code class="docutils literal notranslate"><span class="pre">1.0.0</span></code>):</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>MNU=1.0.0
+MN=1.0
 BRANCH=master
 </pre></div>
 </div>
-<p>When releasing a stable branch (e.g. as version <code class="docutils literal notranslate"><span class="pre">0.5.1</span></code>):</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>MNU=0.5.1
-MN=0.5
+<p>When releasing a stable branch (e.g. as version <code class="docutils literal notranslate"><span class="pre">0.8.1</span></code>):</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>MNU=0.8.1
+MN=0.8
 BRANCH=stable_$MN
 </pre></div>
 </div>
@@ -269,38 +265,48 @@ git checkout -b release_$MNU
 </div>
 </li>
 <li><p>Edit the change log:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>vi docs/changes.rst
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>vi docs_source/changes.rst
 </pre></div>
 </div>
 <p>and make the following changes in the section of the version to be released:</p>
 <ul class="simple">
 <li><p>Finalize the version to the version to be released.</p></li>
-<li><p>Remove the statement that the version is in development.</p></li>
-<li><p>Change the release date to today´s date.</p></li>
+<li><p>Change the release date to today’s date.</p></li>
 <li><p>Make sure that all changes are described.</p></li>
 <li><p>Make sure the items shown in the change log are relevant for and understandable
 by users.</p></li>
-<li><p>In the “Known issues” list item, remove the link to the issue tracker and add
-text for any known issues you want users to know about.</p></li>
-<li><p>Remove all empty list items in that section.</p></li>
+<li><p>In the “Known issues” list item, remove the link to the issue tracker and
+add text for any known issues you want users to know about.</p></li>
+<li><p>Remove all empty list items in the section of the version to be released.</p></li>
 </ul>
 </li>
+<li><p>Edit the Galaxy metadata file:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>vi galaxy.yml
+</pre></div>
+</div>
+<p>and verify that the version is set to the version to be released:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>version: M.N.U
+</pre></div>
+</div>
+<p>Note: The version in galaxy.yml cannot have a suffix of “.devX”, so it
+should already have had the version to be released.</p>
+</li>
 <li><p>Commit your changes and push them upstream:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>git add docs/changes.rst
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>git add docs_source/changes.rst
 git commit -sm &quot;Release $MNU&quot;
 git push --set-upstream origin release_$MNU
 </pre></div>
 </div>
 </li>
 <li><p>On GitHub, create a Pull Request for branch <code class="docutils literal notranslate"><span class="pre">release_$MNU</span></code>. This will trigger the
-CI runs in Travis and Appveyor.</p>
+CI runs in Travis.</p>
 <p>Important: When creating Pull Requests, GitHub by default targets the <code class="docutils literal notranslate"><span class="pre">master</span></code>
 branch. If you are releasing a stable branch, you need to change the target branch
 of the Pull Request to <code class="docutils literal notranslate"><span class="pre">stable_M.N</span></code>.</p>
 </li>
 <li><p>On GitHub, close milestone <code class="docutils literal notranslate"><span class="pre">M.N.U</span></code>.</p></li>
-<li><p>Perform a complete test:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>tox
+<li><p>Perform a complete test in your preferred Python environment:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>make clobber all
 </pre></div>
 </div>
 <p>This should not fail because the same tests have already been run in the
@@ -320,10 +326,11 @@ git push
 <li><p>On GitHub, once the checks for this Pull Request succeed:</p>
 <ul>
 <li><p>Merge the Pull Request (no review is needed).</p>
-<p>Because this updates the <code class="docutils literal notranslate"><span class="pre">stable_M.N</span></code> branch, it triggers an RTD docs build of
+<p>Because this updates the <code class="docutils literal notranslate"><span class="pre">stable_M.N</span></code> branch, it triggers a docs build of
 its stable version. However, because the git tag for this version is not assigned
-yet, this RTD build will show an incorrect version (a dev version based on the
+yet, this docs build will show an incorrect version (a dev version based on the
 previous version tag). This will be fixed in a subsequent step.</p>
+<p><strong>TBD: Verify the above on GitHub pages once established</strong></p>
 </li>
 <li><p>Delete the branch of the Pull Request (<code class="docutils literal notranslate"><span class="pre">release_M.N.U</span></code>)</p></li>
 </ul>
@@ -343,8 +350,9 @@ git tag $MNU
 git push --tags
 </pre></div>
 </div>
-<p>The pushing of the tag triggers another RTD docs build of its stable version, this time
+<p>The pushing of the tag triggers another docs build of its stable version, this time
 with the correct version as defined in the tag.</p>
+<p><strong>TBD: Verify the above on GitHub pages once established</strong></p>
 <p>If the previous commands fail because this tag already exists for some reason, delete
 the tag locally and remotely:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>git tag --delete $MNU
@@ -353,18 +361,15 @@ git push --delete origin $MNU
 </div>
 <p>and try again.</p>
 </li>
-<li><p>On RTD, verify that it shows the correct version for its stable version:</p>
-<p>RTD stable version: <a class="reference external" href="https://zhmc-ansible-modules.readthedocs.io/en/stable">https://zhmc-ansible-modules.readthedocs.io/en/stable</a>.</p>
-<p>If it does not, trigger a build of RTD version “stable” on the RTD project
-page:</p>
-<p>RTD build page: <a class="reference external" href="https://readthedocs.org/projects/zhmc-ansible-modules/builds/">https://readthedocs.org/projects/zhmc-ansible-modules/builds/</a></p>
-<p>Once that build is complete, verify again.</p>
+<li><p>On GitHub pages, verify that it shows the correct version for its stable version:</p>
+<p><a class="reference external" href="https://github.io/zhmc-ansible-modules">https://github.io/zhmc-ansible-modules</a></p>
+<p><strong>TBD: Verify the above on GitHub pages once established</strong></p>
 </li>
 <li><p>On GitHub, edit the new tag <code class="docutils literal notranslate"><span class="pre">M.N.U</span></code>, and create a release description on it. This
 will cause it to appear in the Release tab.</p>
 <p>You can see the tags in GitHub via Code -&gt; Releases -&gt; Tags.</p>
 </li>
-<li><p>Upload the package to PyPI:</p>
+<li><p>Publish the collection to Ansible Galaxy:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>make upload
 </pre></div>
 </div>
@@ -372,9 +377,9 @@ will cause it to appear in the Release tab.</p>
 <p><strong>Important:</strong> Double check that the correct package version (<code class="docutils literal notranslate"><span class="pre">M.N.U</span></code>,
 without any development suffix) is shown.</p>
 <p><strong>Attention!!</strong> This only works once for each version. You cannot
-re-release the same version to PyPI, or otherwise update it.</p>
-<p>Verify that the released version arrived on PyPI:
-<a class="reference external" href="https://pypi.python.org/pypi/zhmc-ansible-modules/">https://pypi.python.org/pypi/zhmc-ansible-modules/</a></p>
+re-release the same version to Ansible Galaxy, or otherwise update it.</p>
+<p>Verify that the released version arrived on Ansible Galaxy:</p>
+<p><strong>TBD: Add link to ibm.zhmc collection on Ansible Galaxy</strong></p>
 </li>
 <li><p>If you released the master branch, it needs a new fix stream.</p>
 <p>Create a branch for its fix stream and push it upstream:</p>
@@ -383,10 +388,6 @@ git checkout -b stable_$MN
 git push --set-upstream origin stable_$MN
 </pre></div>
 </div>
-<p>Log on to the
-<a class="reference external" href="https://readthedocs.org/projects/zhmc-ansible-modules/versions">RTD project zhmc-ansible-modules</a>
-and activate the new version (=branch) <code class="docutils literal notranslate"><span class="pre">stable_M.N</span></code> as a version to be
-built.</p>
 </li>
 </ol>
 </div>
@@ -412,15 +413,15 @@ repo and perform the following steps in that directory.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">MN</span></code> - Major and minor version numbers M.N of that full version</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">BRANCH</span></code> - Name of the branch the new version is based upon</p></li>
 </ul>
-<p>When starting a (major or minor) version (e.g. <code class="docutils literal notranslate"><span class="pre">0.6.0</span></code>) based on the master branch:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>MNU=0.6.0
-MN=0.6
+<p>When starting a (major or minor) version (e.g. <code class="docutils literal notranslate"><span class="pre">1.1.0</span></code>) based on the master branch:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>MNU=1.1.0
+MN=1.0
 BRANCH=master
 </pre></div>
 </div>
-<p>When starting an update (=fix) version (e.g. <code class="docutils literal notranslate"><span class="pre">0.5.1</span></code>) based on a stable branch:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>MNU=0.5.1
-MN=0.5
+<p>When starting an update (=fix) version (e.g. <code class="docutils literal notranslate"><span class="pre">0.8.2</span></code>) based on a stable branch:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>MNU=0.8.2
+MN=0.8
 BRANCH=stable_$MN
 </pre></div>
 </div>
@@ -435,11 +436,11 @@ git checkout -b start_$MNU
 </div>
 </li>
 <li><p>Edit the change log:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>vi docs/changes.rst
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>vi docs_source/changes.rst
 </pre></div>
 </div>
 <p>and insert the following section before the top-most section:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Version 0.6.0
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Version 1.1.0
 ^^^^^^^^^^^^^
 
 Released: not yet
@@ -452,11 +453,22 @@ Released: not yet
 
 **Enhancements:**
 
+**Cleanup:**
+
 **Known issues:**
 
 * See `list of open issues`_.
 
 .. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
+</pre></div>
+</div>
+</li>
+<li><p>Edit the Galaxy metadata file:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>vi galaxy.yml
+</pre></div>
+</div>
+<p>and update the version to the new version:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>version: M.N.U
 </pre></div>
 </div>
 </li>
