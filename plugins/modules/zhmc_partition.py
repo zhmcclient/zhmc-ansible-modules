@@ -47,8 +47,9 @@ author:
   - Andreas Scheuring (@scheuran)
   - Juergen Leopold (@leopoldjuergen)
 requirements:
-  - Access to the WS API of the HMC of the targeted Z system. The targeted Z
-    system must be in the Dynamic Partition Manager (DPM) operational mode.
+  - Access to the WS API of the HMC of the targeted Z system
+    (see :term:`HMC API`). The targeted Z system must be in the Dynamic
+    Partition Manager (DPM) operational mode.
   - Python package zhmcclient >=0.14.0
 options:
   hmc_host:
@@ -126,14 +127,14 @@ options:
          partition exists."
       - "* C(crypto_configuration): The crypto configuration for the partition,
          in the format of the C(crypto-configuration) property of the
-         partition (see HMC API book for details), with the exception that
+         partition (see :term:`HMC API` for details), with the exception that
          adapters are specified with their names in field
          C(crypto_adapter_names) instead of their URIs in field
          C(crypto_adapter_uris). If the C(crypto_adapter_names) field is null,
          all crypto adapters of the CPC will be used."
       - "Properties omitted in this dictionary will remain unchanged when the
          partition already exists, and will get the default value defined in
-         the data model for partitions in the HMC API book when the partition
+         the data model for partitions in the :term:`HMC API` when the partition
          is being created."
     type: dict
     required: false
@@ -272,7 +273,7 @@ partition:
       type: str
     "{property}":
       description: "Additional properties of the partition, as described in the
-        HMC WS-API book (using hyphens (-) in the property names)."
+        :term:`HMC API` (using hyphens (-) in the property names)."
     hbas:
       description: "HBAs of the partition (for C(state=facts))."
       type: list
@@ -283,7 +284,7 @@ partition:
           type: str
         "{property}":
           description: "Additional properties of the HBA, as described in the
-            HMC WS-API book (using hyphens (-) in the property names)."
+            :term:`HMC API` (using hyphens (-) in the property names)."
     nics:
       description: "NICs of the partition (for C(state=facts))."
       type: list
@@ -294,7 +295,7 @@ partition:
           type: str
         "{property}":
           description: "Additional properties of the NIC, as described in the
-            HMC WS-API book (using hyphens (-) in the property names)."
+            :term:`HMC API` (using hyphens (-) in the property names)."
     virtual-functions:
       description: "Virtual functions of the partition (for C(state=facts))."
       type: list
@@ -305,7 +306,7 @@ partition:
           type: str
         "{property}":
           description: "Additional properties of the VF, as described in the
-            HMC WS-API book (using hyphens (-) in the property names)."
+            :term:`HMC API` (using hyphens (-) in the property names)."
 """
 
 from collections import OrderedDict  # noqa: E402

@@ -201,7 +201,7 @@
 <h2><a class="toc-backref" href="#id2">Requirements</a><a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
 <p>The below requirements are needed on the host that executes this module.</p>
 <ul class="simple">
-<li><p>Access to the WS API of the HMC of the targeted Z system. The targeted Z system must be in the Dynamic Partition Manager (DPM) operational mode.</p></li>
+<li><p>Access to the WS API of the HMC of the targeted Z system (see <a class="reference internal" href="../appendix.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a>). The targeted Z system must be in the Dynamic Partition Manager (DPM) operational mode.</p></li>
 <li><p>The Z system must be of generation z14 or later, to have the “dpm-storage-management” firmware feature.</p></li>
 <li><p>Python package zhmcclient &gt;=0.20.0</p></li>
 </ul>
@@ -237,7 +237,7 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: Cannot be specified because the name has already been specified in the <code class="docutils literal notranslate"><span class="pre">name</span></code> module parameter.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: Cannot be changed once the storage group exists.</p></li>
 </ul>
-<p>Properties omitted in this dictionary will remain unchanged when the storage group already exists, and will get the default value defined in the data model for storage groups in the HMC API book when the storage group is being created.</p>
+<p>Properties omitted in this dictionary will remain unchanged when the storage group already exists, and will get the default value defined in the data model for storage groups in the <a class="reference internal" href="../appendix.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> when the storage group is being created.</p>
 </dd>
 <dt>expand (False, bool, False)</dt><dd><p>Boolean that controls whether the returned storage group contains additional artificial properties that expand certain URI or name properties to the full set of resource properties (see description of return values of this module).</p>
 </dd>
@@ -307,7 +307,7 @@
 <dl>
 <dt>name (, str, )</dt><dd><p>Storage group name</p>
 </dd>
-<dt>{property} (, any, )</dt><dd><p>Additional properties of the storage group, as described in the HMC WS-API book (using hyphens (-) in the property names).</p>
+<dt>{property} (, any, )</dt><dd><p>Additional properties of the storage group, as described in the <a class="reference internal" href="../appendix.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> (using hyphens (-) in the property names).</p>
 </dd>
 <dt>attached-partition-names (, list, )</dt><dd><p>Names of the partitions to which the storage group is attached.</p>
 </dd>
@@ -319,13 +319,13 @@
 </dd>
 <dt>index (, int, )</dt><dd><p>Storage port index</p>
 </dd>
-<dt>{property} (, any, )</dt><dd><p>Additional properties of the storage port, as described in the HMC WS-API book (using hyphens (-) in the property names).</p>
+<dt>{property} (, any, )</dt><dd><p>Additional properties of the storage port, as described in the <a class="reference internal" href="../appendix.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> (using hyphens (-) in the property names).</p>
 </dd>
 <dt>parent-adapter (, dict, )</dt><dd><p>Storage adapter of the port.</p>
 <dl class="simple">
 <dt>name (, str, )</dt><dd><p>Storage adapter name</p>
 </dd>
-<dt>{property} (, any, )</dt><dd><p>Additional properties of the storage adapter, as described in the HMC WS-API book (using hyphens (-) in the property names).</p>
+<dt>{property} (, any, )</dt><dd><p>Additional properties of the storage adapter, as described in the <a class="reference internal" href="../appendix.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> (using hyphens (-) in the property names).</p>
 </dd>
 </dl>
 </dd>
@@ -335,25 +335,25 @@
 <dl class="simple">
 <dt>name (, str, )</dt><dd><p>Storage volume name</p>
 </dd>
-<dt>{property} (, any, )</dt><dd><p>Additional properties of the storage volume, as described in the HMC WS-API book (using hyphens (-) in the property names).</p>
+<dt>{property} (, any, )</dt><dd><p>Additional properties of the storage volume, as described in the <a class="reference internal" href="../appendix.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> (using hyphens (-) in the property names).</p>
 </dd>
 </dl>
 </dd>
 <dt>virtual-storage-resources (success+expand, list, )</dt><dd><p>Only if expand was requested: List of virtual storage resources of the storage group.</p>
 <dl class="simple">
-<dt>{property} (, any, )</dt><dd><p>Properties of the virtual storage resource, as described in the HMC WS-API book (using hyphens (-) in the property names).</p>
+<dt>{property} (, any, )</dt><dd><p>Properties of the virtual storage resource, as described in the <a class="reference internal" href="../appendix.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> (using hyphens (-) in the property names).</p>
 </dd>
 </dl>
 </dd>
 <dt>attached-partitions (success+expand, list, )</dt><dd><p>Only if expand was requested: List of partitions to which the storage group is attached.</p>
 <dl class="simple">
-<dt>{property} (, any, )</dt><dd><p>Properties of the partition, as described in the HMC WS-API book (using hyphens (-) in the property names).</p>
+<dt>{property} (, any, )</dt><dd><p>Properties of the partition, as described in the <a class="reference internal" href="../appendix.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> (using hyphens (-) in the property names).</p>
 </dd>
 </dl>
 </dd>
 <dt>cpc (success+expand, list, )</dt><dd><p>Only if expand was requested: The CPC that is associated to this storage group.</p>
 <dl class="simple">
-<dt>{property} (, any, )</dt><dd><p>Properties of the CPC, as described in the HMC WS-API book (using hyphens (-) in the property names).</p>
+<dt>{property} (, any, )</dt><dd><p>Properties of the CPC, as described in the <a class="reference internal" href="../appendix.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> (using hyphens (-) in the property names).</p>
 </dd>
 </dl>
 </dd>

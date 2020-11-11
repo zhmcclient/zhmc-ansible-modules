@@ -22,7 +22,7 @@ Requirements
 ------------
 The below requirements are needed on the host that executes this module.
 
-- Access to the WS API of the HMC of the targeted Z system. The targeted Z system must be in the Dynamic Partition Manager (DPM) operational mode.
+- Access to the WS API of the HMC of the targeted Z system (see :term:`HMC API`). The targeted Z system must be in the Dynamic Partition Manager (DPM) operational mode.
 - The Z system must be of generation z14 or later, to have the "dpm-storage-management" firmware feature.
 - Python package zhmcclient >=0.20.0
 
@@ -77,7 +77,7 @@ Parameters
 
     * ``name``: Cannot be specified because the name has already been specified in the ``name`` module parameter.
 
-    Properties omitted in this dictionary will remain unchanged when the storage volume already exists, and will get the default value defined in the data model for storage volumes in the HMC API book when the storage volume is being created.
+    Properties omitted in this dictionary will remain unchanged when the storage volume already exists, and will get the default value defined in the data model for storage volumes in the :term:`HMC API` when the storage volume is being created.
 
 
   log_file (False, str, None)
@@ -158,7 +158,7 @@ storage_volume (success, dict, )
 
 
   {property} (, any, )
-    Additional properties of the storage volume, as described in the HMC WS-API book (using hyphens (-) in the property names).
+    Additional properties of the storage volume, as described in the :term:`HMC API` (using hyphens (-) in the property names).
 
 
   type (, str, )

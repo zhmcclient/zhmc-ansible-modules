@@ -22,7 +22,7 @@ Requirements
 ------------
 The below requirements are needed on the host that executes this module.
 
-- Access to the WS API of the HMC of the targeted Z system. The targeted Z system can be in any operational mode (classic, DPM)
+- Access to the WS API of the HMC of the targeted Z system (see :term:`HMC API`). The targeted Z system can be in any operational mode (classic, DPM)
 - Python package zhmcclient >=0.23.0
 
 
@@ -78,7 +78,7 @@ Parameters
 
     * ``default-group-uri``: Cannot be set directly, but indirectly via the artificial property ``default-group-name``.
 
-    Properties omitted in this dictionary will remain unchanged when the user already exists, and will get the default value defined in the data model for users in the HMC API book when the user is being created.
+    Properties omitted in this dictionary will remain unchanged when the user already exists, and will get the default value defined in the data model for users in the :term:`HMC API` when the user is being created.
 
 
   expand (False, bool, False)
@@ -154,7 +154,7 @@ user (success, dict, )
 
 
   {property} (, any, )
-    Additional properties of the user, as described in the HMC WS-API book (using hyphens (-) in the property names).
+    Additional properties of the user, as described in the :term:`HMC API` (using hyphens (-) in the property names).
 
 
   user-pattern-name (, str, )

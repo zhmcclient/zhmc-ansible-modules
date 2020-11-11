@@ -44,8 +44,9 @@ author:
   - Andreas Maier (@andy-maier)
   - Andreas Scheuring (@scheuran)
 requirements:
-  - Access to the WS API of the HMC of the targeted Z system. The targeted Z
-    system must be in the Dynamic Partition Manager (DPM) operational mode.
+  - Access to the WS API of the HMC of the targeted Z system
+    (see :term:`HMC API`). The targeted Z system must be in the Dynamic
+    Partition Manager (DPM) operational mode.
   - Python package zhmcclient >=0.20.0
 options:
   hmc_host:
@@ -251,7 +252,7 @@ crypto_configuration:
                   type: str
                 "{property}":
                   description: "Additional properties of the adapter,
-                    as described in the HMC WS-API book
+                    as described in the :term:`HMC API`
                     (using hyphens (-) in the property names)."
         domain_config:
           description: "Attached crypto domains"

@@ -48,8 +48,9 @@ author:
   - Andreas Scheuring (@scheuran)
   - Juergen Leopold (@leopoldjuergen)
 requirements:
-  - Access to the WS API of the HMC of the targeted Z system. The targeted Z
-    system must be in the Dynamic Partition Manager (DPM) operational mode.
+  - Access to the WS API of the HMC of the targeted Z system
+    (see :term:`HMC API`). The targeted Z system must be in the Dynamic
+    Partition Manager (DPM) operational mode.
   - The Z system must be of generation z14 or later, to have the
     "dpm-storage-management" firmware feature.
   - Python package zhmcclient >=0.20.0
@@ -116,7 +117,7 @@ options:
       - "* C(type): Cannot be changed once the storage group exists."
       - "Properties omitted in this dictionary will remain unchanged when the
          storage group already exists, and will get the default value defined
-         in the data model for storage groups in the HMC API book when the
+         in the data model for storage groups in the :term:`HMC API` when the
          storage group is being created."
     type: dict
     required: false
@@ -203,7 +204,7 @@ storage_group:
       type: str
     "{property}":
       description: "Additional properties of the storage group, as described
-        in the HMC WS-API book (using hyphens (-) in the property names)."
+        in the :term:`HMC API` (using hyphens (-) in the property names)."
     attached-partition-names:
       description: "Names of the partitions to which the storage group is
         attached."
@@ -228,7 +229,7 @@ storage_group:
           type: int
         "{property}":
           description: "Additional properties of the storage port, as described
-            in the HMC WS-API book (using hyphens (-) in the property names)."
+            in the :term:`HMC API` (using hyphens (-) in the property names)."
         parent-adapter:
           description: "Storage adapter of the port."
           type: dict
@@ -238,7 +239,7 @@ storage_group:
               type: str
             "{property}":
               description: "Additional properties of the storage adapter, as
-                described in the HMC WS-API book (using hyphens (-) in the
+                described in the :term:`HMC API` (using hyphens (-) in the
                 property names)."
     storage-volumes:
       description: "Only if expand was requested: List of storage volumes of
@@ -252,7 +253,7 @@ storage_group:
           type: str
         "{property}":
           description: "Additional properties of the storage volume, as
-            described in the HMC WS-API book (using hyphens (-) in the
+            described in the :term:`HMC API` (using hyphens (-) in the
             property names)."
     virtual-storage-resources:
       description: "Only if expand was requested: List of virtual storage
@@ -263,7 +264,7 @@ storage_group:
       contains:
         "{property}":
           description: "Properties of the virtual storage resource,
-            as described in the HMC WS-API book (using hyphens (-) in the
+            as described in the :term:`HMC API` (using hyphens (-) in the
             property names)."
     attached-partitions:
       description: "Only if expand was requested: List of partitions to which
@@ -274,7 +275,7 @@ storage_group:
       contains:
         "{property}":
           description: "Properties of the partition,
-            as described in the HMC WS-API book (using hyphens (-) in the
+            as described in the :term:`HMC API` (using hyphens (-) in the
             property names)."
     cpc:
       description: "Only if expand was requested: The CPC that is associated to
@@ -285,7 +286,7 @@ storage_group:
       contains:
         "{property}":
           description: "Properties of the CPC,
-            as described in the HMC WS-API book (using hyphens (-) in the
+            as described in the :term:`HMC API` (using hyphens (-) in the
             property names)."
 """
 

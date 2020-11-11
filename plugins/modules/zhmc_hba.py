@@ -42,8 +42,9 @@ author:
   - Andreas Scheuring (@scheuran)
   - Juergen Leopold (@leopoldjuergen)
 requirements:
-  - Access to the WS API of the HMC of the targeted Z system. The targeted Z
-    system must be in the Dynamic Partition Manager (DPM) operational mode.
+  - Access to the WS API of the HMC of the targeted Z system
+    (see :term:`HMC API`). The targeted Z system must be in the Dynamic
+    Partition Manager (DPM) operational mode.
   - The targeted Z system must be a z13 generation. The z14 and later
     generations manage HBAs automatically via the "dpm-storage-management"
     firmware feature.
@@ -184,7 +185,7 @@ hba:
       type: str
     "{property}":
       description: "Additional properties of the HBA, as described in the
-        HMC WS-API book (using hyphens (-) in the property names)."
+        :term:`HMC API` (using hyphens (-) in the property names)."
 """
 
 import logging  # noqa: E402

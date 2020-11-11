@@ -22,7 +22,7 @@ Requirements
 ------------
 The below requirements are needed on the host that executes this module.
 
-- Access to the WS API of the HMC of the targeted Z system. The targeted Z system must be in the Dynamic Partition Manager (DPM) operational mode.
+- Access to the WS API of the HMC of the targeted Z system (see :term:`HMC API`). The targeted Z system must be in the Dynamic Partition Manager (DPM) operational mode.
 - The Z system must be of generation z14 or later, to have the "dpm-storage-management" firmware feature.
 - Python package zhmcclient >=0.20.0
 
@@ -75,7 +75,7 @@ Parameters
 
     * ``type``: Cannot be changed once the storage group exists.
 
-    Properties omitted in this dictionary will remain unchanged when the storage group already exists, and will get the default value defined in the data model for storage groups in the HMC API book when the storage group is being created.
+    Properties omitted in this dictionary will remain unchanged when the storage group already exists, and will get the default value defined in the data model for storage groups in the :term:`HMC API` when the storage group is being created.
 
 
   expand (False, bool, False)
@@ -163,7 +163,7 @@ storage_group (success, dict, )
 
 
   {property} (, any, )
-    Additional properties of the storage group, as described in the HMC WS-API book (using hyphens (-) in the property names).
+    Additional properties of the storage group, as described in the :term:`HMC API` (using hyphens (-) in the property names).
 
 
   attached-partition-names (, list, )
@@ -187,7 +187,7 @@ storage_group (success, dict, )
 
 
     {property} (, any, )
-      Additional properties of the storage port, as described in the HMC WS-API book (using hyphens (-) in the property names).
+      Additional properties of the storage port, as described in the :term:`HMC API` (using hyphens (-) in the property names).
 
 
     parent-adapter (, dict, )
@@ -199,7 +199,7 @@ storage_group (success, dict, )
 
 
       {property} (, any, )
-        Additional properties of the storage adapter, as described in the HMC WS-API book (using hyphens (-) in the property names).
+        Additional properties of the storage adapter, as described in the :term:`HMC API` (using hyphens (-) in the property names).
 
 
 
@@ -213,7 +213,7 @@ storage_group (success, dict, )
 
 
     {property} (, any, )
-      Additional properties of the storage volume, as described in the HMC WS-API book (using hyphens (-) in the property names).
+      Additional properties of the storage volume, as described in the :term:`HMC API` (using hyphens (-) in the property names).
 
 
 
@@ -222,7 +222,7 @@ storage_group (success, dict, )
 
 
     {property} (, any, )
-      Properties of the virtual storage resource, as described in the HMC WS-API book (using hyphens (-) in the property names).
+      Properties of the virtual storage resource, as described in the :term:`HMC API` (using hyphens (-) in the property names).
 
 
 
@@ -231,7 +231,7 @@ storage_group (success, dict, )
 
 
     {property} (, any, )
-      Properties of the partition, as described in the HMC WS-API book (using hyphens (-) in the property names).
+      Properties of the partition, as described in the :term:`HMC API` (using hyphens (-) in the property names).
 
 
 
@@ -240,7 +240,7 @@ storage_group (success, dict, )
 
 
     {property} (, any, )
-      Properties of the CPC, as described in the HMC WS-API book (using hyphens (-) in the property names).
+      Properties of the CPC, as described in the :term:`HMC API` (using hyphens (-) in the property names).
 
 
 
