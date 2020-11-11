@@ -160,6 +160,7 @@ help:
 	@echo '  test       - Run unit and function tests with test coverage'
 	@echo '  sanity     - Run Ansible sanity tests (includes flake8, pylint, validate-modules)'
 	@echo '  all        - Do all of the above'
+	@echo '  doccheck   - Check if documentation build is up to date'
 	@echo '  end2end    - Run end2end tests'
 	@echo '  dist       - Build the collection distribution archive in: $(dist_dir)'
 	@echo '  upload     - Publish the collection to Ansible Galaxy'
@@ -191,6 +192,18 @@ develop: _check_version develop_$(pymn).done
 
 .PHONY: docs
 docs: _check_version develop_$(pymn).done $(doc_build_dir)/index.html
+	@echo '$@ done.'
+
+.PHONY: _dc_copy
+_dc_copy:
+	rm -rf tmp_docs
+	cp -r $(doc_build_dir) tmp_docs
+
+.PHONY: doccheck
+doccheck: _check_version _dc_copy develop_$(pymn).done $(doc_build_dir)/index.html
+	@echo 'Checking if docs build is up to date'
+	diff -rq $(doc_build_dir) tmp_docs
+	rm -rf tmp_docs
 	@echo '$@ done.'
 
 .PHONY: linkcheck
