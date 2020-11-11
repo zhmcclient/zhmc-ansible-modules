@@ -222,6 +222,9 @@ install:
   - make develop
   - pip install python-coveralls
   - pip list
+  - if [[ "$TRAVIS_OS_NAME" == "linux" && "$PACKAGE_LEVEL" == "latest" && $(python --version 2>&1) =~ (3\.9\.[0-9]) ]]; then
+      make doccheck;
+    fi
 
 # commands to run builds & tests
 # Note: make sanity is excluded on Ansible 2.9 and Python 3.9 (or higher) because it is not supported.
