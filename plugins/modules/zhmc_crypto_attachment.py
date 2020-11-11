@@ -476,7 +476,7 @@ def ensure_attached(params, check_mode):
             raise Error("No crypto adapters of type {0!r} found on CPC {1!r} ".
                         format(crypto_type, cpc_name))
 
-        all_adapters_dict = {(a.name, a) for a in all_adapters}
+        all_adapters_dict = {a.name: a for a in all_adapters}
 
         # All crypto adapters in a CPC have the same number of domains
         # (otherwise the concept of attaching domains across all attached
