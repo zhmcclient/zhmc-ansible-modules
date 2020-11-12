@@ -298,6 +298,9 @@ has the remote name ``origin`` in your local clone.
         git checkout -b stable_$MN
         git push --set-upstream origin stable_$MN
 
+    On GitHub, go to "Settings" and change the branch from which the Github
+    pages are built, to ``stable_$MN``.
+
 
 .. _`Starting a new version`:
 
