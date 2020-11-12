@@ -1,6 +1,6 @@
 
-ibm.zhmc Ansible Galaxy collection
-==================================
+ibm.zhmc Ansible Galaxy collection |release|
+============================================
 
 .. toctree::
    :maxdepth: 2

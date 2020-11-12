@@ -185,14 +185,11 @@ has the remote name ``origin`` in your local clone.
 
         vi galaxy.yml
 
-    and verify that the version is set to the version to be released:
+    and set the 'version' parameter to the version to be released:
 
     .. code-block:: text
 
         version: M.N.U
-
-    Note: The version in galaxy.yml cannot have a suffix of ".devX", so it
-    should already have had the version to be released.
 
 6.  Commit your changes and push them upstream:
 
@@ -393,11 +390,16 @@ has the remote name ``origin`` in your local clone.
 
         vi galaxy.yml
 
-    and update the version to the new version:
+    and update the version to the new version plus '-dev1' to indicate it is in
+    development:
 
     .. code-block:: text
 
-        version: M.N.U
+        version: M.N.U-dev1
+
+    Note: The version must follow the rules for semantic versioning 2.0 including
+    the description of development/alpha/etc suffixes, as described in
+    https://semver.org/
 
 6.  Commit your changes and push them upstream:
 
