@@ -23,20 +23,32 @@ __metaclass__ = type
 import re
 import setuptools
 
+# The following disables the version normalization that setuptools otherwise
+# performs:
+from setuptools.extern.packaging import version
+version.Version = version.LegacyVersion
 
-def get_version(version_file):
+
+def get_version(galaxy_file):
     """
-    Get the version from the collection manifest.
+    Get the version from the collection manifest file (galaxy.yml).
 
     In order to avoid the dependency to a yaml package, this is done by
     parsing the file with a regular expression.
     """
-    with open(version_file, 'r') as fp:
+    with open(galaxy_file, 'r') as fp:
         ftext = fp.read()
-    m = re.search(r"^version: *([0-9.a-z]+) *$", ftext, re.MULTILINE)
+    m = re.search(r"^version: *(.+) *$", ftext, re.MULTILINE)
     if not m:
-        raise ValueError("No version found in collection manifest: {0}".
-                         format(version_file))
+        raise ValueError(
+            "No 'version' parameter found in collection manifest file: {0}".
+            format(galaxy_file))
+    version_str = m.group(1)
+    m = re.search(r"^([0-9]+\.[0-9]+\.[0-9]+(-[a-z.0-9]+)?)$", version_str)
+    if not m:
+        raise ValueError(
+            "Invalid version found in collection manifest file {0}: {1}".
+            format(galaxy_file, version_str))
     version = m.group(1)
     return version
 

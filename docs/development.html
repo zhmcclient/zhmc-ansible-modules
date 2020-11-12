@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Development &mdash; ibm.zhmc Ansible Galaxy collection 1.0.0 documentation</title>
+  <title>Development &mdash; ibm.zhmc Ansible Galaxy collection 1.0.0-dev1 1.0.0-dev1 documentation</title>
   
 
   
@@ -51,7 +51,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home" alt="Documentation Home"> ibm.zhmc Ansible Galaxy collection
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> ibm.zhmc Ansible Galaxy collection 1.0.0-dev1
           
 
           
@@ -112,7 +112,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">ibm.zhmc Ansible Galaxy collection</a>
+          <a href="index.html">ibm.zhmc Ansible Galaxy collection 1.0.0-dev1</a>
         
       </nav>
 
@@ -284,12 +284,10 @@ add text for any known issues you want users to know about.</p></li>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>vi galaxy.yml
 </pre></div>
 </div>
-<p>and verify that the version is set to the version to be released:</p>
+<p>and set the ‘version’ parameter to the version to be released:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>version: M.N.U
 </pre></div>
 </div>
-<p>Note: The version in galaxy.yml cannot have a suffix of “.devX”, so it
-should already have had the version to be released.</p>
 </li>
 <li><p>Commit your changes and push them upstream:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>git add docs_source/changes.rst
@@ -456,10 +454,14 @@ Released: not yet
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>vi galaxy.yml
 </pre></div>
 </div>
-<p>and update the version to the new version:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>version: M.N.U
+<p>and update the version to the new version plus ‘-dev1’ to indicate it is in
+development:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>version: M.N.U-dev1
 </pre></div>
 </div>
+<p>Note: The version must follow the rules for semantic versioning 2.0 including
+the description of development/alpha/etc suffixes, as described in
+<a class="reference external" href="https://semver.org/">https://semver.org/</a></p>
 </li>
 <li><p>Commit your changes and push them upstream:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>git add docs/changes.rst

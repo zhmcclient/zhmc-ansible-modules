@@ -30,27 +30,33 @@ def get_version(galaxy_file):
     """
     with open(galaxy_file, 'r') as fp:
         ftext = fp.read()
-    m = re.search(r"^version: *([0-9.a-z]+) *$", ftext, re.MULTILINE)
+    m = re.search(r"^version: *(.+) *$", ftext, re.MULTILINE)
     if not m:
-        raise ValueError("No version found in collection manifest file: {0}".
-                         format(galaxy_file))
+        raise ValueError(
+            "No 'version' parameter found in collection manifest file: {0}".
+            format(galaxy_file))
+    version_str = m.group(1)
+    m = re.search(r"^([0-9]+\.[0-9]+\.[0-9]+(-[a-z.0-9]+)?)$", version_str)
+    if not m:
+        raise ValueError(
+            "Invalid version found in collection manifest file {0}: {1}".
+            format(galaxy_file, version_str))
     version = m.group(1)
     return version
 
 
 # -- Project information -----------------------------------------------------
 
-project = 'ibm.zhmc Ansible Galaxy collection'
-copyright = '2016-2020, IBM'
-author = 'IBM'
-
-_version_file = '../galaxy.yml'  # relative to the dir of this file
-_version_file = os.path.relpath(os.path.join(
-    os.path.dirname(__file__), _version_file))
+_galaxy_file = '../galaxy.yml'  # relative to the dir of this file
+_galaxy_file = os.path.relpath(os.path.join(
+    os.path.dirname(__file__), _galaxy_file))
 
 # The full version, including alpha/beta/rc tags
-release = get_version(_version_file)
+release = get_version(_galaxy_file)
 
+project = 'ibm.zhmc Ansible Galaxy collection {0}'.format(release)
+copyright = '2016-2020, IBM'
+author = 'IBM'
 
 # -- General configuration ---------------------------------------------------
 
