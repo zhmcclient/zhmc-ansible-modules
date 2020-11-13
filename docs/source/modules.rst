@@ -60,6 +60,7 @@ Modules supported with CPCs in any operational mode:
 
    modules/zhmc_cpc
    modules/zhmc_cpc_list
+   modules/zhmc_cpc_capacity
 
 Modules supported only with CPCs in DPM operational mode:
 

@@ -415,6 +415,7 @@ hmc_definition:
         msu-permanent-plus-billable: 3068
         msu-permanent-plus-temporary: 3068
         msu-permanent: 3068
+        msu-purchased: 3068
         network1-ipv4-alt-ipaddr: null
         network1-ipv4-mask: 255.255.254.0
         network1-ipv4-pri-ipaddr: 9.152.151.39
@@ -430,6 +431,8 @@ hmc_definition:
         processor-count-icf: 0
         processor-count-ifl: 10
         processor-count-iip: 3
+        processor-count-service-assist: 5
+        processor-count-spare: 0
         processor-count-pending-aap: 0
         processor-count-pending-cbp: 0
         processor-count-pending-general-purpose: 0
@@ -438,12 +441,19 @@ hmc_definition:
         processor-count-pending-iip: 0
         processor-count-pending-service-assist: 0
         processor-count-pending: 0
-        processor-count-service-assist: 5
-        processor-count-spare: 0
+        processor-count-permanent-icf: 0
+        processor-count-permanent-ifl: 10
+        processor-count-permanent-iip: 3
+        processor-count-permanent-service-assist: 5
+        processor-count-unassigned-icf: 0
+        processor-count-unassigned-ifl: 0
+        processor-count-unassigned-iip: 0
+        processor-count-unassigned-service-assist: 0
         se-version: 2.14.1
         software-model-permanent-plus-billable: '720'
         software-model-permanent-plus-temporary: '720'
         software-model-permanent: '720'
+        software-model-purchased: '720'
         status: active
         storage-customer-available: 1105920
         storage-customer-central: 16384
@@ -660,6 +670,7 @@ hmc_definition:
         msu-permanent-plus-billable: 3068
         msu-permanent-plus-temporary: 3068
         msu-permanent: 3068
+        msu-purchased: 3068
         network1-ipv4-alt-ipaddr: null
         network1-ipv4-mask: 255.255.254.0
         network1-ipv4-pri-ipaddr: 9.152.151.39
@@ -675,6 +686,8 @@ hmc_definition:
         processor-count-icf: 0
         processor-count-ifl: 10
         processor-count-iip: 3
+        processor-count-service-assist: 5
+        processor-count-spare: 0
         processor-count-pending-aap: 0
         processor-count-pending-cbp: 0
         processor-count-pending-general-purpose: 0
@@ -683,12 +696,19 @@ hmc_definition:
         processor-count-pending-iip: 0
         processor-count-pending-service-assist: 0
         processor-count-pending: 0
-        processor-count-service-assist: 5
-        processor-count-spare: 0
+        processor-count-permanent-icf: 0
+        processor-count-permanent-ifl: 10
+        processor-count-permanent-iip: 3
+        processor-count-permanent-service-assist: 5
+        processor-count-unassigned-icf: 0
+        processor-count-unassigned-ifl: 0
+        processor-count-unassigned-iip: 0
+        processor-count-unassigned-service-assist: 0
         se-version: 2.14.1
         software-model-permanent-plus-billable: '720'
         software-model-permanent-plus-temporary: '720'
         software-model-permanent: '720'
+        software-model-purchased: '720'
         status: active
         storage-customer-available: 1105920
         storage-customer-central: 16384

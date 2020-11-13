@@ -126,6 +126,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Test: Added end2end tests for adding and removing user roles to/from existing
   users. (related to issue #716)
 
+* Added a new Ansible module 'zhmc_cpc_capacity' for managing the temporary
+  processor capacity of a CPC. (issue #243)
+
 **Cleanup:**
 
 * Modernized the code to match the minimum Python version 3.8 (use of f-strings,

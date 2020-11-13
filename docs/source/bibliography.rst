@@ -55,3 +55,8 @@ Resources
 
    Java regular expressions
        `Java class java.util.regex.Pattern <https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html>`_
+
+.. _`CoD Users Guide`:
+
+   Capacity on Demand User's Guide
+       `IBM SC28-6985, IBM Z Capacity on Demand User's Guide <https://www.ibm.com/support/pages/node/6018790>`_
