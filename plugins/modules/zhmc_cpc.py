@@ -42,8 +42,8 @@ author:
   - Andreas Scheuring (@scheuran)
 requirements:
   - Access to the WS API of the HMC of the targeted Z system
-    (see :term:`HMC API`). The targeted Z system must be in the Dynamic
-    Partition Manager (DPM) operational mode
+    (see :term:`HMC API`). The targeted Z system can be in any operational
+    mode (classic, DPM).
 options:
   hmc_host:
     description:
@@ -326,9 +326,16 @@ LOGGER = logging.getLogger(LOGGER_NAME)
 #     current deficiency of Ansible).
 ZHMC_CPC_PROPERTIES = {
 
-    # update properties:
+    # update properties for any mode:
     'description': (True, None, True, True, None, to_unicode),
     'acceptable_status': (True, None, True, True, None, None),
+
+    # update properties for classic mode:
+    'next_activation_profile_name': (True, None, True, True, None, to_unicode),
+    'processor_running_time_type': (True, None, True, True, None, to_unicode),
+    'processor_running_time': (True, None, True, True, None, int),
+    # Following property is read-only on z14 and higher:
+    'does_wait_state_end_time_slice': (True, None, True, True, None, None),
 
     # read-only properties (subset):
     'name': (False, None, False, None, None, None),  # provided in 'name' parm
