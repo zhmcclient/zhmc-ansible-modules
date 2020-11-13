@@ -31,7 +31,7 @@ ANSIBLE_METADATA = {
 DOCUMENTATION = """
 ---
 module: zhmc_adapter
-version_added: "0.6"
+version_added: "0.6.0"
 short_description: Manages adapters of Z systems.
 description:
   - Gather facts about an adapter of a CPC (Z system), including its ports.

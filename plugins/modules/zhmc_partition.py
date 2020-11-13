@@ -31,6 +31,7 @@ ANSIBLE_METADATA = {
 DOCUMENTATION = """
 ---
 module: zhmc_partition
+version_added: "0.5.0"
 short_description: Manages partitions of Z systems.
 description:
   - Gather facts about a partition of a CPC (Z system), including its HBAs,
