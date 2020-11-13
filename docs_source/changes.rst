@@ -89,6 +89,9 @@ Released: not yet
 * Added support in the zhmc_crypto_attachment module for specifying crypto
   adapters by name instead of just their count. (See issue #187)
 
+* Migrated from Travis and Appveyor to GitHub Actions. This required several
+  changes in package dependencies for development.
+
 **Cleanup:**
 
 * Removed the page describing common return values, because all return values
