@@ -143,3 +143,161 @@ def test_common_parse_hmc_host(
         hmc_host = common.parse_hmc_host(in_hmc_host)
 
         assert hmc_host == exp_hmc_host
+
+
+TESTCASES_COMMON_ENSURE_HYPHENS = [
+    # Testcases for test_common_ensure_hyphens()
+    # The list items are tuples with the following items:
+    # - input_dict (dict): Input dict for the function
+    # - exp_dict (dict): Expected result dict
+
+    (
+        {},
+        {},
+    ),
+    (
+        {
+            'a': 1,
+        },
+        {
+            'a': 1,
+        },
+    ),
+    (
+        {
+            'a_b': '1_2',
+        },
+        {
+            'a-b': '1_2',
+        },
+    ),
+    (
+        {
+            'a_b_c': 1,
+        },
+        {
+            'a-b-c': 1,
+        },
+    ),
+    (
+        {
+            'a_b_c': {
+                'd_e': {
+                    'f_g': 1,
+                },
+            },
+        },
+        {
+            'a-b-c': {
+                'd-e': {
+                    'f-g': 1,
+                },
+            },
+        },
+    ),
+    (
+        {
+            'a_b_c': [
+                '1_2',
+            ],
+        },
+        {
+            'a-b-c': [
+                '1_2',
+            ],
+        },
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "input_dict, exp_dict",
+    TESTCASES_COMMON_ENSURE_HYPHENS)
+def test_common_ensure_hyphens(input_dict, exp_dict):
+    """
+    Test the ensure_hyphens() function.
+    """
+
+    # The code to be tested
+    result_dict = common.ensure_hyphens(input_dict)
+
+    assert result_dict == exp_dict
+
+
+TESTCASES_COMMON_ENSURE_UNDERSCORES = [
+    # Testcases for test_common_ensure_underscores()
+    # The list items are tuples with the following items:
+    # - input_dict (dict): Input dict for the function
+    # - exp_dict (dict): Expected result dict
+
+    (
+        {},
+        {},
+    ),
+    (
+        {
+            'a': 1,
+        },
+        {
+            'a': 1,
+        },
+    ),
+    (
+        {
+            'a-b': '1-2',
+        },
+        {
+            'a_b': '1-2',
+        },
+    ),
+    (
+        {
+            'a-b-c': 1,
+        },
+        {
+            'a_b_c': 1,
+        },
+    ),
+    (
+        {
+            'a-b-c': {
+                'd-e': {
+                    'f-g': 1,
+                },
+            },
+        },
+        {
+            'a_b_c': {
+                'd_e': {
+                    'f_g': 1,
+                },
+            },
+        },
+    ),
+    (
+        {
+            'a-b-c': [
+                '1-2',
+            ],
+        },
+        {
+            'a_b_c': [
+                '1-2',
+            ],
+        },
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "input_dict, exp_dict",
+    TESTCASES_COMMON_ENSURE_UNDERSCORES)
+def test_common_ensure_underscores(input_dict, exp_dict):
+    """
+    Test the ensure_underscores() function.
+    """
+
+    # The code to be tested
+    result_dict = common.ensure_underscores(input_dict)
+
+    assert result_dict == exp_dict
