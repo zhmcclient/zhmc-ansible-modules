@@ -31,7 +31,7 @@ ANSIBLE_METADATA = {
 DOCUMENTATION = """
 ---
 module: zhmc_storage_group_attachment
-version_added: "0.5"
+version_added: "0.5.0"
 short_description: Manages the attachment of storage groups to partitions of
     Z systems.
 description:

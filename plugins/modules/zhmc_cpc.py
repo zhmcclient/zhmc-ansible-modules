@@ -31,7 +31,7 @@ ANSIBLE_METADATA = {
 DOCUMENTATION = """
 ---
 module: zhmc_cpc
-version_added: "0.6"
+version_added: "0.6.0"
 short_description: Manages Z systems at the system level.
 description:
   - Gather facts about a CPC (Z system), including its adapters and partitions.
