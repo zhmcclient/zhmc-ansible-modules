@@ -76,8 +76,8 @@ module_py_files := $(wildcard $(module_py_dir)/zhmc_*.py)
 src_py_dir := plugins
 src_py_files := \
     $(wildcard $(src_py_dir)/*.py) \
-		$(wildcard $(src_py_dir)/*/*.py) \
-		$(wildcard $(src_py_dir)/*/*/*.py) \
+    $(wildcard $(src_py_dir)/*/*.py) \
+    $(wildcard $(src_py_dir)/*/*/*.py) \
 
 # All Python test source files
 test_dir := tests
@@ -115,15 +115,14 @@ doc_source_dir := docs_source
 doc_linkcheck_dir := docs_linkcheck
 doc_build_dir := docs
 
-# All documentation RST files (including module RST files)
-doc_rst_files := \
-    $(wildcard $(doc_source_dir)/*.rst) \
-		$(wildcard $(doc_source_dir)/*/*.rst) \
-		$(wildcard $(doc_source_dir)/*/*/*.rst) \
-
 # Module RST files
 module_rst_dir := $(doc_source_dir)/modules
 module_rst_files := $(patsubst $(module_py_dir)/%.py,$(module_rst_dir)/%.rst,$(module_py_files))
+
+# All documentation RST files (including module RST files)
+doc_rst_files := \
+    $(wildcard $(doc_source_dir)/*.rst) \
+    $(module_rst_files) \
 
 # The Ansible Galaxy distribution archive
 dist_dir := dist
@@ -134,8 +133,8 @@ dist_dependent_files := \
     requirements.txt \
     $(wildcard *.py) \
     $(src_py_files) \
-		$(test_py_files) \
-		$(doc_rst_files) \
+    $(test_py_files) \
+    $(doc_rst_files) \
 
 # Sphinx options (besides -M)
 sphinx_opts := -v
