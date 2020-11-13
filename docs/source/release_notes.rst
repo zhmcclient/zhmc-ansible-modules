@@ -136,6 +136,11 @@ Availability: `Galaxy`_, `GitHub`_
 * Migrated from Travis and Appveyor to GitHub Actions. This required several
   changes in package dependencies for development.
 
+* Clarified that the zhmc_cpc module can be used for CPCs in any operational
+  mode. Previously, the documentation stated DPM mode as a prerequisite.
+  Added support to the zhmc_cpc module for updating several classic-mode-only
+  properties.
+
 **Cleanup:**
 
 * Removed the page describing common return values, because all return values
