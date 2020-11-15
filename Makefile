@@ -141,6 +141,11 @@ sphinx_opts := -v
 
 # Pytest options
 pytest_opts := $(TESTOPTS) -s
+ifeq ($(python_m_n_version),3.4)
+  pytest_cov_opts :=
+else
+  pytest_cov_opts := --cov $(module_py_dir) --cov-config .coveragerc --cov-report=html:htmlcov
+endif
 
 # No built-in rules needed:
 .SUFFIXES:
@@ -212,7 +217,7 @@ linkcheck: _check_version develop_$(pymn).done $(doc_rst_files)
 
 .PHONY: test
 test: _check_version develop_$(pymn).done
-	bash -c 'PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. pytest --cov $(module_py_dir) --cov-config .coveragerc --cov-report=html:htmlcov $(pytest_opts) $(test_dir)/unit $(test_dir)/function'
+	bash -c 'PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. pytest $(pytest_cov_opts) $(pytest_opts) $(test_dir)/unit $(test_dir)/function'
 	@echo '$@ done.'
 
 .PHONY:	sanity
