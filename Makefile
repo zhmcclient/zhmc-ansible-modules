@@ -151,6 +151,11 @@ pytest_opts := -k $(TESTCASES)
 else
 pytest_opts :=
 endif
+ifeq ($(python_m_n_version),3.4)
+  pytest_cov_opts :=
+else
+  pytest_cov_opts := --cov $(module_src_dir) --cov-config .coveragerc --cov-report=html:htmlcov
+endif
 
 # Location of local clone of Ansible project's Git repository.
 # Note: For now, that location must have checked out the 'zhmc-fixes' branch
@@ -357,6 +362,6 @@ $(validate_modules_log_file): Makefile $(module_py_files) $(validate_modules)
 
 $(test_log_file): Makefile $(check_py_files)
 	rm -f $@
-	bash -c 'set -o pipefail; PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_src_dir) PYTHONPATH=. py.test -s --cov $(module_src_dir) --cov-config .coveragerc --cov-report=html:htmlcov $(pytest_opts) $(test_dir) 2>&1 |tee $@.tmp'
+	bash -c 'set -o pipefail; PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_src_dir) PYTHONPATH=. py.test -s $(pytest_cov_opts) $(pytest_opts) $(test_dir) 2>&1 |tee $@.tmp'
 	mv -f $@.tmp $@
 	@echo 'Done: Created test log file: $@'
