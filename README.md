@@ -17,7 +17,6 @@ limitations under the License.
 
 [![Github Release](https://img.shields.io/github/v/release/zhmcclient/zhmc-ansible-modules)](https://github.com/zhmcclient/zhmc-ansible-modules/releases)
 [![Ansible Galaxy](https://img.shields.io/badge/galaxy-ibm.zhmc-660198.svg?style=flat)](https://galaxy.ansible.com/ibm/zhmc/)
-[![Travis Result](https://api.travis-ci.org/zhmcclient/zhmc-ansible-modules.svg?branch=master)](https://travis-ci.com/github/zhmcclient/zhmc-ansible-modules/branches)
 [![Coveralls Result](https://img.shields.io/coveralls/zhmcclient/zhmc-ansible-modules.svg)](https://coveralls.io/github/zhmcclient/zhmc-ansible-modules)
 
 
