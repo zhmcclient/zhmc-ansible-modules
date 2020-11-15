@@ -20,10 +20,6 @@ zhmc-ansible-modules - Ansible modules for the IBM Z HMC Web Services API
     :target: https://pypi.python.org/pypi/zhmc-ansible-modules/
     :alt: Version on Pypi
 
-.. image:: https://travis-ci.org/zhmcclient/zhmc-ansible-modules.svg?branch=master
-    :target: https://travis-ci.org/zhmcclient/zhmc-ansible-modules
-    :alt: Travis test status (master)
-
 .. image:: https://readthedocs.org/projects/zhmc-ansible-modules/badge/?version=latest
     :target: http://zhmc-ansible-modules.readthedocs.io/en/latest/
     :alt: Docs build status (latest)
