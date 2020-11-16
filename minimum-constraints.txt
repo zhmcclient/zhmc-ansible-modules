@@ -84,6 +84,12 @@ Sphinx===1.7.6
 # Flake8 (no imports, invoked via flake8 script):
 flake8===3.7.9
 
+# Safety CI by pyup.io
+safety==1.8.7; python_version <= '3.4'
+safety==1.9.0; python_version >= '3.5'
+dparse==0.4.1; python_version <= '3.4'
+dparse==0.5.1; python_version >= '3.5'
+
 # Twine (no imports, invoked via twine script):
 twine===1.8.1
 
