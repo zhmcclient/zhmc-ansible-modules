@@ -8,8 +8,7 @@ Welcome to zhmc client's documentation!
 
 .. toctree::
    :maxdepth: 1
-   :caption: Contents:
-   :globe:
+   :glob:
 
    modules/*
 
