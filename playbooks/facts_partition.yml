@@ -3,6 +3,8 @@
   vars_files:
     - vars.yml
     - vault.yml
+  collections:
+  - ibm.zhmc
   tasks:
 
   - name: Get partition facts

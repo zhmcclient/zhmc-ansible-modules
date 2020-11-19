@@ -806,6 +806,9 @@ def main():
         argument_spec=argument_spec,
         supports_check_mode=True)
 
+    module.exit_json(
+        changed=False, adapter=dict(verbosity=module._verbosity))
+
     if not IMP_URLLIB3:
         module.fail_json(msg=missing_required_lib("requests"),
                          exception=IMP_URLLIB3_ERR)
