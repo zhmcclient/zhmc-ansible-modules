@@ -37,7 +37,16 @@ Released: not yet
 
     ansible-galaxy collection install ibm.zhmc
 
-  Playbooks using the zhmc Ansible modules do not need to be changed.
+  Playbooks using the zhmc Ansible modules do not need to be changed, other
+  than adding a "collections" property that includes the "ibm.zhmc"
+  collection::
+
+    ---
+    - hosts: localhost
+      collections:
+      - ibm.zhmc
+      tasks:
+      - ...
 
 **Deprecations:**
 
