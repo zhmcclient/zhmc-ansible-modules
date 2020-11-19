@@ -34,7 +34,8 @@ module: zhmc_cpc
 version_added: "2.9.0"
 short_description: Update CPCs
 description:
-  - Gather facts about a CPC (Z system), including its adapters and partitions.
+  - Gather facts about a CPC (Z system), including its adapters, partitions,
+    and storage groups.
   - Update the properties of a CPC.
 author:
   - Andreas Maier (@andy-maier)
@@ -137,9 +138,17 @@ EXAMPLES = """
 """
 
 RETURN = """
+changed:
+  description: Indicates if any change has been made by the module.
+    For C(state=facts), always will be false.
+  returned: always
+  type: bool
+msg:
+  description: An error message that describes the failure.
+  returned: failure
+  type: str
 cpc:
-  description: "A dictionary with the properties of the CPC, including
-    additional artificial properties as described below."
+  description: "The CPC and its adapters, partitions, and storage groups."
   returned: success
   type: dict
   contains:
@@ -147,62 +156,125 @@ cpc:
       description: "CPC name"
       type: str
     "{property}":
-      description: "Additional properties of the CPC, as described in the
-       :term:`HMC API` (using hyphens (-) in the property names)."
-    partitions:
-      description: "Artificial property for the defined partitions of the CPC,
-        with a subset of its properties."
-      type: dict
-      contains:
-        "{name}":
-          description: "Partition name"
-          type: dict
-          contains:
-            name:
-              description: "Partition name"
-              type: str
-            status:
-              description: "Status of the partition"
-              type: str
-            object_uri:
-              description: "Canonical URI of the partition"
-              type: str
+      description: "Additional properties of the CPC, as described in the data
+        model of the 'CPC' object in the :term:`HMC API` book.
+        The property names have hyphens (-) as described in that book."
     adapters:
-      description: "Artificial property for the adapters of the CPC,
-        with a subset of its properties."
-      type: dict
+      description: "The adapters of the CPC, with a subset of their
+        properties. For details, see the :term:`HMC API` book."
+      type: list
+      elements: dict
       contains:
-        "{name}":
+        name:
           description: "Adapter name"
-          type: dict
-          contains:
-            name:
-              description: "Adapter name"
-              type: str
-            status:
-              description: "Status of the adapter"
-              type: str
-            object_uri:
-              description: "Canonical URI of the adapter"
-              type: str
-    storage-groups:
-      description: "Artificial property for the storage groups associated with
-        the CPC, with a subset of its properties."
-      type: dict
+          type: str
+        object-uri:
+          description: "Canonical URI of the adapter"
+          type: str
+        adapter-id:
+          description: "Adapter ID (PCHID)"
+          type: str
+        type:
+          description: "Adapter type"
+          type: str
+        adapter-family:
+          description: "Adapter family"
+          type: str
+        status:
+          description: "Status of the adapter"
+          type: str
+    partitions:
+      description: "The defined partitions of the CPC, with a subset of their
+        properties. For details, see the :term:`HMC API` book."
+      type: list
+      elements: dict
       contains:
-        "{name}":
+        name:
+          description: "Partition name"
+          type: str
+        object-uri:
+          description: "Canonical URI of the partition"
+          type: str
+        type:
+          description: "Type of the partition"
+          type: str
+        status:
+          description: "Status of the partition"
+          type: str
+    storage-groups:
+      description: "The storage groups associated with the CPC, with a subset
+        of their properties. For details, see the :term:`HMC API` book."
+      type: list
+      elements: dict
+      contains:
+        name:
           description: "Storage group name"
-          type: dict
-          contains:
-            name:
-              description: "Storage group name"
-              type: str
-            fulfillment-status:
-              description: "Fulfillment status of the storage group"
-              type: str
-            object_uri:
-              description: "Canonical URI of the storage group"
-              type: str
+          type: str
+        object-uri:
+          description: "Canonical URI of the storage group"
+          type: str
+        type:
+          description: "Storage group type"
+          type: str
+        fulfillment-status:
+          description: "Fulfillment status of the storage group"
+          type: str
+        cpc-uri:
+          description: "Canonical URI of the associated CPC"
+          type: str
+  sample:
+    {
+        "name": "CPCA",
+        "{property}": "... more properties ... ",
+        "adapters": [
+            {
+                "adapter-family": "ficon",
+                "adapter-id": "120",
+                "name": "FCP_120_SAN1_02",
+                "object-uri": "/api/adapters/dfb2147a-e578-11e8-a87c-00106f239c31",
+                "status": "active",
+                "type": "fcp"
+            },
+            {
+                "adapter-family": "osa",
+                "adapter-id": "10c",
+                "name": "OSM1",
+                "object-uri": "/api/adapters/ddde026c-e578-11e8-a87c-00106f239c31",
+                "status": "active",
+                "type": "osm"
+            },
+        ],
+        "partitions": [
+            {
+                "name": "PART1",
+                "object-uri": "/api/partitions/c44338de-351b-11e9-9fbb-00106f239d19",
+                "status": "stopped",
+                "type": "linux"
+            },
+            {
+                "name": "PART2",
+                "object-uri": "/api/partitions/6a46d18a-cf79-11e9-b447-00106f239d19",
+                "status": "active",
+                "type": "ssc"
+            },
+        ],
+        "storage-groups": [
+            {
+                "cpc-uri": "/api/cpcs/66942455-4a14-3f99-8904-3e7ed5ca28d7",
+                "fulfillment-state": "complete",
+                "name": "CPCA_SG_PART1",
+                "object-uri": "/api/storage-groups/58e41a42-20a6-11e9-8dfc-00106f239c31",
+                "type": "fcp"
+            },
+            {
+                "cpc-uri": "/api/cpcs/66942455-4a14-3f99-8904-3e7ed5ca28d7",
+                "fulfillment-state": "complete",
+                "name": "CPCA_SG_PART2",
+                "object-uri": "/api/storage-groups/4947c6d0-f433-11ea-8f73-00106f239d19",
+                "type": "fcp"
+            },
+        ],
+    }
 """
 
 import logging  # noqa: E402

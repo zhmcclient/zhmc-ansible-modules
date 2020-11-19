@@ -101,7 +101,7 @@ state
 
      
 adapter_count
-  Only for ``state=attach``: The number of crypto adapters the partition needs to have attached. The special value -1 means all adapters of the desired crypto type in the CPC. The ``adapter_names`` and ``adapter_count`` parameters are mutually exclusive; if neither is specified the default for ``adapter_count`` applies.
+  Only for ``state=attached``: The number of crypto adapters the partition needs to have attached. The special value -1 means all adapters of the desired crypto type in the CPC. The ``adapter_names`` and ``adapter_count`` parameters are mutually exclusive; if neither is specified the default for ``adapter_count`` applies.
 
 
   | **required**: False
@@ -111,7 +111,7 @@ adapter_count
 
      
 adapter_names
-  Only for ``state=attach``: The names of the crypto adapters the partition needs to have attached. The ``adapter_names`` and ``adapter_count`` parameters are mutually exclusive; if neither is specified the default for ``adapter_count`` applies.
+  Only for ``state=attached``: The names of the crypto adapters the partition needs to have attached. The ``adapter_names`` and ``adapter_count`` parameters are mutually exclusive; if neither is specified the default for ``adapter_count`` applies.
 
 
   | **required**: False
@@ -120,7 +120,7 @@ adapter_names
 
      
 domain_range
-  Only for ``state=attach``: The domain range the partition needs to have attached, as a tuple of integers (min, max) that specify the inclusive range of domain index numbers. Other domains attached to the partition remain unchanged. The special value -1 for the max item means the maximum supported domain index number.
+  Only for ``state=attached``: The domain range the partition needs to have attached, as a tuple of integers (min, max) that specify the inclusive range of domain index numbers. Other domains attached to the partition remain unchanged. The special value -1 for the max item means the maximum supported domain index number.
 
 
   | **required**: False
@@ -130,7 +130,7 @@ domain_range
 
      
 access_mode
-  Only for ``state=attach``: The access mode in which the crypto domains specified in ``domain_range`` need to be attached.
+  Only for ``state=attached``: The access mode in which the crypto domains specified in ``domain_range`` need to be attached.
 
 
   | **required**: False
@@ -141,7 +141,7 @@ access_mode
 
      
 crypto_type
-  Only for ``state=attach``: The crypto type of the crypto adapters that will be considered for attaching.
+  Only for ``state=attached``: The crypto type of the crypto adapters that will be considered for attaching.
 
 
   | **required**: False
@@ -250,12 +250,60 @@ Return Values
 -------------
 
 
-   crypto_configuration
-        For ``state=detached|attached|facts``, the crypto configuration of the partition after the changes performed by the module.
+   changed
+        Indicates if any change has been made by the module. For ``state=facts``, always will be false.
+
+
+        | **returned**: always
+        | **type**: bool
+
+
+
+   msg
+        An error message that describes the failure.
+
+
+        | **returned**: failure
+        | **type**: str
+
+
+
+   changes
+        The changes that were performed by the module.
 
 
         | **returned**: success
         | **type**: dict
+
+
+    added-adapters
+          Names of the adapters that were added to the partition
+
+
+          | **type**: list
+
+
+
+    added-domains
+          Domain index numbers of the crypto domains that were added to the partition
+
+
+          | **type**: list
+
+
+
+
+
+   crypto_configuration
+        The crypto configuration of the partition after the changes performed by the module.
+
+
+        | **returned**: success
+        | **type**: dict
+
+        **sample**: ::
+
+                  {"CSPF1": {"adapters": {"CRYP00": {"adapter-family": "crypto", "adapter-id": "118", "card-location": "A14B-LG09", "class": "adapter", "crypto-number": 0, "crypto-type": "ep11-coprocessor", "description": "", "detected-card-type": "crypto-express-6s", "name": "CRYP00", "object-id": "e1274d16-e578-11e8-a87c-00106f239c31", "object-uri": "/api/adapters/e1274d16-e578-11e8-a87c-00106f239c31", "parent": "/api/cpcs/66942455-4a14-3f99-8904-3e7ed5ca28d7", "physical-channel-status": "operating", "state": "online", "status": "active", "tke-commands-enabled": true, "type": "crypto", "udx-loaded": false}}, "control_domains": [], "domain_config": {"10": "usage", "11": "usage"}, "usage_domains": [10, 11]}}
 
 
     {name}
@@ -266,7 +314,7 @@ Return Values
 
 
      adapters
-            Attached adapters
+            Attached crypto adapters
 
 
             | **type**: dict
@@ -288,7 +336,7 @@ Return Values
 
 
        {property}
-                Additional properties of the adapter, as described in the :term:`HMC API` (using hyphens (-) in the property names).
+                Additional properties of the adapter, as described in the data model of the 'Adapter' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
 
 
                 | **type**: 
@@ -340,32 +388,6 @@ Return Values
             | **type**: list
 
 
-
-
-
-
-
-   changes
-        For ``state=detached|attached|facts``, a dictionary with the changes performed.
-
-
-        | **returned**: success
-        | **type**: dict
-
-
-    added-adapters
-          Names of the adapters that were added to the partition
-
-
-          | **type**: list
-
-
-
-    added-domains
-          Domain index numbers of the crypto domains that were added to the partition
-
-
-          | **type**: list
 
 
 

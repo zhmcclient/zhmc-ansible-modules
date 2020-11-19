@@ -184,12 +184,34 @@ Return Values
 -------------
 
 
+   changed
+        Indicates if any change has been made by the module. For ``state=facts``, always will be false.
+
+
+        | **returned**: always
+        | **type**: bool
+
+
+
+   msg
+        An error message that describes the failure.
+
+
+        | **returned**: failure
+        | **type**: str
+
+
+
    storage_group_attachment
         Attachment state of the storage group. If no check mode was requested, the attachment state after any changes is returned. If check mode was requested, the actual attachment state is returned.
 
 
         | **returned**: success
         | **type**: dict
+
+        **sample**: ::
+
+                  {"attached": false}
 
 
     attached
