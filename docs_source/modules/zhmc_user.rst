@@ -1,8 +1,8 @@
 .. _zhmc_user_module:
 
 
-zhmc_user -- Manages users defined on the HMC of Z systems.
-===========================================================
+zhmc_user -- Create HMC users
+=============================
 
 .. contents::
    :local:

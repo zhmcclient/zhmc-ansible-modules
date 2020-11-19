@@ -32,7 +32,7 @@ DOCUMENTATION = """
 ---
 module: zhmc_storage_volume
 version_added: "0.5.0"
-short_description: Manages storage volumes of Z systems.
+short_description: Create storage volumes
 description:
   - Gather facts about a storage volume in a storage group associated with a
     CPC (Z system).

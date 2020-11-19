@@ -32,7 +32,7 @@ DOCUMENTATION = """
 ---
 module: zhmc_cpc
 version_added: "0.6.0"
-short_description: Manages Z systems at the system level.
+short_description: Update CPCs
 description:
   - Gather facts about a CPC (Z system), including its adapters and partitions.
   - Update the properties of a CPC.

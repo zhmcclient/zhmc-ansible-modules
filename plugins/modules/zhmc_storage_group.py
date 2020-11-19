@@ -32,7 +32,7 @@ DOCUMENTATION = """
 ---
 module: zhmc_storage_group
 version_added: "0.5.0"
-short_description: Manages storage groups of Z systems.
+short_description: Create storage groups
 description:
   - Gather facts about a storage group associated with a CPC (Z system),
     including its storage volumes and virtual storage resources.

@@ -1,8 +1,8 @@
 .. _zhmc_crypto_attachment_module:
 
 
-zhmc_crypto_attachment -- Manages the attachment of crypto resources to partitions of Z systems.
-================================================================================================
+zhmc_crypto_attachment -- Attach crypto resources to partitions
+===============================================================
 
 .. contents::
    :local:

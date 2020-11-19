@@ -1,8 +1,8 @@
 .. _zhmc_adapter_module:
 
 
-zhmc_adapter -- Manages adapters of Z systems.
-==============================================
+zhmc_adapter -- Update adapters and create Hipersocket adapters
+===============================================================
 
 .. contents::
    :local:
@@ -14,7 +14,9 @@ Synopsis
 
 Gather facts about an adapter of a CPC (Z system), including its ports.
 
-Update the properties of an adapter.
+Update the properties of an adapter and its ports.
+
+Create or delete a Hipersocket adapter.
 
 
 

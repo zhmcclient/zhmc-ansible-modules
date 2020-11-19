@@ -32,10 +32,11 @@ DOCUMENTATION = """
 ---
 module: zhmc_adapter
 version_added: "0.6.0"
-short_description: Manages adapters of Z systems.
+short_description: Update adapters and create Hipersocket adapters
 description:
   - Gather facts about an adapter of a CPC (Z system), including its ports.
-  - Update the properties of an adapter.
+  - Update the properties of an adapter and its ports.
+  - Create or delete a Hipersocket adapter.
 author:
   - Andreas Maier (@andy-maier)
   - Andreas Scheuring (@scheuran)

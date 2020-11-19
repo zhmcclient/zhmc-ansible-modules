@@ -32,8 +32,7 @@ DOCUMENTATION = """
 ---
 module: zhmc_crypto_attachment
 version_added: "0.6.0"
-short_description: Manages the attachment of crypto resources to partitions of
-    Z systems.
+short_description: Attach crypto resources to partitions
 description:
   - Gather facts about the attachment of crypto adapters and crypto domains to
     a partition of a CPC (Z system).

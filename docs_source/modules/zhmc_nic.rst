@@ -1,8 +1,8 @@
 .. _zhmc_nic_module:
 
 
-zhmc_nic -- Manages NICs in partitions of Z systems.
-====================================================
+zhmc_nic -- Create NICs in partitions
+=====================================
 
 .. contents::
    :local:

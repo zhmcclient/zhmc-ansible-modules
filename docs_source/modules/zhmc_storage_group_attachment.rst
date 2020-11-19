@@ -1,8 +1,8 @@
 .. _zhmc_storage_group_attachment_module:
 
 
-zhmc_storage_group_attachment -- Manages the attachment of storage groups to partitions of Z systems.
-=====================================================================================================
+zhmc_storage_group_attachment -- Attach storage groups to partitions
+====================================================================
 
 .. contents::
    :local:

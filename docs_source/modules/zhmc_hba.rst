@@ -1,8 +1,8 @@
 .. _zhmc_hba_module:
 
 
-zhmc_hba -- Manages HBAs in partitions of Z systems.
-====================================================
+zhmc_hba -- Create HBAs in partitions
+=====================================
 
 .. contents::
    :local:

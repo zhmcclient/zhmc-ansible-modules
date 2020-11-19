@@ -1,8 +1,8 @@
 .. _zhmc_partition_module:
 
 
-zhmc_partition -- Manages partitions of Z systems.
-==================================================
+zhmc_partition -- Create partitions
+===================================
 
 .. contents::
    :local:
@@ -14,7 +14,7 @@ Synopsis
 
 Gather facts about a partition of a CPC (Z system), including its HBAs, NICs, and virtual functions.
 
-Create, update, or delete a partition. The HBAs, NICs, and virtual functions of the partition are are managed by separate Ansible modules.
+Create, update, or delete a partition. The HBAs, NICs, and virtual functions of the partition are managed by separate Ansible modules.
 
 Start or stop a partition.
 

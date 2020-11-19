@@ -32,12 +32,12 @@ DOCUMENTATION = """
 ---
 module: zhmc_partition
 version_added: "0.5.0"
-short_description: Manages partitions of Z systems.
+short_description: Create partitions
 description:
   - Gather facts about a partition of a CPC (Z system), including its HBAs,
     NICs, and virtual functions.
   - Create, update, or delete a partition. The HBAs, NICs, and virtual
-   functions of the partition are are managed by separate Ansible modules.
+   functions of the partition are managed by separate Ansible modules.
   - Start or stop a partition.
 seealso:
   - module: zhmc_hba

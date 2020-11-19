@@ -1,8 +1,8 @@
 .. _zhmc_cpc_module:
 
 
-zhmc_cpc -- Manages Z systems at the system level.
-==================================================
+zhmc_cpc -- Update CPCs
+=======================
 
 .. contents::
    :local:
