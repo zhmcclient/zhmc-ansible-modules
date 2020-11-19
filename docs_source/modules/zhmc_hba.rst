@@ -24,7 +24,6 @@ The below requirements are needed on the host that executes this module.
 
 - Access to the WS API of the HMC of the targeted Z system (see :term:`HMC API`). The targeted Z system must be in the Dynamic Partition Manager (DPM) operational mode.
 - The targeted Z system must be a z13 generation. The z14 and later generations manage HBAs automatically via the "dpm-storage-management" firmware feature.
-- Python package zhmcclient >=0.14.0
 
 
 
