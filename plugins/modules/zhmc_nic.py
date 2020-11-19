@@ -32,7 +32,7 @@ DOCUMENTATION = """
 ---
 module: zhmc_nic
 version_added: "0.5.0"
-short_description: Manages NICs in partitions of Z systems.
+short_description: Create NICs in partitions
 description:
   - Create, update, or delete a NIC (virtual Network Interface Card) in a
     partition of a CPC (Z system).

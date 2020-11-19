@@ -1,8 +1,8 @@
 .. _zhmc_storage_volume_module:
 
 
-zhmc_storage_volume -- Manages storage volumes of Z systems.
-============================================================
+zhmc_storage_volume -- Create storage volumes
+=============================================
 
 .. contents::
    :local:

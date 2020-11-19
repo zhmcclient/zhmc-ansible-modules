@@ -32,7 +32,7 @@ DOCUMENTATION = """
 ---
 module: zhmc_hba
 version_added: "0.5.0"
-short_description: Manages HBAs in partitions of Z systems.
+short_description: Create HBAs in partitions
 description:
   - Create, update, or delete an HBA (virtual Host Bus Adapter) in a partition
     of a CPC (Z system).

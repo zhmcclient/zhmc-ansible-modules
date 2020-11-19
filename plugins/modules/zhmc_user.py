@@ -32,7 +32,7 @@ DOCUMENTATION = """
 ---
 module: zhmc_user
 version_added: "1.0.0"
-short_description: Manages users defined on the HMC of Z systems.
+short_description: Create HMC users
 description:
   - Gather facts about a user on an HMC of a Z system.
   - Create, delete, or update a user on an HMC.

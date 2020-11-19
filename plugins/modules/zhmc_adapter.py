@@ -32,10 +32,11 @@ DOCUMENTATION = """
 ---
 module: zhmc_adapter
 version_added: "0.6.0"
-short_description: Manages adapters of Z systems.
+short_description: Update adapters and create Hipersocket adapters
 description:
   - Gather facts about an adapter of a CPC (Z system), including its ports.
-  - Update the properties of an adapter.
+  - Update the properties of an adapter and its ports.
+  - Create or delete a Hipersocket adapter.
 author:
   - Andreas Maier (@andy-maier)
   - Andreas Scheuring (@scheuran)
@@ -805,9 +806,6 @@ def main():
     module = AnsibleModule(
         argument_spec=argument_spec,
         supports_check_mode=True)
-
-    module.exit_json(
-        changed=False, adapter=dict(verbosity=module._verbosity))
 
     if not IMP_URLLIB3:
         module.fail_json(msg=missing_required_lib("requests"),

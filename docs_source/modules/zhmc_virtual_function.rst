@@ -1,8 +1,8 @@
 .. _zhmc_virtual_function_module:
 
 
-zhmc_virtual_function -- Manages virtual functions in partitions of Z systems.
-==============================================================================
+zhmc_virtual_function -- Create virtual functions in partitions
+===============================================================
 
 .. contents::
    :local:

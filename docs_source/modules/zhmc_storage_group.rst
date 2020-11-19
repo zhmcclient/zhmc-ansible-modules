@@ -1,8 +1,8 @@
 .. _zhmc_storage_group_module:
 
 
-zhmc_storage_group -- Manages storage groups of Z systems.
-==========================================================
+zhmc_storage_group -- Create storage groups
+===========================================
 
 .. contents::
    :local:

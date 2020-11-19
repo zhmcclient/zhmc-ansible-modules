@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>zhmc_storage_group – Manages storage groups of Z systems. &mdash; ibm.zhmc Ansible Galaxy collection 1.0.0-dev1 1.0.0-dev1 documentation</title>
+  <title>zhmc_storage_group – Create storage groups &mdash; ibm.zhmc Ansible Galaxy collection 1.0.0-dev1 1.0.0-dev1 documentation</title>
   
 
   
@@ -36,8 +36,8 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="zhmc_storage_group_attachment – Manages the attachment of storage groups to partitions of Z systems." href="zhmc_storage_group_attachment.html" />
-    <link rel="prev" title="zhmc_partition – Manages partitions of Z systems." href="zhmc_partition.html" /> 
+    <link rel="next" title="zhmc_storage_group_attachment – Attach storage groups to partitions" href="zhmc_storage_group_attachment.html" />
+    <link rel="prev" title="zhmc_partition – Create partitions" href="zhmc_partition.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -85,13 +85,13 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../all_modules.html">All modules</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="zhmc_adapter.html">zhmc_adapter – Manages adapters of Z systems.</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_cpc.html">zhmc_cpc – Manages Z systems at the system level.</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_crypto_attachment.html">zhmc_crypto_attachment – Manages the attachment of crypto resources to partitions of Z systems.</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_hba.html">zhmc_hba – Manages HBAs in partitions of Z systems.</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_nic.html">zhmc_nic – Manages NICs in partitions of Z systems.</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_partition.html">zhmc_partition – Manages partitions of Z systems.</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">zhmc_storage_group – Manages storage groups of Z systems.</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_adapter.html">zhmc_adapter – Update adapters and create Hipersocket adapters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_cpc.html">zhmc_cpc – Update CPCs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_crypto_attachment.html">zhmc_crypto_attachment – Attach crypto resources to partitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_hba.html">zhmc_hba – Create HBAs in partitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_nic.html">zhmc_nic – Create NICs in partitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_partition.html">zhmc_partition – Create partitions</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">zhmc_storage_group – Create storage groups</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#parameters">Parameters</a></li>
@@ -104,10 +104,10 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Manages the attachment of storage groups to partitions of Z systems.</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_volume.html">zhmc_storage_volume – Manages storage volumes of Z systems.</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_user.html">zhmc_user – Manages users defined on the HMC of Z systems.</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_virtual_function.html">zhmc_virtual_function – Manages virtual functions in partitions of Z systems.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Attach storage groups to partitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_volume.html">zhmc_storage_volume – Create storage volumes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_user.html">zhmc_user – Create HMC users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_virtual_function.html">zhmc_virtual_function – Create virtual functions in partitions</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../development.html">Development</a></li>
@@ -162,7 +162,7 @@
         
           <li><a href="../all_modules.html">All modules</a> &raquo;</li>
         
-      <li>zhmc_storage_group – Manages storage groups of Z systems.</li>
+      <li>zhmc_storage_group – Create storage groups</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -179,8 +179,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="zhmc-storage-group-manages-storage-groups-of-z-systems">
-<span id="zhmc-storage-group-module"></span><h1>zhmc_storage_group – Manages storage groups of Z systems.<a class="headerlink" href="#zhmc-storage-group-manages-storage-groups-of-z-systems" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="zhmc-storage-group-create-storage-groups">
+<span id="zhmc-storage-group-module"></span><h1>zhmc_storage_group – Create storage groups<a class="headerlink" href="#zhmc-storage-group-create-storage-groups" title="Permalink to this headline">¶</a></h1>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
@@ -386,10 +386,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="zhmc_storage_group_attachment.html" class="btn btn-neutral float-right" title="zhmc_storage_group_attachment – Manages the attachment of storage groups to partitions of Z systems." accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="zhmc_storage_group_attachment.html" class="btn btn-neutral float-right" title="zhmc_storage_group_attachment – Attach storage groups to partitions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="zhmc_partition.html" class="btn btn-neutral float-left" title="zhmc_partition – Manages partitions of Z systems." accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="zhmc_partition.html" class="btn btn-neutral float-left" title="zhmc_partition – Create partitions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

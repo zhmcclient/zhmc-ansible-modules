@@ -32,8 +32,7 @@ DOCUMENTATION = """
 ---
 module: zhmc_storage_group_attachment
 version_added: "0.5.0"
-short_description: Manages the attachment of storage groups to partitions of
-    Z systems.
+short_description: Attach storage groups to partitions
 description:
   - Gather facts about the attachment of a storage group to a partition of a
     CPC (Z system).
