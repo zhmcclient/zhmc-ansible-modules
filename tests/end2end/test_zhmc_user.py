@@ -230,7 +230,6 @@ def test_user_facts(ansible_mod_cls, expand, check_mode, hmc_session):  # noqa: 
             'state': 'facts',
             'expand': expand,
             'log_file': LOG_FILE,
-            'faked_session': None,
         }
 
         # Prepare mocks for AnsibleModule object
@@ -376,7 +375,6 @@ def test_user_absent_present(
             'state': input_state,
             'expand': expand,
             'log_file': LOG_FILE,
-            'faked_session': None,
         }
         if input_props is not None:
             params['properties'] = input_props

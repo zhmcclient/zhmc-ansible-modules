@@ -88,7 +88,7 @@ class TestZhmcVirtualFunctionMain(object):
                        choices=['absent', 'present']),
             properties=dict(required=False, type='dict', default={}),
             log_file=dict(required=False, type='str', default=None),
-            faked_session=dict(required=False, type='raw'),
+            _faked_session=dict(required=False, type='raw'),
         )
         assert(ansible_mod_cls.call_args ==
                mock.call(argument_spec=expected_argument_spec,

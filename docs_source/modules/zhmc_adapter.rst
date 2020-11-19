@@ -147,8 +147,8 @@ log_file
 
 
      
-faked_session
-  A ``zhmcclient_mock.FakedSession`` object that has a mocked HMC set up. If not null, this session will be used instead of connecting to the HMC specified in ``hmc_host``. This is used for testing purposes only.
+_faked_session
+  An internal parameter used for testing the module.
 
 
   | **required**: False

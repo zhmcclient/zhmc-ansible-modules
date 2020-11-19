@@ -152,11 +152,9 @@ options:
     type: str
     required: false
     default: null
-  faked_session:
+  _faked_session:
     description:
-      - "A C(zhmcclient_mock.FakedSession) object that has a mocked HMC set up.
-         If not null, this session will be used instead of connecting to the
-         HMC specified in C(hmc_host). This is used for testing purposes only."
+      - "An internal parameter used for testing the module."
     required: false
     type: raw
     default: null
@@ -436,7 +434,7 @@ def ensure_attached(params, check_mode):
     domain_range = params['domain_range']
     access_mode = params['access_mode']
     crypto_type = params['crypto_type']
-    faked_session = params.get('faked_session', None)  # No default specified
+    _faked_session = params.get('_faked_session', None)  # No default specified
 
     try:
         if len(domain_range) != 2:
@@ -458,7 +456,7 @@ def ensure_attached(params, check_mode):
     result_changes = dict()
 
     try:
-        session = get_session(faked_session, host, userid, password)
+        session = get_session(_faked_session, host, userid, password)
         client = zhmcclient.Client(session)
         cpc = client.cpcs.find(name=cpc_name)
         partition = cpc.partitions.find(name=partition_name)
@@ -866,14 +864,14 @@ def ensure_detached(params, check_mode):
     userid, password = get_hmc_auth(params['hmc_auth'])
     cpc_name = params['cpc_name']
     partition_name = params['partition_name']
-    faked_session = params.get('faked_session', None)  # No default specified
+    _faked_session = params.get('_faked_session', None)  # No default specified
 
     changed = False
     result = dict()
     result_changes = dict()
 
     try:
-        session = get_session(faked_session, host, userid, password)
+        session = get_session(_faked_session, host, userid, password)
         client = zhmcclient.Client(session)
         cpc = client.cpcs.find(name=cpc_name)
         partition = cpc.partitions.find(name=partition_name)
@@ -955,10 +953,10 @@ def facts(params, check_mode):
     userid, password = get_hmc_auth(params['hmc_auth'])
     cpc_name = params['cpc_name']
     partition_name = params['partition_name']
-    faked_session = params.get('faked_session', None)  # No default specified
+    _faked_session = params.get('_faked_session', None)  # No default specified
 
     try:
-        session = get_session(faked_session, host, userid, password)
+        session = get_session(_faked_session, host, userid, password)
         client = zhmcclient.Client(session)
         cpc = client.cpcs.find(name=cpc_name)
         partition = cpc.partitions.find(name=partition_name)
@@ -1020,7 +1018,7 @@ def main():
         crypto_type=dict(required=False, type='str',
                          choices=['ep11', 'cca', 'acc'], default='ep11'),
         log_file=dict(required=False, type='str', default=None),
-        faked_session=dict(required=False, type='raw'),
+        _faked_session=dict(required=False, type='raw'),
     )
 
     module = AnsibleModule(
