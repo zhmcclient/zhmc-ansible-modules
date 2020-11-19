@@ -53,7 +53,6 @@ requirements:
     Partition Manager (DPM) operational mode.
   - The Z system must be of generation z14 or later, to have the
     "dpm-storage-management" firmware feature.
-  - Python package zhmcclient >=0.20.0
 options:
   hmc_host:
     description:

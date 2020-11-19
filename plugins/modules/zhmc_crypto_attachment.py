@@ -46,7 +46,6 @@ requirements:
   - Access to the WS API of the HMC of the targeted Z system
     (see :term:`HMC API`). The targeted Z system must be in the Dynamic
     Partition Manager (DPM) operational mode.
-  - Python package zhmcclient >=0.20.0
 options:
   hmc_host:
     description:

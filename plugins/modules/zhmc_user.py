@@ -42,7 +42,6 @@ requirements:
   - Access to the WS API of the HMC of the targeted Z system
     (see :term:`HMC API`). The targeted Z system can be in any operational
     mode (classic, DPM)
-  - Python package zhmcclient >=0.23.0
 options:
   hmc_host:
     description:

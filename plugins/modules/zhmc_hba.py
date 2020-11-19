@@ -49,7 +49,6 @@ requirements:
   - The targeted Z system must be a z13 generation. The z14 and later
     generations manage HBAs automatically via the "dpm-storage-management"
     firmware feature.
-  - Python package zhmcclient >=0.14.0
 options:
   hmc_host:
     description:
