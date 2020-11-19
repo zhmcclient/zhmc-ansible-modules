@@ -154,6 +154,15 @@ EXAMPLES = """
 """
 
 RETURN = """
+changed:
+  description: Indicates if any change has been made by the module.
+    For C(state=facts), always will be false.
+  returned: always
+  type: bool
+msg:
+  description: An error message that describes the failure.
+  returned: failure
+  type: str
 storage_group_attachment:
   description: "Attachment state of the storage group. If no check mode was
     requested, the attachment state after any changes is returned. If check
@@ -165,6 +174,10 @@ storage_group_attachment:
       description: "Attachment state of the storage group: Indicates whether
         the storage group is attached to the partition."
       type: bool
+  sample:
+    {
+        "attached": false
+    }
 """
 
 import logging  # noqa: E402

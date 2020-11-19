@@ -221,11 +221,19 @@ EXAMPLES = """
 """
 
 RETURN = """
-cpc:
+changed:
+  description: Indicates if any change has been made by the module.
+    For C(state=facts), always will be false.
+  returned: always
+  type: bool
+msg:
+  description: An error message that describes the failure.
+  returned: failure
+  type: str
+adapter:
   description:
     - "For C(state=absent), an empty dictionary."
-    - "For C(state=set|present|facts), a dictionary with the properties of the
-       adapter, including additional artificial properties as described below."
+    - "For C(state=set|present|facts), the adapter and its ports."
   returned: success
   type: dict
   contains:
@@ -234,25 +242,59 @@ cpc:
       type: str
     "{property}":
       description: "Additional properties of the adapter, as described in the
-        :term:`HMC API` (using hyphens (-) in the property names)."
+        data model of the 'Adapter' object in the :term:`HMC API` book.
+        The property names have hyphens (-) as described in that book."
     ports:
-      description: "Artificial property for the ports of the adapter,
-        with a subset of its properties."
-      type: dict
+      description: "Artificial property for the ports of the adapter."
+      type: list
+      elements: dict
       contains:
-        "{name}":
+        name:
           description: "Port name"
-          type: dict
-          contains:
-            name:
-              description: "Port name"
-              type: str
-            status:
-              description: "Status of the port"
-              type: str
-            element_uri:
-              description: "Canonical URI of the port"
-              type: str
+          type: str
+        "{property}":
+          description: "Additional properties of the port, as described in the
+            data model of the 'Network Port' or 'Storage Port' element object
+            of the 'Adapter' object in the :term:`HMC API` book.
+            The property names have hyphens (-) as described in that book."
+  sample:
+    {
+        "adapter-family": "ficon",
+        "adapter-id": "120",
+        "allowed-capacity": 64,
+        "card-location": "A14B-D112-J.01",
+        "channel-path-id": "09",
+        "class": "adapter",
+        "configured-capacity": 14,
+        "description": "",
+        "detected-card-type": "ficon-express-16s-plus",
+        "maximum-total-capacity": 254,
+        "name": "FCP_120_SAN1_02",
+        "object-id": "dfb2147a-e578-11e8-a87c-00106f239c31",
+        "object-uri": "/api/adapters/dfb2147a-e578-11e8-a87c-00106f239c31",
+        "parent": "/api/cpcs/66942455-4a14-3f99-8904-3e7ed5ca28d7",
+        "physical-channel-status": "operating",
+        "port-count": 1,
+        "ports": [
+            {
+                "class": "storage-port",
+                "description": "",
+                "element-id": "0",
+                "element-uri": "/api/adapters/dfb2147a-e578-11e8-a87c-00106f239c31/storage-ports/0",
+                "fabric-id": "100088947155A1E9",
+                "index": 0,
+                "name": "Port 0",
+                "parent": "/api/adapters/dfb2147a-e578-11e8-a87c-00106f239c31"
+            }
+        ],
+        "state": "online",
+        "status": "active",
+        "storage-port-uris": [
+            "/api/adapters/dfb2147a-e578-11e8-a87c-00106f239c31/storage-ports/0"
+        ],
+        "type": "fcp",
+        "used-capacity": 20
+    }
 """
 
 import logging  # noqa: E402

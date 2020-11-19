@@ -164,11 +164,20 @@ EXAMPLES = """
 """
 
 RETURN = """
+changed:
+  description: Indicates if any change has been made by the module.
+    For C(state=facts), always will be false.
+  returned: always
+  type: bool
+msg:
+  description: An error message that describes the failure.
+  returned: failure
+  type: str
 virtual_function:
   description:
     - "For C(state=absent), an empty dictionary."
-    - "For C(state=present), a dictionary with the resource properties of the
-       virtual function (after changes, if any)."
+    - "For C(state=present), the resource properties of the virtual function
+       after any changes."
   returned: success
   type: dict
   contains:
@@ -177,7 +186,9 @@ virtual_function:
       type: str
     "{property}":
       description: "Additional properties of the virtual function, as described
-        in the :term:`HMC API` (using hyphens (-) in the property names)."
+        in the data model of the 'Virtual Function' element object of the
+        'Partition' object in the :term:`HMC API` book.
+        The property names have hyphens (-) as described in that book."
 """
 
 import logging  # noqa: E402

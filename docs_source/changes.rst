@@ -72,6 +72,10 @@ Released: not yet
 
 * Fixed ParameterError raised when creating NICs on CNA adapter ports.
 
+* Docs: In the description of the module return data, added samples and
+  fixed errors in the described structure of return data for the modules
+  `zhmc_adapter`, `zhmc_cpc`, `zhmc_storage_group` and `zhmc_user`.
+
 **Enhancements:**
 
 * Added end2end test support, against real HMCs.

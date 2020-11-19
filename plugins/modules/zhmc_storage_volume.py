@@ -178,25 +178,58 @@ EXAMPLES = """
 """
 
 RETURN = """
+changed:
+  description: Indicates if any change has been made by the module.
+    For C(state=facts), always will be false.
+  returned: always
+  type: bool
+msg:
+  description: An error message that describes the failure.
+  returned: failure
+  type: str
 storage_volume:
   description:
     - "For C(state=absent), an empty dictionary."
-    - "For C(state=present|facts), a dictionary with the resource properties of
-       the storage volume, indicating the state after changes from this module
-       (if any) have been applied."
+    - "For C(state=present|facts), the resource properties of the storage
+       volume after any changes."
   returned: success
   type: dict
   contains:
     name:
       description: "Storage volume name"
       type: str
-    "{property}":
-      description: "Additional properties of the storage volume, as described
-        in the :term:`HMC API` (using hyphens (-) in the property names)."
     type:
       description: "Type of the storage volume ('fc' or 'fcp'), as defined in
         its storage group."
       type: str
+    "{property}":
+      description: "Additional properties of the storage volume, as described
+        in the data model of the 'Storage Volume' element object of the
+        'Storage Group' object in the :term:`HMC API` book.
+        The property names have hyphens (-) as described in that book."
+  sample:
+    {
+        "active-size": 128.0,
+        "class": "storage-volume",
+        "description": "Boot volume",
+        "element-id": "f02e2632-200a-11e9-8748-00106f239c31",
+        "element-uri": "/api/storage-groups/edd782f2-200a-11e9-a142-00106f239c31/storage-volumes/f02e2632-200a-11e9-8748-00106f239c31",
+        "fulfillment-state": "complete",
+        "name": "MGMT1_MGMT1-boot",
+        "parent": "/api/storage-groups/edd782f2-200a-11e9-a142-00106f239c31",
+        "paths": [
+            {
+                "device-number": "0015",
+                "logical-unit-number": "0000000000000000",
+                "partition-uri": "/api/partitions/009c0f4c-3588-11e9-bad3-00106f239d19",
+                "target-world-wide-port-name": "5005076810260382"
+            }
+        ],
+        "size": 128.0,
+        "type": "fcp",
+        "usage": "boot",
+        "uuid": "600507681081001D4800000000000083"
+    }
 """
 
 import logging  # noqa: E402

@@ -235,14 +235,36 @@ Return Values
 -------------
 
 
-   cpc
+   changed
+        Indicates if any change has been made by the module. For ``state=facts``, always will be false.
+
+
+        | **returned**: always
+        | **type**: bool
+
+
+
+   msg
+        An error message that describes the failure.
+
+
+        | **returned**: failure
+        | **type**: str
+
+
+
+   adapter
         For ``state=absent``, an empty dictionary.
 
-        For ``state=set|present|facts``, a dictionary with the properties of the adapter, including additional artificial properties as described below.
+        For ``state=set|present|facts``, the adapter and its ports.
 
 
         | **returned**: success
         | **type**: dict
+
+        **sample**: ::
+
+                  {"adapter-family": "ficon", "adapter-id": "120", "allowed-capacity": 64, "card-location": "A14B-D112-J.01", "channel-path-id": "09", "class": "adapter", "configured-capacity": 14, "description": "", "detected-card-type": "ficon-express-16s-plus", "maximum-total-capacity": 254, "name": "FCP_120_SAN1_02", "object-id": "dfb2147a-e578-11e8-a87c-00106f239c31", "object-uri": "/api/adapters/dfb2147a-e578-11e8-a87c-00106f239c31", "parent": "/api/cpcs/66942455-4a14-3f99-8904-3e7ed5ca28d7", "physical-channel-status": "operating", "port-count": 1, "ports": [{"class": "storage-port", "description": "", "element-id": "0", "element-uri": "/api/adapters/dfb2147a-e578-11e8-a87c-00106f239c31/storage-ports/0", "fabric-id": "100088947155A1E9", "index": 0, "name": "Port 0", "parent": "/api/adapters/dfb2147a-e578-11e8-a87c-00106f239c31"}], "state": "online", "status": "active", "storage-port-uris": ["/api/adapters/dfb2147a-e578-11e8-a87c-00106f239c31/storage-ports/0"], "type": "fcp", "used-capacity": 20}
 
 
     name
@@ -254,7 +276,7 @@ Return Values
 
 
     {property}
-          Additional properties of the adapter, as described in the :term:`HMC API` (using hyphens (-) in the property names).
+          Additional properties of the adapter, as described in the data model of the 'Adapter' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
 
 
           | **type**: 
@@ -262,42 +284,25 @@ Return Values
 
 
     ports
-          Artificial property for the ports of the adapter, with a subset of its properties.
+          Artificial property for the ports of the adapter.
 
 
-          | **type**: dict
+          | **type**: list
 
 
-     {name}
+     name
             Port name
 
 
-            | **type**: dict
-
-
-      name
-              Port name
-
-
-              | **type**: str
+            | **type**: str
 
 
 
-      status
-              Status of the port
+     {property}
+            Additional properties of the port, as described in the data model of the 'Network Port' or 'Storage Port' element object of the 'Adapter' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
 
 
-              | **type**: str
-
-
-
-      element_uri
-              Canonical URI of the port
-
-
-              | **type**: str
-
-
+            | **type**: 
 
 
 

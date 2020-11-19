@@ -95,8 +95,8 @@ options:
     choices: ['attached', 'detached', 'facts']
   adapter_count:
     description:
-      - "Only for C(state=attach): The number of crypto adapters the partition
-         needs to have attached.
+      - "Only for C(state=attached): The number of crypto adapters the
+         partition needs to have attached.
          The special value -1 means all adapters of the desired crypto type in
          the CPC.
          The C(adapter_names) and C(adapter_count) parameters are mutually
@@ -107,7 +107,7 @@ options:
     default: -1
   adapter_names:
     description:
-      - "Only for C(state=attach): The names of the crypto adapters the
+      - "Only for C(state=attached): The names of the crypto adapters the
          partition needs to have attached.
          The C(adapter_names) and C(adapter_count) parameters are mutually
          exclusive; if neither is specified the default for C(adapter_count)
@@ -118,9 +118,9 @@ options:
     default: []
   domain_range:
     description:
-      - "Only for C(state=attach): The domain range the partition needs to have
-         attached, as a tuple of integers (min, max) that specify the inclusive
-         range of domain index numbers.
+      - "Only for C(state=attached): The domain range the partition needs to
+         have attached, as a tuple of integers (min, max) that specify the
+         inclusive range of domain index numbers.
          Other domains attached to the partition remain unchanged.
          The special value -1 for the max item means the maximum supported
          domain index number."
@@ -130,16 +130,16 @@ options:
     default: [0,-1]
   access_mode:
     description:
-      - "Only for C(state=attach): The access mode in which the crypto domains
-         specified in C(domain_range) need to be attached."
+      - "Only for C(state=attached): The access mode in which the crypto
+         domains specified in C(domain_range) need to be attached."
     type: str
     required: false
     default: 'usage'
     choices: ['usage', 'control']
   crypto_type:
     description:
-      - "Only for C(state=attach): The crypto type of the crypto adapters that
-         will be considered for attaching."
+      - "Only for C(state=attached): The crypto type of the crypto adapters
+         that will be considered for attaching."
     type: str
     required: false
     default: 'ep11'
@@ -224,10 +224,32 @@ EXAMPLES = """
 """
 
 RETURN = """
+changed:
+  description: Indicates if any change has been made by the module.
+    For C(state=facts), always will be false.
+  returned: always
+  type: bool
+msg:
+  description: An error message that describes the failure.
+  returned: failure
+  type: str
+changes:
+  description: The changes that were performed by the module.
+  returned: success
+  type: dict
+  contains:
+    added-adapters:
+      description: Names of the adapters that were added to the partition
+      type: list
+      elements: str
+    added-domains:
+      description: Domain index numbers of the crypto domains that were added
+        to the partition
+      type: list
+      elements: str
 crypto_configuration:
-  description:
-    - "For C(state=detached|attached|facts), the crypto configuration of the
-      partition after the changes performed by the module."
+  description: The crypto configuration of the partition after the changes
+    performed by the module.
   returned: success
   type: dict
   contains:
@@ -236,7 +258,7 @@ crypto_configuration:
       type: dict
       contains:
         adapters:
-          description: "Attached adapters"
+          description: "Attached crypto adapters"
           type: dict
           contains:
             "{name}":
@@ -247,9 +269,10 @@ crypto_configuration:
                   description: "Adapter name"
                   type: str
                 "{property}":
-                  description: "Additional properties of the adapter,
-                    as described in the :term:`HMC API`
-                    (using hyphens (-) in the property names)."
+                  description: "Additional properties of the adapter, as
+                    described in the data model of the 'Adapter' object in the
+                    :term:`HMC API` book. The property names have hyphens
+                    (-) as described in that book."
         domain_config:
           description: "Attached crypto domains"
           type: dict
@@ -271,22 +294,39 @@ crypto_configuration:
             in control mode"
           type: list
           elements: str
-changes:
-  description:
-    - "For C(state=detached|attached|facts), a dictionary with the changes
-       performed."
-  returned: success
-  type: dict
-  contains:
-    added-adapters:
-      description: "Names of the adapters that were added to the partition"
-      type: list
-      elements: str
-    added-domains:
-      description: "Domain index numbers of the crypto domains that were added
-        to the partition"
-      type: list
-      elements: str
+  sample:
+    {
+        "CSPF1": {
+            "adapters": {
+                "CRYP00": {
+                    "adapter-family": "crypto",
+                    "adapter-id": "118",
+                    "card-location": "A14B-LG09",
+                    "class": "adapter",
+                    "crypto-number": 0,
+                    "crypto-type": "ep11-coprocessor",
+                    "description": "",
+                    "detected-card-type": "crypto-express-6s",
+                    "name": "CRYP00",
+                    "object-id": "e1274d16-e578-11e8-a87c-00106f239c31",
+                    "object-uri": "/api/adapters/e1274d16-e578-11e8-a87c-00106f239c31",
+                    "parent": "/api/cpcs/66942455-4a14-3f99-8904-3e7ed5ca28d7",
+                    "physical-channel-status": "operating",
+                    "state": "online",
+                    "status": "active",
+                    "tke-commands-enabled": true,
+                    "type": "crypto",
+                    "udx-loaded": false
+                }
+            },
+            "domain_config": {
+                "10": "usage",
+                "11": "usage"
+            },
+            "control_domains": [],
+            "usage_domains": [10, 11]
+        }
+    }
 """
 
 import logging  # noqa: E402

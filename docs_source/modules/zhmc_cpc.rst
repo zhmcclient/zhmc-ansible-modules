@@ -16,7 +16,7 @@ zhmc_cpc -- Update CPCs
 
 Synopsis
 --------
-- Gather facts about a CPC (Z system), including its adapters and partitions.
+- Gather facts about a CPC (Z system), including its adapters, partitions, and storage groups.
 - Update the properties of a CPC.
 
 
@@ -162,12 +162,34 @@ Return Values
 -------------
 
 
+   changed
+        Indicates if any change has been made by the module. For ``state=facts``, always will be false.
+
+
+        | **returned**: always
+        | **type**: bool
+
+
+
+   msg
+        An error message that describes the failure.
+
+
+        | **returned**: failure
+        | **type**: str
+
+
+
    cpc
-        A dictionary with the properties of the CPC, including additional artificial properties as described below.
+        The CPC and its adapters, partitions, and storage groups.
 
 
         | **returned**: success
         | **type**: dict
+
+        **sample**: ::
+
+                  {"adapters": [{"adapter-family": "ficon", "adapter-id": "120", "name": "FCP_120_SAN1_02", "object-uri": "/api/adapters/dfb2147a-e578-11e8-a87c-00106f239c31", "status": "active", "type": "fcp"}, {"adapter-family": "osa", "adapter-id": "10c", "name": "OSM1", "object-uri": "/api/adapters/ddde026c-e578-11e8-a87c-00106f239c31", "status": "active", "type": "osm"}], "name": "CPCA", "partitions": [{"name": "PART1", "object-uri": "/api/partitions/c44338de-351b-11e9-9fbb-00106f239d19", "status": "stopped", "type": "linux"}, {"name": "PART2", "object-uri": "/api/partitions/6a46d18a-cf79-11e9-b447-00106f239d19", "status": "active", "type": "ssc"}], "storage-groups": [{"cpc-uri": "/api/cpcs/66942455-4a14-3f99-8904-3e7ed5ca28d7", "fulfillment-state": "complete", "name": "CPCA_SG_PART1", "object-uri": "/api/storage-groups/58e41a42-20a6-11e9-8dfc-00106f239c31", "type": "fcp"}, {"cpc-uri": "/api/cpcs/66942455-4a14-3f99-8904-3e7ed5ca28d7", "fulfillment-state": "complete", "name": "CPCA_SG_PART2", "object-uri": "/api/storage-groups/4947c6d0-f433-11ea-8f73-00106f239d19", "type": "fcp"}], "{property}": "... more properties ... "}
 
 
     name
@@ -179,134 +201,155 @@ Return Values
 
 
     {property}
-          Additional properties of the CPC, as described in the :term:`HMC API` (using hyphens (-) in the property names).
+          Additional properties of the CPC, as described in the data model of the 'CPC' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
 
 
           | **type**: 
 
 
 
-    partitions
-          Artificial property for the defined partitions of the CPC, with a subset of its properties.
-
-
-          | **type**: dict
-
-
-     {name}
-            Partition name
-
-
-            | **type**: dict
-
-
-      name
-              Partition name
-
-
-              | **type**: str
-
-
-
-      status
-              Status of the partition
-
-
-              | **type**: str
-
-
-
-      object_uri
-              Canonical URI of the partition
-
-
-              | **type**: str
-
-
-
-
-
-
-
     adapters
-          Artificial property for the adapters of the CPC, with a subset of its properties.
+          The adapters of the CPC, with a subset of their properties. For details, see the :term:`HMC API` book.
 
 
-          | **type**: dict
+          | **type**: list
 
 
-     {name}
+     name
             Adapter name
 
 
-            | **type**: dict
-
-
-      name
-              Adapter name
-
-
-              | **type**: str
+            | **type**: str
 
 
 
-      status
-              Status of the adapter
+     object-uri
+            Canonical URI of the adapter
 
 
-              | **type**: str
+            | **type**: str
 
 
 
-      object_uri
-              Canonical URI of the adapter
+     adapter-id
+            Adapter ID (PCHID)
 
 
-              | **type**: str
+            | **type**: str
 
 
+
+     type
+            Adapter type
+
+
+            | **type**: str
+
+
+
+     adapter-family
+            Adapter family
+
+
+            | **type**: str
+
+
+
+     status
+            Status of the adapter
+
+
+            | **type**: str
+
+
+
+
+
+    partitions
+          The defined partitions of the CPC, with a subset of their properties. For details, see the :term:`HMC API` book.
+
+
+          | **type**: list
+
+
+     name
+            Partition name
+
+
+            | **type**: str
+
+
+
+     object-uri
+            Canonical URI of the partition
+
+
+            | **type**: str
+
+
+
+     type
+            Type of the partition
+
+
+            | **type**: str
+
+
+
+     status
+            Status of the partition
+
+
+            | **type**: str
 
 
 
 
 
     storage-groups
-          Artificial property for the storage groups associated with the CPC, with a subset of its properties.
+          The storage groups associated with the CPC, with a subset of their properties. For details, see the :term:`HMC API` book.
 
 
-          | **type**: dict
+          | **type**: list
 
 
-     {name}
+     name
             Storage group name
 
 
-            | **type**: dict
-
-
-      name
-              Storage group name
-
-
-              | **type**: str
+            | **type**: str
 
 
 
-      fulfillment-status
-              Fulfillment status of the storage group
+     object-uri
+            Canonical URI of the storage group
 
 
-              | **type**: str
+            | **type**: str
 
 
 
-      object_uri
-              Canonical URI of the storage group
+     type
+            Storage group type
 
 
-              | **type**: str
+            | **type**: str
 
 
+
+     fulfillment-status
+            Fulfillment status of the storage group
+
+
+            | **type**: str
+
+
+
+     cpc-uri
+            Canonical URI of the associated CPC
+
+
+            | **type**: str
 
 
 

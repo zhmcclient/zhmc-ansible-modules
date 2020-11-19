@@ -172,6 +172,15 @@ EXAMPLES = """
 """
 
 RETURN = """
+changed:
+  description: Indicates if any change has been made by the module.
+    For C(state=facts), always will be false.
+  returned: always
+  type: bool
+msg:
+  description: An error message that describes the failure.
+  returned: failure
+  type: str
 user:
   description:
     - "For C(state=absent), an empty dictionary."
@@ -186,24 +195,145 @@ user:
       description: "User name"
       type: str
     "{property}":
-      description: "Additional properties of the user, as described
-        in the :term:`HMC API` (using hyphens (-) in the property names)."
+      description: "Additional properties of the user, as described in the
+        data model of the 'User' object in the :term:`HMC API` book.
+        The property names have hyphens (-) as described in that book."
     user-pattern-name:
-      description: "Name of the user pattern referenced by property
-        C(user-pattern-uri)."
+      description: "Only for users with C(type=pattern): Name of the user
+        pattern referenced by property C(user-pattern-uri)."
       type: str
+    user-pattern:
+      description: "Only for users with C(type=pattern) and if C(expand=true):
+        User pattern referenced by property C(user-pattern-uri)."
+      type: dict
+      contains:
+        "{property}":
+          description: "Properties of the user pattern, as described in the
+            data model of the 'User Pattern' object in the :term:`HMC API`
+            book.
+            The property names have hyphens (-) as described in that book."
     password-rule-name:
-      description: "Name of the password rule referenced by property
-        C(password-rule-uri)."
+      description: "Only for users with C(authentication-type=local): Name of
+        the password rule referenced by property C(password-rule-uri)."
       type: str
+    password-rule:
+      description: "Only for users with C(authentication-type=local) and if
+        C(expand=true): Password rule referenced by property
+        C(password-rule-uri)."
+      type: dict
+      contains:
+        "{property}":
+          description: "Properties of the password rule, as described in the
+            data model of the 'Password Rule' object in the :term:`HMC API`
+            book.
+            The property names have hyphens (-) as described in that book."
     ldap-server-definition-name:
-      description: "Name of the LDAP server definition referenced by property
+      description: "Only for users with C(authentication-type=ldap): Name of
+        the LDAP server definition referenced by property
         C(ldap-server-definition-uri)."
       type: str
-    default-group-name:
-      description: "Name of the group referenced by property
-        C(default-group-uri)."
-      type: str
+    ldap-server-definition:
+      description: "Only for users with C(authentication-type=ldap) and if
+        C(expand=true): LDAP server definition referenced by property
+        C(ldap-server-definition-uri)."
+      type: dict
+      contains:
+        "{property}":
+          description: "Properties of the LDAP server definition, as described
+            in the data model of the 'LDAP Server Definition' object in the
+            :term:`HMC API` book.
+            The property names have hyphens (-) as described in that book."
+  sample:
+    {
+        "allow-management-interfaces": true,
+        "allow-remote-access": true,
+        "authentication-type": "local",
+        "class": "user",
+        "default-group-uri": null,
+        "description": "",
+        "disable-delay": 1,
+        "disabled": false,
+        "disruptive-pw-required": true,
+        "disruptive-text-required": false,
+        "email-address": null,
+        "force-password-change": false,
+        "force-shared-secret-key-change": null,
+        "idle-timeout": 0,
+        "inactivity-timeout": 0,
+        "is-locked": false,
+        "ldap-server-definition-uri": null,
+        "max-failed-logins": 3,
+        "max-web-services-api-sessions": 1000,
+        "min-pw-change-time": 0,
+        "multi-factor-authentication-required": false,
+        "name": "VALUE_SPECIFIED_IN_NO_LOG_PARAMETER",
+        "object-id": "91773b88-0c99-11eb-b4d3-00106f237ab1",
+        "object-uri": "/api/users/91773b88-0c99-11eb-b4d3-00106f237ab1",
+        "parent": "/api/console",
+        "password-expires": 87,
+        "password-rule": {
+            "case-sensitive": true,
+            "character-rules": [
+                {
+                    "alphabetic": "required",
+                    "custom-character-sets": [],
+                    "max-characters": 30,
+                    "min-characters": 15,
+                    "numeric": "required",
+                    "special": "required"
+                }
+            ],
+            "class": "password-rule",
+            "consecutive-characters": 1,
+            "description": "ZaaS password rule definition",
+            "element-id": "518ac1d8-bf98-11e9-b9dd-00106f237ab1",
+            "element-uri": "/api/console/password-rules/518ac1d8-bf98-11e9-b9dd-00106f237ab1",
+            "expiration": 90,
+            "history-count": 10,
+            "max-length": 30,
+            "min-length": 15,
+            "name": "ZaaS",
+            "parent": "/api/console",
+            "replication-overwrite-possible": true,
+            "similarity-count": 0,
+            "type": "user-defined"
+        },
+        "password-rule-name": "ZaaS",
+        "password-rule-uri": "/api/console/password-rules/518ac1d8-bf98-11e9-b9dd-00106f237ab1",
+        "replication-overwrite-possible": true,
+        "session-timeout": 0,
+        "type": "standard",
+        "user-role-names": [
+            "hmc-system-programmer-tasks",
+        ],
+        "user-role-objects": [
+            {
+                "associated-system-defined-user-role-uri": null,
+                "class": "user-role",
+                "description": "Tasks used by system programmers to configure and manage the system",
+                "is-inheritance-enabled": false,
+                "is-locked": false,
+                "name": "hmc-system-programmer-tasks",
+                "object-id": "19e90e27-1cae-422c-91ba-f76ac7fb8b82",
+                "object-uri": "/api/user-roles/19e90e27-1cae-422c-91ba-f76ac7fb8b82",
+                "parent": "/api/console",
+                "permissions": [
+                    {
+                        "permitted-object": "/api/console/tasks/900e4676-fd59-4e4d-8bf2-03ef73c3a3df",
+                        "permitted-object-type": "object"
+                    }
+                ],
+                "replication-overwrite-possible": true,
+                "type": "system-defined"
+            }
+        ],
+        "user-roles": [
+            "/api/user-roles/19e90e27-1cae-422c-91ba-f76ac7fb8b82"
+        ],
+        "userid-on-ldap-server": null,
+        "verify-timeout": 15,
+        "web-services-api-session-idle-timeout": 360
+    }
 """
 
 import uuid  # noqa: E402

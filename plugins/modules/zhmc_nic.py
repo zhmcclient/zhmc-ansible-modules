@@ -168,11 +168,20 @@ EXAMPLES = """
 """
 
 RETURN = """
+changed:
+  description: Indicates if any change has been made by the module.
+    For C(state=facts), always will be false.
+  returned: always
+  type: bool
+msg:
+  description: An error message that describes the failure.
+  returned: failure
+  type: str
 nic:
   description:
     - "For C(state=absent), an empty dictionary."
-    - "For C(state=present), a dictionary with the resource properties of the
-       NIC after changes, if any."
+    - "For C(state=present), the resource properties of the NIC after any
+       changes."
   returned: success
   type: dict
   contains:
@@ -180,8 +189,32 @@ nic:
       description: "NIC name"
       type: str
     "{property}":
-      description: "Additional properties of the NIC, as described in the
-        :term:`HMC API` (using hyphens (-) in the property names)."
+      description: "Additional properties of the NIC, as described in the data
+        model of the 'NIC' element object of the 'Partition' object in the
+        :term:`HMC API` book.
+        The property names have hyphens (-) as described in that book."
+  sample:
+    {
+        "adapter-id": "128",
+        "adapter-name": "OSD_128_MGMT_NET2_30",
+        "adapter-port": 0,
+        "class": "nic",
+        "description": "HAMGMT",
+        "device-number": "0004",
+        "element-id": "5956e97a-f433-11ea-b67c-00106f239d19",
+        "element-uri": "/api/partitions/32323df4-f433-11ea-b67c-00106f239d19/nics/5956e97a-f433-11ea-b67c-00106f239d19",
+        "mac-address": "02:d2:4d:80:b9:88",
+        "name": "HAMGMT0",
+        "parent": "/api/partitions/32323df4-f433-11ea-b67c-00106f239d19",
+        "ssc-ip-address": null,
+        "ssc-ip-address-type": null,
+        "ssc-management-nic": false,
+        "ssc-mask-prefix": null,
+        "type": "osd",
+        "virtual-switch-uri": "/api/virtual-switches/db2f0bec-e578-11e8-bd0a-00106f239c31",
+        "vlan-id": null,
+        "vlan-type": null
+    }
 """
 
 import logging  # noqa: E402

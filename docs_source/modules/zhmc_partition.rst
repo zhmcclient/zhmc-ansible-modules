@@ -272,16 +272,36 @@ Return Values
 -------------
 
 
+   changed
+        Indicates if any change has been made by the module. For ``state=facts``, always will be false.
+
+
+        | **returned**: always
+        | **type**: bool
+
+
+
+   msg
+        An error message that describes the failure.
+
+
+        | **returned**: failure
+        | **type**: str
+
+
+
    partition
         For ``state=absent``, an empty dictionary.
 
-        For ``state=stopped`` and ``state=active``, a dictionary with the resource properties of the partition after changes, if any.
-
-        For ``state=facts``, a dictionary with the resource properties of the partition, including its child resources as described below.
+        For ``state=stopped|active|facts``, the resource properties of the partition after any changes, including its child resources as described below.
 
 
         | **returned**: success
         | **type**: dict
+
+        **sample**: ::
+
+                  {"acceptable-status": ["active"], "access-basic-counter-set": true, "access-basic-sampling": false, "access-coprocessor-group-set": false, "access-crypto-activity-counter-set": true, "access-diagnostic-sampling": false, "access-extended-counter-set": true, "access-global-performance-data": true, "access-problem-state-counter-set": true, "auto-start": false, "autogenerate-partition-id": true, "available-features-list": [{"description": "The DPM storage management approach in which FCP and FICON storage resources are defined in Storage Groups, which are attached to Partitions.", "name": "dpm-storage-management", "state": true}], "boot-configuration-selector": 0, "boot-device": "none", "boot-ftp-host": null, "boot-ftp-insfile": null, "boot-ftp-username": null, "boot-iso-image-name": null, "boot-iso-ins-file": null, "boot-logical-unit-number": "", "boot-network-device": null, "boot-os-specific-parameters": "", "boot-record-lba": "0", "boot-removable-media": null, "boot-removable-media-type": null, "boot-storage-device": null, "boot-storage-volume": null, "boot-timeout": 60, "boot-world-wide-port-name": "", "class": "partition", "cp-absolute-processor-capping": false, "cp-absolute-processor-capping-value": 1.0, "cp-processing-weight-capped": false, "cp-processors": 0, "crypto-configuration": {"crypto-adapter-uris": ["/api/adapters/f1b97ed8-e578-11e8-a87c-00106f239c31"], "crypto-domain-configurations": [{"access-mode": "control-usage", "domain-index": 2}]}, "current-cp-processing-weight": 1, "current-ifl-processing-weight": 1, "degraded-adapters": [], "description": "Colo dev partition", "has-unacceptable-status": false, "hba-uris": [], "hbas": [], "ifl-absolute-processor-capping": false, "ifl-absolute-processor-capping-value": 1.0, "ifl-processing-weight-capped": false, "ifl-processors": 12, "initial-cp-processing-weight": 100, "initial-ifl-processing-weight": 120, "initial-memory": 102400, "ipl-load-parameter": "", "is-locked": false, "maximum-cp-processing-weight": 999, "maximum-ifl-processing-weight": 999, "maximum-memory": 102400, "minimum-cp-processing-weight": 1, "minimum-ifl-processing-weight": 1, "name": "CSPF1", "nic-uris": ["/api/partitions/32323df4-f433-11ea-b67c-00106f239d19/nics/5956e97a-f433-11ea-b67c-00106f239d19"], "nics": [{"adapter-id": "128", "adapter-name": "OSD_128_MGMT_NET2_30", "adapter-port": 0, "class": "nic", "description": "HAMGMT", "device-number": "0004", "element-id": "5956e97a-f433-11ea-b67c-00106f239d19", "element-uri": "/api/partitions/32323df4-f433-11ea-b67c-00106f239d19/nics/5956e97a-f433-11ea-b67c-00106f239d19", "mac-address": "02:d2:4d:80:b9:88", "name": "HAMGMT0", "parent": "/api/partitions/32323df4-f433-11ea-b67c-00106f239d19", "ssc-ip-address": null, "ssc-ip-address-type": null, "ssc-management-nic": false, "ssc-mask-prefix": null, "type": "osd", "virtual-switch-uri": "/api/virtual-switches/db2f0bec-e578-11e8-bd0a-00106f239c31", "vlan-id": null, "vlan-type": null}], "object-id": "32323df4-f433-11ea-b67c-00106f239d19", "object-uri": "/api/partitions/32323df4-f433-11ea-b67c-00106f239d19", "os-name": "SSC", "os-type": "SSC", "os-version": "3.13.0", "parent": "/api/cpcs/66942455-4a14-3f99-8904-3e7ed5ca28d7", "partition-id": "08", "permit-aes-key-import-functions": true, "permit-cross-partition-commands": false, "permit-des-key-import-functions": true, "processor-management-enabled": false, "processor-mode": "shared", "reserve-resources": false, "reserved-memory": 0, "short-name": "CSPF1", "ssc-boot-selection": "appliance", "ssc-dns-servers": ["8.8.8.8"], "ssc-host-name": "cpca-cspf1", "ssc-ipv4-gateway": null, "ssc-ipv6-gateway": null, "ssc-master-userid": "hmREST", "status": "active", "storage-group-uris": ["/api/storage-groups/4947c6d0-f433-11ea-8f73-00106f239d19"], "threads-per-processor": 2, "type": "ssc", "virtual-function-uris": [], "virtual-functions": []}
 
 
     name
@@ -293,7 +313,7 @@ Return Values
 
 
     {property}
-          Additional properties of the partition, as described in the :term:`HMC API` (using hyphens (-) in the property names).
+          Additional properties of the partition, as described in the data model of the 'Partition' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
 
 
           | **type**: 
@@ -301,7 +321,7 @@ Return Values
 
 
     hbas
-          HBAs of the partition (for ``state=facts``).
+          HBAs of the partition. If the CPC does not have the storage-management feature enabled (ie. before z15), the list is empty.
 
 
           | **type**: list
@@ -316,7 +336,7 @@ Return Values
 
 
      {property}
-            Additional properties of the HBA, as described in the :term:`HMC API` (using hyphens (-) in the property names).
+            Additional properties of the HBA, as described in the data model of the 'HBA' element object of the 'Partition' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
 
 
             | **type**: 
@@ -326,7 +346,7 @@ Return Values
 
 
     nics
-          NICs of the partition (for ``state=facts``).
+          NICs of the partition.
 
 
           | **type**: list
@@ -341,7 +361,7 @@ Return Values
 
 
      {property}
-            Additional properties of the NIC, as described in the :term:`HMC API` (using hyphens (-) in the property names).
+            Additional properties of the NIC, as described in the data model of the 'NIC' element object of the 'Partition' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
 
 
             | **type**: 
@@ -351,14 +371,14 @@ Return Values
 
 
     virtual-functions
-          Virtual functions of the partition (for ``state=facts``).
+          Virtual functions of the partition.
 
 
           | **type**: list
 
 
      name
-            VF name
+            Virtual function name
 
 
             | **type**: str
@@ -366,7 +386,7 @@ Return Values
 
 
      {property}
-            Additional properties of the VF, as described in the :term:`HMC API` (using hyphens (-) in the property names).
+            Additional properties of the virtual function, as described in the data model of the 'Virtual Function' element object of the 'Partition' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
 
 
             | **type**: 
