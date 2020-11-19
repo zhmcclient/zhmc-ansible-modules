@@ -90,7 +90,7 @@ class TestZhmcPartitionMain(unittest.TestCase):
             expand_crypto_adapters=dict(required=False, type='bool',
                                         default=False),
             log_file=dict(required=False, type='str', default=None),
-            faked_session=dict(required=False, type='raw'),
+            _faked_session=dict(required=False, type='raw'),
         )
         assert(ansible_mod_cls.call_args ==
                mock.call(argument_spec=expected_argument_spec,

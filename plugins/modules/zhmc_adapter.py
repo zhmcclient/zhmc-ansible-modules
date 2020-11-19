@@ -151,11 +151,9 @@ options:
     type: str
     required: false
     default: null
-  faked_session:
+  _faked_session:
     description:
-      - "A C(zhmcclient_mock.FakedSession) object that has a mocked HMC set up.
-         If not null, this session will be used instead of connecting to the
-         HMC specified in C(hmc_host). This is used for testing purposes only."
+      - "An internal parameter used for testing the module."
     type: raw
     required: false
     default: null
@@ -488,12 +486,12 @@ def ensure_set(params, check_mode):
     cpc_name = params['cpc_name']
     adapter_name = params['name']
     adapter_match = params['match']
-    faked_session = params.get('faked_session', None)  # No default specified
+    _faked_session = params.get('_faked_session', None)  # No default specified
 
     changed = False
 
     try:
-        session = get_session(faked_session, host, userid, password)
+        session = get_session(_faked_session, host, userid, password)
         client = zhmcclient.Client(session)
         cpc = client.cpcs.find(name=cpc_name)
         adapter = identify_adapter(cpc, adapter_name, adapter_match)
@@ -564,12 +562,12 @@ def ensure_present(params, check_mode):
     userid, password = get_hmc_auth(params['hmc_auth'])
     cpc_name = params['cpc_name']
     adapter_name = params['name']
-    faked_session = params.get('faked_session', None)  # No default specified
+    _faked_session = params.get('_faked_session', None)  # No default specified
 
     changed = False
 
     try:
-        session = get_session(faked_session, host, userid, password)
+        session = get_session(_faked_session, host, userid, password)
         client = zhmcclient.Client(session)
         cpc = client.cpcs.find(name=cpc_name)
         # The default exception handling is sufficient for the above.
@@ -699,13 +697,13 @@ def ensure_absent(params, check_mode):
     userid, password = get_hmc_auth(params['hmc_auth'])
     cpc_name = params['cpc_name']
     adapter_name = params['name']
-    faked_session = params.get('faked_session', None)  # No default specified
+    _faked_session = params.get('_faked_session', None)  # No default specified
 
     changed = False
     result = {}
 
     try:
-        session = get_session(faked_session, host, userid, password)
+        session = get_session(_faked_session, host, userid, password)
         client = zhmcclient.Client(session)
         cpc = client.cpcs.find(name=cpc_name)
         # The default exception handling is sufficient for the above.
@@ -739,10 +737,10 @@ def facts(params, check_mode):
     userid, password = get_hmc_auth(params['hmc_auth'])
     cpc_name = params['cpc_name']
     adapter_name = params['name']
-    faked_session = params.get('faked_session', None)  # No default specified
+    _faked_session = params.get('_faked_session', None)  # No default specified
 
     try:
-        session = get_session(faked_session, host, userid, password)
+        session = get_session(_faked_session, host, userid, password)
         client = zhmcclient.Client(session)
         cpc = client.cpcs.find(name=cpc_name)
         adapter = cpc.adapters.find(name=adapter_name)
@@ -799,7 +797,7 @@ def main():
                    choices=['set', 'present', 'absent', 'facts']),
         properties=dict(required=False, type='dict', default={}),
         log_file=dict(required=False, type='str', default=None),
-        faked_session=dict(required=False, type='raw'),
+        _faked_session=dict(required=False, type='raw'),
     )
 
     module = AnsibleModule(

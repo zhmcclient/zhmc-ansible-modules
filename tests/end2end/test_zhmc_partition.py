@@ -130,7 +130,6 @@ def test_partition_facts(ansible_mod_cls, check_mode, hmc_session):  # noqa: F81
         'name': partition.name,
         'state': 'facts',
         'log_file': None,
-        'faked_session': None,
     }
 
     # Prepare mocks for AnsibleModule object

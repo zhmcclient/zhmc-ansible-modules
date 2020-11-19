@@ -1016,7 +1016,7 @@ class TestPartition(object):
             'expand_storage_groups': False,
             'expand_crypto_adapters': False,
             'log_file': None,
-            'faked_session': self.session,
+            '_faked_session': self.session,
         }
 
         # Prepare mocks for AnsibleModule object
@@ -1101,7 +1101,7 @@ class TestPartition(object):
             'expand_storage_groups': expand_storage_groups,
             'expand_crypto_adapters': expand_crypto_adapters,
             'log_file': None,
-            'faked_session': self.session,
+            '_faked_session': self.session,
         }
 
         # Prepare mocks for AnsibleModule object
@@ -1254,7 +1254,7 @@ class TestPartition(object):
             'expand_storage_groups': False,
             'expand_crypto_adapters': False,
             'log_file': None,
-            'faked_session': self.session,
+            '_faked_session': self.session,
         }
 
         # Prepare mocks for AnsibleModule object
@@ -1324,7 +1324,7 @@ class TestPartition(object):
             'expand_storage_groups': False,
             'expand_crypto_adapters': False,
             'log_file': None,
-            'faked_session': self.session,
+            '_faked_session': self.session,
         }
 
         # Prepare mocks for AnsibleModule object
@@ -1405,7 +1405,7 @@ class TestPartition(object):
             'expand_storage_groups': False,
             'expand_crypto_adapters': False,
             'log_file': None,
-            'faked_session': self.session,
+            '_faked_session': self.session,
         }
 
         # Prepare mocks for AnsibleModule object
@@ -1471,7 +1471,7 @@ class TestPartition(object):
             'expand_storage_groups': False,
             'expand_crypto_adapters': False,
             'log_file': None,
-            'faked_session': self.session,
+            '_faked_session': self.session,
         }
 
         # Prepare mocks for AnsibleModule object
@@ -1550,7 +1550,7 @@ class TestPartition(object):
             'expand_storage_groups': False,
             'expand_crypto_adapters': False,
             'log_file': None,
-            'faked_session': self.session,
+            '_faked_session': self.session,
         }
 
         # Prepare mocks for AnsibleModule object
@@ -1628,7 +1628,7 @@ class TestPartition(object):
             'expand_storage_groups': False,
             'expand_crypto_adapters': False,
             'log_file': None,
-            'faked_session': self.session,
+            '_faked_session': self.session,
         }
 
         # Prepare mocks for AnsibleModule object
@@ -1816,7 +1816,7 @@ class TestPartition(object):
             'expand_storage_groups': False,
             'expand_crypto_adapters': False,
             'log_file': None,
-            'faked_session': self.session,
+            '_faked_session': self.session,
         }
 
         # Prepare mocks for AnsibleModule object

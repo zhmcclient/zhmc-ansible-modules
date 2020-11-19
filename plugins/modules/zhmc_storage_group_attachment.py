@@ -111,11 +111,9 @@ options:
     type: str
     required: false
     default: null
-  faked_session:
+  _faked_session:
     description:
-      - "A C(zhmcclient_mock.FakedSession) object that has a mocked HMC set up.
-         If not null, this session will be used instead of connecting to the
-         HMC specified in C(hmc_host). This is used for testing purposes only."
+      - "An internal parameter used for testing the module."
     required: false
     type: raw
     default: null
@@ -210,13 +208,13 @@ def ensure_attached(params, check_mode):
     cpc_name = params['cpc_name']
     storage_group_name = params['storage_group_name']
     partition_name = params['partition_name']
-    faked_session = params.get('faked_session', None)
+    _faked_session = params.get('_faked_session', None)
 
     changed = False
     attached = None
 
     try:
-        session = get_session(faked_session, host, userid, password)
+        session = get_session(_faked_session, host, userid, password)
         client = zhmcclient.Client(session)
         console = client.consoles.console
         cpc = client.cpcs.find(name=cpc_name)
@@ -264,13 +262,13 @@ def ensure_detached(params, check_mode):
     cpc_name = params['cpc_name']
     storage_group_name = params['storage_group_name']
     partition_name = params['partition_name']
-    faked_session = params.get('faked_session', None)
+    _faked_session = params.get('_faked_session', None)
 
     changed = False
     attached = None
 
     try:
-        session = get_session(faked_session, host, userid, password)
+        session = get_session(_faked_session, host, userid, password)
         client = zhmcclient.Client(session)
         console = client.consoles.console
         cpc = client.cpcs.find(name=cpc_name)
@@ -318,13 +316,13 @@ def facts(params, check_mode):
     cpc_name = params['cpc_name']
     storage_group_name = params['storage_group_name']
     partition_name = params['partition_name']
-    faked_session = params.get('faked_session', None)
+    _faked_session = params.get('_faked_session', None)
 
     changed = False
     attached = None
 
     try:
-        session = get_session(faked_session, host, userid, password)
+        session = get_session(_faked_session, host, userid, password)
         client = zhmcclient.Client(session)
         console = client.consoles.console
         cpc = client.cpcs.find(name=cpc_name)
@@ -387,7 +385,7 @@ def main():
         state=dict(required=True, type='str',
                    choices=['detached', 'attached', 'facts']),
         log_file=dict(required=False, type='str', default=None),
-        faked_session=dict(required=False, type='raw'),
+        _faked_session=dict(required=False, type='raw'),
     )
 
     module = AnsibleModule(
