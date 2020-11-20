@@ -15,7 +15,6 @@
       cpc_name: "{{ cpc_name }}"
       partition_name: "{{ partition_name }}"
       state: detached
-      log_file: crypto.log
     register: result
 
   - name: Print the result

@@ -16,3 +16,8 @@
       storage_group_name: "{{ sg_name }}"
       name: "{{ sv_name }}"
       state: absent
+    register: result
+
+  - name: Print the result
+    debug:
+      var: result

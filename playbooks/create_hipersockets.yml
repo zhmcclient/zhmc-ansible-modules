@@ -17,10 +17,8 @@
       properties:
         type: hipersockets
         description: "This is Hipersockets adapter {{ hs_adapter_name }}"
-    register: adapter1
+    register: result
 
-  - debug:
-      var: adapter1
-
-  - debug:
-      msg: "Adapter: description = '{{ adapter1['adapter']['description'] }}', name = '{{ adapter1['adapter']['name'] }}'"
+  - name: Print the result
+    debug:
+      var: result

@@ -15,3 +15,8 @@
       cpc_name: "{{ cpc_name }}"
       name: "{{ sg_name }}"
       state: absent
+    register: result
+
+  - name: Print the result
+    debug:
+      var: result
