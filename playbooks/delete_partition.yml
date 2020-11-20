@@ -14,3 +14,8 @@
       cpc_name: "{{ cpc_name }}"
       name: "{{ partition_name }}"
       state: absent
+    register: result
+
+  - name: Print the result
+    debug:
+      var: result

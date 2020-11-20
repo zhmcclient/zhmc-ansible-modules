@@ -14,7 +14,8 @@
       cpc_name: "{{ cpc_name }}"
       name: "{{ partition_name }}"
       state: facts
-    register: part1
+    register: result
 
-  - debug:
-      var: part1
+  - name: Print the result
+    debug:
+      var: result

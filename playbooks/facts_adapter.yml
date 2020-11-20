@@ -15,10 +15,8 @@
       cpc_name: "{{ cpc_name }}"
       name: "{{ adapter_name }}"
       state: facts
-    register: adapter1
+    register: result
 
-  - debug:
-      var: adapter1
-
-  - debug:
-      msg: "Adapter: description = '{{ adapter1['adapter']['description'] }}', name = '{{ adapter1['adapter']['name'] }}'"
+  - name: Print the result
+    debug:
+      var: result

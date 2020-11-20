@@ -19,11 +19,8 @@
       state: set
       properties:
         description: "This is adapter {{ adapter_name }}"
-      # log_file: adapter.log
-    register: adapter1
+    register: result
 
-  - debug:
-      var: adapter1
-
-  - debug:
-      msg: "Adapter: description = '{{ adapter1['adapter']['description'] }}', name = '{{ adapter1['adapter']['name'] }}'"
+  - name: Print the result
+    debug:
+      var: result
