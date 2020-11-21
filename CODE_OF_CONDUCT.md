@@ -55,9 +55,9 @@ further defined and clarified by project maintainers.
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported by contacting a zhmc-ansible-modules project maintainer,
-Juergen Leopold leopoldj@de.ibm.com, and/or Andreas Maier maiera@de.ibm.com. All
-complaints will be reviewed and investigated and will result in a response that
+reported by contacting an
+[admin of this project](https://github.com/zhmcclient/zhmc-ansible-modules/people).
+All complaints will be reviewed and investigated and will result in a response that
 is deemed necessary and appropriate to the circumstances. The project team is
 obligated to maintain confidentiality with regard to the reporter of an incident.
 Further details of specific enforcement policies may be posted separately.

@@ -70,7 +70,7 @@ build_ignore:
   - .travis.yml
   - CODE_OF_CONDUCT.md
   - CONTRIBUTING.rst  # only in older branches
-  - DCO1.1.txt
+  - DCO1.1.txt  # only in older branches
   - LICENSE
   - Makefile
   - README.md

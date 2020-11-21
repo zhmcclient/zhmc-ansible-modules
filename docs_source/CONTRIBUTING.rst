@@ -18,6 +18,9 @@ Contributing
 
 Third party contributions to this project are welcome!
 
+If you want to contribute, please first contact one of the
+`admins of this project <https://github.com/zhmcclient/zhmc-ansible-modules/people>`_.
+
 In order to contribute, create a `Git pull request`_, considering this:
 
 .. _Git pull request: https://help.github.com/articles/using-pull-requests/
@@ -59,13 +62,10 @@ a colon.
 It can include a more detailed description after the summary line. This is
 where you explain why the change was done, and summarize what was done.
 
-It must end with the DCO (Developer Certificate of Origin) sign-off line in the
+It must end with a sign-off line in the
 format shown in the example below, using your name and a valid email address of
-yours. The DCO sign-off line certifies that you followed the rules stated in
-`DCO 1.1`_. In short, you certify that you wrote the patch or otherwise have
+yours. The sign-off line certifies that you wrote the patch or otherwise have
 the right to pass it on as an open-source patch.
-
-.. _DCO 1.1: https://raw.githubusercontent.com/zhmcclient/zhmc-ansible-modules/master/DCO1.1.txt
 
 We use `GitCop`_ during creation of a pull request to check whether the commit
 messages in the pull request comply to this format.
