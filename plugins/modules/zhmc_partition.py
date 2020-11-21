@@ -31,7 +31,7 @@ ANSIBLE_METADATA = {
 DOCUMENTATION = """
 ---
 module: zhmc_partition
-version_added: "0.5.0"
+version_added: "2.9.0"
 short_description: Create partitions
 description:
   - Gather facts about a partition of a CPC (Z system), including its HBAs,

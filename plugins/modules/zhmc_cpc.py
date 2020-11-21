@@ -31,7 +31,7 @@ ANSIBLE_METADATA = {
 DOCUMENTATION = """
 ---
 module: zhmc_cpc
-version_added: "0.6.0"
+version_added: "2.9.0"
 short_description: Update CPCs
 description:
   - Gather facts about a CPC (Z system), including its adapters and partitions.

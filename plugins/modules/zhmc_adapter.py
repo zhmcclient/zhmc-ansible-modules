@@ -31,7 +31,7 @@ ANSIBLE_METADATA = {
 DOCUMENTATION = """
 ---
 module: zhmc_adapter
-version_added: "0.6.0"
+version_added: "2.9.0"
 short_description: Update adapters and create Hipersocket adapters
 description:
   - Gather facts about an adapter of a CPC (Z system), including its ports.
