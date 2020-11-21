@@ -291,11 +291,11 @@ $(dist_file): $(dist_dependent_files) galaxy.yml
 $(module_rst_dir):
 	mkdir -p $(module_rst_dir)
 
-$(module_rst_dir)/%.rst: $(module_py_dir)/%.py $(module_rst_dir)
+$(module_rst_dir)/%.rst: $(module_py_dir)/%.py $(module_rst_dir) $(doc_source_dir)/templates/module.rst.j2
 ifneq ($(doc_build),true)
 	@echo "makefile: Warning: Skipping module docs extraction on Python $(python_m_n_version)"
 else
-	ansible-doc-extractor $(module_rst_dir) $<
+	ansible-doc-extractor --template $(doc_source_dir)/templates/module.rst.j2 $(module_rst_dir) $<
 endif
 
 # .nojekyll file disables GitHub pages jekyll pre-processing
