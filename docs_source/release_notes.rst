@@ -13,18 +13,21 @@
 .. limitations under the License.
 ..
 
-.. _`Change log`:
 
-Change log
-----------
+.. _`Releases`:
+
+Releases
+========
 
 
 Version 1.0.0-dev1
-^^^^^^^^^^^^^^^^^^
+------------------
 
 This version contains all fixes up to version 0.8.x.
 
 Released: not yet
+
+Availability: `Galaxy`_, `GitHub`_
 
 **Incompatible changes:**
 
@@ -32,7 +35,7 @@ Released: not yet
   as the
   `zhmc-ansible-modules package on Pypi <https://pypi.org/project/zhmc-ansible-modules/>`_,
   but as the
-  `ibm.zhmc collection on Galaxy <https://galaxy.ansible.com/ibm/zhmc/>`_.
+  `ibm.zhmc collection on Ansible Galaxy <https://galaxy.ansible.com/ibm/zhmc/>`_.
   The installation of the zhmc Ansible modules is now done with::
 
     ansible-galaxy collection install ibm.zhmc
@@ -148,6 +151,8 @@ Version 0.8.0
 
 Released: 2019-04-02
 
+Availability: `Pypi`_, `GitHub`_
+
 **Bug fixes:**
 
 * Fixed an issue in the zhmc_crypto_attachment module where the incorrect
@@ -163,6 +168,8 @@ Version 0.7.0
 ^^^^^^^^^^^^^
 
 Released: 2019-02-20
+
+Availability: `Pypi`_, `GitHub`_
 
 **Incompatible changes:**
 
@@ -180,10 +187,13 @@ Released: 2019-02-20
   - Changed the format of the log lines.
   - Set log level also when no log_file is specified, causing the logs to be propagated to the root logger.
 
+
 Version 0.6.0
 ^^^^^^^^^^^^^
 
 Released: 2019-01-07
+
+Availability: `Pypi`_, `GitHub`_
 
 Fixed this change log in 0.6.1 and 0.7.0
 
@@ -245,6 +255,8 @@ Version 0.5.0
 
 Released: 2018-10-24
 
+Availability: `Pypi`_, `GitHub`_
+
 **Incompatible changes:**
 
 * Changed 'make setup' back to 'make develop' for consistency with the other
@@ -265,6 +277,8 @@ Released: 2018-10-24
 
 Version 0.4.0
 ^^^^^^^^^^^^^
+
+Availability: `Pypi`_, `GitHub`_
 
 Released: 2018-03-15
 
@@ -311,6 +325,8 @@ Version 0.3.0
 
 Released: 2017-08-16
 
+Availability: `Pypi`_, `GitHub`_
+
 **Incompatible changes:**
 
 **Deprecations:**
@@ -339,4 +355,18 @@ Version 0.2.0
 
 Released: 2017-07-20
 
+Availability: `Pypi`_, `GitHub`_
+
 This is the initial release.
+
+
+.. .............................................................................
+.. Links to available distributions of the zhmc collection
+.. .............................................................................
+
+.. _GitHub:
+   https://github.com/zhmcclient/zhmc-ansible-modules/releases
+.. _Galaxy:
+   https://galaxy.ansible.com/ibm/zhmc
+.. _Pypi:
+   https://pypi.org/project/zhmc-ansible-modules/
