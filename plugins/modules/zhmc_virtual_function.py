@@ -31,7 +31,7 @@ ANSIBLE_METADATA = {
 DOCUMENTATION = """
 ---
 module: zhmc_virtual_function
-version_added: "0.5.0"
+version_added: "2.9.0"
 short_description: Create virtual functions in partitions
 description:
   - Create, update, or delete a virtual function in a partition of a CPC

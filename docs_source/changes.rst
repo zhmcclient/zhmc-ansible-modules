@@ -48,6 +48,12 @@ Released: not yet
       tasks:
       - ...
 
+* Fixed the 'version_added' field in the module description to no longer
+  indicate the version of this module collection package, but instead the
+  minimum Ansible version supported, consistent with the definition of that
+  field. Since Ansible Galaxy supports Ansible 2.9 and above, the field
+  now shows 2.9 for all modules.
+
 **Deprecations:**
 
 **Bug fixes:**

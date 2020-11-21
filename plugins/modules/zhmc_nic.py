@@ -31,7 +31,7 @@ ANSIBLE_METADATA = {
 DOCUMENTATION = """
 ---
 module: zhmc_nic
-version_added: "0.5.0"
+version_added: "2.9.0"
 short_description: Create NICs in partitions
 description:
   - Create, update, or delete a NIC (virtual Network Interface Card) in a

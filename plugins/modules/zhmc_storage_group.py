@@ -31,7 +31,7 @@ ANSIBLE_METADATA = {
 DOCUMENTATION = """
 ---
 module: zhmc_storage_group
-version_added: "0.5.0"
+version_added: "2.9.0"
 short_description: Create storage groups
 description:
   - Gather facts about a storage group associated with a CPC (Z system),

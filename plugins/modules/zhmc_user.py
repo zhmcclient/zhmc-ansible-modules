@@ -31,7 +31,7 @@ ANSIBLE_METADATA = {
 DOCUMENTATION = """
 ---
 module: zhmc_user
-version_added: "1.0.0"
+version_added: "2.9.0"
 short_description: Create HMC users
 description:
   - Gather facts about a user on an HMC of a Z system.

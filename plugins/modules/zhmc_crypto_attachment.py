@@ -31,7 +31,7 @@ ANSIBLE_METADATA = {
 DOCUMENTATION = """
 ---
 module: zhmc_crypto_attachment
-version_added: "0.6.0"
+version_added: "2.9.0"
 short_description: Attach crypto resources to partitions
 description:
   - Gather facts about the attachment of crypto adapters and crypto domains to
