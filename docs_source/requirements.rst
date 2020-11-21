@@ -13,22 +13,29 @@
 .. limitations under the License.
 ..
 
-.. _all_modules:
 
-All modules
------------
+.. _`Requirements`:
+
+Requirements
+============
+
+For **IBM Z HMC Collection**, the managed node is the control node, i.e. the
+playbook has its ``hosts`` and ``connection`` properties set accordingly:
+
+.. code-block:: text
+
+   - hosts: localhost
+     connection: local
+
+The location of the HMC is defined with input parameters to the modules.
+
+Control node
+============
+
+Besides having Ansible and **IBM Z HMC Collection** installed, there are no
+additional requirements for the control node.
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 3
 
-   modules/zhmc_adapter
-   modules/zhmc_cpc
-   modules/zhmc_crypto_attachment
-   modules/zhmc_hba
-   modules/zhmc_nic
-   modules/zhmc_partition
-   modules/zhmc_storage_group
-   modules/zhmc_storage_group_attachment
-   modules/zhmc_storage_volume
-   modules/zhmc_user
-   modules/zhmc_virtual_function
+   requirements_managed

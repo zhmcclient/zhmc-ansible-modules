@@ -13,6 +13,7 @@
 .. limitations under the License.
 ..
 
+
 .. _`Development`:
 
 Development
@@ -29,7 +30,7 @@ the purpose of this section.
 Repository
 ----------
 
-The repository for the ibm.zhmc Ansible Galaxy collection project is on GitHub:
+The repository for **IBM Z HMC Collection** is on GitHub:
 
 https://github.com/zhmcclient/zhmc-ansible-modules
 
@@ -68,7 +69,7 @@ list of valid Make targets and a short description of what each target does.
 Building the documentation
 --------------------------
 
-The documentation for the ibm.zhmc Ansible Galaxy collection is published
+The documentation for **IBM Z HMC Collection** is published
 on GitHub pages at https://zhmcclient.github.io/zhmc-ansible-modules/.
 
 That page represents the ``master`` branch of the Git repo for this collection
