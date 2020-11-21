@@ -154,7 +154,9 @@ See Also
 
 {%     endfor %}
 
+{%     if _returned %}
   {{ "  " * level }}| **returned**: {{ _returned }}
+{%     endif %}
   {{ "  " * level }}| **type**: {{ _type }}
 {%     if _sample %}
 {%       if _type != 'str' and _type != 'int' %}
