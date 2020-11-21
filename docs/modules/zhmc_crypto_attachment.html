@@ -89,14 +89,9 @@
 <li class="toctree-l2"><a class="reference internal" href="zhmc_cpc.html">zhmc_cpc – Update CPCs</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">zhmc_crypto_attachment – Attach crypto resources to partitions</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#synopsis">Synopsis</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#parameters">Parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#examples">Examples</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#return-values">Return Values</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#status">Status</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#authors">Authors</a></li>
-</ul>
-</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_hba.html">zhmc_hba – Create HBAs in partitions</a></li>
@@ -153,6 +148,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -167,6 +164,11 @@
       <li class="wy-breadcrumbs-aside">
         
             
+            
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/IBM/ibm_zos_zosmf/tree/master/plugins/modules/zhmc_crypto_attachment.py" class="fa fa-github"> Edit on GitHub</a>
+            
+          
         
       </li>
     
@@ -183,70 +185,124 @@
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
-<li><p><a class="reference internal" href="#requirements" id="id2">Requirements</a></p></li>
-<li><p><a class="reference internal" href="#parameters" id="id3">Parameters</a></p></li>
-<li><p><a class="reference internal" href="#examples" id="id4">Examples</a></p></li>
-<li><p><a class="reference internal" href="#return-values" id="id5">Return Values</a></p></li>
-<li><p><a class="reference internal" href="#status" id="id6">Status</a></p></li>
+<li><p><a class="reference internal" href="#parameters" id="id2">Parameters</a></p></li>
+<li><p><a class="reference internal" href="#examples" id="id3">Examples</a></p></li>
+<li><p><a class="reference internal" href="#return-values" id="id4">Return Values</a></p></li>
 </ul>
 </div>
 <div class="section" id="synopsis">
 <h2><a class="toc-backref" href="#id1">Synopsis</a><a class="headerlink" href="#synopsis" title="Permalink to this headline">¶</a></h2>
-<p>Gather facts about the attachment of crypto adapters and crypto domains to a partition of a CPC (Z system).</p>
-<p>Attach a range of crypto domains and a number of crypto adapters to a partition.</p>
-<p>Detach all crypto domains and all crypto adapters from a partition.</p>
-</div>
-<div class="section" id="requirements">
-<h2><a class="toc-backref" href="#id2">Requirements</a><a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
-<p>The below requirements are needed on the host that executes this module.</p>
 <ul class="simple">
-<li><p>Access to the WS API of the HMC of the targeted Z system (see <a class="reference internal" href="../appendix.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a>). The targeted Z system must be in the Dynamic Partition Manager (DPM) operational mode.</p></li>
+<li><p>Gather facts about the attachment of crypto adapters and crypto domains to a partition of a CPC (Z system).</p></li>
+<li><p>Attach a range of crypto domains and a number of crypto adapters to a partition.</p></li>
+<li><p>Detach all crypto domains and all crypto adapters from a partition.</p></li>
 </ul>
 </div>
 <div class="section" id="parameters">
-<h2><a class="toc-backref" href="#id3">Parameters</a><a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div><dl>
-<dt>hmc_host (True, str, None)</dt><dd><p>The hostname or IP address of the HMC.</p>
+<h2><a class="toc-backref" href="#id2">Parameters</a><a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<dl>
+<dt>hmc_host</dt><dd><p>The hostname or IP address of the HMC.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: True</div>
+<div class="line"><strong>type</strong>: str</div>
+</div>
 </dd>
-<dt>hmc_auth (True, dict, None)</dt><dd><p>The authentication credentials for the HMC, as a dictionary of <code class="docutils literal notranslate"><span class="pre">userid</span></code>, <code class="docutils literal notranslate"><span class="pre">password</span></code>.</p>
-<dl class="simple">
-<dt>userid (True, str, None)</dt><dd><p>The userid (username) for authenticating with the HMC.</p>
+<dt>hmc_auth</dt><dd><p>The authentication credentials for the HMC, as a dictionary of <code class="docutils literal notranslate"><span class="pre">userid</span></code>, <code class="docutils literal notranslate"><span class="pre">password</span></code>.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: True</div>
+<div class="line"><strong>type</strong>: dict</div>
+</div>
+<dl>
+<dt>userid</dt><dd><p>The userid (username) for authenticating with the HMC.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: True</div>
+<div class="line"><strong>type</strong>: str</div>
+</div>
 </dd>
-<dt>password (True, str, None)</dt><dd><p>The password for authenticating with the HMC.</p>
+<dt>password</dt><dd><p>The password for authenticating with the HMC.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: True</div>
+<div class="line"><strong>type</strong>: str</div>
+</div>
 </dd>
 </dl>
 </dd>
-<dt>cpc_name (True, str, None)</dt><dd><p>The name of the CPC that has the partition and the crypto adapters.</p>
+<dt>cpc_name</dt><dd><p>The name of the CPC that has the partition and the crypto adapters.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: True</div>
+<div class="line"><strong>type</strong>: str</div>
+</div>
 </dd>
-<dt>partition_name (True, str, None)</dt><dd><p>The name of the partition to which the crypto domains and crypto adapters are attached.</p>
+<dt>partition_name</dt><dd><p>The name of the partition to which the crypto domains and crypto adapters are attached.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: True</div>
+<div class="line"><strong>type</strong>: str</div>
+</div>
 </dd>
-<dt>state (True, str, None)</dt><dd><p>The desired state for the attachment:</p>
+<dt>state</dt><dd><p>The desired state for the attachment:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">attached</span></code>: Ensures that the specified number of crypto adapters of the specified crypto type, and the specified range of domain index numbers in the specified access mode are attached to the partition.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">detached</span></code>: Ensures that no crypto adapter and no crypto domains are attached to the partition.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">facts</span></code>: Does not change anything on the attachment and returns the crypto configuration of the partition.</p></li>
 </ul>
+<div class="line-block">
+<div class="line"><strong>required</strong>: True</div>
+<div class="line"><strong>type</strong>: str</div>
+<div class="line"><strong>choices</strong>: attached, detached, facts</div>
+</div>
 </dd>
-<dt>adapter_count (False, int, -1)</dt><dd><p>Only for <code class="docutils literal notranslate"><span class="pre">state=attach</span></code>: The number of crypto adapters the partition needs to have attached. The special value -1 means all adapters of the desired crypto type in the CPC. The <code class="docutils literal notranslate"><span class="pre">adapter_names</span></code> and <code class="docutils literal notranslate"><span class="pre">adapter_count</span></code> parameters are mutually exclusive; if neither is specified the default for <code class="docutils literal notranslate"><span class="pre">adapter_count</span></code> applies.</p>
+<dt>adapter_count</dt><dd><p>Only for <code class="docutils literal notranslate"><span class="pre">state=attach</span></code>: The number of crypto adapters the partition needs to have attached. The special value -1 means all adapters of the desired crypto type in the CPC. The <code class="docutils literal notranslate"><span class="pre">adapter_names</span></code> and <code class="docutils literal notranslate"><span class="pre">adapter_count</span></code> parameters are mutually exclusive; if neither is specified the default for <code class="docutils literal notranslate"><span class="pre">adapter_count</span></code> applies.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: int</div>
+<div class="line"><strong>default</strong>: -1</div>
+</div>
 </dd>
-<dt>adapter_names (False, list, [])</dt><dd><p>Only for <code class="docutils literal notranslate"><span class="pre">state=attach</span></code>: The names of the crypto adapters the partition needs to have attached. The <code class="docutils literal notranslate"><span class="pre">adapter_names</span></code> and <code class="docutils literal notranslate"><span class="pre">adapter_count</span></code> parameters are mutually exclusive; if neither is specified the default for <code class="docutils literal notranslate"><span class="pre">adapter_count</span></code> applies.</p>
+<dt>adapter_names</dt><dd><p>Only for <code class="docutils literal notranslate"><span class="pre">state=attach</span></code>: The names of the crypto adapters the partition needs to have attached. The <code class="docutils literal notranslate"><span class="pre">adapter_names</span></code> and <code class="docutils literal notranslate"><span class="pre">adapter_count</span></code> parameters are mutually exclusive; if neither is specified the default for <code class="docutils literal notranslate"><span class="pre">adapter_count</span></code> applies.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: list</div>
+</div>
 </dd>
-<dt>domain_range (False, list, [0, -1])</dt><dd><p>Only for <code class="docutils literal notranslate"><span class="pre">state=attach</span></code>: The domain range the partition needs to have attached, as a tuple of integers (min, max) that specify the inclusive range of domain index numbers. Other domains attached to the partition remain unchanged. The special value -1 for the max item means the maximum supported domain index number.</p>
+<dt>domain_range</dt><dd><p>Only for <code class="docutils literal notranslate"><span class="pre">state=attach</span></code>: The domain range the partition needs to have attached, as a tuple of integers (min, max) that specify the inclusive range of domain index numbers. Other domains attached to the partition remain unchanged. The special value -1 for the max item means the maximum supported domain index number.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: list</div>
+<div class="line"><strong>default</strong>: [0, -1]</div>
+</div>
 </dd>
-<dt>access_mode (False, str, usage)</dt><dd><p>Only for <code class="docutils literal notranslate"><span class="pre">state=attach</span></code>: The access mode in which the crypto domains specified in <code class="docutils literal notranslate"><span class="pre">domain_range</span></code> need to be attached.</p>
+<dt>access_mode</dt><dd><p>Only for <code class="docutils literal notranslate"><span class="pre">state=attach</span></code>: The access mode in which the crypto domains specified in <code class="docutils literal notranslate"><span class="pre">domain_range</span></code> need to be attached.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: str</div>
+<div class="line"><strong>default</strong>: usage</div>
+<div class="line"><strong>choices</strong>: usage, control</div>
+</div>
 </dd>
-<dt>crypto_type (False, str, ep11)</dt><dd><p>Only for <code class="docutils literal notranslate"><span class="pre">state=attach</span></code>: The crypto type of the crypto adapters that will be considered for attaching.</p>
+<dt>crypto_type</dt><dd><p>Only for <code class="docutils literal notranslate"><span class="pre">state=attach</span></code>: The crypto type of the crypto adapters that will be considered for attaching.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: str</div>
+<div class="line"><strong>default</strong>: ep11</div>
+<div class="line"><strong>choices</strong>: ep11, cca, acc</div>
+</div>
 </dd>
-<dt>log_file (False, str, None)</dt><dd><p>File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.</p>
+<dt>log_file</dt><dd><p>File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: str</div>
+</div>
 </dd>
-<dt>faked_session (False, raw, None)</dt><dd><p>A <code class="docutils literal notranslate"><span class="pre">zhmcclient_mock.FakedSession</span></code> object that has a mocked HMC set up. If not null, this session will be used instead of connecting to the HMC specified in <code class="docutils literal notranslate"><span class="pre">hmc_host</span></code>. This is used for testing purposes only.</p>
+<dt>faked_session</dt><dd><p>A <code class="docutils literal notranslate"><span class="pre">zhmcclient_mock.FakedSession</span></code> object that has a mocked HMC set up. If not null, this session will be used instead of connecting to the HMC specified in <code class="docutils literal notranslate"><span class="pre">hmc_host</span></code>. This is used for testing purposes only.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: raw</div>
+</div>
 </dd>
 </dl>
-</div></blockquote>
 </div>
 <div class="section" id="examples">
-<h2><a class="toc-backref" href="#id4">Examples</a><a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id3">Examples</a><a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
 <span class="c1"># Note: The following examples assume that some variables named &#39;my_*&#39; are set.</span>
 
@@ -310,65 +366,111 @@
 </div>
 </div>
 <div class="section" id="return-values">
-<h2><a class="toc-backref" href="#id5">Return Values</a><a class="headerlink" href="#return-values" title="Permalink to this headline">¶</a></h2>
-<dl>
-<dt>crypto_configuration (success, dict, )</dt><dd><p>For <code class="docutils literal notranslate"><span class="pre">state=detached|attached|facts</span></code>, the crypto configuration of the partition after the changes performed by the module.</p>
-<dl>
-<dt>{name} (, dict, )</dt><dd><p>Partition name</p>
-<dl>
-<dt>adapters (, dict, )</dt><dd><p>Attached adapters</p>
-<dl>
-<dt>{name} (, dict, )</dt><dd><p>Adapter name</p>
-<dl class="simple">
-<dt>name (, str, )</dt><dd><p>Adapter name</p>
-</dd>
-<dt>{property} (, any, )</dt><dd><p>Additional properties of the adapter, as described in the <a class="reference internal" href="../appendix.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> (using hyphens (-) in the property names).</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd>
-<dt>domain_config (, dict, )</dt><dd><p>Attached crypto domains</p>
-<dl>
-<dt>{index} (, dict, )</dt><dd><p>Crypto domain index</p>
-<dl class="simple">
-<dt>{access_mode} (, str, )</dt><dd><p>Access mode (‘control’ or ‘usage’).</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd>
-<dt>usage_domains (, list, )</dt><dd><p>Domain index numbers of the crypto domains attached in usage mode</p>
-</dd>
-<dt>control_domains (, list, )</dt><dd><p>Domain index numbers of the crypto domains attached in control mode</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd>
-<dt>changes (success, dict, )</dt><dd><p>For <code class="docutils literal notranslate"><span class="pre">state=detached|attached|facts</span></code>, a dictionary with the changes performed.</p>
-<dl class="simple">
-<dt>added-adapters (, list, )</dt><dd><p>Names of the adapters that were added to the partition</p>
-</dd>
-<dt>added-domains (, list, )</dt><dd><p>Domain index numbers of the crypto domains that were added to the partition</p>
-</dd>
-</dl>
-</dd>
-</dl>
+<h2><a class="toc-backref" href="#id4">Return Values</a><a class="headerlink" href="#return-values" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><dl>
+<dt>crypto_configuration</dt><dd><blockquote>
+<div><p>For <code class="docutils literal notranslate"><span class="pre">state=detached|attached|facts</span></code>, the crypto configuration of the partition after the changes performed by the module.</p>
+<div class="line-block">
+<div class="line"><strong>returned</strong>: success</div>
+<div class="line"><strong>type</strong>: dict</div>
 </div>
-<div class="section" id="status">
-<h2><a class="toc-backref" href="#id6">Status</a><a class="headerlink" href="#status" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p>This module is guaranteed to have backward compatible interface changes going forward. <em>[stableinterface]</em></p></li>
-<li><p>This module is maintained by community.</p></li>
-</ul>
-<div class="section" id="authors">
-<h3>Authors<a class="headerlink" href="#authors" title="Permalink to this headline">¶</a></h3>
-<ul class="simple">
-<li><p>Andreas Maier (&#64;andy-maier)</p></li>
-<li><p>Andreas Scheuring (&#64;scheuran)</p></li>
-</ul>
+</div></blockquote>
+<dl>
+<dt>{name}</dt><dd><blockquote>
+<div><p>Partition name</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: dict</div>
 </div>
+</div></blockquote>
+<dl>
+<dt>adapters</dt><dd><blockquote>
+<div><p>Attached adapters</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: dict</div>
+</div>
+</div></blockquote>
+<dl>
+<dt>{name}</dt><dd><blockquote>
+<div><p>Adapter name</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: dict</div>
+</div>
+</div></blockquote>
+<dl>
+<dt>name</dt><dd><p>Adapter name</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>{property}</dt><dd><p>Additional properties of the adapter, as described in the <a class="reference internal" href="../appendix.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> (using hyphens (-) in the property names).</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>:</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt>domain_config</dt><dd><blockquote>
+<div><p>Attached crypto domains</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: dict</div>
+</div>
+</div></blockquote>
+<dl>
+<dt>{index}</dt><dd><blockquote>
+<div><p>Crypto domain index</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: dict</div>
+</div>
+</div></blockquote>
+<dl>
+<dt>{access_mode}</dt><dd><p>Access mode (‘control’ or ‘usage’).</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt>usage_domains</dt><dd><p>Domain index numbers of the crypto domains attached in usage mode</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: list</div>
+</div>
+</dd>
+<dt>control_domains</dt><dd><p>Domain index numbers of the crypto domains attached in control mode</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: list</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt>changes</dt><dd><blockquote>
+<div><p>For <code class="docutils literal notranslate"><span class="pre">state=detached|attached|facts</span></code>, a dictionary with the changes performed.</p>
+<div class="line-block">
+<div class="line"><strong>returned</strong>: success</div>
+<div class="line"><strong>type</strong>: dict</div>
+</div>
+</div></blockquote>
+<dl>
+<dt>added-adapters</dt><dd><p>Names of the adapters that were added to the partition</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: list</div>
+</div>
+</dd>
+<dt>added-domains</dt><dd><p>Domain index numbers of the crypto domains that were added to the partition</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: list</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
 </div>
 </div>
 

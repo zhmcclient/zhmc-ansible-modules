@@ -1,8 +1,13 @@
+
+:github_url: https://github.com/IBM/ibm_zos_zosmf/tree/master/plugins/modules/zhmc_cpc.py
+
 .. _zhmc_cpc_module:
 
 
 zhmc_cpc -- Update CPCs
 =======================
+
+
 
 .. contents::
    :local:
@@ -11,72 +16,106 @@ zhmc_cpc -- Update CPCs
 
 Synopsis
 --------
-
-Gather facts about a CPC (Z system), including its adapters and partitions.
-
-Update the properties of a CPC.
+- Gather facts about a CPC (Z system), including its adapters and partitions.
+- Update the properties of a CPC.
 
 
-
-Requirements
-------------
-The below requirements are needed on the host that executes this module.
-
-- Access to the WS API of the HMC of the targeted Z system (see :term:`HMC API`). The targeted Z system must be in the Dynamic Partition Manager (DPM) operational mode
 
 
 
 Parameters
 ----------
 
-  hmc_host (True, str, None)
-    The hostname or IP address of the HMC.
+
+     
+hmc_host
+  The hostname or IP address of the HMC.
 
 
-  hmc_auth (True, dict, None)
-    The authentication credentials for the HMC, as a dictionary of ``userid``, ``password``.
+  | **required**: True
+  | **type**: str
 
 
-    userid (True, str, None)
-      The userid (username) for authenticating with the HMC.
+     
+hmc_auth
+  The authentication credentials for the HMC, as a dictionary of ``userid``, ``password``.
 
 
-    password (True, str, None)
-      The password for authenticating with the HMC.
+  | **required**: True
+  | **type**: dict
 
 
-
-  name (True, str, None)
-    The name of the target CPC.
-
-
-  state (True, str, None)
-    The desired state for the attachment:
-
-    * ``set``: Ensures that the CPC has the specified properties.
-
-    * ``facts``: Does not change anything on the CPC and returns the CPC properties including its child resources.
+     
+  userid
+    The userid (username) for authenticating with the HMC.
 
 
-  properties (False, dict, None)
-    Only for ``state=set``: New values for the properties of the CPC. Properties omitted in this dictionary will remain unchanged. This parameter will be ignored for ``state=facts``.
-
-    The parameter is a dictionary. The key of each dictionary item is the property name as specified in the data model for CPC resources, with underscores instead of hyphens. The value of each dictionary item is the property value (in YAML syntax). Integer properties may also be provided as decimal strings.
-
-    The possible properties in this dictionary are the properties defined as writeable in the data model for CPC resources.
+    | **required**: True
+    | **type**: str
 
 
-  log_file (False, str, None)
-    File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.
+     
+  password
+    The password for authenticating with the HMC.
 
 
-  faked_session (False, raw, None)
-    A ``zhmcclient_mock.FakedSession`` object that has a mocked HMC set up. If not null, this session will be used instead of connecting to the HMC specified in ``hmc_host``. This is used for testing purposes only.
+    | **required**: True
+    | **type**: str
 
 
 
+     
+name
+  The name of the target CPC.
 
 
+  | **required**: True
+  | **type**: str
+
+
+     
+state
+  The desired state for the attachment:
+
+  * ``set``: Ensures that the CPC has the specified properties.
+
+  * ``facts``: Does not change anything on the CPC and returns the CPC properties including its child resources.
+
+
+  | **required**: True
+  | **type**: str
+  | **choices**: set, facts
+
+
+     
+properties
+  Only for ``state=set``: New values for the properties of the CPC. Properties omitted in this dictionary will remain unchanged. This parameter will be ignored for ``state=facts``.
+
+  The parameter is a dictionary. The key of each dictionary item is the property name as specified in the data model for CPC resources, with underscores instead of hyphens. The value of each dictionary item is the property value (in YAML syntax). Integer properties may also be provided as decimal strings.
+
+  The possible properties in this dictionary are the properties defined as writeable in the data model for CPC resources.
+
+
+  | **required**: False
+  | **type**: dict
+
+
+     
+log_file
+  File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.
+
+
+  | **required**: False
+  | **type**: str
+
+
+     
+faked_session
+  A ``zhmcclient_mock.FakedSession`` object that has a mocked HMC set up. If not null, this session will be used instead of connecting to the HMC specified in ``hmc_host``. This is used for testing purposes only.
+
+
+  | **required**: False
+  | **type**: raw
 
 
 
@@ -86,28 +125,35 @@ Examples
 
 .. code-block:: yaml+jinja
 
-    
-    ---
-    # Note: The following examples assume that some variables named 'my_*' are set.
+   
+   ---
+   # Note: The following examples assume that some variables named 'my_*' are set.
 
-    - name: Gather facts about the CPC
-      zhmc_cpc:
-        hmc_host: "{{ my_hmc_host }}"
-        hmc_auth: "{{ my_hmc_auth }}"
-        name: "{{ my_cpc_name }}"
-        state: facts
-      register: cpc1
+   - name: Gather facts about the CPC
+     zhmc_cpc:
+       hmc_host: "{{ my_hmc_host }}"
+       hmc_auth: "{{ my_hmc_auth }}"
+       name: "{{ my_cpc_name }}"
+       state: facts
+     register: cpc1
 
-    - name: Ensure the CPC has the desired property values
-      zhmc_cpc:
-        hmc_host: "{{ my_hmc_host }}"
-        hmc_auth: "{{ my_hmc_auth }}"
-        name: "{{ my_cpc_name }}"
-        state: set
-        properties:
-          acceptable_status:
-           - active
-          description: "This is CPC {{ my_cpc_name }}"
+   - name: Ensure the CPC has the desired property values
+     zhmc_cpc:
+       hmc_host: "{{ my_hmc_host }}"
+       hmc_auth: "{{ my_hmc_auth }}"
+       name: "{{ my_cpc_name }}"
+       state: set
+       properties:
+         acceptable_status:
+          - active
+         description: "This is CPC {{ my_cpc_name }}"
+
+
+
+
+
+
+
 
 
 
@@ -115,80 +161,66 @@ Examples
 Return Values
 -------------
 
-cpc (success, dict, )
-  A dictionary with the properties of the CPC, including additional artificial properties as described below.
+
+   cpc
+        A dictionary with the properties of the CPC, including additional artificial properties as described below.
 
 
-  name (, str, )
-    CPC name
+        | **returned**: success
+        | **type**: dict
 
 
-  {property} (, any, )
-    Additional properties of the CPC, as described in the :term:`HMC API` (using hyphens (-) in the property names).
+    name
+          CPC name
 
 
-  partitions (, dict, )
-    Artificial property for the defined partitions of the CPC, with a subset of its properties.
-
-
-    {name} (, dict, )
-      Partition name
-
-
-      name (, str, )
-        Partition name
-
-
-      status (, str, )
-        Status of the partition
-
-
-      object_uri (, str, )
-        Canonical URI of the partition
+          | **type**: str
 
 
 
-
-  adapters (, dict, )
-    Artificial property for the adapters of the CPC, with a subset of its properties.
-
-
-    {name} (, dict, )
-      Adapter name
+    {property}
+          Additional properties of the CPC, as described in the :term:`HMC API` (using hyphens (-) in the property names).
 
 
-      name (, str, )
-        Adapter name
-
-
-      status (, str, )
-        Status of the adapter
-
-
-      object_uri (, str, )
-        Canonical URI of the adapter
+          | **type**: 
 
 
 
-
-  storage-groups (, dict, )
-    Artificial property for the storage groups associated with the CPC, with a subset of its properties.
-
-
-    {name} (, dict, )
-      Storage group name
+    partitions
+          Artificial property for the defined partitions of the CPC, with a subset of its properties.
 
 
-      name (, str, )
-        Storage group name
+          | **type**: dict
 
 
-      fulfillment-status (, str, )
-        Fulfillment status of the storage group
+     {name}
+            Partition name
 
 
-      object_uri (, str, )
-        Canonical URI of the storage group
+            | **type**: dict
+
+
+      name
+              Partition name
+
+
+              | **type**: str
+
+
+
+      status
+              Status of the partition
+
+
+              | **type**: str
+
+
+
+      object_uri
+              Canonical URI of the partition
+
+
+              | **type**: str
 
 
 
@@ -196,23 +228,89 @@ cpc (success, dict, )
 
 
 
-
-Status
-------
-
+    adapters
+          Artificial property for the adapters of the CPC, with a subset of its properties.
 
 
-
-- This module is guaranteed to have backward compatible interface changes going forward. *[stableinterface]*
-
-
-- This module is maintained by community.
+          | **type**: dict
 
 
+     {name}
+            Adapter name
 
-Authors
-~~~~~~~
 
-- Andreas Maier (@andy-maier)
-- Andreas Scheuring (@scheuran)
+            | **type**: dict
+
+
+      name
+              Adapter name
+
+
+              | **type**: str
+
+
+
+      status
+              Status of the adapter
+
+
+              | **type**: str
+
+
+
+      object_uri
+              Canonical URI of the adapter
+
+
+              | **type**: str
+
+
+
+
+
+
+
+    storage-groups
+          Artificial property for the storage groups associated with the CPC, with a subset of its properties.
+
+
+          | **type**: dict
+
+
+     {name}
+            Storage group name
+
+
+            | **type**: dict
+
+
+      name
+              Storage group name
+
+
+              | **type**: str
+
+
+
+      fulfillment-status
+              Fulfillment status of the storage group
+
+
+              | **type**: str
+
+
+
+      object_uri
+              Canonical URI of the storage group
+
+
+              | **type**: str
+
+
+
+
+
+
+
+
 

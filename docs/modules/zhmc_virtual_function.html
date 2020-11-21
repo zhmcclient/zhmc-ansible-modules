@@ -97,14 +97,9 @@
 <li class="toctree-l2"><a class="reference internal" href="zhmc_user.html">zhmc_user – Create HMC users</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">zhmc_virtual_function – Create virtual functions in partitions</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#synopsis">Synopsis</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#parameters">Parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#examples">Examples</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#return-values">Return Values</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#status">Status</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#authors">Authors</a></li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
@@ -153,6 +148,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -167,6 +164,11 @@
       <li class="wy-breadcrumbs-aside">
         
             
+            
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/IBM/ibm_zos_zosmf/tree/master/plugins/modules/zhmc_virtual_function.py" class="fa fa-github"> Edit on GitHub</a>
+            
+          
         
       </li>
     
@@ -183,50 +185,75 @@
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
-<li><p><a class="reference internal" href="#requirements" id="id2">Requirements</a></p></li>
-<li><p><a class="reference internal" href="#parameters" id="id3">Parameters</a></p></li>
-<li><p><a class="reference internal" href="#examples" id="id4">Examples</a></p></li>
-<li><p><a class="reference internal" href="#return-values" id="id5">Return Values</a></p></li>
-<li><p><a class="reference internal" href="#status" id="id6">Status</a></p></li>
+<li><p><a class="reference internal" href="#parameters" id="id2">Parameters</a></p></li>
+<li><p><a class="reference internal" href="#examples" id="id3">Examples</a></p></li>
+<li><p><a class="reference internal" href="#return-values" id="id4">Return Values</a></p></li>
 </ul>
 </div>
 <div class="section" id="synopsis">
 <h2><a class="toc-backref" href="#id1">Synopsis</a><a class="headerlink" href="#synopsis" title="Permalink to this headline">¶</a></h2>
-<p>Create, update, or delete a virtual function in a partition of a CPC (Z system).</p>
-<p>Note that the Ansible module zhmc_partition can be used to gather facts about existing virtual functions of a partition.</p>
-</div>
-<div class="section" id="requirements">
-<h2><a class="toc-backref" href="#id2">Requirements</a><a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
-<p>The below requirements are needed on the host that executes this module.</p>
 <ul class="simple">
-<li><p>Access to the WS API of the HMC of the targeted Z system (see <a class="reference internal" href="../appendix.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a>). The targeted Z system must be in the Dynamic Partition Manager (DPM) operational mode.</p></li>
+<li><p>Create, update, or delete a virtual function in a partition of a CPC (Z system).</p></li>
+<li><p>Note that the Ansible module zhmc_partition can be used to gather facts about existing virtual functions of a partition.</p></li>
 </ul>
 </div>
 <div class="section" id="parameters">
-<h2><a class="toc-backref" href="#id3">Parameters</a><a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div><dl>
-<dt>hmc_host (True, str, None)</dt><dd><p>The hostname or IP address of the HMC.</p>
+<h2><a class="toc-backref" href="#id2">Parameters</a><a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<dl>
+<dt>hmc_host</dt><dd><p>The hostname or IP address of the HMC.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: True</div>
+<div class="line"><strong>type</strong>: str</div>
+</div>
 </dd>
-<dt>hmc_auth (True, dict, None)</dt><dd><p>The authentication credentials for the HMC, as a dictionary of <code class="docutils literal notranslate"><span class="pre">userid</span></code>, <code class="docutils literal notranslate"><span class="pre">password</span></code>.</p>
-<dl class="simple">
-<dt>userid (True, str, None)</dt><dd><p>The userid (username) for authenticating with the HMC.</p>
+<dt>hmc_auth</dt><dd><p>The authentication credentials for the HMC, as a dictionary of <code class="docutils literal notranslate"><span class="pre">userid</span></code>, <code class="docutils literal notranslate"><span class="pre">password</span></code>.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: True</div>
+<div class="line"><strong>type</strong>: dict</div>
+</div>
+<dl>
+<dt>userid</dt><dd><p>The userid (username) for authenticating with the HMC.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: True</div>
+<div class="line"><strong>type</strong>: str</div>
+</div>
 </dd>
-<dt>password (True, str, None)</dt><dd><p>The password for authenticating with the HMC.</p>
+<dt>password</dt><dd><p>The password for authenticating with the HMC.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: True</div>
+<div class="line"><strong>type</strong>: str</div>
+</div>
 </dd>
 </dl>
 </dd>
-<dt>cpc_name (True, str, None)</dt><dd><p>The name of the CPC with the partition containing the virtual function.</p>
+<dt>cpc_name</dt><dd><p>The name of the CPC with the partition containing the virtual function.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: True</div>
+<div class="line"><strong>type</strong>: str</div>
+</div>
 </dd>
-<dt>partition_name (True, str, None)</dt><dd><p>The name of the partition containing the virtual function.</p>
+<dt>partition_name</dt><dd><p>The name of the partition containing the virtual function.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: True</div>
+<div class="line"><strong>type</strong>: str</div>
+</div>
 </dd>
-<dt>name (True, str, None)</dt><dd><p>The name of the target virtual function that is managed. If the virtual function needs to be created, this value becomes its name.</p>
+<dt>name</dt><dd><p>The name of the target virtual function that is managed. If the virtual function needs to be created, this value becomes its name.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: True</div>
+<div class="line"><strong>type</strong>: str</div>
+</div>
 </dd>
-<dt>state (True, str, None)</dt><dd><p>The desired state for the target virtual function:</p>
+<dt>state</dt><dd><p>The desired state for the target virtual function:</p>
 <p><code class="docutils literal notranslate"><span class="pre">absent</span></code>: Ensures that the virtual function does not exist in the specified partition.</p>
 <p><code class="docutils literal notranslate"><span class="pre">present</span></code>: Ensures that the virtual function exists in the specified partition and has the specified properties.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: True</div>
+<div class="line"><strong>type</strong>: str</div>
+<div class="line"><strong>choices</strong>: absent, present</div>
+</div>
 </dd>
-<dt>properties (False, dict, None)</dt><dd><p>Dictionary with input properties for the virtual function, for <code class="docutils literal notranslate"><span class="pre">state=present</span></code>. Key is the property name with underscores instead of hyphens, and value is the property value in YAML syntax. Integer properties may also be provided as decimal strings. Will be ignored for <code class="docutils literal notranslate"><span class="pre">state=absent</span></code>.</p>
+<dt>properties</dt><dd><p>Dictionary with input properties for the virtual function, for <code class="docutils literal notranslate"><span class="pre">state=present</span></code>. Key is the property name with underscores instead of hyphens, and value is the property value in YAML syntax. Integer properties may also be provided as decimal strings. Will be ignored for <code class="docutils literal notranslate"><span class="pre">state=absent</span></code>.</p>
 <p>The possible input properties in this dictionary are the properties defined as writeable in the data model for Virtual Function resources (where the property names contain underscores instead of hyphens), with the following exceptions:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: Cannot be specified because the name has already been specified in the <code class="docutils literal notranslate"><span class="pre">name</span></code> module parameter.</p></li>
@@ -234,16 +261,27 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">adapter_name</span></code>: The name of the adapter that backs the target virtual function.</p></li>
 </ul>
 <p>Properties omitted in this dictionary will remain unchanged when the virtual function already exists, and will get the default value defined in the data model for virtual functions when the virtual function is being created.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: dict</div>
+</div>
 </dd>
-<dt>log_file (False, str, None)</dt><dd><p>File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.</p>
+<dt>log_file</dt><dd><p>File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: str</div>
+</div>
 </dd>
-<dt>faked_session (False, raw, None)</dt><dd><p>A <code class="docutils literal notranslate"><span class="pre">zhmcclient_mock.FakedSession</span></code> object that has a mocked HMC set up. If not null, this session will be used instead of connecting to the HMC specified in <code class="docutils literal notranslate"><span class="pre">hmc_host</span></code>. This is used for testing purposes only.</p>
+<dt>faked_session</dt><dd><p>A <code class="docutils literal notranslate"><span class="pre">zhmcclient_mock.FakedSession</span></code> object that has a mocked HMC set up. If not null, this session will be used instead of connecting to the HMC specified in <code class="docutils literal notranslate"><span class="pre">hmc_host</span></code>. This is used for testing purposes only.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: raw</div>
+</div>
 </dd>
 </dl>
-</div></blockquote>
 </div>
 <div class="section" id="examples">
-<h2><a class="toc-backref" href="#id4">Examples</a><a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id3">Examples</a><a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
 <span class="c1"># Note: The following examples assume that some variables named &#39;my_*&#39; are set.</span>
 
@@ -273,33 +311,32 @@
 </div>
 </div>
 <div class="section" id="return-values">
-<h2><a class="toc-backref" href="#id5">Return Values</a><a class="headerlink" href="#return-values" title="Permalink to this headline">¶</a></h2>
-<dl>
-<dt>virtual_function (success, dict, )</dt><dd><p>For <code class="docutils literal notranslate"><span class="pre">state=absent</span></code>, an empty dictionary.</p>
+<h2><a class="toc-backref" href="#id4">Return Values</a><a class="headerlink" href="#return-values" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><dl>
+<dt>virtual_function</dt><dd><blockquote>
+<div><p>For <code class="docutils literal notranslate"><span class="pre">state=absent</span></code>, an empty dictionary.</p>
 <p>For <code class="docutils literal notranslate"><span class="pre">state=present</span></code>, a dictionary with the resource properties of the virtual function (after changes, if any).</p>
-<dl class="simple">
-<dt>name (, str, )</dt><dd><p>Virtual function name</p>
+<div class="line-block">
+<div class="line"><strong>returned</strong>: success</div>
+<div class="line"><strong>type</strong>: dict</div>
+</div>
+</div></blockquote>
+<dl>
+<dt>name</dt><dd><p>Virtual function name</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: str</div>
+</div>
 </dd>
-<dt>{property} (, any, )</dt><dd><p>Additional properties of the virtual function, as described in the <a class="reference internal" href="../appendix.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> (using hyphens (-) in the property names).</p>
+<dt>{property}</dt><dd><p>Additional properties of the virtual function, as described in the <a class="reference internal" href="../appendix.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> (using hyphens (-) in the property names).</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>:</div>
+</div>
 </dd>
 </dl>
 </dd>
 </dl>
-</div>
-<div class="section" id="status">
-<h2><a class="toc-backref" href="#id6">Status</a><a class="headerlink" href="#status" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p>This module is guaranteed to have backward compatible interface changes going forward. <em>[stableinterface]</em></p></li>
-<li><p>This module is maintained by community.</p></li>
-</ul>
-<div class="section" id="authors">
-<h3>Authors<a class="headerlink" href="#authors" title="Permalink to this headline">¶</a></h3>
-<ul class="simple">
-<li><p>Andreas Maier (&#64;andy-maier)</p></li>
-<li><p>Andreas Scheuring (&#64;scheuran)</p></li>
-<li><p>Juergen Leopold (&#64;leopoldjuergen)</p></li>
-</ul>
-</div>
+</div></blockquote>
 </div>
 </div>
 
