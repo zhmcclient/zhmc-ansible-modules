@@ -297,6 +297,7 @@ endif
 _pip:
 	$(PYTHON_CMD) remove_duplicate_setuptools.py
 	@echo 'Installing/upgrading pip, setuptools, wheel and pbr with PACKAGE_LEVEL=$(PACKAGE_LEVEL)'
+	bash -c 'pv=$$($(PYTHON_CMD) -m pip --version); if [[ $$pv =~ (^pip [1-8]\..*) ]]; then $(PYTHON_CMD) -m pip install pip==9.0.1; fi'
 	$(PYTHON_CMD) -m pip install $(pip_level_opts) pip setuptools wheel pbr
 
 $(bdist_file): _check_version Makefile $(dist_dependent_files)
