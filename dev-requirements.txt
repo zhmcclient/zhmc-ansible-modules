@@ -119,5 +119,7 @@ readme-renderer>=23.0; python_version == '2.7'
 readme-renderer>=23.0,<25.0; python_version == '3.4'
 readme-renderer>=23.0; python_version >= '3.5'
 
+pyzmq>=16.0.4; python_version <= '3.8'
+pyzmq>=20.0.0; python_version >= '3.9'
 
 # Indirect dependencies are not specified in this file unless constraints are needed.
