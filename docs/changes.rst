@@ -29,6 +29,28 @@ but as the
 `ibm.zhmc collection on Galaxy <https://galaxy.ansible.com/ibm/zhmc/>`_.
 
 
+Version 0.8.4.dev1
+^^^^^^^^^^^^^^^^^^
+
+Released: not yet
+
+**Incompatible changes:**
+
+**Deprecations:**
+
+**Bug fixes:**
+
+**Enhancements:**
+
+**Cleanup:**
+
+**Known issues:**
+
+* See `list of open issues`_.
+
+.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
+
+
 Version 0.8.3
 ^^^^^^^^^^^^^
 
