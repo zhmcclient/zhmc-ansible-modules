@@ -280,6 +280,7 @@ develop_$(pymn).done: Makefile install_pip_$(pymn).done tools/os_setup.sh dev-re
 	echo "done" >$@
 
 install_pip_$(pymn).done: Makefile
+	bash -c 'pv=$$($(PYTHON_CMD) -m pip --version); if [[ $$pv =~ (^pip [1-8]\..*) ]]; then $(PYTHON_CMD) -m pip install pip==9.0.1; fi'
 	$(PYTHON_CMD) -m pip install $(pip_level_opts) pip setuptools wheel
 	echo "done" >$@
 
