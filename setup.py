@@ -23,10 +23,26 @@ __metaclass__ = type
 import re
 import setuptools
 
-# The following disables the version normalization that setuptools otherwise
-# performs:
-from setuptools.extern.packaging import version
-version.Version = version.LegacyVersion
+
+def nop_sic(version):
+    """Replacement for setuptools.sic() if not available"""
+    return version
+
+
+# Disable the version normalization of setuptools.setup():
+try:
+    # Try the approach of using sic(), added in setuptools 46.1.0
+    from setuptools import sic
+except ImportError:
+    # Try the approach of replacing packaging.version.Version
+    sic = nop_sic
+    try:
+        # setuptools >=39.0.0 uses packaging from setuptools.extern
+        from setuptools.extern import packaging
+    except ImportError:
+        # setuptools <39.0.0 uses packaging from pkg_resources.extern
+        from pkg_resources.extern import packaging
+    packaging.version.Version = packaging.version.LegacyVersion
 
 
 def get_version(galaxy_file):
@@ -99,7 +115,7 @@ package_version = get_version('galaxy.yml')
 # * https://stackoverflow.com/a/14159430/1424462
 setuptools.setup(
     name='zhmc-ansible-modules',
-    version=package_version,
+    version=sic(package_version),
     package_dir={'zhmc-ansible-modules': 'plugins'},
     packages=[
         'zhmc-ansible-modules',
