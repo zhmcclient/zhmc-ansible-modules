@@ -24,6 +24,8 @@ pbr===1.10.0
 requests===2.20.0
 zhmcclient===0.20.0
 # git+https://github.com/zhmcclient/python-zhmcclient@master#egg=zhmcclient
+# certify is needed by requests
+certifi===2017.4.17
 
 
 # Indirect dependencies for runtime (must be consistent with requirements.txt)
@@ -38,7 +40,6 @@ PyYAML==5.1.2; python_version >= '3.8'
 asn1crypto===0.23.0
 bcrypt===3.0.0; python_version <= '3.5'
 bcrypt===3.2.0; python_version >= '3.6'
-certifi===2016.9.26
 cffi===1.14.0
 chardet===3.0.3
 decorator===4.0.10
