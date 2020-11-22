@@ -186,6 +186,9 @@ functools32==3.2.3.post2; python_version == '2.7'  # technically: python_version
 twine==1.8.1
 readme-renderer==23.0
 
+pyzmq==16.0.4; python_version <= '3.8'
+pyzmq==20.0.0; python_version >= '3.9'
+
 # Indirect dependencies (not in requirements.txt or dev-requirements.txt)
 
 alabaster==0.7.9
@@ -233,7 +236,6 @@ prompt-toolkit==2.0.1
 ptyprocess==0.5.1
 py==1.5.1
 python-dateutil==2.6.0
-pyzmq==16.0.4
 qtconsole==4.2.1
 scandir==1.9.0
 sh==1.12.14
