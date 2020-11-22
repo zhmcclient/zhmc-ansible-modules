@@ -13,8 +13,8 @@
 .. limitations under the License.
 ..
 
-ibm.zhmc Ansible Galaxy collection |release|
-============================================
+ibm.zhmc Ansible Galaxy collection
+==================================
 
 .. toctree::
    :maxdepth: 2

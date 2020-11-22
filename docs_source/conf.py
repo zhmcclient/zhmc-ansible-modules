@@ -66,9 +66,9 @@ _galaxy_file = os.path.relpath(os.path.join(
     os.path.dirname(__file__), _galaxy_file))
 
 # The full version, including alpha/beta/rc tags
-release = get_version(_galaxy_file)
+version = get_version(_galaxy_file)
 
-project = 'ibm.zhmc Ansible Galaxy collection {0}'.format(release)
+project = 'ibm.zhmc Ansible Galaxy collection'
 copyright = '2016-2020, IBM'
 author = 'IBM'
 
@@ -97,6 +97,8 @@ exclude_patterns = []
 #
 html_theme = 'sphinx_rtd_theme'
 
+html_theme_options = {'display_version': True}
+
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
@@ -107,3 +109,90 @@ html_copy_source = False
 
 # and do not show the links to the originals
 html_show_sourcelink = False
+
+##############################################################################
+#                          sphinx-versioning                                 #
+##############################################################################
+# Options for sphinx-versioning 1.0.0
+# https://pypi.org/project/sphinx-versions/1.0.0/
+#
+# Documentation for v1.0.0
+# https://github.com/Smile-SA/sphinx-versions/blob/v1.0.0/docs/settings.rst
+#
+# For more information on sphinx-versioning options follow this link:
+# https://sphinx-versions.readthedocs.io/en/latest/settings.html#cmdoption-arg-destination
+#
+# Commands:
+# sphinx-versioning -l docs/source/conf.py build docs/source/ docs/build/html
+# open docs/build/html/v1.1.0-beta1/index.html
+##############################################################################
+
+# Give the underlying ``sphinx-build`` program command line options.
+# ``sphinx-versions`` passes everything after ``--`` to it ``sphinx-build`` and
+# in this case we are wanting to disable the sphinx footer.
+# NOTE:  Appending "-- -D html_show_sphinx=False" to the Makefile
+# ``sphinx-versioning`` command nor the ``scv_overflow`` are working.
+scv_overflow = ("-D", "html_show_sphinx=False")
+
+# Choosing to not generate documentation on any branch and rely solely on
+# Github tags. Branches are whitelisted with option 'scv_whitelist_branches'.
+# In other words, filter out any branches that don't match the pattern.
+scv_whitelist_branches = ('master',)
+
+# Since all branches are whitelisted, a 'root_ref' must be specified to avoid
+# the error: "Root ref master not found in: v1.0.0 v1.1.0-beta1". The simplest
+# solution is to provide a known tagged branch to serve as the root_ref such
+# as 'v1.0.0'.
+# UPDATE: Able to avoid 'root_ref' by setting property 'scv_recent_tag= True'
+# thus commenting out scv_root_ref = 'v1.0.0'.
+# scv_root_ref = 'v1.0.0'
+
+# Override root-ref to be the most recent committed tag. If no tags have docs
+# then this option is ignored and --root-ref is used. Since we whitelist the
+# master branch, we need to set a "root_ref" to avoid error
+# "Root ref master not found in: v1.0.0 v1.1.0-beta1", See also 'scv_root_ref'.
+# UPDATE: Able to avoid 'root_ref' by setting property 'scv_greatest_tag= True'
+# thus commenting out scv_recent_tag = True'.
+# scv_recent_tag = True
+
+# Override root-ref to be the tag with the highest version number. If no tags
+# have docs then this option is ignored and --root-ref is used. Since we
+# whitelist the master branch, we need to set a root_ref.
+# See also 'scv_root_ref
+scv_greatest_tag = True
+
+# White list which Git tags documentation will be generated and linked into the
+# version selection box. This is currently a manual selection, until more
+# versions are released, there are no regular expressions used.
+scv_whitelist_tags = (' ',)
+
+# Sort versions by one or more values. Valid values are semver, alpha, and time.
+# Semantic is referred to as 'semver', this would ensure our latest VRM is
+# the first in the list of documentation links.
+scv_sort = ('semver',)
+
+# Show a warning banner. Enables the Banner Message feature. Further info:
+# https://sphinx-versions.readthedocs.io/en/latest/banner.html#banner
+scv_show_banner = True
+
+# The branch/tag considered to be the latest/current version. The banner will
+# not be displayed in this ref, only in all others. Default is master.
+# This can override the scv_banner_greatest_tag option, but given the greatest
+# tag is currently desired behavior, this site will rely on
+# 'scv_banner_greatest_tag = True' and not use 'scv_banner_main_ref'
+# scv_banner_main_ref = 'v1.1.0-beta1'
+
+# Override banner-main-ref to be the tag with the highest version number. If no
+# tags have docs then this option is ignored and --banner-main-ref is used.
+# The greatest tag is desirable behavior for this site.
+# scv_banner_greatest_tag = True
+
+# Temporary work around to promote the latest git tag in the banner, for some
+# reason pre-release semantic versioning used with scv_banner_greatest_tag does
+# not generate the correct latest banner.
+scv_banner_recent_tag = True
+
+# Invert the order of branches/tags displayed in the sidebars in generated HTML
+# documents. The default order is whatever git prints when
+# running "git ls-remote --tags ./."
+scv_invert = True
