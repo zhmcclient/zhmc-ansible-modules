@@ -206,7 +206,7 @@ _dc_copy:
 .PHONY: doccheck
 doccheck: _check_version _dc_copy develop_$(pymn).done $(doc_build_dir)/index.html
 	@echo 'Checking if docs build is up to date'
-	diff -rq $(doc_build_dir) tmp_docs
+	diff -rq $(doc_build_dir) tmp_docs --exclude=".buildinfo"
 	rm -rf tmp_docs
 	@echo '$@ done.'
 
@@ -303,7 +303,7 @@ $(doc_build_dir)/index.html: $(doc_rst_files) $(doc_source_dir)/conf.py
 ifneq ($(doc_build),true)
 	@echo "makefile: Warning: Skipping docs build on Python $(python_m_n_version)"
 else
-	sphinx-build -b html $(sphinx_opts) $(doc_source_dir) $(doc_build_dir)
+	sphinx-versioning -l $(doc_source_dir)/conf.py build $(doc_source_dir) $(doc_build_dir)
 	touch $(doc_build_dir)/.nojekyll
-	rm -rf $(doc_build_dir)/.buildinfo $(doc_build_dir)/.doctrees
+	find docs -name .doctrees -prune -exec rm -rf  {} \;
 endif
