@@ -1,0 +1,318 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Contributing &mdash; ibm.zhmc Ansible Galaxy collection  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/banner.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Appendix" href="appendix.html" />
+    <link rel="prev" title="Development" href="development.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> ibm.zhmc Ansible Galaxy collection
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0-dev1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="all_modules.html">All modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Development</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#format-of-commit-messages">Format of commit messages</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="appendix.html">Appendix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Change log</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ibm.zhmc Ansible Galaxy collection</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Contributing</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+
+
+
+
+
+<div class="section" id="contributing">
+<h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h1>
+<p>Third party contributions to this project are welcome!</p>
+<p>If you want to contribute, please first contact one of the
+<a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/people">admins of this project</a>.</p>
+<p>In order to contribute, create a <a class="reference external" href="https://help.github.com/articles/using-pull-requests/">Git pull request</a>, considering this:</p>
+<ul class="simple">
+<li><p>Test is required.</p></li>
+<li><p>Each commit should only contain one “logical” change.</p></li>
+<li><p>A “logical” change should be put into one commit, and not split over multiple
+commits.</p></li>
+<li><p>Large new features should be split into stages.</p></li>
+<li><p>The commit message should not only summarize what you have done, but explain
+why the change is useful.</p></li>
+<li><p>The commit message must follow the format explained below.</p></li>
+</ul>
+<p>What comprises a “logical” change is subject to sound judgement. Sometimes, it
+makes sense to produce a set of commits for a feature (even if not large).
+For example, a first commit may introduce a (presumably) compatible API change
+without exploitation of that feature. With only this commit applied, it should
+be demonstrable that everything is still working as before. The next commit may
+be the exploitation of the feature in other components.</p>
+<p>For further discussion of good and bad practices regarding commits, see:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://wiki.openstack.org/wiki/GitCommitMessages">OpenStack Git Commit Good Practice</a></p></li>
+<li><p><a class="reference external" href="https://www.kernel.org/doc/Documentation/SubmittingPatches">How to Get Your Change Into the Linux Kernel</a></p></li>
+</ul>
+<div class="section" id="format-of-commit-messages">
+<h2>Format of commit messages<a class="headerlink" href="#format-of-commit-messages" title="Permalink to this headline">¶</a></h2>
+<p>A commit message must start with a short summary line, followed by a blank
+line.</p>
+<p>Optionally, the summary line may start with an identifier that helps
+identifying the type of change or the component that is affected, followed by
+a colon.</p>
+<p>It can include a more detailed description after the summary line. This is
+where you explain why the change was done, and summarize what was done.</p>
+<p>It must end with a sign-off line in the
+format shown in the example below, using your name and a valid email address of
+yours. The sign-off line certifies that you wrote the patch or otherwise have
+the right to pass it on as an open-source patch.</p>
+<p>We use <a class="reference external" href="http://gitcop.com/">GitCop</a> during creation of a pull request to check whether the commit
+messages in the pull request comply to this format.
+If the commit messages do not comply, GitCop will add a comment to the pull
+request with a description of what was wrong.</p>
+<p>Example commit message:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>cookies: Add support for delivering cookies
+
+Cookies are important for many people. This change adds a pluggable API for
+delivering cookies to the user, and provides a default implementation.
+
+Signed-off-by: Random J Developer &lt;random@developer.org&gt;
+</pre></div>
+</div>
+<p>Use <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">commit</span> <span class="pre">--amend</span></code> to edit the commit message, if you need to.</p>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">--signoff</span></code> (<code class="docutils literal notranslate"><span class="pre">-s</span></code>) option of <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">commit</span></code> to append a sign-off
+line to the commit message with your name and email as known by Git.</p>
+<p>If you like filling out the commit message in an editor instead of using
+the <code class="docutils literal notranslate"><span class="pre">-m</span></code> option of <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">commit</span></code>, you can automate the presence of the
+sign-off line by using a commit template file:</p>
+<ul>
+<li><p>Create a file outside of the repo (say, <code class="docutils literal notranslate"><span class="pre">~/.git-signoff.template</span></code>)
+that contains, for example:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&lt;one-line subject&gt;
+
+&lt;detailed description&gt;
+
+Signed-off-by: Random J Developer &lt;random@developer.org&gt;
+</pre></div>
+</div>
+</li>
+<li><p>Configure Git to use that file as a commit template for your repo:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>git config commit.template ~/.git-signoff.template
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="appendix.html" class="btn btn-neutral float-right" title="Appendix" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="development.html" class="btn btn-neutral float-left" title="Development" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2016-2020, IBM
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+        <span class="fa fa-book"> Other Versions</span>
+        v: master
+        <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        <dl>
+            <dt>Branches</dt>
+            <dd><a href="CONTRIBUTING.html">master</a></dd>
+        </dl>
+    </div>
+</div>
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
