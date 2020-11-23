@@ -137,7 +137,7 @@ scv_overflow = ("-D", "html_show_sphinx=False")
 # Choosing to not generate documentation on any branch and rely solely on
 # Github tags. Branches are whitelisted with option 'scv_whitelist_branches'.
 # In other words, filter out any branches that don't match the pattern.
-scv_whitelist_branches = ('master',)
+scv_whitelist_branches = (' ',)
 
 # Since all branches are whitelisted, a 'root_ref' must be specified to avoid
 # the error: "Root ref master not found in: v1.0.0 v1.1.0-beta1". The simplest
@@ -164,7 +164,7 @@ scv_greatest_tag = True
 # White list which Git tags documentation will be generated and linked into the
 # version selection box. This is currently a manual selection, until more
 # versions are released, there are no regular expressions used.
-scv_whitelist_tags = (' ',)
+scv_whitelist_tags = ('1.0.0-dev1',)
 
 # Sort versions by one or more values. Valid values are semver, alpha, and time.
 # Semantic is referred to as 'semver', this would ensure our latest VRM is

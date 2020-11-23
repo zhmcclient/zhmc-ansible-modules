@@ -298,6 +298,16 @@ has the remote name ``origin`` in your local clone.
     On GitHub, go to "Settings" and change the branch from which the Github
     pages are built, to ``stable_$MN``.
 
+16. The final step of the version release process is to generate the documentation
+    for the new version. For that please create a new branch, then add the newly
+    created tag ``M.N.U`` into the ``scv_whitelist_tags`` list in conf.py (or
+    replace one of the existing ones).
+    Then execute the ``docs`` make target, check that the new tag is in the
+    current version (bottom left part of the page) and create a PR with the new branch.
+    Once the PR is merged, the docs on the GitHub pages will be updated to include
+    the new version.
+    **Attention!!** This section needs to be updated as soon as the gh-pages
+    branch and the supporting process to release will be ready.
 
 .. _`Starting a new version`:
 

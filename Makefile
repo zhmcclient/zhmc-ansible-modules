@@ -114,6 +114,7 @@ sanity_tar_file := tmp_workspace.tar
 doc_source_dir := docs
 doc_linkcheck_dir := docs_linkcheck
 doc_build_dir := docs_build
+doc_build_local_dir := docs_local
 
 # Module RST files
 module_rst_dir := $(doc_source_dir)/modules
@@ -159,7 +160,8 @@ help:
 	@echo 'Valid targets are:'
 	@echo '  develop    - Set up the development environment'
 	@echo '  install    - Install collection and its dependent Python packages'
-	@echo '  docs       - Build the documentation in: $(doc_build_dir)'
+	@echo '  docs       - Build the documentation for all enabled (docs/conf.py) versions in: $(doc_build_dir) using remote repo'
+	@echo '  docslocal  - Build the documentation from local repo contents in: $(doc_build_local_dir)'
 	@echo '  linkcheck  - Check links in documentation'
 	@echo '  test       - Run unit and function tests with test coverage'
 	@echo '  sanity     - Run Ansible sanity tests (includes flake8, pylint, validate-modules)'
@@ -241,6 +243,7 @@ clobber:
 	rm -Rf tests/output build .tox *.egg-info
 	rm -f .coverage *.done
 	rm -f MANIFEST MANIFEST.in AUTHORS ChangeLog
+	rm -rf $(doc_build_local_dir)
 	find . -name "*.pyc" -delete -o -name "__pycache__" -delete -o -name "*.tmp" -delete -o -name "tmp_*" -delete
 	@echo '$@ done.'
 
@@ -293,3 +296,9 @@ else
 	sphinx-versioning -l $(doc_source_dir)/conf.py build $(doc_source_dir) $(doc_build_dir)
 	touch $(doc_build_dir)/.nojekyll
 endif
+
+.PHONY: docslocal
+docslocal: _check_version develop_$(pymn).done $(doc_rst_files) $(doc_source_dir)/conf.py
+	rm -rf $(doc_build_local_dir)
+	sphinx-build -b html $(sphinx_opts) $(doc_source_dir) $(doc_build_local_dir)
+	open $(doc_build_local_dir)/index.html
