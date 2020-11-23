@@ -79,3 +79,4 @@ build_ignore:
   - minimum-constraints.txt
   - setup.py
   - tools
+  - docs_local
