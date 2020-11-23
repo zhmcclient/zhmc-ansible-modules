@@ -164,10 +164,10 @@ help:
 	@echo '  test       - Run unit and function tests with test coverage'
 	@echo '  sanity     - Run Ansible sanity tests (includes flake8, pylint, validate-modules)'
 	@echo '  all        - Do all of the above'
-	@echo '  doccheck   - Check if documentation build is up to date'
 	@echo '  end2end    - Run end2end tests'
 	@echo '  dist       - Build the collection distribution archive in: $(dist_dir)'
 	@echo '  upload     - Publish the collection to Ansible Galaxy'
+	@echo '  pages      - Publish the documentation to GitHub Pages'
 	@echo '  clobber    - Remove any produced files'
 	@echo 'Environment variables:'
 	@echo '  TESTHMC=... - Nickname of HMC to be used in end2end tests. Default: $(default_test_hmc)'
@@ -198,16 +198,17 @@ develop: _check_version develop_$(pymn).done
 docs: _check_version develop_$(pymn).done $(doc_build_dir)/index.html
 	@echo '$@ done.'
 
-.PHONY: _dc_copy
-_dc_copy:
-	rm -rf tmp_docs
-	cp -r $(doc_build_dir) tmp_docs
+gh-pages:
+	@echo 'Setting up gh-pages branch as a git worktree'
+	git worktree add gh-pages gh-pages
 
-.PHONY: doccheck
-doccheck: _check_version _dc_copy develop_$(pymn).done $(doc_build_dir)/index.html
-	@echo 'Checking if docs build is up to date'
-	diff -rq $(doc_build_dir) tmp_docs --exclude=".buildinfo"
-	rm -rf tmp_docs
+.PHONY: pages
+pages: _check_version develop_$(pymn).done $(doc_build_dir)/index.html gh-pages .gh-pages-exclude
+	@echo 'Publishing documentation to GitHub Pages'
+	bash -c "cd gh-pages; git fetch; rm -rf *"
+	rsync -a $(doc_build_dir)/ gh-pages/ --exclude-from=.gh-pages-exclude
+	bash -c "set -e; cd gh-pages; git add .; if git commit -m 'Doc update'; then git push --set-upstream origin gh-pages; fi"
+	@echo 'Documentation has been published to GitHub Pages: https://zhmcclient.github.io/zhmc-ansible-modules/'
 	@echo '$@ done.'
 
 .PHONY: linkcheck

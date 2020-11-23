@@ -23,3 +23,5 @@ tmp_*
 /AUTHORS
 /ChangeLog
 /build/
+/gh-pages/
+/docs/
