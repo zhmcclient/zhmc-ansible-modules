@@ -1,0 +1,44 @@
+# This GitHub workflow will build the documentation and publish it on GitHub Pages.
+
+name: pages
+
+on:
+  push:  # A push to master event occurs when a PR targeting master is merged
+    branches: [ master, stable_1.0 ]
+
+jobs:
+
+  pages:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+      with:
+        persist-credentials: false  # Use personal token (???)
+        fetch-depth: 0  # Required for pushing to the repo
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+    - name: Install the package and its dependents
+      run: |
+        make install
+    - name: Development setup
+      run: |
+        make develop
+    - name: Build documentation in the gh-pages branch
+      run: |
+        make pages
+    - name: Commit changes in the gh-pages branch
+      # The git config can specify any user name and email
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "github-actions@github.com"
+        bash -c "cd gh-pages; git status; git commit -m 'Docs update from PR with commit ${{ github.SHA }}'"
+    - name: Push gh-pages branch to upstream repo
+      uses: ad-m/github-push-action@master
+      # From https://github.com/marketplace/actions/github-push
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: gh-pages
+        directory: gh-pages
