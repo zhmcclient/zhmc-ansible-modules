@@ -17,7 +17,7 @@
 IBM Z HMC Collection
 ====================
 
-**IBM Z HMC Collection** provides Ansible modules that can manage platform
+**IBM Z HMC Collection** provides `Ansible`_ modules that can manage platform
 resources on `IBM Z`_ and `LinuxONE`_ machines.
 
 The goal of this collection is to be able to utilize the power and ease of use
@@ -126,6 +126,8 @@ please open an issue in the `issue tracker`_.
    https://galaxy.ansible.com/ibm/zhmc/
 .. _zhmc-ansible-modules package on Pypi:
    https://pypi.org/project/zhmc-ansible-modules/
+.. _Ansible:
+   https://www.ansible.com/
 .. _IBM Z:
    http://www.ibm.com/systems/z/
 .. _LinuxONE:
