@@ -167,7 +167,7 @@ help:
 	@echo '  end2end    - Run end2end tests'
 	@echo '  dist       - Build the collection distribution archive in: $(dist_dir)'
 	@echo '  upload     - Publish the collection to Ansible Galaxy'
-	@echo '  pages      - Publish the documentation to GitHub Pages'
+	@echo '  pages      - Build and sync the documentation to the gh-pages worktree'
 	@echo '  clobber    - Remove any produced files'
 	@echo 'Environment variables:'
 	@echo '  TESTHMC=... - Nickname of HMC to be used in end2end tests. Default: $(default_test_hmc)'
@@ -204,11 +204,9 @@ gh-pages:
 
 .PHONY: pages
 pages: _check_version develop_$(pymn).done $(doc_build_dir)/index.html gh-pages .gh-pages-exclude
-	@echo 'Publishing documentation to GitHub Pages'
+	@echo 'Syncing documentation to gh-pages worktree'
 	bash -c "cd gh-pages; git fetch; rm -rf *"
 	rsync -a $(doc_build_dir)/ gh-pages/ --exclude-from=.gh-pages-exclude
-	bash -c "set -e; cd gh-pages; git add .; if git commit -m 'Doc update'; then git push --set-upstream origin gh-pages; fi"
-	@echo 'Documentation has been published to GitHub Pages: https://zhmcclient.github.io/zhmc-ansible-modules/'
 	@echo '$@ done.'
 
 .PHONY: linkcheck

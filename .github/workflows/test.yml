@@ -97,12 +97,6 @@ jobs:
         COVERALLS_FLAG_NAME: "${{ matrix.os }},${{ matrix.python-version }},${{ matrix.package_level }}"
       run: |
         coveralls
-    - name: Publish to GitHub Pages
-      if: ${{ matrix.os == 'ubuntu-latest' && matrix.package_level == 'latest' && matrix.python-version == '3.9' && github.event_name == 'push' && github.ref == 'refs/heads/master' }}
-      env:
-        PACKAGE_LEVEL: ${{ matrix.package_level }}
-      run: |
-        make pages
 
   test_finish:
     needs: test
