@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>ibm.zhmc Ansible Galaxy collection &mdash; ibm.zhmc Ansible Galaxy collection  documentation</title>
+  <title>IBM Z HMC Collection &mdash; IBM Z HMC Collection  documentation</title>
   
 
   
@@ -37,7 +37,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Introduction" href="intro.html" /> 
+    <link rel="next" title="Installation" href="installation.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -51,7 +51,7 @@
           
 
           
-            <a href="#" class="icon icon-home" alt="Documentation Home"> ibm.zhmc Ansible Galaxy collection
+            <a href="#" class="icon icon-home" alt="Documentation Home"> IBM Z HMC Collection
           
 
           
@@ -86,13 +86,30 @@
               
             
             
-              <ul>
-<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="all_modules.html">All modules</a></li>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">References</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="playbooks.html">Playbooks</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Community Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="community_guides.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development.html">Development</a></li>
-<li class="toctree-l1"><a class="reference internal" href="CONTRIBUTING.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="appendix.html">Appendix</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changes.html">Change log</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Requirements</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html#control-node">Control node</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Appendices</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="release_notes.html">Releases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="versioning.html">Versioning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bibliography.html">Bibliography</a></li>
 </ul>
 
             
@@ -108,7 +125,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">ibm.zhmc Ansible Galaxy collection</a>
+          <a href="#">IBM Z HMC Collection</a>
         
       </nav>
 
@@ -139,7 +156,7 @@
     
       <li><a href="#" class="icon icon-home"></a> &raquo;</li>
         
-      <li>ibm.zhmc Ansible Galaxy collection</li>
+      <li>IBM Z HMC Collection</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -162,74 +179,129 @@
 
 
 
-<div class="section" id="ibm-zhmc-ansible-galaxy-collection">
-<h1>ibm.zhmc Ansible Galaxy collection<a class="headerlink" href="#ibm-zhmc-ansible-galaxy-collection" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound" id="mastertoc">
+<div class="section" id="ibm-z-hmc-collection">
+<h1>IBM Z HMC Collection<a class="headerlink" href="#ibm-z-hmc-collection" title="Permalink to this headline">¶</a></h1>
+<p><strong>IBM Z HMC Collection</strong> provides Ansible modules that can manage platform
+resources on <a class="reference external" href="http://www.ibm.com/systems/z/">IBM Z</a> and <a class="reference external" href="http://www.ibm.com/systems/linuxone/">LinuxONE</a> machines.</p>
+<p>The goal of this collection is to be able to utilize the power and ease of use
+of Ansible for the management of IBM Z platform resources.</p>
+<p>The IBM Z platform resources that can be managed include for example partitions,
+I/O adapters, the Z system itself, or various resources on its Hardware
+Management Console (HMC).</p>
+<p>The Ansible modules in this collection are fully
+<a class="reference external" href="http://docs.ansible.com/ansible/latest/glossary.html#term-idempotency">idempotent</a>,
+following an important principle for Ansible modules.
+The idempotency of a module allows Ansible playbooks to specify the desired end
+state for a resource, regardless of what the current state is. For example, an
+IBM Z partition can be specified to have <code class="docutils literal notranslate"><span class="pre">state=active</span></code> which means that
+it must exist and be in the active operational status. Depending on the current
+state of the partition, actions will be taken by the module to reach this
+desired end state: If the partition does not exist, it will be created and
+started. If it exists but is not active, it will be started. If it is already
+active, nothing will be done. Other initial states including transitional
+states such as starting or stopping also will be taken care of.
+The idempotency of modules makes Ansible playbooks restartable: If an error
+happens and some things have been changed already, the playbook can simply be
+re-run and will automatically do the right thing, because the initial state
+does not matter for reaching the desired end state.</p>
+<p>The Ansible modules in this collection are written in Python and interact with
+the Web Services API of the Hardware Management Console (HMC) of the Z machines
+to be managed.</p>
+<p>Note: Before version 1.0.0, the Ansible modules in this collection have been
+distributed as the <a class="reference external" href="https://pypi.org/project/zhmc-ansible-modules/">zhmc-ansible-modules package on Pypi</a>.
+Starting with version 1.0.0, the Ansible modules are no longer distributed on
+Pypi, but as the <a class="reference external" href="https://galaxy.ansible.com/ibm/zhmc/">ibm.zhmc collection on Ansible Galaxy</a>.</p>
+<div class="section" id="features">
+<h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
+<p><strong>IBM Z HMC Collection</strong> includes <a class="reference internal" href="modules.html#modules"><span class="std std-ref">Modules</span></a> to automate the management of
+IBM Z platform resources. There are sample <a class="reference internal" href="playbooks.html#playbooks"><span class="std std-ref">Playbooks</span></a> that show how to
+invoke these modules in playbook tasks.</p>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Getting Started</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="intro.html#what-this-package-provides">What this package provides</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intro.html#supported-environments">Supported environments</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intro.html#installation">Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intro.html#example-playbooks">Example playbooks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intro.html#versioning">Versioning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intro.html#compatibility">Compatibility</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intro.html#deprecations">Deprecations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intro.html#reporting-issues">Reporting issues</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intro.html#license">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#standard-installation-with-system-python">Standard installation with system Python</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#alternative-installation-with-virtual-python-environment">Alternative installation with virtual Python environment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#verification-of-the-installation">Verification of the installation</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="all_modules.html">All modules</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_adapter.html">zhmc_adapter – Update adapters and create Hipersocket adapters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_cpc.html">zhmc_cpc – Update CPCs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_crypto_attachment.html">zhmc_crypto_attachment – Attach crypto resources to partitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_hba.html">zhmc_hba – Create HBAs in partitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_nic.html">zhmc_nic – Create NICs in partitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_partition.html">zhmc_partition – Create partitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_storage_group.html">zhmc_storage_group – Create storage groups</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Attach storage groups to partitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_storage_volume.html">zhmc_storage_volume – Create storage volumes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_user.html">zhmc_user – Create HMC users</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_virtual_function.html">zhmc_virtual_function – Create virtual functions in partitions</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="development.html">Development</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="development.html#repository">Repository</a></li>
-<li class="toctree-l2"><a class="reference internal" href="development.html#setting-up-the-development-environment">Setting up the development environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="development.html#building-the-documentation">Building the documentation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="development.html#testing">Testing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="development.html#releasing-a-version">Releasing a version</a></li>
-<li class="toctree-l2"><a class="reference internal" href="development.html#starting-a-new-version">Starting a new version</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="CONTRIBUTING.html">Contributing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="CONTRIBUTING.html#format-of-commit-messages">Format of commit messages</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="appendix.html">Appendix</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="appendix.html#bibliography">Bibliography</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="changes.html">Change log</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="changes.html#version-1-0-0-dev1">Version 1.0.0-dev1</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-8-0">Version 0.8.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-7-0">Version 0.7.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-6-0">Version 0.6.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-5-0">Version 0.5.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-4-0">Version 0.4.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-3-0">Version 0.3.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-2-0">Version 0.2.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#supported-environments">Supported environments</a></li>
 </ul>
 </li>
 </ul>
 </div>
-</div>
-<div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
-<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
-<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">References</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#module-reference">Module Reference</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter.html">zhmc_adapter – Update adapters and create Hipersocket adapters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_cpc.html">zhmc_cpc – Update CPCs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_crypto_attachment.html">zhmc_crypto_attachment – Attach crypto resources to partitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_hba.html">zhmc_hba – Create HBAs in partitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_nic.html">zhmc_nic – Create NICs in partitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition.html">zhmc_partition – Create partitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_group.html">zhmc_storage_group – Create storage groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Attach storage groups to partitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_volume.html">zhmc_storage_volume – Create storage volumes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user.html">zhmc_user – Create HMC users</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_virtual_function.html">zhmc_virtual_function – Create virtual functions in partitions</a></li>
 </ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#module-documentation">Module Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="playbooks.html">Playbooks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="playbooks.html#playbook-documentation">Playbook Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="playbooks.html#run-the-playbooks">Run the Playbooks</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Community Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="community_guides.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Development</a></li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Requirements</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html#control-node">Control node</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="requirements_managed.html">Managed node</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Appendices</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="release_notes.html">Releases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="versioning.html">Versioning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bibliography.html">Bibliography</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="copyright">
+<h2>Copyright<a class="headerlink" href="#copyright" title="Permalink to this headline">¶</a></h2>
+<p>Copyright IBM Corporation 2016-2020</p>
+</div>
+<div class="section" id="license">
+<h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
+<p>This collection is licensed under the <a class="reference external" href="https://opensource.org/licenses/Apache-2.0">Apache 2.0 License</a>.</p>
+</div>
+<div class="section" id="author-information">
+<h2>Author Information<a class="headerlink" href="#author-information" title="Permalink to this headline">¶</a></h2>
+<p><strong>IBM Z HMC Collection</strong> is maintained by the IBM Z development team.</p>
+</div>
+<div class="section" id="reporting-issues">
+<span id="id1"></span><h2>Reporting issues<a class="headerlink" href="#reporting-issues" title="Permalink to this headline">¶</a></h2>
+<p>If you encounter any problem with this collection, or if you have questions of
+any kind related to this collection (even when they are not about a problem),
+please open an issue in the <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/issues">issue tracker</a>.</p>
+</div>
 </div>
 
 
@@ -240,7 +312,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="intro.html" class="btn btn-neutral float-right" title="Introduction" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
     </div>

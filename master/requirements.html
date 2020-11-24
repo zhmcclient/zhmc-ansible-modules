@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; IBM Z HMC Collection  documentation</title>
+  <title>Requirements &mdash; IBM Z HMC Collection  documentation</title>
   
 
   
@@ -35,8 +35,10 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-    <link rel="index" title="Index" href="#" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Managed node" href="requirements_managed.html" />
+    <link rel="prev" title="Development" href="development.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -100,9 +102,12 @@
 <li class="toctree-l1"><a class="reference internal" href="development.html">Development</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Requirements</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="requirements.html">Requirements</a></li>
-<li class="toctree-l1"><a class="reference internal" href="requirements.html#control-node">Control node</a></li>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#control-node">Control node</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="requirements_managed.html">Managed node</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption"><span class="caption-text">Appendices</span></p>
 <ul>
@@ -155,7 +160,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Index</li>
+      <li>Requirements</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -172,64 +177,47 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
+  
 
-<h1 id="index">Index</h1>
 
-<div class="genindex-jumpbox">
- <a href="#A"><strong>A</strong></a>
- | <a href="#H"><strong>H</strong></a>
- 
+
+
+
+<div class="section" id="requirements">
+<span id="id1"></span><h1>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h1>
+<p>For <strong>IBM Z HMC Collection</strong>, the managed node is the control node, i.e. the
+playbook has its <code class="docutils literal notranslate"><span class="pre">hosts</span></code> and <code class="docutils literal notranslate"><span class="pre">connection</span></code> properties set accordingly:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>- hosts: localhost
+  connection: local
+</pre></div>
 </div>
-<h2 id="A">A</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="bibliography.html#term-Ansible-Community-Guide"><strong>Ansible Community Guide</strong></a>
-</li>
-      <li><a href="bibliography.html#term-Ansible-Developer-Guide"><strong>Ansible Developer Guide</strong></a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="bibliography.html#term-Ansible-Documentation"><strong>Ansible Documentation</strong></a>
-</li>
-      <li><a href="bibliography.html#term-Ansible-Module-Index"><strong>Ansible Module Index</strong></a>
-</li>
-      <li><a href="bibliography.html#term-Ansible-Testing"><strong>Ansible Testing</strong></a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="H">H</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="bibliography.html#term-HMC-API"><strong>HMC API</strong></a>
-</li>
-      <li><a href="bibliography.html#term-HMC-API-2.11.1"><strong>HMC API 2.11.1</strong></a>
-</li>
-      <li><a href="bibliography.html#term-HMC-API-2.12.0"><strong>HMC API 2.12.0</strong></a>
-</li>
-      <li><a href="bibliography.html#term-HMC-API-2.12.1"><strong>HMC API 2.12.1</strong></a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="bibliography.html#term-HMC-API-2.13.0"><strong>HMC API 2.13.0</strong></a>
-</li>
-      <li><a href="bibliography.html#term-HMC-API-2.13.1"><strong>HMC API 2.13.1</strong></a>
-</li>
-      <li><a href="bibliography.html#term-HMC-API-2.14.0"><strong>HMC API 2.14.0</strong></a>
-</li>
-      <li><a href="bibliography.html#term-HMC-API-2.14.1"><strong>HMC API 2.14.1</strong></a>
-</li>
-      <li><a href="bibliography.html#term-HMC-API-2.15.0"><strong>HMC API 2.15.0</strong></a>
-</li>
-  </ul></td>
-</tr></table>
-
+<p>The location of the HMC is defined with input parameters to the modules.</p>
+</div>
+<div class="section" id="control-node">
+<h1>Control node<a class="headerlink" href="#control-node" title="Permalink to this headline">¶</a></h1>
+<p>Besides having Ansible and <strong>IBM Z HMC Collection</strong> installed, there are no
+additional requirements for the control node.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="requirements_managed.html">Managed node</a></li>
+</ul>
+</div>
+</div>
 
 
            </div>
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="requirements_managed.html" class="btn btn-neutral float-right" title="Managed node" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="development.html" class="btn btn-neutral float-left" title="Development" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>
@@ -268,7 +256,7 @@
     <div class="rst-other-versions">
         <dl>
             <dt>Branches</dt>
-            <dd><a href="genindex.html">master</a></dd>
+            <dd><a href="requirements.html">master</a></dd>
         </dl>
     </div>
 </div>

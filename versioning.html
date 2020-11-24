@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; IBM Z HMC Collection  documentation</title>
+  <title>Versioning &mdash; IBM Z HMC Collection  documentation</title>
   
 
   
@@ -35,8 +35,10 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-    <link rel="index" title="Index" href="#" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Bibliography" href="bibliography.html" />
+    <link rel="prev" title="Releases" href="release_notes.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -105,9 +107,13 @@
 <li class="toctree-l1"><a class="reference internal" href="requirements.html#control-node">Control node</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Appendices</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="release_notes.html">Releases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="versioning.html">Versioning</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Versioning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#compatibility">Compatibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#deprecations">Deprecations</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="bibliography.html">Bibliography</a></li>
 </ul>
 
@@ -155,7 +161,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Index</li>
+      <li>Versioning</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -172,64 +178,54 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
+  
 
-<h1 id="index">Index</h1>
 
-<div class="genindex-jumpbox">
- <a href="#A"><strong>A</strong></a>
- | <a href="#H"><strong>H</strong></a>
- 
+
+
+
+<div class="section" id="versioning">
+<span id="id1"></span><h1>Versioning<a class="headerlink" href="#versioning" title="Permalink to this headline">¶</a></h1>
+<p>This collection uses the rules of <a class="reference external" href="http://semver.org/spec/v2.0.0.html">Semantic Versioning 2.0.0</a> for its version.</p>
+<p>This documentation may have been built from a development level of the
+package. You can recognize a development version of this package by the
+presence of a “.devD” suffix in the version string.</p>
+<div class="section" id="compatibility">
+<span id="id2"></span><h2>Compatibility<a class="headerlink" href="#compatibility" title="Permalink to this headline">¶</a></h2>
+<p>For Ansible modules, compatibility is always seen from the perspective of an
+Ansible playbook using it. Thus, a backwards compatible new version of an
+Ansible Galaxy collection means that the user can safely upgrade to that new
+version without encountering compatibility issues in any Ansible playbooks
+using the modules in the collection.</p>
+<p>This collection uses the rules of <a class="reference external" href="http://semver.org/spec/v2.0.0.html">Semantic Versioning 2.0.0</a> for compatibility
+between package versions, and for <a class="reference internal" href="#deprecations"><span class="std std-ref">deprecations</span></a>.</p>
+<p>The public interface of the collection that is subject to the semantic
+versioning rules (and specificically to its compatibility rules) are the Ansible
+module interfaces described in this documentation.</p>
+<p>Violations of these compatibility rules are described in section
+<a class="reference internal" href="release_notes.html#releases"><span class="std std-ref">Releases</span></a>.</p>
 </div>
-<h2 id="A">A</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="bibliography.html#term-Ansible-Community-Guide"><strong>Ansible Community Guide</strong></a>
-</li>
-      <li><a href="bibliography.html#term-Ansible-Developer-Guide"><strong>Ansible Developer Guide</strong></a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="bibliography.html#term-Ansible-Documentation"><strong>Ansible Documentation</strong></a>
-</li>
-      <li><a href="bibliography.html#term-Ansible-Module-Index"><strong>Ansible Module Index</strong></a>
-</li>
-      <li><a href="bibliography.html#term-Ansible-Testing"><strong>Ansible Testing</strong></a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="H">H</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="bibliography.html#term-HMC-API"><strong>HMC API</strong></a>
-</li>
-      <li><a href="bibliography.html#term-HMC-API-2.11.1"><strong>HMC API 2.11.1</strong></a>
-</li>
-      <li><a href="bibliography.html#term-HMC-API-2.12.0"><strong>HMC API 2.12.0</strong></a>
-</li>
-      <li><a href="bibliography.html#term-HMC-API-2.12.1"><strong>HMC API 2.12.1</strong></a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="bibliography.html#term-HMC-API-2.13.0"><strong>HMC API 2.13.0</strong></a>
-</li>
-      <li><a href="bibliography.html#term-HMC-API-2.13.1"><strong>HMC API 2.13.1</strong></a>
-</li>
-      <li><a href="bibliography.html#term-HMC-API-2.14.0"><strong>HMC API 2.14.0</strong></a>
-</li>
-      <li><a href="bibliography.html#term-HMC-API-2.14.1"><strong>HMC API 2.14.1</strong></a>
-</li>
-      <li><a href="bibliography.html#term-HMC-API-2.15.0"><strong>HMC API 2.15.0</strong></a>
-</li>
-  </ul></td>
-</tr></table>
-
+<div class="section" id="deprecations">
+<span id="id3"></span><h2>Deprecations<a class="headerlink" href="#deprecations" title="Permalink to this headline">¶</a></h2>
+<p>Deprecated functionality is marked accordingly in this documentation and in the
+<a class="reference internal" href="release_notes.html#releases"><span class="std std-ref">Releases</span></a> section.</p>
+</div>
+</div>
 
 
            </div>
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="bibliography.html" class="btn btn-neutral float-right" title="Bibliography" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="release_notes.html" class="btn btn-neutral float-left" title="Releases" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>
@@ -268,7 +264,7 @@
     <div class="rst-other-versions">
         <dl>
             <dt>Branches</dt>
-            <dd><a href="genindex.html">master</a></dd>
+            <dd><a href="master/versioning.html">master</a></dd>
         </dl>
     </div>
 </div>
