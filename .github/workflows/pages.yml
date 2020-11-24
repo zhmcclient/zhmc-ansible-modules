@@ -4,9 +4,9 @@ name: pages
 
 env:
   # Command that builds the documentation:
-  docs_build_cmd: make docs
+  doc_build_cmd: make docs
   # Directory where the documentation is built in main worktree:
-  docs_build_dir: docs
+  doc_build_dir: docs_build
 
 on:
   push:
@@ -32,7 +32,7 @@ jobs:
         make develop
     - name: Build documentation
       run: |
-        ${{ env.docs_build_cmd }}
+        ${{ env.doc_build_cmd }}
     - name: Setup gh-pages worktree
       run: |
          git worktree add gh-pages gh-pages
@@ -40,7 +40,7 @@ jobs:
       # The file .gh-pages-exclude defines files to be excluded from the sync
       run: |
          bash -c "cd gh-pages; git fetch; rm -rf *"
-         rsync -a ${{ env.docs_build_dir }}/ gh-pages/ --exclude-from=.gh-pages-exclude
+         rsync -a ${{ env.doc_build_dir }}/ gh-pages/ --exclude-from=.gh-pages-exclude
     - name: Commit changes in the gh-pages branch locally
       # The git config can specify any user name and email
       run: |
