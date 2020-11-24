@@ -19,10 +19,9 @@
 Development
 ===========
 
-This section only needs to be read by developers of the ibm.zhmc Ansible Galaxy
-collection project. People that want to make a fix or develop some extension,
-and people that want to test the project are also considered developers for
-the purpose of this section.
+This section only needs to be read by developers of this project. People that
+want to make a fix or develop some extension, and people that want to test the
+project are also considered developers for the purpose of this section.
 
 
 .. _`Repository`:
