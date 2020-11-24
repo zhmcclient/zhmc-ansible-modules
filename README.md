@@ -13,20 +13,19 @@ limitations under the License.
 -->
 
 
-# ibm.zhmc Ansible Galaxy collection
+# IBM Z HMC Collection
 
-[![Github Release](https://img.shields.io/github/v/release/zhmcclient/zhmc-ansible-modules)](https://github.com/zhmcclient/zhmc-ansible-modules/releases)
-[![Ansible Galaxy](https://img.shields.io/badge/galaxy-ibm.zhmc-660198.svg?style=flat)](https://galaxy.ansible.com/ibm/zhmc/)
-[![Test status](https://github.com/zhmcclient/zhmc-ansible-modules/workflows/test/badge.svg?branch=master)](https://github.com/zhmcclient/zhmc-ansible-modules/actions?query=workflow%3Atest)
-[![Docs status](https://github.com/zhmcclient/zhmc-ansible-modules/workflows/pages/badge.svg?branch=master)](https://github.com/zhmcclient/zhmc-ansible-modules/actions?query=workflow%3Apages)
-[![Coveralls Result](https://img.shields.io/coveralls/zhmcclient/zhmc-ansible-modules.svg)](https://coveralls.io/github/zhmcclient/zhmc-ansible-modules)
+[![Github Releases](https://img.shields.io/github/v/release/zhmcclient/zhmc-ansible-modules)](https://github.com/zhmcclient/zhmc-ansible-modules/releases "Github Releases")
+[![Ansible Galaxy](https://img.shields.io/badge/galaxy-ibm.zhmc-660198.svg?style=flat)](https://galaxy.ansible.com/ibm/zhmc/ "Ansible Galaxy")
+[![Test status (master)](https://github.com/zhmcclient/zhmc-ansible-modules/workflows/test/badge.svg?branch=master)](https://github.com/zhmcclient/zhmc-ansible-modules/actions?query=workflow%3Atest "Test status (master)")
+[![Docs status (master)](https://github.com/zhmcclient/zhmc-ansible-modules/workflows/pages/badge.svg?branch=master)](https://github.com/zhmcclient/zhmc-ansible-modules/actions?query=workflow%3Apages "Docs status (master)")
+[![Coveralls result](https://img.shields.io/coveralls/zhmcclient/zhmc-ansible-modules.svg)](https://coveralls.io/github/zhmcclient/zhmc-ansible-modules "Coveralls result")
 
 
 ## Overview
 
-The [ibm.zhmc collection on Ansible Galaxy](https://galaxy.ansible.com/ibm/zhmc/)
-contains [Ansible](https://www.ansible.com/) modules that can manage platform
-resources on [IBM Z](http://www.ibm.com/systems/z/) and
+**IBM Z HMC Collection** provides [Ansible](https://www.ansible.com/) modules
+that can manage platform resources on [IBM Z](http://www.ibm.com/systems/z/) and
 [LinuxONE](http://www.ibm.com/systems/linuxone/) machines.
 
 The goal of this collection is to be able to utilize the power and ease of use
