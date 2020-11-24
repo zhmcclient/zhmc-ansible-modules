@@ -3,7 +3,10 @@
 name: pages
 
 env:
-  docs_build_dir: docs  # Directory where the documentation is built in main worktree
+  # Command that builds the documentation:
+  docs_build_cmd: make docs
+  # Directory where the documentation is built in main worktree:
+  docs_build_dir: docs
 
 on:
   push:
@@ -18,28 +21,26 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v2
       with:
-        persist-credentials: false  # Use personal token (???)
+        persist-credentials: false  # TODO: Understand if this is needed
         fetch-depth: 0  # Required for pushing to the repo
     - name: Set up Python 3.8
       uses: actions/setup-python@v2
       with:
         python-version: '3.8'
-    - name: Install the package and its dependents
-      run: |
-        make install
-    - name: Development setup
+    - name: Setup development environment
       run: |
         make develop
-    - name: Build versioned documentation in ${{ env.docs_build_dir }}
+    - name: Build documentation
       run: |
-        make docs
-    - name: Setup gh-pages branch as a Git worktree
+        ${{ env.docs_build_cmd }}
+    - name: Setup gh-pages worktree
       run: |
          git worktree add gh-pages gh-pages
-    - name: Syncing documentation in ${{ env.docs_build_dir }} to gh-pages worktree
+    - name: Sync documentation to gh-pages worktree
+      # The file .gh-pages-exclude defines files to be excluded from the sync
       run: |
          bash -c "cd gh-pages; git fetch; rm -rf *"
-         rsync -a ${{ env.docs_build_dir }} gh-pages --exclude-from=.gh-pages-exclude
+         rsync -a ${{ env.docs_build_dir }}/ gh-pages/ --exclude-from=.gh-pages-exclude
     - name: Commit changes in the gh-pages branch locally
       # The git config can specify any user name and email
       run: |
