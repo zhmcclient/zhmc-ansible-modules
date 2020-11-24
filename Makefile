@@ -167,7 +167,6 @@ help:
 	@echo '  end2end    - Run end2end tests'
 	@echo '  dist       - Build the collection distribution archive in: $(dist_dir)'
 	@echo '  upload     - Publish the collection to Ansible Galaxy'
-	@echo '  pages      - Build and sync the documentation to the gh-pages worktree'
 	@echo '  clobber    - Remove any produced files'
 	@echo 'Environment variables:'
 	@echo '  TESTHMC=... - Nickname of HMC to be used in end2end tests. Default: $(default_test_hmc)'
@@ -196,17 +195,6 @@ develop: _check_version develop_$(pymn).done
 
 .PHONY: docs
 docs: _check_version develop_$(pymn).done $(doc_build_dir)/index.html
-	@echo '$@ done.'
-
-gh-pages:
-	@echo 'Setting up gh-pages branch as a git worktree'
-	git worktree add gh-pages gh-pages
-
-.PHONY: pages
-pages: _check_version develop_$(pymn).done $(doc_build_dir)/index.html gh-pages .gh-pages-exclude
-	@echo 'Syncing documentation to gh-pages worktree'
-	bash -c "cd gh-pages; git fetch; rm -rf *"
-	rsync -a $(doc_build_dir)/ gh-pages/ --exclude-from=.gh-pages-exclude
 	@echo '$@ done.'
 
 .PHONY: linkcheck

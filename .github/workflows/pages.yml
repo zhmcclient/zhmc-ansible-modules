@@ -2,8 +2,12 @@
 
 name: pages
 
+env:
+  docs_build_dir: docs  # Directory where the documentation is built in main worktree
+
 on:
-  push:  # A push to master event occurs when a PR targeting master is merged
+  push:
+    # PR merge to these branches triggers this workflow
     branches: [ master, stable_1.0 ]
 
 jobs:
@@ -26,10 +30,17 @@ jobs:
     - name: Development setup
       run: |
         make develop
-    - name: Build documentation in the gh-pages branch
+    - name: Build versioned documentation in ${{ env.docs_build_dir }}
       run: |
-        make pages
-    - name: Commit changes in the gh-pages branch
+        make docs
+    - name: Setup gh-pages branch as a Git worktree
+      run: |
+         git worktree add gh-pages gh-pages
+    - name: Syncing documentation in ${{ env.docs_build_dir }} to gh-pages worktree
+      run: |
+         bash -c "cd gh-pages; git fetch; rm -rf *"
+         rsync -a ${{ env.docs_build_dir }} gh-pages --exclude-from=.gh-pages-exclude
+    - name: Commit changes in the gh-pages branch locally
       # The git config can specify any user name and email
       run: |
         git config --global user.name "GitHub Actions"
