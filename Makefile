@@ -57,7 +57,7 @@ collection_full_name := $(collection_namespace).$(collection_name)
 
 # Collection version (full version, e.g. "1.0.0")
 # Note: The collection version is defined in galaxy.yml
-collection_version := $(shell $(PYTHON_CMD) setup.py --version)
+collection_version := $(shell $(PYTHON_CMD) docs/conf.py)
 
 # Python versions
 python_major_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('%s'%sys.version_info[0])")
@@ -128,7 +128,6 @@ doc_rst_files := \
 dist_dir := dist
 dist_file := $(dist_dir)/$(collection_namespace)-$(collection_name)-$(collection_version).tar.gz
 dist_dependent_files := \
-    setup.py \
     README.md \
     requirements.txt \
     $(wildcard *.py) \
