@@ -17,8 +17,8 @@ limitations under the License.
 
 [![Github Release](https://img.shields.io/github/v/release/zhmcclient/zhmc-ansible-modules)](https://github.com/zhmcclient/zhmc-ansible-modules/releases)
 [![Ansible Galaxy](https://img.shields.io/badge/galaxy-ibm.zhmc-660198.svg?style=flat)](https://galaxy.ansible.com/ibm/zhmc/)
-[![Github Actions test](https://github.com/pywbem/pywbem/workflows/test/badge.svg?branch=master)](https://github.com/zhmcclient/zhmc-ansible-modules/actions?query=workflow%3Atest)
-[![Github Actions pages](https://github.com/pywbem/pywbem/workflows/pages/badge.svg?branch=master)](https://github.com/zhmcclient/zhmc-ansible-modules/actions?query=workflow%3Apages)
+[![Test status](https://github.com/zhmcclient/zhmc-ansible-modules/workflows/test/badge.svg?branch=master)](https://github.com/zhmcclient/zhmc-ansible-modules/actions?query=workflow%3Atest)
+[![Docs status](https://github.com/zhmcclient/zhmc-ansible-modules/workflows/pages/badge.svg?branch=master)](https://github.com/zhmcclient/zhmc-ansible-modules/actions?query=workflow%3Apages)
 [![Coveralls Result](https://img.shields.io/coveralls/zhmcclient/zhmc-ansible-modules.svg)](https://coveralls.io/github/zhmcclient/zhmc-ansible-modules)
 
 
