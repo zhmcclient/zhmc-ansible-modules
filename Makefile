@@ -111,9 +111,9 @@ sanity_dir1 := tmp_sanity
 sanity_tar_file := tmp_workspace.tar
 
 # Directories for documentation
-doc_source_dir := docs_source
+doc_source_dir := docs
 doc_linkcheck_dir := docs_linkcheck
-doc_build_dir := docs
+doc_build_dir := docs_build
 
 # Module RST files
 module_rst_dir := $(doc_source_dir)/modules
