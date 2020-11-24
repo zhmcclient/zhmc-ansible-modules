@@ -19,6 +19,7 @@ tmp_*
 /htmlcov/
 /dist/
 /docs_linkcheck/
+/docs_build/
 /tests/output/
 /AUTHORS
 /ChangeLog
