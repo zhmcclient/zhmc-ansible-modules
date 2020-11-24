@@ -34,7 +34,7 @@ jobs:
       run: |
         git config --global user.name "GitHub Actions"
         git config --global user.email "github-actions@github.com"
-        bash -c "cd gh-pages; git status; git commit -m 'Docs update from PR with commit ${{ github.SHA }}'"
+        bash -c "cd gh-pages; git add .; git status; git commit -m 'Docs update from PR with commit ${{ github.SHA }}'; true"
     - name: Push gh-pages branch to upstream repo
       uses: ad-m/github-push-action@master
       # From https://github.com/marketplace/actions/github-push
