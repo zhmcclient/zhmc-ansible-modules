@@ -27,20 +27,24 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: '3.8'
-    - name: Setup development environment
+    - name: Set up development environment
       run: |
         make develop
     - name: Build documentation
       run: |
         ${{ env.doc_build_cmd }}
-    - name: Setup gh-pages worktree
+    - name: Set up gh-pages worktree
       run: |
          git worktree add gh-pages gh-pages
+         bash -c "cd gh-pages; git fetch"
     - name: Sync documentation to gh-pages worktree
       # The file .gh-pages-exclude defines files to be excluded from the sync
       run: |
-         bash -c "cd gh-pages; git fetch; rm -rf *"
-         rsync -a ${{ env.doc_build_dir }}/ gh-pages/ --exclude-from=.gh-pages-exclude
+         rm -rf gh-pages/*
+         rm -f gh-pages/.doctrees
+         rm -f gh-pages/.buildinfo
+         ls -al gh-pages
+         rsync -a --exclude-from=.gh-pages-exclude ${{ env.doc_build_dir }}/ gh-pages/
     - name: Commit changes in the gh-pages branch locally
       # The git config can specify any user name and email
       run: |

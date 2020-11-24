@@ -1,2 +1,5 @@
-.DS_Store
+# rsync exclude patterns for the documentation build. For details on the syntax,
+# see https://linuxize.com/post/how-to-exclude-files-and-directories-with-rsync/
+# or https://download.samba.org/pub/rsync/rsync.html.
+# Path names are relative to the 'docs_build' directory.
 .doctrees
