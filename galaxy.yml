@@ -85,6 +85,5 @@ build_ignore:
   # requirements.txt is intentionally included for dependent install
   - dev-requirements.txt
   - minimum-constraints.txt
-  - setup.py
   - tools
   - docs_local

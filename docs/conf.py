@@ -196,3 +196,7 @@ scv_banner_recent_tag = True
 # documents. The default order is whatever git prints when
 # running "git ls-remote --tags ./."
 scv_invert = True
+
+# this is needed for the makefile
+if __name__ == '__main__':
+    print(version)
