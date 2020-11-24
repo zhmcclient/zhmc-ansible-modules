@@ -16,8 +16,9 @@ limitations under the License.
 # ibm.zhmc Ansible Galaxy collection
 
 [![Github Release](https://img.shields.io/github/v/release/zhmcclient/zhmc-ansible-modules)](https://github.com/zhmcclient/zhmc-ansible-modules/releases)
-[![Github Actions](https://github.com/pywbem/pywbem/workflows/test/badge.svg?branch=master)](https://github.com/pywbem/pywbem/actions/)
 [![Ansible Galaxy](https://img.shields.io/badge/galaxy-ibm.zhmc-660198.svg?style=flat)](https://galaxy.ansible.com/ibm/zhmc/)
+[![Github Actions test](https://github.com/pywbem/pywbem/workflows/test/badge.svg?branch=master)](https://github.com/zhmcclient/zhmc-ansible-modules/actions?query=workflow%3Atest)
+[![Github Actions pages](https://github.com/pywbem/pywbem/workflows/pages/badge.svg?branch=master)](https://github.com/zhmcclient/zhmc-ansible-modules/actions?query=workflow%3Apages)
 [![Coveralls Result](https://img.shields.io/coveralls/zhmcclient/zhmc-ansible-modules.svg)](https://coveralls.io/github/zhmcclient/zhmc-ansible-modules)
 
 
