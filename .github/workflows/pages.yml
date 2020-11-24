@@ -41,7 +41,7 @@ jobs:
       # The file .gh-pages-exclude defines files to be excluded from the sync
       run: |
          rm -rf gh-pages/*
-         rm -f gh-pages/.doctrees
+         rm -rf gh-pages/.doctrees
          rm -f gh-pages/.buildinfo
          ls -al gh-pages
          rsync -a --exclude-from=.gh-pages-exclude ${{ env.doc_build_dir }}/ gh-pages/
