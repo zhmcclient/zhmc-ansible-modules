@@ -60,10 +60,18 @@ build_ignore:
   - .pytest_cache
   - venv
   - htmlcov
-  - docs_linkcheck
   - dist
+  - docs_linkcheck
+  - docs_build
+  - tests/output
+  - AUTHORS  # only in older branches
+  - ChangeLog  # only in older branches
+  - build  # only in older branches
+  - gh-pages  # in case it exists locally
   # Other ignore items:
   - galaxy.yml
+  - .github
+  - .gh-pages-exclude
   - .gitignore
   - .coveragerc
   - .flake8  # only in older branches
