@@ -403,6 +403,16 @@ git push --set-upstream origin stable_$MN
 <p>On GitHub, go to “Settings” and change the branch from which the Github
 pages are built, to <code class="docutils literal notranslate"><span class="pre">stable_$MN</span></code>.</p>
 </li>
+<li><p>The final step of the version release process is to generate the documentation
+for the new version. For that please create a new branch, the add the newly
+created tag <code class="docutils literal notranslate"><span class="pre">M.N.U</span></code> into the <code class="docutils literal notranslate"><span class="pre">scv_whitelist_tags</span></code> list in conf.py (or
+replace one of the existing ones).
+Then execute the <code class="docutils literal notranslate"><span class="pre">docs</span></code> make target, check that the new tag is in the
+current version (bottom left part of the page) and create a PR with the new branch.
+Once the PR is merged, the docs on the GitHub pages will be updated to include
+the new version.
+<strong>Attention!!</strong> This section needs to be updated as soon as the gh-pages
+branch and the supporting process to release will be ready.</p></li>
 </ol>
 </div>
 <div class="section" id="starting-a-new-version">
@@ -573,13 +583,13 @@ git branch -d start_$MNU
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: master
+        v: 1.0.0-dev1
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
         <dl>
-            <dt>Branches</dt>
-            <dd><a href="master/development.html">master</a></dd>
+            <dt>Tags</dt>
+            <dd><a href="1.0.0-dev1/development.html">1.0.0-dev1</a></dd>
         </dl>
     </div>
 </div>
