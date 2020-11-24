@@ -292,5 +292,4 @@ ifneq ($(doc_build),true)
 else
 	sphinx-versioning -l $(doc_source_dir)/conf.py build $(doc_source_dir) $(doc_build_dir)
 	touch $(doc_build_dir)/.nojekyll
-	find docs -name .doctrees -prune -exec rm -rf  {} \;
 endif
