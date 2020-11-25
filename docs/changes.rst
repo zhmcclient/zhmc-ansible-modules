@@ -45,6 +45,9 @@ Released: not yet
 * Migrated from Travis and Appveyor to GitHub Actions. This required several
   changes in package dependencies for development.
 
+* Increased the development status shown for the package on Pypi to
+  Production/Stable. (Issue #285)
+
 **Cleanup:**
 
 **Known issues:**
