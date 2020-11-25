@@ -1,5 +1,5 @@
 
-:github_url: https://github.com/IBM/ibm_zos_zosmf/tree/master/plugins/modules/zhmc_nic.py
+:github_url: https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_nic.py
 
 .. _zhmc_nic_module:
 
@@ -27,71 +27,56 @@ Parameters
 ----------
 
 
-     
 hmc_host
   The hostname or IP address of the HMC.
-
 
   | **required**: True
   | **type**: str
 
 
-     
 hmc_auth
   The authentication credentials for the HMC, as a dictionary of ``userid``, ``password``.
-
 
   | **required**: True
   | **type**: dict
 
 
-     
   userid
     The userid (username) for authenticating with the HMC.
 
-
     | **required**: True
     | **type**: str
 
 
-     
   password
     The password for authenticating with the HMC.
 
-
     | **required**: True
     | **type**: str
 
 
 
-     
 cpc_name
   The name of the CPC with the partition containing the NIC.
 
-
   | **required**: True
   | **type**: str
 
 
-     
 partition_name
   The name of the partition containing the NIC.
 
-
   | **required**: True
   | **type**: str
 
 
-     
 name
   The name of the target NIC that is managed. If the NIC needs to be created, this value becomes its name.
 
-
   | **required**: True
   | **type**: str
 
 
-     
 state
   The desired state for the target NIC:
 
@@ -99,13 +84,11 @@ state
 
   ``present``: Ensures that the NIC exists in the specified partition and has the specified properties.
 
-
   | **required**: True
   | **type**: str
   | **choices**: absent, present
 
 
-     
 properties
   Dictionary with input properties for the NIC, for ``state=present``. Key is the property name with underscores instead of hyphens, and value is the property value in YAML syntax. Integer properties may also be provided as decimal strings. Will be ignored for ``state=absent``.
 
@@ -121,24 +104,19 @@ properties
 
   Properties omitted in this dictionary will remain unchanged when the NIC already exists, and will get the default value defined in the data model for NICs when the NIC is being created.
 
-
   | **required**: False
   | **type**: dict
 
 
-     
 log_file
   File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.
-
 
   | **required**: False
   | **type**: str
 
 
-     
 _faked_session
   An internal parameter used for testing the module.
-
 
   | **required**: False
   | **type**: raw
@@ -192,53 +170,58 @@ Return Values
 -------------
 
 
-   changed
-        Indicates if any change has been made by the module. For ``state=facts``, always will be false.
+changed
+  Indicates if any change has been made by the module. For ``state=facts``, always will be false.
 
+  | **returned**: always
+  | **type**: bool
 
-        | **returned**: always
-        | **type**: bool
+msg
+  An error message that describes the failure.
 
+  | **returned**: failure
+  | **type**: str
 
+nic
+  For ``state=absent``, an empty dictionary.
 
-   msg
-        An error message that describes the failure.
+  For ``state=present``, the resource properties of the NIC after any changes.
 
+  | **returned**: success
+  | **type**: dict
+  | **sample**:
 
-        | **returned**: failure
-        | **type**: str
+    .. code-block:: json
 
+        {
+            "adapter-id": "128",
+            "adapter-name": "OSD_128_MGMT_NET2_30",
+            "adapter-port": 0,
+            "class": "nic",
+            "description": "HAMGMT",
+            "device-number": "0004",
+            "element-id": "5956e97a-f433-11ea-b67c-00106f239d19",
+            "element-uri": "/api/partitions/32323df4-f433-11ea-b67c-00106f239d19/nics/5956e97a-f433-11ea-b67c-00106f239d19",
+            "mac-address": "02:d2:4d:80:b9:88",
+            "name": "HAMGMT0",
+            "parent": "/api/partitions/32323df4-f433-11ea-b67c-00106f239d19",
+            "ssc-ip-address": null,
+            "ssc-ip-address-type": null,
+            "ssc-management-nic": false,
+            "ssc-mask-prefix": null,
+            "type": "osd",
+            "virtual-switch-uri": "/api/virtual-switches/db2f0bec-e578-11e8-bd0a-00106f239c31",
+            "vlan-id": null,
+            "vlan-type": null
+        }
 
+  name
+    NIC name
 
-   nic
-        For ``state=absent``, an empty dictionary.
+    | **type**: str
 
-        For ``state=present``, the resource properties of the NIC after any changes.
-
-
-        | **returned**: success
-        | **type**: dict
-
-        **sample**: ::
-
-                  {"adapter-id": "128", "adapter-name": "OSD_128_MGMT_NET2_30", "adapter-port": 0, "class": "nic", "description": "HAMGMT", "device-number": "0004", "element-id": "5956e97a-f433-11ea-b67c-00106f239d19", "element-uri": "/api/partitions/32323df4-f433-11ea-b67c-00106f239d19/nics/5956e97a-f433-11ea-b67c-00106f239d19", "mac-address": "02:d2:4d:80:b9:88", "name": "HAMGMT0", "parent": "/api/partitions/32323df4-f433-11ea-b67c-00106f239d19", "ssc-ip-address": null, "ssc-ip-address-type": null, "ssc-management-nic": false, "ssc-mask-prefix": null, "type": "osd", "virtual-switch-uri": "/api/virtual-switches/db2f0bec-e578-11e8-bd0a-00106f239c31", "vlan-id": null, "vlan-type": null}
-
-
-    name
-          NIC name
-
-
-          | **type**: str
-
-
-
-    {property}
-          Additional properties of the NIC, as described in the data model of the 'NIC' element object of the 'Partition' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
-
-
-          | **type**: 
-
-
+  {property}
+    Additional properties of the NIC, as described in the data model of the 'NIC' element object of the 'Partition' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
 
 
 

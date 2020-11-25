@@ -1,5 +1,5 @@
 
-:github_url: https://github.com/IBM/ibm_zos_zosmf/tree/master/plugins/modules/zhmc_crypto_attachment.py
+:github_url: https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_crypto_attachment.py
 
 .. _zhmc_crypto_attachment_module:
 
@@ -28,62 +28,49 @@ Parameters
 ----------
 
 
-     
 hmc_host
   The hostname or IP address of the HMC.
-
 
   | **required**: True
   | **type**: str
 
 
-     
 hmc_auth
   The authentication credentials for the HMC, as a dictionary of ``userid``, ``password``.
-
 
   | **required**: True
   | **type**: dict
 
 
-     
   userid
     The userid (username) for authenticating with the HMC.
 
-
     | **required**: True
     | **type**: str
 
 
-     
   password
     The password for authenticating with the HMC.
 
-
     | **required**: True
     | **type**: str
 
 
 
-     
 cpc_name
   The name of the CPC that has the partition and the crypto adapters.
 
-
   | **required**: True
   | **type**: str
 
 
-     
 partition_name
   The name of the partition to which the crypto domains and crypto adapters are attached.
 
-
   | **required**: True
   | **type**: str
 
 
-     
 state
   The desired state for the attachment:
 
@@ -93,45 +80,38 @@ state
 
   * ``facts``: Does not change anything on the attachment and returns the crypto configuration of the partition.
 
-
   | **required**: True
   | **type**: str
   | **choices**: attached, detached, facts
 
 
-     
 adapter_count
   Only for ``state=attached``: The number of crypto adapters the partition needs to have attached. The special value -1 means all adapters of the desired crypto type in the CPC. The ``adapter_names`` and ``adapter_count`` parameters are mutually exclusive; if neither is specified the default for ``adapter_count`` applies.
-
 
   | **required**: False
   | **type**: int
   | **default**: -1
 
 
-     
 adapter_names
   Only for ``state=attached``: The names of the crypto adapters the partition needs to have attached. The ``adapter_names`` and ``adapter_count`` parameters are mutually exclusive; if neither is specified the default for ``adapter_count`` applies.
 
-
   | **required**: False
   | **type**: list
+  | **elements**: str
 
 
-     
 domain_range
   Only for ``state=attached``: The domain range the partition needs to have attached, as a tuple of integers (min, max) that specify the inclusive range of domain index numbers. Other domains attached to the partition remain unchanged. The special value -1 for the max item means the maximum supported domain index number.
 
-
   | **required**: False
   | **type**: list
+  | **elements**: int
   | **default**: [0, -1]
 
 
-     
 access_mode
   Only for ``state=attached``: The access mode in which the crypto domains specified in ``domain_range`` need to be attached.
-
 
   | **required**: False
   | **type**: str
@@ -139,10 +119,8 @@ access_mode
   | **choices**: usage, control
 
 
-     
 crypto_type
   Only for ``state=attached``: The crypto type of the crypto adapters that will be considered for attaching.
-
 
   | **required**: False
   | **type**: str
@@ -150,19 +128,15 @@ crypto_type
   | **choices**: ep11, cca, acc
 
 
-     
 log_file
   File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.
-
 
   | **required**: False
   | **type**: str
 
 
-     
 _faked_session
   An internal parameter used for testing the module.
-
 
   | **required**: False
   | **type**: raw
@@ -250,146 +224,136 @@ Return Values
 -------------
 
 
-   changed
-        Indicates if any change has been made by the module. For ``state=facts``, always will be false.
+changed
+  Indicates if any change has been made by the module. For ``state=facts``, always will be false.
+
+  | **returned**: always
+  | **type**: bool
+
+msg
+  An error message that describes the failure.
+
+  | **returned**: failure
+  | **type**: str
+
+changes
+  The changes that were performed by the module.
+
+  | **returned**: success
+  | **type**: dict
+
+  added-adapters
+    Names of the adapters that were added to the partition
+
+    | **type**: list
+    | **elements**: str
+
+  added-domains
+    Domain index numbers of the crypto domains that were added to the partition
+
+    | **type**: list
+    | **elements**: str
 
 
-        | **returned**: always
-        | **type**: bool
+crypto_configuration
+  The crypto configuration of the partition after the changes performed by the module.
 
+  | **returned**: success
+  | **type**: dict
+  | **sample**:
 
+    .. code-block:: json
 
-   msg
-        An error message that describes the failure.
+        {
+            "CSPF1": {
+                "adapters": {
+                    "CRYP00": {
+                        "adapter-family": "crypto",
+                        "adapter-id": "118",
+                        "card-location": "A14B-LG09",
+                        "class": "adapter",
+                        "crypto-number": 0,
+                        "crypto-type": "ep11-coprocessor",
+                        "description": "",
+                        "detected-card-type": "crypto-express-6s",
+                        "name": "CRYP00",
+                        "object-id": "e1274d16-e578-11e8-a87c-00106f239c31",
+                        "object-uri": "/api/adapters/e1274d16-e578-11e8-a87c-00106f239c31",
+                        "parent": "/api/cpcs/66942455-4a14-3f99-8904-3e7ed5ca28d7",
+                        "physical-channel-status": "operating",
+                        "state": "online",
+                        "status": "active",
+                        "tke-commands-enabled": true,
+                        "type": "crypto",
+                        "udx-loaded": false
+                    }
+                },
+                "control_domains": [],
+                "domain_config": {
+                    "10": "usage",
+                    "11": "usage"
+                },
+                "usage_domains": [
+                    10,
+                    11
+                ]
+            }
+        }
 
+  {name}
+    Partition name
 
-        | **returned**: failure
-        | **type**: str
+    | **type**: dict
 
+    adapters
+      Attached crypto adapters
 
-
-   changes
-        The changes that were performed by the module.
-
-
-        | **returned**: success
-        | **type**: dict
-
-
-    added-adapters
-          Names of the adapters that were added to the partition
-
-
-          | **type**: list
-
-
-
-    added-domains
-          Domain index numbers of the crypto domains that were added to the partition
-
-
-          | **type**: list
-
-
-
-
-
-   crypto_configuration
-        The crypto configuration of the partition after the changes performed by the module.
-
-
-        | **returned**: success
-        | **type**: dict
-
-        **sample**: ::
-
-                  {"CSPF1": {"adapters": {"CRYP00": {"adapter-family": "crypto", "adapter-id": "118", "card-location": "A14B-LG09", "class": "adapter", "crypto-number": 0, "crypto-type": "ep11-coprocessor", "description": "", "detected-card-type": "crypto-express-6s", "name": "CRYP00", "object-id": "e1274d16-e578-11e8-a87c-00106f239c31", "object-uri": "/api/adapters/e1274d16-e578-11e8-a87c-00106f239c31", "parent": "/api/cpcs/66942455-4a14-3f99-8904-3e7ed5ca28d7", "physical-channel-status": "operating", "state": "online", "status": "active", "tke-commands-enabled": true, "type": "crypto", "udx-loaded": false}}, "control_domains": [], "domain_config": {"10": "usage", "11": "usage"}, "usage_domains": [10, 11]}}
-
-
-    {name}
-          Partition name
-
-
-          | **type**: dict
-
-
-     adapters
-            Attached crypto adapters
-
-
-            | **type**: dict
-
+      | **type**: dict
 
       {name}
-              Adapter name
+        Adapter name
 
+        | **type**: dict
 
-              | **type**: dict
+        name
+          Adapter name
 
+          | **type**: str
 
-       name
-                Adapter name
-
-
-                | **type**: str
-
-
-
-       {property}
-                Additional properties of the adapter, as described in the data model of the 'Adapter' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
-
-
-                | **type**: 
+        {property}
+          Additional properties of the adapter, as described in the data model of the 'Adapter' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
 
 
 
 
+    domain_config
+      Attached crypto domains
 
-
-
-     domain_config
-            Attached crypto domains
-
-
-            | **type**: dict
-
+      | **type**: dict
 
       {index}
-              Crypto domain index
+        Crypto domain index
 
+        | **type**: dict
 
-              | **type**: dict
+        {access_mode}
+          Access mode ('control' or 'usage').
 
-
-       {access_mode}
-                Access mode ('control' or 'usage').
-
-
-                | **type**: str
+          | **type**: str
 
 
 
+    usage_domains
+      Domain index numbers of the crypto domains attached in usage mode
 
+      | **type**: list
+      | **elements**: str
 
+    control_domains
+      Domain index numbers of the crypto domains attached in control mode
 
-
-     usage_domains
-            Domain index numbers of the crypto domains attached in usage mode
-
-
-            | **type**: list
-
-
-
-     control_domains
-            Domain index numbers of the crypto domains attached in control mode
-
-
-            | **type**: list
-
-
-
-
+      | **type**: list
+      | **elements**: str
 
 
 

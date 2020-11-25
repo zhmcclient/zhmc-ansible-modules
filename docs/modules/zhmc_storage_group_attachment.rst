@@ -1,5 +1,5 @@
 
-:github_url: https://github.com/IBM/ibm_zos_zosmf/tree/master/plugins/modules/zhmc_storage_group_attachment.py
+:github_url: https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_storage_group_attachment.py
 
 .. _zhmc_storage_group_attachment_module:
 
@@ -27,71 +27,56 @@ Parameters
 ----------
 
 
-     
 hmc_host
   The hostname or IP address of the HMC.
-
 
   | **required**: True
   | **type**: str
 
 
-     
 hmc_auth
   The authentication credentials for the HMC, as a dictionary of ``userid``, ``password``.
-
 
   | **required**: True
   | **type**: dict
 
 
-     
   userid
     The userid (username) for authenticating with the HMC.
 
-
     | **required**: True
     | **type**: str
 
 
-     
   password
     The password for authenticating with the HMC.
 
-
     | **required**: True
     | **type**: str
 
 
 
-     
 cpc_name
   The name of the CPC that has the partition and is associated with the storage group.
 
-
   | **required**: True
   | **type**: str
 
 
-     
 storage_group_name
   The name of the storage group for the attachment.
 
-
   | **required**: True
   | **type**: str
 
 
-     
 partition_name
   The name of the partition for the attachment.
 
-
   | **required**: True
   | **type**: str
 
 
-     
 state
   The desired state for the attachment:
 
@@ -101,25 +86,20 @@ state
 
   * ``facts``: Does not change anything on the attachment and returns the attachment status.
 
-
   | **required**: True
   | **type**: str
   | **choices**: detached, attached, facts
 
 
-     
 log_file
   File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.
-
 
   | **required**: False
   | **type**: str
 
 
-     
 _faked_session
   An internal parameter used for testing the module.
-
 
   | **required**: False
   | **type**: raw
@@ -184,43 +164,34 @@ Return Values
 -------------
 
 
-   changed
-        Indicates if any change has been made by the module. For ``state=facts``, always will be false.
+changed
+  Indicates if any change has been made by the module. For ``state=facts``, always will be false.
 
+  | **returned**: always
+  | **type**: bool
 
-        | **returned**: always
-        | **type**: bool
+msg
+  An error message that describes the failure.
 
+  | **returned**: failure
+  | **type**: str
 
+storage_group_attachment
+  Attachment state of the storage group. If no check mode was requested, the attachment state after any changes is returned. If check mode was requested, the actual attachment state is returned.
 
-   msg
-        An error message that describes the failure.
+  | **returned**: success
+  | **type**: dict
+  | **sample**:
 
+    .. code-block:: json
 
-        | **returned**: failure
-        | **type**: str
+        {
+            "attached": false
+        }
 
+  attached
+    Attachment state of the storage group: Indicates whether the storage group is attached to the partition.
 
-
-   storage_group_attachment
-        Attachment state of the storage group. If no check mode was requested, the attachment state after any changes is returned. If check mode was requested, the actual attachment state is returned.
-
-
-        | **returned**: success
-        | **type**: dict
-
-        **sample**: ::
-
-                  {"attached": false}
-
-
-    attached
-          Attachment state of the storage group: Indicates whether the storage group is attached to the partition.
-
-
-          | **type**: bool
-
-
-
+    | **type**: bool
 
 

@@ -1,5 +1,5 @@
 
-:github_url: https://github.com/IBM/ibm_zos_zosmf/tree/master/plugins/modules/zhmc_adapter.py
+:github_url: https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_adapter.py
 
 .. _zhmc_adapter_module:
 
@@ -28,62 +28,49 @@ Parameters
 ----------
 
 
-     
 hmc_host
   The hostname or IP address of the HMC.
-
 
   | **required**: True
   | **type**: str
 
 
-     
 hmc_auth
   The authentication credentials for the HMC, as a dictionary of ``userid``, ``password``.
-
 
   | **required**: True
   | **type**: dict
 
 
-     
   userid
     The userid (username) for authenticating with the HMC.
 
-
     | **required**: True
     | **type**: str
 
 
-     
   password
     The password for authenticating with the HMC.
 
-
     | **required**: True
     | **type**: str
 
 
 
-     
 name
   The name of the target adapter. In case of renaming an adapter, this is the new name of the adapter.
 
-
   | **required**: True
   | **type**: str
 
 
-     
 cpc_name
   The name of the target CPC.
 
-
   | **required**: True
   | **type**: str
 
 
-     
 match
   Only for ``state=set``: Match properties for identifying the target adapter in the set of adapters in the CPC, if an adapter with the name specified in the ``name`` module parameter does not exist in that set. This parameter will be ignored otherwise.
 
@@ -95,12 +82,10 @@ match
 
   The possible match properties are all properties in the data model for adapter resources, including ``name``.
 
-
   | **required**: False
   | **type**: dict
 
 
-     
 state
   The desired state for the attachment:
 
@@ -112,13 +97,11 @@ state
 
   * ``facts``: Does not change anything on the adapter and returns the adapter properties including its ports.
 
-
   | **required**: True
   | **type**: str
   | **choices**: set, present, absent, facts
 
 
-     
 properties
   Only for ``state=set|present``: New values for the properties of the adapter. Properties omitted in this dictionary will remain unchanged. This parameter will be ignored for other states.
 
@@ -132,24 +115,19 @@ properties
 
   * ``crypto_type``: The crypto type can be specified in order to support the ability of the Crypto Express adapters to change their crypto type. Valid values are 'ep11', 'cca' and 'acc'. Changing to 'acc' will zeroize the crypto adapter.
 
-
   | **required**: False
   | **type**: dict
 
 
-     
 log_file
   File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.
-
 
   | **required**: False
   | **type**: str
 
 
-     
 _faked_session
   An internal parameter used for testing the module.
-
 
   | **required**: False
   | **type**: raw
@@ -235,77 +213,89 @@ Return Values
 -------------
 
 
-   changed
-        Indicates if any change has been made by the module. For ``state=facts``, always will be false.
+changed
+  Indicates if any change has been made by the module. For ``state=facts``, always will be false.
+
+  | **returned**: always
+  | **type**: bool
+
+msg
+  An error message that describes the failure.
+
+  | **returned**: failure
+  | **type**: str
+
+adapter
+  For ``state=absent``, an empty dictionary.
+
+  For ``state=set|present|facts``, the adapter and its ports.
+
+  | **returned**: success
+  | **type**: dict
+  | **sample**:
+
+    .. code-block:: json
+
+        {
+            "adapter-family": "ficon",
+            "adapter-id": "120",
+            "allowed-capacity": 64,
+            "card-location": "A14B-D112-J.01",
+            "channel-path-id": "09",
+            "class": "adapter",
+            "configured-capacity": 14,
+            "description": "",
+            "detected-card-type": "ficon-express-16s-plus",
+            "maximum-total-capacity": 254,
+            "name": "FCP_120_SAN1_02",
+            "object-id": "dfb2147a-e578-11e8-a87c-00106f239c31",
+            "object-uri": "/api/adapters/dfb2147a-e578-11e8-a87c-00106f239c31",
+            "parent": "/api/cpcs/66942455-4a14-3f99-8904-3e7ed5ca28d7",
+            "physical-channel-status": "operating",
+            "port-count": 1,
+            "ports": [
+                {
+                    "class": "storage-port",
+                    "description": "",
+                    "element-id": "0",
+                    "element-uri": "/api/adapters/dfb2147a-e578-11e8-a87c-00106f239c31/storage-ports/0",
+                    "fabric-id": "100088947155A1E9",
+                    "index": 0,
+                    "name": "Port 0",
+                    "parent": "/api/adapters/dfb2147a-e578-11e8-a87c-00106f239c31"
+                }
+            ],
+            "state": "online",
+            "status": "active",
+            "storage-port-uris": [
+                "/api/adapters/dfb2147a-e578-11e8-a87c-00106f239c31/storage-ports/0"
+            ],
+            "type": "fcp",
+            "used-capacity": 20
+        }
+
+  name
+    Adapter name
+
+    | **type**: str
+
+  {property}
+    Additional properties of the adapter, as described in the data model of the 'Adapter' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
 
 
-        | **returned**: always
-        | **type**: bool
+  ports
+    Artificial property for the ports of the adapter.
 
-
-
-   msg
-        An error message that describes the failure.
-
-
-        | **returned**: failure
-        | **type**: str
-
-
-
-   adapter
-        For ``state=absent``, an empty dictionary.
-
-        For ``state=set|present|facts``, the adapter and its ports.
-
-
-        | **returned**: success
-        | **type**: dict
-
-        **sample**: ::
-
-                  {"adapter-family": "ficon", "adapter-id": "120", "allowed-capacity": 64, "card-location": "A14B-D112-J.01", "channel-path-id": "09", "class": "adapter", "configured-capacity": 14, "description": "", "detected-card-type": "ficon-express-16s-plus", "maximum-total-capacity": 254, "name": "FCP_120_SAN1_02", "object-id": "dfb2147a-e578-11e8-a87c-00106f239c31", "object-uri": "/api/adapters/dfb2147a-e578-11e8-a87c-00106f239c31", "parent": "/api/cpcs/66942455-4a14-3f99-8904-3e7ed5ca28d7", "physical-channel-status": "operating", "port-count": 1, "ports": [{"class": "storage-port", "description": "", "element-id": "0", "element-uri": "/api/adapters/dfb2147a-e578-11e8-a87c-00106f239c31/storage-ports/0", "fabric-id": "100088947155A1E9", "index": 0, "name": "Port 0", "parent": "/api/adapters/dfb2147a-e578-11e8-a87c-00106f239c31"}], "state": "online", "status": "active", "storage-port-uris": ["/api/adapters/dfb2147a-e578-11e8-a87c-00106f239c31/storage-ports/0"], "type": "fcp", "used-capacity": 20}
-
+    | **type**: list
+    | **elements**: dict
 
     name
-          Adapter name
+      Port name
 
-
-          | **type**: str
-
-
+      | **type**: str
 
     {property}
-          Additional properties of the adapter, as described in the data model of the 'Adapter' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
-
-
-          | **type**: 
-
-
-
-    ports
-          Artificial property for the ports of the adapter.
-
-
-          | **type**: list
-
-
-     name
-            Port name
-
-
-            | **type**: str
-
-
-
-     {property}
-            Additional properties of the port, as described in the data model of the 'Network Port' or 'Storage Port' element object of the 'Adapter' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
-
-
-            | **type**: 
-
-
-
+      Additional properties of the port, as described in the data model of the 'Network Port' or 'Storage Port' element object of the 'Adapter' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
 
 
 
