@@ -82,7 +82,7 @@ environments:
 
 * Ansible versions: 2.4 or higher
 
-* Python versions: 2.7, 3.4 or higher
+* Python versions: 2.7, 3.5 or higher
 
 * Operating systems running Ansible: Linux, OS-X
 
