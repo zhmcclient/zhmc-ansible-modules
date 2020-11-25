@@ -28,6 +28,8 @@ tmp_*
 *.done
 /dist/
 /docs_linkcheck/
+/docs_local/
+/docs_build/
 vars.yml
 vault.yml
 /python-zhmcclient
