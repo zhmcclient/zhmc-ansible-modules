@@ -147,7 +147,7 @@ Availability: `Galaxy`_, `GitHub`_
 
 
 Version 0.8.0
-^^^^^^^^^^^^^
+-------------
 
 Released: 2019-04-02
 
@@ -165,7 +165,7 @@ Availability: `Pypi`_, `GitHub`_
 
 
 Version 0.7.0
-^^^^^^^^^^^^^
+-------------
 
 Released: 2019-02-20
 
@@ -189,7 +189,7 @@ Availability: `Pypi`_, `GitHub`_
 
 
 Version 0.6.0
-^^^^^^^^^^^^^
+-------------
 
 Released: 2019-01-07
 
@@ -251,7 +251,7 @@ Fixed this change log in 0.6.1 and 0.7.0
 
 
 Version 0.5.0
-^^^^^^^^^^^^^
+-------------
 
 Released: 2018-10-24
 
@@ -276,7 +276,7 @@ Availability: `Pypi`_, `GitHub`_
 
 
 Version 0.4.0
-^^^^^^^^^^^^^
+-------------
 
 Availability: `Pypi`_, `GitHub`_
 
@@ -321,7 +321,7 @@ Released: 2018-03-15
 
 
 Version 0.3.0
-^^^^^^^^^^^^^
+-------------
 
 Released: 2017-08-16
 
@@ -351,7 +351,7 @@ Availability: `Pypi`_, `GitHub`_
 
 
 Version 0.2.0
-^^^^^^^^^^^^^^
+-------------
 
 Released: 2017-07-20
 
