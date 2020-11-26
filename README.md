@@ -25,8 +25,8 @@ limitations under the License.
 ## Overview
 
 **IBM Z HMC Collection** provides [Ansible](https://www.ansible.com/) modules
-that can manage platform resources on [IBM Z](http://www.ibm.com/systems/z/) and
-[LinuxONE](http://www.ibm.com/systems/linuxone/) machines.
+that can manage platform resources on [IBM Z](http://www.ibm.com/it-infrastructure/z/) and
+[LinuxONE](http://www.ibm.com/it-infrastructure/linuxone/) machines.
 
 The goal of this collection is to be able to utilize the power and ease of use
 of Ansible for the management of IBM Z platform resources.
@@ -213,7 +213,7 @@ currently exists, it is stopped (if needed) and deleted.
 ## Quick start
 
 For installation instructions, see
-[Installation](https://zhmcclient.github.io/zhmc-ansible-modules/intro.html#installation).
+[Installation](https://zhmcclient.github.io/zhmc-ansible-modules/installation.html).
 
 After having installed the ibm.zhmc Ansible Galaxy collection, you find the
 example playbooks in folder ``ibm/zhmc/playbooks/`` of your local Ansible

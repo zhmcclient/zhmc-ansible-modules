@@ -132,6 +132,6 @@ please open an issue in the `issue tracker`_.
 .. _Ansible:
    https://www.ansible.com/
 .. _IBM Z:
-   http://www.ibm.com/systems/z/
+   http://www.ibm.com/it-infrastructure/z/
 .. _LinuxONE:
-   http://www.ibm.com/systems/linuxone/
+   http://www.ibm.com/it-infrastructure/linuxone/
