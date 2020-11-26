@@ -75,7 +75,7 @@ That web site represents a defined set of versions of this collection and
 automatically gets updated whenever a pull request gets merged into the
 repository branch that corresponds to the version. The automatic update
 mechanism is implemented in the GitHub Actions workflow file
-``.github/workflows/pages.yml``.
+``.github/workflows/docs.yml``.
 
 The versions to be represented on that site are defined in ``docs/conf.py``
 in the section for "sphinx-versioning".

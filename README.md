@@ -44,7 +44,7 @@ https://galaxy.ansible.com/api/v2/collections/<NS>/<COLL>/ as follows:
 
 [![Version on Galaxy](https://img.shields.io/badge/dynamic/json?style=flat&label=galaxy&prefix=v&url=https://galaxy.ansible.com/api/v2/collections/ibm/zhmc/&query=latest_version.version)](https://galaxy.ansible.com/ibm/zhmc/ "Version on Galaxy")
 [![Test status (master)](https://github.com/zhmcclient/zhmc-ansible-modules/workflows/test/badge.svg?branch=master)](https://github.com/zhmcclient/zhmc-ansible-modules/actions?query=workflow%3Atest "Test status (master)")
-[![Docs status (master)](https://github.com/zhmcclient/zhmc-ansible-modules/workflows/pages/badge.svg?branch=master)](https://github.com/zhmcclient/zhmc-ansible-modules/actions?query=workflow%3Apages "Docs status (master)")
+[![Docs status (master)](https://github.com/zhmcclient/zhmc-ansible-modules/workflows/docs/badge.svg?branch=master)](https://github.com/zhmcclient/zhmc-ansible-modules/actions?query=workflow%3Adocs "Docs status (master)")
 [![Test coverage (master)](https://img.shields.io/coveralls/zhmcclient/zhmc-ansible-modules.svg)](https://coveralls.io/github/zhmcclient/zhmc-ansible-modules "Test coverage (master)")
 
 
