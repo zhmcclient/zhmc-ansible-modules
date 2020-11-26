@@ -23,14 +23,16 @@ jobs:
       uses: actions/checkout@v2
       with:
         fetch-depth: 0  # Required for pushing to the repo
-    - name: Update the tag for the development branch
+    # Repeat the following step for each dev branch:
+    - name: Update the tag of the master branch locally
+      if: ${{ github.ref == 'master' }}
       run: |
-        git checkout ${{ github.ref }}
-        echo git tag -f ${{ env.${{ github.ref }} }}
-    # - name: Push tags to upstream repo
-    #   uses: ad-m/github-push-action@master
-    #   # From https://github.com/marketplace/actions/github-push
-    #   with:
-    #     github_token: ${{ secrets.GITHUB_TOKEN }}
-    #     branch: ${{ github.ref }}
-    #     tags: true
+        git checkout master
+        git tag -f ${{ env.master }}
+    - name: Push the tag to the upstream repo
+      uses: ad-m/github-push-action@master
+      # From https://github.com/marketplace/actions/github-push
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ github.ref }}
+        tags: true
