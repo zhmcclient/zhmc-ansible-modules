@@ -16,7 +16,7 @@ on:
 
 jobs:
 
-  pages:
+  tags:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repo
@@ -25,10 +25,15 @@ jobs:
         fetch-depth: 0  # Required for pushing to the repo
     # Repeat the following step for each dev branch:
     - name: Update the tag of the master branch locally
-      if: ${{ github.ref == 'master' }}
+      if: ${{ github.ref == 'refs/heads/master' }}
       run: |
+        echo "Commit that previously had the tag:"
+        git log ${{ env.master }}~..${{ env.master }} --oneline --decorate
         git checkout master
+        echo "Updating the tag:"
         git tag -f ${{ env.master }}
+        echo "Commit that now has the tag:"
+        git log ${{ env.master }}~..${{ env.master }} --oneline --decorate
     - name: Push the tag to the upstream repo
       uses: ad-m/github-push-action@master
       # From https://github.com/marketplace/actions/github-push
