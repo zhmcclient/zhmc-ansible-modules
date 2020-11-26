@@ -49,10 +49,10 @@ Run the Playbooks
 
 Two of the sample playbooks are:
 
-* ``create_partition.yml`` creates a partition with a NIC, HBA and virtual
-  function to an accelerator adapter.
+* ``sample_create_partition_full.yml`` creates a partition with a NIC, HBA and
+  virtual function to an accelerator adapter.
 
-* ``delete_partition.yml`` deletes a partition.
+* ``sample_delete_partition.yml`` deletes a partition.
 
 The following examples assume that you have the playbook files in the current
 directory.
@@ -60,7 +60,7 @@ You can use the `ansible-playbook`_ command to run these two playbooks as follow
 
 .. code-block:: sh
 
-    $ ansible-playbook create_partition.yml
+    $ ansible-playbook sample_create_partition_full.yml
 
     PLAY [localhost] **********************************************************
 
@@ -85,7 +85,7 @@ You can use the `ansible-playbook`_ command to run these two playbooks as follow
     PLAY RECAP ****************************************************************
     127.0.0.1                  : ok=6    changed=5    unreachable=0    failed=0
 
-    $ ansible-playbook playbooks/delete_partition.yml
+    $ ansible-playbook sample_delete_partition.yml
 
     PLAY [localhost] **********************************************************
 
