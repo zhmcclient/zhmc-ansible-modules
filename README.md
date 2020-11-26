@@ -13,13 +13,39 @@ limitations under the License.
 -->
 
 
+<!---
+Note: Details on the "Version on Galaxy" badge, below:
+
+Shields.io allows defining dynamic badge creation using data in the result of
+an HTTP GET on a JSON based REST API, as follows:
+
+https://img.shields.io/badge/dynamic/json?
+  url=<URL>&
+  label=<LABEL>&
+  query=<$.DATA.SUBDATA>&
+  color=<COLOR>&
+  prefix=<PREFIX>&
+  suffix=<SUFFIX>
+plus the standard query parameters (style, color, ...)
+
+Ansible Galaxy returns the latest version of a collection using an HTTP GET on
+https://galaxy.ansible.com/api/v2/collections/<NS>/<COLL>/ as follows:
+
+{
+    . . .
+    "latest_version": {
+        "version": "1.0.0-dev1",
+    }
+}
+-->
+
+
 # IBM Z HMC Collection
 
-[![Github Releases](https://img.shields.io/github/v/release/zhmcclient/zhmc-ansible-modules)](https://github.com/zhmcclient/zhmc-ansible-modules/releases "Github Releases")
-[![Ansible Galaxy](https://img.shields.io/badge/galaxy-ibm.zhmc-660198.svg?style=flat)](https://galaxy.ansible.com/ibm/zhmc/ "Ansible Galaxy")
+[![Version on Galaxy](https://img.shields.io/badge/dynamic/json?style=flat&label=galaxy&prefix=v&url=https://galaxy.ansible.com/api/v2/collections/ibm/zhmc/&query=latest_version.version)](https://galaxy.ansible.com/ibm/zhmc/ "Version on Galaxy")
 [![Test status (master)](https://github.com/zhmcclient/zhmc-ansible-modules/workflows/test/badge.svg?branch=master)](https://github.com/zhmcclient/zhmc-ansible-modules/actions?query=workflow%3Atest "Test status (master)")
 [![Docs status (master)](https://github.com/zhmcclient/zhmc-ansible-modules/workflows/pages/badge.svg?branch=master)](https://github.com/zhmcclient/zhmc-ansible-modules/actions?query=workflow%3Apages "Docs status (master)")
-[![Coveralls result](https://img.shields.io/coveralls/zhmcclient/zhmc-ansible-modules.svg)](https://coveralls.io/github/zhmcclient/zhmc-ansible-modules "Coveralls result")
+[![Test coverage (master)](https://img.shields.io/coveralls/zhmcclient/zhmc-ansible-modules.svg)](https://coveralls.io/github/zhmcclient/zhmc-ansible-modules "Test coverage (master)")
 
 
 ## Overview
