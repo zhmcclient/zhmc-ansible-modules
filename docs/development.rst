@@ -438,7 +438,7 @@ has the remote name ``origin`` in your local clone.
 
     .. code-block:: text
 
-        git add docs/changes.rst
+        git add docs/release_notes.rst
         git commit -sm "Start $MNU"
         git push --set-upstream origin start_$MNU
 
