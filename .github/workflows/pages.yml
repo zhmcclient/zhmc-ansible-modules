@@ -10,16 +10,15 @@ env:
 
 on:
   push:
-    # Update of these tags (done by tags.yml) triggers this workflow.
-    # Keep these tags consistent with the pages.yml workflow and with the
-    # sphinx-versioning config in docs/conf.py.
-    tags: [ '1.0.0-dev1' ]
+    # PR merge to these branches triggers this workflow
+    branches: [ master ]
 
 jobs:
 
   pages:
     runs-on: ubuntu-latest
     steps:
+
     - name: Checkout repo
       uses: actions/checkout@v2
       with:
@@ -29,20 +28,53 @@ jobs:
         # versioned Sphinx build builds from the tags/branches specified in the
         # sphinx-versioning config in docs/conf.py, regardless of what is
         # currently checked out.
+
+    # Repeat the following step for each branch/tag in the docs.
+    # Keep these branches and tags consistent with the sphinx-versioning config
+    # in docs/conf.py.
+    - name: Set the tag and branch variables for master
+      if: ${{ github.ref == 'refs/heads/master' }}
+      run: |
+        echo "branch=master" >> $GITHUB_ENV
+        echo "tag=1.0.0-dev1" >> $GITHUB_ENV
+
+    - name: Update the tag locally
+      run: |
+        git checkout ${{ env.branch }}
+        echo "Commit that previously had the tag:"
+        git log ${{ env.tag }}~..${{ env.tag }} --oneline --decorate
+        echo "Updating the tag:"
+        git tag -f ${{ env.tag }}
+        echo "Commit that now has the tag:"
+        git log ${{ env.tag }}~..${{ env.tag }} --oneline --decorate
+
+    - name: Push the tag to the upstream repo
+      uses: ad-m/github-push-action@master
+      # From https://github.com/marketplace/actions/github-push
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ env.branch }}
+        tags: true
+        force: true
+
     - name: Set up Python 3.8
       uses: actions/setup-python@v2
       with:
         python-version: '3.8'
+
     - name: Set up development environment
       run: |
         make develop
+
     - name: Build documentation
       run: |
         ${{ env.doc_build_cmd }}
+
     - name: Set up gh-pages worktree
       run: |
          git worktree add gh-pages gh-pages
          bash -c "cd gh-pages; git fetch"
+
     - name: Sync documentation to gh-pages worktree
       # The file .gh-pages-exclude defines files to be excluded from the sync
       run: |
@@ -51,12 +83,14 @@ jobs:
          rm -f gh-pages/.buildinfo
          ls -al gh-pages
          rsync -a --exclude-from=.gh-pages-exclude ${{ env.doc_build_dir }}/ gh-pages/
+
     - name: Commit changes in the gh-pages branch locally
       # The git config can specify any user name and email
       run: |
         git config --global user.name "GitHub Actions"
         git config --global user.email "github-actions@github.com"
         bash -c "cd gh-pages; git add .; git status; git commit -m 'Docs update from PR with commit ${{ github.SHA }}'; true"
+
     - name: Push gh-pages branch to upstream repo
       uses: ad-m/github-push-action@master
       # From https://github.com/marketplace/actions/github-push
