@@ -82,16 +82,20 @@ of the machines to be managed, by using the API of the `zhmcclient`_ Python
 package.
 
 .. _Ansible: https://www.ansible.com/
-.. _IBM Z: http://www.ibm.com/systems/z/
-.. _LinuxONE: http://www.ibm.com/systems/linuxone/
+.. _IBM Z: http://www.ibm.com/it-infrastructure/z/
+.. _LinuxONE: http://www.ibm.com/it-infrastructure/linuxone/
 .. _zhmcclient: https://github.com/zhmcclient/python-zhmcclient
 
 
 Documentation
 =============
 
-The full documentation for this project is on RTD:
+This version of the project has its documentation on RTD:
 http://zhmc-ansible-modules.readthedocs.io/en/stable/
+
+Starting with version 1.0.0, the documentation is available on GitHub Pages:
+https://zhmcclient.github.io/zhmc-ansible-modules/
+
 
 Playbook examples
 =================

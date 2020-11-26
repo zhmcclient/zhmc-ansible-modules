@@ -67,8 +67,8 @@ of the machines to be managed, by using the API of the `zhmcclient`_ Python
 package.
 
 .. _Ansible: https://www.ansible.com/
-.. _IBM Z: http://www.ibm.com/systems/z/
-.. _LinuxONE: http://www.ibm.com/systems/linuxone/
+.. _IBM Z: http://www.ibm.com/it-infrastructure/z/
+.. _LinuxONE: http://www.ibm.com/it-infrastructure/linuxone/
 .. _zhmcclient: http://python-zhmcclient.readthedocs.io/en/stable/
 
 
