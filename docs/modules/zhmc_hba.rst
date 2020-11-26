@@ -1,5 +1,5 @@
 
-:github_url: https://github.com/IBM/ibm_zos_zosmf/tree/master/plugins/modules/zhmc_hba.py
+:github_url: https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_hba.py
 
 .. _zhmc_hba_module:
 
@@ -27,71 +27,56 @@ Parameters
 ----------
 
 
-     
 hmc_host
   The hostname or IP address of the HMC.
-
 
   | **required**: True
   | **type**: str
 
 
-     
 hmc_auth
   The authentication credentials for the HMC, as a dictionary of ``userid``, ``password``.
-
 
   | **required**: True
   | **type**: dict
 
 
-     
   userid
     The userid (username) for authenticating with the HMC.
 
-
     | **required**: True
     | **type**: str
 
 
-     
   password
     The password for authenticating with the HMC.
 
-
     | **required**: True
     | **type**: str
 
 
 
-     
 cpc_name
   The name of the CPC with the partition containing the HBA.
 
-
   | **required**: True
   | **type**: str
 
 
-     
 partition_name
   The name of the partition containing the HBA.
 
-
   | **required**: True
   | **type**: str
 
 
-     
 name
   The name of the target HBA that is managed. If the HBA needs to be created, this value becomes its name.
 
-
   | **required**: True
   | **type**: str
 
 
-     
 state
   The desired state for the target HBA:
 
@@ -99,13 +84,11 @@ state
 
   ``present``: Ensures that the HBA exists in the specified partition and has the specified properties.
 
-
   | **required**: True
   | **type**: str
   | **choices**: absent, present
 
 
-     
 properties
   Dictionary with input properties for the HBA, for ``state=present``. Key is the property name with underscores instead of hyphens, and value is the property value in YAML syntax. Integer properties may also be provided as decimal strings. Will be ignored for ``state=absent``.
 
@@ -121,24 +104,19 @@ properties
 
   Properties omitted in this dictionary will remain unchanged when the HBA already exists, and will get the default value defined in the data model for HBAs when the HBA is being created.
 
-
   | **required**: False
   | **type**: dict
 
 
-     
 log_file
   File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.
-
 
   | **required**: False
   | **type**: str
 
 
-     
 _faked_session
   An internal parameter used for testing the module.
-
 
   | **required**: False
   | **type**: raw
@@ -192,49 +170,33 @@ Return Values
 -------------
 
 
-   changed
-        Indicates if any change has been made by the module. For ``state=facts``, always will be false.
+changed
+  Indicates if any change has been made by the module. For ``state=facts``, always will be false.
 
+  | **returned**: always
+  | **type**: bool
 
-        | **returned**: always
-        | **type**: bool
+msg
+  An error message that describes the failure.
 
+  | **returned**: failure
+  | **type**: str
 
+hba
+  For ``state=absent``, an empty dictionary.
 
-   msg
-        An error message that describes the failure.
+  For ``state=present``, the resource properties of the HBA after any changes.
 
+  | **returned**: success
+  | **type**: dict
 
-        | **returned**: failure
-        | **type**: str
+  name
+    HBA name
 
+    | **type**: str
 
-
-   hba
-        For ``state=absent``, an empty dictionary.
-
-        For ``state=present``, the resource properties of the HBA after any changes.
-
-
-        | **returned**: success
-        | **type**: dict
-
-
-    name
-          HBA name
-
-
-          | **type**: str
-
-
-
-    {property}
-          Additional properties of the HBA, as described in the data model of the 'HBA' element object of the 'Partition' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
-
-
-          | **type**: 
-
-
+  {property}
+    Additional properties of the HBA, as described in the data model of the 'HBA' element object of the 'Partition' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
 
 
 
