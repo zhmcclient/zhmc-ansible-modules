@@ -10,8 +10,10 @@ env:
 
 on:
   push:
-    # PR merge to these branches triggers this workflow
-    branches: [ master, stable_1.0 ]
+    # Update of these tags (done by tags.yml) triggers this workflow.
+    # Keep these tags consistent with the pages.yml workflow and with the
+    # sphinx-versioning config in docs/conf.py.
+    tags: [ '1.0.0-dev1' ]
 
 jobs:
 
@@ -23,6 +25,10 @@ jobs:
       with:
         persist-credentials: false  # TODO: Understand if this is needed
         fetch-depth: 0  # Required for pushing to the repo
+        # Checking out the default branch (master) is fine because the
+        # versioned Sphinx build builds from the tags/branches specified in the
+        # sphinx-versioning config in docs/conf.py, regardless of what is
+        # currently checked out.
     - name: Set up Python 3.8
       uses: actions/setup-python@v2
       with:
