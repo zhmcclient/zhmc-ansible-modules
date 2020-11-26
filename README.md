@@ -71,8 +71,7 @@ continue using the latest released version on Pypi.
 ## Documentation
 
 * [Documentation](https://zhmcclient.github.io/zhmc-ansible-modules/)
-* [Change log](https://zhmcclient.github.io/zhmc-ansible-modules/changes.html)
-
+* [Releases (change log)](https://zhmcclient.github.io/zhmc-ansible-modules/release_notes.html)
 
 ## Playbook examples
 
