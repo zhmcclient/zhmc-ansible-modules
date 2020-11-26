@@ -192,7 +192,7 @@
             
             
               <!-- User defined GitHub URL -->
-              <a href="https://github.com/IBM/ibm_zos_zosmf/tree/master/plugins/modules/zhmc_crypto_attachment.py" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_crypto_attachment.py" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -294,12 +294,14 @@
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: list</div>
+<div class="line"><strong>elements</strong>: str</div>
 </div>
 </dd>
 <dt>domain_range</dt><dd><p>Only for <code class="docutils literal notranslate"><span class="pre">state=attached</span></code>: The domain range the partition needs to have attached, as a tuple of integers (min, max) that specify the inclusive range of domain index numbers. Other domains attached to the partition remain unchanged. The special value -1 for the max item means the maximum supported domain index number.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: list</div>
+<div class="line"><strong>elements</strong>: int</div>
 <div class="line"><strong>default</strong>: [0, -1]</div>
 </div>
 </dd>
@@ -399,8 +401,7 @@
 </div>
 <div class="section" id="return-values">
 <h2><a class="toc-backref" href="#id4">Return Values</a><a class="headerlink" href="#return-values" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div><dl>
+<dl>
 <dt>changed</dt><dd><p>Indicates if any change has been made by the module. For <code class="docutils literal notranslate"><span class="pre">state=facts</span></code>, always will be false.</p>
 <div class="line-block">
 <div class="line"><strong>returned</strong>: always</div>
@@ -413,58 +414,86 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>changes</dt><dd><blockquote>
-<div><p>The changes that were performed by the module.</p>
+<dt>changes</dt><dd><p>The changes that were performed by the module.</p>
 <div class="line-block">
 <div class="line"><strong>returned</strong>: success</div>
 <div class="line"><strong>type</strong>: dict</div>
 </div>
-</div></blockquote>
 <dl>
 <dt>added-adapters</dt><dd><p>Names of the adapters that were added to the partition</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: list</div>
+<div class="line"><strong>elements</strong>: str</div>
 </div>
 </dd>
 <dt>added-domains</dt><dd><p>Domain index numbers of the crypto domains that were added to the partition</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: list</div>
+<div class="line"><strong>elements</strong>: str</div>
 </div>
 </dd>
 </dl>
 </dd>
-<dt>crypto_configuration</dt><dd><blockquote>
-<div><p>The crypto configuration of the partition after the changes performed by the module.</p>
+<dt>crypto_configuration</dt><dd><p>The crypto configuration of the partition after the changes performed by the module.</p>
 <div class="line-block">
 <div class="line"><strong>returned</strong>: success</div>
 <div class="line"><strong>type</strong>: dict</div>
+<div class="line"><strong>sample</strong>:</div>
 </div>
-<p><strong>sample</strong>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;CSPF1&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;adapters&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;CRYP00&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;adapter-family&quot;</span><span class="p">:</span> <span class="s2">&quot;crypto&quot;</span><span class="p">,</span> <span class="s2">&quot;adapter-id&quot;</span><span class="p">:</span> <span class="s2">&quot;118&quot;</span><span class="p">,</span> <span class="s2">&quot;card-location&quot;</span><span class="p">:</span> <span class="s2">&quot;A14B-LG09&quot;</span><span class="p">,</span> <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;adapter&quot;</span><span class="p">,</span> <span class="s2">&quot;crypto-number&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;crypto-type&quot;</span><span class="p">:</span> <span class="s2">&quot;ep11-coprocessor&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;detected-card-type&quot;</span><span class="p">:</span> <span class="s2">&quot;crypto-express-6s&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;CRYP00&quot;</span><span class="p">,</span> <span class="s2">&quot;object-id&quot;</span><span class="p">:</span> <span class="s2">&quot;e1274d16-e578-11e8-a87c-00106f239c31&quot;</span><span class="p">,</span> <span class="s2">&quot;object-uri&quot;</span><span class="p">:</span> <span class="s2">&quot;/api/adapters/e1274d16-e578-11e8-a87c-00106f239c31&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">:</span> <span class="s2">&quot;/api/cpcs/66942455-4a14-3f99-8904-3e7ed5ca28d7&quot;</span><span class="p">,</span> <span class="s2">&quot;physical-channel-status&quot;</span><span class="p">:</span> <span class="s2">&quot;operating&quot;</span><span class="p">,</span> <span class="s2">&quot;state&quot;</span><span class="p">:</span> <span class="s2">&quot;online&quot;</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;active&quot;</span><span class="p">,</span> <span class="s2">&quot;tke-commands-enabled&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;crypto&quot;</span><span class="p">,</span> <span class="s2">&quot;udx-loaded&quot;</span><span class="p">:</span> <span class="n">false</span><span class="p">}},</span> <span class="s2">&quot;control_domains&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;domain_config&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;10&quot;</span><span class="p">:</span> <span class="s2">&quot;usage&quot;</span><span class="p">,</span> <span class="s2">&quot;11&quot;</span><span class="p">:</span> <span class="s2">&quot;usage&quot;</span><span class="p">},</span> <span class="s2">&quot;usage_domains&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">]}}</span>
+<blockquote>
+<div><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;CSPF1&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;adapters&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;CRYP00&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;adapter-family&quot;</span><span class="p">:</span> <span class="s2">&quot;crypto&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;adapter-id&quot;</span><span class="p">:</span> <span class="s2">&quot;118&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;card-location&quot;</span><span class="p">:</span> <span class="s2">&quot;A14B-LG09&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;adapter&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;crypto-number&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="nt">&quot;crypto-type&quot;</span><span class="p">:</span> <span class="s2">&quot;ep11-coprocessor&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;detected-card-type&quot;</span><span class="p">:</span> <span class="s2">&quot;crypto-express-6s&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;CRYP00&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;object-id&quot;</span><span class="p">:</span> <span class="s2">&quot;e1274d16-e578-11e8-a87c-00106f239c31&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;object-uri&quot;</span><span class="p">:</span> <span class="s2">&quot;/api/adapters/e1274d16-e578-11e8-a87c-00106f239c31&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;parent&quot;</span><span class="p">:</span> <span class="s2">&quot;/api/cpcs/66942455-4a14-3f99-8904-3e7ed5ca28d7&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;physical-channel-status&quot;</span><span class="p">:</span> <span class="s2">&quot;operating&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;state&quot;</span><span class="p">:</span> <span class="s2">&quot;online&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;active&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;tke-commands-enabled&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;crypto&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;udx-loaded&quot;</span><span class="p">:</span> <span class="kc">false</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;control_domains&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="nt">&quot;domain_config&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;10&quot;</span><span class="p">:</span> <span class="s2">&quot;usage&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;11&quot;</span><span class="p">:</span> <span class="s2">&quot;usage&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;usage_domains&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="mi">10</span><span class="p">,</span>
+            <span class="mi">11</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div></blockquote>
 <dl>
-<dt>{name}</dt><dd><blockquote>
-<div><p>Partition name</p>
+<dt>{name}</dt><dd><p>Partition name</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: dict</div>
 </div>
-</div></blockquote>
 <dl>
-<dt>adapters</dt><dd><blockquote>
-<div><p>Attached crypto adapters</p>
+<dt>adapters</dt><dd><p>Attached crypto adapters</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: dict</div>
 </div>
-</div></blockquote>
 <dl>
-<dt>{name}</dt><dd><blockquote>
-<div><p>Adapter name</p>
+<dt>{name}</dt><dd><p>Adapter name</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: dict</div>
 </div>
-</div></blockquote>
 <dl>
 <dt>name</dt><dd><p>Adapter name</p>
 <div class="line-block">
@@ -472,27 +501,20 @@
 </div>
 </dd>
 <dt>{property}</dt><dd><p>Additional properties of the adapter, as described in the data model of the ‘Adapter’ object in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
-<div class="line-block">
-<div class="line"><strong>type</strong>:</div>
-</div>
 </dd>
 </dl>
 </dd>
 </dl>
 </dd>
-<dt>domain_config</dt><dd><blockquote>
-<div><p>Attached crypto domains</p>
+<dt>domain_config</dt><dd><p>Attached crypto domains</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: dict</div>
 </div>
-</div></blockquote>
 <dl>
-<dt>{index}</dt><dd><blockquote>
-<div><p>Crypto domain index</p>
+<dt>{index}</dt><dd><p>Crypto domain index</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: dict</div>
 </div>
-</div></blockquote>
 <dl>
 <dt>{access_mode}</dt><dd><p>Access mode (‘control’ or ‘usage’).</p>
 <div class="line-block">
@@ -506,11 +528,13 @@
 <dt>usage_domains</dt><dd><p>Domain index numbers of the crypto domains attached in usage mode</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: list</div>
+<div class="line"><strong>elements</strong>: str</div>
 </div>
 </dd>
 <dt>control_domains</dt><dd><p>Domain index numbers of the crypto domains attached in control mode</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: list</div>
+<div class="line"><strong>elements</strong>: str</div>
 </div>
 </dd>
 </dl>
@@ -518,7 +542,6 @@
 </dl>
 </dd>
 </dl>
-</div></blockquote>
 </div>
 </div>
 

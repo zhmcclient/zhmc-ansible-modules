@@ -219,15 +219,31 @@ list of valid Make targets and a short description of what each target does.</p>
 <div class="section" id="building-the-documentation">
 <span id="id4"></span><h2>Building the documentation<a class="headerlink" href="#building-the-documentation" title="Permalink to this headline">¶</a></h2>
 <p>The documentation for <strong>IBM Z HMC Collection</strong> is published
-on GitHub pages at <a class="reference external" href="https://zhmcclient.github.io/zhmc-ansible-modules/">https://zhmcclient.github.io/zhmc-ansible-modules/</a>.</p>
-<p>That page represents the <code class="docutils literal notranslate"><span class="pre">master</span></code> branch of the Git repo for this collection
-and automatically gets updated whenever the <code class="docutils literal notranslate"><span class="pre">master</span></code> branch of the Git repo
-changes.</p>
-<p>In order to build the documentation locally from the Git work directory, issue:</p>
+on GitHub Pages at <a class="reference external" href="https://zhmcclient.github.io/zhmc-ansible-modules/">https://zhmcclient.github.io/zhmc-ansible-modules/</a>.</p>
+<p>That web site represents a defined set of versions of this collection and
+automatically gets updated whenever a pull request gets merged into the
+repository branch that corresponds to the version. The automatic update
+mechanism is implemented in the GitHub Actions workflow file
+<code class="docutils literal notranslate"><span class="pre">.github/workflows/pages.yml</span></code>.</p>
+<p>The versions to be represented on that site are defined in <code class="docutils literal notranslate"><span class="pre">docs/conf.py</span></code>
+in the section for “sphinx-versioning”.</p>
+<p>In order to build this “versioned” documentation locally, issue:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ make docs
 </pre></div>
 </div>
-<p>The top-level document to open with a web browser will be <code class="docutils literal notranslate"><span class="pre">docs/index.html</span></code>.</p>
+<p>The top-level document to open with a web browser will be
+<code class="docutils literal notranslate"><span class="pre">docs_build/index.html</span></code>. Note that the versioned documentation is built from
+the defined branches, so it does not include the content of your Git work
+directory.</p>
+<p>In order to see the effects of some change in your Git work directory, there
+is a second documentation build that builds an “unversioned” documentation
+from the content of your Git work directory:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ make docslocal
+</pre></div>
+</div>
+<p>The top-level document to open with a web browser will be
+<code class="docutils literal notranslate"><span class="pre">docs_local/index.html</span></code>; it is opened automatically when the documentation
+has been built successfully.</p>
 </div>
 <div class="section" id="testing">
 <span id="id5"></span><h2>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h2>
@@ -292,7 +308,7 @@ git checkout -b release_$MNU
 </div>
 </li>
 <li><p>Edit the change log:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>vi docs_source/changes.rst
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>vi docs/release_notes.rst
 </pre></div>
 </div>
 <p>and make the following changes in the section of the version to be released:</p>
@@ -317,7 +333,7 @@ add text for any known issues you want users to know about.</p></li>
 </div>
 </li>
 <li><p>Commit your changes and push them upstream:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>git add docs_source/changes.rst
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>git add docs/release_notes.rst
 git commit -sm &quot;Release $MNU&quot;
 git push --set-upstream origin release_$MNU
 </pre></div>
@@ -404,7 +420,7 @@ git push --set-upstream origin stable_$MN
 pages are built, to <code class="docutils literal notranslate"><span class="pre">stable_$MN</span></code>.</p>
 </li>
 <li><p>The final step of the version release process is to generate the documentation
-for the new version. For that please create a new branch, the add the newly
+for the new version. For that please create a new branch, then add the newly
 created tag <code class="docutils literal notranslate"><span class="pre">M.N.U</span></code> into the <code class="docutils literal notranslate"><span class="pre">scv_whitelist_tags</span></code> list in conf.py (or
 replace one of the existing ones).
 Then execute the <code class="docutils literal notranslate"><span class="pre">docs</span></code> make target, check that the new tag is in the
@@ -460,12 +476,15 @@ git checkout -b start_$MNU
 </div>
 </li>
 <li><p>Edit the change log:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>vi docs_source/changes.rst
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>vi docs/release_notes.rst
 </pre></div>
 </div>
-<p>and insert the following section before the top-most section:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Version 1.1.0
-^^^^^^^^^^^^^
+<p>and insert the following section before the top-most section, and update
+the version to the new version:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Version M.N.U.dev1
+------------------
+
+This version contains all fixes up to version M.N-1.x.
 
 Released: not yet
 
