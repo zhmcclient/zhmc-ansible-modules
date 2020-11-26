@@ -55,6 +55,6 @@
 
   - name: "Using Jinja2 template to create output file: playbooks/cpc_io_{{ cpc_name }}.md"
     template:
-      src: get_cpc_io.md.j2
+      src: sample_get_cpc_io.md.j2
       dest: "cpc_io_{{ cpc_name }}.md"
       mode: '0755'

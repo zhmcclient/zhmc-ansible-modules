@@ -216,14 +216,14 @@ For installation instructions, see
 [Installation](https://zhmcclient.github.io/zhmc-ansible-modules/intro.html#installation).
 
 After having installed the ibm.zhmc Ansible Galaxy collection, you find the
-example playbooks in folder ``ibm/zhmc/playbooks/`` of your local Ansible
+sample playbooks in folder ``ibm/zhmc/playbooks/`` of your local Ansible
 collection directory (e.g. ``$HOME/.ansible/collections/ansible_collections/``),
 for example:
 
-- `create_partition.yml` creates a partition with a NIC, HBA and
+- `sample_create_partition_full.yml` creates a partition with a NIC, HBA and
   virtual function to an accelerator adapter.
 
-- `delete_partition.yml` deletes a partition.
+- `sample_delete_partition.yml` deletes a partition.
 
 These example playbooks include two other files for defining credentials
 and other variables:
@@ -239,7 +239,7 @@ and other variables:
 Then, run the example playbooks:
 
 ``` {.sourceCode .text}
-$ ansible-playbook create_partition.yml
+$ ansible-playbook sample_create_partition_full.yml
 
 PLAY [localhost] **********************************************************
 
@@ -264,7 +264,7 @@ changed: [127.0.0.1]
 PLAY RECAP ****************************************************************
 127.0.0.1                  : ok=6    changed=5    unreachable=0    failed=0
 
-$ ansible-playbook delete_partition.yml
+$ ansible-playbook sample_delete_partition.yml
 
 PLAY [localhost] **********************************************************
 
