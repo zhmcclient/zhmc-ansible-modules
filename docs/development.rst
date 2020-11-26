@@ -69,19 +69,39 @@ Building the documentation
 --------------------------
 
 The documentation for **IBM Z HMC Collection** is published
-on GitHub pages at https://zhmcclient.github.io/zhmc-ansible-modules/.
+on GitHub Pages at https://zhmcclient.github.io/zhmc-ansible-modules/.
 
-That page represents the ``master`` branch of the Git repo for this collection
-and automatically gets updated whenever the ``master`` branch of the Git repo
-changes.
+That web site represents a defined set of versions of this collection and
+automatically gets updated whenever a pull request gets merged into the
+repository branch that corresponds to the version. The automatic update
+mechanism is implemented in the GitHub Actions workflow file
+``.github/workflows/pages.yml``.
 
-In order to build the documentation locally from the Git work directory, issue:
+The versions to be represented on that site are defined in ``docs/conf.py``
+in the section for "sphinx-versioning".
+
+In order to build this "versioned" documentation locally, issue:
 
 .. code-block:: text
 
     $ make docs
 
-The top-level document to open with a web browser will be ``docs/index.html``.
+The top-level document to open with a web browser will be
+``docs_build/index.html``. Note that the versioned documentation is built from
+the defined branches, so it does not include the content of your Git work
+directory.
+
+In order to see the effects of some change in your Git work directory, there
+is a second documentation build that builds an "unversioned" documentation
+from the content of your Git work directory:
+
+.. code-block:: text
+
+    $ make docslocal
+
+The top-level document to open with a web browser will be
+``docs_local/index.html``; it is opened automatically when the documentation
+has been built successfully.
 
 
 .. _`Testing`:
@@ -166,7 +186,7 @@ has the remote name ``origin`` in your local clone.
 
     .. code-block:: text
 
-        vi docs_source/changes.rst
+        vi docs/release_notes.rst
 
     and make the following changes in the section of the version to be released:
 
@@ -195,7 +215,7 @@ has the remote name ``origin`` in your local clone.
 
     .. code-block:: text
 
-        git add docs_source/changes.rst
+        git add docs/release_notes.rst
         git commit -sm "Release $MNU"
         git push --set-upstream origin release_$MNU
 
@@ -367,14 +387,17 @@ has the remote name ``origin`` in your local clone.
 
     .. code-block:: text
 
-        vi docs_source/changes.rst
+        vi docs/release_notes.rst
 
-    and insert the following section before the top-most section:
+    and insert the following section before the top-most section, and update
+    the version to the new version:
 
     .. code-block:: text
 
-        Version 1.1.0
-        ^^^^^^^^^^^^^
+        Version M.N.U.dev1
+        ------------------
+
+        This version contains all fixes up to version M.N-1.x.
 
         Released: not yet
 
