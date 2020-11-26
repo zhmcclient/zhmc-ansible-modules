@@ -164,7 +164,7 @@ scv_greatest_tag = True
 # White list which Git tags documentation will be generated and linked into the
 # version selection box. This is currently a manual selection, until more
 # versions are released, there are no regular expressions used.
-# Keep these tags consistent with the pages.yml workflow.
+# Keep these tags consistent with the docs.yml workflow.
 scv_whitelist_tags = ('1.0.0-dev1',)
 
 # Sort versions by one or more values. Valid values are semver, alpha, and time.

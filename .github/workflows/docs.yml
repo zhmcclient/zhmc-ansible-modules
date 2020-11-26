@@ -1,6 +1,6 @@
 # This GitHub workflow will build the documentation and publish it on GitHub Pages.
 
-name: pages
+name: docs
 
 env:
   # Command that builds the documentation:
@@ -15,7 +15,7 @@ on:
 
 jobs:
 
-  pages:
+  docs:
     runs-on: ubuntu-latest
     steps:
 
