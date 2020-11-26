@@ -65,6 +65,9 @@ Starting with version 1.0.0, the Ansible modules are no longer distributed on
 Pypi, but as the
 [ibm.zhmc collection on Galaxy](https://galaxy.ansible.com/ibm/zhmc/).
 
+Note that at this point, version 1.0.0 has not been released yet, so please
+continue using the latest released version on Pypi.
+
 ## Documentation
 
 * [Documentation](https://zhmcclient.github.io/zhmc-ansible-modules/)
