@@ -50,7 +50,7 @@ Besides having a supported operating system with a supported Python version
 Then, with a virtual Python environment active, clone the Git repo of this
 project and prepare the development environment with ``make develop``:
 
-.. code-block:: text
+.. code-block:: sh
 
     $ git clone git@github.com:zhmcclient/zhmc-ansible-modules.git
     $ cd zhmc-ansible-modules
@@ -82,7 +82,7 @@ in the section for "sphinx-versioning".
 
 In order to build this "versioned" documentation locally, issue:
 
-.. code-block:: text
+.. code-block:: sh
 
     $ make docs
 
@@ -95,7 +95,7 @@ In order to see the effects of some change in your Git work directory, there
 is a second documentation build that builds an "unversioned" documentation
 from the content of your Git work directory:
 
-.. code-block:: text
+.. code-block:: sh
 
     $ make docslocal
 
@@ -122,7 +122,7 @@ For the unit and function tests, the testcases and options for pytest
 can be specified via the environment variable ``TESTOPTS``, as shown in these
 examples:
 
-.. code-block:: text
+.. code-block:: sh
 
     $ make test                                      # Run all unit and function tests
     $ TESTOPTS='-vv' make test                       # Specify -vv verbosity for pytest
@@ -158,7 +158,7 @@ has the remote name ``origin`` in your local clone.
 
     When releasing the master branch (e.g. as version ``1.0.0``):
 
-    .. code-block:: text
+    .. code-block:: sh
 
         MNU=1.0.0
         MN=1.0
@@ -166,25 +166,25 @@ has the remote name ``origin`` in your local clone.
 
     When releasing a stable branch (e.g. as version ``0.8.1``):
 
-    .. code-block:: text
+    .. code-block:: sh
 
         MNU=0.8.1
         MN=0.8
-        BRANCH=stable_$MN
+        BRANCH=stable_${MN}
 
-3.  Check out the branch to be released, make sure it is up to date with upstream, and
-    create a topic branch for the version to be released:
+3.  Check out the branch to be released, make sure it is up to date with
+    upstream, and create a topic branch for the version to be released:
 
-    .. code-block:: text
+    .. code-block:: sh
 
         git status  # Double check the work directory is clean
-        git checkout $BRANCH
+        git checkout ${BRANCH}
         git pull
-        git checkout -b release_$MNU
+        git checkout -b release_${MNU}
 
 4.  Edit the change log:
 
-    .. code-block:: text
+    .. code-block:: sh
 
         vi docs/source/release_notes.rst
 
@@ -193,104 +193,119 @@ has the remote name ``origin`` in your local clone.
     * Finalize the version to the version to be released.
     * Change the release date to today's date.
     * Make sure that all changes are described.
-    * Make sure the items shown in the change log are relevant for and understandable
-      by users.
+    * Make sure the items shown in the change log are relevant for and
+      understandable by users.
     * In the "Known issues" list item, remove the link to the issue tracker and
       add text for any known issues you want users to know about.
     * Remove all empty list items in the section of the version to be released.
 
 5.  Edit the Galaxy metadata file:
 
-    .. code-block:: text
+    .. code-block:: sh
 
         vi galaxy.yml
 
-    and set the 'version' parameter to the version to be released:
+    and set the 'version' parameter to the version to be released (replacing
+    the ``${...}`` variables with their values):
 
+    .. code-block:: yaml
+
+        version: ${MNU}
+
+6.  Edit the Sphinx config file:
+
+    .. code-block:: sh
+
+        vi docs/source/conf.py
+
+    and in the ``scv_whitelist_tags`` property, change the draft version
+    to the version to be released (replacing the ``${...}`` variables with
+    their values):
+
+    .. # Note: Using python fails rstcheck on Python 3.5
     .. code-block:: text
 
-        version: M.N.U
+        scv_whitelist_tags = [ ...(previous versions)..., '${MNU}' ]
 
-6.  Commit your changes and push them upstream:
+7.  Edit the GitHub workflow file docs.yml:
 
-    .. code-block:: text
+    .. code-block:: sh
+
+        vi .github/workflows/docs.yml
+
+    and in the step named "Set the tag and branch variables for BRANCH",
+    change the draft version to the version to be released (replacing the
+    ``${...}`` variables with their values):
+
+    .. code-block:: yaml
+
+        - name: Set the tag and branch variables for ${BRANCH}
+          if: ${{ github.ref == 'refs/heads/${BRANCH}' }}
+          run: |
+            echo "branch=${BRANCH}" >> $GITHUB_ENV
+            echo "tag=${MNU}" >> $GITHUB_ENV
+
+8.  Commit your changes and push them upstream:
+
+    .. code-block:: sh
 
         git add docs/source/release_notes.rst
-        git commit -sm "Release $MNU"
-        git push --set-upstream origin release_$MNU
+        git commit -sm "Release ${MNU}"
+        git push --set-upstream origin release_${MNU}
 
-7.  On GitHub, create a Pull Request for branch ``release_$MNU``. This will trigger the
-    CI runs in Travis.
+9.  On GitHub, create a Pull Request for branch ``release_M.N.U``. This will
+    trigger the CI runs.
 
-    Important: When creating Pull Requests, GitHub by default targets the ``master``
-    branch. If you are releasing a stable branch, you need to change the target branch
-    of the Pull Request to ``stable_M.N``.
+    Important: When creating Pull Requests, GitHub by default targets the
+    ``master`` branch. If you are releasing a stable branch, you need to change
+    the target branch of the Pull Request to ``stable_M.N``.
 
-8.  On GitHub, close milestone ``M.N.U``.
+10. On GitHub, close milestone ``M.N.U``.
 
-9.  Perform a complete test in your preferred Python environment:
+11. Perform a complete test in your preferred Python environment:
 
-    .. code-block:: text
+    .. code-block:: sh
 
         make clobber all
 
     This should not fail because the same tests have already been run in the
-    Travis CI. However, run it for additional safety before the release.
+    CI. However, run it for additional safety before the release.
 
-    * If this test fails, fix any issues until the test succeeds. Commit the
-      changes and push them upstream:
+    If this test fails, fix any issues (with new commits) until the test
+    succeeds.
 
-      .. code-block:: text
-
-          git add <changed-files>
-          git commit -sm "<change description with details>"
-          git push
-
-      Wait for the automatic tests to show success for this change.
-
-10. On GitHub, once the checks for this Pull Request succeed:
+12. On GitHub, once the checks for this Pull Request succeed:
 
     * Merge the Pull Request (no review is needed).
 
     * Delete the branch of the Pull Request (``release_M.N.U``)
 
-11. Checkout the branch you are releasing, update it from upstream, and delete the local
-    topic branch you created:
+13. Checkout the branch you are releasing, update it from upstream, and delete
+    the local topic branch you created:
 
-    .. code-block:: text
+    .. code-block:: sh
 
-        git checkout $BRANCH
+        git checkout ${BRANCH}
         git pull
-        git branch -d release_$MNU
+        git branch -d release_${MNU}
 
-12. Tag the version:
+14. Tag the version:
 
     Create a tag for the new version and push the tag addition upstream:
 
-    .. code-block:: text
+    .. code-block:: sh
 
-        git status    # Double check the branch to be released is checked out
-        git tag $MNU
-        git push --tags
+        git tag -f ${MNU}
+        git push -f --tags
 
-    If the previous commands fail because this tag already exists for some reason, delete
-    the tag locally and remotely:
-
-    .. code-block:: text
-
-        git tag --delete $MNU
-        git push --delete origin $MNU
-
-    and try again.
-
-13. On GitHub, edit the new tag ``M.N.U``, and create a release description on it. This
-    will cause it to appear in the Release tab.
+15. On GitHub, edit the new tag ``M.N.U``, and create a release description on
+    it. This will cause it to appear in the Release tab.
 
     You can see the tags in GitHub via Code -> Releases -> Tags.
 
-14. Publish the collection to Ansible Galaxy:
+16. Publish the collection to Ansible Galaxy:
 
-    .. code-block:: text
+    .. code-block:: sh
 
         make upload
 
@@ -305,29 +320,15 @@ has the remote name ``origin`` in your local clone.
     Verify that the released version arrived on Ansible Galaxy at
     https://galaxy.ansible.com/ibm/zhmc/
 
-15. If you released the master branch, it needs a new fix stream.
+17. If you released the master branch, it needs a new fix stream.
 
     Create a branch for its fix stream and push it upstream:
 
-    .. code-block:: text
+    .. code-block:: sh
 
-        git status    # Double check the branch to be released is checked out
-        git checkout -b stable_$MN
-        git push --set-upstream origin stable_$MN
+        git checkout -b stable_${MN}
+        git push --set-upstream origin stable_${MN}
 
-    On GitHub, go to "Settings" and change the branch from which the Github
-    pages are built, to ``stable_$MN``.
-
-16. The final step of the version release process is to generate the documentation
-    for the new version. For that please create a new branch, then add the newly
-    created tag ``M.N.U`` into the ``scv_whitelist_tags`` list in conf.py (or
-    replace one of the existing ones).
-    Then execute the ``docs`` make target, check that the new tag is in the
-    current version (bottom left part of the page) and create a PR with the new branch.
-    Once the PR is merged, the docs on the GitHub pages will be updated to include
-    the new version.
-    **Attention!!** This section needs to be updated as soon as the gh-pages
-    branch and the supporting process to release will be ready.
 
 .. _`Starting a new version`:
 
@@ -348,53 +349,61 @@ This description assumes that you are authorized to push to the upstream repo
 at https://github.com/zhmcclient/zhmc-ansible-modules and that the upstream repo
 has the remote name ``origin`` in your local clone.
 
-1.  Switch to your work directory of your local clone of the zhmc-ansible-modules Git
-    repo and perform the following steps in that directory.
+1.  Switch to your work directory of your local clone of the
+    zhmc-ansible-modules Git repo and perform the following steps in that
+    directory.
 
 2.  Set shell variables for the version to be started and its base branch:
 
     * ``MNU`` - Full version number M.N.U of the new version to be started
     * ``MN`` - Major and minor version numbers M.N of that full version
     * ``BRANCH`` - Name of the branch the new version is based upon
+    * ``MNUD`` - Full version number of the new version to be
+      started, plus draft version suffix, i.e. M.N.U-dev1
 
-    When starting a (major or minor) version (e.g. ``1.1.0``) based on the master branch:
+    When starting a (major or minor) version (e.g. ``1.1.0``) based on the
+    master branch:
 
-    .. code-block:: text
+    .. code-block:: sh
 
         MNU=1.1.0
         MN=1.0
         BRANCH=master
+        MNUD=${MNU}-dev1
 
-    When starting an update (=fix) version (e.g. ``0.8.2``) based on a stable branch:
+    When starting an update (=fix) version (e.g. ``0.8.2``) based on a
+    stable branch:
 
-    .. code-block:: text
+    .. code-block:: sh
 
         MNU=0.8.2
         MN=0.8
-        BRANCH=stable_$MN
+        BRANCH=stable_${MN}
+        MNUD=${MNU}-dev1
 
 3.  Check out the branch the new version is based on, make sure it is up to
     date with upstream, and create a topic branch for the new version:
 
-    .. code-block:: text
+    .. code-block:: sh
 
         git status  # Double check the work directory is clean
-        git checkout $BRANCH
+        git checkout ${BRANCH}
         git pull
-        git checkout -b start_$MNU
+        git checkout -b start_${MNU}
 
 4.  Edit the change log:
 
-    .. code-block:: text
+    .. code-block:: sh
 
         vi docs/source/release_notes.rst
 
     and insert the following section before the top-most section, and update
-    the version to the new version:
+    the version to the new version (replacing the ``${...}`` variables with
+    their values):
 
-    .. code-block:: text
+    .. code-block:: rst
 
-        Version M.N.U.dev1
+        Version ${MNUD}
         ------------------
 
         This version contains all fixes up to version M.N-1.x.
@@ -419,54 +428,91 @@ has the remote name ``origin`` in your local clone.
 
 5.  Edit the Galaxy metadata file:
 
-    .. code-block:: text
+    .. code-block:: sh
 
         vi galaxy.yml
 
-    and update the version to the new version plus '-dev1' to indicate it is in
-    development:
+    and update the version to the new draft version:
 
+    .. code-block:: yaml
+
+        version: ${MNUD}
+
+    Note: The version must follow the rules for semantic versioning 2.0
+    including the description of development/alpha/etc suffixes, as described
+    in https://semver.org/
+
+6.  Edit the Sphinx config file:
+
+    .. code-block:: sh
+
+        vi docs/source/conf.py
+
+    and in the ``scv_whitelist_tags`` property, add the new draft version to
+    the list (replacing the ``${...}`` variables with their values):
+
+    .. # Note: Using python fails rstcheck on Python 3.5
     .. code-block:: text
 
-        version: M.N.U-dev1
+        scv_whitelist_tags = [ ...(previous versions)..., '${MNUD}' ]
 
-    Note: The version must follow the rules for semantic versioning 2.0 including
-    the description of development/alpha/etc suffixes, as described in
-    https://semver.org/
+7.  Edit the GitHub workflow file docs.yml:
 
-6.  Commit your changes and push them upstream:
+    .. code-block:: sh
 
-    .. code-block:: text
+        vi .github/workflows/docs.yml
+
+    and add a step for defining the variables for the new draft version after
+    the last such step (replacing the ``${...}`` variables with their values):
+
+    .. code-block:: yaml
+
+        - name: Set the tag and branch variables for ${BRANCH}
+          if: ${{ github.ref == 'refs/heads/${BRANCH}' }}
+          run: |
+            echo "branch=${BRANCH}" >> $GITHUB_ENV
+            echo "tag=${MNUD}" >> $GITHUB_ENV
+
+8.  Commit your changes and push them upstream:
+
+    .. code-block:: sh
 
         git add docs/source/release_notes.rst
-        git commit -sm "Start $MNU"
-        git push --set-upstream origin start_$MNU
+        git commit -sm "Start ${MNU}"
+        git push --set-upstream origin start_${MNU}
 
-7.  On GitHub, create a Pull Request for branch ``start_M.N.U``.
+9.  Tag the branch with the new draft version and push the tag upstream:
 
-    Important: When creating Pull Requests, GitHub by default targets the ``master``
-    branch. If you are starting based on a stable branch, you need to change the
-    target branch of the Pull Request to ``stable_M.N``.
+    .. code-block:: sh
 
-8.  On GitHub, create a milestone for the new version ``M.N.U``.
+        git tag -f ${MNUD}
+        git push -f --tags
+
+10. On GitHub, create a Pull Request for branch ``start_M.N.U``.
+
+    Important: When creating Pull Requests, GitHub by default targets the
+    ``master`` branch. If you are starting based on a stable branch, you need
+    to change the target branch of the Pull Request to ``stable_M.N``.
+
+11. On GitHub, create a milestone for the new version ``M.N.U``.
 
     You can create a milestone in GitHub via Issues -> Milestones -> New
     Milestone.
 
-9.  On GitHub, go through all open issues and pull requests that still have
+12. On GitHub, go through all open issues and pull requests that still have
     milestones for previous releases set, and either set them to the new
     milestone, or to have no milestone.
 
-10. On GitHub, once the checks for this Pull Request succeed:
+13. On GitHub, once the checks for this Pull Request succeed:
 
     * Merge the Pull Request (no review is needed)
     * Delete the branch of the Pull Request (``start_M.N.U``)
 
-11. Checkout the branch the new version is based on, update it from upstream, and
-    delete the local topic branch you created:
+14. Checkout the branch the new version is based on, update it from upstream,
+    and delete the local topic branch you created:
 
-    .. code-block:: text
+    .. code-block:: sh
 
-        git checkout $BRANCH
+        git checkout ${BRANCH}
         git pull
-        git branch -d start_$MNU
+        git branch -d start_${MNU}
