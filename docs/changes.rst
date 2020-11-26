@@ -40,6 +40,9 @@ Released: not yet
 
 **Bug fixes:**
 
+* Fixed the incorrect statement about support for Python 3.4. Ansible never
+  officially supported Python 3.4.
+
 **Enhancements:**
 
 * Migrated from Travis and Appveyor to GitHub Actions. This required several
