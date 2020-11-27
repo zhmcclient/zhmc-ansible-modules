@@ -77,7 +77,7 @@ repository branch that corresponds to the version. The automatic update
 mechanism is implemented in the GitHub Actions workflow file
 ``.github/workflows/docs.yml``.
 
-The versions to be represented on that site are defined in ``docs/conf.py``
+The versions to be represented on that site are defined in ``docs/source/conf.py``
 in the section for "sphinx-versioning".
 
 In order to build this "versioned" documentation locally, issue:
@@ -186,7 +186,7 @@ has the remote name ``origin`` in your local clone.
 
     .. code-block:: text
 
-        vi docs/release_notes.rst
+        vi docs/source/release_notes.rst
 
     and make the following changes in the section of the version to be released:
 
@@ -215,7 +215,7 @@ has the remote name ``origin`` in your local clone.
 
     .. code-block:: text
 
-        git add docs/release_notes.rst
+        git add docs/source/release_notes.rst
         git commit -sm "Release $MNU"
         git push --set-upstream origin release_$MNU
 
@@ -387,7 +387,7 @@ has the remote name ``origin`` in your local clone.
 
     .. code-block:: text
 
-        vi docs/release_notes.rst
+        vi docs/source/release_notes.rst
 
     and insert the following section before the top-most section, and update
     the version to the new version:
@@ -438,7 +438,7 @@ has the remote name ``origin`` in your local clone.
 
     .. code-block:: text
 
-        git add docs/release_notes.rst
+        git add docs/source/release_notes.rst
         git commit -sm "Start $MNU"
         git push --set-upstream origin start_$MNU
 
