@@ -61,7 +61,7 @@ def get_version(galaxy_file):
 
 # -- Project information -----------------------------------------------------
 
-_galaxy_file = '../galaxy.yml'  # relative to the dir of this file
+_galaxy_file = '../../galaxy.yml'  # relative to the dir of this file
 _galaxy_file = os.path.relpath(os.path.join(
     os.path.dirname(__file__), _galaxy_file))
 

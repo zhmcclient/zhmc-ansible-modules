@@ -57,7 +57,7 @@ collection_full_name := $(collection_namespace).$(collection_name)
 
 # Collection version (full version, e.g. "1.0.0")
 # Note: The collection version is defined in galaxy.yml
-collection_version := $(shell $(PYTHON_CMD) docs/conf.py)
+collection_version := $(shell $(PYTHON_CMD) docs/source/conf.py)
 
 # Python versions
 python_major_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('%s'%sys.version_info[0])")
@@ -111,7 +111,8 @@ sanity_dir1 := tmp_sanity
 sanity_tar_file := tmp_workspace.tar
 
 # Directories for documentation
-doc_source_dir := docs
+doc_source_dir := docs/source
+doc_templates_dir := docs/templates
 doc_linkcheck_dir := docs_linkcheck
 doc_build_dir := docs_build
 doc_build_local_dir := docs_local
@@ -159,7 +160,7 @@ help:
 	@echo 'Valid targets are:'
 	@echo '  develop    - Set up the development environment'
 	@echo '  install    - Install collection and its dependent Python packages'
-	@echo '  docs       - Build the documentation for all enabled (docs/conf.py) versions in: $(doc_build_dir) using remote repo'
+	@echo '  docs       - Build the documentation for all enabled (docs/source/conf.py) versions in: $(doc_build_dir) using remote repo'
 	@echo '  docslocal  - Build the documentation from local repo contents in: $(doc_build_local_dir)'
 	@echo '  linkcheck  - Check links in documentation'
 	@echo '  test       - Run unit and function tests with test coverage'
@@ -280,11 +281,11 @@ $(dist_file): $(dist_dependent_files) galaxy.yml
 $(module_rst_dir):
 	mkdir -p $(module_rst_dir)
 
-$(module_rst_dir)/%.rst: $(module_py_dir)/%.py $(module_rst_dir) $(doc_source_dir)/templates/module.rst.j2
+$(module_rst_dir)/%.rst: $(module_py_dir)/%.py $(module_rst_dir) $(doc_templates_dir)/module.rst.j2
 ifneq ($(doc_build),true)
 	@echo "makefile: Warning: Skipping module docs extraction on Python $(python_m_n_version)"
 else
-	ansible-doc-extractor --template $(doc_source_dir)/templates/module.rst.j2 $(module_rst_dir) $<
+	ansible-doc-extractor --template $(doc_templates_dir)/module.rst.j2 $(module_rst_dir) $<
 endif
 
 # .nojekyll file disables GitHub pages jekyll pre-processing
