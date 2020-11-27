@@ -212,14 +212,14 @@ with the HMC. It does not exist in that directory but can be copied from
 <h2>Run the Playbooks<a class="headerlink" href="#run-the-playbooks" title="Permalink to this headline">¶</a></h2>
 <p>Two of the sample playbooks are:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">create_partition.yml</span></code> creates a partition with a NIC, HBA and virtual
-function to an accelerator adapter.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">delete_partition.yml</span></code> deletes a partition.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sample_create_partition_full.yml</span></code> creates a partition with a NIC, HBA and
+virtual function to an accelerator adapter.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sample_delete_partition.yml</span></code> deletes a partition.</p></li>
 </ul>
 <p>The following examples assume that you have the playbook files in the current
 directory.
 You can use the <a class="reference external" href="https://docs.ansible.com/ansible/latest/cli/ansible-playbook.html">ansible-playbook</a> command to run these two playbooks as follows:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ ansible-playbook create_partition.yml
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ ansible-playbook sample_create_partition_full.yml
 
 PLAY <span class="o">[</span>localhost<span class="o">]</span> **********************************************************
 
@@ -244,7 +244,7 @@ changed: <span class="o">[</span><span class="m">127</span>.0.0.1<span class="o"
 PLAY RECAP ****************************************************************
 <span class="m">127</span>.0.0.1                  : <span class="nv">ok</span><span class="o">=</span><span class="m">6</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">5</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>
 
-$ ansible-playbook playbooks/delete_partition.yml
+$ ansible-playbook sample_delete_partition.yml
 
 PLAY <span class="o">[</span>localhost<span class="o">]</span> **********************************************************
 
