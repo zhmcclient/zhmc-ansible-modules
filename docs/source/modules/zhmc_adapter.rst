@@ -126,13 +126,6 @@ log_file
   | **type**: str
 
 
-_faked_session
-  An internal parameter used for testing the module.
-
-  | **required**: False
-  | **type**: raw
-
-
 
 
 Examples
