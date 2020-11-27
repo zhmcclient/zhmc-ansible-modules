@@ -225,7 +225,7 @@ automatically gets updated whenever a pull request gets merged into the
 repository branch that corresponds to the version. The automatic update
 mechanism is implemented in the GitHub Actions workflow file
 <code class="docutils literal notranslate"><span class="pre">.github/workflows/docs.yml</span></code>.</p>
-<p>The versions to be represented on that site are defined in <code class="docutils literal notranslate"><span class="pre">docs/conf.py</span></code>
+<p>The versions to be represented on that site are defined in <code class="docutils literal notranslate"><span class="pre">docs/source/conf.py</span></code>
 in the section for “sphinx-versioning”.</p>
 <p>In order to build this “versioned” documentation locally, issue:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ make docs
@@ -308,7 +308,7 @@ git checkout -b release_$MNU
 </div>
 </li>
 <li><p>Edit the change log:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>vi docs/release_notes.rst
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>vi docs/source/release_notes.rst
 </pre></div>
 </div>
 <p>and make the following changes in the section of the version to be released:</p>
@@ -333,7 +333,7 @@ add text for any known issues you want users to know about.</p></li>
 </div>
 </li>
 <li><p>Commit your changes and push them upstream:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>git add docs/release_notes.rst
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>git add docs/source/release_notes.rst
 git commit -sm &quot;Release $MNU&quot;
 git push --set-upstream origin release_$MNU
 </pre></div>
@@ -476,7 +476,7 @@ git checkout -b start_$MNU
 </div>
 </li>
 <li><p>Edit the change log:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>vi docs/release_notes.rst
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>vi docs/source/release_notes.rst
 </pre></div>
 </div>
 <p>and insert the following section before the top-most section, and update
@@ -520,7 +520,7 @@ the description of development/alpha/etc suffixes, as described in
 <a class="reference external" href="https://semver.org/">https://semver.org/</a></p>
 </li>
 <li><p>Commit your changes and push them upstream:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>git add docs/release_notes.rst
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>git add docs/source/release_notes.rst
 git commit -sm &quot;Start $MNU&quot;
 git push --set-upstream origin start_$MNU
 </pre></div>
