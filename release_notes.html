@@ -196,25 +196,25 @@
 <h2>Version 1.0.0-dev1<a class="headerlink" href="#version-1-0-0-dev1" title="Permalink to this headline">¶</a></h2>
 <p>This version contains all fixes up to version 0.8.x.</p>
 <p>Released: not yet</p>
-<p>Availability: <a class="reference external" href="https://galaxy.ansible.com/ibm/zhmc">Galaxy</a>, <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">GitHub</a></p>
+<p>Availability: <a class="reference external" href="https://galaxy.ansible.com/ibm/ibm_zhmc">Galaxy</a>, <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">GitHub</a></p>
 <p><strong>Incompatible changes:</strong></p>
 <ul>
 <li><p>Starting with version 1.0.0, the zhmc Ansible modules are no longer distributed
 as the
 <a class="reference external" href="https://pypi.org/project/zhmc-ansible-modules/">zhmc-ansible-modules package on Pypi</a>,
 but as the
-<a class="reference external" href="https://galaxy.ansible.com/ibm/zhmc/">ibm.zhmc collection on Ansible Galaxy</a>.
+<a class="reference external" href="https://galaxy.ansible.com/ibm/ibm_zhmc/">ibm.ibm_zhmc collection on Ansible Galaxy</a>.
 The installation of the zhmc Ansible modules is now done with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ansible</span><span class="o">-</span><span class="n">galaxy</span> <span class="n">collection</span> <span class="n">install</span> <span class="n">ibm</span><span class="o">.</span><span class="n">zhmc</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ansible</span><span class="o">-</span><span class="n">galaxy</span> <span class="n">collection</span> <span class="n">install</span> <span class="n">ibm</span><span class="o">.</span><span class="n">ibm_zhmc</span>
 </pre></div>
 </div>
 <p>Playbooks using the zhmc Ansible modules do not need to be changed, other
-than adding a “collections” property that includes the “ibm.zhmc”
+than adding a “collections” property that includes the “ibm.ibm_zhmc”
 collection:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
 <span class="o">-</span> <span class="n">hosts</span><span class="p">:</span> <span class="n">localhost</span>
   <span class="n">collections</span><span class="p">:</span>
-  <span class="o">-</span> <span class="n">ibm</span><span class="o">.</span><span class="n">zhmc</span>
+  <span class="o">-</span> <span class="n">ibm</span><span class="o">.</span><span class="n">ibm_zhmc</span>
   <span class="n">tasks</span><span class="p">:</span>
   <span class="o">-</span> <span class="o">...</span>
 </pre></div>

@@ -217,7 +217,7 @@ control system. The instructions are written for a bash shell.</p>
 <p>For details, see <a class="reference external" href="http://docs.ansible.com/ansible/latest/intro_installation.html#installing-the-control-machine">Installing the Control Machine</a>.</p>
 </li>
 <li><p>Install the <strong>IBM Z HMC collection</strong> from Ansible Galaxy:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ ansible-galaxy collection install ibm.zhmc
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ ansible-galaxy collection install ibm.ibm_zhmc
 </pre></div>
 </div>
 <p>This will install the collection to your local Ansible collections tree,
@@ -225,12 +225,12 @@ which is by default <code class="docutils literal notranslate"><span class="pre"
 It does not install any dependent Python packages.</p>
 </li>
 <li><p>Install the dependent Python packages into your system Python:</p>
-<p>Double check where the <code class="docutils literal notranslate"><span class="pre">ibm.zhmc</span></code> collection got installed:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ ansible-galaxy collection list ibm.zhmc
+<p>Double check where the <code class="docutils literal notranslate"><span class="pre">ibm.ibm_zhmc</span></code> collection got installed:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ ansible-galaxy collection list ibm.ibm_zhmc
 <span class="c1"># /Users/johndoe/.ansible/collections/ansible_collections</span>
-Collection Version
----------- -------
-ibm.zhmc   <span class="m">1</span>.0.0
+Collection   Version
+------------ -------
+ibm.ibm_zhmc <span class="m">1</span>.0.0
 </pre></div>
 </div>
 <p>Set a variable to the installation directory shown in the command output:</p>
@@ -238,9 +238,9 @@ ibm.zhmc   <span class="m">1</span>.0.0
 </pre></div>
 </div>
 <p>Using the <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> file in the installation directory of the
-<code class="docutils literal notranslate"><span class="pre">ibm.zhmc</span></code> collection, install dependent Python packages into your
+<code class="docutils literal notranslate"><span class="pre">ibm.ibm_zhmc</span></code> collection, install dependent Python packages into your
 system Python:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ sudo pip install -r <span class="nv">$anco_dir</span>/ibm/zhmc/requirements.txt
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ sudo pip install -r <span class="nv">$anco_dir</span>/ibm/ibm_zhmc/requirements.txt
 </pre></div>
 </div>
 </li>
@@ -248,7 +248,7 @@ system Python:</p>
 </div>
 <div class="section" id="alternative-installation-with-virtual-python-environment">
 <h2>Alternative installation with virtual Python environment<a class="headerlink" href="#alternative-installation-with-virtual-python-environment" title="Permalink to this headline">¶</a></h2>
-<p>This section describes the installation of Ansible and the ibm.zhmc Ansible
+<p>This section describes the installation of Ansible and the ibm.ibm_zhmc Ansible
 Galaxy collection into a virtual Python environment that is set
 up using <a class="reference external" href="https://virtualenv.pypa.io/">virtualenv</a>.</p>
 <p>This installation method utilizes the ability of Ansible to configure the
@@ -298,7 +298,7 @@ $ chmod <span class="m">755</span> <span class="nv">$python_script</span>
 </div>
 </li>
 <li><p>Install the <strong>IBM Z HMC collection</strong> from Ansible Galaxy:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ ansible-galaxy collection install ibm.zhmc
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ ansible-galaxy collection install ibm.ibm_zhmc
 </pre></div>
 </div>
 <p>This will install the collection to your local Ansible collections tree,
@@ -306,12 +306,12 @@ which is by default <code class="docutils literal notranslate"><span class="pre"
 It does not install any dependent Python packages.</p>
 </li>
 <li><p>Install the dependent Python packages into the active Python:</p>
-<p>Double check where the <code class="docutils literal notranslate"><span class="pre">ibm.zhmc</span></code> collection got installed:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ ansible-galaxy collection list ibm.zhmc
+<p>Double check where the <code class="docutils literal notranslate"><span class="pre">ibm.ibm_zhmc</span></code> collection got installed:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ ansible-galaxy collection list ibm.ibm_zhmc
 <span class="c1"># /Users/johndoe/.ansible/collections/ansible_collections</span>
-Collection Version
----------- -------
-ibm.zhmc   <span class="m">1</span>.0.0
+Collection   Version
+------------ -------
+ibm.ibm_zhmc <span class="m">1</span>.0.0
 </pre></div>
 </div>
 <p>Set a variable to the installation directory shown in the command output:</p>
@@ -319,9 +319,9 @@ ibm.zhmc   <span class="m">1</span>.0.0
 </pre></div>
 </div>
 <p>Using the <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> file in the installation directory of the
-<code class="docutils literal notranslate"><span class="pre">ibm.zhmc</span></code> collection, install dependent Python packages into your
+<code class="docutils literal notranslate"><span class="pre">ibm.ibm_zhmc</span></code> collection, install dependent Python packages into your
 active Python:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ pip install -r <span class="nv">$anco_dir</span>/ibm/zhmc/requirements.txt
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ pip install -r <span class="nv">$anco_dir</span>/ibm/ibm_zhmc/requirements.txt
 </pre></div>
 </div>
 </li>
@@ -331,7 +331,7 @@ active Python:</p>
 <p>You can verify that the <strong>IBM Z HMC collection</strong> and its dependent
 Python packages are installed correctly by running an example playbook in
 check mode:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ ansible-playbook <span class="nv">$anco_dir</span>/ibm/zhmc/playbooks/create_partition.yml --check
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ ansible-playbook <span class="nv">$anco_dir</span>/ibm/ibm_zhmc/playbooks/create_partition.yml --check
 
 PLAY <span class="o">[</span>localhost<span class="o">]</span> ***********************************************************
 
