@@ -165,7 +165,7 @@ scv_greatest_tag = True
 # version selection box. This is currently a manual selection, until more
 # versions are released, there are no regular expressions used.
 # Keep these tags consistent with the docs.yml workflow.
-scv_whitelist_tags = ('1.0.0-dev1',)
+scv_whitelist_tags = ('0.9.0-dev1',)
 
 # Sort versions by one or more values. Valid values are semver, alpha, and time.
 # Semantic is referred to as 'semver', this would ensure our latest VRM is

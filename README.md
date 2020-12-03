@@ -84,14 +84,14 @@ of the machines to be managed, by using the API of the
 [zhmcclient](https://github.com/zhmcclient/python-zhmcclient)
 Python package.
 
-Note: Before version 1.0.0, the Ansible modules in this collection have been
+Note: Before version 0.9.0, the Ansible modules in this collection have been
 distributed as the
 [zhmc-ansible-modules package on Pypi](https://pypi.org/project/zhmc-ansible-modules/).
-Starting with version 1.0.0, the Ansible modules are no longer distributed on
+Starting with version 0.9.0, the Ansible modules are no longer distributed on
 Pypi, but as the
 [ibm.ibm_zhmc collection on Galaxy](https://galaxy.ansible.com/ibm/ibm_zhmc/).
 
-Note that at this point, version 1.0.0 has not been released yet, so please
+Note that at this point, version 0.9.0 has not been released yet, so please
 continue using the latest released version on Pypi.
 
 ## Documentation
