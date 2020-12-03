@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>zhmc_hba – Create HBAs in partitions &mdash; IBM Z HMC collection  documentation</title>
+  <title>zhmc_storage_group_attachment – Attach storage groups to partitions &mdash; IBM Z HMC collection  documentation</title>
   
 
   
@@ -37,8 +37,8 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="zhmc_nic – Create NICs in partitions" href="zhmc_nic.html" />
-    <link rel="prev" title="zhmc_crypto_attachment – Attach crypto resources to partitions" href="zhmc_crypto_attachment.html" /> 
+    <link rel="next" title="zhmc_storage_volume – Create storage volumes" href="zhmc_storage_volume.html" />
+    <link rel="prev" title="zhmc_storage_group – Create storage groups" href="zhmc_storage_group.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                1.0.0-dev1
+                0.9.0-dev1
               </div>
             
           
@@ -98,17 +98,18 @@
 <li class="toctree-l3"><a class="reference internal" href="zhmc_adapter.html">zhmc_adapter – Update adapters and create Hipersocket adapters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="zhmc_cpc.html">zhmc_cpc – Update CPCs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="zhmc_crypto_attachment.html">zhmc_crypto_attachment – Attach crypto resources to partitions</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">zhmc_hba – Create HBAs in partitions</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#synopsis">Synopsis</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#return-values">Return Values</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="zhmc_hba.html">zhmc_hba – Create HBAs in partitions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="zhmc_nic.html">zhmc_nic – Create NICs in partitions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="zhmc_partition.html">zhmc_partition – Create partitions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="zhmc_storage_group.html">zhmc_storage_group – Create storage groups</a></li>
-<li class="toctree-l3"><a class="reference internal" href="zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Attach storage groups to partitions</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">zhmc_storage_group_attachment – Attach storage groups to partitions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#synopsis">Synopsis</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#notes">Notes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#return-values">Return Values</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="zhmc_storage_volume.html">zhmc_storage_volume – Create storage volumes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="zhmc_user.html">zhmc_user – Create HMC users</a></li>
 <li class="toctree-l3"><a class="reference internal" href="zhmc_virtual_function.html">zhmc_virtual_function – Create virtual functions in partitions</a></li>
@@ -184,7 +185,7 @@
         
           <li><a href="../modules.html">Modules</a> &raquo;</li>
         
-      <li>zhmc_hba – Create HBAs in partitions</li>
+      <li>zhmc_storage_group_attachment – Attach storage groups to partitions</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -192,7 +193,7 @@
             
             
               <!-- User defined GitHub URL -->
-              <a href="https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_hba.py" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_storage_group_attachment.py" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -212,21 +213,22 @@
 
 
 
-<div class="section" id="zhmc-hba-create-hbas-in-partitions">
-<span id="zhmc-hba-module"></span><h1>zhmc_hba – Create HBAs in partitions<a class="headerlink" href="#zhmc-hba-create-hbas-in-partitions" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="zhmc-storage-group-attachment-attach-storage-groups-to-partitions">
+<span id="zhmc-storage-group-attachment-module"></span><h1>zhmc_storage_group_attachment – Attach storage groups to partitions<a class="headerlink" href="#zhmc-storage-group-attachment-attach-storage-groups-to-partitions" title="Permalink to this headline">¶</a></h1>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
 <li><p><a class="reference internal" href="#parameters" id="id2">Parameters</a></p></li>
 <li><p><a class="reference internal" href="#examples" id="id3">Examples</a></p></li>
-<li><p><a class="reference internal" href="#return-values" id="id4">Return Values</a></p></li>
+<li><p><a class="reference internal" href="#notes" id="id4">Notes</a></p></li>
+<li><p><a class="reference internal" href="#return-values" id="id5">Return Values</a></p></li>
 </ul>
 </div>
 <div class="section" id="synopsis">
 <h2><a class="toc-backref" href="#id1">Synopsis</a><a class="headerlink" href="#synopsis" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><p>Create, update, or delete an HBA (virtual Host Bus Adapter) in a partition of a CPC (Z system).</p></li>
-<li><p>Note that the Ansible module zhmc_partition can be used to gather facts about existing HBAs of a partition.</p></li>
+<li><p>Gather facts about the attachment of a storage group to a partition of a CPC (Z system).</p></li>
+<li><p>Attach and detach a storage group to and from a partition.</p></li>
 </ul>
 </div>
 <div class="section" id="parameters">
@@ -258,45 +260,34 @@
 </dd>
 </dl>
 </dd>
-<dt>cpc_name</dt><dd><p>The name of the CPC with the partition containing the HBA.</p>
+<dt>cpc_name</dt><dd><p>The name of the CPC that has the partition and is associated with the storage group.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: True</div>
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>partition_name</dt><dd><p>The name of the partition containing the HBA.</p>
+<dt>storage_group_name</dt><dd><p>The name of the storage group for the attachment.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: True</div>
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>name</dt><dd><p>The name of the target HBA that is managed. If the HBA needs to be created, this value becomes its name.</p>
+<dt>partition_name</dt><dd><p>The name of the partition for the attachment.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: True</div>
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>state</dt><dd><p>The desired state for the target HBA:</p>
-<p><code class="docutils literal notranslate"><span class="pre">absent</span></code>: Ensures that the HBA does not exist in the specified partition.</p>
-<p><code class="docutils literal notranslate"><span class="pre">present</span></code>: Ensures that the HBA exists in the specified partition and has the specified properties.</p>
-<div class="line-block">
-<div class="line"><strong>required</strong>: True</div>
-<div class="line"><strong>type</strong>: str</div>
-<div class="line"><strong>choices</strong>: absent, present</div>
-</div>
-</dd>
-<dt>properties</dt><dd><p>Dictionary with input properties for the HBA, for <code class="docutils literal notranslate"><span class="pre">state=present</span></code>. Key is the property name with underscores instead of hyphens, and value is the property value in YAML syntax. Integer properties may also be provided as decimal strings. Will be ignored for <code class="docutils literal notranslate"><span class="pre">state=absent</span></code>.</p>
-<p>The possible input properties in this dictionary are the properties defined as writeable in the data model for HBA resources (where the property names contain underscores instead of hyphens), with the following exceptions:</p>
+<dt>state</dt><dd><p>The desired state for the attachment:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: Cannot be specified because the name has already been specified in the <code class="docutils literal notranslate"><span class="pre">name</span></code> module parameter.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">adapter_port_uri</span></code>: Cannot be specified because this information is specified using the artificial properties <code class="docutils literal notranslate"><span class="pre">adapter_name</span></code> and <code class="docutils literal notranslate"><span class="pre">adapter_port</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">adapter_name</span></code>: The name of the adapter that has the port backing the target HBA. Cannot be changed after the HBA exists.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">adapter_port</span></code>: The port index of the adapter port backing the target HBA. Cannot be changed after the HBA exists.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">detached</span></code>: Ensures that the storage group is not attached to the partition. If the storage group is currently attached to the partition and the partition is currently active, the module will fail.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">attached</span></code>: Ensures that the storage group is attached to the partition.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">facts</span></code>: Does not change anything on the attachment and returns the attachment status.</p></li>
 </ul>
-<p>Properties omitted in this dictionary will remain unchanged when the HBA already exists, and will get the default value defined in the data model for HBAs when the HBA is being created.</p>
 <div class="line-block">
-<div class="line"><strong>required</strong>: False</div>
-<div class="line"><strong>type</strong>: dict</div>
+<div class="line"><strong>required</strong>: True</div>
+<div class="line"><strong>type</strong>: str</div>
+<div class="line"><strong>choices</strong>: detached, attached, facts</div>
 </div>
 </dd>
 <dt>log_file</dt><dd><p>File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.</p>
@@ -312,34 +303,45 @@
 <div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
 <span class="c1"># Note: The following examples assume that some variables named &#39;my_*&#39; are set.</span>
 
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Ensure HBA exists in the partition</span>
-  <span class="nt">zhmc_partition</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Gather facts about the attachment</span>
+  <span class="nt">zhmc_storage_group_attachment</span><span class="p">:</span>
     <span class="nt">hmc_host</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
     <span class="nt">hmc_auth</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
     <span class="nt">cpc_name</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">storage_group_name</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_storage_group_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
     <span class="nt">partition_name</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_partition_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
-    <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hba_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
-    <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">present</span>
-    <span class="nt">properties</span><span class="p">:</span>
-      <span class="nt">adapter_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">FCP-1</span>
-      <span class="nt">adapter_port</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0</span>
-      <span class="nt">description</span><span class="p">:</span> <span class="s">&quot;The</span><span class="nv"> </span><span class="s">port</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">our</span><span class="nv"> </span><span class="s">V7K</span><span class="nv"> </span><span class="s">#1&quot;</span>
-      <span class="nt">device_number</span><span class="p">:</span> <span class="s">&quot;123F&quot;</span>
-  <span class="nt">register</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">hba1</span>
+    <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">facts</span>
+  <span class="nt">register</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">sga1</span>
 
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Ensure HBA does not exist in the partition</span>
-  <span class="nt">zhmc_partition</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Ensure the storage group is attached to the partition</span>
+  <span class="nt">zhmc_storage_group_attachment</span><span class="p">:</span>
     <span class="nt">hmc_host</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
     <span class="nt">hmc_auth</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
     <span class="nt">cpc_name</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">storage_group_name</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_storage_group_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
     <span class="nt">partition_name</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_partition_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
-    <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hba_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
-    <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">absent</span>
+    <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">attached</span>
+
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;Ensure</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">storage</span><span class="nv"> </span><span class="s">group</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">not</span><span class="nv"> </span><span class="s">attached</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">partition.&quot;</span>
+  <span class="nt">zhmc_storage_group_attachment</span><span class="p">:</span>
+    <span class="nt">hmc_host</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">hmc_auth</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">cpc_name</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">storage_group_name</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_storage_group_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">partition_name</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_partition_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">detached</span>
 </pre></div>
 </div>
 </div>
+<div class="section" id="notes">
+<h2><a class="toc-backref" href="#id4">Notes</a><a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This module manages only the knowledge of the Z system about its storage, but does not perform any actions against the storage subsystems or SAN switches attached to the Z system.</p>
+</div>
+</div>
 <div class="section" id="return-values">
-<h2><a class="toc-backref" href="#id4">Return Values</a><a class="headerlink" href="#return-values" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id5">Return Values</a><a class="headerlink" href="#return-values" title="Permalink to this headline">¶</a></h2>
 <dl>
 <dt>changed</dt><dd><p>Indicates if any change has been made by the module. For <code class="docutils literal notranslate"><span class="pre">state=facts</span></code>, always will be false.</p>
 <div class="line-block">
@@ -353,19 +355,24 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>hba</dt><dd><p>For <code class="docutils literal notranslate"><span class="pre">state=absent</span></code>, an empty dictionary.</p>
-<p>For <code class="docutils literal notranslate"><span class="pre">state=present</span></code>, the resource properties of the HBA after any changes.</p>
+<dt>storage_group_attachment</dt><dd><p>Attachment state of the storage group. If no check mode was requested, the attachment state after any changes is returned. If check mode was requested, the actual attachment state is returned.</p>
 <div class="line-block">
 <div class="line"><strong>returned</strong>: success</div>
 <div class="line"><strong>type</strong>: dict</div>
+<div class="line"><strong>sample</strong>:</div>
 </div>
+<blockquote>
+<div><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;attached&quot;</span><span class="p">:</span> <span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
 <dl>
-<dt>name</dt><dd><p>HBA name</p>
+<dt>attached</dt><dd><p>Attachment state of the storage group: Indicates whether the storage group is attached to the partition.</p>
 <div class="line-block">
-<div class="line"><strong>type</strong>: str</div>
+<div class="line"><strong>type</strong>: bool</div>
 </div>
-</dd>
-<dt>{property}</dt><dd><p>Additional properties of the HBA, as described in the data model of the ‘HBA’ element object of the ‘Partition’ object in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
 </dd>
 </dl>
 </dd>
@@ -381,10 +388,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="zhmc_nic.html" class="btn btn-neutral float-right" title="zhmc_nic – Create NICs in partitions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="zhmc_storage_volume.html" class="btn btn-neutral float-right" title="zhmc_storage_volume – Create storage volumes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="zhmc_crypto_attachment.html" class="btn btn-neutral float-left" title="zhmc_crypto_attachment – Attach crypto resources to partitions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="zhmc_storage_group.html" class="btn btn-neutral float-left" title="zhmc_storage_group – Create storage groups" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -419,13 +426,13 @@
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.0.0-dev1
+        v: 0.9.0-dev1
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
         <dl>
             <dt>Tags</dt>
-            <dd><a href="zhmc_hba.html">1.0.0-dev1</a></dd>
+            <dd><a href="zhmc_storage_group_attachment.html">0.9.0-dev1</a></dd>
         </dl>
     </div>
 </div>
