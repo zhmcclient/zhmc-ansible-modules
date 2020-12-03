@@ -42,7 +42,7 @@ using the `ansible-doc`_ command, for example:
 
 .. code-block:: sh
 
-   $ ansible-doc ibm.zhmc.zhmc_adapter
+   $ ansible-doc ibm.ibm_zhmc.zhmc_adapter
 
 .. _ansible-doc:
    https://docs.ansible.com/ansible/latest/cli/ansible-doc.html#ansible-doc

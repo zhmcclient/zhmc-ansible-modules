@@ -5,7 +5,7 @@
     - vars.yml
     - vault.yml
   collections:
-  - ibm.zhmc
+  - ibm.ibm_zhmc
   tasks:
 
   - name: "Get facts for CPC {{ cpc_name }}"

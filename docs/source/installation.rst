@@ -62,7 +62,7 @@ control system. The instructions are written for a bash shell.
 
     .. code-block:: sh
 
-        $ ansible-galaxy collection install ibm.zhmc
+        $ ansible-galaxy collection install ibm.ibm_zhmc
 
     This will install the collection to your local Ansible collections tree,
     which is by default ``$HOME/.ansible/collections/ansible_collections``.
@@ -70,15 +70,15 @@ control system. The instructions are written for a bash shell.
 
 3.  Install the dependent Python packages into your system Python:
 
-    Double check where the ``ibm.zhmc`` collection got installed:
+    Double check where the ``ibm.ibm_zhmc`` collection got installed:
 
     .. code-block:: sh
 
-        $ ansible-galaxy collection list ibm.zhmc
+        $ ansible-galaxy collection list ibm.ibm_zhmc
         # /Users/johndoe/.ansible/collections/ansible_collections
-        Collection Version
-        ---------- -------
-        ibm.zhmc   1.0.0
+        Collection   Version
+        ------------ -------
+        ibm.ibm_zhmc 1.0.0
 
     Set a variable to the installation directory shown in the command output:
 
@@ -87,12 +87,12 @@ control system. The instructions are written for a bash shell.
         $ anco_dir=/Users/johndoe/.ansible/collections/ansible_collections
 
     Using the ``requirements.txt`` file in the installation directory of the
-    ``ibm.zhmc`` collection, install dependent Python packages into your
+    ``ibm.ibm_zhmc`` collection, install dependent Python packages into your
     system Python:
 
     .. code-block:: sh
 
-        $ sudo pip install -r $anco_dir/ibm/zhmc/requirements.txt
+        $ sudo pip install -r $anco_dir/ibm/ibm_zhmc/requirements.txt
 
 
 Alternative installation with virtual Python environment
@@ -100,7 +100,7 @@ Alternative installation with virtual Python environment
 
 .. _virtualenv: https://virtualenv.pypa.io/
 
-This section describes the installation of Ansible and the ibm.zhmc Ansible
+This section describes the installation of Ansible and the ibm.ibm_zhmc Ansible
 Galaxy collection into a virtual Python environment that is set
 up using `virtualenv`_.
 
@@ -163,7 +163,7 @@ control system. The instructions are written for a bash shell.
 
     .. code-block:: sh
 
-        $ ansible-galaxy collection install ibm.zhmc
+        $ ansible-galaxy collection install ibm.ibm_zhmc
 
     This will install the collection to your local Ansible collections tree,
     which is by default ``$HOME/.ansible/collections/ansible_collections``.
@@ -171,15 +171,15 @@ control system. The instructions are written for a bash shell.
 
 6.  Install the dependent Python packages into the active Python:
 
-    Double check where the ``ibm.zhmc`` collection got installed:
+    Double check where the ``ibm.ibm_zhmc`` collection got installed:
 
     .. code-block:: sh
 
-        $ ansible-galaxy collection list ibm.zhmc
+        $ ansible-galaxy collection list ibm.ibm_zhmc
         # /Users/johndoe/.ansible/collections/ansible_collections
-        Collection Version
-        ---------- -------
-        ibm.zhmc   1.0.0
+        Collection   Version
+        ------------ -------
+        ibm.ibm_zhmc 1.0.0
 
     Set a variable to the installation directory shown in the command output:
 
@@ -188,12 +188,12 @@ control system. The instructions are written for a bash shell.
         $ anco_dir=/Users/johndoe/.ansible/collections/ansible_collections
 
     Using the ``requirements.txt`` file in the installation directory of the
-    ``ibm.zhmc`` collection, install dependent Python packages into your
+    ``ibm.ibm_zhmc`` collection, install dependent Python packages into your
     active Python:
 
     .. code-block:: sh
 
-        $ pip install -r $anco_dir/ibm/zhmc/requirements.txt
+        $ pip install -r $anco_dir/ibm/ibm_zhmc/requirements.txt
 
 
 Verification of the installation
@@ -205,7 +205,7 @@ check mode:
 
 .. code-block:: sh
 
-    $ ansible-playbook $anco_dir/ibm/zhmc/playbooks/create_partition.yml --check
+    $ ansible-playbook $anco_dir/ibm/ibm_zhmc/playbooks/create_partition.yml --check
 
     PLAY [localhost] ***********************************************************
 

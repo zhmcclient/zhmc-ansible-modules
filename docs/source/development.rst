@@ -318,7 +318,7 @@ has the remote name ``origin`` in your local clone.
     re-release the same version to Ansible Galaxy, or otherwise update it.
 
     Verify that the released version arrived on Ansible Galaxy at
-    https://galaxy.ansible.com/ibm/zhmc/
+    https://galaxy.ansible.com/ibm/ibm_zhmc/
 
 17. If you released the master branch, it needs a new fix stream.
 

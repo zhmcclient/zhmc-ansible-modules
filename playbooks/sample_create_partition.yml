@@ -4,7 +4,7 @@
     - vars.yml
     - vault.yml
   collections:
-  - ibm.zhmc
+  - ibm.ibm_zhmc
   tasks:
 
   - name: Ensure partition exists and is stopped

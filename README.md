@@ -42,7 +42,7 @@ https://galaxy.ansible.com/api/v2/collections/<NS>/<COLL>/ as follows:
 
 # IBM Z HMC collection
 
-[![Version on Galaxy](https://img.shields.io/badge/dynamic/json?style=flat&label=galaxy&prefix=v&url=https://galaxy.ansible.com/api/v2/collections/ibm/zhmc/&query=latest_version.version)](https://galaxy.ansible.com/ibm/zhmc/ "Version on Galaxy")
+[![Version on Galaxy](https://img.shields.io/badge/dynamic/json?style=flat&label=galaxy&prefix=v&url=https://galaxy.ansible.com/api/v2/collections/ibm/ibm_zhmc/&query=latest_version.version)](https://galaxy.ansible.com/ibm/ibm_zhmc/ "Version on Galaxy")
 [![Test status (master)](https://github.com/zhmcclient/zhmc-ansible-modules/workflows/test/badge.svg?branch=master)](https://github.com/zhmcclient/zhmc-ansible-modules/actions?query=workflow%3Atest "Test status (master)")
 [![Docs status (master)](https://github.com/zhmcclient/zhmc-ansible-modules/workflows/docs/badge.svg?branch=master)](https://github.com/zhmcclient/zhmc-ansible-modules/actions?query=workflow%3Adocs "Docs status (master)")
 [![Test coverage (master)](https://img.shields.io/coveralls/zhmcclient/zhmc-ansible-modules.svg)](https://coveralls.io/github/zhmcclient/zhmc-ansible-modules "Test coverage (master)")
@@ -89,7 +89,7 @@ distributed as the
 [zhmc-ansible-modules package on Pypi](https://pypi.org/project/zhmc-ansible-modules/).
 Starting with version 1.0.0, the Ansible modules are no longer distributed on
 Pypi, but as the
-[ibm.zhmc collection on Galaxy](https://galaxy.ansible.com/ibm/zhmc/).
+[ibm.ibm_zhmc collection on Galaxy](https://galaxy.ansible.com/ibm/ibm_zhmc/).
 
 Note that at this point, version 1.0.0 has not been released yet, so please
 continue using the latest released version on Pypi.
@@ -240,8 +240,8 @@ currently exists, it is stopped (if needed) and deleted.
 For installation instructions, see
 [Installation](https://zhmcclient.github.io/zhmc-ansible-modules/installation.html).
 
-After having installed the ibm.zhmc Ansible Galaxy collection, you find the
-sample playbooks in folder ``ibm/zhmc/playbooks/`` of your local Ansible
+After having installed the **IBM Z HMC collection**, you find the
+sample playbooks in folder ``ibm/ibm_zhmc/playbooks/`` of your local Ansible
 collection directory (e.g. ``$HOME/.ansible/collections/ansible_collections/``),
 for example:
 
