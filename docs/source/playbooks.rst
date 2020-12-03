@@ -24,84 +24,19 @@ a managed node (hosts) to be managed with Ansible. In case of the
 **IBM Z HMC collection**, the managed node is the local host, and the IP address
 of the HMC is specified as an input parameter to the Ansible modules.
 
-Playbook Documentation
-----------------------
+.. _`Sample Playbooks`:
 
-After having installed the **IBM Z HMC collection**, you find the
-sample playbooks in folder ``ibm/ibm_zhmc/playbooks/`` of your local Ansible
-collection directory (e.g. ``$HOME/.ansible/collections/ansible_collections/``).
-Alternatively, you can download the sample playbooks from the
-`playbooks directory`_ of the Git repository.
+Sample Playbooks
+----------------
 
-All sample playbooks include two files for defining credentials and other
-input parameters:
+The **IBM Z HMC collection** provides sample playbooks in the
+`IBM Z Ansible Collection Samples`_ repository.
 
-* ``vars.yml`` defines variables such as CPC name, partition name, etc. It does
-  not exist in that directory but can be copied from ``vars_example.yml``,
-  changing the variables to your needs.
+The starting point for reading about them is `IBM Z HMC Sample Playbooks`_.
 
-* ``vault.yml`` is a password vault file defining variables for authenticating
-  with the HMC. It does not exist in that directory but can be copied from
-  ``vault_example.yml``, changing the variables to your needs.
-
-Run the Playbooks
------------------
-
-Two of the sample playbooks are:
-
-* ``sample_create_partition_full.yml`` creates a partition with a NIC, HBA and
-  virtual function to an accelerator adapter.
-
-* ``sample_delete_partition.yml`` deletes a partition.
-
-The following examples assume that you have the playbook files in the current
-directory.
-You can use the `ansible-playbook`_ command to run these two playbooks as follows:
-
-.. code-block:: sh
-
-    $ ansible-playbook sample_create_partition_full.yml
-
-    PLAY [localhost] **********************************************************
-
-    TASK [Gathering Facts] ****************************************************
-    ok: [127.0.0.1]
-
-    TASK [Ensure partition exists and is stopped] *****************************
-    changed: [127.0.0.1]
-
-    TASK [Ensure HBA exists in the partition] *********************************
-    changed: [127.0.0.1]
-
-    TASK [Ensure NIC exists in the partition] *********************************
-    changed: [127.0.0.1]
-
-    TASK [Ensure virtual function exists in the partition] ********************
-    changed: [127.0.0.1]
-
-    TASK [Configure partition for booting via HBA] ****************************
-    changed: [127.0.0.1]
-
-    PLAY RECAP ****************************************************************
-    127.0.0.1                  : ok=6    changed=5    unreachable=0    failed=0
-
-    $ ansible-playbook sample_delete_partition.yml
-
-    PLAY [localhost] **********************************************************
-
-    TASK [Gathering Facts] ****************************************************
-    ok: [127.0.0.1]
-
-    TASK [Ensure partition does not exist] ************************************
-    changed: [127.0.0.1]
-
-    PLAY RECAP ****************************************************************
-    127.0.0.1                  : ok=2    changed=1    unreachable=0    failed=0
-
-
-.. _playbooks directory:
-   https://github.com/zhmcclient/zhmc-ansible-modules/tree/master/playbooks/
 .. _Ansible playbook:
    https://docs.ansible.com/ansible/latest/user_guide/playbooks_intro.html#playbooks-intro
-.. _ansible-playbook:
-   https://docs.ansible.com/ansible/latest/cli/ansible-playbook.html
+.. _IBM Z Ansible Collection Samples:
+   https://github.com/IBM/z_ansible_collections_samples/
+.. _IBM Z HMC Sample Playbooks:
+   https://github.com/IBM/z_ansible_collections_samples/tree/master/zhmc

@@ -60,7 +60,7 @@ Features
 ========
 
 The **IBM Z HMC collection** includes :ref:`modules` to automate the management
-of IBM Z platform resources. There are sample :ref:`playbooks` that show how to
+of IBM Z platform resources. There are :ref:`sample playbooks` that show how to
 invoke these modules in playbook tasks.
 
 .. toctree::
