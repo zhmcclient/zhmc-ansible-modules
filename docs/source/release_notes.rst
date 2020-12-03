@@ -20,7 +20,7 @@ Releases
 ========
 
 
-Version 1.0.0-dev1
+Version 0.9.0-dev1
 ------------------
 
 This version contains all fixes up to version 0.8.x.
@@ -31,7 +31,7 @@ Availability: `Galaxy`_, `GitHub`_
 
 **Incompatible changes:**
 
-* Starting with version 1.0.0, the zhmc Ansible modules are no longer distributed
+* Starting with version 0.9.0, the zhmc Ansible modules are no longer distributed
   as the
   `zhmc-ansible-modules package on Pypi <https://pypi.org/project/zhmc-ansible-modules/>`_,
   but as the

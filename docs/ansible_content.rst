@@ -48,12 +48,12 @@ The Ansible modules in this collection are written in Python and interact with
 the Web Services API of the Hardware Management Console (HMC) of the Z machines
 to be managed.
 
-Note: Before version 1.0.0, the Ansible modules in this collection have been
+Note: Before version 0.9.0, the Ansible modules in this collection have been
 distributed as the `zhmc-ansible-modules package on Pypi`_.
-Starting with version 1.0.0, the Ansible modules are no longer distributed on
+Starting with version 0.9.0, the Ansible modules are no longer distributed on
 Pypi, but as the `ibm.ibm_zhmc collection on Ansible Galaxy`_.
 
-Note that at this point, version 1.0.0 has not been released yet, so please
+Note that at this point, version 0.9.0 has not been released yet, so please
 continue using the latest released version on Pypi.
 
 Features
