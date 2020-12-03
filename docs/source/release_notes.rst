@@ -35,19 +35,19 @@ Availability: `Galaxy`_, `GitHub`_
   as the
   `zhmc-ansible-modules package on Pypi <https://pypi.org/project/zhmc-ansible-modules/>`_,
   but as the
-  `ibm.zhmc collection on Ansible Galaxy <https://galaxy.ansible.com/ibm/zhmc/>`_.
+  `ibm.ibm_zhmc collection on Ansible Galaxy <https://galaxy.ansible.com/ibm/ibm_zhmc/>`_.
   The installation of the zhmc Ansible modules is now done with::
 
-    ansible-galaxy collection install ibm.zhmc
+    ansible-galaxy collection install ibm.ibm_zhmc
 
   Playbooks using the zhmc Ansible modules do not need to be changed, other
-  than adding a "collections" property that includes the "ibm.zhmc"
+  than adding a "collections" property that includes the "ibm.ibm_zhmc"
   collection::
 
     ---
     - hosts: localhost
       collections:
-      - ibm.zhmc
+      - ibm.ibm_zhmc
       tasks:
       - ...
 
@@ -367,6 +367,6 @@ This is the initial release.
 .. _GitHub:
    https://github.com/zhmcclient/zhmc-ansible-modules/releases
 .. _Galaxy:
-   https://galaxy.ansible.com/ibm/zhmc
+   https://galaxy.ansible.com/ibm/ibm_zhmc
 .. _Pypi:
    https://pypi.org/project/zhmc-ansible-modules/

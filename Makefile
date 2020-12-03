@@ -52,7 +52,7 @@ endif
 # Namespace and name of this collection
 # TODO: Check out whether this needs to match the 'name' attribute specified in setup.py.
 collection_namespace := ibm
-collection_name := zhmc
+collection_name := ibm_zhmc
 collection_full_name := $(collection_namespace).$(collection_name)
 
 # Collection version (full version, e.g. "1.0.0")
@@ -106,7 +106,7 @@ endif
 #       discusses improving that.
 #       We copy most of the repo directory into sanity_dir to establish the
 #       required directory structure.
-sanity_dir := tmp_sanity/collections/ansible_collections/ibm/zhmc
+sanity_dir := tmp_sanity/collections/ansible_collections/ibm/ibm_zhmc
 sanity_dir1 := tmp_sanity
 sanity_tar_file := tmp_workspace.tar
 

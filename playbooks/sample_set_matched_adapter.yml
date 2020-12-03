@@ -4,7 +4,7 @@
     - vars.yml
     - vault.yml
   collections:
-  - ibm.zhmc
+  - ibm.ibm_zhmc
   tasks:
 
   - name: "Ensure the existing adapter identified by its name or adapter ID has

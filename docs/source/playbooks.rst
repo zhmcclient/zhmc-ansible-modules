@@ -28,7 +28,7 @@ Playbook Documentation
 ----------------------
 
 After having installed the **IBM Z HMC collection**, you find the
-sample playbooks in folder ``ibm/zhmc/playbooks/`` of your local Ansible
+sample playbooks in folder ``ibm/ibm_zhmc/playbooks/`` of your local Ansible
 collection directory (e.g. ``$HOME/.ansible/collections/ansible_collections/``).
 Alternatively, you can download the sample playbooks from the
 `playbooks directory`_ of the Git repository.

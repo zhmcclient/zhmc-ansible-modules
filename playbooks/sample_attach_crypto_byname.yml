@@ -5,7 +5,7 @@
     - vars.yml
     - vault.yml
   collections:
-  - ibm.zhmc
+  - ibm.ibm_zhmc
   tasks:
 
   - name: "Ensure domains 2-max on 2 specific adapters are attached in usage mode to partition {{ partition_name }}"
