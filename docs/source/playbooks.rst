@@ -20,14 +20,14 @@ Playbooks
 =========
 
 An `Ansible playbook`_ consists of organized instructions that define work for
-a managed node (hosts) to be managed with Ansible. In case of
-**IBM Z HMC Collection**, the managed node is the local host, and the IP address
+a managed node (hosts) to be managed with Ansible. In case of the
+**IBM Z HMC collection**, the managed node is the local host, and the IP address
 of the HMC is specified as an input parameter to the Ansible modules.
 
 Playbook Documentation
 ----------------------
 
-After having installed **IBM Z HMC Collection**, you find the
+After having installed the **IBM Z HMC collection**, you find the
 sample playbooks in folder ``ibm/zhmc/playbooks/`` of your local Ansible
 collection directory (e.g. ``$HOME/.ansible/collections/ansible_collections/``).
 Alternatively, you can download the sample playbooks from the

@@ -19,7 +19,7 @@
 Requirements
 ============
 
-For **IBM Z HMC Collection**, the managed node is the control node, i.e. the
+For the **IBM Z HMC collection**, the managed node is the control node, i.e. the
 playbook has its ``hosts`` and ``connection`` properties set accordingly:
 
 .. code-block:: text
@@ -32,7 +32,7 @@ The location of the HMC is defined with input parameters to the modules.
 Control node
 ============
 
-Besides having Ansible and **IBM Z HMC Collection** installed, there are no
+Besides having Ansible and the **IBM Z HMC collection** installed, there are no
 additional requirements for the control node.
 
 .. toctree::

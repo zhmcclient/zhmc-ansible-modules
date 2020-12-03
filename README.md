@@ -40,7 +40,7 @@ https://galaxy.ansible.com/api/v2/collections/<NS>/<COLL>/ as follows:
 -->
 
 
-# IBM Z HMC Collection
+# IBM Z HMC collection
 
 [![Version on Galaxy](https://img.shields.io/badge/dynamic/json?style=flat&label=galaxy&prefix=v&url=https://galaxy.ansible.com/api/v2/collections/ibm/zhmc/&query=latest_version.version)](https://galaxy.ansible.com/ibm/zhmc/ "Version on Galaxy")
 [![Test status (master)](https://github.com/zhmcclient/zhmc-ansible-modules/workflows/test/badge.svg?branch=master)](https://github.com/zhmcclient/zhmc-ansible-modules/actions?query=workflow%3Atest "Test status (master)")
@@ -50,7 +50,7 @@ https://galaxy.ansible.com/api/v2/collections/<NS>/<COLL>/ as follows:
 
 ## Overview
 
-**IBM Z HMC Collection** provides [Ansible](https://www.ansible.com/) modules
+The **IBM Z HMC collection** provides [Ansible](https://www.ansible.com/) modules
 that can manage platform resources on [IBM Z](http://www.ibm.com/it-infrastructure/z/) and
 [LinuxONE](http://www.ibm.com/it-infrastructure/linuxone/) machines.
 
