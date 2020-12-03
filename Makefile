@@ -239,11 +239,10 @@ endif
 # The second rm command of each type is for files that were used before 1.0.0, to make it easier to switch.
 .PHONY: clobber
 clobber:
-	rm -Rf .cache .pytest_cache $(sanity_dir1) $(sanity_tar_file) htmlcov docs_linkcheck
+	rm -Rf .cache .pytest_cache $(sanity_dir1) $(sanity_tar_file) htmlcov $(doc_linkcheck_dir) $(doc_build_dir) $(doc_build_local_dir)
 	rm -Rf tests/output build .tox *.egg-info
 	rm -f .coverage *.done
 	rm -f MANIFEST MANIFEST.in AUTHORS ChangeLog
-	rm -rf $(doc_build_local_dir)
 	find . -name "*.pyc" -delete -o -name "__pycache__" -delete -o -name "*.tmp" -delete -o -name "tmp_*" -delete
 	@echo '$@ done.'
 
