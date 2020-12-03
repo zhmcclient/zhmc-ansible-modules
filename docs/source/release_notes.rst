@@ -139,6 +139,9 @@ Availability: `Galaxy`_, `GitHub`_
 * Dev: Changed make targets and adjusted to directory structure compatible with
   Ansible collections, and for publishing on Ansible Galaxy.
 
+* Moved the sample playbooks to the common IBM Z Ansible Collection Samples
+  repository: https://github.com/IBM/z_ansible_collections_samples/
+
 **Known issues:**
 
 * See `list of open issues`_.

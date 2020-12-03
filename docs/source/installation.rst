@@ -196,41 +196,6 @@ control system. The instructions are written for a bash shell.
         $ pip install -r $anco_dir/ibm/ibm_zhmc/requirements.txt
 
 
-Verification of the installation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-You can verify that the **IBM Z HMC collection** and its dependent
-Python packages are installed correctly by running an example playbook in
-check mode:
-
-.. code-block:: sh
-
-    $ ansible-playbook $anco_dir/ibm/ibm_zhmc/playbooks/create_partition.yml --check
-
-    PLAY [localhost] ***********************************************************
-
-    TASK [Gathering Facts] *****************************************************
-    ok: [127.0.0.1]
-
-    TASK [Ensure partition exists and is stopped] ******************************
-    changed: [127.0.0.1]
-
-    TASK [Ensure HBA exists in the partition] **********************************
-    changed: [127.0.0.1]
-
-    TASK [Ensure NIC exists in the partition] **********************************
-    changed: [127.0.0.1]
-
-    TASK [Ensure virtual function exists in the partition] *********************
-    changed: [127.0.0.1]
-
-    TASK [Configure partition for booting via HBA] *****************************
-    changed: [127.0.0.1]
-
-    PLAY RECAP *****************************************************************
-    127.0.0.1                  : ok=6    changed=5    unreachable=0    failed=0
-
-
 .. _`Supported environments`:
 
 Supported environments
