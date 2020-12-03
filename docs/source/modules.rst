@@ -24,9 +24,9 @@ Modules can be used from the command line or in a playbook task or in a role tas
 Module Reference
 ----------------
 
-**IBM Z HMC Collection** provides several modules. Reference material for each
-module contains documentation on what parameters the module accepts and what
-will returned.
+The **IBM Z HMC collection** provides several modules. Reference material for
+each module contains documentation on what parameters the module accepts and
+what will returned.
 
 .. toctree::
    :maxdepth: 1

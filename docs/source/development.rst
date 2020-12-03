@@ -29,7 +29,7 @@ project are also considered developers for the purpose of this section.
 Repository
 ----------
 
-The repository for **IBM Z HMC Collection** is on GitHub:
+The repository for the **IBM Z HMC collection** is on GitHub:
 
 https://github.com/zhmcclient/zhmc-ansible-modules
 
@@ -68,7 +68,7 @@ list of valid Make targets and a short description of what each target does.
 Building the documentation
 --------------------------
 
-The documentation for **IBM Z HMC Collection** is published
+The documentation for the **IBM Z HMC collection** is published
 on GitHub Pages at https://zhmcclient.github.io/zhmc-ansible-modules/.
 
 That web site represents a defined set of versions of this collection and

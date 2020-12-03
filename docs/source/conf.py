@@ -68,7 +68,7 @@ _galaxy_file = os.path.relpath(os.path.join(
 # The full version, including alpha/beta/rc tags
 version = get_version(_galaxy_file)
 
-project = 'IBM Z HMC Collection'
+project = 'IBM Z HMC collection'
 copyright = '2016-2020, IBM'
 author = 'IBM'
 

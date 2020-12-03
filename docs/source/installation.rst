@@ -58,7 +58,7 @@ control system. The instructions are written for a bash shell.
 
     For details, see `Installing the Control Machine`_.
 
-2.  Install **IBM Z HMC Collection** from Ansible Galaxy:
+2.  Install the **IBM Z HMC collection** from Ansible Galaxy:
 
     .. code-block:: sh
 
@@ -159,7 +159,7 @@ control system. The instructions are written for a bash shell.
         ansible_python_interpreter=$python_script
         EOT
 
-5.  Install **IBM Z HMC Collection** from Ansible Galaxy:
+5.  Install the **IBM Z HMC collection** from Ansible Galaxy:
 
     .. code-block:: sh
 
@@ -199,7 +199,7 @@ control system. The instructions are written for a bash shell.
 Verification of the installation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You can verify that **IBM Z HMC Collection** and its dependent
+You can verify that the **IBM Z HMC collection** and its dependent
 Python packages are installed correctly by running an example playbook in
 check mode:
 

@@ -14,10 +14,10 @@
 ..
 
 ====================
-IBM Z HMC Collection
+IBM Z HMC collection
 ====================
 
-**IBM Z HMC Collection** provides `Ansible`_ modules that can manage platform
+The **IBM Z HMC collection** provides `Ansible`_ modules that can manage platform
 resources on `IBM Z`_ and `LinuxONE`_ machines.
 
 The goal of this collection is to be able to utilize the power and ease of use
@@ -59,8 +59,8 @@ continue using the latest released version on Pypi.
 Features
 ========
 
-**IBM Z HMC Collection** includes :ref:`modules` to automate the management of
-IBM Z platform resources. There are sample :ref:`playbooks` that show how to
+The **IBM Z HMC collection** includes :ref:`modules` to automate the management
+of IBM Z platform resources. There are sample :ref:`playbooks` that show how to
 invoke these modules in playbook tasks.
 
 .. toctree::
@@ -110,7 +110,7 @@ This collection is licensed under the `Apache 2.0 License`_.
 Author Information
 ==================
 
-**IBM Z HMC Collection** is maintained by the IBM Z development team.
+The **IBM Z HMC collection** is maintained by the IBM Z development team.
 
 .. _`Reporting issues`:
 

@@ -17,5 +17,5 @@
 Managed node
 ============
 
-For **IBM Z HMC Collection**, the managed node is the control node, so there
+For the **IBM Z HMC collection**, the managed node is the control node, so there
 are no additional requirements for the managed node.
