@@ -20,12 +20,12 @@ Releases
 ========
 
 
-Version 0.9.0-dev1
-------------------
+Version 0.9.0
+-------------
 
-This version contains all fixes up to version 0.8.x.
+This version contains all fixes up to version 0.8.3.
 
-Released: not yet
+Released: 2020-12-14
 
 Availability: `Galaxy`_, `GitHub`_
 
@@ -56,8 +56,6 @@ Availability: `Galaxy`_, `GitHub`_
   minimum Ansible version supported, consistent with the definition of that
   field. Since Ansible Galaxy supports Ansible 2.9 and above, the field
   now shows 2.9 for all modules.
-
-**Deprecations:**
 
 **Bug fixes:**
 
@@ -141,12 +139,6 @@ Availability: `Galaxy`_, `GitHub`_
 
 * Moved the sample playbooks to the common IBM Z Ansible Collection Samples
   repository: https://github.com/IBM/z_ansible_collections_samples/
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 0.8.0
