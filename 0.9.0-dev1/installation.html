@@ -91,10 +91,7 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#standard-installation-with-system-python">Standard installation with system Python</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#alternative-installation-with-virtual-python-environment">Alternative installation with virtual Python environment</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#verification-of-the-installation">Verification of the installation</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#alternative-installation-with-virtual-python-environment">Alternative installation with virtual Python environment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#supported-environments">Supported environments</a></li>
 </ul>
 </li>
@@ -326,38 +323,6 @@ active Python:</p>
 </div>
 </li>
 </ol>
-<div class="section" id="verification-of-the-installation">
-<h3>Verification of the installation<a class="headerlink" href="#verification-of-the-installation" title="Permalink to this headline">¶</a></h3>
-<p>You can verify that the <strong>IBM Z HMC collection</strong> and its dependent
-Python packages are installed correctly by running an example playbook in
-check mode:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ ansible-playbook <span class="nv">$anco_dir</span>/ibm/ibm_zhmc/playbooks/create_partition.yml --check
-
-PLAY <span class="o">[</span>localhost<span class="o">]</span> ***********************************************************
-
-TASK <span class="o">[</span>Gathering Facts<span class="o">]</span> *****************************************************
-ok: <span class="o">[</span><span class="m">127</span>.0.0.1<span class="o">]</span>
-
-TASK <span class="o">[</span>Ensure partition exists and is stopped<span class="o">]</span> ******************************
-changed: <span class="o">[</span><span class="m">127</span>.0.0.1<span class="o">]</span>
-
-TASK <span class="o">[</span>Ensure HBA exists in the partition<span class="o">]</span> **********************************
-changed: <span class="o">[</span><span class="m">127</span>.0.0.1<span class="o">]</span>
-
-TASK <span class="o">[</span>Ensure NIC exists in the partition<span class="o">]</span> **********************************
-changed: <span class="o">[</span><span class="m">127</span>.0.0.1<span class="o">]</span>
-
-TASK <span class="o">[</span>Ensure virtual <span class="k">function</span> exists in the partition<span class="o">]</span> *********************
-changed: <span class="o">[</span><span class="m">127</span>.0.0.1<span class="o">]</span>
-
-TASK <span class="o">[</span>Configure partition <span class="k">for</span> booting via HBA<span class="o">]</span> *****************************
-changed: <span class="o">[</span><span class="m">127</span>.0.0.1<span class="o">]</span>
-
-PLAY RECAP *****************************************************************
-<span class="m">127</span>.0.0.1                  : <span class="nv">ok</span><span class="o">=</span><span class="m">6</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">5</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>
-</pre></div>
-</div>
-</div>
 </div>
 <div class="section" id="supported-environments">
 <span id="id2"></span><h2>Supported environments<a class="headerlink" href="#supported-environments" title="Permalink to this headline">¶</a></h2>

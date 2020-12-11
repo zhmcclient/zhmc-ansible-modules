@@ -95,8 +95,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Playbooks</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#playbook-documentation">Playbook Documentation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#run-the-playbooks">Run the Playbooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sample-playbooks">Sample Playbooks</a></li>
 </ul>
 </li>
 </ul>
@@ -190,74 +189,11 @@
 a managed node (hosts) to be managed with Ansible. In case of the
 <strong>IBM Z HMC collection</strong>, the managed node is the local host, and the IP address
 of the HMC is specified as an input parameter to the Ansible modules.</p>
-<div class="section" id="playbook-documentation">
-<h2>Playbook Documentation<a class="headerlink" href="#playbook-documentation" title="Permalink to this headline">¶</a></h2>
-<p>After having installed the <strong>IBM Z HMC collection</strong>, you find the
-sample playbooks in folder <code class="docutils literal notranslate"><span class="pre">ibm/ibm_zhmc/playbooks/</span></code> of your local Ansible
-collection directory (e.g. <code class="docutils literal notranslate"><span class="pre">$HOME/.ansible/collections/ansible_collections/</span></code>).
-Alternatively, you can download the sample playbooks from the
-<a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/tree/master/playbooks/">playbooks directory</a> of the Git repository.</p>
-<p>All sample playbooks include two files for defining credentials and other
-input parameters:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">vars.yml</span></code> defines variables such as CPC name, partition name, etc. It does
-not exist in that directory but can be copied from <code class="docutils literal notranslate"><span class="pre">vars_example.yml</span></code>,
-changing the variables to your needs.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">vault.yml</span></code> is a password vault file defining variables for authenticating
-with the HMC. It does not exist in that directory but can be copied from
-<code class="docutils literal notranslate"><span class="pre">vault_example.yml</span></code>, changing the variables to your needs.</p></li>
-</ul>
-</div>
-<div class="section" id="run-the-playbooks">
-<h2>Run the Playbooks<a class="headerlink" href="#run-the-playbooks" title="Permalink to this headline">¶</a></h2>
-<p>Two of the sample playbooks are:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">sample_create_partition_full.yml</span></code> creates a partition with a NIC, HBA and
-virtual function to an accelerator adapter.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">sample_delete_partition.yml</span></code> deletes a partition.</p></li>
-</ul>
-<p>The following examples assume that you have the playbook files in the current
-directory.
-You can use the <a class="reference external" href="https://docs.ansible.com/ansible/latest/cli/ansible-playbook.html">ansible-playbook</a> command to run these two playbooks as follows:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ ansible-playbook sample_create_partition_full.yml
-
-PLAY <span class="o">[</span>localhost<span class="o">]</span> **********************************************************
-
-TASK <span class="o">[</span>Gathering Facts<span class="o">]</span> ****************************************************
-ok: <span class="o">[</span><span class="m">127</span>.0.0.1<span class="o">]</span>
-
-TASK <span class="o">[</span>Ensure partition exists and is stopped<span class="o">]</span> *****************************
-changed: <span class="o">[</span><span class="m">127</span>.0.0.1<span class="o">]</span>
-
-TASK <span class="o">[</span>Ensure HBA exists in the partition<span class="o">]</span> *********************************
-changed: <span class="o">[</span><span class="m">127</span>.0.0.1<span class="o">]</span>
-
-TASK <span class="o">[</span>Ensure NIC exists in the partition<span class="o">]</span> *********************************
-changed: <span class="o">[</span><span class="m">127</span>.0.0.1<span class="o">]</span>
-
-TASK <span class="o">[</span>Ensure virtual <span class="k">function</span> exists in the partition<span class="o">]</span> ********************
-changed: <span class="o">[</span><span class="m">127</span>.0.0.1<span class="o">]</span>
-
-TASK <span class="o">[</span>Configure partition <span class="k">for</span> booting via HBA<span class="o">]</span> ****************************
-changed: <span class="o">[</span><span class="m">127</span>.0.0.1<span class="o">]</span>
-
-PLAY RECAP ****************************************************************
-<span class="m">127</span>.0.0.1                  : <span class="nv">ok</span><span class="o">=</span><span class="m">6</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">5</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>
-
-$ ansible-playbook sample_delete_partition.yml
-
-PLAY <span class="o">[</span>localhost<span class="o">]</span> **********************************************************
-
-TASK <span class="o">[</span>Gathering Facts<span class="o">]</span> ****************************************************
-ok: <span class="o">[</span><span class="m">127</span>.0.0.1<span class="o">]</span>
-
-TASK <span class="o">[</span>Ensure partition does not exist<span class="o">]</span> ************************************
-changed: <span class="o">[</span><span class="m">127</span>.0.0.1<span class="o">]</span>
-
-PLAY RECAP ****************************************************************
-<span class="m">127</span>.0.0.1                  : <span class="nv">ok</span><span class="o">=</span><span class="m">2</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">1</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>
-</pre></div>
-</div>
+<div class="section" id="sample-playbooks">
+<span id="id2"></span><h2>Sample Playbooks<a class="headerlink" href="#sample-playbooks" title="Permalink to this headline">¶</a></h2>
+<p>The <strong>IBM Z HMC collection</strong> provides sample playbooks in the
+<a class="reference external" href="https://github.com/IBM/z_ansible_collections_samples/">IBM Z Ansible Collection Samples</a> repository.</p>
+<p>The starting point for reading about them is <a class="reference external" href="https://github.com/IBM/z_ansible_collections_samples/tree/master/zhmc">IBM Z HMC Sample Playbooks</a>.</p>
 </div>
 </div>
 
