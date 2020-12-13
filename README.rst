@@ -38,11 +38,11 @@ zhmc-ansible-modules - Ansible modules for the IBM Z HMC Web Services API
 Moving to Ansible Galaxy
 ========================
 
-Starting with version 1.0.0, the zhmc Ansible modules are no longer distributed
+Starting with version 0.9.0, the zhmc Ansible modules are no longer distributed
 as the
 `zhmc-ansible-modules package on Pypi <https://pypi.org/project/zhmc-ansible-modules/>`_,
 but as the
-`ibm.zhmc collection on Galaxy <https://galaxy.ansible.com/ibm/zhmc/>`_.
+`ibm.ibm_zhmc collection on Galaxy <https://galaxy.ansible.com/ibm/ibm_zhmc/>`_.
 
 Overview
 ========
@@ -93,7 +93,7 @@ Documentation
 This version of the project has its documentation on RTD:
 http://zhmc-ansible-modules.readthedocs.io/en/stable/
 
-Starting with version 1.0.0, the documentation is available on GitHub Pages:
+Starting with version 0.9.0, the documentation is available on GitHub Pages:
 https://zhmcclient.github.io/zhmc-ansible-modules/
 
 
