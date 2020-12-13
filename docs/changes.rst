@@ -29,14 +29,10 @@ but as the
 `ibm.ibm_zhmc collection on Galaxy <https://galaxy.ansible.com/ibm/ibm_zhmc/>`_.
 
 
-Version 0.8.4.dev1
-^^^^^^^^^^^^^^^^^^
+Version 0.8.4
+^^^^^^^^^^^^^
 
-Released: not yet
-
-**Incompatible changes:**
-
-**Deprecations:**
+Released: 2020-12-14
 
 **Bug fixes:**
 
@@ -50,14 +46,6 @@ Released: not yet
 
 * Increased the development status shown for the package on Pypi to
   Production/Stable. (Issue #285)
-
-**Cleanup:**
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 0.8.3
