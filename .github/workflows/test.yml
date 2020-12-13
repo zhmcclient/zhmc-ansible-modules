@@ -16,38 +16,40 @@ jobs:
     strategy:
       fail-fast: false
       max-parallel: 20
-      # # The matrix for the all-environment pull request:
-      # matrix:
-      #   os: [ubuntu-latest, macos-latest]  # TODO: Add windows-latest
-      #   python-version: [2.7, 3.5, 3.6, 3.7, 3.8, 3.9]
-      #   package_level: [minimum, latest]
-      # The matrix for normal pull requests:
+      # The matrix for the all-environment pull request:
       matrix:
-        os: [ubuntu-latest]
-        python-version: [2.7, 3.5, 3.9]
+        os: [ubuntu-latest, macos-latest]  # TODO: Add windows-latest
+        python-version: [2.7, 3.5, 3.6, 3.7, 3.8, 3.9]
         package_level: [minimum, latest]
-        include:
-        - os: macos-latest
-          python-version: 3.9
-          package_level: latest
+      # # The matrix for normal pull requests:
+      # matrix:
+      #   os: [ubuntu-latest]
+      #   python-version: [2.7, 3.5, 3.9]
+      #   package_level: [minimum, latest]
+      #   include:
+      #   - os: macos-latest
+      #     python-version: 3.9
+      #     package_level: latest
     runs-on: ${{ matrix.os }}
     steps:
     - name: Checkout repo
       uses: actions/checkout@v2
       with:
         fetch-depth: 0
-    - name: Rebase manual-ci-run to master
+    - name: Rebase manual-ci-run to stable_0.8
       if: ${{ github.head_ref == 'manual-ci-run' }}
+      env:
+        BRANCH: stable_0.8
       run: |
-        echo "Fetching and defining master:"
-        git fetch origin master
-        git branch master FETCH_HEAD
-        echo "Log back to master:"
-        git log master~..HEAD --oneline --decorate
-        echo "Rebasing to master:"
-        git rebase master
-        echo "Log back to master:"
-        git log master~..HEAD --oneline --decorate
+        echo "Fetching and defining ${{ env.BRANCH }}:"
+        git fetch origin ${{ env.BRANCH }}
+        git branch ${{ env.BRANCH }} FETCH_HEAD
+        echo "Log back to ${{ env.BRANCH }}:"
+        git log ${{ env.BRANCH }}~..HEAD --oneline --decorate
+        echo "Rebasing to ${{ env.BRANCH }}:"
+        git rebase ${{ env.BRANCH }}
+        echo "Log back to ${{ env.BRANCH }}:"
+        git log ${{ env.BRANCH }}~..HEAD --oneline --decorate
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
