@@ -66,13 +66,13 @@ tasks on the Hardware Management Console (HMC) of
 [LinuxONE](http://www.ibm.com/it-infrastructure/linuxone/) machines, such as
 creating, updating or deleting partitions and other resources.
 For guides and reference, please review the
-[IBM Z HMC documentation](https://zhmcclient.github.io/zhmc-ansible-modules/).
+[IBM Z HMC Collection Documentation](https://zhmcclient.github.io/zhmc-ansible-modules/).
 
 The **IBM Z HMC collection** provides sample Ansible playbooks in the
 [IBM Z Ansible Collection Samples](https://github.com/IBM/z_ansible_collections_samples/)
 repository.
 The starting point for reading about them is
-[IBM Z HMC Sample Playbooks](https://github.com/IBM/z_ansible_collections_samples/tree/master/zhmc).
+[IBM Z HMC Collection Sample Playbooks](https://github.com/IBM/z_ansible_collections_samples/tree/master/zhmc).
 
 Copyright
 =========
