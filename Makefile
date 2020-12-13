@@ -178,6 +178,7 @@ help:
 	@echo '  PACKAGE_LEVEL="latest" - Default: Install latest version of dependent Python packages'
 	@echo '  PYTHON_CMD=... - Name of python command. Default: python'
 	@echo '  PIP_CMD=... - Name of pip command. Default: pip'
+	@echo '  GALAXY_TOKEN=... - Your Ansible Galaxy token, required for upload (see https://galaxy.ansible.com/me/preferences)'
 	@echo 'Invocation of ansible commands from within repo main directory:'
 	@echo '  export ANSIBLE_LIBRARY="$$(pwd)/$(module_py_dir);$$ANSIBLE_LIBRARY"'
 	@echo '  # currently: ANSIBLE_LIBRARY=$(ANSIBLE_LIBRARY)'
@@ -224,12 +225,12 @@ end2end: _check_version develop_$(pymn).done
 	@echo '$@ done.'
 
 .PHONY: upload
-upload: _check_version $(dist_file)
+upload: _check_version _check_galaxy_token $(dist_file)
 ifeq (,$(findstring .dev,$(collection_version)))
 	@echo '==> This will publish collection $(collection_full_name) version $(collection_version) on Ansible Galaxy!'
 	@echo -n '==> Continue? [yN] '
 	@bash -c 'read answer; if [[ "$$answer" != "y" ]]; then echo "Aborted."; false; fi'
-	ansible-galaxy collection publish $(dist_file)
+	ansible-galaxy collection publish --token $(GALAXY_TOKEN) $(dist_file)
 	@echo 'Done: Published collection $(collection_full_name) version $(collection_version) on Ansible Galaxy'
 	@echo '$@ done.'
 else
@@ -254,6 +255,14 @@ dist: _check_version $(dist_file)
 _check_version:
 ifeq (,$(collection_version))
 	$(error Error: Collection version could not be determined)
+else
+	@true >/dev/null
+endif
+
+.PHONY: _check_galaxy_token
+_check_galaxy_token:
+ifeq (,$(GALAXY_TOKEN))
+	$(error Error: GALAXY_TOKEN env var needs to be set to your Ansible Galaxy API Key, see https://galaxy.ansible.com/me/preferences)
 else
 	@true >/dev/null
 endif

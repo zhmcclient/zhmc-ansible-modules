@@ -81,7 +81,6 @@ build_ignore:
   - DCO1.1.txt  # only in older branches
   - LICENSE
   - Makefile
-  - README.md
   # requirements.txt is intentionally included for dependent install
   - dev-requirements.txt
   - minimum-constraints.txt
