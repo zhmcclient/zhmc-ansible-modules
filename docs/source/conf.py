@@ -137,7 +137,7 @@ scv_overflow = ("-D", "html_show_sphinx=False")
 # Choosing to not generate documentation on any branch and rely solely on
 # Github tags. Branches are whitelisted with option 'scv_whitelist_branches'.
 # In other words, filter out any branches that don't match the pattern.
-scv_whitelist_branches = (' ',)
+scv_whitelist_branches = ('master', 'stable_0.9')
 
 # Since all branches are whitelisted, a 'root_ref' must be specified to avoid
 # the error: "Root ref master not found in: v1.0.0 v1.1.0-beta1". The simplest
@@ -145,7 +145,7 @@ scv_whitelist_branches = (' ',)
 # as 'v1.0.0'.
 # UPDATE: Able to avoid 'root_ref' by setting property 'scv_recent_tag= True'
 # thus commenting out scv_root_ref = 'v1.0.0'.
-# scv_root_ref = 'v1.0.0'
+scv_root_ref = 'master'
 
 # Override root-ref to be the most recent committed tag. If no tags have docs
 # then this option is ignored and --root-ref is used. Since we whitelist the
@@ -159,7 +159,7 @@ scv_whitelist_branches = (' ',)
 # have docs then this option is ignored and --root-ref is used. Since we
 # whitelist the master branch, we need to set a root_ref.
 # See also 'scv_root_ref
-scv_greatest_tag = True
+# scv_greatest_tag = True
 
 # White list which Git tags documentation will be generated and linked into the
 # version selection box. This is currently a manual selection, until more
@@ -181,7 +181,7 @@ scv_show_banner = True
 # This can override the scv_banner_greatest_tag option, but given the greatest
 # tag is currently desired behavior, this site will rely on
 # 'scv_banner_greatest_tag = True' and not use 'scv_banner_main_ref'
-# scv_banner_main_ref = 'v1.1.0-beta1'
+scv_banner_main_ref = 'master'
 
 # Override banner-main-ref to be the tag with the highest version number. If no
 # tags have docs then this option is ignored and --banner-main-ref is used.
@@ -191,7 +191,7 @@ scv_show_banner = True
 # Temporary work around to promote the latest git tag in the banner, for some
 # reason pre-release semantic versioning used with scv_banner_greatest_tag does
 # not generate the correct latest banner.
-scv_banner_recent_tag = True
+# scv_banner_recent_tag = True
 
 # Invert the order of branches/tags displayed in the sidebars in generated HTML
 # documents. The default order is whatever git prints when
