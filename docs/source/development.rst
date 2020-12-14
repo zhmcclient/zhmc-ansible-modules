@@ -231,7 +231,26 @@ has the remote name ``origin`` in your local clone.
 
         scv_whitelist_branches = ('master', 'stable_M.N')
 
-7.  Edit the GitHub workflow file docs.yml:
+7.  Edit the GitHub workflow file test.yml:
+
+    .. code-block:: sh
+
+        vi .github/workflows/test.yml
+
+    and in the `on` section, increase the version of the stable branch to be
+    the new stable version:
+
+    .. code-block:: yaml
+
+        on:
+          schedule:
+            . . .
+          push:
+            branches: [ master, stable_M.N ]
+          pull_request:
+            branches: [ master, stable_M.N ]
+
+8.  Edit the GitHub workflow file docs.yml:
 
     .. code-block:: sh
 
@@ -247,24 +266,24 @@ has the remote name ``origin`` in your local clone.
             # PR merge to these branches triggers this workflow
             branches: [ master, stable_M.N ]
 
-8.  Commit your changes and push them upstream:
+9.  Commit your changes and push them upstream:
 
     .. code-block:: sh
 
-        git add docs/source/release_notes.rst galaxy.yml docs/source/conf.py .github/workflows/docs.yml
-        git commit -sm "Release ${MNU}"
+        git status  # Double check the changed files
+        git commit -asm "Release ${MNU}"
         git push --set-upstream origin release_${MNU}
 
-9.  On GitHub, create a Pull Request for branch ``release_M.N.U``. This will
+10. On GitHub, create a Pull Request for branch ``release_M.N.U``. This will
     trigger the CI runs.
 
     Important: When creating Pull Requests, GitHub by default targets the
     ``master`` branch. If you are releasing a stable branch, you need to change
     the target branch of the Pull Request to ``stable_M.N``.
 
-10. On GitHub, close milestone ``M.N.U``.
+11. On GitHub, close milestone ``M.N.U``.
 
-11. Perform a complete test in your preferred Python environment:
+12. Perform a complete test in your preferred Python environment:
 
     .. code-block:: sh
 
@@ -276,13 +295,13 @@ has the remote name ``origin`` in your local clone.
     If this test fails, fix any issues (with new commits) until the test
     succeeds.
 
-12. On GitHub, once the checks for this Pull Request succeed:
+13. On GitHub, once the checks for this Pull Request succeed:
 
     * Merge the Pull Request (no review is needed).
 
     * Delete the branch of the Pull Request (``release_M.N.U``)
 
-13. Checkout the branch you are releasing, update it from upstream, and delete
+14. Checkout the branch you are releasing, update it from upstream, and delete
     the local topic branch you created:
 
     .. code-block:: sh
@@ -291,7 +310,7 @@ has the remote name ``origin`` in your local clone.
         git pull
         git branch -d release_${MNU}
 
-14. Tag the version:
+15. Tag the version:
 
     Create a tag for the new version and push the tag addition upstream:
 
@@ -300,12 +319,12 @@ has the remote name ``origin`` in your local clone.
         git tag -f ${MNU}
         git push -f --tags
 
-15. On GitHub, edit the new tag ``M.N.U``, and create a release description on
+16. On GitHub, edit the new tag ``M.N.U``, and create a release description on
     it. This will cause it to appear in the Release tab.
 
     You can see the tags in GitHub via Code -> Releases -> Tags.
 
-16. Publish the collection to Ansible Galaxy:
+17. Publish the collection to Ansible Galaxy:
 
     You need to be registered on Ansible Galaxy, and your userid there needs to
     be authorized to modify the 'ibm' namespace.
@@ -329,7 +348,7 @@ has the remote name ``origin`` in your local clone.
     Verify that the released version arrived on Ansible Galaxy at
     https://galaxy.ansible.com/ibm/ibm_zhmc/
 
-17. If you released the master branch, it needs a new fix stream.
+18. If you released the master branch, it needs a new fix stream.
 
     Create a branch for its fix stream and push it upstream:
 
@@ -450,8 +469,8 @@ has the remote name ``origin`` in your local clone.
 
     .. code-block:: sh
 
-        git add docs/source/release_notes.rst galaxy.yml
-        git commit -sm "Start ${MNU}"
+        git status  # Double check the changed files
+        git commit -asm "Start ${MNU}"
         git push --set-upstream origin start_${MNU}
 
 7.  On GitHub, create a Pull Request for branch ``start_M.N.U``.
