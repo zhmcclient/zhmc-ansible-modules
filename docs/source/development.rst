@@ -205,12 +205,11 @@ has the remote name ``origin`` in your local clone.
 
         vi galaxy.yml
 
-    and set the 'version' parameter to the version to be released (replacing
-    the ``${...}`` variables with their values):
+    and set the 'version' parameter to the version to be released:
 
     .. code-block:: yaml
 
-        version: ${MNU}
+        version: M.N.U
 
 6.  Edit the Sphinx config file:
 
@@ -218,14 +217,19 @@ has the remote name ``origin`` in your local clone.
 
         vi docs/source/conf.py
 
-    and in the ``scv_whitelist_tags`` property, change the draft version
-    to the version to be released (replacing the ``${...}`` variables with
-    their values):
+    and in the ``scv_whitelist_tags`` property, add the version to be released:
 
-    .. # Note: Using python fails rstcheck on Python 3.5
-    .. code-block:: text
+    .. code-block:: python
 
-        scv_whitelist_tags = [ ...(previous versions)..., '${MNU}' ]
+        scv_whitelist_tags = [ ..., 'M.N.U' ]
+
+    If you are releasing the master branch, in addition increase the version of
+    the stable branch in the ``scv_whitelist_branches`` property to be the new
+    stable version:
+
+    .. code-block:: python
+
+        scv_whitelist_branches = ('master', 'stable_M.N')
 
 7.  Edit the GitHub workflow file docs.yml:
 
@@ -233,23 +237,21 @@ has the remote name ``origin`` in your local clone.
 
         vi .github/workflows/docs.yml
 
-    and in the step named "Set the tag and branch variables for BRANCH",
-    change the draft version to the version to be released (replacing the
-    ``${...}`` variables with their values):
+    and in the `on` section, increase the version of the stable branch to be
+    the new stable version:
 
     .. code-block:: yaml
 
-        - name: Set the tag and branch variables for ${BRANCH}
-          if: ${{ github.ref == 'refs/heads/${BRANCH}' }}
-          run: |
-            echo "branch=${BRANCH}" >> $GITHUB_ENV
-            echo "tag=${MNU}" >> $GITHUB_ENV
+        on:
+          push:
+            # PR merge to these branches triggers this workflow
+            branches: [ master, stable_M.N ]
 
 8.  Commit your changes and push them upstream:
 
     .. code-block:: sh
 
-        git add docs/source/release_notes.rst
+        git add docs/source/release_notes.rst galaxy.yml docs/source/conf.py .github/workflows/docs.yml
         git commit -sm "Release ${MNU}"
         git push --set-upstream origin release_${MNU}
 
@@ -305,11 +307,18 @@ has the remote name ``origin`` in your local clone.
 
 16. Publish the collection to Ansible Galaxy:
 
+    You need to be registered on Ansible Galaxy, and your userid there needs to
+    be authorized to modify the 'ibm' namespace.
+
+    Look up your API Key on https://galaxy.ansible.com/me/preferences and upload
+    to galaxy while the `GALAXY_TOKEN` environment variable is set to your API
+    Key:
+
     .. code-block:: sh
 
-        make upload
+        GALAXY_TOKEN={your-galaxy-api-key} make upload
 
-    This will show the package version and will ask for confirmation.
+    This will show the collection version and will ask for confirmation.
 
     **Important:** Double check that the correct package version (``M.N.U``,
     without any development suffix) is shown.
@@ -358,8 +367,6 @@ has the remote name ``origin`` in your local clone.
     * ``MNU`` - Full version number M.N.U of the new version to be started
     * ``MN`` - Major and minor version numbers M.N of that full version
     * ``BRANCH`` - Name of the branch the new version is based upon
-    * ``MNUD`` - Full version number of the new version to be
-      started, plus draft version suffix, i.e. M.N.U-dev1
 
     When starting a (major or minor) version (e.g. ``1.1.0``) based on the
     master branch:
@@ -369,7 +376,6 @@ has the remote name ``origin`` in your local clone.
         MNU=1.1.0
         MN=1.0
         BRANCH=master
-        MNUD=${MNU}-dev1
 
     When starting an update (=fix) version (e.g. ``0.8.2``) based on a
     stable branch:
@@ -379,7 +385,6 @@ has the remote name ``origin`` in your local clone.
         MNU=0.8.2
         MN=0.8
         BRANCH=stable_${MN}
-        MNUD=${MNU}-dev1
 
 3.  Check out the branch the new version is based on, make sure it is up to
     date with upstream, and create a topic branch for the new version:
@@ -398,12 +403,11 @@ has the remote name ``origin`` in your local clone.
         vi docs/source/release_notes.rst
 
     and insert the following section before the top-most section, and update
-    the version to the new version (replacing the ``${...}`` variables with
-    their values):
+    the version to the new version:
 
     .. code-block:: rst
 
-        Version ${MNUD}
+        Version M.N.U-dev1
         ------------------
 
         This version contains all fixes up to version M.N-1.x.
@@ -436,79 +440,41 @@ has the remote name ``origin`` in your local clone.
 
     .. code-block:: yaml
 
-        version: ${MNUD}
+        version: M.N.U-dev1
 
     Note: The version must follow the rules for semantic versioning 2.0
     including the description of development/alpha/etc suffixes, as described
     in https://semver.org/
 
-6.  Edit the Sphinx config file:
+6.  Commit your changes and push them upstream:
 
     .. code-block:: sh
 
-        vi docs/source/conf.py
-
-    and in the ``scv_whitelist_tags`` property, add the new draft version to
-    the list (replacing the ``${...}`` variables with their values):
-
-    .. # Note: Using python fails rstcheck on Python 3.5
-    .. code-block:: text
-
-        scv_whitelist_tags = [ ...(previous versions)..., '${MNUD}' ]
-
-7.  Edit the GitHub workflow file docs.yml:
-
-    .. code-block:: sh
-
-        vi .github/workflows/docs.yml
-
-    and add a step for defining the variables for the new draft version after
-    the last such step (replacing the ``${...}`` variables with their values):
-
-    .. code-block:: yaml
-
-        - name: Set the tag and branch variables for ${BRANCH}
-          if: ${{ github.ref == 'refs/heads/${BRANCH}' }}
-          run: |
-            echo "branch=${BRANCH}" >> $GITHUB_ENV
-            echo "tag=${MNUD}" >> $GITHUB_ENV
-
-8.  Commit your changes and push them upstream:
-
-    .. code-block:: sh
-
-        git add docs/source/release_notes.rst
+        git add docs/source/release_notes.rst galaxy.yml
         git commit -sm "Start ${MNU}"
         git push --set-upstream origin start_${MNU}
 
-9.  Tag the branch with the new draft version and push the tag upstream:
-
-    .. code-block:: sh
-
-        git tag -f ${MNUD}
-        git push -f --tags
-
-10. On GitHub, create a Pull Request for branch ``start_M.N.U``.
+7.  On GitHub, create a Pull Request for branch ``start_M.N.U``.
 
     Important: When creating Pull Requests, GitHub by default targets the
     ``master`` branch. If you are starting based on a stable branch, you need
     to change the target branch of the Pull Request to ``stable_M.N``.
 
-11. On GitHub, create a milestone for the new version ``M.N.U``.
+8.  On GitHub, create a milestone for the new version ``M.N.U``.
 
     You can create a milestone in GitHub via Issues -> Milestones -> New
     Milestone.
 
-12. On GitHub, go through all open issues and pull requests that still have
+9.  On GitHub, go through all open issues and pull requests that still have
     milestones for previous releases set, and either set them to the new
     milestone, or to have no milestone.
 
-13. On GitHub, once the checks for this Pull Request succeed:
+10. On GitHub, once the checks for this Pull Request succeed:
 
     * Merge the Pull Request (no review is needed)
     * Delete the branch of the Pull Request (``start_M.N.U``)
 
-14. Checkout the branch the new version is based on, update it from upstream,
+11. Checkout the branch the new version is based on, update it from upstream,
     and delete the local topic branch you created:
 
     .. code-block:: sh
