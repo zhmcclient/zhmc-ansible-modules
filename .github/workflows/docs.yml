@@ -11,7 +11,7 @@ env:
 on:
   push:
     # PR merge to these branches triggers this workflow
-    branches: [ master ]
+    branches: [ master, stable_0.9 ]
 
 jobs:
 
@@ -28,34 +28,6 @@ jobs:
         # versioned Sphinx build builds from the tags/branches specified in the
         # sphinx-versioning config in docs/conf.py, regardless of what is
         # currently checked out.
-
-    # Repeat the following step for each branch/tag in the docs.
-    # Keep these branches and tags consistent with the sphinx-versioning config
-    # in docs/conf.py.
-    - name: Set the tag and branch variables for master
-      if: ${{ github.ref == 'refs/heads/master' }}
-      run: |
-        echo "branch=master" >> $GITHUB_ENV
-        echo "tag=0.9.0" >> $GITHUB_ENV
-
-    - name: Update the tag locally
-      run: |
-        git checkout ${{ env.branch }}
-        echo "Commit that previously had the tag:"
-        git log ${{ env.tag }}~..${{ env.tag }} --oneline --decorate
-        echo "Updating the tag:"
-        git tag -f ${{ env.tag }}
-        echo "Commit that now has the tag:"
-        git log ${{ env.tag }}~..${{ env.tag }} --oneline --decorate
-
-    - name: Push the tag to the upstream repo
-      uses: ad-m/github-push-action@master
-      # From https://github.com/marketplace/actions/github-push
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: ${{ env.branch }}
-        tags: true
-        force: true
 
     - name: Set up Python 3.8
       uses: actions/setup-python@v2
