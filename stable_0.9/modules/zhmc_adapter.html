@@ -1,0 +1,550 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>zhmc_adapter – Update adapters and create Hipersocket adapters &mdash; IBM Z HMC collection  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/banner.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="zhmc_cpc – Update CPCs" href="zhmc_cpc.html" />
+    <link rel="prev" title="Modules" href="../modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> IBM Z HMC collection
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.9.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">References</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../modules.html">Modules</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../modules.html#module-reference">Module Reference</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">zhmc_adapter – Update adapters and create Hipersocket adapters</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#synopsis">Synopsis</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="zhmc_cpc.html">zhmc_cpc – Update CPCs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="zhmc_crypto_attachment.html">zhmc_crypto_attachment – Attach crypto resources to partitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="zhmc_hba.html">zhmc_hba – Create HBAs in partitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="zhmc_nic.html">zhmc_nic – Create NICs in partitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="zhmc_partition.html">zhmc_partition – Create partitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="zhmc_storage_group.html">zhmc_storage_group – Create storage groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Attach storage groups to partitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="zhmc_storage_volume.html">zhmc_storage_volume – Create storage volumes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="zhmc_user.html">zhmc_user – Create HMC users</a></li>
+<li class="toctree-l3"><a class="reference internal" href="zhmc_virtual_function.html">zhmc_virtual_function – Create virtual functions in partitions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../modules.html#module-documentation">Module Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../playbooks.html">Playbooks</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Community Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../community_guides.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">Development</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Requirements</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../requirements.html#control-node">Control node</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Appendices</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes.html">Releases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../versioning.html">Versioning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../bibliography.html">Bibliography</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">IBM Z HMC collection</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../modules.html">Modules</a> &raquo;</li>
+        
+      <li>zhmc_adapter – Update adapters and create Hipersocket adapters</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_adapter.py" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+
+
+    
+    
+
+
+
+    <p class="scv-banner scv-sphinx_rtd_theme"><a href="../../master/modules/zhmc_adapter.html"><b>Warning:</b> This document is for the development version of IBM Z HMC collection. The main version is master.</a></p>
+<div class="section" id="zhmc-adapter-update-adapters-and-create-hipersocket-adapters">
+<span id="zhmc-adapter-module"></span><h1>zhmc_adapter – Update adapters and create Hipersocket adapters<a class="headerlink" href="#zhmc-adapter-update-adapters-and-create-hipersocket-adapters" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
+<li><p><a class="reference internal" href="#parameters" id="id2">Parameters</a></p></li>
+<li><p><a class="reference internal" href="#examples" id="id3">Examples</a></p></li>
+<li><p><a class="reference internal" href="#return-values" id="id4">Return Values</a></p></li>
+</ul>
+</div>
+<div class="section" id="synopsis">
+<h2><a class="toc-backref" href="#id1">Synopsis</a><a class="headerlink" href="#synopsis" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Gather facts about an adapter of a CPC (Z system), including its ports.</p></li>
+<li><p>Update the properties of an adapter and its ports.</p></li>
+<li><p>Create or delete a Hipersocket adapter.</p></li>
+</ul>
+</div>
+<div class="section" id="parameters">
+<h2><a class="toc-backref" href="#id2">Parameters</a><a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<dl>
+<dt>hmc_host</dt><dd><p>The hostname or IP address of the HMC.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: True</div>
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>hmc_auth</dt><dd><p>The authentication credentials for the HMC, as a dictionary of <code class="docutils literal notranslate"><span class="pre">userid</span></code>, <code class="docutils literal notranslate"><span class="pre">password</span></code>.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: True</div>
+<div class="line"><strong>type</strong>: dict</div>
+</div>
+<dl>
+<dt>userid</dt><dd><p>The userid (username) for authenticating with the HMC.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: True</div>
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>password</dt><dd><p>The password for authenticating with the HMC.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: True</div>
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>name</dt><dd><p>The name of the target adapter. In case of renaming an adapter, this is the new name of the adapter.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: True</div>
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>cpc_name</dt><dd><p>The name of the target CPC.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: True</div>
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>match</dt><dd><p>Only for <code class="docutils literal notranslate"><span class="pre">state=set</span></code>: Match properties for identifying the target adapter in the set of adapters in the CPC, if an adapter with the name specified in the <code class="docutils literal notranslate"><span class="pre">name</span></code> module parameter does not exist in that set. This parameter will be ignored otherwise.</p>
+<p>Use of this parameter allows renaming an adapter: The <code class="docutils literal notranslate"><span class="pre">name</span></code> module parameter specifies the new name of the target adapter, and the <code class="docutils literal notranslate"><span class="pre">match</span></code> module parameter identifies the adapter to be renamed. This can be combined with other property updates by using the <code class="docutils literal notranslate"><span class="pre">properties</span></code> module parameter.</p>
+<p>The parameter is a dictionary. The key of each dictionary item is the property name as specified in the data model for adapter resources, with underscores instead of hyphens. The value of each dictionary item is the match value for the property (in YAML syntax). Integer properties may also be provided as decimal strings.</p>
+<p>The specified match properties follow the rules of filtering for the zhmcclient library as described in <a class="reference external" href="https://python-zhmcclient.readthedocs.io/en/stable/concepts.html#filtering">https://python-zhmcclient.readthedocs.io/en/stable/concepts.html#filtering</a></p>
+<p>The possible match properties are all properties in the data model for adapter resources, including <code class="docutils literal notranslate"><span class="pre">name</span></code>.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: dict</div>
+</div>
+</dd>
+<dt>state</dt><dd><p>The desired state for the attachment:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">set</span></code>: Ensures that an existing adapter has the specified properties.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">present</span></code>: Ensures that a Hipersockets adapter exists and has the specified properties.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">absent</span></code>: Ensures that a Hipersockets adapter does not exist.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">facts</span></code>: Does not change anything on the adapter and returns the adapter properties including its ports.</p></li>
+</ul>
+<div class="line-block">
+<div class="line"><strong>required</strong>: True</div>
+<div class="line"><strong>type</strong>: str</div>
+<div class="line"><strong>choices</strong>: set, present, absent, facts</div>
+</div>
+</dd>
+<dt>properties</dt><dd><p>Only for <code class="docutils literal notranslate"><span class="pre">state=set|present</span></code>: New values for the properties of the adapter. Properties omitted in this dictionary will remain unchanged. This parameter will be ignored for other states.</p>
+<p>The parameter is a dictionary. The key of each dictionary item is the property name as specified in the data model for adapter resources, with underscores instead of hyphens. The value of each dictionary item is the property value (in YAML syntax). Integer properties may also be provided as decimal strings.</p>
+<p>The possible properties in this dictionary are the properties defined as writeable in the data model for adapter resources, with the following exceptions:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: Cannot be specified as a property because the name has already been specified in the <code class="docutils literal notranslate"><span class="pre">name</span></code> module parameter.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: The desired adapter type can be specified in order to support adapters that can change their type (e.g. the FICON Express adapter can change its type between ‘not-configured’, ‘fcp’ and ‘fc’).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">crypto_type</span></code>: The crypto type can be specified in order to support the ability of the Crypto Express adapters to change their crypto type. Valid values are ‘ep11’, ‘cca’ and ‘acc’. Changing to ‘acc’ will zeroize the crypto adapter.</p></li>
+</ul>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: dict</div>
+</div>
+</dd>
+<dt>log_file</dt><dd><p>File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="section" id="examples">
+<h2><a class="toc-backref" href="#id3">Examples</a><a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+<span class="c1"># Note: The following examples assume that some variables named &#39;my_*&#39; are set.</span>
+
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Gather facts about an existing adapter</span>
+  <span class="nt">zhmc_adapter</span><span class="p">:</span>
+    <span class="nt">hmc_host</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">hmc_auth</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">cpc_name</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_adapter_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">facts</span>
+  <span class="nt">register</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">adapter1</span>
+
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Ensure an existing adapter has the desired property values</span>
+  <span class="nt">zhmc_adapter</span><span class="p">:</span>
+    <span class="nt">hmc_host</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">hmc_auth</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">cpc_name</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_adapter_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">set</span>
+    <span class="nt">properties</span><span class="p">:</span>
+      <span class="nt">description</span><span class="p">:</span> <span class="s">&quot;This</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">adapter</span><span class="nv"> </span><span class="cp">{{</span> <span class="nv">my_adapter_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+  <span class="nt">register</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">adapter1</span>
+
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;Ensure</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">existing</span><span class="nv"> </span><span class="s">adapter</span><span class="nv"> </span><span class="s">identified</span><span class="nv"> </span><span class="s">by</span><span class="nv"> </span><span class="s">its</span><span class="nv"> </span><span class="s">name</span><span class="nv"> </span><span class="s">or</span><span class="nv"> </span><span class="s">adapter</span><span class="nv"> </span><span class="s">ID</span><span class="nv"> </span><span class="s">has</span>
+         <span class="s">the</span><span class="nv"> </span><span class="s">desired</span><span class="nv"> </span><span class="s">name</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">property</span><span class="nv"> </span><span class="s">values&quot;</span>
+  <span class="nt">zhmc_adapter</span><span class="p">:</span>
+    <span class="nt">hmc_host</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">hmc_auth</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">cpc_name</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_adapter_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">match</span><span class="p">:</span>
+      <span class="nt">adapter_id</span><span class="p">:</span> <span class="s">&quot;12C&quot;</span>
+    <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">set</span>
+    <span class="nt">properties</span><span class="p">:</span>
+      <span class="nt">description</span><span class="p">:</span> <span class="s">&quot;This</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">adapter</span><span class="nv"> </span><span class="cp">{{</span> <span class="nv">my_adapter_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+  <span class="nt">register</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">adapter1</span>
+
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;Ensure</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">Hipersockets</span><span class="nv"> </span><span class="s">adapter</span><span class="nv"> </span><span class="s">exists</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">has</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">desired</span><span class="nv"> </span><span class="s">property</span>
+         <span class="s">values&quot;</span>
+  <span class="nt">zhmc_adapter</span><span class="p">:</span>
+    <span class="nt">hmc_host</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">hmc_auth</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">cpc_name</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_adapter_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">present</span>
+    <span class="nt">properties</span><span class="p">:</span>
+      <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">hipersockets</span>
+      <span class="nt">description</span><span class="p">:</span> <span class="s">&quot;This</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">Hipersockets</span><span class="nv"> </span><span class="s">adapter</span><span class="nv"> </span><span class="cp">{{</span> <span class="nv">my_adapter_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+  <span class="nt">register</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">adapter1</span>
+
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;Ensure</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">Hipersockets</span><span class="nv"> </span><span class="s">adapter</span><span class="nv"> </span><span class="s">does</span><span class="nv"> </span><span class="s">not</span><span class="nv"> </span><span class="s">exist&quot;</span>
+  <span class="nt">zhmc_adapter</span><span class="p">:</span>
+    <span class="nt">hmc_host</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">hmc_auth</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">cpc_name</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_adapter_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+    <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">absent</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="return-values">
+<h2><a class="toc-backref" href="#id4">Return Values</a><a class="headerlink" href="#return-values" title="Permalink to this headline">¶</a></h2>
+<dl>
+<dt>changed</dt><dd><p>Indicates if any change has been made by the module. For <code class="docutils literal notranslate"><span class="pre">state=facts</span></code>, always will be false.</p>
+<div class="line-block">
+<div class="line"><strong>returned</strong>: always</div>
+<div class="line"><strong>type</strong>: bool</div>
+</div>
+</dd>
+<dt>msg</dt><dd><p>An error message that describes the failure.</p>
+<div class="line-block">
+<div class="line"><strong>returned</strong>: failure</div>
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>adapter</dt><dd><p>For <code class="docutils literal notranslate"><span class="pre">state=absent</span></code>, an empty dictionary.</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">state=set|present|facts</span></code>, the adapter and its ports.</p>
+<div class="line-block">
+<div class="line"><strong>returned</strong>: success</div>
+<div class="line"><strong>type</strong>: dict</div>
+<div class="line"><strong>sample</strong>:</div>
+</div>
+<blockquote>
+<div><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;adapter-family&quot;</span><span class="p">:</span> <span class="s2">&quot;ficon&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;adapter-id&quot;</span><span class="p">:</span> <span class="s2">&quot;120&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;allowed-capacity&quot;</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span>
+    <span class="nt">&quot;card-location&quot;</span><span class="p">:</span> <span class="s2">&quot;A14B-D112-J.01&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;channel-path-id&quot;</span><span class="p">:</span> <span class="s2">&quot;09&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;adapter&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;configured-capacity&quot;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span>
+    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;detected-card-type&quot;</span><span class="p">:</span> <span class="s2">&quot;ficon-express-16s-plus&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;maximum-total-capacity&quot;</span><span class="p">:</span> <span class="mi">254</span><span class="p">,</span>
+    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;FCP_120_SAN1_02&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;object-id&quot;</span><span class="p">:</span> <span class="s2">&quot;dfb2147a-e578-11e8-a87c-00106f239c31&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;object-uri&quot;</span><span class="p">:</span> <span class="s2">&quot;/api/adapters/dfb2147a-e578-11e8-a87c-00106f239c31&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;parent&quot;</span><span class="p">:</span> <span class="s2">&quot;/api/cpcs/66942455-4a14-3f99-8904-3e7ed5ca28d7&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;physical-channel-status&quot;</span><span class="p">:</span> <span class="s2">&quot;operating&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;port-count&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nt">&quot;ports&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;storage-port&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;element-id&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;element-uri&quot;</span><span class="p">:</span> <span class="s2">&quot;/api/adapters/dfb2147a-e578-11e8-a87c-00106f239c31/storage-ports/0&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;fabric-id&quot;</span><span class="p">:</span> <span class="s2">&quot;100088947155A1E9&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;index&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Port 0&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;parent&quot;</span><span class="p">:</span> <span class="s2">&quot;/api/adapters/dfb2147a-e578-11e8-a87c-00106f239c31&quot;</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;state&quot;</span><span class="p">:</span> <span class="s2">&quot;online&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;active&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;storage-port-uris&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;/api/adapters/dfb2147a-e578-11e8-a87c-00106f239c31/storage-ports/0&quot;</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;fcp&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;used-capacity&quot;</span><span class="p">:</span> <span class="mi">20</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+<dl>
+<dt>name</dt><dd><p>Adapter name</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>{property}</dt><dd><p>Additional properties of the adapter, as described in the data model of the ‘Adapter’ object in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+</dd>
+<dt>ports</dt><dd><p>Artificial property for the ports of the adapter.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: list</div>
+<div class="line"><strong>elements</strong>: dict</div>
+</div>
+<dl>
+<dt>name</dt><dd><p>Port name</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>{property}</dt><dd><p>Additional properties of the port, as described in the data model of the ‘Network Port’ or ‘Storage Port’ element object of the ‘Adapter’ object in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="zhmc_cpc.html" class="btn btn-neutral float-right" title="zhmc_cpc – Update CPCs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../modules.html" class="btn btn-neutral float-left" title="Modules" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2016-2020, IBM
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+        <span class="fa fa-book"> Other Versions</span>
+        v: stable_0.9
+        <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        <dl>
+            <dt>Tags</dt>
+            <dd><a href="../../0.9.0/modules/zhmc_adapter.html">0.9.0</a></dd>
+        </dl>
+        <dl>
+            <dt>Branches</dt>
+            <dd><a href="zhmc_adapter.html">stable_0.9</a></dd>
+            <dd><a href="../../master/modules/zhmc_adapter.html">master</a></dd>
+        </dl>
+    </div>
+</div>
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
