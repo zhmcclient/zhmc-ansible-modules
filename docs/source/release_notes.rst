@@ -20,26 +20,15 @@ Releases
 ========
 
 
-Version 0.9.1-dev1
-------------------
+Version 0.9.1
+-------------
 
-Released: not yet
-
-**Incompatible changes:**
-
-**Deprecations:**
-
-**Bug fixes:**
+Released: 2020-12-15
 
 **Enhancements:**
 
-**Cleanup:**
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
+* Updated the README page with a section about the RedHat Ansible Certified
+  Content for IBM Z, for consistency with the other IBM Z collections.
 
 
 Version 0.9.0
