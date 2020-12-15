@@ -154,7 +154,7 @@ scv_greatest_tag = True
 
 # List of Github tags that are included as versions in the documentation.
 # This is in addition to the 'scv_whitelist_branches' option.
-scv_whitelist_tags = ('0.9.0',)
+scv_whitelist_tags = ('0.9.1',)
 
 # Sort versions by one or more values. Valid values are semver, alpha, and time.
 # Semantic is referred to as 'semver', this would ensure our latest VRM is
