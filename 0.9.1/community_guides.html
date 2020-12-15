@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Versioning &mdash; IBM Z HMC collection  documentation</title>
+  <title>Contributing &mdash; IBM Z HMC collection  documentation</title>
   
 
   
@@ -37,8 +37,8 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Bibliography" href="bibliography.html" />
-    <link rel="prev" title="Releases" href="release_notes.html" /> 
+    <link rel="next" title="Development" href="development.html" />
+    <link rel="prev" title="Playbooks" href="playbooks.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                0.9.0
+                0.9.1
               </div>
             
           
@@ -97,8 +97,8 @@
 <li class="toctree-l1"><a class="reference internal" href="playbooks.html">Playbooks</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Community Guides</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="community_guides.html">Contributing</a></li>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development.html">Development</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Requirements</span></p>
@@ -107,13 +107,9 @@
 <li class="toctree-l1"><a class="reference internal" href="requirements.html#control-node">Control node</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Appendices</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="release_notes.html">Releases</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Versioning</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#compatibility">Compatibility</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#deprecations">Deprecations</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="versioning.html">Versioning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bibliography.html">Bibliography</a></li>
 </ul>
 
@@ -161,7 +157,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Versioning</li>
+      <li>Contributing</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -178,32 +174,13 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="versioning">
-<span id="id1"></span><h1>Versioning<a class="headerlink" href="#versioning" title="Permalink to this headline">¶</a></h1>
-<p>This collection uses the rules of <a class="reference external" href="http://semver.org/spec/v2.0.0.html">Semantic Versioning 2.0.0</a> for its version.</p>
-<p>This documentation may have been built from a development level of the
-package. You can recognize a development version of this package by the
-presence of a “.devD” suffix in the version string.</p>
-<div class="section" id="compatibility">
-<span id="id2"></span><h2>Compatibility<a class="headerlink" href="#compatibility" title="Permalink to this headline">¶</a></h2>
-<p>For Ansible modules, compatibility is always seen from the perspective of an
-Ansible playbook using it. Thus, a backwards compatible new version of an
-Ansible Galaxy collection means that the user can safely upgrade to that new
-version without encountering compatibility issues in any Ansible playbooks
-using the modules in the collection.</p>
-<p>This collection uses the rules of <a class="reference external" href="http://semver.org/spec/v2.0.0.html">Semantic Versioning 2.0.0</a> for compatibility
-between package versions, and for <a class="reference internal" href="#deprecations"><span class="std std-ref">deprecations</span></a>.</p>
-<p>The public interface of the collection that is subject to the semantic
-versioning rules (and specificically to its compatibility rules) are the Ansible
-module interfaces described in this documentation.</p>
-<p>Violations of these compatibility rules are described in section
-<a class="reference internal" href="release_notes.html#releases"><span class="std std-ref">Releases</span></a>.</p>
-</div>
-<div class="section" id="deprecations">
-<span id="id3"></span><h2>Deprecations<a class="headerlink" href="#deprecations" title="Permalink to this headline">¶</a></h2>
-<p>Deprecated functionality is marked accordingly in this documentation and in the
-<a class="reference internal" href="release_notes.html#releases"><span class="std std-ref">Releases</span></a> section.</p>
-</div>
+  <div class="section" id="contributing">
+<span id="id1"></span><h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h1>
+<p>We are not currently accepting community contributions. However, we encourage
+you to open <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/issues">git issues</a> for bugs, comments or feature requests.</p>
+<p>Review this content periodically to learn when and how to make
+contributions in the future. For the latest information on open issues, see:
+<a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/issues">git issues</a>.</p>
 </div>
 
 
@@ -214,10 +191,10 @@ module interfaces described in this documentation.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="bibliography.html" class="btn btn-neutral float-right" title="Bibliography" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="development.html" class="btn btn-neutral float-right" title="Development" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="release_notes.html" class="btn btn-neutral float-left" title="Releases" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="playbooks.html" class="btn btn-neutral float-left" title="Playbooks" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -252,18 +229,18 @@ module interfaces described in this documentation.</p>
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 0.9.0
+        v: 0.9.1
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
         <dl>
             <dt>Tags</dt>
-            <dd><a href="versioning.html">0.9.0</a></dd>
+            <dd><a href="community_guides.html">0.9.1</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
-            <dd><a href="../stable_0.9/versioning.html">stable_0.9</a></dd>
-            <dd><a href="../master/versioning.html">master</a></dd>
+            <dd><a href="../stable_0.9/community_guides.html">stable_0.9</a></dd>
+            <dd><a href="../master/community_guides.html">master</a></dd>
         </dl>
     </div>
 </div>
