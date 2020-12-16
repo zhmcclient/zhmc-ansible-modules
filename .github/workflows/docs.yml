@@ -3,10 +3,20 @@
 name: docs
 
 env:
-  # Command that builds the documentation:
+
+  # Command that builds the documentation
   doc_build_cmd: make docs
-  # Directory where the documentation is built in main worktree:
+
+  # Directory where the documentation is built in main worktree
   doc_build_dir: docs_build
+
+  # Branch that is checked out for building the docs.
+  # We always build from master even when a stable branch has triggered the
+  # workflow, in order to pick up the conf.py file consistently, independent of
+  # the triggering branch. The built documentation will contain versions for the
+  # list of tags and branches defined in conf.py, so these versions and also
+  # any other build parameters will be consistent that way.
+  doc_branch: master
 
 on:
   push:
@@ -24,10 +34,7 @@ jobs:
       with:
         persist-credentials: false  # TODO: Understand if this is needed
         fetch-depth: 0  # Required for pushing to the repo
-        # Checking out the default branch (master) is fine because the
-        # versioned Sphinx build builds from the tags/branches specified in the
-        # sphinx-versioning config in docs/conf.py, regardless of what is
-        # currently checked out.
+        ref: ${{ env.doc_branch }}
 
     - name: Set up Python 3.8
       uses: actions/setup-python@v2

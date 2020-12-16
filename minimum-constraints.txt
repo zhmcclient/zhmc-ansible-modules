@@ -154,11 +154,11 @@ tox==2.5.0
 # Note: The docs build tools from Ansible 2.10 (in ../ansible) require
 #       antsibull, which supports only py>=3.6.
 Sphinx==3.0.0; python_version >= '3.6'
-sphinx-git==10.1.1; python_version >= '3.6'
-GitPython==2.1.1; python_version >= '3.6'
 sphinxcontrib-fulltoc==1.2.0; python_version >= '3.6'
 sphinxcontrib-websupport==1.1.2; python_version >= '3.6'
 Pygments==2.1.3; python_version >= '3.6'
+# GitPython is used in conf.py
+GitPython==2.1.1; python_version >= '3.6'
 
 # ansible-doc-extractor and it's dependent theme for docs generation (no imports, invoked via script):
 ansible-doc-extractor==0.1.4; python_version >= '3.6'

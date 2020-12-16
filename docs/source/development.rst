@@ -214,41 +214,14 @@ has the remote name ``origin`` in your local clone.
 
         version: M.N.U
 
-6.  Edit the Sphinx config file:
-
-    .. code-block:: sh
-
-        vi docs/source/conf.py
-
-    and change the following properties:
-
-    * ``scv_whitelist_tags`` property:
-      When releasing the master branch, add a list item with the version
-      that is being released. When releasing a stable branch, update the prior version
-      of that stable branch (e.g. update '0.9.0' to '0.9.1'). In any case, the
-      property now has an item with the version that is being released:
-
-      .. code-block:: python
-
-          scv_whitelist_tags = [ ..., 'M.N.U' ]
-
-    * ``scv_whitelist_branches`` property:
-      When releasing the master branch, increase the version of the
-      stable branch to the version that is being released (because such a new stable
-      branch will be created lateron):
-
-      .. code-block:: python
-
-          scv_whitelist_branches = ('master', 'stable_M.N')
-
-7.  When releasing the master branch, edit the GitHub workflow file `test.yml`:
+6.  When releasing the master branch, edit the GitHub workflow file `test.yml`:
 
     .. code-block:: sh
 
         vi .github/workflows/test.yml
 
     and in the `on` section, increase the version of the stable branch to be
-    the version:
+    the version that is being released:
 
     .. code-block:: yaml
 
@@ -260,14 +233,14 @@ has the remote name ``origin`` in your local clone.
           pull_request:
             branches: [ master, stable_M.N ]
 
-8.  Edit the GitHub workflow file docs.yml:
+7.  When releasing the master branch, edit the GitHub workflow file `docs.yml`:
 
     .. code-block:: sh
 
         vi .github/workflows/docs.yml
 
     and in the `on` section, increase the version of the stable branch to be
-    the new stable version:
+    the version that is being released:
 
     .. code-block:: yaml
 
@@ -276,7 +249,7 @@ has the remote name ``origin`` in your local clone.
             # PR merge to these branches triggers this workflow
             branches: [ master, stable_M.N ]
 
-9.  Commit your changes and push them to the remote repo:
+8.  Commit your changes and push them to the remote repo:
 
     .. code-block:: sh
 
@@ -284,16 +257,16 @@ has the remote name ``origin`` in your local clone.
         git commit -asm "Release ${MNU}"
         git push --set-upstream origin release_${MNU}
 
-10. On GitHub, create a Pull Request for branch ``release_M.N.U``. This will
+9.  On GitHub, create a Pull Request for branch ``release_M.N.U``. This will
     trigger the CI runs.
 
     Important: When creating Pull Requests, GitHub by default targets the
     ``master`` branch. When releasing a stable branch, you need to change
     the target branch of the Pull Request to ``stable_M.N``.
 
-11. On GitHub, close milestone ``M.N.U``.
+10. On GitHub, close milestone ``M.N.U``.
 
-12. Perform a complete test in your preferred Python environment:
+11. Perform a complete test in your preferred Python environment:
 
     .. code-block:: sh
 
@@ -305,7 +278,7 @@ has the remote name ``origin`` in your local clone.
     If this test fails, fix any issues (with new commits) until the test
     succeeds.
 
-13. The items in this step should be performed within no more than
+12. The items in this step should be performed within no more than
     1 minute, so that the documentation that is built uses the new tag.
 
     * Merge the Pull Request (no review is needed). This deletes the branch
@@ -322,18 +295,18 @@ has the remote name ``origin`` in your local clone.
           git tag -f ${MNU}
           git push -f --tags
 
-14. Delete the local branch:
+13. Delete the local branch:
 
     .. code-block:: sh
 
         git branch -d release_${MNU}
 
-15. On GitHub, edit the new tag ``M.N.U``, and create a release description on
+14. On GitHub, edit the new tag ``M.N.U``, and create a release description on
     it. This will cause it to appear in the Release tab.
 
     You can see the tags in GitHub via Code -> Releases -> Tags.
 
-16. Publish the collection to Ansible Galaxy:
+15. Publish the collection to Ansible Galaxy:
 
     You need to be registered on Ansible Galaxy, and your userid there needs to
     be authorized to modify the 'ibm' namespace.
@@ -357,7 +330,7 @@ has the remote name ``origin`` in your local clone.
     Verify that the released version arrived on Ansible Galaxy at
     https://galaxy.ansible.com/ibm/ibm_zhmc/
 
-17. When releasing the master branch, create a new stable branch and push it
+16. When releasing the master branch, create a new stable branch and push it
     to the remote repo:
 
     .. code-block:: sh

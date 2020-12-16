@@ -32,41 +32,94 @@ __metaclass__ = type
 # sys.path.insert(0, os.path.abspath('.'))
 
 import os
+import sys
 import re
+import subprocess
+from git import Repo  # GitPython package
 
 
-def get_version(galaxy_file):
+def get_docs_tags(min_version):
     """
-    Get the version from the collection manifest file (galaxy.yml).
+    Get the list of Git tags that should be included in the documentation.
 
-    In order to avoid the dependency to a yaml package, this is done by
-    parsing the file with a regular expression.
+    The algorithm uses those tags that match the format M.N.U, and that are
+    equal to or higher than the specified minimum version, and only the latest
+    update version of each distinct major/minor version.
+
+    Parameters:
+
+      min_version (string): Minimum version to use.
+
+    Returns:
+
+      tuple of strings: List of Git tags to use.
     """
-    with open(galaxy_file, 'r') as fp:
-        ftext = fp.read()
-    m = re.search(r"^version: *(.+) *$", ftext, re.MULTILINE)
-    if not m:
-        raise ValueError(
-            "No 'version' parameter found in collection manifest file: {0}".
-            format(galaxy_file))
-    version_str = m.group(1)
-    m = re.search(r"^([0-9]+\.[0-9]+\.[0-9]+(-[a-z.0-9]+)?)$", version_str)
-    if not m:
-        raise ValueError(
-            "Invalid version found in collection manifest file {0}: {1}".
-            format(galaxy_file, version_str))
-    version = m.group(1)
-    return version
+    min_version_tuple = tuple([int(s) for s in min_version.split('.')])
+    repo_dir = os.path.relpath(
+        os.path.join(os.path.dirname(__file__), '..', '..'))
+    repo = Repo(repo_dir)
+    tag_names = {}  # key: tuple(major, minor), value: highest update
+    for tag in repo.tags:
+        m = re.match(r'^(\d+)\.(\d+)\.(\d+)$', tag.name)
+        if m:
+            mnu_tuple = tuple([int(s) for s in m.groups()])
+            if mnu_tuple < min_version_tuple:
+                continue
+            major, minor, update = m.groups()
+            key = (major, minor)
+            try:
+                old_update = tag_names[key]
+                if update > old_update:
+                    tag_names[key] = update
+            except KeyError:
+                tag_names[key] = update
+    tag_names = ['{mn[0]}.{mn[1]}.{u}'.format(mn=k, u=tag_names[k])
+                 for k in tag_names]
+    return tuple(tag_names)
+
+
+def get_docs_branches(min_version):
+    """
+    Get the list of Git branches that should be included in the documentation.
+
+    The algorithm uses 'master' and the latest branch matching 'stable_M.N'.
+
+    Parameters:
+
+      min_version (string): Minimum version to use.
+
+    Returns:
+
+      tuple of strings: List of Git branches to use.
+    """
+    min_mn_tuple = tuple([int(s) for s in min_version.split('.')[0:2]])
+    repo_dir = os.path.relpath(
+        os.path.join(os.path.dirname(__file__), '..', '..'))
+    repo = Repo(repo_dir)
+    branch_names = ['master']
+    stable_mn_tuple = (-1, -1)
+    for branch in repo.branches:
+        m = re.match(r'^stable_(\d+)\.(\d+)$', branch.name)
+        if m:
+            mn_tuple = tuple([int(s) for s in m.groups()])
+            if mn_tuple < min_mn_tuple:
+                continue
+            if mn_tuple > stable_mn_tuple:
+                stable_mn_tuple = mn_tuple
+    if stable_mn_tuple > (-1, -1):
+        stable_name = 'stable_{mn[0]}.{mn[1]}'.format(mn=stable_mn_tuple)
+        branch_names.append(stable_name)
+    return tuple(branch_names)
 
 
 # -- Project information -----------------------------------------------------
 
-_galaxy_file = '../../galaxy.yml'  # relative to the dir of this file
-_galaxy_file = os.path.relpath(os.path.join(
-    os.path.dirname(__file__), _galaxy_file))
-
 # The full version, including alpha/beta/rc tags
-version = get_version(_galaxy_file)
+_version_file = '../../tools/version.py'  # relative to the dir of this file
+_version_file = os.path.relpath(os.path.join(
+    os.path.dirname(__file__), _version_file))
+version = subprocess.check_output(
+    '{0} {1}'.format(sys.executable, _version_file), shell=True).decode("utf-8")
 
 project = 'IBM Z HMC collection'
 copyright = '2016-2020, IBM'
@@ -136,7 +189,8 @@ scv_overflow = ("-D", "html_show_sphinx=False")
 
 # List of Github branches that are included as versions in the documentation.
 # This is in addition to the 'scv_whitelist_tags' option.
-scv_whitelist_branches = ('master', 'stable_0.9')
+# The minimum version must be the first version that was released to Ansible Galaxy.
+scv_whitelist_branches = get_docs_branches(min_version='0.9.0')
 
 # The Github branch or tag that will be used as the version that is shown for
 # the root URI of the documentation site.
@@ -154,7 +208,8 @@ scv_greatest_tag = True
 
 # List of Github tags that are included as versions in the documentation.
 # This is in addition to the 'scv_whitelist_branches' option.
-scv_whitelist_tags = ('0.9.1',)
+# The minimum version must be the first version that was released to Ansible Galaxy.
+scv_whitelist_tags = get_docs_tags(min_version='0.9.0')
 
 # Sort versions by one or more values. Valid values are semver, alpha, and time.
 # Semantic is referred to as 'semver', this would ensure our latest VRM is
@@ -190,7 +245,3 @@ scv_sort = ('semver',)
 # documents. The default order is whatever git prints when
 # running "git ls-remote --tags ./."
 scv_invert = True
-
-# this is needed for the makefile
-if __name__ == '__main__':
-    print(version)
