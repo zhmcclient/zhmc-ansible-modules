@@ -57,7 +57,7 @@ collection_full_name := $(collection_namespace).$(collection_name)
 
 # Collection version (full version, e.g. "1.0.0")
 # Note: The collection version is defined in galaxy.yml
-collection_version := $(shell $(PYTHON_CMD) docs/source/conf.py)
+collection_version := $(shell $(PYTHON_CMD) tools/version.py)
 
 # Python versions
 python_major_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('%s'%sys.version_info[0])")

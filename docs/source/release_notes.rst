@@ -37,6 +37,11 @@ Released: not yet
   descriptions of releasing a version and starting a new version (issues #344
   and #345).
 
+* Docs: The docs is now always built from the master branch, and the versions
+  to be generated is now automatically determined from the Git tags and branches.
+  This fixes a possible inconsistency in the versions included and build
+  parameters used, between stable branch and master branch (issue #350).
+
 **Enhancements:**
 
 **Cleanup:**
