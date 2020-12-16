@@ -31,6 +31,10 @@ Released: not yet
 
 **Bug fixes:**
 
+* Docs: In the development section of the docs, fixes and improvements for the
+  descriptions of releasing a version and starting a new version (issues #344
+  and #345).
+
 **Enhancements:**
 
 **Cleanup:**
