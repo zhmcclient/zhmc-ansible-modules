@@ -35,7 +35,7 @@ import os
 import sys
 import re
 import subprocess
-from git import Repo  # GitPython package
+import git  # GitPython package
 
 
 def get_docs_tags(min_version):
@@ -55,9 +55,20 @@ def get_docs_tags(min_version):
       tuple of strings: List of Git tags to use.
     """
     min_version_tuple = tuple([int(s) for s in min_version.split('.')])
-    repo_dir = os.path.relpath(
-        os.path.join(os.path.dirname(__file__), '..', '..'))
-    repo = Repo(repo_dir)
+    repo_dir = os.path.join(os.path.dirname(__file__), '..', '..')
+    try:
+        repo = git.Repo(repo_dir)
+    except git.InvalidGitRepositoryError:
+        # sphinx-versioning runs the conf.py file once on the checked out
+        # repo to determine the scv_* parameters to use, and then sphinx-build
+        # runs it again when building each tag/branch. The first run succeeds
+        # because that is done on the checked out repo. The subsequent runs
+        # raise this exception because sphinx-versioning invoked sphinx-build
+        # on a copy of the repo that does not include the .git subtree.
+        # However, since the sphinx-build runs do not look at the scv_*
+        # parameters, we can ignore the exception and return anything, e.g.
+        # an empty tuple.
+        return tuple()
     tag_names = {}  # key: tuple(major, minor), value: highest update
     for tag in repo.tags:
         m = re.match(r'^(\d+)\.(\d+)\.(\d+)$', tag.name)
@@ -93,9 +104,20 @@ def get_docs_branches(min_version):
       tuple of strings: List of Git branches to use.
     """
     min_mn_tuple = tuple([int(s) for s in min_version.split('.')[0:2]])
-    repo_dir = os.path.relpath(
-        os.path.join(os.path.dirname(__file__), '..', '..'))
-    repo = Repo(repo_dir)
+    repo_dir = os.path.join(os.path.dirname(__file__), '..', '..')
+    try:
+        repo = git.Repo(repo_dir)
+    except git.InvalidGitRepositoryError:
+        # sphinx-versioning runs the conf.py file once on the checked out
+        # repo to determine the scv_* parameters to use, and then sphinx-build
+        # runs it again when building each tag/branch. The first run succeeds
+        # because that is done on the checked out repo. The subsequent runs
+        # raise this exception because sphinx-versioning invoked sphinx-build
+        # on a copy of the repo that does not include the .git subtree.
+        # However, since the sphinx-build runs do not look at the scv_*
+        # parameters, we can ignore the exception and return anything, e.g.
+        # an empty tuple.
+        return tuple()
     branch_names = ['master']
     stable_mn_tuple = (-1, -1)
     for branch in repo.branches:
