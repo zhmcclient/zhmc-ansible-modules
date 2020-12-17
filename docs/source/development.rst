@@ -139,25 +139,28 @@ This section shows the steps for releasing a version to `Ansible Galaxy
 
 It covers all variants of versions that can be released:
 
-* Releasing the master branch as a new major version (M+1.0.0)
-* Releasing the master branch as a new minor version (M.N+1.0)
-* Releasing a stable branch as a new update version (M.N.U+1)
+* Releasing a new major version (Mnew.0.0) based on the master branch
+* Releasing a new minor version (M.Nnew.0) based on the master branch
+* Releasing a new update version (M.N.Unew) based on the stable branch of its
+  minor version
 
 This description assumes that you are authorized to push to the remote repo
 at https://github.com/zhmcclient/zhmc-ansible-modules and that the remote repo
 has the remote name ``origin`` in your local clone.
 
-1.  Switch to your work directory of your local clone of the
-    zhmc-ansible-modules Git repo and perform the following steps in that
-    directory.
+Any commands in the following steps are executed in the main directory of your
+local clone of the zhmc-ansible-modules Git repo.
 
-2.  Set shell variables for the version and branch that is being released:
+1.  Set shell variables for the version that is being released and the branch
+    it is based on:
 
     * ``MNU`` - Full version M.N.U that is being released
     * ``MN`` - Major and minor version M.N of that full version
-    * ``BRANCH`` - Name of the branch that is being released
+    * ``BRANCH`` - Name of the branch the version that is being released is
+      based on
 
-    When releasing the master branch (e.g. as version ``1.0.0``):
+    When releasing a new major version (e.g. ``1.0.0``) based on the master
+    branch:
 
     .. code-block:: sh
 
@@ -165,7 +168,17 @@ has the remote name ``origin`` in your local clone.
         MN=1.0
         BRANCH=master
 
-    When releasing a stable branch (e.g. as version ``0.8.1``):
+    When releasing a new minor version (e.g. ``0.9.0``) based on the master
+    branch:
+
+    .. code-block:: sh
+
+        MNU=0.9.0
+        MN=0.9
+        BRANCH=master
+
+    When releasing a new update version (e.g. ``0.8.1``) based on the stable
+    branch of its minor version:
 
     .. code-block:: sh
 
@@ -173,13 +186,22 @@ has the remote name ``origin`` in your local clone.
         MN=0.8
         BRANCH=stable_${MN}
 
-3.  Check out the branch that is being released, make sure it is up to date with
-    the remote repo, and create a topic branch for the version that is being
-    released:
+2.  When releasing based on the master branch, create and push a new stable
+    branch for the same minor version:
 
     .. code-block:: sh
 
-        git status  # Double check the work directory is clean
+        git checkout master
+        git pull
+        git checkout -b stable_${MN}
+        git push --set-upstream origin stable_${MN}
+
+    Note that no GitHub Pull Request is created for any ``stable_*`` branch.
+
+3.  Create a topic branch for the version that is being released:
+
+    .. code-block:: sh
+
         git checkout ${BRANCH}
         git pull
         git checkout -b release_${MNU}
@@ -214,14 +236,15 @@ has the remote name ``origin`` in your local clone.
 
         version: M.N.U
 
-6.  When releasing the master branch, edit the GitHub workflow file `test.yml`:
+6.  When releasing based on the master branch, edit the GitHub workflow file
+    ``test.yml``:
 
     .. code-block:: sh
 
         vi .github/workflows/test.yml
 
-    and in the `on` section, increase the version of the stable branch to be
-    the version that is being released:
+    and in the ``on`` section, increase the version of the ``stable_*`` branch
+    to the new stable branch ``stable_M.N`` created earlier:
 
     .. code-block:: yaml
 
@@ -233,14 +256,15 @@ has the remote name ``origin`` in your local clone.
           pull_request:
             branches: [ master, stable_M.N ]
 
-7.  When releasing the master branch, edit the GitHub workflow file `docs.yml`:
+7.  When releasing based on the master branch, edit the GitHub workflow file
+    ``docs.yml``:
 
     .. code-block:: sh
 
         vi .github/workflows/docs.yml
 
-    and in the `on` section, increase the version of the stable branch to be
-    the version that is being released:
+    and in the ``on`` section, increase the version of the ``stable_*`` branch
+    to the new stable branch ``stable_M.N`` created earlier:
 
     .. code-block:: yaml
 
@@ -249,7 +273,7 @@ has the remote name ``origin`` in your local clone.
             # PR merge to these branches triggers this workflow
             branches: [ master, stable_M.N ]
 
-8.  Commit your changes and push them to the remote repo:
+8.  Commit your changes and push the topic branch to the remote repo:
 
     .. code-block:: sh
 
@@ -261,8 +285,8 @@ has the remote name ``origin`` in your local clone.
     trigger the CI runs.
 
     Important: When creating Pull Requests, GitHub by default targets the
-    ``master`` branch. When releasing a stable branch, you need to change
-    the target branch of the Pull Request to ``stable_M.N``.
+    ``master`` branch. When releasing based on a stable branch, you need to
+    change the target branch of the Pull Request to ``stable_M.N``.
 
 10. On GitHub, close milestone ``M.N.U``.
 
@@ -278,15 +302,19 @@ has the remote name ``origin`` in your local clone.
     If this test fails, fix any issues (with new commits) until the test
     succeeds.
 
-12. The items in this step should be performed within no more than
-    1 minute, so that the documentation that is built uses the new tag.
+12. The items in this step should be performed within no more than 1 minute, so
+    that the documentation that is built uses the new version tag.
 
-    * Merge the Pull Request (no review is needed). This deletes the branch
-      on GitHub and triggers a build of the documentation and subsequent
-      publishng to Github pages.
+    * On GitHub, once the checks for the Pull Request for branch ``start_M.N.U``
+      have succeeded, merge the Pull Request (no review is needed). This
+      automatically deletes the branch on GitHub.
 
-    * Update the branch you are releasing and add a tag for the version to be
-      released:
+      This also triggers a build of the documentation and subsequent publishing
+      to Github pages. This build takes more than 1 minute to get to the
+      point where it needs the new version tag that is added in the next item.
+
+    * Add a new tag for the version that is being released and push it to
+      the remote repo:
 
       .. code-block:: sh
 
@@ -295,7 +323,7 @@ has the remote name ``origin`` in your local clone.
           git tag -f ${MNU}
           git push -f --tags
 
-13. Delete the local branch:
+13. Clean up the local repo:
 
     .. code-block:: sh
 
@@ -330,14 +358,6 @@ has the remote name ``origin`` in your local clone.
     Verify that the released version arrived on Ansible Galaxy at
     https://galaxy.ansible.com/ibm/ibm_zhmc/
 
-16. When releasing the master branch, create a new stable branch and push it
-    to the remote repo:
-
-    .. code-block:: sh
-
-        git checkout -b stable_${MN}
-        git push --set-upstream origin stable_${MN}
-
 
 .. _`Starting a new version`:
 
@@ -351,52 +371,62 @@ These steps may be performed right after the steps for
 
 This section covers all variants of new versions:
 
-* Starting a major or minor version based on the master branch.
-* Starting an update version based on a stable branch.
+* Starting a new major version (Mnew.0.0) based on the master branch
+* Starting a new minor version (M.Nnew.0) based on the master branch
+* Starting a new update version (M.N.Unew) based on the stable branch of its
+  minor version
 
 This description assumes that you are authorized to push to the remote repo
 at https://github.com/zhmcclient/zhmc-ansible-modules and that the remote repo
 has the remote name ``origin`` in your local clone.
 
-1.  Switch to your work directory of your local clone of the
-    zhmc-ansible-modules Git repo and perform the following steps in that
-    directory.
+Any commands in the following steps are executed in the main directory of your
+local clone of the zhmc-ansible-modules Git repo.
 
-2.  Set shell variables for the version that is being started and the branch it
+1.  Set shell variables for the version that is being started and the branch it
     is based on:
 
     * ``MNU`` - Full version M.N.U that is being started
     * ``MN`` - Major and minor version M.N of that full version
-    * ``BRANCH`` - Name of the base branch for the version that is being started
+    * ``BRANCH`` -  Name of the branch the version that is being started is
+      based on
 
-    When starting a version based on the master branch (e.g. version `1.1.0`):
+    When starting a new major version (e.g. ``1.0.0``) based on the master
+    branch:
 
     .. code-block:: sh
 
-        MNU=1.1.0
+        MNU=1.0.0
         MN=1.0
         BRANCH=master
 
-    When starting a version based on a stable branch (e.g. version `0.8.2`):
+    When starting a new minor version (e.g. ``0.9.0``) based on the master
+    branch:
 
     .. code-block:: sh
 
-        MNU=0.8.2
+        MNU=0.9.0
+        MN=0.9
+        BRANCH=master
+
+    When starting a new minor version (e.g. ``0.8.1``) based on the stable
+    branch of its minor version:
+
+    .. code-block:: sh
+
+        MNU=0.8.1
         MN=0.8
         BRANCH=stable_${MN}
 
-3.  Check out the base branch for the version that is being started, make sure
-    it is up to date with the remte repo, and create a topic branch for the new
-    version:
+2.  Create a topic branch for the version that is being started:
 
     .. code-block:: sh
 
-        git status  # Double check the work directory is clean
         git checkout ${BRANCH}
         git pull
         git checkout -b start_${MNU}
 
-4.  Edit the change log:
+3.  Edit the change log:
 
     .. code-block:: sh
 
@@ -430,7 +460,7 @@ has the remote name ``origin`` in your local clone.
 
         .. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
-5.  Edit the Galaxy metadata file:
+4.  Edit the Galaxy metadata file:
 
     .. code-block:: sh
 
@@ -447,7 +477,7 @@ has the remote name ``origin`` in your local clone.
     including the description of development/alpha/etc suffixes, as described
     in https://semver.org/
 
-6.  Commit your changes and push them to the remote repo:
+5.  Commit your changes and push them to the remote repo:
 
     .. code-block:: sh
 
@@ -455,28 +485,26 @@ has the remote name ``origin`` in your local clone.
         git commit -asm "Start ${MNU}"
         git push --set-upstream origin start_${MNU}
 
-7.  On GitHub, create a Pull Request for branch ``start_M.N.U``.
+6.  On GitHub, create a Pull Request for branch ``start_M.N.U``.
 
     Important: When creating Pull Requests, GitHub by default targets the
     ``master`` branch. When starting a version based on a stable branch, you
     need to change the target branch of the Pull Request to ``stable_M.N``.
 
-8.  On GitHub, create a milestone for the new version ``M.N.U``.
+7.  On GitHub, create a milestone for the new version ``M.N.U``.
 
     You can create a milestone in GitHub via Issues -> Milestones -> New
     Milestone.
 
-9.  On GitHub, go through all open issues and pull requests that still have
+8.  On GitHub, go through all open issues and pull requests that still have
     milestones for previous releases set, and either set them to the new
     milestone, or to have no milestone.
 
-10. On GitHub, once the checks for this Pull Request succeed:
+9.  On GitHub, once the checks for the Pull Request for branch ``start_M.N.U``
+    have succeeded, merge the Pull Request (no review is needed). This
+    automatically deletes the branch on GitHub.
 
-    * Merge the Pull Request (no review is needed). This deletes the branch
-      on GitHub.
-
-11. Checkout the base branch for the version that is being started, update it
-    from remote, and delete the local topic branch you created:
+10. Update and clean up the local repo:
 
     .. code-block:: sh
 
