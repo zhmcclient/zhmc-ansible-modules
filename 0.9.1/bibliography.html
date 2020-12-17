@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Playbooks &mdash; IBM Z HMC collection  documentation</title>
+  <title>Bibliography &mdash; IBM Z HMC collection  documentation</title>
   
 
   
@@ -37,8 +37,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Contributing" href="community_guides.html" />
-    <link rel="prev" title="zhmc_virtual_function – Create virtual functions in partitions" href="modules/zhmc_virtual_function.html" /> 
+    <link rel="prev" title="Versioning" href="versioning.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -92,12 +91,9 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 </ul>
 <p class="caption"><span class="caption-text">References</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Playbooks</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#sample-playbooks">Sample Playbooks</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="playbooks.html">Playbooks</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Community Guides</span></p>
 <ul>
@@ -110,10 +106,10 @@
 <li class="toctree-l1"><a class="reference internal" href="requirements.html#control-node">Control node</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Appendices</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="release_notes.html">Releases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="versioning.html">Versioning</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bibliography.html">Bibliography</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Bibliography</a></li>
 </ul>
 
             
@@ -160,7 +156,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Playbooks</li>
+      <li>Bibliography</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -177,18 +173,39 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="playbooks">
-<span id="id1"></span><h1>Playbooks<a class="headerlink" href="#playbooks" title="Permalink to this headline">¶</a></h1>
-<p>An <a class="reference external" href="https://docs.ansible.com/ansible/latest/user_guide/playbooks_intro.html#playbooks-intro">Ansible playbook</a> consists of organized instructions that define work for
-a managed node (hosts) to be managed with Ansible. In case of the
-<strong>IBM Z HMC collection</strong>, the managed node is the local host, and the IP address
-of the HMC is specified as an input parameter to the Ansible modules.</p>
-<div class="section" id="sample-playbooks">
-<span id="id2"></span><h2>Sample Playbooks<a class="headerlink" href="#sample-playbooks" title="Permalink to this headline">¶</a></h2>
-<p>The <strong>IBM Z HMC collection</strong> provides sample playbooks in the
-<a class="reference external" href="https://github.com/IBM/z_ansible_collections_samples/">IBM Z Ansible Collection Samples</a> repository.</p>
-<p>The starting point for reading about them is <a class="reference external" href="https://github.com/IBM/z_ansible_collections_samples/tree/master/zhmc">IBM Z HMC Sample Playbooks</a>.</p>
-</div>
+  <div class="section" id="bibliography">
+<span id="id1"></span><h1>Bibliography<a class="headerlink" href="#bibliography" title="Permalink to this headline">¶</a></h1>
+<dl class="glossary simple">
+<dt id="term-HMC-API">HMC API</dt><dd><p>The Web Services API of the z Systems Hardware Management Console, described in the following books:</p>
+</dd>
+<dt id="term-HMC-API-2.11.1">HMC API 2.11.1</dt><dd><p><a class="reference external" href="https://www.ibm.com/support/pages/node/6017542">IBM SC27-2616, System z Hardware Management Console Web Services API (Version 2.11.1)</a></p>
+</dd>
+<dt id="term-HMC-API-2.12.0">HMC API 2.12.0</dt><dd><p><a class="reference external" href="https://www.ibm.com/support/pages/node/6019030">IBM SC27-2617, System z Hardware Management Console Web Services API (Version 2.12.0)</a></p>
+</dd>
+<dt id="term-HMC-API-2.12.1">HMC API 2.12.1</dt><dd><p><a class="reference external" href="https://www.ibm.com/support/pages/node/6017614">IBM SC27-2626, System z Hardware Management Console Web Services API (Version 2.12.1)</a></p>
+</dd>
+<dt id="term-HMC-API-2.13.0">HMC API 2.13.0</dt><dd><p><a class="reference external" href="https://www.ibm.com/support/pages/node/6018628">IBM SC27-2627, z Systems Hardware Management Console Web Services API (Version 2.13.0)</a></p>
+</dd>
+<dt id="term-HMC-API-2.13.1">HMC API 2.13.1</dt><dd><p><a class="reference external" href="https://www.ibm.com/support/pages/node/6019732">IBM SC27-2634, z Systems Hardware Management Console Web Services API (Version 2.13.1)</a></p>
+</dd>
+<dt id="term-HMC-API-2.14.0">HMC API 2.14.0</dt><dd><p><a class="reference external" href="https://www.ibm.com/support/pages/node/6020008">IBM SC27-2636, IBM Z Hardware Management Console Web Services API (Version 2.14.0)</a></p>
+</dd>
+<dt id="term-HMC-API-2.14.1">HMC API 2.14.1</dt><dd><p><a class="reference external" href="https://www.ibm.com/support/pages/node/6019768">IBM SC27-2637, IBM Z Hardware Management Console Web Services API (Version 2.14.1)</a></p>
+</dd>
+<dt id="term-HMC-API-2.15.0">HMC API 2.15.0</dt><dd><p><a class="reference external" href="https://www.ibm.com/support/pages/node/6019720">IBM SC27-2638, IBM Z Hardware Management Console Web Services API (Version 2.15.0)</a>
+(covers both GA1 and GA2)</p>
+</dd>
+<dt id="term-Ansible-Documentation">Ansible Documentation</dt><dd><p><a class="reference external" href="https://docs.ansible.com/ansible/latest/index.html">Ansible Documentation</a></p>
+</dd>
+<dt id="term-Ansible-Community-Guide">Ansible Community Guide</dt><dd><p><a class="reference external" href="https://docs.ansible.com/ansible/latest/community/index.html">Ansible Community Guide</a></p>
+</dd>
+<dt id="term-Ansible-Module-Index">Ansible Module Index</dt><dd><p><a class="reference external" href="https://docs.ansible.com/ansible/latest/modules/modules_by_category.html">Ansible Module Index</a></p>
+</dd>
+<dt id="term-Ansible-Developer-Guide">Ansible Developer Guide</dt><dd><p><a class="reference external" href="https://docs.ansible.com/ansible/latest/dev_guide/index.html">Ansible Developer Guide</a></p>
+</dd>
+<dt id="term-Ansible-Testing">Ansible Testing</dt><dd><p><a class="reference external" href="https://docs.ansible.com/ansible/latest/dev_guide/testing.html">Ansible Testing</a></p>
+</dd>
+</dl>
 </div>
 
 
@@ -199,10 +216,8 @@ of the HMC is specified as an input parameter to the Ansible modules.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="community_guides.html" class="btn btn-neutral float-right" title="Contributing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-      
-        <a href="modules/zhmc_virtual_function.html" class="btn btn-neutral float-left" title="zhmc_virtual_function – Create virtual functions in partitions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="versioning.html" class="btn btn-neutral float-left" title="Versioning" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -243,7 +258,7 @@ of the HMC is specified as an input parameter to the Ansible modules.</p>
     <div class="rst-other-versions">
         <dl>
             <dt>Tags</dt>
-            <dd><a href="0.9.1/playbooks.html">0.9.1</a></dd>
+            <dd><a href="bibliography.html">0.9.1</a></dd>
         </dl>
     </div>
 </div>
