@@ -120,8 +120,10 @@ def get_docs_branches(min_version):
         return tuple()
     branch_names = ['master']
     stable_mn_tuple = (-1, -1)
-    for branch in repo.branches:
-        m = re.match(r'^stable_(\d+)\.(\d+)$', branch.name)
+    # Iterate through the remote branches, because they do not necessarily
+    # exist as local branches:
+    for r_branch in repo.remote().refs:
+        m = re.search(r'/stable_(\d+)\.(\d+)$', r_branch.name)
         if m:
             mn_tuple = tuple([int(s) for s in m.groups()])
             if mn_tuple < min_mn_tuple:
