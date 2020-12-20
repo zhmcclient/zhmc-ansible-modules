@@ -186,25 +186,25 @@ local clone of the zhmc-ansible-modules Git repo.
         MN=0.8
         BRANCH=stable_${MN}
 
-2.  When releasing based on the master branch, create and push a new stable
-    branch for the same minor version:
-
-    .. code-block:: sh
-
-        git checkout master
-        git pull
-        git checkout -b stable_${MN}
-        git push --set-upstream origin stable_${MN}
-
-    Note that no GitHub Pull Request is created for any ``stable_*`` branch.
-
-3.  Create a topic branch for the version that is being released:
+2.  Create a topic branch for the version that is being released:
 
     .. code-block:: sh
 
         git checkout ${BRANCH}
         git pull
         git checkout -b release_${MNU}
+
+3.  Edit the Galaxy metadata file:
+
+    .. code-block:: sh
+
+        vi galaxy.yml
+
+    and set the 'version' parameter to the version that is being released:
+
+    .. code-block:: yaml
+
+        version: M.N.U
 
 4.  Edit the change log:
 
@@ -224,19 +224,7 @@ local clone of the zhmc-ansible-modules Git repo.
       add text for any known issues you want users to know about.
     * Remove all empty list items.
 
-5.  Edit the Galaxy metadata file:
-
-    .. code-block:: sh
-
-        vi galaxy.yml
-
-    and set the 'version' parameter to the version that is being released:
-
-    .. code-block:: yaml
-
-        version: M.N.U
-
-6.  When releasing based on the master branch, edit the GitHub workflow file
+5.  When releasing based on the master branch, edit the GitHub workflow file
     ``test.yml``:
 
     .. code-block:: sh
@@ -256,7 +244,7 @@ local clone of the zhmc-ansible-modules Git repo.
           pull_request:
             branches: [ master, stable_M.N ]
 
-7.  When releasing based on the master branch, edit the GitHub workflow file
+6.  When releasing based on the master branch, edit the GitHub workflow file
     ``docs.yml``:
 
     .. code-block:: sh
@@ -273,7 +261,7 @@ local clone of the zhmc-ansible-modules Git repo.
             # PR merge to these branches triggers this workflow
             branches: [ master, stable_M.N ]
 
-8.  Commit your changes and push the topic branch to the remote repo:
+7.  Commit your changes and push the topic branch to the remote repo:
 
     .. code-block:: sh
 
@@ -281,28 +269,16 @@ local clone of the zhmc-ansible-modules Git repo.
         git commit -asm "Release ${MNU}"
         git push --set-upstream origin release_${MNU}
 
-9.  On GitHub, create a Pull Request for branch ``release_M.N.U``. This will
+8.  On GitHub, create a Pull Request for branch ``release_M.N.U``. This will
     trigger the CI runs.
 
     Important: When creating Pull Requests, GitHub by default targets the
     ``master`` branch. When releasing based on a stable branch, you need to
     change the target branch of the Pull Request to ``stable_M.N``.
 
-10. On GitHub, close milestone ``M.N.U``.
+9.  On GitHub, close milestone ``M.N.U``.
 
-11. Perform a complete test in your preferred Python environment:
-
-    .. code-block:: sh
-
-        make clobber all
-
-    This should not fail because the same tests have already been run in the
-    CI. However, run it for additional safety before the release.
-
-    If this test fails, fix any issues (with new commits) until the test
-    succeeds.
-
-12. The items in this step should be performed within no more than 1 minute, so
+10. The items in this step should be performed within no more than 1 minute, so
     that the documentation that is built uses the new version tag.
 
     * On GitHub, once the checks for the Pull Request for branch ``start_M.N.U``
@@ -323,18 +299,29 @@ local clone of the zhmc-ansible-modules Git repo.
           git tag -f ${MNU}
           git push -f --tags
 
-13. Clean up the local repo:
+11. Clean up the local repo:
 
     .. code-block:: sh
 
         git branch -d release_${MNU}
 
-14. On GitHub, edit the new tag ``M.N.U``, and create a release description on
+12. When releasing based on the master branch, create and push a new stable
+    branch for the same minor version:
+
+    .. code-block:: sh
+
+        git checkout -b stable_${MN}
+        git push --set-upstream origin stable_${MN}
+        git checkout ${BRANCH}
+
+    Note that no GitHub Pull Request is created for any ``stable_*`` branch.
+
+13. On GitHub, edit the new tag ``M.N.U``, and create a release description on
     it. This will cause it to appear in the Release tab.
 
     You can see the tags in GitHub via Code -> Releases -> Tags.
 
-15. Publish the collection to Ansible Galaxy:
+14. Publish the collection to Ansible Galaxy:
 
     You need to be registered on Ansible Galaxy, and your userid there needs to
     be authorized to modify the 'ibm' namespace.
