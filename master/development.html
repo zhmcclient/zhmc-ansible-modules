@@ -30,7 +30,6 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -305,20 +304,19 @@ branch of its minor version:</p>
 </pre></div>
 </div>
 </li>
-<li><p>When releasing based on the master branch, create and push a new stable
-branch for the same minor version:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git checkout master
-git pull
-git checkout -b stable_<span class="si">${</span><span class="nv">MN</span><span class="si">}</span>
-git push --set-upstream origin stable_<span class="si">${</span><span class="nv">MN</span><span class="si">}</span>
-</pre></div>
-</div>
-<p>Note that no GitHub Pull Request is created for any <code class="docutils literal notranslate"><span class="pre">stable_*</span></code> branch.</p>
-</li>
 <li><p>Create a topic branch for the version that is being released:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git checkout <span class="si">${</span><span class="nv">BRANCH</span><span class="si">}</span>
 git pull
 git checkout -b release_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>Edit the Galaxy metadata file:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>vi galaxy.yml
+</pre></div>
+</div>
+<p>and set the ‘version’ parameter to the version that is being released:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">version</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">M.N.U</span>
 </pre></div>
 </div>
 </li>
@@ -338,15 +336,6 @@ understandable by users.</p></li>
 add text for any known issues you want users to know about.</p></li>
 <li><p>Remove all empty list items.</p></li>
 </ul>
-</li>
-<li><p>Edit the Galaxy metadata file:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>vi galaxy.yml
-</pre></div>
-</div>
-<p>and set the ‘version’ parameter to the version that is being released:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">version</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">M.N.U</span>
-</pre></div>
-</div>
 </li>
 <li><p>When releasing based on the master branch, edit the GitHub workflow file
 <code class="docutils literal notranslate"><span class="pre">test.yml</span></code>:</p>
@@ -393,15 +382,6 @@ trigger the CI runs.</p>
 change the target branch of the Pull Request to <code class="docutils literal notranslate"><span class="pre">stable_M.N</span></code>.</p>
 </li>
 <li><p>On GitHub, close milestone <code class="docutils literal notranslate"><span class="pre">M.N.U</span></code>.</p></li>
-<li><p>Perform a complete test in your preferred Python environment:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>make clobber all
-</pre></div>
-</div>
-<p>This should not fail because the same tests have already been run in the
-CI. However, run it for additional safety before the release.</p>
-<p>If this test fails, fix any issues (with new commits) until the test
-succeeds.</p>
-</li>
 <li><p>The items in this step should be performed within no more than 1 minute, so
 that the documentation that is built uses the new version tag.</p>
 <ul>
@@ -427,6 +407,15 @@ git push -f --tags
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git branch -d release_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
 </pre></div>
 </div>
+</li>
+<li><p>When releasing based on the master branch, create and push a new stable
+branch for the same minor version:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git checkout -b stable_<span class="si">${</span><span class="nv">MN</span><span class="si">}</span>
+git push --set-upstream origin stable_<span class="si">${</span><span class="nv">MN</span><span class="si">}</span>
+git checkout <span class="si">${</span><span class="nv">BRANCH</span><span class="si">}</span>
+</pre></div>
+</div>
+<p>Note that no GitHub Pull Request is created for any <code class="docutils literal notranslate"><span class="pre">stable_*</span></code> branch.</p>
 </li>
 <li><p>On GitHub, edit the new tag <code class="docutils literal notranslate"><span class="pre">M.N.U</span></code>, and create a release description on
 it. This will cause it to appear in the Release tab.</p>
