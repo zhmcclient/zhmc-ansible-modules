@@ -40,6 +40,9 @@ Released: not yet
   This fixes a possible inconsistency in the versions included and build
   parameters used, between stable branch and master branch (issue #350).
 
+* Mitigated the coveralls HTTP status 422 by pinning coveralls-python to
+  <3.0.0.
+
 * Docs: Pinned Sphinx to <4.0 to circumvent the issue that sphinx-versions
   uses the deprecated Sphinx.add_stylesheet() method that was removed in
   Sphinx 4.0. (issue #402)
