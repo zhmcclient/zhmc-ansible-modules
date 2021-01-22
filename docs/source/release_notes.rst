@@ -42,6 +42,9 @@ Released: not yet
   This fixes a possible inconsistency in the versions included and build
   parameters used, between stable branch and master branch (issue #350).
 
+* Mitigated the coveralls HTTP status 422 by pinning coveralls-python to
+  <3.0.0.
+
 **Enhancements:**
 
 **Cleanup:**
