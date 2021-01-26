@@ -74,6 +74,10 @@ jobs:
         PACKAGE_LEVEL: ${{ matrix.package_level }}
       run: |
         make install
+    - name: Show installed package versions
+      env:
+        PACKAGE_LEVEL: ${{ matrix.package_level }}
+      run: |
         echo "Installed Python packages:"
         pip list
     - name: Development setup
@@ -81,8 +85,18 @@ jobs:
         PACKAGE_LEVEL: ${{ matrix.package_level }}
       run: |
         make develop
+    - name: Show installed package versions
+      env:
+        PACKAGE_LEVEL: ${{ matrix.package_level }}
+      run: |
         echo "Installed Python packages:"
         pip list
+    - name: Show package dependency tree
+      env:
+        PACKAGE_LEVEL: ${{ matrix.package_level }}
+      run: |
+        echo "Package dependency tree of installed Python packages:"
+        pipdeptree --all
     - name: Run sanity
       # Note: make sanity is excluded on Ansible 2.9 and Python 3.9 because it is not supported.
       if: ${{ ! (matrix.package_level == 'minimum' || matrix.python-version == '3.9') }}
