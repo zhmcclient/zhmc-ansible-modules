@@ -192,6 +192,10 @@ pyzmq==20.0.0; python_version >= '3.9'
 # The module.rst.j2 template uses the 'tojson' filter added in Jinja2 2.9
 Jinja2==2.9
 
+# Package dependency management tools (not used by any make rules)
+pipdeptree==2.0.0
+pip-check-reqs==2.0.4
+
 # Indirect dependencies (not in requirements.txt or dev-requirements.txt)
 
 alabaster==0.7.9
