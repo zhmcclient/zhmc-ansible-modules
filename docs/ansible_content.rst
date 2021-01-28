@@ -36,7 +36,7 @@ to be managed.
    :maxdepth: 1
    :caption: Collection Content
 
-   modules
+   source/modules
 
 .. _ibm_zhmc:
    https://galaxy.ansible.com/ibm/ibm_zhmc/
