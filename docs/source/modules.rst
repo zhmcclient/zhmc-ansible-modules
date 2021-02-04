@@ -13,29 +13,15 @@
 .. limitations under the License.
 ..
 
-
-.. _`Modules`:
-
 Modules
 =======
 
-Modules can be used from the command line or in a playbook task or in a role task.
+Ansible® modules can be used from the command line, in a playbook or in
+an role.
 
-Module Reference
-----------------
-
-The **IBM Z HMC collection** provides several modules. Reference material for
+The **IBM Z® HMC collection** provides several modules. Reference material for
 each module contains documentation on what parameters the module accepts and
 what will returned.
-
-.. toctree::
-   :maxdepth: 1
-   :glob:
-
-   modules/*
-
-Module Documentation
---------------------
 
 You can also access the documentation of each module from the command line by
 using the `ansible-doc`_ command, for example:
@@ -46,3 +32,9 @@ using the `ansible-doc`_ command, for example:
 
 .. _ansible-doc:
    https://docs.ansible.com/ansible/latest/cli/ansible-doc.html#ansible-doc
+
+.. toctree::
+   :maxdepth: 1
+   :glob:
+
+   modules/*
