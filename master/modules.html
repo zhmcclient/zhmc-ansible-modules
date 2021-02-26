@@ -97,21 +97,17 @@
 <p class="caption"><span class="caption-text">References</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Modules</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-reference">Module Reference</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter.html">zhmc_adapter – Update adapters and create Hipersocket adapters</a></li>
-<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_cpc.html">zhmc_cpc – Update CPCs</a></li>
-<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_crypto_attachment.html">zhmc_crypto_attachment – Attach crypto resources to partitions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_hba.html">zhmc_hba – Create HBAs in partitions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_nic.html">zhmc_nic – Create NICs in partitions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition.html">zhmc_partition – Create partitions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_group.html">zhmc_storage_group – Create storage groups</a></li>
-<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Attach storage groups to partitions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_volume.html">zhmc_storage_volume – Create storage volumes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user.html">zhmc_user – Create HMC users</a></li>
-<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_virtual_function.html">zhmc_virtual_function – Create virtual functions in partitions</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#module-documentation">Module Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_adapter.html">zhmc_adapter – Update adapters and create Hipersocket adapters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_cpc.html">zhmc_cpc – Update CPCs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_crypto_attachment.html">zhmc_crypto_attachment – Attach crypto resources to partitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_hba.html">zhmc_hba – Create HBAs in partitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_nic.html">zhmc_nic – Create NICs in partitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_partition.html">zhmc_partition – Create partitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_storage_group.html">zhmc_storage_group – Create storage groups</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Attach storage groups to partitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_storage_volume.html">zhmc_storage_volume – Create storage volumes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_user.html">zhmc_user – Create HMC users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_virtual_function.html">zhmc_virtual_function – Create virtual functions in partitions</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="playbooks.html">Playbooks</a></li>
@@ -197,13 +193,17 @@
            <div itemprop="articleBody">
             
   <div class="section" id="modules">
-<span id="id1"></span><h1>Modules<a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h1>
-<p>Modules can be used from the command line or in a playbook task or in a role task.</p>
-<div class="section" id="module-reference">
-<h2>Module Reference<a class="headerlink" href="#module-reference" title="Permalink to this headline">¶</a></h2>
-<p>The <strong>IBM Z HMC collection</strong> provides several modules. Reference material for
+<h1>Modules<a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h1>
+<p>Ansible® modules can be used from the command line, in a playbook or in
+an role.</p>
+<p>The <strong>IBM Z® HMC collection</strong> provides several modules. Reference material for
 each module contains documentation on what parameters the module accepts and
 what will returned.</p>
+<p>You can also access the documentation of each module from the command line by
+using the <a class="reference external" href="https://docs.ansible.com/ansible/latest/cli/ansible-doc.html#ansible-doc">ansible-doc</a> command, for example:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ ansible-doc ibm.ibm_zhmc.zhmc_adapter
+</pre></div>
+</div>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="modules/zhmc_adapter.html">zhmc_adapter – Update adapters and create Hipersocket adapters</a></li>
@@ -218,15 +218,6 @@ what will returned.</p>
 <li class="toctree-l1"><a class="reference internal" href="modules/zhmc_user.html">zhmc_user – Create HMC users</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules/zhmc_virtual_function.html">zhmc_virtual_function – Create virtual functions in partitions</a></li>
 </ul>
-</div>
-</div>
-<div class="section" id="module-documentation">
-<h2>Module Documentation<a class="headerlink" href="#module-documentation" title="Permalink to this headline">¶</a></h2>
-<p>You can also access the documentation of each module from the command line by
-using the <a class="reference external" href="https://docs.ansible.com/ansible/latest/cli/ansible-doc.html#ansible-doc">ansible-doc</a> command, for example:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ ansible-doc ibm.ibm_zhmc.zhmc_adapter
-</pre></div>
-</div>
 </div>
 </div>
 
