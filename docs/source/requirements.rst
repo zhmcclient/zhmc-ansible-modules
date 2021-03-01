@@ -19,21 +19,29 @@
 Requirements
 ============
 
-For the **IBM Z HMC collection**, the managed node is the control node, i.e. the
-playbook has its ``hosts`` and ``connection`` properties set accordingly:
+The **IBM Z HMC collection** runs on the control node and communicates with the
+targeted HMC via the IP or host name input parameters of the Ansible modules.
+
+In playbooks, this looks as follows:
 
 .. code-block:: text
 
-   - hosts: localhost
-     connection: local
-
-The location of the HMC is defined with input parameters to the modules.
+   - hosts: localhost  # required: target host
+     connection: local  # required
+     collections:
+       - ibm.ibm_zhmc
+     tasks:
+       - zhmc_adapter:
+           hmc_host: 9.10.11.12
+           hmc_auth: "{{ hmc_auth }}"
+           . . .
 
 Control node
 ============
 
-Besides having Ansible and the **IBM Z HMC collection** installed, there are no
-additional requirements for the control node.
+Requirements for the Ansible control node are:
+
+* The control node must have network connectivity to the targeted HMC.
 
 .. toctree::
    :maxdepth: 3

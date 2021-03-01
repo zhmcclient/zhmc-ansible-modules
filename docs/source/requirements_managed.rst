@@ -17,5 +17,11 @@
 Managed node
 ============
 
-For the **IBM Z HMC collection**, the managed node is the control node, so there
-are no additional requirements for the managed node.
+The managed node for the **IBM Z HMC collection** is the targeted HMC. The
+Z systems managed by the HMC are not visible on the network because the HMC
+encapsulates them. In addition, there is a number of resources that are owned
+by the HMC itself, such as users or password rules.
+
+Requirements for the targeted HMC are:
+
+* The HMC must have its Web Services API enabled.
