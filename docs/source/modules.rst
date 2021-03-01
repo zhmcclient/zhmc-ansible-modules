@@ -13,6 +13,8 @@
 .. limitations under the License.
 ..
 
+.. _`Modules`:
+
 Modules
 =======
 
