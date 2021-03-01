@@ -54,6 +54,7 @@ def get_docs_tags(min_version):
 
       tuple of strings: List of Git tags to use.
     """
+    # pylint: disable=consider-using-generator
     min_version_tuple = tuple([int(s) for s in min_version.split('.')])
     repo_dir = os.path.join(os.path.dirname(__file__), '..', '..')
     try:
@@ -73,6 +74,7 @@ def get_docs_tags(min_version):
     for tag in repo.tags:
         m = re.match(r'^(\d+)\.(\d+)\.(\d+)$', tag.name)
         if m:
+            # pylint: disable=consider-using-generator
             mnu_tuple = tuple([int(s) for s in m.groups()])
             if mnu_tuple < min_version_tuple:
                 continue
@@ -103,6 +105,7 @@ def get_docs_branches(min_version):
 
       tuple of strings: List of Git branches to use.
     """
+    # pylint: disable=consider-using-generator
     min_mn_tuple = tuple([int(s) for s in min_version.split('.')[0:2]])
     repo_dir = os.path.join(os.path.dirname(__file__), '..', '..')
     try:
@@ -125,6 +128,7 @@ def get_docs_branches(min_version):
     for r_branch in repo.remote().refs:
         m = re.search(r'/stable_(\d+)\.(\d+)$', r_branch.name)
         if m:
+            # pylint: disable=consider-using-generator
             mn_tuple = tuple([int(s) for s in m.groups()])
             if mn_tuple < min_mn_tuple:
                 continue

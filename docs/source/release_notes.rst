@@ -45,6 +45,9 @@ Released: not yet
 * Mitigated the coveralls HTTP status 422 by pinning coveralls-python to
   <3.0.0.
 
+* Fixed the condition for whether to run the Ansible sanity test and fixed
+  issues reported by it. (issue #377 and others)
+
 **Enhancements:**
 
 **Cleanup:**
