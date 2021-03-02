@@ -78,13 +78,13 @@ name
 
 
 state
-  The desired state for the target storage volume:
+  The desired state for the storage volume. All states are fully idempotent within the limits of the properties that can be changed:
 
   * ``absent``: Ensures that the storage volume does not exist in the specified storage group.
 
   * ``present``: Ensures that the storage volume exists in the specified storage group, and has the specified properties.
 
-  * ``facts``: Does not change anything on the storage volume and returns the storage volume properties.
+  * ``facts``: Returns the storage volume properties.
 
   | **required**: True
   | **type**: str

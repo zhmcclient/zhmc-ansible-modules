@@ -50,6 +50,9 @@ Released: not yet
 
 **Enhancements:**
 
+* Docs: The idempotency of each module and possible limitations are now
+  described for each module. (issue #375)
+
 **Cleanup:**
 
 **Known issues:**

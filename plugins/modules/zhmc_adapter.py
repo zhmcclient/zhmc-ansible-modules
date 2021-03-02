@@ -105,14 +105,14 @@ options:
     default: null
   state:
     description:
-      - "The desired state for the attachment:"
+      - "The desired state for the adapter. All states are fully idempotent
+         within the limits of the properties that can be changed:"
       - "* C(set): Ensures that an existing adapter has the specified
          properties."
       - "* C(present): Ensures that a Hipersockets adapter exists and has the
          specified properties."
       - "* C(absent): Ensures that a Hipersockets adapter does not exist."
-      - "* C(facts): Does not change anything on the adapter and returns
-         the adapter properties including its ports."
+      - "* C(facts): Returns the adapter properties including its ports."
     type: str
     required: true
     choices: ['set', 'present', 'absent', 'facts']

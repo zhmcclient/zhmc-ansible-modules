@@ -72,13 +72,13 @@ partition_name
 
 
 state
-  The desired state for the attachment:
+  The desired state for the crypto attachment. All states are fully idempotent within the limits of the properties that can be changed:
 
   * ``attached``: Ensures that the specified number of crypto adapters of the specified crypto type, and the specified range of domain index numbers in the specified access mode are attached to the partition.
 
   * ``detached``: Ensures that no crypto adapter and no crypto domains are attached to the partition.
 
-  * ``facts``: Does not change anything on the attachment and returns the crypto configuration of the partition.
+  * ``facts``: Returns the crypto configuration of the partition.
 
   | **required**: True
   | **type**: str

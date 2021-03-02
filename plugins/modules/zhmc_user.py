@@ -73,12 +73,12 @@ options:
     required: true
   state:
     description:
-      - "The desired state for the target user:"
+      - "The desired state for the HMC user. All states are fully idempotent
+         within the limits of the properties that can be changed:"
       - "* C(absent): Ensures that the user does not exist."
       - "* C(present): Ensures that the user exists and has the specified
          properties."
-      - "* C(facts): Does not change anything on the user and returns
-         the user properties."
+      - "* C(facts): Returns the user properties."
     type: str
     required: true
     choices: ['absent', 'present', 'facts']

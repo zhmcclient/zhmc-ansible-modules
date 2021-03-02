@@ -90,10 +90,11 @@ options:
     required: true
   state:
     description:
-      - "The desired state for the target HBA:"
-      - "C(absent): Ensures that the HBA does not exist in the specified
+      - "The desired state for the HBA. All states are fully idempotent
+         within the limits of the properties that can be changed:"
+      - "* C(absent): Ensures that the HBA does not exist in the specified
          partition."
-      - "C(present): Ensures that the HBA exists in the specified partition
+      - "* C(present): Ensures that the HBA exists in the specified partition
          and has the specified properties."
     type: str
     required: true

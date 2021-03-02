@@ -88,15 +88,17 @@ options:
     required: true
   state:
     description:
-      - "The desired state for the target storage group:"
+      - "The desired state for the storage group. All states are fully
+         idempotent within the limits of the properties that can be changed,
+         unless otherwise stated:"
       - "* C(absent): Ensures that the storage group does not exist. If the
          storage group is currently attached to any partitions, the module will
-         fail."
+         fail (this is an idempotency limitation)."
       - "* C(present): Ensures that the storage group exists and is associated
          with the specified CPC, and has the specified properties. The
-         attachment state of the storage group to a partition is not changed."
-      - "* C(facts): Does not change anything on the storage group and returns
-         the storage group properties."
+         attachment state of an already existing storage group to a partition
+         is not changed."
+      - "* C(facts): Returns the storage group properties."
     type: str
     required: true
     choices: ['absent', 'present', 'facts']

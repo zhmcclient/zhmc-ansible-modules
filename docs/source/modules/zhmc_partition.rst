@@ -72,15 +72,15 @@ name
 
 
 state
-  The desired state for the target partition:
+  The desired state for the partition. All states are fully idempotent within the limits of the properties that can be changed:
 
-  ``absent``: Ensures that the partition does not exist in the specified CPC.
+  * ``absent``: Ensures that the partition does not exist in the specified CPC.
 
-  ``stopped``: Ensures that the partition exists in the specified CPC, has the specified properties, and is in the 'stopped' status.
+  * ``stopped``: Ensures that the partition exists in the specified CPC, has the specified properties, and is in the 'stopped' status.
 
-  ``active``: Ensures that the partition exists in the specified CPC, has the specified properties, and is in the 'active' or 'degraded' status.
+  * ``active``: Ensures that the partition exists in the specified CPC, has the specified properties, and is in the 'active' or 'degraded' status.
 
-  ``facts``: Does not change anything on the partition and returns the partition properties and the properties of its child resources (HBAs, NICs, and virtual functions).
+  * ``facts``: Returns the partition properties and the properties of its child resources (HBAs, NICs, and virtual functions).
 
   | **required**: True
   | **type**: str

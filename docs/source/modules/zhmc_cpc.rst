@@ -64,11 +64,11 @@ name
 
 
 state
-  The desired state for the attachment:
+  The desired state for the CPC. All states are fully idempotent within the limits of the properties that can be changed:
 
   * ``set``: Ensures that the CPC has the specified properties.
 
-  * ``facts``: Does not change anything on the CPC and returns the CPC properties including its child resources.
+  * ``facts``: Returns the CPC properties including its child resources.
 
   | **required**: True
   | **type**: str
