@@ -93,13 +93,13 @@ options:
     required: true
   state:
     description:
-      - "The desired state for the target storage volume:"
+      - "The desired state for the storage volume. All states are fully
+         idempotent within the limits of the properties that can be changed:"
       - "* C(absent): Ensures that the storage volume does not exist in the
          specified storage group."
       - "* C(present): Ensures that the storage volume exists in the specified
          storage group, and has the specified properties."
-      - "* C(facts): Does not change anything on the storage volume and returns
-         the storage volume properties."
+      - "* C(facts): Returns the storage volume properties."
     type: str
     required: true
     choices: ['absent', 'present', 'facts']

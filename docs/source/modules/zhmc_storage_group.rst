@@ -71,13 +71,13 @@ name
 
 
 state
-  The desired state for the target storage group:
+  The desired state for the storage group. All states are fully idempotent within the limits of the properties that can be changed, unless otherwise stated:
 
-  * ``absent``: Ensures that the storage group does not exist. If the storage group is currently attached to any partitions, the module will fail.
+  * ``absent``: Ensures that the storage group does not exist. If the storage group is currently attached to any partitions, the module will fail (this is an idempotency limitation).
 
-  * ``present``: Ensures that the storage group exists and is associated with the specified CPC, and has the specified properties. The attachment state of the storage group to a partition is not changed.
+  * ``present``: Ensures that the storage group exists and is associated with the specified CPC, and has the specified properties. The attachment state of an already existing storage group to a partition is not changed.
 
-  * ``facts``: Does not change anything on the storage group and returns the storage group properties.
+  * ``facts``: Returns the storage group properties.
 
   | **required**: True
   | **type**: str

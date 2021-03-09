@@ -78,13 +78,13 @@ partition_name
 
 
 state
-  The desired state for the attachment:
+  The desired state for the storage group attachment. All states are fully idempotent within the limits of the properties that can be changed, unless otherwise stated:
 
-  * ``detached``: Ensures that the storage group is not attached to the partition. If the storage group is currently attached to the partition and the partition is currently active, the module will fail.
+  * ``detached``: Ensures that the storage group is not attached to the partition. If the storage group is currently attached to the partition and the partition is currently active, the module will fail (this is an idempotency limitation).
 
   * ``attached``: Ensures that the storage group is attached to the partition.
 
-  * ``facts``: Does not change anything on the attachment and returns the attachment status.
+  * ``facts``: Returns the attachment status.
 
   | **required**: True
   | **type**: str

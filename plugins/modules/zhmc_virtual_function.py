@@ -87,10 +87,11 @@ options:
     required: true
   state:
     description:
-      - "The desired state for the target virtual function:"
-      - "C(absent): Ensures that the virtual function does not exist in the
+      - "The desired state for the virtual function. All states are fully
+         idempotent within the limits of the properties that can be changed:"
+      - "* C(absent): Ensures that the virtual function does not exist in the
          specified partition."
-      - "C(present): Ensures that the virtual function exists in the specified
+      - "* C(present): Ensures that the virtual function exists in the specified
          partition and has the specified properties."
     type: str
     required: true

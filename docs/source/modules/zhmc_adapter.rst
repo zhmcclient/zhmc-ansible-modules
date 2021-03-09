@@ -87,7 +87,7 @@ match
 
 
 state
-  The desired state for the attachment:
+  The desired state for the adapter. All states are fully idempotent within the limits of the properties that can be changed:
 
   * ``set``: Ensures that an existing adapter has the specified properties.
 
@@ -95,7 +95,7 @@ state
 
   * ``absent``: Ensures that a Hipersockets adapter does not exist.
 
-  * ``facts``: Does not change anything on the adapter and returns the adapter properties including its ports.
+  * ``facts``: Returns the adapter properties including its ports.
 
   | **required**: True
   | **type**: str

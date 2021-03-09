@@ -87,10 +87,11 @@ options:
     required: true
   state:
     description:
-      - "The desired state for the target NIC:"
-      - "C(absent): Ensures that the NIC does not exist in the specified
+      - "The desired state for the NIC. All states are fully idempotent
+         within the limits of the properties that can be changed:"
+      - "* C(absent): Ensures that the NIC does not exist in the specified
          partition."
-      - "C(present): Ensures that the NIC exists in the specified partition
+      - "* C(present): Ensures that the NIC exists in the specified partition
          and has the specified properties."
     type: str
     required: true

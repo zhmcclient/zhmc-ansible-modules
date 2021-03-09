@@ -86,17 +86,17 @@ options:
     required: true
   state:
     description:
-      - "The desired state for the target partition:"
-      - "C(absent): Ensures that the partition does not exist in the specified
+      - "The desired state for the partition. All states are fully idempotent
+         within the limits of the properties that can be changed:"
+      - "* C(absent): Ensures that the partition does not exist in the specified
          CPC."
-      - "C(stopped): Ensures that the partition exists in the specified CPC,
+      - "* C(stopped): Ensures that the partition exists in the specified CPC,
          has the specified properties, and is in the 'stopped' status."
-      - "C(active): Ensures that the partition exists in the specified CPC,
+      - "* C(active): Ensures that the partition exists in the specified CPC,
          has the specified properties, and is in the 'active' or 'degraded'
          status."
-      - "C(facts): Does not change anything on the partition and returns
-         the partition properties and the properties of its child resources
-         (HBAs, NICs, and virtual functions)."
+      - "* C(facts): Returns the partition properties and the properties of its
+         child resources (HBAs, NICs, and virtual functions)."
     type: str
     required: true
     choices: ['absent', 'stopped', 'active', 'facts']

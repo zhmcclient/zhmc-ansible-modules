@@ -78,11 +78,11 @@ name
 
 
 state
-  The desired state for the target NIC:
+  The desired state for the NIC. All states are fully idempotent within the limits of the properties that can be changed:
 
-  ``absent``: Ensures that the NIC does not exist in the specified partition.
+  * ``absent``: Ensures that the NIC does not exist in the specified partition.
 
-  ``present``: Ensures that the NIC exists in the specified partition and has the specified properties.
+  * ``present``: Ensures that the NIC exists in the specified partition and has the specified properties.
 
   | **required**: True
   | **type**: str

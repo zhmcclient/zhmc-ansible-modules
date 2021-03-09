@@ -64,13 +64,13 @@ name
 
 
 state
-  The desired state for the target user:
+  The desired state for the HMC user. All states are fully idempotent within the limits of the properties that can be changed:
 
   * ``absent``: Ensures that the user does not exist.
 
   * ``present``: Ensures that the user exists and has the specified properties.
 
-  * ``facts``: Does not change anything on the user and returns the user properties.
+  * ``facts``: Returns the user properties.
 
   | **required**: True
   | **type**: str

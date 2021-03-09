@@ -74,10 +74,10 @@ options:
     required: true
   state:
     description:
-      - "The desired state for the attachment:"
+      - "The desired state for the CPC. All states are fully idempotent
+         within the limits of the properties that can be changed:"
       - "* C(set): Ensures that the CPC has the specified properties."
-      - "* C(facts): Does not change anything on the CPC and returns
-         the CPC properties including its child resources."
+      - "* C(facts): Returns the CPC properties including its child resources."
     type: str
     required: true
     choices: ['set', 'facts']
