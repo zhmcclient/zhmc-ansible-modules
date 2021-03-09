@@ -273,11 +273,11 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>state</dt><dd><p>The desired state for the target storage volume:</p>
+<dt>state</dt><dd><p>The desired state for the storage volume. All states are fully idempotent within the limits of the properties that can be changed:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">absent</span></code>: Ensures that the storage volume does not exist in the specified storage group.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">present</span></code>: Ensures that the storage volume exists in the specified storage group, and has the specified properties.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">facts</span></code>: Does not change anything on the storage volume and returns the storage volume properties.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">facts</span></code>: Returns the storage volume properties.</p></li>
 </ul>
 <div class="line-block">
 <div class="line"><strong>required</strong>: True</div>

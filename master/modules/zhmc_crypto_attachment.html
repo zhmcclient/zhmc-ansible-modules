@@ -266,11 +266,11 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>state</dt><dd><p>The desired state for the attachment:</p>
+<dt>state</dt><dd><p>The desired state for the crypto attachment. All states are fully idempotent within the limits of the properties that can be changed:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">attached</span></code>: Ensures that the specified number of crypto adapters of the specified crypto type, and the specified range of domain index numbers in the specified access mode are attached to the partition.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">detached</span></code>: Ensures that no crypto adapter and no crypto domains are attached to the partition.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">facts</span></code>: Does not change anything on the attachment and returns the crypto configuration of the partition.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">facts</span></code>: Returns the crypto configuration of the partition.</p></li>
 </ul>
 <div class="line-block">
 <div class="line"><strong>required</strong>: True</div>

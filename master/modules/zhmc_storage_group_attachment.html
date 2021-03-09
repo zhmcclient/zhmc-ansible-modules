@@ -273,11 +273,11 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>state</dt><dd><p>The desired state for the attachment:</p>
+<dt>state</dt><dd><p>The desired state for the storage group attachment. All states are fully idempotent within the limits of the properties that can be changed, unless otherwise stated:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">detached</span></code>: Ensures that the storage group is not attached to the partition. If the storage group is currently attached to the partition and the partition is currently active, the module will fail.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">detached</span></code>: Ensures that the storage group is not attached to the partition. If the storage group is currently attached to the partition and the partition is currently active, the module will fail (this is an idempotency limitation).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">attached</span></code>: Ensures that the storage group is attached to the partition.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">facts</span></code>: Does not change anything on the attachment and returns the attachment status.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">facts</span></code>: Returns the attachment status.</p></li>
 </ul>
 <div class="line-block">
 <div class="line"><strong>required</strong>: True</div>

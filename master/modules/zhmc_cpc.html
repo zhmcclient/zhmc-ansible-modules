@@ -259,10 +259,10 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>state</dt><dd><p>The desired state for the attachment:</p>
+<dt>state</dt><dd><p>The desired state for the CPC. All states are fully idempotent within the limits of the properties that can be changed:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">set</span></code>: Ensures that the CPC has the specified properties.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">facts</span></code>: Does not change anything on the CPC and returns the CPC properties including its child resources.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">facts</span></code>: Returns the CPC properties including its child resources.</p></li>
 </ul>
 <div class="line-block">
 <div class="line"><strong>required</strong>: True</div>

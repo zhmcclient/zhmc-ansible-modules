@@ -271,9 +271,11 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>state</dt><dd><p>The desired state for the target virtual function:</p>
-<p><code class="docutils literal notranslate"><span class="pre">absent</span></code>: Ensures that the virtual function does not exist in the specified partition.</p>
-<p><code class="docutils literal notranslate"><span class="pre">present</span></code>: Ensures that the virtual function exists in the specified partition and has the specified properties.</p>
+<dt>state</dt><dd><p>The desired state for the virtual function. All states are fully idempotent within the limits of the properties that can be changed:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">absent</span></code>: Ensures that the virtual function does not exist in the specified partition.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">present</span></code>: Ensures that the virtual function exists in the specified partition and has the specified properties.</p></li>
+</ul>
 <div class="line-block">
 <div class="line"><strong>required</strong>: True</div>
 <div class="line"><strong>type</strong>: str</div>
