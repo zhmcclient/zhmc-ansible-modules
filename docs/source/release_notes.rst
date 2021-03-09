@@ -48,6 +48,11 @@ Released: not yet
 * Fixed the condition for whether to run the Ansible sanity test and fixed
   issues reported by it. (issue #377 and others)
 
+* Docs: Fixed the text for the Ansible Module Index in the bibliography to
+  state it applies to Ansible 2.9 and fixed the link to reference the 2.9
+  version instead of the latest version. Added a bibliography entry for the
+  Ansible Collection Index for Ansible 2.10 and later.
+
 **Enhancements:**
 
 * Docs: The idempotency of each module and possible limitations are now
