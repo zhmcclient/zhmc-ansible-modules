@@ -184,18 +184,27 @@
             
   <div class="section" id="requirements">
 <span id="id1"></span><h1>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h1>
-<p>For the <strong>IBM Z HMC collection</strong>, the managed node is the control node, i.e. the
-playbook has its <code class="docutils literal notranslate"><span class="pre">hosts</span></code> and <code class="docutils literal notranslate"><span class="pre">connection</span></code> properties set accordingly:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>- hosts: localhost
-  connection: local
+<p>The <strong>IBM Z HMC collection</strong> runs on the control node and communicates with the
+targeted HMC via the IP or host name input parameters of the Ansible modules.</p>
+<p>In playbooks, this looks as follows:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>- hosts: localhost  # required: target host
+  connection: local  # required
+  collections:
+    - ibm.ibm_zhmc
+  tasks:
+    - zhmc_adapter:
+        hmc_host: 9.10.11.12
+        hmc_auth: &quot;{{ hmc_auth }}&quot;
+        . . .
 </pre></div>
 </div>
-<p>The location of the HMC is defined with input parameters to the modules.</p>
 </div>
 <div class="section" id="control-node">
 <h1>Control node<a class="headerlink" href="#control-node" title="Permalink to this headline">¶</a></h1>
-<p>Besides having Ansible and the <strong>IBM Z HMC collection</strong> installed, there are no
-additional requirements for the control node.</p>
+<p>Requirements for the Ansible control node are:</p>
+<ul class="simple">
+<li><p>The control node must have network connectivity to the targeted HMC.</p></li>
+</ul>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="requirements_managed.html">Managed node</a></li>

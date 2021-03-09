@@ -186,8 +186,14 @@
             
   <div class="section" id="managed-node">
 <h1>Managed node<a class="headerlink" href="#managed-node" title="Permalink to this headline">¶</a></h1>
-<p>For the <strong>IBM Z HMC collection</strong>, the managed node is the control node, so there
-are no additional requirements for the managed node.</p>
+<p>The managed node for the <strong>IBM Z HMC collection</strong> is the targeted HMC. The
+Z systems managed by the HMC are not visible on the network because the HMC
+encapsulates them. In addition, there is a number of resources that are owned
+by the HMC itself, such as users or password rules.</p>
+<p>Requirements for the targeted HMC are:</p>
+<ul class="simple">
+<li><p>The HMC must have its Web Services API enabled.</p></li>
+</ul>
 </div>
 
 
