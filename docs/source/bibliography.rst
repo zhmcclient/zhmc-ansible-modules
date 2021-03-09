@@ -56,7 +56,10 @@ Bibliography
        `Ansible Community Guide <https://docs.ansible.com/ansible/latest/community/index.html>`_
 
    Ansible Module Index
-       `Ansible Module Index <https://docs.ansible.com/ansible/latest/modules/modules_by_category.html>`_
+       `Ansible Module Index (Ansible 2.9) <https://docs.ansible.com/ansible/2.9/modules/modules_by_category.html>`_
+
+   Ansible Collection Index
+       `Ansible Collection Index (Ansible 2.10 and later) <https://docs.ansible.com/ansible/latest/collections/index.html>`_
 
    Ansible Developer Guide
        `Ansible Developer Guide <https://docs.ansible.com/ansible/latest/dev_guide/index.html>`_
