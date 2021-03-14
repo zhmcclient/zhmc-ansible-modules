@@ -35,20 +35,8 @@ jobs:
         else \
           echo "::set-output name=matrix::{ \
             \"os\": [ \"ubuntu-latest\" ], \
-            \"python-version\": [ \"2.7\", \"3.5\", \"3.6\", \"3.9\" ], \
-            \"package_level\": [ \"latest\", \"minimum\" ], \
-            \"include\": [ \
-              { \
-                \"os\": \"macos-latest\", \
-                \"python-version\": \"3.9\", \
-                \"package_level\": \"minimum\" \
-              }, \
-              { \
-                \"os\": \"macos-latest\", \
-                \"python-version\": \"3.9\", \
-                \"package_level\": \"latest\" \
-              } \
-            ] \
+            \"python-version\": [ \"3.6\", \"3.7\", \"3.8\" ], \
+            \"package_level\": [ \"minimum\" ] \
           }"; \
         fi
     - name: Show matrix in JSON
