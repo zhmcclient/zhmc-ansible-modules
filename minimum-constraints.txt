@@ -88,7 +88,7 @@ wheel==0.33.5; python_version >= '3.8'
 ansible==2.9.0.0
 requests==2.20.1
 # git+https://github.com/zhmcclient/python-zhmcclient@master#egg=zhmcclient
-zhmcclient==0.26.0
+zhmcclient==0.29.0
 
 # Indirect dependencies for installation (must be consistent with requirements.txt)
 
