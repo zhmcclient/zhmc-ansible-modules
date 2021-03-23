@@ -58,6 +58,8 @@ Released: not yet
 * Docs: The idempotency of each module and possible limitations are now
   described for each module. (issue #375)
 
+* Increased minimum version of zhmcclient to 0.29.0 to pick up fixes.
+
 **Cleanup:**
 
 **Known issues:**

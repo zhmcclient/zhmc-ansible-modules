@@ -12,7 +12,7 @@
 ansible>=2.9.0.0
 requests>=2.20.1
 # git+https://github.com/zhmcclient/python-zhmcclient@master#egg=zhmcclient
-zhmcclient>=0.26.0 # Apache-2.0
+zhmcclient>=0.29.0 # Apache-2.0
 
 
 # Indirect dependencies are not specified in this file, unless needed to solve versioning issues:
