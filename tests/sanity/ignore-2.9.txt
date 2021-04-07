@@ -12,6 +12,7 @@ plugins/modules/zhmc_virtual_function.py validate-modules:missing-gplv3-license 
 tools/os_setup.sh shebang # using /bin/bash
 plugins/module_utils/common.py pylint:raise-missing-from
 plugins/modules/zhmc_adapter.py pylint!skip # Unreliable duplicate-code issues
+plugins/modules/zhmc_cpc.py pylint!skip # Unreliable duplicate-code issues
 plugins/modules/zhmc_crypto_attachment.py pylint!skip # Unreliable duplicate-code issues
 plugins/modules/zhmc_hba.py pylint!skip # Unreliable duplicate-code issues
 plugins/modules/zhmc_nic.py pylint!skip # Unreliable duplicate-code issues
@@ -21,8 +22,17 @@ plugins/modules/zhmc_storage_group_attachment.py pylint!skip # Unreliable duplic
 plugins/modules/zhmc_storage_volume.py pylint!skip # Unreliable duplicate-code issues
 plugins/modules/zhmc_user.py pylint!skip # Unreliable duplicate-code issues
 plugins/modules/zhmc_virtual_function.py pylint!skip # Unreliable duplicate-code issues
-tests/function/test_func_partition.py pylint:duplicate-code
-tests/unit/test_partition.py pylint:duplicate-code
+tests/end2end/test_zhmc_partition.py pylint!skip # Unreliable duplicate-code issues
+tests/end2end/test_zhmc_user.py pylint!skip # Unreliable duplicate-code issues
+tests/end2end/utils.py pylint!skip # Unreliable duplicate-code issues
+tests/function/func_utils.py pylint!skip # Unreliable duplicate-code issues
+tests/function/test_func_partition.py pylint!skip # Unreliable duplicate-code issues
+tests/unit/test_hba.py pylint!skip # Unreliable duplicate-code issues
+tests/unit/test_nic.py pylint!skip # Unreliable duplicate-code issues
+tests/unit/test_partition.py pylint!skip # Unreliable duplicate-code issues
+tests/unit/test_virtual_function.py pylint!skip # Unreliable duplicate-code issues
+docs/source/conf.py pylint!skip # Unreliable duplicate-code issues
+tools/version.py pylint!skip # Unreliable duplicate-code issues
 plugins/modules/zhmc_adapter.py validate-modules:import-error # Was broken in Ansible 2.9, fixed in 2.10 via PR 63932
 plugins/modules/zhmc_cpc.py validate-modules:import-error # Was broken in Ansible 2.9, fixed in 2.10 via PR 63932
 plugins/modules/zhmc_crypto_attachment.py validate-modules:import-error # Was broken in Ansible 2.9, fixed in 2.10 via PR 63932
