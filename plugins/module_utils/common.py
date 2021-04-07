@@ -495,6 +495,24 @@ def process_normal_property(
     return create_props, update_props, deactivate
 
 
+def ensure_hyphens(props):
+    """
+    Return a dict that is a deep copy of the input dict, with underscores in
+    key (property) names replaced by hyphens.
+
+    This is used when property names specified in Ansible that have underscores
+    in the name need to be converted to property names for HMC operations,
+    where they need to have hyphens in the name.
+    """
+    hyphen_props = dict()
+    for pname, pvalue in props.items():
+        hpname = pname.replace('_', '-')
+        if isinstance(pvalue, dict):
+            pvalue = ensure_hyphens(pvalue)
+        hyphen_props[hpname] = pvalue
+    return hyphen_props
+
+
 def log_init(logger_name, log_file=None):
     """
     Set up logging for the loggers of the current Ansible module, and for the
