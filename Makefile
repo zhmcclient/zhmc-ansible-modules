@@ -212,7 +212,8 @@ test: _check_version develop_$(pymn).done
 
 .PHONY:	sanity
 sanity: _check_version develop_$(pymn).done
-	tar -rf $(sanity_tar_file) --exclude=tmp_workspace.tar --exclude=$(doc_build_dir) --exclude=$(sanity_dir1) .
+	rm -f $(sanity_tar_file)
+	tar -rf $(sanity_tar_file) --exclude=tmp_workspace.tar --exclude=$(doc_build_dir) --exclude=$(sanity_dir) .
 	rm -rf $(sanity_dir)
 	mkdir -p $(sanity_dir)
 	tar -xvf $(sanity_tar_file) --directory $(sanity_dir)
