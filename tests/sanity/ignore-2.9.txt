@@ -15,8 +15,8 @@ plugins/modules/zhmc_crypto_attachment.py pylint:raise-missing-from
 plugins/modules/zhmc_hba.py pylint:raise-missing-from
 plugins/modules/zhmc_nic.py pylint:raise-missing-from
 plugins/modules/zhmc_partition.py pylint:raise-missing-from
+plugins/modules/zhmc_user.py pylint:duplicate-code
 plugins/modules/zhmc_virtual_function.py pylint:raise-missing-from
-plugins/modules/zhmc_virtual_function.py pylint:duplicate-code
 tests/function/test_func_partition.py pylint:duplicate-code
 tests/unit/test_partition.py pylint:duplicate-code
 plugins/modules/zhmc_adapter.py validate-modules:import-error # Was broken in Ansible 2.9, fixed in 2.10 via PR 63932

@@ -35,9 +35,14 @@ jobs:
         else \
           echo "::set-output name=matrix::{ \
             \"os\": [ \"ubuntu-latest\" ], \
-            \"python-version\": [ \"2.7\", \"3.5\", \"3.6\", \"3.9\" ], \
+            \"python-version\": [ \"2.7\", \"3.5\", \"3.8\", \"3.9\" ], \
             \"package_level\": [ \"latest\", \"minimum\" ], \
             \"include\": [ \
+              { \
+                \"os\": \"ubuntu-latest\", \
+                \"python-version\": \"3.6\", \
+                \"package_level\": \"minimum\" \
+              }, \
               { \
                 \"os\": \"macos-latest\", \
                 \"python-version\": \"3.9\", \
@@ -105,8 +110,9 @@ jobs:
     - name: Run sanity
       # Notes on running 'make sanity':
       # * Excluded on Python 2.7 and 3.5 due to pylint 2.7 checks being referenced.
+      # * Excluded on Python 3.6 and 3.7 with minimum package levels because pylint reports different issues than on 3.8.
       # * Excluded on Python 3.9 with minimum package levels because Ansible 2.9 is not supported there.
-      if: ${{ ! (matrix.python-version == '2.7' || matrix.python-version == '3.5' || (matrix.python-version == '3.9' && matrix.package_level == 'minimum')) }}
+      if: ${{ ! ( matrix.python-version == '2.7' || matrix.python-version == '3.5' || (matrix.python-version == '3.6' && matrix.package_level == 'minimum') || (matrix.python-version == '3.7' && matrix.package_level == 'minimum') || (matrix.python-version == '3.9' && matrix.package_level == 'minimum') ) }}
       env:
         PACKAGE_LEVEL: ${{ matrix.package_level }}
       run: |
