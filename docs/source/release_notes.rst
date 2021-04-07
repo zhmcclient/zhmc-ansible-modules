@@ -62,6 +62,10 @@ Released: not yet
 
 **Cleanup:**
 
+* Renamed "Bibliography" page to "Resources" and removed common Ansible links
+  from that page to better fit the unified documentation for the IBM Z
+  collections.
+
 **Known issues:**
 
 * See `list of open issues`_.

@@ -1,4 +1,4 @@
-.. Copyright 2017-2020 IBM Corp. All Rights Reserved.
+.. Copyright 2017-2021 IBM Corp. All Rights Reserved.
 ..
 .. Licensed under the Apache License, Version 2.0 (the "License");
 .. you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
 ..
 
 
-.. _`Bibliography`:
+.. _`Resources`:
 
-Bibliography
-============
+Resources
+=========
 
 .. glossary::
 
@@ -48,21 +48,3 @@ Bibliography
    HMC API 2.15.0
        `IBM SC27-2638, IBM Z Hardware Management Console Web Services API (Version 2.15.0) <https://www.ibm.com/support/pages/node/6019720>`_
        (covers both GA1 and GA2)
-
-   Ansible Documentation
-       `Ansible Documentation <https://docs.ansible.com/ansible/latest/index.html>`_
-
-   Ansible Community Guide
-       `Ansible Community Guide <https://docs.ansible.com/ansible/latest/community/index.html>`_
-
-   Ansible Module Index
-       `Ansible Module Index (Ansible 2.9) <https://docs.ansible.com/ansible/2.9/modules/modules_by_category.html>`_
-
-   Ansible Collection Index
-       `Ansible Collection Index (Ansible 2.10 and later) <https://docs.ansible.com/ansible/latest/collections/index.html>`_
-
-   Ansible Developer Guide
-       `Ansible Developer Guide <https://docs.ansible.com/ansible/latest/dev_guide/index.html>`_
-
-   Ansible Testing
-       `Ansible Testing <https://docs.ansible.com/ansible/latest/dev_guide/testing.html>`_
