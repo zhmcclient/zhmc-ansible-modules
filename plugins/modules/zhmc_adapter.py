@@ -560,7 +560,7 @@ def ensure_set(params, check_mode):
         # The default exception handling is sufficient for the above.
 
         adapter.pull_full_properties()
-        result = adapter.properties
+        result = adapter.properties.copy()
 
         # It was identified by name or match properties, so it does exist.
         # Update its properties and change adapter and crypto type, if
@@ -591,7 +591,7 @@ def ensure_set(params, check_mode):
 
         if changed and not check_mode:
             adapter.pull_full_properties()
-            result = adapter.properties  # from actual values
+            result = adapter.properties.copy()  # from actual values
 
         ports = adapter.ports.list()
         result_ports = list()
@@ -599,7 +599,7 @@ def ensure_set(params, check_mode):
             # TODO: Disabling the following line mitigates the recent issue
             #       with HTTP error 404,4 when retrieving port properties.
             # port.pull_full_properties()
-            result_ports.append(port.properties)
+            result_ports.append(port.properties.copy())
         result['ports'] = result_ports
 
         return changed, result
@@ -686,7 +686,7 @@ def ensure_present(params, check_mode):
             if not check_mode:
                 adapter = cpc.adapters.create_hipersocket(create_props)
                 adapter.pull_full_properties()
-                result = adapter.properties  # from actual values
+                result = adapter.properties.copy()  # from actual values
             else:
                 adapter = None
                 result = dict()
@@ -698,7 +698,7 @@ def ensure_present(params, check_mode):
             # needed.
 
             adapter.pull_full_properties()
-            result = adapter.properties
+            result = adapter.properties.copy()
 
             create_props, update_props, chg_adapter_type, chg_crypto_type = \
                 process_properties(adapter, params)
@@ -726,14 +726,14 @@ def ensure_present(params, check_mode):
 
             if changed and not check_mode:
                 adapter.pull_full_properties()
-                result = adapter.properties  # from actual values
+                result = adapter.properties.copy()  # from actual values
 
         if adapter:
             ports = adapter.ports.list()
             result_ports = list()
             for port in ports:
                 port.pull_full_properties()
-                result_ports.append(port.properties)
+                result_ports.append(port.properties.copy())
             result['ports'] = result_ports
         else:
             # For now, we return no ports when creating in check mode
@@ -812,13 +812,13 @@ def facts(params, check_mode):
         # The default exception handling is sufficient for the above.
 
         adapter.pull_full_properties()
-        result = adapter.properties
+        result = adapter.properties.copy()
 
         ports = adapter.ports.list()
         result_ports = list()
         for port in ports:
             port.pull_full_properties()
-            result_ports.append(port.properties)
+            result_ports.append(port.properties.copy())
         result['ports'] = result_ports
 
         return False, result

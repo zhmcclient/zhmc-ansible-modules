@@ -627,12 +627,12 @@ def process_properties(console, user, params):
     return create_props, update_props
 
 
-def add_artificial_properties(console, user, expand, check_mode):
+def add_artificial_properties(
+        user_properties, console, user, expand, check_mode):
     """
-    Add artificial properties to the user object (class User).
+    Add artificial properties to the user_properties dict.
 
-    Upon return, the properties of the user object have been extended by these
-    properties:
+    Upon return, the user_properties dict has been extended by these properties:
 
     Regardless of expand:
 
@@ -689,14 +689,14 @@ def add_artificial_properties(console, user, expand, check_mode):
             raise AssertionError()
         user_pattern = console.user_patterns.resource_object(user_pattern_uri)
         if check_mode:
-            user.properties['user-pattern-name'] = user_pattern.oid
+            user_properties['user-pattern-name'] = user_pattern.oid
             if expand:
-                user.properties['user-pattern'] = dict()
+                user_properties['user-pattern'] = dict()
         else:
             user_pattern.pull_full_properties()
-            user.properties['user-pattern-name'] = user_pattern.name
+            user_properties['user-pattern-name'] = user_pattern.name
             if expand:
-                user.properties['user-pattern'] = user_pattern.properties
+                user_properties['user-pattern'] = user_pattern.properties.copy()
 
     if auth_type == 'local':
         # For that auth type, the property exists and is non-null.
@@ -707,15 +707,16 @@ def add_artificial_properties(console, user, expand, check_mode):
         password_rule = console.password_rules.resource_object(
             password_rule_uri)
         if check_mode:
-            user.properties['password-rule-name'] = \
+            user_properties['password-rule-name'] = \
                 password_rule.uri.split('/')[-1]
             if expand:
-                user.properties['password-rule'] = dict()
+                user_properties['password-rule'] = dict()
         else:
             password_rule.pull_full_properties()
-            user.properties['password-rule-name'] = password_rule.name
+            user_properties['password-rule-name'] = password_rule.name
             if expand:
-                user.properties['password-rule'] = password_rule.properties
+                user_properties['password-rule'] = \
+                    password_rule.properties.copy()
 
     if auth_type == 'ldap':
         # For that auth type, the property exists and is non-null.
@@ -725,15 +726,15 @@ def add_artificial_properties(console, user, expand, check_mode):
             raise AssertionError()
         ldap_srv_def = console.ldap_srv_defs.resource_object(ldap_srv_def_uri)
         if check_mode:
-            user.properties['ldap-server-definition-name'] = ldap_srv_def.oid
+            user_properties['ldap-server-definition-name'] = ldap_srv_def.oid
             if expand:
-                user.properties['ldap-server-definition'] = dict()
+                user_properties['ldap-server-definition'] = dict()
         else:
             ldap_srv_def.pull_full_properties()
-            user.properties['ldap-server-definition-name'] = ldap_srv_def.name
+            user_properties['ldap-server-definition-name'] = ldap_srv_def.name
             if expand:
-                user.properties['ldap-server-definition'] = \
-                    ldap_srv_def.properties
+                user_properties['ldap-server-definition'] = \
+                    ldap_srv_def.properties.copy()
 
     user_roles = list()
     user_role_uris = user.properties['user-roles']
@@ -742,10 +743,10 @@ def add_artificial_properties(console, user, expand, check_mode):
         if not check_mode:
             user_role.pull_full_properties()
         user_roles.append(user_role)
-    user.properties['user-role-names'] = [ur.name for ur in user_roles]
+    user_properties['user-role-names'] = [ur.name for ur in user_roles]
     if expand:
-        user.properties['user-role-objects'] = \
-            [ur.properties for ur in user_roles]
+        user_properties['user-role-objects'] = \
+            [ur.properties.copy() for ur in user_roles]
 
 
 def create_check_mode_user(console, create_props, update_props):
@@ -822,10 +823,12 @@ def ensure_present(params, check_mode):
                 # Create a User object locally
                 user = create_check_mode_user(
                     console, create_props, update2_props)
+            result = user.properties.copy()
             changed = True
         else:
             # It exists. Update its properties.
             user.pull_full_properties()
+            result = user.properties.copy()
             create_props, update_props = process_properties(
                 console, user, params)
             if create_props:
@@ -840,15 +843,16 @@ def ensure_present(params, check_mode):
                     # We refresh the properties after the update, in case an
                     # input property value gets changed.
                     user.pull_full_properties()
+                    result = user.properties.copy()
                 else:
                     # Update the local User object's properties
-                    user.properties.update(update_props)
+                    result.update(update_props)
                 changed = True
 
         if not user:
             raise AssertionError()
-        add_artificial_properties(console, user, expand, check_mode)
-        result = user.properties
+
+        add_artificial_properties(result, console, user, expand, check_mode)
 
         return changed, result
 
@@ -924,8 +928,8 @@ def facts(params, check_mode):
         user = console.users.find(name=user_name)
         user.pull_full_properties()
 
-        add_artificial_properties(console, user, expand, check_mode)
-        result = user.properties
+        result = user.properties.copy()
+        add_artificial_properties(result, console, user, expand, check_mode)
 
         return changed, result
 

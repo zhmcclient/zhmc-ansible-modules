@@ -422,12 +422,12 @@ def process_properties(cpc, params):
     return update_props
 
 
-def add_artificial_properties(cpc):
+def add_artificial_properties(cpc_properties, cpc):
     """
-    Add artificial properties to the CPC object.
+    Add artificial properties to the CPC properties.
 
-    Upon return, the properties of the cpc object have been
-    extended by these artificial properties:
+    Upon return, the cpc_properties dict has been extended by these artificial
+    properties:
 
     * 'partitions': List of partitions of the CPC, with the list subset of
       their properties.
@@ -439,14 +439,14 @@ def add_artificial_properties(cpc):
       the list subset of their properties.
     """
     partitions = cpc.partitions.list()
-    cpc.properties['partitions'] = [p.properties for p in partitions]
+    cpc_properties['partitions'] = [p.properties.copy() for p in partitions]
 
     adapters = cpc.adapters.list()
-    cpc.properties['adapters'] = [a.properties for a in adapters]
+    cpc_properties['adapters'] = [a.properties.copy() for a in adapters]
 
     storage_groups = cpc.manager.console.storage_groups.list(
         filter_args={'cpc-uri': cpc.uri})
-    cpc.properties['storage-groups'] = [sg.properties
+    cpc_properties['storage-groups'] = [sg.properties.copy()
                                         for sg in storage_groups]
 
 
@@ -477,6 +477,7 @@ def ensure_set(params, check_mode):
         # The default exception handling is sufficient for the above.
 
         cpc.pull_full_properties()
+        result = cpc.properties.copy()
         update_props = process_properties(cpc, params)
         if update_props:
             if not check_mode:
@@ -486,12 +487,11 @@ def ensure_set(params, check_mode):
             # second retrieval).
             # Therefore, we construct the modified result based upon the input
             # changes, and not based upon newly retrieved properties.
-            cpc.properties.update(update_props)
+            result.update(update_props)
             changed = True
 
-        add_artificial_properties(cpc)
+        add_artificial_properties(result, cpc)
 
-        result = cpc.properties
         return changed, result
 
     finally:
@@ -521,10 +521,9 @@ def facts(params, check_mode):
         # The default exception handling is sufficient for the above.
 
         cpc.pull_full_properties()
+        result = cpc.properties.copy()
+        add_artificial_properties(result, cpc)
 
-        add_artificial_properties(cpc)
-
-        result = cpc.properties
         return False, result
 
     finally:

@@ -419,12 +419,11 @@ def process_properties(cpc, storage_group, storage_volume, params):
     return create_props, update_props
 
 
-def add_artificial_properties(storage_volume):
+def add_artificial_properties(sv_properties, storage_volume):
     """
-    Add artificial properties to the storage_volume object.
+    Add artificial properties to the sv_properties dict.
 
-    Upon return, the properties of the storage_volume object have been
-    extended by these properties:
+    Upon return, the sv_properties dict has been extended by these properties:
 
     * 'type': Type of storage group of the volume: 'fc' (for ECKD) or 'fcp'.
     """
@@ -433,7 +432,7 @@ def add_artificial_properties(storage_volume):
 
     # Type property
     type_prop = storage_group.get_property('type')
-    storage_volume.properties['type'] = type_prop
+    sv_properties['type'] = type_prop
 
 
 def ensure_present(params, check_mode):
@@ -527,8 +526,8 @@ def ensure_present(params, check_mode):
                 raise AssertionError()
 
         if storage_volume:
-            add_artificial_properties(storage_volume)
-            result = storage_volume.properties
+            result = storage_volume.properties.copy()
+            add_artificial_properties(result, storage_volume)
 
         return changed, result
 
@@ -635,8 +634,8 @@ def facts(params, check_mode):
             raise
 
         storage_volume.pull_full_properties()
-        add_artificial_properties(storage_volume)
-        result = storage_volume.properties
+        result = storage_volume.properties.copy()
+        add_artificial_properties(result, storage_volume)
 
         return changed, result
 
