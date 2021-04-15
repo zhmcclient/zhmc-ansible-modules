@@ -563,7 +563,7 @@ def ensure_present(params, check_mode):
                 changed = True
 
         if nic:
-            result = nic.properties
+            result = nic.properties.copy()
 
         return changed, result
 
