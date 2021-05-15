@@ -82,7 +82,7 @@ Features
 ========
 
 The **IBM Z HMC collection** provides Ansible modules and
-[sample_playbooks](https://github.com/IBM/z_ansible_collections_samples/tree/master/meta/samples_repository)
+[sample_playbooks](https://github.com/IBM/z_ansible_collections_samples/tree/master/z_systems_administration/zhmc)
 for automating management tasks on the Hardware Management Console (HMC) of
 [IBM Z](http://www.ibm.com/it-infrastructure/z/) and
 [LinuxONE](http://www.ibm.com/it-infrastructure/linuxone/) machines, such as
