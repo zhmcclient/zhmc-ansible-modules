@@ -53,6 +53,10 @@ Released: not yet
   version instead of the latest version. Added a bibliography entry for the
   Ansible Collection Index for Ansible 2.10 and later.
 
+* Docs: Pinned Sphinx to <4.0 to circumvent the issue that sphinx-versions
+  uses the deprecated Sphinx.add_stylesheet() method that was removed in
+  Sphinx 4.0. (issue #402)
+
 **Enhancements:**
 
 * Docs: The idempotency of each module and possible limitations are now
