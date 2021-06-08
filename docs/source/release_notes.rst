@@ -1,4 +1,4 @@
-.. Copyright 2017-2020 IBM Corp. All Rights Reserved.
+.. Copyright 2017-2021 IBM Corp. All Rights Reserved.
 ..
 .. Licensed under the Apache License, Version 2.0 (the "License");
 .. you may not use this file except in compliance with the License.
@@ -20,14 +20,10 @@ Releases
 ========
 
 
-Version 0.9.2-dev1
-------------------
+Version 0.9.2
+-------------
 
-Released: not yet
-
-**Incompatible changes:**
-
-**Deprecations:**
+Released: 2021-06-08
 
 **Bug fixes:**
 
@@ -53,14 +49,6 @@ Released: not yet
 **Enhancements:**
 
 * Docs: Stated that ansible-core 2.11 is supported.
-
-**Cleanup:**
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 0.9.1
