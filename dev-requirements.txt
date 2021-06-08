@@ -76,7 +76,10 @@ tox>=2.5.0
 #       Python 2.7, so we can no longer build the docs on Python 2.7.
 # Note: The docs build tools from Ansible 2.10 (in ../ansible) require
 #       antsibull, which supports only py>=3.6.
-Sphinx>=3.0.0; python_version >= '3.6'
+# Note: Sphinx 4.0 removed the deprecated Sphinx.add_stylesheet() which causes
+#       sphinx-versions to fail that uses it. A circumvention is to pin
+#       Sphinx to <4.0.
+Sphinx>=3.0.0,<4.0.0; python_version >= '3.6'
 sphinxcontrib-fulltoc>=1.2.0; python_version >= '3.6'
 sphinxcontrib-websupport>=1.1.2; python_version >= '3.6'
 Pygments>=2.1.3; python_version >= '3.6'
