@@ -57,6 +57,9 @@ Released: not yet
   uses the deprecated Sphinx.add_stylesheet() method that was removed in
   Sphinx 4.0. (issue #402)
 
+* Test: Added sanity test ignore file for ansible-core 2.11 and fixed some
+  Pylint issues to pass the test.
+
 **Enhancements:**
 
 * Docs: The idempotency of each module and possible limitations are now
