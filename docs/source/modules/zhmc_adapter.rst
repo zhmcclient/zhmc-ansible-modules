@@ -36,7 +36,7 @@ hmc_host
 
 
 hmc_auth
-  The authentication credentials for the HMC, as a dictionary of ``userid``, ``password``.
+  The authentication credentials for the HMC.
 
   | **required**: True
   | **type**: dict
@@ -54,6 +54,21 @@ hmc_auth
 
     | **required**: True
     | **type**: str
+
+
+  ca_certs
+    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the 'REQUESTS_CA_BUNDLE' environment variable or the path name in the 'CURL_CA_BUNDLE' environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
+
+    | **required**: False
+    | **type**: str
+
+
+  verify
+    If True (default), verify the HMC certificate as specified in the ``ca_certs`` parameter. If False, ignore what is specified in the ``ca_certs`` parameter and do not verify the HMC certificate.
+
+    | **required**: False
+    | **type**: bool
+    | **default**: True
 
 
 

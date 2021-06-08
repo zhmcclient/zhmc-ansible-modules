@@ -29,6 +29,13 @@ Released: not yet
 
 **Incompatible changes:**
 
+* The new support for verifying HMC certificates will by default verify the
+  HMC certificate using the "Mozilla CA Certificate List" provided by the
+  'certifi' Python package, causing self-signed HMC certificates to be
+  rejected. The verification behavior can be controlled with the new
+  'ca_certs' and 'verify' sub-parameters of the 'hmc_auth' module parameter
+  of each module.
+
 **Deprecations:**
 
 **Bug fixes:**
@@ -65,7 +72,15 @@ Released: not yet
 * Docs: The idempotency of each module and possible limitations are now
   described for each module. (issue #375)
 
-* Increased minimum version of zhmcclient to 0.29.0 to pick up fixes.
+* Increased minimum version of zhmcclient to 0.31.0 in order to have
+  the support for certificate verification and to pick up fixes.
+
+* Added support for verifying HMC certificates by adding module sub-parameters
+  'ca_certs' and 'verify' to the 'hmc_auth' module parameter of all modules.
+  (issue #401)
+
+* Changed module input parameter 'hmc_auth.userid' to no longer be hidden in
+  logs, for better debugging. The password is still hidden in any logs.
 
 **Cleanup:**
 

@@ -80,7 +80,16 @@ class TestZhmcVirtualFunctionMain(object):
         # Assert call to AnsibleModule()
         expected_argument_spec = dict(
             hmc_host=dict(required=True, type='str'),
-            hmc_auth=dict(required=True, type='dict', no_log=True),
+            hmc_auth=dict(
+                required=True,
+                type='dict',
+                options=dict(
+                    userid=dict(required=True, type='str'),
+                    password=dict(required=True, type='str', no_log=True),
+                    ca_certs=dict(required=False, type='str', default=None),
+                    verify=dict(required=False, type='bool', default=True),
+                ),
+            ),
             cpc_name=dict(required=True, type='str'),
             partition_name=dict(required=True, type='str'),
             name=dict(required=True, type='str'),
