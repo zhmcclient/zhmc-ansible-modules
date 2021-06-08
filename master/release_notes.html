@@ -215,6 +215,11 @@ issues reported by it. (issue #377 and others)</p></li>
 state it applies to Ansible 2.9 and fixed the link to reference the 2.9
 version instead of the latest version. Added a bibliography entry for the
 Ansible Collection Index for Ansible 2.10 and later.</p></li>
+<li><p>Docs: Pinned Sphinx to &lt;4.0 to circumvent the issue that sphinx-versions
+uses the deprecated Sphinx.add_stylesheet() method that was removed in
+Sphinx 4.0. (issue #402)</p></li>
+<li><p>Test: Added sanity test ignore file for ansible-core 2.11 and fixed some
+Pylint issues to pass the test.</p></li>
 </ul>
 <p><strong>Enhancements:</strong></p>
 <ul class="simple">
