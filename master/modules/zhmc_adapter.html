@@ -234,7 +234,7 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>hmc_auth</dt><dd><p>The authentication credentials for the HMC, as a dictionary of <code class="docutils literal notranslate"><span class="pre">userid</span></code>, <code class="docutils literal notranslate"><span class="pre">password</span></code>.</p>
+<dt>hmc_auth</dt><dd><p>The authentication credentials for the HMC.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: True</div>
 <div class="line"><strong>type</strong>: dict</div>
@@ -250,6 +250,19 @@
 <div class="line-block">
 <div class="line"><strong>required</strong>: True</div>
 <div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>ca_certs</dt><dd><p>Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the ‘REQUESTS_CA_BUNDLE’ environment variable or the path name in the ‘CURL_CA_BUNDLE’ environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the ‘certifi’ Python package are used for verifying the HMC certificate.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>verify</dt><dd><p>If True (default), verify the HMC certificate as specified in the <code class="docutils literal notranslate"><span class="pre">ca_certs</span></code> parameter. If False, ignore what is specified in the <code class="docutils literal notranslate"><span class="pre">ca_certs</span></code> parameter and do not verify the HMC certificate.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: bool</div>
+<div class="line"><strong>default</strong>: True</div>
 </div>
 </dd>
 </dl>
