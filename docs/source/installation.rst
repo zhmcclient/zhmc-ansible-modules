@@ -221,8 +221,9 @@ The following operating systems are supported:
 
 The following versions of Ansible are supported:
 
-- Ansible 2.9
-- Ansible 2.10
+- ansible 2.9
+- ansible 2.10
+- ansible-core 2.11
 
 The following Z and LinuxONE machine generations are supported:
 
