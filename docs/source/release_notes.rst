@@ -52,6 +52,8 @@ Released: not yet
 
 **Enhancements:**
 
+* Docs: Stated that ansible-core 2.11 is supported.
+
 **Cleanup:**
 
 **Known issues:**
