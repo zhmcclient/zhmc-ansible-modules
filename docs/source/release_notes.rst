@@ -82,6 +82,8 @@ Released: not yet
 * Changed module input parameter 'hmc_auth.userid' to no longer be hidden in
   logs, for better debugging. The password is still hidden in any logs.
 
+* Docs: Stated that ansible-core 2.11 is supported.
+
 **Cleanup:**
 
 * Renamed "Bibliography" page to "Resources" and removed common Ansible links
