@@ -59,8 +59,7 @@ options:
     required: true
   hmc_auth:
     description:
-      - The authentication credentials for the HMC, as a dictionary of
-        C(userid), C(password).
+      - The authentication credentials for the HMC.
     type: dict
     required: true
     suboptions:
@@ -74,6 +73,26 @@ options:
           - The password for authenticating with the HMC.
         type: str
         required: true
+      ca_certs:
+        description:
+          - Path name of certificate file or certificate directory to be used
+            for verifying the HMC certificate. If null (default), the path name
+            in the 'REQUESTS_CA_BUNDLE' environment variable or the path name
+            in the 'CURL_CA_BUNDLE' environment variable is used, or if neither
+            of these variables is set, the certificates in the Mozilla CA
+            Certificate List provided by the 'certifi' Python package are used
+            for verifying the HMC certificate.
+        type: str
+        required: false
+        default: null
+      verify:
+        description:
+          - If True (default), verify the HMC certificate as specified in the
+            C(ca_certs) parameter. If False, ignore what is specified in the
+            C(ca_certs) parameter and do not verify the HMC certificate.
+        type: bool
+        required: false
+        default: true
   cpc_name:
     description:
       - The name of the CPC that has the partition and is associated with the
@@ -219,7 +238,7 @@ def ensure_attached(params, check_mode):
     """
 
     host = params['hmc_host']
-    userid, password = get_hmc_auth(params['hmc_auth'])
+    userid, password, ca_certs, verify = get_hmc_auth(params['hmc_auth'])
     cpc_name = params['cpc_name']
     storage_group_name = params['storage_group_name']
     partition_name = params['partition_name']
@@ -229,7 +248,8 @@ def ensure_attached(params, check_mode):
     attached = None
 
     try:
-        session = get_session(_faked_session, host, userid, password)
+        session = get_session(_faked_session,
+                              host, userid, password, ca_certs, verify)
         client = zhmcclient.Client(session)
         console = client.consoles.console
         cpc = client.cpcs.find(name=cpc_name)
@@ -273,7 +293,7 @@ def ensure_detached(params, check_mode):
     """
 
     host = params['hmc_host']
-    userid, password = get_hmc_auth(params['hmc_auth'])
+    userid, password, ca_certs, verify = get_hmc_auth(params['hmc_auth'])
     cpc_name = params['cpc_name']
     storage_group_name = params['storage_group_name']
     partition_name = params['partition_name']
@@ -283,7 +303,8 @@ def ensure_detached(params, check_mode):
     attached = None
 
     try:
-        session = get_session(_faked_session, host, userid, password)
+        session = get_session(_faked_session,
+                              host, userid, password, ca_certs, verify)
         client = zhmcclient.Client(session)
         console = client.consoles.console
         cpc = client.cpcs.find(name=cpc_name)
@@ -327,7 +348,7 @@ def facts(params, check_mode):
     """
 
     host = params['hmc_host']
-    userid, password = get_hmc_auth(params['hmc_auth'])
+    userid, password, ca_certs, verify = get_hmc_auth(params['hmc_auth'])
     cpc_name = params['cpc_name']
     storage_group_name = params['storage_group_name']
     partition_name = params['partition_name']
@@ -337,7 +358,8 @@ def facts(params, check_mode):
     attached = None
 
     try:
-        session = get_session(_faked_session, host, userid, password)
+        session = get_session(_faked_session,
+                              host, userid, password, ca_certs, verify)
         client = zhmcclient.Client(session)
         console = client.consoles.console
         cpc = client.cpcs.find(name=cpc_name)
@@ -393,7 +415,16 @@ def main():
     # description of the options in the DOCUMENTATION string.
     argument_spec = dict(
         hmc_host=dict(required=True, type='str'),
-        hmc_auth=dict(required=True, type='dict', no_log=True),
+        hmc_auth=dict(
+            required=True,
+            type='dict',
+            options=dict(
+                userid=dict(required=True, type='str'),
+                password=dict(required=True, type='str', no_log=True),
+                ca_certs=dict(required=False, type='str', default=None),
+                verify=dict(required=False, type='bool', default=True),
+            ),
+        ),
         cpc_name=dict(required=True, type='str'),
         storage_group_name=dict(required=True, type='str'),
         partition_name=dict(required=True, type='str'),

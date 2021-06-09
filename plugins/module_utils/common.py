@@ -153,11 +153,14 @@ def get_hmc_auth(hmc_auth):
 
     Parameters:
       hmc_auth (dict): value of the 'hmc_auth' module input parameter,
-        which is a dictionary with items 'userid' and 'password'.
+        which is a dictionary with required items 'userid' and 'password'
+        and optional items 'ca_certs' and 'verify'.
 
     Returns:
-      tuple(userid, password): A tuple with the respective items
-        of the input dictionary.
+      tuple(userid, password, ca_certs, verify): A tuple with the respective
+        items of the input dictionary. Optional items are defaulted:
+        - ca_certs: Defaults to None.
+        - verify: Defaults to True.
 
     Raises:
       ParameterError: An item in the input dictionary was missing.
@@ -172,7 +175,9 @@ def get_hmc_auth(hmc_auth):
     except KeyError:
         raise ParameterError("Required item 'password' is missing in "
                              "dictionary module parameter 'hmc_auth'.")
-    return userid, password
+    ca_certs = hmc_auth.get('ca_certs', None)
+    verify = hmc_auth.get('verify', True)
+    return userid, password, ca_certs, verify
 
 
 def pull_partition_status(partition):
@@ -364,7 +369,7 @@ def wait_for_transition_completion(partition):
             raise AssertionError()
 
 
-def get_session(faked_session, host, userid, password):
+def get_session(faked_session, host, userid, password, ca_certs, verify):
     """
     Return a session object for the HMC.
 
@@ -372,13 +377,13 @@ def get_session(faked_session, host, userid, password):
       faked_session (zhmcclient_mock.FakedSession or None):
         If this object is a `zhmcclient_mock.FakedSession` object, return that
         object.
-        Else, return a new `zhmcclient.Session` object from the `host`,
-        `userid`, and `password` arguments.
+        Else, return a new `zhmcclient.Session` object from the other arguments.
     """
     if isinstance(faked_session, FakedSession):
         return faked_session
     else:
-        return Session(host, userid, password)
+        verify_cert = ca_certs if verify else False
+        return Session(host, userid, password, verify_cert=verify_cert)
 
 
 def to_unicode(value):
