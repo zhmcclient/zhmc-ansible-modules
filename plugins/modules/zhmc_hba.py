@@ -44,10 +44,10 @@ author:
   - Juergen Leopold (@leopoldjuergen)
 requirements:
   - Access to the WS API of the HMC of the targeted Z system
-    (see :term:`HMC API`). The targeted Z system must be in the Dynamic
-    Partition Manager (DPM) operational mode.
-  - The targeted Z system must be a z13 generation. The z14 and later
-    generations manage HBAs automatically via the "dpm-storage-management"
+    (see :term:`HMC API`).
+  - The targeted Z system must be a z13 generation and must be in the Dynamic
+    Partition Manager (DPM) operational mode. The z14 and later generations
+    in DPM mode manage HBAs automatically via the "dpm-storage-management"
     firmware feature.
 options:
   hmc_host:

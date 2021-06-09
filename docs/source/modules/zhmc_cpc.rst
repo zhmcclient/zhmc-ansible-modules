@@ -20,6 +20,12 @@ Synopsis
 - Update the properties of a CPC.
 
 
+Requirements
+------------
+
+- Access to the WS API of the HMC of the targeted Z system (see :term:`HMC API`).
+- The targeted Z system can be in any operational mode (classic, DPM).
+
 
 
 
