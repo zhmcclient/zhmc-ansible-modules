@@ -84,6 +84,8 @@ Released: not yet
 
 * Docs: Stated that ansible-core 2.11 is supported.
 
+* Increased the minimum version of zhmcclient to 0.31.0.
+
 **Cleanup:**
 
 * Renamed "Bibliography" page to "Resources" and removed common Ansible links
