@@ -39,4 +39,4 @@ The starting point for reading about them is `IBM Z HMC Sample Playbooks`_.
 .. _IBM Z Ansible Collection Samples:
    https://github.com/IBM/z_ansible_collections_samples/
 .. _IBM Z HMC Sample Playbooks:
-   https://github.com/IBM/z_ansible_collections_samples/tree/master/zhmc
+   https://github.com/IBM/z_ansible_collections_samples/tree/master/z_systems_administration/zhmc
