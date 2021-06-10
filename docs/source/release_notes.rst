@@ -67,6 +67,8 @@ Released: not yet
 * Test: Added sanity test ignore file for ansible-core 2.11 and fixed some
   Pylint issues to pass the test.
 
+* Docs: Fixed link to ibm_zhmc samples playbooks.
+
 **Enhancements:**
 
 * Docs: The idempotency of each module and possible limitations are now
