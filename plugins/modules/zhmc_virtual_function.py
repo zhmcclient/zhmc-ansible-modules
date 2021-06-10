@@ -481,7 +481,7 @@ def ensure_present(params, check_mode):
                 changed = True
 
         if vfunction:
-            result = vfunction.properties.copy()
+            result = dict(vfunction.properties)
 
         return changed, result
 

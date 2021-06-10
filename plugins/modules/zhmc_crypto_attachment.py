@@ -418,7 +418,7 @@ def get_partition_config(partition, all_adapters):
         adapter_uris = partition_config['crypto-adapter-uris']
         for a in all_adapters:
             if a.uri in adapter_uris:
-                adapters[a.name] = a.properties.copy()
+                adapters[a.name] = dict(a.properties)
         for dc in partition_config['crypto-domain-configurations']:
             di = int(dc['domain-index'])
             am = ACCESS_MODES_HMC2MOD[dc['access-mode']]

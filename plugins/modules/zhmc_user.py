@@ -696,7 +696,7 @@ def add_artificial_properties(
             user_pattern.pull_full_properties()
             user_properties['user-pattern-name'] = user_pattern.name
             if expand:
-                user_properties['user-pattern'] = user_pattern.properties.copy()
+                user_properties['user-pattern'] = dict(user_pattern.properties)
 
     if auth_type == 'local':
         # For that auth type, the property exists and is non-null.
@@ -716,7 +716,7 @@ def add_artificial_properties(
             user_properties['password-rule-name'] = password_rule.name
             if expand:
                 user_properties['password-rule'] = \
-                    password_rule.properties.copy()
+                    dict(password_rule.properties)
 
     if auth_type == 'ldap':
         # For that auth type, the property exists and is non-null.
@@ -734,7 +734,7 @@ def add_artificial_properties(
             user_properties['ldap-server-definition-name'] = ldap_srv_def.name
             if expand:
                 user_properties['ldap-server-definition'] = \
-                    ldap_srv_def.properties.copy()
+                    dict(ldap_srv_def.properties)
 
     user_roles = list()
     user_role_uris = user.properties['user-roles']
@@ -746,7 +746,7 @@ def add_artificial_properties(
     user_properties['user-role-names'] = [ur.name for ur in user_roles]
     if expand:
         user_properties['user-role-objects'] = \
-            [ur.properties.copy() for ur in user_roles]
+            [dict(ur.properties) for ur in user_roles]
 
 
 def create_check_mode_user(console, create_props, update_props):
@@ -823,12 +823,12 @@ def ensure_present(params, check_mode):
                 # Create a User object locally
                 user = create_check_mode_user(
                     console, create_props, update2_props)
-            result = user.properties.copy()
+            result = dict(user.properties)
             changed = True
         else:
             # It exists. Update its properties.
             user.pull_full_properties()
-            result = user.properties.copy()
+            result = dict(user.properties)
             create_props, update_props = process_properties(
                 console, user, params)
             if create_props:
@@ -843,7 +843,7 @@ def ensure_present(params, check_mode):
                     # We refresh the properties after the update, in case an
                     # input property value gets changed.
                     user.pull_full_properties()
-                    result = user.properties.copy()
+                    result = dict(user.properties)
                 else:
                     # Update the local User object's properties
                     result.update(update_props)
@@ -928,7 +928,7 @@ def facts(params, check_mode):
         user = console.users.find(name=user_name)
         user.pull_full_properties()
 
-        result = user.properties.copy()
+        result = dict(user.properties)
         add_artificial_properties(result, console, user, expand, check_mode)
 
         return changed, result

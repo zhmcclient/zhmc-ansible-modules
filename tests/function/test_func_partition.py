@@ -1611,7 +1611,7 @@ class TestPartition(object):
 
         if self.partition:
             self.partition.pull_full_properties()
-            exp_properties = self.partition.properties.copy()
+            exp_properties = dict(self.partition.properties)
         else:
             exp_properties = {}
         exp_properties['crypto-configuration'] = exp_config

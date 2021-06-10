@@ -1015,14 +1015,14 @@ def add_artificial_properties(
     hbas_prop = list()
     if partition.hbas is not None:
         for hba in partition.hbas.list(full_properties=True):
-            hbas_prop.append(hba.properties.copy())
+            hbas_prop.append(dict(hba.properties))
     partition_properties['hbas'] = hbas_prop
 
     # Get the NIC child elements of the partition
     nics_prop = list()
     for nic in partition.nics.list(full_properties=True):
         nic_props = OrderedDict()
-        nic_props.update(nic.properties.copy())
+        nic_props.update(nic.properties)
         # Add artificial properties adapter-name/-port/-id:
         vswitch_uri = nic.prop("virtual-switch-uri", None)
         if vswitch_uri:
@@ -1049,7 +1049,7 @@ def add_artificial_properties(
     # Get the VF child elements of the partition
     vfs_prop = list()
     for vf in partition.virtual_functions.list(full_properties=True):
-        vfs_prop.append(vf.properties.copy())
+        vfs_prop.append(dict(vf.properties))
     partition_properties['virtual-functions'] = vfs_prop
 
     if expand_storage_groups:
@@ -1057,16 +1057,16 @@ def add_artificial_properties(
         for sg_uri in partition.properties['storage-group-uris']:
             storage_group = console.storage_groups.resource_object(sg_uri)
             storage_group.pull_full_properties()
-            sg_properties = storage_group.properties.copy()
+            sg_properties = dict(storage_group.properties)
 
             # Candidate adapter ports and their adapters (full set of props)
             caps_prop = list()
             for cap in storage_group.list_candidate_adapter_ports(
                     full_properties=True):
-                cap_properties = cap.properties.copy()
+                cap_properties = dict(cap.properties)
                 adapter = cap.manager.adapter
                 adapter.pull_full_properties()
-                cap_properties['parent-adapter'] = adapter.properties.copy()
+                cap_properties['parent-adapter'] = dict(adapter.properties)
                 caps_prop.append(cap_properties)
             sg_properties['candidate-adapter-ports'] = caps_prop
 
@@ -1080,7 +1080,7 @@ def add_artificial_properties(
             for sv_uri in sv_uris:
                 sv = storage_group.storage_volumes.resource_object(sv_uri)
                 sv.pull_full_properties()
-                svs_prop.append(sv.properties.copy())
+                svs_prop.append(dict(sv.properties))
             sg_properties['storage-volumes'] = svs_prop
 
             # Virtual storage resources (full set of properties).
@@ -1091,7 +1091,7 @@ def add_artificial_properties(
                 vsr = storage_group.virtual_storage_resources.resource_object(
                     vsr_uri)
                 vsr.pull_full_properties()
-                vsrs_prop.append(vsr.properties.copy())
+                vsrs_prop.append(dict(vsr.properties))
             sg_properties['virtual-storage-resources'] = vsrs_prop
 
             sgs_prop.append(sg_properties)
@@ -1111,7 +1111,7 @@ def add_artificial_properties(
             for ca_uri in cc['crypto-adapter-uris']:
                 ca = cpc.adapters.resource_object(ca_uri)
                 ca.pull_full_properties()
-                cas_prop.append(ca.properties.copy())
+                cas_prop.append(dict(ca.properties))
             cc['crypto-adapters'] = cas_prop
             partition_properties['crypto-configuration'] = cc
 
@@ -1211,7 +1211,7 @@ def ensure_active(params, check_mode):
                     "status is: {1!r}".format(partition.name, status))
 
         if partition:
-            result = partition.properties.copy()
+            result = dict(partition.properties)
             add_artificial_properties(
                 result, partition, expand_storage_groups,
                 expand_crypto_adapters)
@@ -1295,7 +1295,7 @@ def ensure_stopped(params, check_mode):
                     "status is: {1!r}".format(partition.name, status))
 
         if partition:
-            result = partition.properties.copy()
+            result = dict(partition.properties)
             add_artificial_properties(
                 result, partition, expand_storage_groups,
                 expand_crypto_adapters)
@@ -1379,7 +1379,7 @@ def facts(params, check_mode):
         partition = cpc.partitions.find(name=partition_name)
         partition.pull_full_properties()
 
-        result = partition.properties.copy()
+        result = dict(partition.properties)
         add_artificial_properties(
             result, partition, expand_storage_groups, expand_crypto_adapters)
 
