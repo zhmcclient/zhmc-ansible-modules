@@ -526,7 +526,7 @@ def ensure_present(params, check_mode):
                 raise AssertionError()
 
         if storage_volume:
-            result = storage_volume.properties.copy()
+            result = dict(storage_volume.properties)
             add_artificial_properties(result, storage_volume)
 
         return changed, result
@@ -634,7 +634,7 @@ def facts(params, check_mode):
             raise
 
         storage_volume.pull_full_properties()
-        result = storage_volume.properties.copy()
+        result = dict(storage_volume.properties)
         add_artificial_properties(result, storage_volume)
 
         return changed, result

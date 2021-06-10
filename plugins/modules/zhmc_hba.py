@@ -505,7 +505,7 @@ def ensure_present(params, check_mode):
                 changed = True
 
         if hba:
-            result = hba.properties.copy()
+            result = dict(hba.properties)
 
         return changed, result
 

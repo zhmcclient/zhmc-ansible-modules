@@ -750,8 +750,8 @@ def add_artificial_properties(sg_properties, storage_group, expand):
                 full_properties=True):
             adapter = cap.manager.adapter
             adapter.pull_full_properties()
-            cap_properties = cap.properties.copy()
-            cap_properties['parent-adapter'] = adapter.properties.copy()
+            cap_properties = dict(cap.properties)
+            cap_properties['parent-adapter'] = dict(adapter.properties)
             caps_prop.append(cap_properties)
         sg_properties['candidate-adapter-ports'] = caps_prop
 
@@ -764,7 +764,7 @@ def add_artificial_properties(sg_properties, storage_group, expand):
         for sv_uri in sv_uris:
             sv = storage_group.storage_volumes.resource_object(sv_uri)
             sv.pull_full_properties()
-            svs_prop.append(sv.properties.copy())
+            svs_prop.append(dict(sv.properties))
         sg_properties['storage-volumes'] = svs_prop
 
         # Virtual storage resources (full set of properties).
@@ -774,7 +774,7 @@ def add_artificial_properties(sg_properties, storage_group, expand):
             vsr = storage_group.virtual_storage_resources.resource_object(
                 vsr_uri)
             vsr.pull_full_properties()
-            vsrs_prop.append(vsr.properties.copy())
+            vsrs_prop.append(dict(vsr.properties))
         sg_properties['virtual-storage-resources'] = vsrs_prop
 
         # List of attached partitions (full set of properties).
@@ -782,7 +782,7 @@ def add_artificial_properties(sg_properties, storage_group, expand):
         parts_prop = list()
         for part in parts:
             part.pull_full_properties()
-            parts_prop.append(part.properties.copy())
+            parts_prop.append(dict(part.properties))
         sg_properties['attached-partitions'] = parts_prop
 
 
@@ -865,7 +865,7 @@ def ensure_present(params, check_mode):
         if not check_mode:
             if not storage_group:
                 raise AssertionError()
-            result = storage_group.properties.copy()
+            result = dict(storage_group.properties)
             add_artificial_properties(result, storage_group, expand)
 
         return changed, result
@@ -967,7 +967,7 @@ def facts(params, check_mode):
                 "CPC {1!r}, but with CPC {2!r}.".
                 format(storage_group_name, cpc.name, sg_cpc.name))
 
-        result = storage_group.properties.copy()
+        result = dict(storage_group.properties)
         add_artificial_properties(result, storage_group, expand)
 
         return changed, result

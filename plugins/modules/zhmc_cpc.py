@@ -439,14 +439,14 @@ def add_artificial_properties(cpc_properties, cpc):
       the list subset of their properties.
     """
     partitions = cpc.partitions.list()
-    cpc_properties['partitions'] = [p.properties.copy() for p in partitions]
+    cpc_properties['partitions'] = [dict(p.properties) for p in partitions]
 
     adapters = cpc.adapters.list()
-    cpc_properties['adapters'] = [a.properties.copy() for a in adapters]
+    cpc_properties['adapters'] = [dict(a.properties) for a in adapters]
 
     storage_groups = cpc.manager.console.storage_groups.list(
         filter_args={'cpc-uri': cpc.uri})
-    cpc_properties['storage-groups'] = [sg.properties.copy()
+    cpc_properties['storage-groups'] = [dict(sg.properties)
                                         for sg in storage_groups]
 
 
@@ -477,7 +477,7 @@ def ensure_set(params, check_mode):
         # The default exception handling is sufficient for the above.
 
         cpc.pull_full_properties()
-        result = cpc.properties.copy()
+        result = dict(cpc.properties)
         update_props = process_properties(cpc, params)
         if update_props:
             if not check_mode:
@@ -521,7 +521,7 @@ def facts(params, check_mode):
         # The default exception handling is sufficient for the above.
 
         cpc.pull_full_properties()
-        result = cpc.properties.copy()
+        result = dict(cpc.properties)
         add_artificial_properties(result, cpc)
 
         return False, result

@@ -90,6 +90,8 @@ Released: not yet
   from that page to better fit the unified documentation for the IBM Z
   collections.
 
+* Accomodated the immutable properties introduced with zhmcclient 0.31.0.
+
 **Known issues:**
 
 * See `list of open issues`_.
