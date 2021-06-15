@@ -19,22 +19,26 @@
 Requirements
 ============
 
-The **IBM Z HMC collection** runs on the control node and communicates with the
-targeted HMC via the IP or host name input parameters of the Ansible modules.
+Ansible playbook tasks using modules from the **IBM Z HMC collection** must
+be configured to run on the control node (= local host). From there, the
+modules communicate remotely with the WS API of the targeted HMCs.
 
-In playbooks, this looks as follows:
+There are multiple approaches on how this can be configured:
 
-.. code-block:: text
+* The recommended approach uses an Ansible inventory and delegation of the tasks
+  to localhost, by specifying ``connection: local`` for the playbook or
+  ``ansible_connection: local`` in the inventory, and
+  ``delegate_to: localhost`` for each task that uses a module of the
+  **IBM Z HMC collection**.
 
-   - hosts: localhost  # required: target host
-     connection: local  # required
-     collections:
-       - ibm.ibm_zhmc
-     tasks:
-       - zhmc_adapter:
-           hmc_host: 9.10.11.12
-           hmc_auth: "{{ hmc_auth }}"
-           . . .
+* A simpler but more limited approach uses no Ansible inventory and specifies
+  ``connection: local`` and ``hosts: localhost`` for the entire playbook.
+
+For more details on these approaches, see the description and sample playbooks
+in `IBM Z HMC Sample Playbooks`_.
+
+.. _IBM Z HMC Sample Playbooks:
+   https://github.com/IBM/z_ansible_collections_samples/tree/master/z_systems_administration/zhmc
 
 Control node
 ============
