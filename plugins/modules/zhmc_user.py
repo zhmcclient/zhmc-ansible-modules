@@ -40,8 +40,8 @@ author:
   - Andreas Maier (@andy-maier)
 requirements:
   - Access to the WS API of the HMC of the targeted Z system
-    (see :term:`HMC API`). The targeted Z system can be in any operational
-    mode (classic, DPM)
+    (see :term:`HMC API`).
+  - The targeted Z system can be in any operational mode (classic, DPM)
 options:
   hmc_host:
     description:

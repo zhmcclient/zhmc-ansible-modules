@@ -20,6 +20,12 @@ Synopsis
 - Create, delete, or update a user on an HMC.
 
 
+Requirements
+------------
+
+- Access to the WS API of the HMC of the targeted Z system (see :term:`HMC API`).
+- The targeted Z system can be in any operational mode (classic, DPM)
+
 
 
 

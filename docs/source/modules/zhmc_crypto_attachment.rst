@@ -21,6 +21,12 @@ Synopsis
 - Detach all crypto domains and all crypto adapters from a partition.
 
 
+Requirements
+------------
+
+- Access to the WS API of the HMC of the targeted Z system (see :term:`HMC API`).
+- The targeted Z system must be in the Dynamic Partition Manager (DPM) operational mode.
+
 
 
 

@@ -20,6 +20,12 @@ Synopsis
 - Note that the Ansible module zhmc_partition can be used to gather facts about existing NICs of a partition.
 
 
+Requirements
+------------
+
+- Access to the WS API of the HMC of the targeted Z system (see :term:`HMC API`).
+- The targeted Z system must be in the Dynamic Partition Manager (DPM) operational mode.
+
 
 
 

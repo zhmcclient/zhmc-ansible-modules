@@ -20,6 +20,12 @@ Synopsis
 - Attach and detach a storage group to and from a partition.
 
 
+Requirements
+------------
+
+- Access to the WS API of the HMC of the targeted Z system (see :term:`HMC API`).
+- The targeted Z system must be of generation z14 or later (to have the "dpm-storage-management" firmware feature) and must be in the Dynamic Partition Manager (DPM) operational mode.
+
 
 
 
