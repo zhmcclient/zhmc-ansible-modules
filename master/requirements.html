@@ -184,20 +184,21 @@
             
   <div class="section" id="requirements">
 <span id="id1"></span><h1>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h1>
-<p>The <strong>IBM Z HMC collection</strong> runs on the control node and communicates with the
-targeted HMC via the IP or host name input parameters of the Ansible modules.</p>
-<p>In playbooks, this looks as follows:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>- hosts: localhost  # required: target host
-  connection: local  # required
-  collections:
-    - ibm.ibm_zhmc
-  tasks:
-    - zhmc_adapter:
-        hmc_host: 9.10.11.12
-        hmc_auth: &quot;{{ hmc_auth }}&quot;
-        . . .
-</pre></div>
-</div>
+<p>Ansible playbook tasks using modules from the <strong>IBM Z HMC collection</strong> must
+be configured to run on the control node (= local host). From there, the
+modules communicate remotely with the WS API of the targeted HMCs.</p>
+<p>There are multiple approaches on how this can be configured:</p>
+<ul class="simple">
+<li><p>The recommended approach uses an Ansible inventory and delegation of the tasks
+to localhost, by specifying <code class="docutils literal notranslate"><span class="pre">connection:</span> <span class="pre">local</span></code> for the playbook or
+<code class="docutils literal notranslate"><span class="pre">ansible_connection:</span> <span class="pre">local</span></code> in the inventory, and
+<code class="docutils literal notranslate"><span class="pre">delegate_to:</span> <span class="pre">localhost</span></code> for each task that uses a module of the
+<strong>IBM Z HMC collection</strong>.</p></li>
+<li><p>A simpler but more limited approach uses no Ansible inventory and specifies
+<code class="docutils literal notranslate"><span class="pre">connection:</span> <span class="pre">local</span></code> and <code class="docutils literal notranslate"><span class="pre">hosts:</span> <span class="pre">localhost</span></code> for the entire playbook.</p></li>
+</ul>
+<p>For more details on these approaches, see the description and sample playbooks
+in <a class="reference external" href="https://github.com/IBM/z_ansible_collections_samples/tree/master/z_systems_administration/zhmc">IBM Z HMC Sample Playbooks</a>.</p>
 </div>
 <div class="section" id="control-node">
 <h1>Control node<a class="headerlink" href="#control-node" title="Permalink to this headline">¶</a></h1>
