@@ -229,6 +229,10 @@ Sphinx 4.0. (issue #402)</p></li>
 <li><p>Test: Added sanity test ignore file for ansible-core 2.11 and fixed some
 Pylint issues to pass the test.</p></li>
 <li><p>Docs: Fixed link to ibm_zhmc samples playbooks.</p></li>
+<li><p>Docs: Fixed error during automatic docs build when two PRs are merged to
+master shortly one after another. The last one finishing the docs build now
+wins. Since PRs are merged in the order earlier first, their docs build should
+also finish first. (issue #417)</p></li>
 </ul>
 <p><strong>Enhancements:</strong></p>
 <ul class="simple">
