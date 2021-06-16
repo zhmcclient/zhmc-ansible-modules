@@ -69,6 +69,11 @@ Released: not yet
 
 * Docs: Fixed link to ibm_zhmc samples playbooks.
 
+* Docs: Fixed error during automatic docs build when two PRs are merged to
+  master shortly one after another. The last one finishing the docs build now
+  wins. Since PRs are merged in the order earlier first, their docs build should
+  also finish first. (issue #417)
+
 **Enhancements:**
 
 * Docs: The idempotency of each module and possible limitations are now
