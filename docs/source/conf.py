@@ -107,7 +107,7 @@ def get_docs_branches(min_version):
 
       tuple of strings: List of Git branches to use.
     """
-    return tuple('master')
+    return ('master',)
 
 
 # -- Project information -----------------------------------------------------
