@@ -29,6 +29,8 @@ This version contains all fixes up to version 0.9.x.
 
 Released: not yet
 
+Test 3b
+
 **Incompatible changes:**
 
 * The new support for verifying HMC certificates will by default verify the
