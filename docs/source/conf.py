@@ -43,8 +43,16 @@ def get_docs_tags(min_version):
     Get the list of Git tags that should be included in the documentation.
 
     The algorithm uses those tags that match the format M.N.U, and that are
-    equal to or higher than the specified minimum version, and only the latest
-    update version of each distinct major/minor version.
+    equal to or higher than the specified minimum version.
+
+    As a result, all update version of a particular minor version are built,
+    e.g. 0.9.0, 0.9.1, and 0.9.2. A prior approach built only the latest
+    update version of a particular minor version, i.e. only 0.9.2 in this
+    example, effectively removing the docs for 0.9.1 when 0.9.2 was released.
+    While that approach is more economic in terms of number of versions,
+    it makes it hard for users to reference the documentation, since a
+    version they have referenced today may no longer exist tomorrow, just
+    because a fix was released.
 
     Parameters:
 
@@ -70,24 +78,11 @@ def get_docs_tags(min_version):
         # parameters, we can ignore the exception and return anything, e.g.
         # an empty tuple.
         return tuple()
-    tag_names = {}  # key: tuple(major, minor), value: highest update
+    tag_names = []  # items: tuple(major, minor, update)
     for tag in repo.tags:
         m = re.match(r'^(\d+)\.(\d+)\.(\d+)$', tag.name)
         if m:
-            # pylint: disable=consider-using-generator
-            mnu_tuple = tuple([int(s) for s in m.groups()])
-            if mnu_tuple < min_version_tuple:
-                continue
-            major, minor, update = m.groups()
-            key = (major, minor)
-            try:
-                old_update = tag_names[key]
-                if update > old_update:
-                    tag_names[key] = update
-            except KeyError:
-                tag_names[key] = update
-    tag_names = ['{mn[0]}.{mn[1]}.{u}'.format(mn=k, u=tag_names[k])
-                 for k in tag_names]
+            tag_names.append(tag.name)
     return tuple(tag_names)
 
 
@@ -95,7 +90,14 @@ def get_docs_branches(min_version):
     """
     Get the list of Git branches that should be included in the documentation.
 
-    The algorithm uses 'master' and the latest branch matching 'stable_M.N'.
+    The algorithm uses only 'master' (the development branch).
+
+    A prior approach uses also the latest fix branch 'stable_M.N', but that
+    is too confusing for only the small gain that upcoming fixes are already
+    documented before being released (which should not take long, anyway),
+    plus it has the same problem as described in get_docs_tags() which is
+    that the release of a new major or minor version increases the latest
+    fix branch, causing the docs for the previous fix branch to go away.
 
     Parameters:
 
@@ -105,39 +107,7 @@ def get_docs_branches(min_version):
 
       tuple of strings: List of Git branches to use.
     """
-    # pylint: disable=consider-using-generator
-    min_mn_tuple = tuple([int(s) for s in min_version.split('.')[0:2]])
-    repo_dir = os.path.join(os.path.dirname(__file__), '..', '..')
-    try:
-        repo = git.Repo(repo_dir)
-    except git.InvalidGitRepositoryError:
-        # sphinx-versioning runs the conf.py file once on the checked out
-        # repo to determine the scv_* parameters to use, and then sphinx-build
-        # runs it again when building each tag/branch. The first run succeeds
-        # because that is done on the checked out repo. The subsequent runs
-        # raise this exception because sphinx-versioning invoked sphinx-build
-        # on a copy of the repo that does not include the .git subtree.
-        # However, since the sphinx-build runs do not look at the scv_*
-        # parameters, we can ignore the exception and return anything, e.g.
-        # an empty tuple.
-        return tuple()
-    branch_names = ['master']
-    stable_mn_tuple = (-1, -1)
-    # Iterate through the remote branches, because they do not necessarily
-    # exist as local branches:
-    for r_branch in repo.remote().refs:
-        m = re.search(r'/stable_(\d+)\.(\d+)$', r_branch.name)
-        if m:
-            # pylint: disable=consider-using-generator
-            mn_tuple = tuple([int(s) for s in m.groups()])
-            if mn_tuple < min_mn_tuple:
-                continue
-            if mn_tuple > stable_mn_tuple:
-                stable_mn_tuple = mn_tuple
-    if stable_mn_tuple > (-1, -1):
-        stable_name = 'stable_{mn[0]}.{mn[1]}'.format(mn=stable_mn_tuple)
-        branch_names.append(stable_name)
-    return tuple(branch_names)
+    return tuple('master')
 
 
 # -- Project information -----------------------------------------------------
