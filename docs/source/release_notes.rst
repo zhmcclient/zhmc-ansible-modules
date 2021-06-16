@@ -20,12 +20,12 @@ Releases
 ========
 
 
-Version 0.10.0-dev1
--------------------
+Version 0.10.0
+--------------
 
-This version contains all fixes up to version 0.9.x.
+This version contains all fixes up to version 0.9.2.
 
-Released: not yet
+Released: 2021-06-17
 
 **Incompatible changes:**
 
@@ -35,8 +35,6 @@ Released: not yet
   rejected. The verification behavior can be controlled with the new
   'ca_certs' and 'verify' sub-parameters of the 'hmc_auth' module parameter
   of each module.
-
-**Deprecations:**
 
 **Bug fixes:**
 
@@ -105,12 +103,6 @@ Released: not yet
   the master branch. This change added the update versions before the latest
   update version within each minor version, and removed the latest stable branch
   stable_M.N.
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 0.9.0
