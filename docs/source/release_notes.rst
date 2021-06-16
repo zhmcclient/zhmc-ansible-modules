@@ -101,6 +101,11 @@ Released: not yet
 
 * Accomodated the immutable properties introduced with zhmcclient 0.31.0.
 
+* Docs: The documentation is now built for all versions since 0.9.0 and for
+  the master branch. This change added the update versions before the latest
+  update version within each minor version, and removed the latest stable branch
+  stable_M.N.
+
 **Known issues:**
 
 * See `list of open issues`_.
