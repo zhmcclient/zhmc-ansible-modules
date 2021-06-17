@@ -21,7 +21,7 @@ env:
 on:
   push:
     # PR merge to these branches triggers this workflow
-    branches: [ master, stable_0.9 ]
+    branches: [ master, stable_0.10 ]
 
 jobs:
 
