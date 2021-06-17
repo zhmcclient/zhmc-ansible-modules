@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.9.2
+                0.9.3
 
               </div>
             
@@ -112,6 +112,7 @@
 <p class="caption"><span class="caption-text">Appendices</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Releases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-9-3">Version 0.9.3</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-9-2">Version 0.9.2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-9-1">Version 0.9.1</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-9-0">Version 0.9.0</a></li>
@@ -193,6 +194,25 @@
             
   <div class="section" id="releases">
 <span id="id1"></span><h1>Releases<a class="headerlink" href="#releases" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="version-0-9-3">
+<h2>Version 0.9.3<a class="headerlink" href="#version-0-9-3" title="Permalink to this headline">¶</a></h2>
+<p>Released: 2021-06-17</p>
+<p><strong>Bug fixes:</strong></p>
+<ul class="simple">
+<li><p>Pinned zhmcclient version to &lt;0.31 for two reasons:</p>
+<ul>
+<li><p>zhmcclient 0.31.0 introduces a new Session parameter ‘verify_cert’ that
+by default verifies HMC certificates, so self-signed HMC certificates
+will fail. The ibm_zhmc collection 0.10.0 introduces the support for this
+new parameter, but versions 0.9.x do not have that yet.</p></li>
+<li><p>zhmcclient 0.31.0 introduces that the properties attribute of resource
+objects are immutable. The ibm_zhmc collection needs to accomodate that,
+and that support is also in ibm_zhmc collection 0.10.0, but versions 0.9.x
+do not have that yet.</p></li>
+</ul>
+</li>
+</ul>
+</div>
 <div class="section" id="version-0-9-2">
 <h2>Version 0.9.2<a class="headerlink" href="#version-0-9-2" title="Permalink to this headline">¶</a></h2>
 <p>Released: 2021-06-08</p>
@@ -541,7 +561,7 @@ property update.</p></li>
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 0.9.2
+        v: 0.9.3
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -550,6 +570,7 @@ property update.</p></li>
             <dd><a href="0.9.0/release_notes.html">0.9.0</a></dd>
             <dd><a href="0.9.1/release_notes.html">0.9.1</a></dd>
             <dd><a href="0.9.2/release_notes.html">0.9.2</a></dd>
+            <dd><a href="0.9.3/release_notes.html">0.9.3</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
