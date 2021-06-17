@@ -72,6 +72,9 @@ Released: 2021-06-17
   wins. Since PRs are merged in the order earlier first, their docs build should
   also finish first. (issue #417)
 
+* Docs: Fixed instructions to release a version to cover for the case where
+  the docs build does not show the new verison in the release notes.
+
 **Enhancements:**
 
 * Docs: The idempotency of each module and possible limitations are now

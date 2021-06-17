@@ -299,6 +299,16 @@ local clone of the zhmc-ansible-modules Git repo.
           git tag -f ${MNU}
           git push -f --tags
 
+    * Wait for the docs workflow named "Release M.N.U" to complete, on
+      https://github.com/zhmcclient/zhmc-ansible-modules/actions/workflows/docs.yml,
+      and once it is complete, double check whether you see the new version
+      in the release notes at
+      https://zhmcclient.github.io/zhmc-ansible-modules/release_notes.html.
+
+      If you do not see the new release notes, the build was faster than the
+      pushing of the new tag, and this can be fixed by simply re-running
+      the docs workflow via the corresponding button in GitHub Actions.
+
 11. Clean up the local repo:
 
     .. code-block:: sh
