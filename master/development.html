@@ -406,6 +406,15 @@ git push -f --tags
 </pre></div>
 </div>
 </li>
+<li><p>Wait for the docs workflow named “Release M.N.U” to complete, on
+<a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/actions/workflows/docs.yml">https://github.com/zhmcclient/zhmc-ansible-modules/actions/workflows/docs.yml</a>,
+and once it is complete, double check whether you see the new version
+in the release notes at
+<a class="reference external" href="https://zhmcclient.github.io/zhmc-ansible-modules/release_notes.html">https://zhmcclient.github.io/zhmc-ansible-modules/release_notes.html</a>.</p>
+<p>If you do not see the new release notes, the build was faster than the
+pushing of the new tag, and this can be fixed by simply re-running
+the docs workflow via the corresponding button in GitHub Actions.</p>
+</li>
 </ul>
 </li>
 <li><p>Clean up the local repo:</p>
