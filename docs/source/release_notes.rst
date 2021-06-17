@@ -20,14 +20,10 @@ Releases
 ========
 
 
-Version 0.9.3-dev1
-------------------
+Version 0.9.3
+-------------
 
-Released: not yet
-
-**Incompatible changes:**
-
-**Deprecations:**
+Released: 2021-06-17
 
 **Bug fixes:**
 
@@ -42,16 +38,6 @@ Released: not yet
     objects are immutable. The ibm_zhmc collection needs to accomodate that,
     and that support is also in ibm_zhmc collection 0.10.0, but versions 0.9.x
     do not have that yet.
-
-**Enhancements:**
-
-**Cleanup:**
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 0.9.2
