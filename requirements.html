@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.9.3
+                0.10.0
 
               </div>
             
@@ -116,7 +116,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="release_notes.html">Releases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="versioning.html">Versioning</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bibliography.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bibliography.html">Resources</a></li>
 </ul>
 
             
@@ -184,18 +184,28 @@
             
   <div class="section" id="requirements">
 <span id="id1"></span><h1>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h1>
-<p>For the <strong>IBM Z HMC collection</strong>, the managed node is the control node, i.e. the
-playbook has its <code class="docutils literal notranslate"><span class="pre">hosts</span></code> and <code class="docutils literal notranslate"><span class="pre">connection</span></code> properties set accordingly:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>- hosts: localhost
-  connection: local
-</pre></div>
-</div>
-<p>The location of the HMC is defined with input parameters to the modules.</p>
+<p>Ansible playbook tasks using modules from the <strong>IBM Z HMC collection</strong> must
+be configured to run on the control node (= local host). From there, the
+modules communicate remotely with the WS API of the targeted HMCs.</p>
+<p>There are multiple approaches on how this can be configured:</p>
+<ul class="simple">
+<li><p>The recommended approach uses an Ansible inventory and delegation of the tasks
+to localhost, by specifying <code class="docutils literal notranslate"><span class="pre">connection:</span> <span class="pre">local</span></code> for the playbook or
+<code class="docutils literal notranslate"><span class="pre">ansible_connection:</span> <span class="pre">local</span></code> in the inventory, and
+<code class="docutils literal notranslate"><span class="pre">delegate_to:</span> <span class="pre">localhost</span></code> for each task that uses a module of the
+<strong>IBM Z HMC collection</strong>.</p></li>
+<li><p>A simpler but more limited approach uses no Ansible inventory and specifies
+<code class="docutils literal notranslate"><span class="pre">connection:</span> <span class="pre">local</span></code> and <code class="docutils literal notranslate"><span class="pre">hosts:</span> <span class="pre">localhost</span></code> for the entire playbook.</p></li>
+</ul>
+<p>For more details on these approaches, see the description and sample playbooks
+in <a class="reference external" href="https://github.com/IBM/z_ansible_collections_samples/tree/master/z_systems_administration/zhmc">IBM Z HMC Sample Playbooks</a>.</p>
 </div>
 <div class="section" id="control-node">
 <h1>Control node<a class="headerlink" href="#control-node" title="Permalink to this headline">¶</a></h1>
-<p>Besides having Ansible and the <strong>IBM Z HMC collection</strong> installed, there are no
-additional requirements for the control node.</p>
+<p>Requirements for the Ansible control node are:</p>
+<ul class="simple">
+<li><p>The control node must have network connectivity to the targeted HMC.</p></li>
+</ul>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="requirements_managed.html">Managed node</a></li>
@@ -241,7 +251,7 @@ additional requirements for the control node.</p>
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 0.9.3
+        v: 0.10.0
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -251,6 +261,7 @@ additional requirements for the control node.</p>
             <dd><a href="0.9.1/requirements.html">0.9.1</a></dd>
             <dd><a href="0.9.2/requirements.html">0.9.2</a></dd>
             <dd><a href="0.9.3/requirements.html">0.9.3</a></dd>
+            <dd><a href="0.10.0/requirements.html">0.10.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

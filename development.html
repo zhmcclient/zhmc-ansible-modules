@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.9.3
+                0.10.0
 
               </div>
             
@@ -121,7 +121,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="release_notes.html">Releases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="versioning.html">Versioning</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bibliography.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bibliography.html">Resources</a></li>
 </ul>
 
             
@@ -309,20 +309,19 @@ branch of its minor version:</p>
 </pre></div>
 </div>
 </li>
-<li><p>When releasing based on the master branch, create and push a new stable
-branch for the same minor version:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git checkout master
-git pull
-git checkout -b stable_<span class="si">${</span><span class="nv">MN</span><span class="si">}</span>
-git push --set-upstream origin stable_<span class="si">${</span><span class="nv">MN</span><span class="si">}</span>
-</pre></div>
-</div>
-<p>Note that no GitHub Pull Request is created for any <code class="docutils literal notranslate"><span class="pre">stable_*</span></code> branch.</p>
-</li>
 <li><p>Create a topic branch for the version that is being released:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git checkout <span class="si">${</span><span class="nv">BRANCH</span><span class="si">}</span>
 git pull
 git checkout -b release_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>Edit the Galaxy metadata file:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>vi galaxy.yml
+</pre></div>
+</div>
+<p>and set the ‘version’ parameter to the version that is being released:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">version</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">M.N.U</span>
 </pre></div>
 </div>
 </li>
@@ -342,15 +341,6 @@ understandable by users.</p></li>
 add text for any known issues you want users to know about.</p></li>
 <li><p>Remove all empty list items.</p></li>
 </ul>
-</li>
-<li><p>Edit the Galaxy metadata file:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>vi galaxy.yml
-</pre></div>
-</div>
-<p>and set the ‘version’ parameter to the version that is being released:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">version</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">M.N.U</span>
-</pre></div>
-</div>
 </li>
 <li><p>When releasing based on the master branch, edit the GitHub workflow file
 <code class="docutils literal notranslate"><span class="pre">test.yml</span></code>:</p>
@@ -397,15 +387,6 @@ trigger the CI runs.</p>
 change the target branch of the Pull Request to <code class="docutils literal notranslate"><span class="pre">stable_M.N</span></code>.</p>
 </li>
 <li><p>On GitHub, close milestone <code class="docutils literal notranslate"><span class="pre">M.N.U</span></code>.</p></li>
-<li><p>Perform a complete test in your preferred Python environment:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>make clobber all
-</pre></div>
-</div>
-<p>This should not fail because the same tests have already been run in the
-CI. However, run it for additional safety before the release.</p>
-<p>If this test fails, fix any issues (with new commits) until the test
-succeeds.</p>
-</li>
 <li><p>The items in this step should be performed within no more than 1 minute, so
 that the documentation that is built uses the new version tag.</p>
 <ul>
@@ -425,12 +406,30 @@ git push -f --tags
 </pre></div>
 </div>
 </li>
+<li><p>Wait for the docs workflow named “Release M.N.U” to complete, on
+<a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/actions/workflows/docs.yml">https://github.com/zhmcclient/zhmc-ansible-modules/actions/workflows/docs.yml</a>,
+and once it is complete, double check whether you see the new version
+in the release notes at
+<a class="reference external" href="https://zhmcclient.github.io/zhmc-ansible-modules/release_notes.html">https://zhmcclient.github.io/zhmc-ansible-modules/release_notes.html</a>.</p>
+<p>If you do not see the new release notes, the build was faster than the
+pushing of the new tag, and this can be fixed by simply re-running
+the docs workflow via the corresponding button in GitHub Actions.</p>
+</li>
 </ul>
 </li>
 <li><p>Clean up the local repo:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git branch -d release_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
 </pre></div>
 </div>
+</li>
+<li><p>When releasing based on the master branch, create and push a new stable
+branch for the same minor version:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git checkout -b stable_<span class="si">${</span><span class="nv">MN</span><span class="si">}</span>
+git push --set-upstream origin stable_<span class="si">${</span><span class="nv">MN</span><span class="si">}</span>
+git checkout <span class="si">${</span><span class="nv">BRANCH</span><span class="si">}</span>
+</pre></div>
+</div>
+<p>Note that no GitHub Pull Request is created for any <code class="docutils literal notranslate"><span class="pre">stable_*</span></code> branch.</p>
 </li>
 <li><p>On GitHub, edit the new tag <code class="docutils literal notranslate"><span class="pre">M.N.U</span></code>, and create a release description on
 it. This will cause it to appear in the Release tab.</p>
@@ -625,7 +624,7 @@ git branch -d start_<span class="si">${</span><span class="nv">MNU</span><span c
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 0.9.3
+        v: 0.10.0
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -635,6 +634,7 @@ git branch -d start_<span class="si">${</span><span class="nv">MNU</span><span c
             <dd><a href="0.9.1/development.html">0.9.1</a></dd>
             <dd><a href="0.9.2/development.html">0.9.2</a></dd>
             <dd><a href="0.9.3/development.html">0.9.3</a></dd>
+            <dd><a href="0.10.0/development.html">0.10.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

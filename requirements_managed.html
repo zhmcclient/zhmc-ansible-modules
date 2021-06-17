@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.9.3
+                0.10.0
 
               </div>
             
@@ -116,7 +116,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="release_notes.html">Releases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="versioning.html">Versioning</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bibliography.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bibliography.html">Resources</a></li>
 </ul>
 
             
@@ -186,8 +186,14 @@
             
   <div class="section" id="managed-node">
 <h1>Managed node<a class="headerlink" href="#managed-node" title="Permalink to this headline">¶</a></h1>
-<p>For the <strong>IBM Z HMC collection</strong>, the managed node is the control node, so there
-are no additional requirements for the managed node.</p>
+<p>The managed node for the <strong>IBM Z HMC collection</strong> is the targeted HMC. The
+Z systems managed by the HMC are not visible on the network because the HMC
+encapsulates them. In addition, there is a number of resources that are owned
+by the HMC itself, such as users or password rules.</p>
+<p>Requirements for the targeted HMC are:</p>
+<ul class="simple">
+<li><p>The HMC must have its Web Services API enabled.</p></li>
+</ul>
 </div>
 
 
@@ -228,7 +234,7 @@ are no additional requirements for the managed node.</p>
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 0.9.3
+        v: 0.10.0
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -238,6 +244,7 @@ are no additional requirements for the managed node.</p>
             <dd><a href="0.9.1/requirements_managed.html">0.9.1</a></dd>
             <dd><a href="0.9.2/requirements_managed.html">0.9.2</a></dd>
             <dd><a href="0.9.3/requirements_managed.html">0.9.3</a></dd>
+            <dd><a href="0.10.0/requirements_managed.html">0.10.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

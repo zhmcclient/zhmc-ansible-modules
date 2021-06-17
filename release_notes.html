@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.9.3
+                0.10.0
 
               </div>
             
@@ -112,9 +112,7 @@
 <p class="caption"><span class="caption-text">Appendices</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Releases</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#version-0-9-3">Version 0.9.3</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-0-9-2">Version 0.9.2</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-0-9-1">Version 0.9.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-10-0">Version 0.10.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-9-0">Version 0.9.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-8-0">Version 0.8.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-7-0">Version 0.7.0</a></li>
@@ -126,7 +124,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="versioning.html">Versioning</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bibliography.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bibliography.html">Resources</a></li>
 </ul>
 
             
@@ -194,28 +192,19 @@
             
   <div class="section" id="releases">
 <span id="id1"></span><h1>Releases<a class="headerlink" href="#releases" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="version-0-9-3">
-<h2>Version 0.9.3<a class="headerlink" href="#version-0-9-3" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="version-0-10-0">
+<h2>Version 0.10.0<a class="headerlink" href="#version-0-10-0" title="Permalink to this headline">¶</a></h2>
+<p>This version contains all fixes up to version 0.9.2.</p>
 <p>Released: 2021-06-17</p>
-<p><strong>Bug fixes:</strong></p>
+<p><strong>Incompatible changes:</strong></p>
 <ul class="simple">
-<li><p>Pinned zhmcclient version to &lt;0.31 for two reasons:</p>
-<ul>
-<li><p>zhmcclient 0.31.0 introduces a new Session parameter ‘verify_cert’ that
-by default verifies HMC certificates, so self-signed HMC certificates
-will fail. The ibm_zhmc collection 0.10.0 introduces the support for this
-new parameter, but versions 0.9.x do not have that yet.</p></li>
-<li><p>zhmcclient 0.31.0 introduces that the properties attribute of resource
-objects are immutable. The ibm_zhmc collection needs to accomodate that,
-and that support is also in ibm_zhmc collection 0.10.0, but versions 0.9.x
-do not have that yet.</p></li>
+<li><p>The new support for verifying HMC certificates will by default verify the
+HMC certificate using the “Mozilla CA Certificate List” provided by the
+‘certifi’ Python package, causing self-signed HMC certificates to be
+rejected. The verification behavior can be controlled with the new
+‘ca_certs’ and ‘verify’ sub-parameters of the ‘hmc_auth’ module parameter
+of each module.</p></li>
 </ul>
-</li>
-</ul>
-</div>
-<div class="section" id="version-0-9-2">
-<h2>Version 0.9.2<a class="headerlink" href="#version-0-9-2" title="Permalink to this headline">¶</a></h2>
-<p>Released: 2021-06-08</p>
 <p><strong>Bug fixes:</strong></p>
 <ul class="simple">
 <li><p>Docs: In the development section of the docs, fixes and improvements for the
@@ -227,24 +216,49 @@ This fixes a possible inconsistency in the versions included and build
 parameters used, between stable branch and master branch (issue #350).</p></li>
 <li><p>Mitigated the coveralls HTTP status 422 by pinning coveralls-python to
 &lt;3.0.0.</p></li>
+<li><p>Fixed the condition for whether to run the Ansible sanity test and fixed
+issues reported by it. (issue #377 and others)</p></li>
+<li><p>Docs: Fixed the text for the Ansible Module Index in the bibliography to
+state it applies to Ansible 2.9 and fixed the link to reference the 2.9
+version instead of the latest version. Added a bibliography entry for the
+Ansible Collection Index for Ansible 2.10 and later.</p></li>
 <li><p>Docs: Pinned Sphinx to &lt;4.0 to circumvent the issue that sphinx-versions
 uses the deprecated Sphinx.add_stylesheet() method that was removed in
 Sphinx 4.0. (issue #402)</p></li>
 <li><p>Test: Added sanity test ignore file for ansible-core 2.11 and fixed some
 Pylint issues to pass the test.</p></li>
+<li><p>Docs: Fixed link to ibm_zhmc samples playbooks.</p></li>
+<li><p>Docs: Fixed error during automatic docs build when two PRs are merged to
+master shortly one after another. The last one finishing the docs build now
+wins. Since PRs are merged in the order earlier first, their docs build should
+also finish first. (issue #417)</p></li>
+<li><p>Docs: Fixed instructions to release a version to cover for the case where
+the docs build does not show the new verison in the release notes.</p></li>
 </ul>
 <p><strong>Enhancements:</strong></p>
 <ul class="simple">
+<li><p>Docs: The idempotency of each module and possible limitations are now
+described for each module. (issue #375)</p></li>
+<li><p>Increased minimum version of zhmcclient to 0.31.0 in order to have
+the support for certificate verification and to pick up fixes.</p></li>
+<li><p>Added support for verifying HMC certificates by adding module sub-parameters
+‘ca_certs’ and ‘verify’ to the ‘hmc_auth’ module parameter of all modules.
+(issue #401)</p></li>
+<li><p>Changed module input parameter ‘hmc_auth.userid’ to no longer be hidden in
+logs, for better debugging. The password is still hidden in any logs.</p></li>
 <li><p>Docs: Stated that ansible-core 2.11 is supported.</p></li>
+<li><p>Increased the minimum version of zhmcclient to 0.31.0.</p></li>
 </ul>
-</div>
-<div class="section" id="version-0-9-1">
-<h2>Version 0.9.1<a class="headerlink" href="#version-0-9-1" title="Permalink to this headline">¶</a></h2>
-<p>Released: 2020-12-15</p>
-<p><strong>Enhancements:</strong></p>
+<p><strong>Cleanup:</strong></p>
 <ul class="simple">
-<li><p>Updated the README page with a section about the RedHat Ansible Certified
-Content for IBM Z, for consistency with the other IBM Z collections.</p></li>
+<li><p>Renamed “Bibliography” page to “Resources” and removed common Ansible links
+from that page to better fit the unified documentation for the IBM Z
+collections.</p></li>
+<li><p>Accomodated the immutable properties introduced with zhmcclient 0.31.0.</p></li>
+<li><p>Docs: The documentation is now built for all versions since 0.9.0 and for
+the master branch. This change added the update versions before the latest
+update version within each minor version, and removed the latest stable branch
+stable_M.N.</p></li>
 </ul>
 </div>
 <div class="section" id="version-0-9-0">
@@ -314,6 +328,10 @@ the ‘vlan_type’, ‘function_number’ and ‘function_range’ properties.<
 adapters by name instead of just their count. (See issue #187)</p></li>
 <li><p>Migrated from Travis and Appveyor to GitHub Actions. This required several
 changes in package dependencies for development.</p></li>
+<li><p>Clarified that the zhmc_cpc module can be used for CPCs in any operational
+mode. Previously, the documentation stated DPM mode as a prerequisite.
+Added support to the zhmc_cpc module for updating several classic-mode-only
+properties.</p></li>
 </ul>
 <p><strong>Cleanup:</strong></p>
 <ul class="simple">
@@ -561,7 +579,7 @@ property update.</p></li>
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 0.9.3
+        v: 0.10.0
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -571,6 +589,7 @@ property update.</p></li>
             <dd><a href="0.9.1/release_notes.html">0.9.1</a></dd>
             <dd><a href="0.9.2/release_notes.html">0.9.2</a></dd>
             <dd><a href="0.9.3/release_notes.html">0.9.3</a></dd>
+            <dd><a href="0.10.0/release_notes.html">0.10.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
