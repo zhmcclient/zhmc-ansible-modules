@@ -31,6 +31,18 @@ Released: not yet
 
 **Bug fixes:**
 
+* Pinned zhmcclient version to <0.31 for two reasons:
+
+  - zhmcclient 0.31.0 introduces a new Session parameter 'verify_cert' that
+    by default verifies HMC certificates, so self-signed HMC certificates
+    will fail. The ibm_zhmc collection 0.10.0 introduces the support for this
+    new parameter, but versions 0.9.x do not have that yet.
+
+  - zhmcclient 0.31.0 introduces that the properties attribute of resource
+    objects are immutable. The ibm_zhmc collection needs to accomodate that,
+    and that support is also in ibm_zhmc collection 0.10.0, but versions 0.9.x
+    do not have that yet.
+
 **Enhancements:**
 
 **Cleanup:**
