@@ -20,6 +20,30 @@ Releases
 ========
 
 
+Version 1.0.0-dev1
+------------------
+
+This version contains all fixes up to version 0.10.x.
+
+Released: not yet
+
+**Incompatible changes:**
+
+**Deprecations:**
+
+**Bug fixes:**
+
+**Enhancements:**
+
+**Cleanup:**
+
+**Known issues:**
+
+* See `list of open issues`_.
+
+.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
+
+
 Version 0.10.0
 --------------
 
