@@ -1160,9 +1160,9 @@ def ensure_active(params, check_mode):
                     process_properties(cpc, partition, params)
                 partition = cpc.partitions.create(create_props)
                 update2_props = {}
-                for name in update_props:
+                for name, value in update_props.items():
                     if name not in create_props:
-                        update2_props[name] = update_props[name]
+                        update2_props[name] = value
                 if update2_props:
                     partition.update_properties(update2_props)
                 # We refresh the properties after the update, in case an
@@ -1266,9 +1266,9 @@ def ensure_stopped(params, check_mode):
                     process_properties(cpc, partition, params)
                 partition = cpc.partitions.create(create_props)
                 update2_props = {}
-                for name in update_props:
+                for name, value in update_props.items():
                     if name not in create_props:
-                        update2_props[name] = update_props[name]
+                        update2_props[name] = value
                 if update2_props:
                     partition.update_properties(update2_props)
                 if crypto_changes:
