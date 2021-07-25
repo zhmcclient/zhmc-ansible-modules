@@ -809,9 +809,9 @@ def ensure_present(params, check_mode):
             create_props, update_props = process_properties(
                 console, user, params)
             update2_props = {}
-            for name in update_props:
+            for name, value in update_props.items():
                 if name not in create_props:
-                    update2_props[name] = update_props[name]
+                    update2_props[name] = value
             if not check_mode:
                 user = console.users.create(create_props)
                 if update2_props:
