@@ -490,9 +490,9 @@ def ensure_present(params, check_mode):
                 storage_volume = storage_group.storage_volumes.create(
                     create_props)
                 update2_props = {}
-                for name in update_props:
+                for name, value in update_props.items():
                     if name not in create_props:
-                        update2_props[name] = update_props[name]
+                        update2_props[name] = value
                 if update2_props:
                     storage_volume.update_properties(update2_props)
                 # We refresh the properties after the update, in case an

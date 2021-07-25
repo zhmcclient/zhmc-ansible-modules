@@ -1041,9 +1041,8 @@ class TestPartition(object):
                 assert part_props['status'] == exp_status
                 assert part_props['name'] == params['name']
                 if exp_props:
-                    for hmc_prop_name in exp_props:
-                        assert part_props[hmc_prop_name] == \
-                            exp_props[hmc_prop_name], \
+                    for hmc_prop_name, exp_value in exp_props.items():
+                        assert part_props[hmc_prop_name] == exp_value, \
                             "Property: {0}".format(hmc_prop_name)
         else:
             assert part_props == {}
@@ -1058,9 +1057,8 @@ class TestPartition(object):
                 assert part.properties['status'] == exp_status
                 assert part.properties['name'] == params['name']
                 if properties:
-                    for hmc_prop_name in exp_props:
-                        assert part.properties[hmc_prop_name] == \
-                            exp_props[hmc_prop_name], \
+                    for hmc_prop_name, exp_value in exp_props.items():
+                        assert part.properties[hmc_prop_name] == exp_value, \
                             "Property: {0}".format(hmc_prop_name)
             else:
                 assert len(parts) == 0
@@ -1347,10 +1345,9 @@ class TestPartition(object):
         if not check_mode:
             assert part_props['status'] == exp_status
             assert part_props['name'] == params['name']
-            for prop_name in exp_properties:
+            for prop_name, exp_value in exp_properties.items():
                 hmc_prop_name = prop_name.replace('_', '-')
-                assert part_props[hmc_prop_name] == \
-                    exp_properties[prop_name], \
+                assert part_props[hmc_prop_name] == exp_value, \
                     "Property: {0}".format(prop_name)
 
         # Assert the partition resource
@@ -1361,10 +1358,9 @@ class TestPartition(object):
             part.pull_full_properties()
             assert part.properties['status'] == exp_status
             assert part.properties['name'] == params['name']
-            for prop_name in exp_properties:
+            for prop_name, exp_value in exp_properties.items():
                 hmc_prop_name = prop_name.replace('_', '-')
-                assert part.properties[hmc_prop_name] == \
-                    exp_properties[prop_name], \
+                assert part.properties[hmc_prop_name] == exp_value, \
                     "Property: {0}".format(prop_name)
 
     @pytest.mark.parametrize(
@@ -1494,10 +1490,9 @@ class TestPartition(object):
         if not check_mode:
             assert part_props['status'] == exp_status
             assert part_props['name'] == params['name']
-            for prop_name in exp_properties:
+            for prop_name, exp_value in exp_properties.items():
                 hmc_prop_name = prop_name.replace('_', '-')
-                assert part_props[hmc_prop_name] == \
-                    exp_properties[prop_name], \
+                assert part_props[hmc_prop_name] == exp_value, \
                     "Property: {0}".format(prop_name)
 
         # Assert the partition resource
@@ -1508,10 +1503,9 @@ class TestPartition(object):
             part.pull_full_properties()
             assert part.properties['status'] == exp_status
             assert part.properties['name'] == params['name']
-            for prop_name in exp_properties:
+            for prop_name, exp_value in exp_properties.items():
                 hmc_prop_name = prop_name.replace('_', '-')
-                assert part.properties[hmc_prop_name] == \
-                    exp_properties[prop_name], \
+                assert part.properties[hmc_prop_name] == exp_value, \
                     "Property: {0}".format(prop_name)
 
     @pytest.mark.parametrize(
