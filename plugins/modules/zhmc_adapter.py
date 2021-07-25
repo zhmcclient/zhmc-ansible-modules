@@ -670,9 +670,9 @@ def ensure_present(params, check_mode):
             # This is specific to Hipersockets: There are no update-only
             # properties, so any remaining such property is an input error
             invalid_update_props = {}
-            for name in update_props:
+            for name, value in update_props.items():
                 if name not in create_props:
-                    invalid_update_props[name] = update_props[name]
+                    invalid_update_props[name] = value
             if invalid_update_props:
                 raise ParameterError(
                     "Invalid input properties specified when creating "

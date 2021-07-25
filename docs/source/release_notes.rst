@@ -31,6 +31,8 @@ Released: not yet
 
 **Bug fixes:**
 
+* Fixed new Pylint issues reported by Pylint 2.9.
+
 **Enhancements:**
 
 **Cleanup:**
