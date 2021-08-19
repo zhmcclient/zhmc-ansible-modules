@@ -62,7 +62,7 @@ def get_docs_tags(min_version):
 
       tuple of strings: List of Git tags to use.
     """
-    # pylint: disable=consider-using-generator
+    # pylint: disable=bad-option-value,consider-using-generator
     min_version_tuple = tuple([int(s) for s in min_version.split('.')])
     repo_dir = os.path.join(os.path.dirname(__file__), '..', '..')
     try:

@@ -217,7 +217,10 @@ sanity: _check_version develop_$(pymn).done
 	rm -rf $(sanity_dir)
 	mkdir -p $(sanity_dir)
 	tar -xvf $(sanity_tar_file) --directory $(sanity_dir)
-	sh -c "cd $(sanity_dir); ansible-test sanity --local --python $(python_m_n_version)"
+	sh -c "cd $(sanity_dir); ansible-test sanity --verbose --truncate 0 --local --python $(python_m_n_version)"
+ifeq ($(PACKAGE_LEVEL),latest)
+	sh -c "cd $(sanity_dir); ansible-test sanity --verbose --truncate 0 --venv --requirements --python $(python_m_n_version)"
+endif
 	@echo '$@ done.'
 
 .PHONY:	end2end
