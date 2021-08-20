@@ -9,7 +9,9 @@
 
 # Direct dependencies (except pip, setuptools, wheel):
 
+# Keep ansible versions in sync with meta/runtime.yml (and minimum-constraints.txt)
 ansible>=2.9.0.0
+
 requests>=2.20.1
 # git+https://github.com/zhmcclient/python-zhmcclient@master#egg=zhmcclient
 zhmcclient>=0.31.0
