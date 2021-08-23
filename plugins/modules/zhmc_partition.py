@@ -1013,14 +1013,14 @@ def add_artificial_properties(
     session = cpc.manager.client.session
 
     # Get the HBA child elements of the partition
-    hbas_prop = list()
+    hbas_prop = []
     if partition.hbas is not None:
         for hba in partition.hbas.list(full_properties=True):
             hbas_prop.append(dict(hba.properties))
     partition_properties['hbas'] = hbas_prop
 
     # Get the NIC child elements of the partition
-    nics_prop = list()
+    nics_prop = []
     for nic in partition.nics.list(full_properties=True):
         nic_props = OrderedDict()
         nic_props.update(nic.properties)
@@ -1048,20 +1048,20 @@ def add_artificial_properties(
     partition_properties['nics'] = nics_prop
 
     # Get the VF child elements of the partition
-    vfs_prop = list()
+    vfs_prop = []
     for vf in partition.virtual_functions.list(full_properties=True):
         vfs_prop.append(dict(vf.properties))
     partition_properties['virtual-functions'] = vfs_prop
 
     if expand_storage_groups:
-        sgs_prop = list()
+        sgs_prop = []
         for sg_uri in partition.properties['storage-group-uris']:
             storage_group = console.storage_groups.resource_object(sg_uri)
             storage_group.pull_full_properties()
             sg_properties = dict(storage_group.properties)
 
             # Candidate adapter ports and their adapters (full set of props)
-            caps_prop = list()
+            caps_prop = []
             for cap in storage_group.list_candidate_adapter_ports(
                     full_properties=True):
                 cap_properties = dict(cap.properties)
@@ -1076,7 +1076,7 @@ def add_artificial_properties(
             # 'storage-volume-uris' property, because the 'List Storage
             # Volumes of a Storage Group' operation returns an empty list for
             # auto-discovered volumes.
-            svs_prop = list()
+            svs_prop = []
             sv_uris = storage_group.get_property('storage-volume-uris')
             for sv_uri in sv_uris:
                 sv = storage_group.storage_volumes.resource_object(sv_uri)
@@ -1085,7 +1085,7 @@ def add_artificial_properties(
             sg_properties['storage-volumes'] = svs_prop
 
             # Virtual storage resources (full set of properties).
-            vsrs_prop = list()
+            vsrs_prop = []
             vsr_uris = storage_group.get_property(
                 'virtual-storage-resource-uris')
             for vsr_uri in vsr_uris:
@@ -1108,7 +1108,7 @@ def add_artificial_properties(
             # original Partition.properties dict. Therefore, we copy cc
             # since we modify it.
             cc = cc.copy()
-            cas_prop = list()
+            cas_prop = []
             for ca_uri in cc['crypto-adapter-uris']:
                 ca = cpc.adapters.resource_object(ca_uri)
                 ca.pull_full_properties()

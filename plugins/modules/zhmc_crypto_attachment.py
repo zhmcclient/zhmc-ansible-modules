@@ -408,10 +408,10 @@ def get_partition_config(partition, all_adapters):
     """
 
     # result items
-    adapters = dict()  # adapter name: adapter properties
-    domain_config = dict()  # domain index: access mode
-    usage_domains = list()  # domains attached in usage mode
-    control_domains = list()  # domains attached in control mode
+    adapters = {}  # adapter name: adapter properties
+    domain_config = {}  # domain index: access mode
+    usage_domains = []  # domains attached in usage mode
+    control_domains = []  # domains attached in control mode
 
     partition.pull_full_properties()  # Make sure it contains the changes
     partition_config = partition.get_property('crypto-configuration')
@@ -431,8 +431,8 @@ def get_partition_config(partition, all_adapters):
                     raise AssertionError("am={0}".format(am))
                 usage_domains.append(di)
 
-    result = dict()
-    result[partition.name] = dict()
+    result = {}
+    result[partition.name] = {}
     partition_result = result[partition.name]
     partition_result['adapters'] = adapters
     partition_result['domain_config'] = domain_config
@@ -450,7 +450,7 @@ def get_conflicting_domains(
     in the desired mode because they are already attached to other partitions
     in a mode that prevents that.
     """
-    conflicting_domains = dict()
+    conflicting_domains = {}
     if adapter.uri in all_crypto_config:
         domains_dict = all_crypto_config[adapter.uri]
         for di in desired_domains:
@@ -512,8 +512,8 @@ def ensure_attached(params, check_mode):
     hmc_access_mode = ACCESS_MODES_MOD2HMC[access_mode]
 
     changed = False
-    result = dict()
-    result_changes = dict()
+    result = {}
+    result_changes = {}
 
     try:
         session = get_session(_faked_session,
@@ -605,15 +605,15 @@ def ensure_attached(params, check_mode):
         # Domains attached to the partition, as a dict with:
         #   key: domain index
         #   value: access mode
-        attached_domains = dict()
+        attached_domains = {}
 
         # Adapters attached to the partition, as a list of Adapter objects:
-        attached_adapters = list()
+        attached_adapters = []
 
         # Adapters not attached to the partition, as a list of Adapter objects:
-        detached_adapters = list()
+        detached_adapters = []
 
-        _attached_adapter_uris = list()  # URIs of attached adapters
+        _attached_adapter_uris = []  # URIs of attached adapters
         cc = partition.get_property('crypto-configuration')
         if cc:
             _attached_adapter_uris = cc['crypto-adapter-uris']
@@ -658,7 +658,7 @@ def ensure_attached(params, check_mode):
         #   value: dict:
         #     key: domain index (for attached domains)
         #     value: list of tuple(access mode, partition URI)
-        all_crypto_config = dict()
+        all_crypto_config = {}
 
         for p_uri in all_partitions:
             p = all_partitions[p_uri]
@@ -678,10 +678,10 @@ def ensure_attached(params, check_mode):
                     am = dc['access-mode']
                     for a_uri in _adapter_uris:
                         if a_uri not in all_crypto_config:
-                            all_crypto_config[a_uri] = dict()
+                            all_crypto_config[a_uri] = {}
                         domains_dict = all_crypto_config[a_uri]  # mutable
                         if di not in domains_dict:
-                            domains_dict[di] = list()
+                            domains_dict[di] = []
                         domains_dict[di].append((am, p.uri))
 
         #
@@ -689,7 +689,7 @@ def ensure_attached(params, check_mode):
         #
 
         desired_domains = list(range(domain_range_lo, domain_range_hi + 1))
-        add_domains = list()  # List of domain index numbers to be attached
+        add_domains = []  # List of domain index numbers to be attached
         for di in desired_domains:
             if di not in attached_domains:
                 # This domain is not attached to the target partition
@@ -711,7 +711,7 @@ def ensure_attached(params, check_mode):
                 pass
 
         # Create the domain config structure for the domains to be attached
-        add_domain_config = list()
+        add_domain_config = []
         for di in add_domains:
             add_domain_config.append(
                 {'domain-index': di,
@@ -928,8 +928,8 @@ def ensure_detached(params, check_mode):
     _faked_session = params.get('_faked_session', None)  # No default specified
 
     changed = False
-    result = dict()
-    result_changes = dict()
+    result = {}
+    result_changes = {}
 
     try:
         session = get_session(_faked_session,
