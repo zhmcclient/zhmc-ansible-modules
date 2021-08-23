@@ -515,7 +515,7 @@ def identify_adapter(cpc, name, match_props):
     except zhmcclient.NotFound:
         if not match_props:
             raise
-        match_props_hmc = dict()
+        match_props_hmc = {}
         for prop_name in match_props:
             prop_name_hmc = prop_name.replace('_', '-')
             match_value = match_props[prop_name]
@@ -595,7 +595,7 @@ def ensure_set(params, check_mode):
             result = dict(adapter.properties)  # from actual values
 
         ports = adapter.ports.list()
-        result_ports = list()
+        result_ports = []
         for port in ports:
             # TODO: Disabling the following line mitigates the recent issue
             #       with HTTP error 404,4 when retrieving port properties.
@@ -690,7 +690,7 @@ def ensure_present(params, check_mode):
                 result = dict(adapter.properties)  # from actual values
             else:
                 adapter = None
-                result = dict()
+                result = {}
                 result.update(create_props)  # from input values
             changed = True
         else:
@@ -731,14 +731,14 @@ def ensure_present(params, check_mode):
 
         if adapter:
             ports = adapter.ports.list()
-            result_ports = list()
+            result_ports = []
             for port in ports:
                 port.pull_full_properties()
                 result_ports.append(dict(port.properties))
             result['ports'] = result_ports
         else:
             # For now, we return no ports when creating in check mode
-            result['ports'] = dict()
+            result['ports'] = {}
 
         return changed, result
 
@@ -816,7 +816,7 @@ def facts(params, check_mode):
         result = dict(adapter.properties)
 
         ports = adapter.ports.list()
-        result_ports = list()
+        result_ports = []
         for port in ports:
             port.pull_full_properties()
             result_ports.append(dict(port.properties))

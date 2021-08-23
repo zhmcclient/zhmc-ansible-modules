@@ -979,8 +979,8 @@ class TestPartition(object):
         exp_changed = (initial_state != desired_state or
                        props_changed and desired_state != 'absent')
 
-        input_props = dict()
-        exp_props = dict()
+        input_props = {}
+        exp_props = {}
         for prop_name in properties:
             hmc_prop_name = prop_name.replace('_', '-')
             value = properties[prop_name]
