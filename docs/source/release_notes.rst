@@ -31,7 +31,7 @@ Released: 2022-02-xx
 
 **Bug fixes:**
 
-* Fixed new Pylint issues reported by Pylint 2.9.
+* Fixed new Pylint issues reported by Pylint 2.9 and 2.10.
 
 **Enhancements:**
 
