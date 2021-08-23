@@ -691,7 +691,7 @@ def add_artificial_properties(
         if check_mode:
             user_properties['user-pattern-name'] = user_pattern.oid
             if expand:
-                user_properties['user-pattern'] = dict()
+                user_properties['user-pattern'] = {}
         else:
             user_pattern.pull_full_properties()
             user_properties['user-pattern-name'] = user_pattern.name
@@ -710,7 +710,7 @@ def add_artificial_properties(
             user_properties['password-rule-name'] = \
                 password_rule.uri.split('/')[-1]
             if expand:
-                user_properties['password-rule'] = dict()
+                user_properties['password-rule'] = {}
         else:
             password_rule.pull_full_properties()
             user_properties['password-rule-name'] = password_rule.name
@@ -728,7 +728,7 @@ def add_artificial_properties(
         if check_mode:
             user_properties['ldap-server-definition-name'] = ldap_srv_def.oid
             if expand:
-                user_properties['ldap-server-definition'] = dict()
+                user_properties['ldap-server-definition'] = {}
         else:
             ldap_srv_def.pull_full_properties()
             user_properties['ldap-server-definition-name'] = ldap_srv_def.name
@@ -736,7 +736,7 @@ def add_artificial_properties(
                 user_properties['ldap-server-definition'] = \
                     dict(ldap_srv_def.properties)
 
-    user_roles = list()
+    user_roles = []
     user_role_uris = user.properties['user-roles']
     for user_role_uri in user_role_uris:
         user_role = console.user_roles.resource_object(user_role_uri)
@@ -755,7 +755,7 @@ def create_check_mode_user(console, create_props, update_props):
     This is used when a user needs to be created in check mode.
     """
     type_ = create_props['type']
-    props = dict()
+    props = {}
 
     # Defaults for some read-only properties
     if type_ == 'pattern-based':

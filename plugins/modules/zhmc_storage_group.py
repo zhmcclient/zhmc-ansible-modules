@@ -737,7 +737,7 @@ def add_artificial_properties(sg_properties, storage_group, expand):
     parts = storage_group.list_attached_partitions()
 
     # List of attached partitions (just the names)
-    part_names_prop = list()
+    part_names_prop = []
     for part in parts:
         part_names_prop.append(part.get_property('name'))
     sg_properties['attached-partition-names'] = part_names_prop
@@ -745,7 +745,7 @@ def add_artificial_properties(sg_properties, storage_group, expand):
     if expand:
 
         # Candidate adapter ports and their parent adapters (full set of props)
-        caps_prop = list()
+        caps_prop = []
         for cap in storage_group.list_candidate_adapter_ports(
                 full_properties=True):
             adapter = cap.manager.adapter
@@ -759,7 +759,7 @@ def add_artificial_properties(sg_properties, storage_group, expand):
         # Note: We create the storage volumes from the 'storage-volume-uris'
         # property, because the 'List Storage Volumes of a Storage Group'
         # operation returns an empty list for auto-discovered volumes.
-        svs_prop = list()
+        svs_prop = []
         sv_uris = storage_group.get_property('storage-volume-uris')
         for sv_uri in sv_uris:
             sv = storage_group.storage_volumes.resource_object(sv_uri)
@@ -768,7 +768,7 @@ def add_artificial_properties(sg_properties, storage_group, expand):
         sg_properties['storage-volumes'] = svs_prop
 
         # Virtual storage resources (full set of properties).
-        vsrs_prop = list()
+        vsrs_prop = []
         vsr_uris = storage_group.get_property('virtual-storage-resource-uris')
         for vsr_uri in vsr_uris:
             vsr = storage_group.virtual_storage_resources.resource_object(
@@ -779,7 +779,7 @@ def add_artificial_properties(sg_properties, storage_group, expand):
 
         # List of attached partitions (full set of properties).
         parts = storage_group.list_attached_partitions()
-        parts_prop = list()
+        parts_prop = []
         for part in parts:
             part.pull_full_properties()
             parts_prop.append(dict(part.properties))
