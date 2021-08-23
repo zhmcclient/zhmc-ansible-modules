@@ -20,3 +20,4 @@ plugins/modules/zhmc_storage_group.py validate-modules:return-syntax-error  # Mi
 plugins/modules/zhmc_storage_volume.py validate-modules:return-syntax-error  # Missing type on generic {property}
 plugins/modules/zhmc_user.py validate-modules:return-syntax-error  # Missing type on generic {property}
 plugins/modules/zhmc_virtual_function.py validate-modules:return-syntax-error  # Missing type on generic {property}
+tests/function/test_func_partition.py pylint:redundant-u-string-prefix
