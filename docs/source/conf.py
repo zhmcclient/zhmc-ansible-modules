@@ -62,8 +62,7 @@ def get_docs_tags(min_version):
 
       tuple of strings: List of Git tags to use.
     """
-    # pylint: disable=bad-option-value,consider-using-generator
-    min_version_tuple = tuple([int(s) for s in min_version.split('.')])
+    min_version_tuple = tuple(map(int, min_version.split('.')))
     repo_dir = os.path.join(os.path.dirname(__file__), '..', '..')
     try:
         repo = git.Repo(repo_dir)
@@ -78,15 +77,18 @@ def get_docs_tags(min_version):
         # parameters, we can ignore the exception and return anything, e.g.
         # an empty tuple.
         return tuple()
-    tag_names = []  # items: tuple(major, minor, update)
+
+    tag_names = []
     for tag in repo.tags:
         m = re.match(r'^(\d+)\.(\d+)\.(\d+)$', tag.name)
         if m:
-            tag_names.append(tag.name)
+            tag_version_tuple = tuple(map(int, tag.name.split('.')))
+            if tag_version_tuple >= min_version_tuple:
+                tag_names.append(tag.name)
     return tuple(tag_names)
 
 
-def get_docs_branches(min_version):
+def get_docs_branches():
     """
     Get the list of Git branches that should be included in the documentation.
 
@@ -98,10 +100,6 @@ def get_docs_branches(min_version):
     plus it has the same problem as described in get_docs_tags() which is
     that the release of a new major or minor version increases the latest
     fix branch, causing the docs for the previous fix branch to go away.
-
-    Parameters:
-
-      min_version (string): Minimum version to use.
 
     Returns:
 
@@ -188,11 +186,11 @@ scv_overflow = ("-D", "html_show_sphinx=False")
 # List of Github branches that are included as versions in the documentation.
 # This is in addition to the 'scv_whitelist_tags' option.
 # The minimum version must be the first version that was released to Ansible Galaxy.
-scv_whitelist_branches = get_docs_branches(min_version='0.9.0')
+scv_whitelist_branches = get_docs_branches()
 
 # The Github branch or tag that will be used as the version that is shown for
 # the root URI of the documentation site.
-scv_root_ref = 'master'
+# scv_root_ref = 'master'
 
 # Override the 'scv_root_ref' option to use the tag with the highest version
 # number. If no tags have docs then this option is ignored and 'scv_root_ref'
