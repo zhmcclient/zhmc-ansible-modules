@@ -808,9 +808,9 @@ def ensure_present(params, check_mode):
     changed = False
     result = {}
 
+    session = get_session(
+        _faked_session, host, userid, password, ca_certs, verify)
     try:
-        session = get_session(_faked_session,
-                              host, userid, password, ca_certs, verify)
         client = zhmcclient.Client(session)
         console = client.consoles.console
         cpc = client.cpcs.find(name=cpc_name)
@@ -892,9 +892,9 @@ def ensure_absent(params, check_mode):
     changed = False
     result = {}
 
+    session = get_session(
+        _faked_session, host, userid, password, ca_certs, verify)
     try:
-        session = get_session(_faked_session,
-                              host, userid, password, ca_certs, verify)
         client = zhmcclient.Client(session)
         console = client.consoles.console
         cpc = client.cpcs.find(name=cpc_name)
@@ -948,11 +948,10 @@ def facts(params, check_mode):
     changed = False
     result = {}
 
+    session = get_session(
+        _faked_session, host, userid, password, ca_certs, verify)
     try:
         # The default exception handling is sufficient for this code
-
-        session = get_session(_faked_session,
-                              host, userid, password, ca_certs, verify)
         client = zhmcclient.Client(session)
         console = client.consoles.console
         cpc = client.cpcs.find(name=cpc_name)

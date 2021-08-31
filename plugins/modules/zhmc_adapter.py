@@ -552,9 +552,9 @@ def ensure_set(params, check_mode):
 
     changed = False
 
+    session = get_session(
+        _faked_session, host, userid, password, ca_certs, verify)
     try:
-        session = get_session(_faked_session,
-                              host, userid, password, ca_certs, verify)
         client = zhmcclient.Client(session)
         cpc = client.cpcs.find(name=cpc_name)
         adapter = identify_adapter(cpc, adapter_name, adapter_match)
@@ -629,9 +629,9 @@ def ensure_present(params, check_mode):
 
     changed = False
 
+    session = get_session(
+        _faked_session, host, userid, password, ca_certs, verify)
     try:
-        session = get_session(_faked_session,
-                              host, userid, password, ca_certs, verify)
         client = zhmcclient.Client(session)
         cpc = client.cpcs.find(name=cpc_name)
         # The default exception handling is sufficient for the above.
@@ -766,9 +766,9 @@ def ensure_absent(params, check_mode):
     changed = False
     result = {}
 
+    session = get_session(
+        _faked_session, host, userid, password, ca_certs, verify)
     try:
-        session = get_session(_faked_session,
-                              host, userid, password, ca_certs, verify)
         client = zhmcclient.Client(session)
         cpc = client.cpcs.find(name=cpc_name)
         # The default exception handling is sufficient for the above.
@@ -804,9 +804,9 @@ def facts(params, check_mode):
     adapter_name = params['name']
     _faked_session = params.get('_faked_session', None)  # No default specified
 
+    session = get_session(
+        _faked_session, host, userid, password, ca_certs, verify)
     try:
-        session = get_session(_faked_session,
-                              host, userid, password, ca_certs, verify)
         client = zhmcclient.Client(session)
         cpc = client.cpcs.find(name=cpc_name)
         adapter = cpc.adapters.find(name=adapter_name)

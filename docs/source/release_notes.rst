@@ -35,6 +35,9 @@ Released: not yet
 
 * Fixed new Pylint issues reported by Pylint 2.9 and 2.10.
 
+* Improved handling of exceptions when creation of zhmcclient.Session fails.
+  (issue #451)
+
 **Enhancements:**
 
 **Cleanup:**

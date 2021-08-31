@@ -247,9 +247,9 @@ def ensure_attached(params, check_mode):
     changed = False
     attached = None
 
+    session = get_session(
+        _faked_session, host, userid, password, ca_certs, verify)
     try:
-        session = get_session(_faked_session,
-                              host, userid, password, ca_certs, verify)
         client = zhmcclient.Client(session)
         console = client.consoles.console
         cpc = client.cpcs.find(name=cpc_name)
@@ -302,9 +302,9 @@ def ensure_detached(params, check_mode):
     changed = False
     attached = None
 
+    session = get_session(
+        _faked_session, host, userid, password, ca_certs, verify)
     try:
-        session = get_session(_faked_session,
-                              host, userid, password, ca_certs, verify)
         client = zhmcclient.Client(session)
         console = client.consoles.console
         cpc = client.cpcs.find(name=cpc_name)
@@ -357,9 +357,9 @@ def facts(params, check_mode):
     changed = False
     attached = None
 
+    session = get_session(
+        _faked_session, host, userid, password, ca_certs, verify)
     try:
-        session = get_session(_faked_session,
-                              host, userid, password, ca_certs, verify)
         client = zhmcclient.Client(session)
         console = client.consoles.console
         cpc = client.cpcs.find(name=cpc_name)
