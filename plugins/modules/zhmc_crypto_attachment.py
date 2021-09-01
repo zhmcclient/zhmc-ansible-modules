@@ -515,9 +515,9 @@ def ensure_attached(params, check_mode):
     result = {}
     result_changes = {}
 
+    session = get_session(
+        _faked_session, host, userid, password, ca_certs, verify)
     try:
-        session = get_session(_faked_session,
-                              host, userid, password, ca_certs, verify)
         client = zhmcclient.Client(session)
         cpc = client.cpcs.find(name=cpc_name)
         partition = cpc.partitions.find(name=partition_name)
@@ -931,9 +931,9 @@ def ensure_detached(params, check_mode):
     result = {}
     result_changes = {}
 
+    session = get_session(
+        _faked_session, host, userid, password, ca_certs, verify)
     try:
-        session = get_session(_faked_session,
-                              host, userid, password, ca_certs, verify)
         client = zhmcclient.Client(session)
         cpc = client.cpcs.find(name=cpc_name)
         partition = cpc.partitions.find(name=partition_name)
@@ -1017,9 +1017,9 @@ def facts(params, check_mode):
     partition_name = params['partition_name']
     _faked_session = params.get('_faked_session', None)  # No default specified
 
+    session = get_session(
+        _faked_session, host, userid, password, ca_certs, verify)
     try:
-        session = get_session(_faked_session,
-                              host, userid, password, ca_certs, verify)
         client = zhmcclient.Client(session)
         cpc = client.cpcs.find(name=cpc_name)
         partition = cpc.partitions.find(name=partition_name)
