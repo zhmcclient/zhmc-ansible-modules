@@ -19,11 +19,47 @@ Modules
 =======
 
 Ansible® modules can be used from the command line, in a playbook or in
-an role.
+a role.
 
 The **IBM Z® HMC collection** provides several modules. Reference material for
 each module contains documentation on what parameters the module accepts and
 what will returned.
+
+Modules targeting the HMC (i.e. not a specific CPC):
+
+.. toctree::
+   :maxdepth: 1
+   :glob:
+
+   modules/zhmc_user
+
+Modules supported with CPCs in any operational mode:
+
+.. toctree::
+   :maxdepth: 1
+   :glob:
+
+   modules/zhmc_cpc
+
+Modules supported only with CPCs in DPM operational mode:
+
+.. toctree::
+   :maxdepth: 1
+   :glob:
+
+   modules/zhmc_adapter
+   modules/zhmc_crypto_attachment
+   modules/zhmc_hba
+   modules/zhmc_nic
+   modules/zhmc_partition
+   modules/zhmc_storage_group
+   modules/zhmc_storage_group_attachment
+   modules/zhmc_storage_volume
+   modules/zhmc_virtual_function
+
+Modules supported only with CPCs in classic operational mode:
+
+* None
 
 You can also access the documentation of each module from the command line by
 using the `ansible-doc`_ command, for example:
@@ -34,9 +70,3 @@ using the `ansible-doc`_ command, for example:
 
 .. _ansible-doc:
    https://docs.ansible.com/ansible/latest/cli/ansible-doc.html#ansible-doc
-
-.. toctree::
-   :maxdepth: 1
-   :glob:
-
-   modules/*
