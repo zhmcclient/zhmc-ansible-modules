@@ -98,9 +98,12 @@ sphinx-versions==1.0.0
 # Pylint 2.0 / astroid 2.0 removed support for py27
 # Pylint 2.4 / astroid 2.3 removed support for py34
 # Pylint 2.7 / astroid 2.5 removed support for py35
-# Pylint 2.7 introduced the consider-using-generator check which is used.
-pylint>=2.7.4; python_version >= '3.6'
-astroid>=2.5.2; python_version >= '3.6'
+# Pylint 2.7 introduced the consider-using-generator check, which is raised.
+# Pylint 2.11 introduced the consider-using-f-string check, which is raised.
+# The ansible sanity test with --venv installs Pylint 2.6.0, so that is the
+# version we also use since the issues raised depend on the Pylint version.
+pylint>=2.6.0,<2.7; python_version >= '3.6'
+astroid>=2.4.0,<2.5; python_version >= '3.6'
 # typed-ast 1.4.0 removed support for Python 3.4.
 typed-ast>=1.3.0,<1.4.0; python_version == '3.4' and implementation_name=='cpython'
 typed-ast>=1.4.0,<1.5.0; python_version >= '3.5' and python_version < '3.8' and implementation_name=='cpython'

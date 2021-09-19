@@ -219,6 +219,9 @@ sanity: _check_version develop_$(pymn).done
 	tar -xvf $(sanity_tar_file) --directory $(sanity_dir)
 	sh -c "cd $(sanity_dir); ansible-test sanity --verbose --truncate 0 --local --python $(python_m_n_version)"
 ifeq ($(PACKAGE_LEVEL),latest)
+  # On minimum package level (i.e. Ansible 2.9), the pylint check fails with:
+  #   internal error with sending report for module ['plugins/module_utils/common.py']
+  #   object of type 'Uninferable' has no len()
 	sh -c "cd $(sanity_dir); ansible-test sanity --verbose --truncate 0 --venv --requirements --python $(python_m_n_version)"
 endif
 	@echo '$@ done.'
