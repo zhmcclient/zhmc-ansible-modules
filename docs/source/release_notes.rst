@@ -45,8 +45,7 @@ Released: not yet
   packages due to fixes requires for Python 3.10, and also due to the new
   package dependency resolver in Pip.
 
-* Pinned Ansible to <5.0 for the time being, since that requires addressing new
-  issues reported by the Ansible sanity test.
+* Added support for Ansible 5.0.
 
 **Enhancements:**
 
