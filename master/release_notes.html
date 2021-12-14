@@ -113,6 +113,13 @@
 <li><p>Fixed new Pylint issues reported by Pylint 2.9 and 2.10.</p></li>
 <li><p>Improved handling of exceptions when creation of zhmcclient.Session fails.
 (issue #451)</p></li>
+<li><p>Added support for Python 3.10, but needed to exclude the Ansible sanity
+test for the time being, since it does not yet support Python 3.10.</p></li>
+<li><p>Increased the minimum versions of the requests, cryptography, and PyYAML
+packages due to fixes requires for Python 3.10, and also due to the new
+package dependency resolver in Pip.</p></li>
+<li><p>Pinned Ansible to &lt;5.0 for the time being, since that requires addressing new
+issues reported by the Ansible sanity test.</p></li>
 </ul>
 <p><strong>Enhancements:</strong></p>
 <p><strong>Cleanup:</strong></p>
