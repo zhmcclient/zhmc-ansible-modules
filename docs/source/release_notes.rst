@@ -38,6 +38,16 @@ Released: not yet
 * Improved handling of exceptions when creation of zhmcclient.Session fails.
   (issue #451)
 
+* Added support for Python 3.10, but needed to exclude the Ansible sanity
+  test for the time being, since it does not yet support Python 3.10.
+
+* Increased the minimum versions of the requests, cryptography, and PyYAML
+  packages due to fixes requires for Python 3.10, and also due to the new
+  package dependency resolver in Pip.
+
+* Pinned Ansible to <5.0 for the time being, since that requires addressing new
+  issues reported by the Ansible sanity test.
+
 **Enhancements:**
 
 **Cleanup:**
