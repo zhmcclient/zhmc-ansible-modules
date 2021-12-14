@@ -218,6 +218,7 @@ The following versions of Ansible are supported:
 - Ansible 2.10
 - Ansible 3.0 (ansible-base 2.10)
 - Ansible 4.0 (ansible-core 2.11)
+- Ansible 5.0 (ansible-core 2.12)
 
 The following Z and LinuxONE machine generations are supported:
 

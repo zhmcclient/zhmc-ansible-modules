@@ -10,8 +10,7 @@
 # Direct dependencies (except pip, setuptools, wheel):
 
 # Keep ansible versions in sync with meta/runtime.yml (and minimum-constraints.txt)
-# TODO: Enable support for Ansible 5.0.
-ansible>=2.9.0.0,<5.0
+ansible>=2.9.0.0
 
 # requests 2.22.0 removes the pinning of urllib3 to <1.25.0, and urllib 1.25.9
 #   is required to address safety issues
