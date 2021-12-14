@@ -201,7 +201,7 @@ control system. The instructions are written for a bash shell.
 Supported environments
 ----------------------
 
-The following versions of Python are currently supported:
+The following versions of Python are supported:
 
 - Python 2.7
 - Python 3.5 and higher
@@ -214,9 +214,10 @@ The following operating systems are supported:
 
 The following versions of Ansible are supported:
 
-- ansible 2.9
-- ansible 2.10
-- ansible-core 2.11
+- Ansible 2.9
+- Ansible 2.10
+- Ansible 3.0 (ansible-base 2.10)
+- Ansible 4.0 (ansible-core 2.11)
 
 The following Z and LinuxONE machine generations are supported:
 
