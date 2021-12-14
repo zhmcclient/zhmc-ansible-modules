@@ -204,14 +204,7 @@ Supported environments
 The following versions of Python are currently supported:
 
 - Python 2.7
-- Python 3.5
-- Python 3.6
-- Python 3.7
-- Python 3.8
-- Python 3.9
-
-Higher versions of Python 3.x have not been tested at this point, but are
-expected to work.
+- Python 3.5 and higher
 
 The following operating systems are supported:
 

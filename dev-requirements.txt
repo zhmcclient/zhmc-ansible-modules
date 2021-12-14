@@ -32,7 +32,9 @@ colorama>=0.4.0; python_version >= '3.5'
 # mock>=2.0.0
 # requests>=2.20.1
 requests-mock>=1.6.0
-requests-toolbelt>=0.7.0
+# twine 3.0.0 depends on requests-toolbelt!=0.9.0 and >=0.8.0
+requests-toolbelt>=0.7.0; python_version <= '3.5'
+requests-toolbelt>=0.8.0; python_version >= '3.6'
 importlib-metadata<1,>=0.12; python_version <= '3.7'
 pytz>=2016.10
 
@@ -64,8 +66,8 @@ safety>=1.8.7,<1.9.0; python_version <= '3.4'
 safety>=1.9.0; python_version >= '3.5'
 # dparse 0.5.0 has an infinite recursion issue on Python 2.7,
 #   see https://github.com/pyupio/dparse/issues/46
+# Pip 19.1.1 does not recognize that dparse 0.5.0 has dropped support for Python 3.4
 dparse>=0.4.1,<0.5.0; python_version == '2.7'
-dparse>=0.4.1; python_version == '3.4'
 dparse>=0.5.1; python_version >= '3.5'
 
 # Tox
@@ -79,19 +81,34 @@ tox>=2.5.0
 # Note: Sphinx 4.0 removed the deprecated Sphinx.add_stylesheet() which causes
 #       sphinx-versions to fail that uses it. A circumvention is to pin
 #       Sphinx to <4.0.
-Sphinx>=3.0.0,<4.0.0; python_version >= '3.6'
+# Note: Sphinx <4.2.0 fails on Python 3.10 because it tries to import
+#       non-existing types.Union. This also drives docutils>=0.14.
+# Note: Sphinx pins docutils to <0.18 (some versions even to <0.17) but the
+#       package version resolver in the pip version used on py27 ignores package
+#       dependencies.
+# Note: sphinx-versions in the latest released version 1.1.3 still uses the
+#       deprecated Sphinx.add_stylesheet() method. That method is deprecated
+#       since Sphinx 1.8, and was removed in Sphinx 4.0, and reintroduced as
+#       deprecated in Sphinx 4.3.0.
+Sphinx>=3.0.0,<4.0.0; python_version >= '3.6' and python_version <= '3.9'
+Sphinx>=4.3.0; python_version >= '3.10'
 sphinxcontrib-fulltoc>=1.2.0; python_version >= '3.6'
 sphinxcontrib-websupport>=1.1.2; python_version >= '3.6'
-Pygments>=2.1.3; python_version >= '3.6'
+Pygments>=2.5.1; python_version >= '3.6'
 # GitPython is used in conf.py
-GitPython>=2.1.1; python_version >= '3.6'
+# GitPython 2.1.8 adds support for PackingType packed-Refs that is used with git 2.18.
+GitPython>=2.1.15; python_version >= '3.6'
+docutils>=0.13.1; python_version >= '3.6' and python_version <= '3.9'
+docutils>=0.14; python_version >= '3.10'
+# Babel 2.7.0 fixes an ImportError for MutableMapping which starts failing on Python 3.10
+Babel>=2.7.0
 
 # ansible-doc-extractor and it's dependent theme for docs generation (no imports, invoked via script):
 ansible-doc-extractor>=0.1.4; python_version >= '3.6'
 sphinx-rtd-theme>=0.5.0; python_version >= '3.6'
-# pin the version to 1.0.0 since higher versions through an error
-# when generating the docs, see https://github.com/Smile-SA/sphinx-versions/issues/4
-sphinx-versions==1.0.0
+# Getting sphinx-versions from this git repo addresses some issues.
+# TODO: Remove getting sphinx-versions from this git repo.
+git+https://github.com/andy-maier/sphinx-versions.git@andy-fixes#egg=sphinx-versions; python_version >= '3.6'
 
 # PyLint (no imports, invoked via pylint script)
 # Pylint requires astroid
@@ -109,20 +126,32 @@ typed-ast>=1.3.0,<1.4.0; python_version == '3.4' and implementation_name=='cpyth
 typed-ast>=1.4.0,<1.5.0; python_version >= '3.5' and python_version < '3.8' and implementation_name=='cpython'
 
 # Flake8 and dependents (no imports, invoked via flake8 script):
-flake8>=3.8.0
+# flake8 3.9.0 has removed support for py34 and pip 19.1.1 on py34 does not deal
+# well with its pinned dependencies, so we need to repeat these for py34.
+# flake8 4.0.0 fixes an AttributeError on Python 3.10.
+flake8>=3.8.0; python_version == '2.7'
+flake8>=3.8.0; python_version >= '3.5' and python_version <= '3.9'
+flake8>=4.0.0; python_version >= '3.10'
 mccabe>=0.6.0
-pycodestyle>=2.6.0
-pyflakes>=2.2.0
+pycodestyle>=2.6.0,<2.8.0; python_version == '2.7'
+pycodestyle>=2.6.0; python_version >= '3.5' and python_version <= '3.9'
+pycodestyle>=2.8.0; python_version >= '3.10'
+pyflakes>=2.2.0,<2.4.0; python_version == '2.7'
+pyflakes>=2.2.0; python_version >= '3.5' and python_version <= '3.9'
+pyflakes>=2.4.0; python_version >= '3.10'
 entrypoints>=0.3.0
 functools32>=3.2.3.post2; python_version == '2.7'  # technically: python_version < '3.2'
 
 # Twine (no imports, invoked via twine script):
-twine>=1.8.1
+# twine 2.0.0 removed support for Python < 3.6
+twine>=1.8.1,<2.0.0; python_version <= '3.5'
+twine>=3.0.0; python_version >= '3.6'
 # readme-renderer 25.0 has removed support for Python 3.4
 # readme-renderer 23.0 has made cmarkgfm part of extras (it fails on Cygwin)
+# readme-renderer 25.0 or higher is needed to address issue on Windows with py39
 readme-renderer>=23.0; python_version == '2.7'
 readme-renderer>=23.0,<25.0; python_version == '3.4'
-readme-renderer>=23.0; python_version >= '3.5'
+readme-renderer>=25.0; python_version >= '3.5'
 
 pyzmq>=16.0.4; python_version <= '3.8'
 pyzmq>=20.0.0; python_version >= '3.9'
@@ -132,7 +161,8 @@ Jinja2>=2.9
 
 # Package dependency management tools (not used by any make rules)
 pipdeptree>=2.0.0
+# pip-check-reqs 2.3.2 solves issues with newer pip versions
 pip-check-reqs>=2.0.4,<2.1.1; python_version == '2.7'
-pip-check-reqs>=2.0.4; python_version >= '3.4'
+pip-check-reqs>=2.3.2; python_version >= '3.4'
 
 # Indirect dependencies are not specified in this file unless constraints are needed.

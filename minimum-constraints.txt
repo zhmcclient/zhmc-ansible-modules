@@ -71,13 +71,15 @@
 # For the base packages, we use the versions from Ubuntu 18.04 as a general
 # minimum, and then increase it to the first version that introduced support
 # for a particular Python version.
-# On pypy3 (py36), pip 18.0 is needed to support constraints like cffi!=1.11.3,>=1.8
-pip==9.0.1; python_version <= '3.5'
-pip==18.0; python_version == '3.6'
-pip==18.1; python_version == '3.7'
-pip==19.3.1; python_version >= '3.8'
+# pip 18.0 is needed on pypy3 (py36) to support constraints like cffi!=1.11.3,>=1.8.
+# pip 10.0.0 introduced the --exclude-editable option.
+# Pip 20.2 introduced a new resolver whose backtracking had issues that were resolved only in 21.2.2.
+# pip>=21.0 is needed for the cryptography package on Windows on GitHub Actions.
+pip==10.0.1; python_version <= '3.5'
+pip==21.2.2; python_version >= '3.6'
 setuptools==40.6.0; python_version <= '3.7'
-setuptools==41.5.0; python_version >= '3.8'
+setuptools==41.5.0; python_version >= '3.8' and python_version <= '3.9'
+setuptools==49.0.0; python_version >= '3.10'
 wheel==0.30.0; python_version <= '3.6'
 wheel==0.32.0; python_version == '3.7'
 wheel==0.33.5; python_version >= '3.8'
@@ -86,17 +88,17 @@ wheel==0.33.5; python_version >= '3.8'
 # Direct dependencies for installation (must be consistent with requirements.txt)
 
 ansible==2.9.0.0
-requests==2.20.1
+requests==2.22.0; python_version <= '3.9'
+requests==2.25.0; python_version >= '3.10'
 zhmcclient==0.31.0
 
 # Indirect dependencies for installation (must be consistent with requirements.txt)
 
-cryptography==3.0; python_version <= '3.5'
-cryptography==3.2; python_version >= '3.6'
+cryptography==3.3; python_version == '2.7'
+cryptography==3.0,<3.1; python_version == '3.5'
+cryptography==3.4.7; python_version >= '3.6'
 packaging==20.0
-PyYAML==5.3; python_version == '2.7'  # PyYAML 5.3 fixes narrow build error
-PyYAML==5.1; python_version >= '3.4' and python_version < '3.8'
-PyYAML==5.1.2; python_version >= '3.8'
+PyYAML==5.3.1
 
 
 # Direct dependencies for development (must be consistent with dev-requirements.txt)
@@ -108,29 +110,39 @@ voluptuous==0.11.7
 # Unit test (imports into testcases):
 # packaging is specified above
 funcsigs==1.0.2; python_version < '3.3'
+# pytest 5.0.0 has removed support for Python < 3.5
+# pytest 4.3.1 solves an issue on Python 3 with minimum package levels
 pytest==4.3.1; python_version <= '3.6'
-pytest==4.4.0; python_version >= '3.7'
+pytest==4.4.0; python_version >= '3.7' and python_version <= '3.9'
+pytest==6.2.5; python_version >= '3.10'
 testfixtures==6.9.0
 colorama==0.3.9; python_version <= '3.4'
 colorama==0.4.0; python_version >= '3.5'
 importlib-metadata==0.12; python_version <= '3.7'
-pytz==2016.10
-# mock==2.0.0
-# requests==2.20.1
+pytz==2016.10; python_version <= '3.9'
+pytz==2019.1; python_version >= '3.10'
 requests-mock==1.6.0
-requests-toolbelt==0.7.0
+requests-toolbelt==0.7.0; python_version <= '3.5'
+requests-toolbelt==0.8.0; python_version >= '3.6'
 
 
 # Unit test (indirect dependencies):
+# Pluggy 0.12.0 has a bug causing pytest plugins to fail loading on py38
 pluggy==0.7.1; python_version >= '2.7' and python_version <= '3.6'
 pluggy==0.13.0; python_version >= '3.7'
 decorator==4.0.11
+
+# six (used by virtualenv, tox, probably others)
+# virtualenv 20.0 requires six>=1.12.0 on py>=3.8
+# tox 3.17 requires six>=1.14.0
+six==1.14.0; python_version <= '3.9'
+six==1.16.0; python_version >= '3.10'
 
 # Coverage reporting (no imports, invoked via coveralls script):
 # We exclude Python 3.4 from coverage testing and reporting.
 coverage==5.0; python_version == '2.7' or python_version >= '3.5'
 pytest-cov==2.7.0; python_version == '2.7' or python_version >= '3.5'
-# handled by dev-requirements.txt: git+https://github.com/andy-maier/coveralls-python.git@andy/add-py27#egg=coveralls; python_version == '2.7'
+# coveralls: Retrieved from git repo in dev-requirements.txt for python_version == '2.7'
 coveralls==2.1.2; python_version >= '3.5'
 
 # ansible-test
@@ -152,16 +164,31 @@ tox==2.5.0
 #       Python 2.7, so we can no longer build the docs on Python 2.7.
 # Note: The docs build tools from Ansible 2.10 (in ../ansible) require
 #       antsibull, which supports only py>=3.6.
-Sphinx==3.0.0; python_version >= '3.6'
+Sphinx==3.5.4; python_version >= '3.6' and python_version <= '3.9'
+Sphinx==4.3.0; python_version >= '3.10'
+# sphinx-versions: Retrieved from git repo in dev-requirements.txt for python_version >= '3.6'
 sphinxcontrib-fulltoc==1.2.0; python_version >= '3.6'
 sphinxcontrib-websupport==1.1.2; python_version >= '3.6'
-Pygments==2.1.3; python_version >= '3.6'
-# GitPython is used in conf.py
-GitPython==2.1.1; python_version >= '3.6'
+sphinxcontrib-applehelp==1.0.0; python_version >= '3.6'
+sphinxcontrib-devhelp==1.0.0; python_version >= '3.6'
+sphinxcontrib-htmlhelp==1.0.0; python_version >= '3.6' and python_version <= "3.9"
+sphinxcontrib-htmlhelp==2.0.0; python_version >= "3.10"
+sphinxcontrib-jsmath==1.0.0; python_version >= '3.6'
+sphinxcontrib-qthelp==1.0.0; python_version >= '3.6'
+sphinxcontrib-serializinghtml==1.1.5; python_version >= '3.6'
+docutils==0.13.1; python_version >= '3.6' and python_version <= '3.9'
+docutils==0.14; python_version >= '3.10'
+Pygments==2.5.1; python_version >= '3.6'
+GitPython==2.1.15; python_version >= '3.6'
+gitdb2==2.0.0; python_version >= '3.6'
+gitdb==4.0.1; python_version >= '3.6'
+smmap2==2.0.1; python_version >= '3.6'
+smmap==3.0.1; python_version >= '3.6'
+sphinx-rtd-theme==0.5.0; python_version >= '3.6'
+Babel==2.7.0; python_version >= '3.6'
 
 # ansible-doc-extractor and it's dependent theme for docs generation (no imports, invoked via script):
 ansible-doc-extractor==0.1.4; python_version >= '3.6'
-sphinx-rtd-theme==0.5.0; python_version >= '3.6'
 
 # PyLint (no imports, invoked via pylint script):
 pylint==2.6.0; python_version >= '3.6'
@@ -170,59 +197,68 @@ typed-ast==1.3.0; python_version == '3.4' and implementation_name=='cpython'
 typed-ast==1.4.0; python_version >= '3.5' and python_version < '3.8' and implementation_name=='cpython'
 
 # Flake8 and dependents (no imports, invoked via flake8 script):
-flake8==3.8.0
+flake8==3.8.0; python_version <= '3.9'
+flake8==4.0.0; python_version >= '3.10'
 mccabe==0.6.0
-pycodestyle==2.6.0
-pyflakes==2.2.0
+pycodestyle==2.6.0; python_version <= '3.9'
+pycodestyle==2.8.0; python_version >= '3.10'
+pyflakes==2.2.0; python_version <= '3.9'
+pyflakes==2.4.0; python_version >= '3.10'
 entrypoints==0.3.0
 functools32==3.2.3.post2; python_version == '2.7'  # technically: python_version < '3.2'
 
 # Twine (no imports, invoked via twine script):
-twine==1.8.1
-readme-renderer==23.0
+twine==1.8.1; python_version <= '3.5'
+twine==3.0.0; python_version >= '3.6'
+# readme-renderer (used by twine, uses Pygments)
+readme-renderer==23.0; python_version == '2.7'
+readme-renderer==25.0; python_version >= '3.5'
 
 pyzmq==16.0.4; python_version <= '3.8'
 pyzmq==20.0.0; python_version >= '3.9'
 
 # The module.rst.j2 template uses the 'tojson' filter added in Jinja2 2.9
-Jinja2==2.9
+Jinja2==2.9; python_version <= '3.9'
+Jinja2==2.10.2; python_version >= '3.10'
 
 # Package dependency management tools (not used by any make rules)
 pipdeptree==2.0.0
-pip-check-reqs==2.0.4
+pip-check-reqs==2.0.4; python_version == '2.7'
+pip-check-reqs==2.3.2; python_version >= '3.4'
 
 # Indirect dependencies (not in requirements.txt or dev-requirements.txt)
 
 alabaster==0.7.9
 appnope==0.1.0
 args==0.1.0
-Babel==2.3.4
+attrs==18.2.0; python_version <= '3.9'
+attrs==19.2.0; python_version >= '3.10'
 backports-abc==0.5
 backports.functools-lru-cache==1.5; python_version < "3.3"
 backports.shutil-get-terminal-size==1.0.0
 backports.ssl-match-hostname==3.5.0.1
-bleach==2.1.4
+bleach==3.3.0; python_version == '2.7'
+bleach==3.1.2; python_version == '3.4'
+bleach==3.3.0; python_version >= '3.5'
 certifi==2019.9.11
 chardet==3.0.3
 clint==0.5.1
 configparser==4.0.2
 contextlib2==0.6.0
 custom-inherit==2.2.2
-docutils==0.13.1
 enum34==1.1.6; python_version < "3.4"
 filelock==3.0.0
 future==0.18.2
 futures==3.3.0; python_version < "3.2"
-gitdb2==2.0.0
 html5lib==0.999999999
 httpretty==0.9.5
 idna==2.5
 imagesize==0.7.1
-isort==4.2.15
-jsonschema==2.5.1
+isort==4.3.5
+jsonschema==2.6.0
 lazy-object-proxy==1.4.2
 linecache2==1.0.0
-MarkupSafe==0.23
+MarkupSafe==1.1.0
 mistune==0.8.1
 more-itertools==5.0.0
 ordereddict==1.1
@@ -231,28 +267,30 @@ pathlib2==2.2.1
 pbr==1.8.0
 pexpect==4.2.1
 pickleshare==0.7.4
-pkginfo==1.4.1
+# twine 3.0.0 depends on pkginfo>=1.4.2
+pkginfo==1.4.2
 ply==3.10
 prompt-toolkit==2.0.1
 ptyprocess==0.5.1
-py==1.5.1
+py==1.10.0
 python-dateutil==2.6.0
 qtconsole==4.2.1
-scandir==1.9.0
+scandir==1.9.0; python_version == '2.7'
 sh==1.12.14
 simplegeneric==0.8.1
 singledispatch==3.4.0.3; python_version < "3.4"
-smmap2==2.0.1
 snowballstemmer==1.2.1
 terminado==0.6
 testpath==0.3
 toml==0.10.0
 tornado==4.4.2
-tqdm==4.11.2
+# twine 3.0.0 depends on tqdm>=4.14
+tqdm==4.14
 traceback2==1.4.0
 traitlets==4.3.1
-typing==3.6.1
-urllib3==1.23
+typing==3.6.1; python_version < '3.5'
+urllib3==1.25.9; python_version <= '3.9'
+urllib3==1.26.5; python_version >= '3.10'
 wcwidth==0.1.7
 webencodings==0.5.1
 widgetsnbextension==1.2.6
