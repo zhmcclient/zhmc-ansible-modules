@@ -91,6 +91,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   adapter gets renamed to another existing adapter and rejects that just
   as in non-check mode.
 
+* Dev - Optimized the development environment so that 'make install' only
+  installs the minimally needed tools (such as ansible-doc-extractor) but no
+  longer the entire development tools.
+
 **Cleanup:**
 
 * Test: Changed identification of adapters in end2end test module

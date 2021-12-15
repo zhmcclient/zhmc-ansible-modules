@@ -376,18 +376,26 @@ else
 	@true >/dev/null
 endif
 
-install_$(pymn).done: Makefile develop_$(pymn).done $(dist_file) requirements.txt
+.PHONY: _check_galaxy_token
+_check_galaxy_token:
+ifeq (,$(GALAXY_TOKEN))
+	$(error Error: GALAXY_TOKEN env var needs to be set to your Ansible Galaxy API Key, see https://galaxy.ansible.com/me/preferences)
+else
+	@true >/dev/null
+endif
+
+install_$(pymn).done: Makefile install_base_$(pymn).done doctools_$(pymn).done $(dist_file) requirements.txt
 	$(PYTHON_CMD) -m pip install $(pip_level_opts) $(pip_level_opts_new) -r requirements.txt
 	ansible-galaxy collection install --force $(dist_file)
 	echo "done" >$@
 
-develop_$(pymn).done: Makefile install_pip_$(pymn).done tools/os_setup.sh dev-requirements.txt
+develop_$(pymn).done: Makefile install_base_$(pymn).done tools/os_setup.sh dev-requirements.txt
 	bash -c 'tools/os_setup.sh'
 	$(PYTHON_CMD) -m pip install $(pip_level_opts) $(pip_level_opts_new) -r dev-requirements.txt
 	echo "done" >$@
 
-install_pip_$(pymn).done: Makefile
-	bash -c 'pv=$$($(PYTHON_CMD) -m pip --version); if [[ $$pv =~ (^pip [1-8]\..*) ]]; then $(PYTHON_CMD) -m pip install pip==9.0.1; fi'
+install_base_$(pymn).done: Makefile
+	bash -c 'pv=$$($(PYTHON_CMD) -m pip --version); if [[ $$pv =~ (^pip [1-9]\..*) ]]; then $(PYTHON_CMD) -m pip install pip==10.0.1; fi'
 	$(PYTHON_CMD) -m pip install $(pip_level_opts) pip setuptools wheel
 	echo "done" >$@
 
@@ -405,6 +413,10 @@ else
 	@echo "Makefile: Done running Safety"
 endif
 endif
+
+doctools_$(pymn).done: Makefile
+	$(PYTHON_CMD) -m pip install $(pip_level_opts) -c dev-requirements.txt ansible-doc-extractor
+	echo "done" >$@
 
 $(dist_file): $(dist_dependent_files) galaxy.yml
 	mkdir -p $(dist_dir)
