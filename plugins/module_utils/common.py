@@ -23,6 +23,7 @@ import logging
 import traceback
 import platform
 import sys
+from datetime import datetime, timedelta
 
 from ansible.module_utils import six
 
@@ -58,7 +59,7 @@ class ParameterError(Error):
 
 class StatusError(Error):
     """
-    Indicates an error with the status of the partition.
+    Indicates an error with the status of the partition or LPAR.
     """
     pass
 
@@ -71,6 +72,16 @@ STOP_END_STATUSES = ('stopped', 'terminated', 'paused')
 
 # Partition status values that indicate CPC issues
 BAD_STATUSES = ('communications-not-active', 'status-check')
+
+
+# LPAR status values that may happen after Lpar.activate()
+LPAR_OPERATING_END_STATUSES = ('operating', 'acceptable')
+
+# LPAR status values that may happen after Lpar.deactivate()
+LPAR_DEACTIVATE_END_STATUSES = ('not-activated',)
+
+# Partition status values that indicate CPC issues
+LPAR_BAD_STATUSES = ('exceptions', 'non-operating')
 
 
 def missing_required_lib(library, reason=None, url=None):
@@ -367,6 +378,125 @@ def wait_for_transition_completion(partition):
     else:
         if not (status in START_END_STATUSES or status in STOP_END_STATUSES):
             raise AssertionError()
+
+
+def pull_lpar_status(lpar):
+    """
+    Retrieve the LPAR operational status as fast as possible and return it.
+    """
+    lpars = lpar.manager.cpc.lpars.list(filter_args={'name': lpar.name})
+    if len(lpars) != 1:
+        raise AssertionError()
+    this_lpar = lpars[0]
+    actual_status = this_lpar.get_property('status')
+    return actual_status
+
+
+def make_lpar_inactive(logger, lpar, check_mode):
+    """
+    Ensure that the LPAR is in an inactive status, regardless of what its
+    current operational status is.
+
+    If this function returns, the operational status of the LPAR will be
+    'not-activated'.
+
+    Parameters:
+
+      logger (logging.Logger): The logger to be used.
+
+      lpar (zhmcclient.Lpar): The LPAR (must exist, and its
+        status property is assumed to be current).
+
+      check_mode (bool): Indicates whether the playbook was run in check mode,
+        in which case this method does ot actually stop the LPAR, but
+        just returns what would have been done.
+
+    Returns:
+      bool: Indicates whether the LPAR was changed.
+
+    Raises:
+      StatusError: CPC is in one of LPAR_BAD_STATUSES or the LPAR did not reach
+        an inactive status despite attempting it.
+      zhmcclient.Error: Any zhmcclient exception can happen.
+    """
+    changed = False
+    status = pull_lpar_status(lpar)
+    if status in LPAR_BAD_STATUSES:
+        raise StatusError(
+            "Target CPC {0!r} has issues; status of LPAR {1!r} is: {2!r}".
+            format(lpar.manager.cpc.name, lpar.name, status))
+    elif status in LPAR_DEACTIVATE_END_STATUSES:
+        logger.debug("LPAR %r was already inactive with status %r",
+                     lpar.name, status)
+    else:
+        if not check_mode:
+            lpar.deactivate(force=True)
+            new_status = pull_lpar_status(lpar)
+            if new_status not in LPAR_DEACTIVATE_END_STATUSES:
+                raise StatusError(
+                    "Could not get LPAR {0!r} from {1!r} status into "
+                    "an inactive status; current status is: {2!r}".
+                    format(lpar.name, status, new_status))
+        changed = True
+    return changed
+
+
+def make_lpar_operating(logger, lpar, check_mode, activation_profile_name):
+    """
+    Ensure that the LPAR is in an operating status, regardless of what its
+    current operational status is.
+
+    If this function returns, the operational status of the LPAR will be one
+    of LPAR_OPERATING_END_STATUSES.
+
+    Parameters:
+
+      logger (logging.Logger): The logger to be used.
+
+      lpar (zhmcclient.Lpar): The LPAR (must exist, and its
+        status property is assumed to be current).
+
+      check_mode (bool): Indicates whether the playbook was run in check mode,
+        in which case this method does not actually change the LPAR, but
+        just returns what would have been done.
+
+      activation_profile_name (string): The name of the image profile to be
+        used if the LPAR gets activated. If None, the default image profile
+        specified in the 'next-activation-profile-name' property is used.
+
+    Returns:
+      bool: Indicates whether the LPAR was changed.
+
+    Raises:
+      StatusError: CPC is in one of LPAR_BAD_STATUSES or the LPAR did not reach
+        an operating status despite attempting it.
+      zhmcclient.Error: Any zhmcclient exception can happen.
+    """
+    changed = False
+    status = pull_lpar_status(lpar)
+    if status in LPAR_BAD_STATUSES:
+        raise StatusError(
+            "Target CPC {0!r} has issues; status of LPAR {1!r} is: {2!r}".
+            format(lpar.manager.cpc.name, lpar.name, status))
+    elif status in LPAR_OPERATING_END_STATUSES:
+        logger.debug("LPAR %r was already operating with status %r",
+                     lpar.name, status)
+    else:
+        if not check_mode:
+            lpar.activate(
+                activation_profile_name=activation_profile_name, force=True)
+            new_status = pull_lpar_status(lpar)
+            if new_status == 'not-operating':
+                # The LPAR was defined not to auto-load, so we load it.
+                lpar.load()
+            new_status = pull_lpar_status(lpar)
+            if new_status not in LPAR_OPERATING_END_STATUSES:
+                raise StatusError(
+                    "Could not get LPAR {0!r} from {1!r} status into "
+                    "an operating status; current status is: {2!r}".
+                    format(lpar.name, status, new_status))
+        changed = True
+    return changed
 
 
 def get_session(faked_session, host, userid, password, ca_certs, verify):

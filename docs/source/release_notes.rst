@@ -49,6 +49,9 @@ Released: not yet
 
 **Enhancements:**
 
+* Added a new zhmc_lpar Ansible module for managing LPARs on CPCs in classic
+  mode. (issue #418)
+
 **Cleanup:**
 
 **Known issues:**
