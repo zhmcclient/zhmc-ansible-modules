@@ -57,6 +57,7 @@
 <li class="toctree-l2"><a class="reference internal" href="modules/zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Attach storage groups to partitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/zhmc_storage_volume.html">zhmc_storage_volume – Create storage volumes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/zhmc_virtual_function.html">zhmc_virtual_function – Create virtual functions in partitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_lpar.html">zhmc_lpar – Manage LPARs</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="playbooks.html">Playbooks</a></li>
@@ -135,9 +136,11 @@ what will returned.</p>
 </ul>
 </div>
 <p>Modules supported only with CPCs in classic operational mode:</p>
-<ul class="simple">
-<li><p>None</p></li>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules/zhmc_lpar.html">zhmc_lpar – Manage LPARs</a></li>
 </ul>
+</div>
 <p>You can also access the documentation of each module from the command line by
 using the <a class="reference external" href="https://docs.ansible.com/ansible/latest/cli/ansible-doc.html#ansible-doc">ansible-doc</a> command, for example:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ ansible-doc ibm.ibm_zhmc.zhmc_adapter

@@ -236,7 +236,7 @@ add text for any known issues you want users to know about.</p></li>
 </div>
 <p>and set the ‘version’ parameter to the version to be released (replacing
 the <code class="docutils literal notranslate"><span class="pre">${...}</span></code> variables with their values):</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">version</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">${MNU}</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${MNU}</span><span class="w"></span>
 </pre></div>
 </div>
 </li>
@@ -258,11 +258,11 @@ their values):</p>
 <p>and in the step named “Set the tag and branch variables for BRANCH”,
 change the draft version to the version to be released (replacing the
 <code class="docutils literal notranslate"><span class="pre">${...}</span></code> variables with their values):</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Set the tag and branch variables for ${BRANCH}</span>
-  <span class="nt">if</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">${{ github.ref == &#39;refs/heads/${BRANCH}&#39; }}</span>
-  <span class="nt">run</span><span class="p">:</span> <span class="p p-Indicator">|</span>
-    <span class="no">echo &quot;branch=${BRANCH}&quot; &gt;&gt; $GITHUB_ENV</span>
-    <span class="no">echo &quot;tag=${MNU}&quot; &gt;&gt; $GITHUB_ENV</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Set the tag and branch variables for ${BRANCH}</span><span class="w"></span>
+<span class="w">  </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ github.ref == &#39;refs/heads/${BRANCH}&#39; }}</span><span class="w"></span>
+<span class="w">  </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
+<span class="w">    </span><span class="no">echo &quot;branch=${BRANCH}&quot; &gt;&gt; $GITHUB_ENV</span><span class="w"></span>
+<span class="w">    </span><span class="no">echo &quot;tag=${MNU}&quot; &gt;&gt; $GITHUB_ENV</span><span class="w"></span>
 </pre></div>
 </div>
 </li>
@@ -423,7 +423,7 @@ Released: not yet
 </pre></div>
 </div>
 <p>and update the version to the new draft version:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">version</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">${MNUD}</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${MNUD}</span><span class="w"></span>
 </pre></div>
 </div>
 <p>Note: The version must follow the rules for semantic versioning 2.0
@@ -446,11 +446,11 @@ the list (replacing the <code class="docutils literal notranslate"><span class="
 </div>
 <p>and add a step for defining the variables for the new draft version after
 the last such step (replacing the <code class="docutils literal notranslate"><span class="pre">${...}</span></code> variables with their values):</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Set the tag and branch variables for ${BRANCH}</span>
-  <span class="nt">if</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">${{ github.ref == &#39;refs/heads/${BRANCH}&#39; }}</span>
-  <span class="nt">run</span><span class="p">:</span> <span class="p p-Indicator">|</span>
-    <span class="no">echo &quot;branch=${BRANCH}&quot; &gt;&gt; $GITHUB_ENV</span>
-    <span class="no">echo &quot;tag=${MNUD}&quot; &gt;&gt; $GITHUB_ENV</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Set the tag and branch variables for ${BRANCH}</span><span class="w"></span>
+<span class="w">  </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ github.ref == &#39;refs/heads/${BRANCH}&#39; }}</span><span class="w"></span>
+<span class="w">  </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
+<span class="w">    </span><span class="no">echo &quot;branch=${BRANCH}&quot; &gt;&gt; $GITHUB_ENV</span><span class="w"></span>
+<span class="w">    </span><span class="no">echo &quot;tag=${MNUD}&quot; &gt;&gt; $GITHUB_ENV</span><span class="w"></span>
 </pre></div>
 </div>
 </li>
