@@ -40,6 +40,7 @@ Modules supported with CPCs in any operational mode:
    :glob:
 
    modules/zhmc_cpc
+   modules/zhmc_cpc_list
 
 Modules supported only with CPCs in DPM operational mode:
 
