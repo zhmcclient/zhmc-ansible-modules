@@ -37,6 +37,7 @@ description:
   - Gather facts about an LPAR of a CPC (Z system) in classic mode.
   - Update modifiable properties of an active LPAR.
   - Activate an LPAR and update its properties.
+  - Load an LPAR and update its properties.
   - Deactivate an LPAR.
 author:
   - Andreas Maier (@andy-maier)
@@ -113,11 +114,16 @@ options:
       - "* C(inactive): Ensures that the LPAR is inactive (i.e. status is
          'not-activated'). Properties cannot be updated. The LPAR is
          deactivated if needed."
-      - "* C(operating): Ensures that the LPAR is operating (i.e. status is
+      - "* C(active): Ensures that the LPAR is at least activated (i.e. status
+         is 'not-operating', 'operating' or 'acceptable'), and then ensures
+         that the LPAR properties have the specified values. The LPAR is
+         activated if needed. If it was already loaded or if auto-load is
+         set, the LPAR will end up loaded."
+      - "* C(loaded): Ensures that the LPAR is loaded (i.e. status is
          'operating' or 'acceptable'), and then ensures that the LPAR properties
          have the specified values. The LPAR is first activated if needed, and
          then loaded if needed (when auto-load is not set)."
-      - "* C(updated): Ensures that the LPAR properties have the specified
+      - "* C(set): Ensures that the LPAR properties have the specified
          values. Requires that the LPAR is at least active (i.e. status is
          'not-operating', 'operating' or 'acceptable') but does not activate
          the LPAR if that is not the case."
@@ -125,24 +131,40 @@ options:
       - "In all cases, the LPAR must exist."
     type: str
     required: true
-    choices: ['inactive', 'operating', 'updated', 'facts']
+    choices: ['inactive', 'active', 'loaded', 'set', 'facts']
   activation_profile_name:
     description:
-      - "The name of the image activation profile to be used when activating the
-         LPAR, for C(state=operating). This parameter is ignored when the LPAR
-         was already operating."
-      - "Default: The image activation profile specified in the
-         'next-activation-profile-name' property of the LPAR."
+      - "The name of the image or load activation profile to be used when the
+         LPAR needs to be activated, for C(state=active) and C(state=loaded)."
+      - "Default: The image or load activation profile specified in the
+         'next-activation-profile-name' property of the LPAR is used when the
+         LPAR needs to be activated."
+      - "If the LPAR was already active, the C(force) parameter determines what
+         happens."
       - "This parameter is not allowed for the other C(state) values."
     type: str
     required: false
+    default: null
+  force:
+    description:
+      - "Controls what happens when the LPAR was already active:"
+      - "If True, the parameters from the specified or defaulted image or load
+         activation profile will be applied."
+      - "If False, the parameters from the previously used activation profile
+         remain applied and will not be changed. The previously used activation
+         profile is shown in the 'last-used-activation-profile' property of the
+         LPAR."
+      - "TODO: Verify these statements"
+    type: bool
+    required: false
+    default: false
   properties:
     description:
       - "Dictionary with new values for the LPAR properties, for
-         C(state=operating) and C(state=updated). Key is the property name with
-         underscores instead of hyphens, and value is the property value in
-         YAML syntax. Integer properties may also be provided as decimal
-         strings."
+         C(state=active), C(state=loaded) and C(state=set). Key is the property
+         name with underscores instead of hyphens, and value is the property
+         value in YAML syntax. Integer properties may also be provided as
+         decimal strings."
       - "The possible input properties in this dictionary are the properties
          defined as writeable in the data model for LPAR resources
          (where the property names contain underscores instead of hyphens)."
@@ -180,25 +202,34 @@ EXAMPLES = """
     state: inactive
   register: lpar1
 
-- name: Ensure the LPAR is operating (using the default image profile when it needs to be activated), and then set the CP sharing weight to 20
+- name: Ensure the LPAR is active (using the default image profile when it needs to be activated), and then set the CP sharing weight to 20
   zhmc_lpar:
     hmc_host: "{{ my_hmc_host }}"
     hmc_auth: "{{ my_hmc_auth }}"
     cpc_name: "{{ my_cpc_name }}"
     name: "{{ my_lpar_name }}"
-    state: operating
+    state: active
     properties:
       initial_processing_weight: 20
   register: lpar1
 
-- name: Ensure the LPAR is operating (using image profile IMAGE1 when it needs to be activated)
+- name: Ensure the LPAR is active (using image profile LPAR2 when it needs to be activated)
   zhmc_lpar:
     hmc_host: "{{ my_hmc_host }}"
     hmc_auth: "{{ my_hmc_auth }}"
     cpc_name: "{{ my_cpc_name }}"
     name: "{{ my_lpar_name }}"
-    state: operating
-    activation_profile_name: IMAGE1
+    state: active
+    activation_profile_name: LPAR2
+  register: lpar1
+
+- name: Ensure the LPAR is loaded (using the default image profile when it needs to be activated)
+  zhmc_lpar:
+    hmc_host: "{{ my_hmc_host }}"
+    hmc_auth: "{{ my_hmc_auth }}"
+    cpc_name: "{{ my_cpc_name }}"
+    name: "{{ my_lpar_name }}"
+    state: loaded
   register: lpar1
 
 - name: Ensure the CP sharing weight of the LPAR is 30
@@ -207,7 +238,7 @@ EXAMPLES = """
     hmc_auth: "{{ my_hmc_auth }}"
     cpc_name: "{{ my_cpc_name }}"
     name: "{{ my_lpar_name }}"
-    state: updated
+    state: set
     properties:
       initial_processing_weight: 30
   register: lpar1
@@ -235,7 +266,7 @@ msg:
   type: str
 lpar:
   description:
-    - "The resource properties of the LPAR, after the specified updates have
+    - "The resource properties of the LPAR, after any specified updates have
        been applied."
     - "Note that the returned properties may show different values than the ones
        that were specified as input for the update. For example, memory
@@ -417,7 +448,7 @@ from ansible.module_utils.basic import AnsibleModule  # noqa: E402
 from operator import itemgetter  # noqa: E402
 
 from ..module_utils.common import log_init, Error, ParameterError, \
-    StatusError, make_lpar_inactive, make_lpar_operating, \
+    StatusError, ensure_lpar_inactive, ensure_lpar_active, ensure_lpar_loaded, \
     eq_hex, get_hmc_auth, get_session, \
     to_unicode, process_normal_property, missing_required_lib  # noqa: E402
 
@@ -440,6 +471,10 @@ LOGGER_NAME = 'zhmc_lpar'
 
 LOGGER = logging.getLogger(LOGGER_NAME)
 
+# Defaults for module input parameters
+DEFAULT_ACTIVATION_PROFILE_NAME = None
+DEFAULT_FORCE = False
+
 # Dictionary of properties of LPAR resources, in this format:
 #   name: (allowed, create, update, update_while_active, eq_func, type_cast)
 # where:
@@ -453,7 +488,7 @@ LOGGER = logging.getLogger(LOGGER_NAME)
 #   update: Indicates whether it can be specified for the "Update Logical
 #     Partition Properties" operation (at all).
 #   update_while_active: Indicates whether it can be specified for the "Update
-#     Logical Partition Properties" operation while the LPAR is operating. None
+#     Logical Partition Properties" operation while the LPAR is active. None
 #     means "not applicable" (i.e. update=False).
 #   eq_func: Equality test function for two values of the property; None means
 #     to use Python equality.
@@ -674,66 +709,6 @@ def add_artificial_properties(lpar_properties, lpar):
     pass
 
 
-def ensure_operating(params, check_mode):
-    """
-    Ensure that the LPAR is in an operating state and has the specified
-    properties.
-
-    Raises:
-      ParameterError: An issue with the module parameters.
-      StatusError: An issue with the LPAR status.
-      zhmcclient.Error: Any zhmcclient exception can happen.
-    """
-
-    host = params['hmc_host']
-    userid, password, ca_certs, verify = get_hmc_auth(params['hmc_auth'])
-    cpc_name = params['cpc_name']
-    lpar_name = params['name']
-    activation_profile_name = params['activation_profile_name']
-    _faked_session = params.get('_faked_session', None)
-
-    changed = False
-    result = {}
-
-    session = get_session(
-        _faked_session, host, userid, password, ca_certs, verify)
-    try:
-        client = zhmcclient.Client(session)
-        cpc = client.cpcs.find(name=cpc_name)
-        lpar = cpc.lpars.find(name=lpar_name)
-        # The default exception handling is sufficient for the above.
-
-        # If we got here, the LPAR exists.
-
-        # Bring the LPAR into the operating status.
-        changed |= make_lpar_operating(
-            LOGGER, lpar, check_mode,
-            activation_profile_name=activation_profile_name)
-
-        # Update the properties of the LPAR.
-        lpar.pull_full_properties()
-        lpar_properties = dict(lpar.properties)
-        update_props = process_properties(cpc, lpar, params)
-        if update_props:
-            if not check_mode:
-                lpar.update_properties(update_props)
-                # We refresh the properties after the update, in case an
-                # input property value gets changed.
-                lpar.pull_full_properties()
-                lpar_properties = dict(lpar.properties)
-            else:
-                lpar_properties.update(update_props)
-            changed = True
-
-        result = lpar_properties
-        add_artificial_properties(result, lpar)
-
-        return changed, result
-
-    finally:
-        session.logoff()
-
-
 def ensure_inactive(params, check_mode):
     """
     Ensure that the LPAR is inactive. No properties are updated.
@@ -770,7 +745,7 @@ def ensure_inactive(params, check_mode):
         # If we got here, the LPAR exists.
 
         # Deactivate the LPAR.
-        changed |= make_lpar_inactive(LOGGER, lpar, check_mode)
+        changed |= ensure_lpar_inactive(LOGGER, lpar, check_mode)
 
         return changed, result
 
@@ -778,12 +753,139 @@ def ensure_inactive(params, check_mode):
         session.logoff()
 
 
-def ensure_updated(params, check_mode):
+def ensure_active(params, check_mode):
+    """
+    Ensure that the LPAR is active and has the specified properties.
+
+    If the LPAR has auto-load set, it will continue to become loaded.
+    If the LPAR was already loaded, it remains loaded.
+
+    Raises:
+      ParameterError: An issue with the module parameters.
+      StatusError: An issue with the LPAR status.
+      zhmcclient.Error: Any zhmcclient exception can happen.
+    """
+
+    host = params['hmc_host']
+    userid, password, ca_certs, verify = get_hmc_auth(params['hmc_auth'])
+    cpc_name = params['cpc_name']
+    lpar_name = params['name']
+    activation_profile_name = params.get(
+        'activation_profile_name', DEFAULT_ACTIVATION_PROFILE_NAME)
+    force = params.get('force', DEFAULT_FORCE)
+    _faked_session = params.get('_faked_session', None)
+
+    changed = False
+    result = {}
+
+    session = get_session(
+        _faked_session, host, userid, password, ca_certs, verify)
+    try:
+        client = zhmcclient.Client(session)
+        cpc = client.cpcs.find(name=cpc_name)
+        lpar = cpc.lpars.find(name=lpar_name)
+        # The default exception handling is sufficient for the above.
+
+        # If we got here, the LPAR exists.
+
+        # Bring the LPAR into the active status.
+        changed |= ensure_lpar_active(
+            LOGGER, lpar, check_mode,
+            activation_profile_name=activation_profile_name,
+            force=force)
+
+        # Update the properties of the LPAR.
+        lpar.pull_full_properties()
+        lpar_properties = dict(lpar.properties)
+        update_props = process_properties(cpc, lpar, params)
+        if update_props:
+            if not check_mode:
+                lpar.update_properties(update_props)
+                # We refresh the properties after the update, in case an
+                # input property value gets changed.
+                lpar.pull_full_properties()
+                lpar_properties = dict(lpar.properties)
+            else:
+                lpar_properties.update(update_props)
+            changed = True
+
+        result = lpar_properties
+        add_artificial_properties(result, lpar)
+
+        return changed, result
+
+    finally:
+        session.logoff()
+
+
+def ensure_loaded(params, check_mode):
+    """
+    Ensure that the LPAR is loaded and has the specified properties.
+
+    Raises:
+      ParameterError: An issue with the module parameters.
+      StatusError: An issue with the LPAR status.
+      zhmcclient.Error: Any zhmcclient exception can happen.
+    """
+
+    host = params['hmc_host']
+    userid, password, ca_certs, verify = get_hmc_auth(params['hmc_auth'])
+    cpc_name = params['cpc_name']
+    lpar_name = params['name']
+    activation_profile_name = params.get(
+        'activation_profile_name', DEFAULT_ACTIVATION_PROFILE_NAME)
+    force = params.get('force', DEFAULT_FORCE)
+    _faked_session = params.get('_faked_session', None)
+
+    changed = False
+    result = {}
+
+    session = get_session(
+        _faked_session, host, userid, password, ca_certs, verify)
+    try:
+        client = zhmcclient.Client(session)
+        cpc = client.cpcs.find(name=cpc_name)
+        lpar = cpc.lpars.find(name=lpar_name)
+        # The default exception handling is sufficient for the above.
+
+        # If we got here, the LPAR exists.
+
+        # Bring the LPAR into the loaded status.
+        changed |= ensure_lpar_loaded(
+            LOGGER, lpar, check_mode,
+            activation_profile_name=activation_profile_name,
+            force=force)
+
+        # Update the properties of the LPAR.
+        lpar.pull_full_properties()
+        lpar_properties = dict(lpar.properties)
+        update_props = process_properties(cpc, lpar, params)
+        if update_props:
+            if not check_mode:
+                lpar.update_properties(update_props)
+                # We refresh the properties after the update, in case an
+                # input property value gets changed.
+                lpar.pull_full_properties()
+                lpar_properties = dict(lpar.properties)
+            else:
+                lpar_properties.update(update_props)
+            changed = True
+
+        result = lpar_properties
+        add_artificial_properties(result, lpar)
+
+        return changed, result
+
+    finally:
+        session.logoff()
+
+
+def ensure_set(params, check_mode):
     """
     Ensure that the LPAR properties have been updated, without activating
     or deactivating the LPAR.
 
-    This requires the LPAR to be in an operating status.
+    This requires the LPAR to be active or loaded.
 
     Raises:
       ParameterError: An issue with the module parameters.
@@ -897,9 +999,10 @@ def perform_task(params, check_mode):
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
     actions = {
-        'operating': ensure_operating,
         'inactive': ensure_inactive,
-        'updated': ensure_updated,
+        'active': ensure_active,
+        'loaded': ensure_loaded,
+        'set': ensure_set,
         'facts': facts,
     }
     return actions[params['state']](params, check_mode)
@@ -923,9 +1026,13 @@ def main():
         ),
         cpc_name=dict(required=True, type='str'),
         name=dict(required=True, type='str'),
-        state=dict(required=True, type='str',
-                   choices=['inactive', 'operating', 'updated', 'facts']),
-        activation_profile_name=dict(required=False, type='str'),
+        state=dict(
+            required=True, type='str',
+            choices=['inactive', 'active', 'loaded', 'set', 'facts']),
+        activation_profile_name=dict(
+            required=False, type='str',
+            default=DEFAULT_ACTIVATION_PROFILE_NAME),
+        force=dict(required=False, type='bool', default=DEFAULT_FORCE),
         properties=dict(required=False, type='dict', default={}),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),
