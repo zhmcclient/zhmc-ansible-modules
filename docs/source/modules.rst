@@ -65,6 +65,7 @@ Modules supported only with CPCs in classic operational mode:
    :glob:
 
    modules/zhmc_lpar
+   modules/zhmc_lpar_list
 
 You can also access the documentation of each module from the command line by
 using the `ansible-doc`_ command, for example:

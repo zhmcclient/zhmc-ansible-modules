@@ -64,6 +64,13 @@ class StatusError(Error):
     pass
 
 
+class VersionError(Error):
+    """
+    Indicates an error with the required version of HMC or SE/CPC.
+    """
+    pass
+
+
 # Partition status values that may happen after Partition.start()
 START_END_STATUSES = ('active', 'degraded')
 
