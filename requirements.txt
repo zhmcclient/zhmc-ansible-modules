@@ -19,8 +19,9 @@ ansible>=2.9.0.0
 requests>=2.22.0; python_version <= '3.9'
 requests>=2.25.0; python_version >= '3.10'
 
-# git+https://github.com/zhmcclient/python-zhmcclient@master#egg=zhmcclient
-zhmcclient>=1.1.1
+# TODO: Switch back to official package once zhmcclient 1.2.0 is released
+git+https://github.com/zhmcclient/python-zhmcclient@andy/cpc-activate#egg=zhmcclient
+# zhmcclient>=1.2.0
 
 
 # Indirect dependencies are not specified in this file, unless needed to solve versioning issues:
