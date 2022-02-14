@@ -103,11 +103,11 @@ name
 state
   The desired state for the LPAR:
 
-  * ``inactive``: Ensures that the LPAR is inactive (i.e. status is 'not-activated'). Properties cannot be updated.
+  * ``inactive``: Ensures that the LPAR is inactive (i.e. status is 'not-activated'). Properties cannot be updated. The LPAR is deactivated if needed.
 
-  * ``operating``: Ensures that the LPAR is operating (i.e. status is 'operating' or 'acceptable'), and then ensures that the LPAR properties have the specified values.
+  * ``operating``: Ensures that the LPAR is operating (i.e. status is 'operating' or 'acceptable'), and then ensures that the LPAR properties have the specified values. The LPAR is first activated if needed, and then loaded if needed (when auto-load is not set).
 
-  * ``updated``: Ensures that the LPAR properties have the specified values. Requires that the LPAR is operating but does not activate it if that is not the case.
+  * ``updated``: Ensures that the LPAR properties have the specified values. Requires that the LPAR is at least active (i.e. status is 'not-operating', 'operating' or 'acceptable') but does not activate the LPAR if that is not the case.
 
   * ``facts``: Returns the current LPAR properties.
 
