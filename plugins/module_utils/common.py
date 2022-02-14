@@ -65,10 +65,10 @@ class StatusError(Error):
 
 
 # Partition status values that may happen after Partition.start()
-START_END_STATUSES = ('active', 'degraded', 'reservation-error')
+START_END_STATUSES = ('active', 'degraded')
 
 # Partition status values that may happen after Partition.stop()
-STOP_END_STATUSES = ('stopped', 'terminated', 'paused')
+STOP_END_STATUSES = ('stopped', 'terminated', 'paused', 'reservation-error')
 
 # Partition status values that indicate CPC issues
 BAD_STATUSES = ('communications-not-active', 'status-check')
@@ -211,8 +211,7 @@ def stop_partition(partition, check_mode):
     status of the partition, regardless of what its current operational status
     is.
 
-    If this function returns, the operational status of the partition will be
-    'stopped'.
+    The resulting operational status will be one of STOP_END_STATUSES.
 
     Parameters:
       partition (zhmcclient.Partition): The partition (must exist, and its
@@ -225,8 +224,8 @@ def stop_partition(partition, check_mode):
       bool: Indicates whether the partition was changed.
 
     Raises:
-      StatusError: Partition is in one of BAD_STATUSES or did not reach the
-        'stopped' status despite attempting it.
+      StatusError: Partition is in one of BAD_STATUSES or did not reach one of
+        the STOP_END_STATUSES despite attempting it.
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
     changed = False
@@ -236,48 +235,44 @@ def stop_partition(partition, check_mode):
         raise StatusError(
             "Target CPC {0!r} has issues; status of partition {1!r} is: {2!r}".
             format(partition.manager.cpc.name, partition.name, status))
-    elif status == 'stopped':
+    elif status in STOP_END_STATUSES:
         pass
     elif status == 'starting':
         if not check_mode:
             # Let it first finish the starting
             partition.wait_for_status(START_END_STATUSES)
-            start_end_status = pull_partition_status(partition)
             # Then stop it
             partition.stop()
             status = pull_partition_status(partition)
-            if status != 'stopped':
+            if status not in STOP_END_STATUSES:
                 raise StatusError(
-                    "Could not get partition {0!r} from {1!r} status into "
-                    "'stopped' status after waiting for its starting to "
-                    "complete; current status is: {2!r}".
-                    format(partition.name, start_end_status, status))
+                    "Could not get partition {0!r} from 'starting' status into "
+                    "an inactive status after waiting for its starting to "
+                    "complete; current status is: {1!r}".
+                    format(partition.name, status))
         changed = True
     elif status == 'stopping':
         if not check_mode:
             # Let it finish the stopping
             partition.wait_for_status(STOP_END_STATUSES)
-            stop_end_status = pull_partition_status(partition)
-            if stop_end_status != 'stopped':
-                # Make another attempt to stop it
-                partition.stop()
-                status = pull_partition_status(partition)
-                if status != 'stopped':
-                    raise StatusError(
-                        "Could not get partition {0!r} from {1!r} status into "
-                        "'stopped' status after waiting for its stopping to "
-                        "complete; current status is: {2!r}".
-                        format(partition.name, stop_end_status, status))
+            status = pull_partition_status(partition)
+            if status not in STOP_END_STATUSES:
+                raise StatusError(
+                    "Could not get partition {0!r} from 'stopping' status into "
+                    "an inactive status after waiting for its stopping to "
+                    "complete; current status is: {1!r}".
+                    format(partition.name, status))
         changed = True
     else:
+        # status in START_END_STATUSES
         if not check_mode:
             previous_status = pull_partition_status(partition)
             partition.stop()
             status = pull_partition_status(partition)
-            if status != 'stopped':
+            if status not in STOP_END_STATUSES:
                 raise StatusError(
                     "Could not get partition {0!r} from {1!r} status into "
-                    "'stopped' status; current status is: {2!r}".
+                    "an inactive status; current status is: {2!r}".
                     format(partition.name, previous_status, status))
         changed = True
     return changed
@@ -302,8 +297,8 @@ def start_partition(partition, check_mode):
       bool: Indicates whether the partition was changed.
 
     Raises:
-      StatusError: Partition is in one of BAD_STATUSES or did not reach a
-        started status despite attempting it.
+      StatusError: Partition is in one of BAD_STATUSES or did not reach one of
+        the START_END_STATUSES despite attempting it.
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
     changed = False
@@ -319,23 +314,30 @@ def start_partition(partition, check_mode):
         if not check_mode:
             # Let it first finish the stopping
             partition.wait_for_status(STOP_END_STATUSES)
-            stop_end_status = pull_partition_status(partition)
             # Then start it
             partition.start()
             status = pull_partition_status(partition)
             if status not in START_END_STATUSES:
                 raise StatusError(
-                    "Could not get partition {0!r} from {1!r} status into "
-                    "a started status after waiting for its stopping to "
-                    "complete; current status is: {2!r}".
-                    format(partition.name, stop_end_status, status))
+                    "Could not get partition {0!r} from 'stopping' status into "
+                    "an active status after waiting for its stopping to "
+                    "complete; current status is: {1!r}".
+                    format(partition.name, status))
         changed = True
     elif status == 'starting':
         if not check_mode:
             # Let it finish the starting
             partition.wait_for_status(START_END_STATUSES)
+            status = pull_partition_status(partition)
+            if status not in START_END_STATUSES:
+                raise StatusError(
+                    "Could not get partition {0!r} from 'starting' status into "
+                    "an active status after waiting for its starting to "
+                    "complete; current status is: {1!r}".
+                    format(partition.name, status))
         changed = True
     else:
+        # status in STOP_END_STATUSES
         if not check_mode:
             previous_status = pull_partition_status(partition)
             partition.start()
@@ -343,7 +345,7 @@ def start_partition(partition, check_mode):
             if status not in START_END_STATUSES:
                 raise StatusError(
                     "Could not get partition {0!r} from {1!r} status into "
-                    "a started status; current status is: {2!r}".
+                    "an active status; current status is: {2!r}".
                     format(partition.name, previous_status, status))
         changed = True
     return changed
