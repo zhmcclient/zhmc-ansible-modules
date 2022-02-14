@@ -111,10 +111,11 @@ options:
       - "* C(absent): Ensures that the partition does not exist in the specified
          CPC."
       - "* C(stopped): Ensures that the partition exists in the specified CPC,
-         has the specified properties, and is in the 'stopped' status."
+         has the specified properties, and is in one of the inactive statuses
+         ('stopped', 'terminated', 'paused', 'reservation-error')."
       - "* C(active): Ensures that the partition exists in the specified CPC,
-         has the specified properties, and is in the 'active' or 'degraded'
-         status."
+         has the specified properties, and is in one of the active statuses
+         ('active', 'degraded')."
       - "* C(facts): Returns the partition properties and the properties of its
          child resources (HBAs, NICs, and virtual functions)."
     type: str
