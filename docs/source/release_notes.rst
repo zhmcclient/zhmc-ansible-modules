@@ -20,14 +20,26 @@ Releases
 ========
 
 
-Version 0.10.1
----------------
+Version 0.10.1-dev1
+-------------------
 
-Released: 2021-08-27
+Released: 2022-02-xx
+
+**Incompatible changes:**
+
+**Deprecations:**
 
 **Bug fixes:**
 
-* Fixed new Pylint issues reported by Pylint 2.9 and 2.10.
+**Enhancements:**
+
+**Cleanup:**
+
+**Known issues:**
+
+* See `list of open issues`_.
+
+.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 0.10.0
