@@ -33,6 +33,8 @@ Released: 2022-02-xx
 
 * Fixed new Pylint issues reported by Pylint 2.9 and 2.10.
 
+* Pinned Ansible to <5.0 in this major version.
+
 **Enhancements:**
 
 **Cleanup:**
