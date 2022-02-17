@@ -157,6 +157,10 @@ cpcs
                 "name": "CPCA",
                 "se_version": "2.15",
                 "status": "active"
+            },
+            {
+                "is_managed": false,
+                "name": "NewCPC"
             }
         ]
 
