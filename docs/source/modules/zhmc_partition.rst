@@ -97,9 +97,9 @@ state
 
   * ``absent``: Ensures that the partition does not exist in the specified CPC.
 
-  * ``stopped``: Ensures that the partition exists in the specified CPC, has the specified properties, and is in the 'stopped' status.
+  * ``stopped``: Ensures that the partition exists in the specified CPC, has the specified properties, and is in one of the inactive statuses ('stopped', 'terminated', 'paused', 'reservation-error').
 
-  * ``active``: Ensures that the partition exists in the specified CPC, has the specified properties, and is in the 'active' or 'degraded' status.
+  * ``active``: Ensures that the partition exists in the specified CPC, has the specified properties, and is in one of the active statuses ('active', 'degraded').
 
   * ``facts``: Returns the partition properties and the properties of its child resources (HBAs, NICs, and virtual functions).
 
