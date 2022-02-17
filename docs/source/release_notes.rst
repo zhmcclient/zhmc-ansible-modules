@@ -35,6 +35,9 @@ Released: 2022-02-xx
 
 * Pinned Ansible to <5.0 in this major version.
 
+* Increased minimum version of zhmcclient from 0.31.0 to 1.1.1 in order to
+  pick up fixes.
+
 **Enhancements:**
 
 **Cleanup:**

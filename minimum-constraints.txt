@@ -87,7 +87,7 @@ wheel==0.33.5; python_version >= '3.8'
 
 ansible==2.9.0.0
 requests==2.20.1
-zhmcclient==0.31.0
+zhmcclient==1.1.1
 
 # Indirect dependencies for installation (must be consistent with requirements.txt)
 
