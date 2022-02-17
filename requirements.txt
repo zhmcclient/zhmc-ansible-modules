@@ -14,7 +14,7 @@ ansible>=2.9.0.0,<5.0
 
 requests>=2.20.1
 # git+https://github.com/zhmcclient/python-zhmcclient@master#egg=zhmcclient
-zhmcclient>=0.31.0
+zhmcclient>=1.1.1
 
 
 # Indirect dependencies are not specified in this file, unless needed to solve versioning issues:
