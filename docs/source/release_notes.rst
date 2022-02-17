@@ -47,6 +47,9 @@ Released: not yet
 
 * Added support for Ansible 5.0.
 
+* Increased minimum version of zhmcclient from 0.31.0 to 1.1.1 in order to
+  pick up fixes.
+
 **Enhancements:**
 
 * Added a new zhmc_lpar Ansible module for managing LPARs on CPCs in classic
