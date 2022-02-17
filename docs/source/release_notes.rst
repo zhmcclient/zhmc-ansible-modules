@@ -20,14 +20,10 @@ Releases
 ========
 
 
-Version 0.10.1-dev1
--------------------
+Version 0.10.1
+--------------
 
-Released: 2022-02-xx
-
-**Incompatible changes:**
-
-**Deprecations:**
+Released: 2022-02-17
 
 **Bug fixes:**
 
@@ -37,16 +33,6 @@ Released: 2022-02-xx
 
 * Increased minimum version of zhmcclient from 0.31.0 to 1.1.1 in order to
   pick up fixes.
-
-**Enhancements:**
-
-**Cleanup:**
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 0.10.0
