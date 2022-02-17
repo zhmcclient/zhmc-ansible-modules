@@ -48,6 +48,7 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../modules.html">Modules</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="zhmc_user.html">zhmc_user – Create HMC users</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_cpc.html">zhmc_cpc – Update CPCs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_cpc_list.html">zhmc_cpc_list – List CPCs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_adapter.html">zhmc_adapter – Update adapters and create Hipersocket adapters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_crypto_attachment.html">zhmc_crypto_attachment – Attach crypto resources to partitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_hba.html">zhmc_hba – Create HBAs in partitions</a></li>
@@ -197,8 +198,8 @@
 <dt>state</dt><dd><p>The desired state for the partition. All states are fully idempotent within the limits of the properties that can be changed:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">absent</span></code>: Ensures that the partition does not exist in the specified CPC.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">stopped</span></code>: Ensures that the partition exists in the specified CPC, has the specified properties, and is in the ‘stopped’ status.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">active</span></code>: Ensures that the partition exists in the specified CPC, has the specified properties, and is in the ‘active’ or ‘degraded’ status.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stopped</span></code>: Ensures that the partition exists in the specified CPC, has the specified properties, and is in one of the inactive statuses (‘stopped’, ‘terminated’, ‘paused’, ‘reservation-error’).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">active</span></code>: Ensures that the partition exists in the specified CPC, has the specified properties, and is in one of the active statuses (‘active’, ‘degraded’).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">facts</span></code>: Returns the partition properties and the properties of its child resources (HBAs, NICs, and virtual functions).</p></li>
 </ul>
 <div class="line-block">
