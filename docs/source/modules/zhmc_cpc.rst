@@ -4,7 +4,7 @@
 .. _zhmc_cpc_module:
 
 
-zhmc_cpc -- Update CPCs
+zhmc_cpc -- Manage CPCs
 =======================
 
 
@@ -16,15 +16,17 @@ zhmc_cpc -- Update CPCs
 
 Synopsis
 --------
-- Gather facts about a CPC (Z system), including its adapters, partitions, and storage groups.
+- Deactivate a CPC (Z system).
+- Activate a CPC and update its properties.
+- Gather facts about a CPC, and for DPM operational mode, including its adapters, partitions and storage groups.
 - Update the properties of a CPC.
 
 
 Requirements
 ------------
 
-- Access to the WS API of the HMC of the targeted Z system (see :term:`HMC API`).
-- The targeted Z system can be in any operational mode (classic, DPM).
+- Access to the WS API of the HMC of the targeted CPC (see :term:`HMC API`).
+- The targeted CPC can be in any operational mode (classic, DPM).
 
 
 
@@ -87,17 +89,32 @@ name
 state
   The desired state for the CPC. All states are fully idempotent within the limits of the properties that can be changed:
 
+  * ``inactive``: Ensures the CPC is inactive.
+
+  * ``active``: Ensures the CPC is active and then ensures that the CPC has the specified properties. The operational mode of the CPC cannot be changed.
+
   * ``set``: Ensures that the CPC has the specified properties.
 
   * ``facts``: Returns the CPC properties including its child resources.
 
   | **required**: True
   | **type**: str
-  | **choices**: set, facts
+  | **choices**: inactive, active, set, facts
+
+
+activation_profile_name
+  The name of the reset activation profile to be used when activating the CPC in the classic operational mode, for ``state=active``. This parameter is ignored when the CPC is in classic mode and was already active, and when the CPC is in DPM mode.
+
+  Default: The reset activation profile specified in the 'next-activation-profile-name' property of the CPC.
+
+  This parameter is not allowed for the other ``state`` values.
+
+  | **required**: False
+  | **type**: str
 
 
 properties
-  Only for ``state=set``: New values for the properties of the CPC. Properties omitted in this dictionary will remain unchanged. This parameter will be ignored for ``state=facts``.
+  Only for ``state=set`` and ``state=active``: New values for the properties of the CPC. Properties omitted in this dictionary will remain unchanged. This parameter will be ignored for other ``state`` values.
 
   The parameter is a dictionary. The key of each dictionary item is the property name as specified in the data model for CPC resources, with underscores instead of hyphens. The value of each dictionary item is the property value (in YAML syntax). Integer properties may also be provided as decimal strings.
 
@@ -133,6 +150,21 @@ Examples
        state: facts
      register: cpc1
 
+   - name: Ensure the CPC is inactive
+     zhmc_cpc:
+       hmc_host: "{{ my_hmc_host }}"
+       hmc_auth: "{{ my_hmc_auth }}"
+       name: "{{ my_cpc_name }}"
+       state: inactive
+
+   - name: Ensure the CPC is active
+     zhmc_cpc:
+       hmc_host: "{{ my_hmc_host }}"
+       hmc_auth: "{{ my_hmc_auth }}"
+       name: "{{ my_cpc_name }}"
+       state: active
+     register: cpc1
+
    - name: Ensure the CPC has the desired property values
      zhmc_cpc:
        hmc_host: "{{ my_hmc_host }}"
@@ -143,6 +175,7 @@ Examples
          acceptable_status:
           - active
          description: "This is CPC {{ my_cpc_name }}"
+     register: cpc1
 
 
 

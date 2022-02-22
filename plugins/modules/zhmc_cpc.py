@@ -32,18 +32,19 @@ DOCUMENTATION = """
 ---
 module: zhmc_cpc
 version_added: "2.9.0"
-short_description: Update CPCs
+short_description: Manage CPCs
 description:
-  - Gather facts about a CPC (Z system), including its adapters, partitions,
-    and storage groups.
+  - Deactivate a CPC (Z system).
+  - Activate a CPC and update its properties.
+  - Gather facts about a CPC, and for DPM operational mode, including its
+    adapters, partitions and storage groups.
   - Update the properties of a CPC.
 author:
   - Andreas Maier (@andy-maier)
   - Andreas Scheuring (@scheuran)
 requirements:
-  - Access to the WS API of the HMC of the targeted Z system
-    (see :term:`HMC API`).
-  - The targeted Z system can be in any operational mode (classic, DPM).
+  - Access to the WS API of the HMC of the targeted CPC (see :term:`HMC API`).
+  - The targeted CPC can be in any operational mode (classic, DPM).
 options:
   hmc_host:
     description:
@@ -95,16 +96,32 @@ options:
     description:
       - "The desired state for the CPC. All states are fully idempotent
          within the limits of the properties that can be changed:"
+      - "* C(inactive): Ensures the CPC is inactive."
+      - "* C(active): Ensures the CPC is active and then ensures that the CPC
+         has the specified properties. The operational mode of the CPC cannot
+         be changed."
       - "* C(set): Ensures that the CPC has the specified properties."
       - "* C(facts): Returns the CPC properties including its child resources."
     type: str
+    choices: ['inactive', 'active', 'set', 'facts']
     required: true
-    choices: ['set', 'facts']
+  activation_profile_name:
+    description:
+      - "The name of the reset activation profile to be used when activating the
+         CPC in the classic operational mode, for C(state=active).
+         This parameter is ignored when the CPC is in classic mode and was
+         already active, and when the CPC is in DPM mode."
+      - "Default: The reset activation profile specified in the
+         'next-activation-profile-name' property of the CPC."
+      - "This parameter is not allowed for the other C(state) values."
+    type: str
+    required: false
   properties:
     description:
-      - "Only for C(state=set): New values for the properties of the CPC.
+      - "Only for C(state=set) and C(state=active): New values for the
+         properties of the CPC.
          Properties omitted in this dictionary will remain unchanged.
-         This parameter will be ignored for C(state=facts)."
+         This parameter will be ignored for other C(state) values."
       - "The parameter is a dictionary. The key of each dictionary item is the
          property name as specified in the data model for CPC resources, with
          underscores instead of hyphens. The value of each dictionary item is
@@ -143,6 +160,21 @@ EXAMPLES = """
     state: facts
   register: cpc1
 
+- name: Ensure the CPC is inactive
+  zhmc_cpc:
+    hmc_host: "{{ my_hmc_host }}"
+    hmc_auth: "{{ my_hmc_auth }}"
+    name: "{{ my_cpc_name }}"
+    state: inactive
+
+- name: Ensure the CPC is active
+  zhmc_cpc:
+    hmc_host: "{{ my_hmc_host }}"
+    hmc_auth: "{{ my_hmc_auth }}"
+    name: "{{ my_cpc_name }}"
+    state: active
+  register: cpc1
+
 - name: Ensure the CPC has the desired property values
   zhmc_cpc:
     hmc_host: "{{ my_hmc_host }}"
@@ -153,6 +185,7 @@ EXAMPLES = """
       acceptable_status:
        - active
       description: "This is CPC {{ my_cpc_name }}"
+  register: cpc1
 
 """
 
@@ -300,7 +333,8 @@ import logging  # noqa: E402
 import traceback  # noqa: E402
 from ansible.module_utils.basic import AnsibleModule  # noqa: E402
 
-from ..module_utils.common import log_init, Error, ParameterError, \
+from ..module_utils.common import log_init, Error, StatusError, \
+    ParameterError, \
     get_hmc_auth, get_session, to_unicode, process_normal_property, \
     missing_required_lib  # noqa: E402
 
@@ -346,8 +380,10 @@ LOGGER = logging.getLogger(LOGGER_NAME)
 ZHMC_CPC_PROPERTIES = {
 
     # update properties for any mode:
-    'description': (True, None, True, True, None, to_unicode),
     'acceptable_status': (True, None, True, True, None, None),
+
+    # update properties for DPM mode:
+    'description': (True, None, True, True, None, to_unicode),
 
     # update properties for classic mode:
     'next_activation_profile_name': (True, None, True, True, None, to_unicode),
@@ -450,6 +486,137 @@ def add_artificial_properties(cpc_properties, cpc):
                                         for sg in storage_groups]
 
 
+def ensure_active(params, check_mode):
+    """
+    Ensure the CPC is active, and then set the properties.
+
+    Raises:
+      ParameterError: An issue with the module parameters.
+      Error: Other errors during processing.
+      zhmcclient.Error: Any zhmcclient exception can happen.
+    """
+
+    # Note: Defaults specified in argument_spec will be set in params dict
+    host = params['hmc_host']
+    userid, password, ca_certs, verify = get_hmc_auth(params['hmc_auth'])
+    cpc_name = params['name']
+    activation_profile_name = params.get('activation_profile_name', None)
+    _faked_session = params.get('_faked_session', None)  # No default specified
+
+    changed = False
+
+    session = get_session(
+        _faked_session, host, userid, password, ca_certs, verify)
+    try:
+        client = zhmcclient.Client(session)
+        cpc = client.cpcs.find(name=cpc_name)
+        # The default exception handling is sufficient for the above.
+
+        # Activate the CPC
+        cpc_status = cpc.get_property('status')
+        if cpc_status in ('not-operating', 'no-power'):
+            # CPC is inactive
+            if not check_mode:
+                cpc_dpm_enabled = cpc.get_property('dpm-enabled')
+                if cpc_dpm_enabled:
+                    cpc.start()
+                else:
+                    if not activation_profile_name:
+                        raise ParameterError(
+                            "CPC {0!r} is in classic mode and activation "
+                            "requires the 'activation_profile_name' parameter "
+                            "to be specified".format(cpc_name))
+                    cpc.activate(
+                        activation_profile_name=activation_profile_name,
+                        force=True)
+            changed = True
+        elif cpc_status in ('active', 'operating', 'exceptions',
+                            'service-required', 'degraded', 'acceptable',
+                            'service'):
+            # CPC is already active
+            pass
+        else:
+            # cpc_status in ('not-communicating', 'status-check')
+            # or any new future status values.
+            raise StatusError(
+                "CPC {0!r} cannot be activated because it is in status {1!r}".
+                format(cpc_name, cpc_status))
+
+        # Set the properties
+        cpc.pull_full_properties()
+        result = dict(cpc.properties)
+        update_props = process_properties(cpc, params)
+        if update_props:
+            if not check_mode:
+                cpc.update_properties(update_props)
+            # Some updates of CPC properties are not reflected in a new
+            # retrieval of properties until after a few seconds (usually the
+            # second retrieval).
+            # Therefore, we construct the modified result based upon the input
+            # changes, and not based upon newly retrieved properties.
+            result.update(update_props)
+            changed = True
+        add_artificial_properties(result, cpc)
+
+        return changed, result
+
+    finally:
+        session.logoff()
+
+
+def ensure_inactive(params, check_mode):
+    """
+    Ensure the CPC is inactive. The operational mode is not changed.
+
+    Raises:
+      ParameterError: An issue with the module parameters.
+      Error: Other errors during processing.
+      zhmcclient.Error: Any zhmcclient exception can happen.
+    """
+
+    # Note: Defaults specified in argument_spec will be set in params dict
+    host = params['hmc_host']
+    userid, password, ca_certs, verify = get_hmc_auth(params['hmc_auth'])
+    cpc_name = params['name']
+    _faked_session = params.get('_faked_session', None)  # No default specified
+
+    changed = False
+
+    session = get_session(
+        _faked_session, host, userid, password, ca_certs, verify)
+    try:
+        client = zhmcclient.Client(session)
+        cpc = client.cpcs.find(name=cpc_name)
+        # The default exception handling is sufficient for the above.
+
+        # Inactivate the CPC
+        cpc_status = cpc.get_property('status')
+        if cpc_status in ('not-operating', 'no-power'):
+            # Already inactive
+            pass
+        elif cpc_status in ('active', 'operating', 'exceptions',
+                            'service-required', 'degraded', 'acceptable',
+                            'service'):
+            if not check_mode:
+                cpc_dpm_enabled = cpc.get_property('dpm-enabled')
+                if cpc_dpm_enabled:
+                    cpc.stop()
+                else:
+                    cpc.deactivate(force=True)
+            changed = True
+        else:
+            # cpc_status in ('not-communicating', 'status-check')
+            # or any new future status values.
+            raise StatusError(
+                "CPC {0!r} cannot be deactivated because it is in status {1!r}".
+                format(cpc_name, cpc_status))
+
+        return changed, None
+
+    finally:
+        session.logoff()
+
+
 def ensure_set(params, check_mode):
     """
     Identify the target CPC and ensure that the specified properties are set on
@@ -476,6 +643,7 @@ def ensure_set(params, check_mode):
         cpc = client.cpcs.find(name=cpc_name)
         # The default exception handling is sufficient for the above.
 
+        # Set the properties
         cpc.pull_full_properties()
         result = dict(cpc.properties)
         update_props = process_properties(cpc, params)
@@ -543,6 +711,8 @@ def perform_task(params, check_mode):
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
     actions = {
+        "inactive": ensure_inactive,
+        "active": ensure_active,
         "set": ensure_set,
         "facts": facts,
     }
@@ -566,7 +736,9 @@ def main():
             ),
         ),
         name=dict(required=True, type='str'),
-        state=dict(required=True, type='str', choices=['set', 'facts']),
+        state=dict(required=True, type='str',
+                   choices=['inactive', 'active', 'set', 'facts']),
+        activation_profile_name=dict(required=False, type='str', default=None),
         properties=dict(required=False, type='dict', default={}),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),
