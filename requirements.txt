@@ -20,7 +20,7 @@ requests>=2.22.0; python_version <= '3.9'
 requests>=2.25.0; python_version >= '3.10'
 
 # TODO: Switch back to official package once zhmcclient 1.2.0 is released
-git+https://github.com/zhmcclient/python-zhmcclient@andy/cpc-activate#egg=zhmcclient
+git+https://github.com/zhmcclient/python-zhmcclient@master#egg=zhmcclient
 # zhmcclient>=1.2.0
 
 
