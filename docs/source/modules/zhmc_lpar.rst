@@ -19,6 +19,7 @@ Synopsis
 - Gather facts about an LPAR of a CPC (Z system) in classic mode.
 - Update modifiable properties of an active LPAR.
 - Activate an LPAR and update its properties.
+- Load an LPAR and update its properties.
 - Deactivate an LPAR.
 
 
@@ -105,9 +106,11 @@ state
 
   * ``inactive``: Ensures that the LPAR is inactive (i.e. status is 'not-activated'). Properties cannot be updated. The LPAR is deactivated if needed.
 
-  * ``operating``: Ensures that the LPAR is operating (i.e. status is 'operating' or 'acceptable'), and then ensures that the LPAR properties have the specified values. The LPAR is first activated if needed, and then loaded if needed (when auto-load is not set).
+  * ``active``: Ensures that the LPAR is at least activated (i.e. status is 'not-operating', 'operating' or 'acceptable'), and then ensures that the LPAR properties have the specified values. The LPAR is activated if needed. If it was already loaded or if auto-load is set, the LPAR will end up loaded.
 
-  * ``updated``: Ensures that the LPAR properties have the specified values. Requires that the LPAR is at least active (i.e. status is 'not-operating', 'operating' or 'acceptable') but does not activate the LPAR if that is not the case.
+  * ``loaded``: Ensures that the LPAR is loaded (i.e. status is 'operating' or 'acceptable'), and then ensures that the LPAR properties have the specified values. The LPAR is first activated if needed, and then loaded if needed (when auto-load is not set).
+
+  * ``set``: Ensures that the LPAR properties have the specified values. Requires that the LPAR is at least active (i.e. status is 'not-operating', 'operating' or 'acceptable') but does not activate the LPAR if that is not the case.
 
   * ``facts``: Returns the current LPAR properties.
 
@@ -115,13 +118,15 @@ state
 
   | **required**: True
   | **type**: str
-  | **choices**: inactive, operating, updated, facts
+  | **choices**: inactive, active, loaded, set, facts
 
 
 activation_profile_name
-  The name of the image activation profile to be used when activating the LPAR, for ``state=operating``. This parameter is ignored when the LPAR was already operating.
+  The name of the image or load activation profile to be used when the LPAR needs to be activated, for ``state=active`` and ``state=loaded``.
 
-  Default: The image activation profile specified in the 'next-activation-profile-name' property of the LPAR.
+  Default: The image or load activation profile specified in the 'next-activation-profile-name' property of the LPAR is used when the LPAR needs to be activated.
+
+  If the LPAR was already active, the ``force`` parameter determines what happens.
 
   This parameter is not allowed for the other ``state`` values.
 
@@ -129,8 +134,21 @@ activation_profile_name
   | **type**: str
 
 
+force
+  Controls what happens when the LPAR was already active:
+
+  If True, the parameters from the specified or defaulted image or load activation profile will be applied.
+
+  If False, the parameters from the previously used activation profile remain applied and will not be changed. The previously used activation profile is shown in the 'last-used-activation-profile' property of the LPAR.
+
+  TODO: Verify these statements
+
+  | **required**: False
+  | **type**: bool
+
+
 properties
-  Dictionary with new values for the LPAR properties, for ``state=operating`` and ``state=updated``. Key is the property name with underscores instead of hyphens, and value is the property value in YAML syntax. Integer properties may also be provided as decimal strings.
+  Dictionary with new values for the LPAR properties, for ``state=active``, ``state=loaded`` and ``state=set``. Key is the property name with underscores instead of hyphens, and value is the property value in YAML syntax. Integer properties may also be provided as decimal strings.
 
   The possible input properties in this dictionary are the properties defined as writeable in the data model for LPAR resources (where the property names contain underscores instead of hyphens).
 
@@ -169,25 +187,34 @@ Examples
        state: inactive
      register: lpar1
 
-   - name: Ensure the LPAR is operating (using the default image profile when it needs to be activated), and then set the CP sharing weight to 20
+   - name: Ensure the LPAR is active (using the default image profile when it needs to be activated), and then set the CP sharing weight to 20
      zhmc_lpar:
        hmc_host: "{{ my_hmc_host }}"
        hmc_auth: "{{ my_hmc_auth }}"
        cpc_name: "{{ my_cpc_name }}"
        name: "{{ my_lpar_name }}"
-       state: operating
+       state: active
        properties:
          initial_processing_weight: 20
      register: lpar1
 
-   - name: Ensure the LPAR is operating (using image profile IMAGE1 when it needs to be activated)
+   - name: Ensure the LPAR is active (using image profile LPAR2 when it needs to be activated)
      zhmc_lpar:
        hmc_host: "{{ my_hmc_host }}"
        hmc_auth: "{{ my_hmc_auth }}"
        cpc_name: "{{ my_cpc_name }}"
        name: "{{ my_lpar_name }}"
-       state: operating
-       activation_profile_name: IMAGE1
+       state: active
+       activation_profile_name: LPAR2
+     register: lpar1
+
+   - name: Ensure the LPAR is loaded (using the default image profile when it needs to be activated)
+     zhmc_lpar:
+       hmc_host: "{{ my_hmc_host }}"
+       hmc_auth: "{{ my_hmc_auth }}"
+       cpc_name: "{{ my_cpc_name }}"
+       name: "{{ my_lpar_name }}"
+       state: loaded
      register: lpar1
 
    - name: Ensure the CP sharing weight of the LPAR is 30
@@ -196,7 +223,7 @@ Examples
        hmc_auth: "{{ my_hmc_auth }}"
        cpc_name: "{{ my_cpc_name }}"
        name: "{{ my_lpar_name }}"
-       state: updated
+       state: set
        properties:
          initial_processing_weight: 30
      register: lpar1
@@ -237,7 +264,7 @@ msg
   | **type**: str
 
 lpar
-  The resource properties of the LPAR, after the specified updates have been applied.
+  The resource properties of the LPAR, after any specified updates have been applied.
 
   Note that the returned properties may show different values than the ones that were specified as input for the update. For example, memory properties may be rounded up, hexadecimal strings may be shown with a different representation format, and other properties may change as a result of updating some properties. For details, see the data model of the 'Logical Partition' object in the :term:`HMC API` book.
 

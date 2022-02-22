@@ -88,7 +88,7 @@ FAKED_LPAR_1_BASE = {
     'acceptable-status': ['operating'],
     # Additional properties will be added by FAKED_LPAR_1_DELTA_*
 }
-FAKED_LPAR_1_DELTA_NOT_ACTIVATED = {
+FAKED_LPAR_1_DELTA_INACTIVE = {
     'activation-mode': 'not-set',
     'additional-status': '',
     'defined-capacity': None,
@@ -123,7 +123,51 @@ FAKED_LPAR_1_DELTA_NOT_ACTIVATED = {
     'current-processing-weight': None,
     'current-processing-weight-capped': None,
 }
-FAKED_LPAR_1_DELTA_OPERATING = {
+FAKED_LPAR_1_DELTA_ACTIVE = {
+    'activation-mode': 'ssc',
+    'additional-status': '',
+    'defined-capacity': 0,
+    'has-operating-system-messages': True,
+    'has-unacceptable-status': False,
+    'is-locked': False,
+    'last-used-activation-profile': FAKED_LPAR_1_PROFILE,
+    'last-used-boot-record-logical-block-address': '0',
+    'last-used-disk-partition-id': 0,
+    'last-used-load-address': '00000',
+    'last-used-load-parameter': '',
+    'last-used-logical-unit-number': '0',
+    'last-used-operating-system-specific-load-parameters': '',
+    'last-used-world-wide-port-name': '0',
+    'next-activation-profile-name': FAKED_LPAR_1_PROFILE,
+    'os-ipl-token': '0000000000000000',
+    'os-level': '1.0.0',
+    'os-name': 'INSTALL',
+    'os-type': 'SSC',
+    'partition-identifier': '33',
+    'partition-number': '2f',
+    'status': 'not-operating',
+    'storage-central-allocation': [
+        {
+            'current': 8192,
+            'gap': 102400,
+            'initial': 8192,
+            'maximum': 8192,
+            'origin': 127322112,
+            'storage-element-type': 'central',
+        },
+    ],
+    'storage-expanded-allocation': [],
+
+    # CPU related properties
+    'absolute-processing-capping': {'type': 'none'},
+    'current-processing-weight': 10,
+    'current-processing-weight-capped': False,
+    'initial-processing-weight': 10,
+    'initial-processing-weight-capped': False,
+    'minimum-processing-weight': 0,
+    'maximum-processing-weight': 999,
+}
+FAKED_LPAR_1_DELTA_LOADED = {
     'activation-mode': 'ssc',
     'additional-status': '',
     'defined-capacity': 0,
@@ -172,8 +216,9 @@ FAKED_LPAR_1_DELTA_OPERATING = {
 # desired LPAR 'status' property value.
 LPAR_STATUS_FROM_STATE = {
     'inactive': 'not-activated',
-    'operating': 'operating',
-    'updated': None,  # Any
+    'active': 'not-operating',
+    'loaded': 'operating',
+    'set': None,  # Any
     'facts': None,  # Any
 }
 
@@ -243,9 +288,11 @@ class TestLpar(object):
         self.lpar_name = FAKED_LPAR_1_NAME
         lpar_props = FAKED_LPAR_1_BASE.copy()
         if initial_state == 'inactive':
-            lpar_props.update(FAKED_LPAR_1_DELTA_NOT_ACTIVATED)
-        elif initial_state == 'operating':
-            lpar_props.update(FAKED_LPAR_1_DELTA_OPERATING)
+            lpar_props.update(FAKED_LPAR_1_DELTA_INACTIVE)
+        elif initial_state == 'active':
+            lpar_props.update(FAKED_LPAR_1_DELTA_ACTIVE)
+        elif initial_state == 'loaded':
+            lpar_props.update(FAKED_LPAR_1_DELTA_LOADED)
         else:
             raise AssertionError(
                 "Invalid initial_state={0!r}".format(initial_state))
@@ -260,9 +307,9 @@ class TestLpar(object):
     @pytest.mark.parametrize(
         "check_mode", [False, True])
     @pytest.mark.parametrize(
-        "initial_state", ['inactive', 'operating'])
+        "initial_state", ['inactive', 'active', 'loaded'])
     @pytest.mark.parametrize(
-        "desired_state", ['inactive', 'operating', 'updated'])
+        "desired_state", ['inactive', 'active', 'loaded', 'set'])
     @pytest.mark.parametrize(
         "properties, props_changed", [
             # Note: properties is a dict of property values, with the property
@@ -298,7 +345,7 @@ class TestLpar(object):
         self.setup_lpar(initial_state)
 
         # Set some expectations for this test from its parametrization#
-        if initial_state == 'inactive' and desired_state == 'updated' \
+        if initial_state == 'inactive' and desired_state == 'set' \
                 and properties and props_changed:
             exp_exit_code = 1
         elif desired_state == 'inactive' and properties:
@@ -310,16 +357,26 @@ class TestLpar(object):
 
             if check_mode:
                 exp_status = LPAR_STATUS_FROM_STATE[initial_state]
-            elif desired_state == 'updated':
+            elif desired_state == 'set':
                 exp_status = LPAR_STATUS_FROM_STATE[initial_state]
             else:
                 exp_status = LPAR_STATUS_FROM_STATE[desired_state]
+            if initial_state == 'loaded' and desired_state == 'active':
+                exp_status = 'operating'
 
-            exp_lpar_returned = (desired_state in ('operating', 'updated'))
+            exp_lpar_returned = (desired_state in ('active', 'loaded', 'set'))
 
-            if desired_state != 'updated' and initial_state != desired_state:
+            if desired_state in ('active', 'loaded', 'set') and \
+                    properties and props_changed:
                 exp_changed = True
-            elif properties and props_changed:
+            elif initial_state == 'inactive' and \
+                    desired_state in ('active', 'loaded'):
+                exp_changed = True
+            elif initial_state == 'active' and \
+                    desired_state in ('inactive', 'loaded'):
+                exp_changed = True
+            elif initial_state == 'loaded' and \
+                    desired_state in ('inactive',):
                 exp_changed = True
             else:
                 exp_changed = False
@@ -397,7 +454,7 @@ class TestLpar(object):
     @pytest.mark.parametrize(
         "check_mode", [False, True])
     @pytest.mark.parametrize(
-        "initial_state", ['inactive', 'operating'])
+        "initial_state", ['inactive', 'active', 'loaded'])
     @pytest.mark.parametrize(
         "desired_state", ['facts'])
     @mock.patch("plugins.modules.zhmc_lpar.AnsibleModule",
