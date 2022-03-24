@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>zhmc_cpc – Update CPCs &mdash; IBM Z HMC collection  documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>zhmc_cpc – Manage CPCs &mdash; IBM Z HMC collection  documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/banner.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -47,7 +47,7 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../modules.html">Modules</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="zhmc_user.html">zhmc_user – Create HMC users</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">zhmc_cpc – Update CPCs</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">zhmc_cpc – Manage CPCs</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#parameters">Parameters</a></li>
@@ -103,7 +103,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../modules.html">Modules</a> &raquo;</li>
-      <li>zhmc_cpc – Update CPCs</li>
+      <li>zhmc_cpc – Manage CPCs</li>
       <li class="wy-breadcrumbs-aside">
               <!-- User defined GitHub URL -->
               <a href="https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_cpc.py" class="fa fa-github"> Edit on GitHub</a>
@@ -114,8 +114,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="zhmc-cpc-update-cpcs">
-<span id="zhmc-cpc-module"></span><h1>zhmc_cpc – Update CPCs<a class="headerlink" href="#zhmc-cpc-update-cpcs" title="Permalink to this headline"></a></h1>
+  <div class="section" id="zhmc-cpc-manage-cpcs">
+<span id="zhmc-cpc-module"></span><h1>zhmc_cpc – Manage CPCs<a class="headerlink" href="#zhmc-cpc-manage-cpcs" title="Permalink to this headline"></a></h1>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
@@ -128,15 +128,17 @@
 <div class="section" id="synopsis">
 <h2><a class="toc-backref" href="#id1">Synopsis</a><a class="headerlink" href="#synopsis" title="Permalink to this headline"></a></h2>
 <ul class="simple">
-<li><p>Gather facts about a CPC (Z system), including its adapters, partitions, and storage groups.</p></li>
+<li><p>Deactivate a CPC (Z system).</p></li>
+<li><p>Activate a CPC and update its properties.</p></li>
+<li><p>Gather facts about a CPC, and for DPM operational mode, including its adapters, partitions and storage groups.</p></li>
 <li><p>Update the properties of a CPC.</p></li>
 </ul>
 </div>
 <div class="section" id="requirements">
 <h2><a class="toc-backref" href="#id2">Requirements</a><a class="headerlink" href="#requirements" title="Permalink to this headline"></a></h2>
 <ul class="simple">
-<li><p>Access to the WS API of the HMC of the targeted Z system (see <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a>).</p></li>
-<li><p>The targeted Z system can be in any operational mode (classic, DPM).</p></li>
+<li><p>Access to the WS API of the HMC of the targeted CPC (see <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a>).</p></li>
+<li><p>The targeted CPC can be in any operational mode (classic, DPM).</p></li>
 </ul>
 </div>
 <div class="section" id="parameters">
@@ -189,16 +191,26 @@
 </dd>
 <dt>state</dt><dd><p>The desired state for the CPC. All states are fully idempotent within the limits of the properties that can be changed:</p>
 <ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">inactive</span></code>: Ensures the CPC is inactive.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">active</span></code>: Ensures the CPC is active and then ensures that the CPC has the specified properties. The operational mode of the CPC cannot be changed.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">set</span></code>: Ensures that the CPC has the specified properties.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">facts</span></code>: Returns the CPC properties including its child resources.</p></li>
 </ul>
 <div class="line-block">
 <div class="line"><strong>required</strong>: True</div>
 <div class="line"><strong>type</strong>: str</div>
-<div class="line"><strong>choices</strong>: set, facts</div>
+<div class="line"><strong>choices</strong>: inactive, active, set, facts</div>
 </div>
 </dd>
-<dt>properties</dt><dd><p>Only for <code class="docutils literal notranslate"><span class="pre">state=set</span></code>: New values for the properties of the CPC. Properties omitted in this dictionary will remain unchanged. This parameter will be ignored for <code class="docutils literal notranslate"><span class="pre">state=facts</span></code>.</p>
+<dt>activation_profile_name</dt><dd><p>The name of the reset activation profile to be used when activating the CPC in the classic operational mode, for <code class="docutils literal notranslate"><span class="pre">state=active</span></code>. This parameter is ignored when the CPC is in classic mode and was already active, and when the CPC is in DPM mode.</p>
+<p>Default: The reset activation profile specified in the ‘next-activation-profile-name’ property of the CPC.</p>
+<p>This parameter is not allowed for the other <code class="docutils literal notranslate"><span class="pre">state</span></code> values.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>properties</dt><dd><p>Only for <code class="docutils literal notranslate"><span class="pre">state=set</span></code> and <code class="docutils literal notranslate"><span class="pre">state=active</span></code>: New values for the properties of the CPC. Properties omitted in this dictionary will remain unchanged. This parameter will be ignored for other <code class="docutils literal notranslate"><span class="pre">state</span></code> values.</p>
 <p>The parameter is a dictionary. The key of each dictionary item is the property name as specified in the data model for CPC resources, with underscores instead of hyphens. The value of each dictionary item is the property value (in YAML syntax). Integer properties may also be provided as decimal strings.</p>
 <p>The possible properties in this dictionary are the properties defined as writeable in the data model for CPC resources.</p>
 <div class="line-block">
@@ -227,6 +239,21 @@
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">facts</span><span class="w"></span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cpc1</span><span class="w"></span>
 
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ensure the CPC is inactive</span><span class="w"></span>
+<span class="w">  </span><span class="nt">zhmc_cpc</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">inactive</span><span class="w"></span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ensure the CPC is active</span><span class="w"></span>
+<span class="w">  </span><span class="nt">zhmc_cpc</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">active</span><span class="w"></span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cpc1</span><span class="w"></span>
+
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ensure the CPC has the desired property values</span><span class="w"></span>
 <span class="w">  </span><span class="nt">zhmc_cpc</span><span class="p">:</span><span class="w"></span>
 <span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
@@ -237,6 +264,7 @@
 <span class="w">      </span><span class="nt">acceptable_status</span><span class="p">:</span><span class="w"></span>
 <span class="w">       </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">active</span><span class="w"></span>
 <span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;This</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">CPC</span><span class="nv"> </span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cpc1</span><span class="w"></span>
 </pre></div>
 </div>
 </div>
