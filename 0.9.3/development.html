@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Development &mdash; IBM Z HMC collection  documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <title>Development &mdash; IBM Z HMC collection  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/banner.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -39,16 +42,16 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 </ul>
-<p class="caption"><span class="caption-text">References</span></p>
+<p class="caption" role="heading"><span class="caption-text">References</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="playbooks.html">Playbooks</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Community Guides</span></p>
+<p class="caption" role="heading"><span class="caption-text">Community Guides</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="community_guides.html">Contributing</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Development</a><ul>
@@ -61,12 +64,12 @@
 </ul>
 </li>
 </ul>
-<p class="caption"><span class="caption-text">Requirements</span></p>
+<p class="caption" role="heading"><span class="caption-text">Requirements</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="requirements.html">Requirements</a></li>
 <li class="toctree-l1"><a class="reference internal" href="requirements.html#control-node">Control node</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Appendices</span></p>
+<p class="caption" role="heading"><span class="caption-text">Appendices</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="release_notes.html">Releases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="versioning.html">Versioning</a></li>
@@ -96,17 +99,17 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="development">
+  <section id="development">
 <span id="id1"></span><h1>Development<a class="headerlink" href="#development" title="Permalink to this headline"></a></h1>
 <p>This section only needs to be read by developers of this project. People that
 want to make a fix or develop some extension, and people that want to test the
 project are also considered developers for the purpose of this section.</p>
-<div class="section" id="repository">
+<section id="repository">
 <span id="id2"></span><h2>Repository<a class="headerlink" href="#repository" title="Permalink to this headline"></a></h2>
 <p>The repository for the <strong>IBM Z HMC collection</strong> is on GitHub:</p>
 <p><a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules">https://github.com/zhmcclient/zhmc-ansible-modules</a></p>
-</div>
-<div class="section" id="setting-up-the-development-environment">
+</section>
+<section id="setting-up-the-development-environment">
 <span id="id3"></span><h2>Setting up the development environment<a class="headerlink" href="#setting-up-the-development-environment" title="Permalink to this headline"></a></h2>
 <p>The development environment is pretty easy to set up.</p>
 <p>Besides having a supported operating system with a supported Python version
@@ -123,8 +126,8 @@ $ make develop
 <p>Generally, this project uses Make to do things in the currently active
 Python environment. The command <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">help</span></code> (or just <code class="docutils literal notranslate"><span class="pre">make</span></code>) displays a
 list of valid Make targets and a short description of what each target does.</p>
-</div>
-<div class="section" id="building-the-documentation">
+</section>
+<section id="building-the-documentation">
 <span id="id4"></span><h2>Building the documentation<a class="headerlink" href="#building-the-documentation" title="Permalink to this headline"></a></h2>
 <p>The documentation for the <strong>IBM Z HMC collection</strong> is published
 on GitHub Pages at <a class="reference external" href="https://zhmcclient.github.io/zhmc-ansible-modules/">https://zhmcclient.github.io/zhmc-ansible-modules/</a>.</p>
@@ -152,8 +155,8 @@ from the content of your Git work directory:</p>
 <p>The top-level document to open with a web browser will be
 <code class="docutils literal notranslate"><span class="pre">docs_local/index.html</span></code>; it is opened automatically when the documentation
 has been built successfully.</p>
-</div>
-<div class="section" id="testing">
+</section>
+<section id="testing">
 <span id="id5"></span><h2>Testing<a class="headerlink" href="#testing" title="Permalink to this headline"></a></h2>
 <p>Again, an invocation of Make runs against the currently active Python environment.</p>
 <p>There are four kinds of tests currently, available as make targets:</p>
@@ -171,8 +174,8 @@ $ <span class="nv">TESTOPTS</span><span class="o">=</span><span class="s1">&#39;
 $ <span class="nv">TESTOPTS</span><span class="o">=</span><span class="s1">&#39;-k test_partition.py&#39;</span> make <span class="nb">test</span>      <span class="c1"># Run only this test source file</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="releasing-a-version">
+</section>
+<section id="releasing-a-version">
 <span id="id6"></span><h2>Releasing a version<a class="headerlink" href="#releasing-a-version" title="Permalink to this headline"></a></h2>
 <p>This section shows the steps for releasing a version to <a class="reference external" href="https://galaxy.ansible.com/">Ansible Galaxy</a>.</p>
 <p>It covers all variants of versions that can be released:</p>
@@ -363,8 +366,8 @@ re-release the same version to Ansible Galaxy, or otherwise update it.</p>
 <a class="reference external" href="https://galaxy.ansible.com/ibm/ibm_zhmc/">https://galaxy.ansible.com/ibm/ibm_zhmc/</a></p>
 </li>
 </ol>
-</div>
-<div class="section" id="starting-a-new-version">
+</section>
+<section id="starting-a-new-version">
 <span id="id7"></span><h2>Starting a new version<a class="headerlink" href="#starting-a-new-version" title="Permalink to this headline"></a></h2>
 <p>This section shows the steps for starting development of a new version.</p>
 <p>These steps may be performed right after the steps for
@@ -493,8 +496,8 @@ git branch -d start_<span class="si">${</span><span class="nv">MNU</span><span c
 </div>
 </li>
 </ol>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
