@@ -90,7 +90,8 @@ tox>=2.5.0
 #       deprecated Sphinx.add_stylesheet() method. That method is deprecated
 #       since Sphinx 1.8, and was removed in Sphinx 4.0, and reintroduced as
 #       deprecated in Sphinx 4.3.0.
-Sphinx>=3.0.0,<4.0.0; python_version >= '3.6' and python_version <= '3.9'
+# Note: Sphinx 4.1.0 added support for Jinja2 3.1.0 which renamed some filters
+Sphinx>=4.1.0; python_version >= '3.6' and python_version <= '3.9'
 Sphinx>=4.3.0; python_version >= '3.10'
 sphinxcontrib-fulltoc>=1.2.0; python_version >= '3.6'
 sphinxcontrib-websupport>=1.1.2; python_version >= '3.6'
