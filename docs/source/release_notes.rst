@@ -50,6 +50,9 @@ Released: not yet
 * Increased minimum version of zhmcclient from 0.31.0 to 1.2.0 in order to
   pick up fixes and new functionality.
 
+* Docs: Increased minimum version of Sphinx to 4.1.0 to fix an issue with
+  renamed filters in Jinja2 3.1.0.
+
 **Enhancements:**
 
 * Added a new zhmc_lpar Ansible module for managing LPARs on CPCs in classic
