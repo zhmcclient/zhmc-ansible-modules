@@ -19,7 +19,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="zhmc_adapter – Update adapters and create Hipersocket adapters" href="modules/zhmc_adapter.html" />
+    <link rel="next" title="zhmc_user – Create HMC users" href="modules/zhmc_user.html" />
     <link rel="prev" title="Installation" href="installation.html" /> 
 </head>
 
@@ -31,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> IBM Z HMC collection
           </a>
               <div class="version">
-                0.10.1
+                1.0.0
 
               </div>
 <div role="search">
@@ -49,8 +49,10 @@
 <p class="caption" role="heading"><span class="caption-text">References</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_user.html">zhmc_user – Create HMC users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_cpc.html">zhmc_cpc – Manage CPCs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_cpc_list.html">zhmc_cpc_list – List CPCs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/zhmc_adapter.html">zhmc_adapter – Update adapters and create Hipersocket adapters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_cpc.html">zhmc_cpc – Update CPCs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/zhmc_crypto_attachment.html">zhmc_crypto_attachment – Attach crypto resources to partitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/zhmc_hba.html">zhmc_hba – Create HBAs in partitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/zhmc_nic.html">zhmc_nic – Create NICs in partitions</a></li>
@@ -58,8 +60,9 @@
 <li class="toctree-l2"><a class="reference internal" href="modules/zhmc_storage_group.html">zhmc_storage_group – Create storage groups</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Attach storage groups to partitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/zhmc_storage_volume.html">zhmc_storage_volume – Create storage volumes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_user.html">zhmc_user – Create HMC users</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/zhmc_virtual_function.html">zhmc_virtual_function – Create virtual functions in partitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_lpar.html">zhmc_lpar – Manage LPARs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_lpar_list.html">zhmc_lpar_list – List LPARs</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="playbooks.html">Playbooks</a></li>
@@ -107,19 +110,27 @@
   <section id="modules">
 <span id="id1"></span><h1>Modules<a class="headerlink" href="#modules" title="Permalink to this headline"></a></h1>
 <p>Ansible® modules can be used from the command line, in a playbook or in
-an role.</p>
+a role.</p>
 <p>The <strong>IBM Z® HMC collection</strong> provides several modules. Reference material for
 each module contains documentation on what parameters the module accepts and
 what will returned.</p>
-<p>You can also access the documentation of each module from the command line by
-using the <a class="reference external" href="https://docs.ansible.com/ansible/latest/cli/ansible-doc.html#ansible-doc">ansible-doc</a> command, for example:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ ansible-doc ibm.ibm_zhmc.zhmc_adapter
-</pre></div>
+<p>Modules targeting the HMC (i.e. not a specific CPC):</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules/zhmc_user.html">zhmc_user – Create HMC users</a></li>
+</ul>
 </div>
+<p>Modules supported with CPCs in any operational mode:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules/zhmc_cpc.html">zhmc_cpc – Manage CPCs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/zhmc_cpc_list.html">zhmc_cpc_list – List CPCs</a></li>
+</ul>
+</div>
+<p>Modules supported only with CPCs in DPM operational mode:</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="modules/zhmc_adapter.html">zhmc_adapter – Update adapters and create Hipersocket adapters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/zhmc_cpc.html">zhmc_cpc – Update CPCs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules/zhmc_crypto_attachment.html">zhmc_crypto_attachment – Attach crypto resources to partitions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules/zhmc_hba.html">zhmc_hba – Create HBAs in partitions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules/zhmc_nic.html">zhmc_nic – Create NICs in partitions</a></li>
@@ -127,9 +138,20 @@ using the <a class="reference external" href="https://docs.ansible.com/ansible/l
 <li class="toctree-l1"><a class="reference internal" href="modules/zhmc_storage_group.html">zhmc_storage_group – Create storage groups</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules/zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Attach storage groups to partitions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules/zhmc_storage_volume.html">zhmc_storage_volume – Create storage volumes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/zhmc_user.html">zhmc_user – Create HMC users</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules/zhmc_virtual_function.html">zhmc_virtual_function – Create virtual functions in partitions</a></li>
 </ul>
+</div>
+<p>Modules supported only with CPCs in classic operational mode:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules/zhmc_lpar.html">zhmc_lpar – Manage LPARs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/zhmc_lpar_list.html">zhmc_lpar_list – List LPARs</a></li>
+</ul>
+</div>
+<p>You can also access the documentation of each module from the command line by
+using the <a class="reference external" href="https://docs.ansible.com/ansible/latest/cli/ansible-doc.html#ansible-doc">ansible-doc</a> command, for example:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ ansible-doc ibm.ibm_zhmc.zhmc_adapter
+</pre></div>
 </div>
 </section>
 
@@ -138,7 +160,7 @@ using the <a class="reference external" href="https://docs.ansible.com/ansible/l
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="modules/zhmc_adapter.html" class="btn btn-neutral float-right" title="zhmc_adapter – Update adapters and create Hipersocket adapters" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="modules/zhmc_user.html" class="btn btn-neutral float-right" title="zhmc_user – Create HMC users" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
@@ -161,7 +183,7 @@ using the <a class="reference external" href="https://docs.ansible.com/ansible/l
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 0.10.1
+        v: 1.0.0
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -173,6 +195,7 @@ using the <a class="reference external" href="https://docs.ansible.com/ansible/l
             <dd><a href="0.9.3/modules.html">0.9.3</a></dd>
             <dd><a href="0.10.0/modules.html">0.10.0</a></dd>
             <dd><a href="0.10.1/modules.html">0.10.1</a></dd>
+            <dd><a href="1.0.0/modules.html">1.0.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

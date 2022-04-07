@@ -19,8 +19,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Playbooks" href="../playbooks.html" />
-    <link rel="prev" title="zhmc_user – Create HMC users" href="zhmc_user.html" /> 
+    <link rel="next" title="zhmc_lpar – Manage LPARs" href="zhmc_lpar.html" />
+    <link rel="prev" title="zhmc_storage_volume – Create storage volumes" href="zhmc_storage_volume.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -31,7 +31,7 @@
             <a href="../index.html" class="icon icon-home"> IBM Z HMC collection
           </a>
               <div class="version">
-                0.10.1
+                1.0.0
 
               </div>
 <div role="search">
@@ -49,8 +49,10 @@
 <p class="caption" role="heading"><span class="caption-text">References</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../modules.html">Modules</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="zhmc_user.html">zhmc_user – Create HMC users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_cpc.html">zhmc_cpc – Manage CPCs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_cpc_list.html">zhmc_cpc_list – List CPCs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_adapter.html">zhmc_adapter – Update adapters and create Hipersocket adapters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_cpc.html">zhmc_cpc – Update CPCs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_crypto_attachment.html">zhmc_crypto_attachment – Attach crypto resources to partitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_hba.html">zhmc_hba – Create HBAs in partitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_nic.html">zhmc_nic – Create NICs in partitions</a></li>
@@ -58,7 +60,6 @@
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group.html">zhmc_storage_group – Create storage groups</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Attach storage groups to partitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_volume.html">zhmc_storage_volume – Create storage volumes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_user.html">zhmc_user – Create HMC users</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">zhmc_virtual_function – Create virtual functions in partitions</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#requirements">Requirements</a></li>
@@ -67,6 +68,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#return-values">Return Values</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_lpar.html">zhmc_lpar – Manage LPARs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_list.html">zhmc_lpar_list – List LPARs</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../playbooks.html">Playbooks</a></li>
@@ -300,8 +303,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="zhmc_user.html" class="btn btn-neutral float-left" title="zhmc_user – Create HMC users" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../playbooks.html" class="btn btn-neutral float-right" title="Playbooks" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="zhmc_storage_volume.html" class="btn btn-neutral float-left" title="zhmc_storage_volume – Create storage volumes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="zhmc_lpar.html" class="btn btn-neutral float-right" title="zhmc_lpar – Manage LPARs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
@@ -324,7 +327,7 @@
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 0.10.1
+        v: 1.0.0
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -336,6 +339,7 @@
             <dd><a href="../0.9.3/modules/zhmc_virtual_function.html">0.9.3</a></dd>
             <dd><a href="../0.10.0/modules/zhmc_virtual_function.html">0.10.0</a></dd>
             <dd><a href="../0.10.1/modules/zhmc_virtual_function.html">0.10.1</a></dd>
+            <dd><a href="../1.0.0/modules/zhmc_virtual_function.html">1.0.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
