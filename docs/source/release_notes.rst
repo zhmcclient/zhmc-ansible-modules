@@ -20,16 +20,14 @@ Releases
 ========
 
 
-Version 1.0.0-dev1
-------------------
+Version 1.0.0
+-------------
 
-This version contains all fixes up to version 0.10.x.
+This version contains all fixes up to version 0.10.1.
 
-Released: not yet
+Released: 2022-04-08
 
-**Incompatible changes:**
-
-**Deprecations:**
+Availability: `AnsibleHub`_, `Galaxy`_, `GitHub`_
 
 **Bug fixes:**
 
@@ -65,14 +63,6 @@ Released: not yet
   for activating/starting and deactivating/stopping CPCs in their current
   operational mode. (issue #418)
 
-**Cleanup:**
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
-
 
 Version 0.10.0
 --------------
@@ -80,6 +70,8 @@ Version 0.10.0
 This version contains all fixes up to version 0.9.2.
 
 Released: 2021-06-17
+
+Availability: `Galaxy`_, `GitHub`_
 
 **Incompatible changes:**
 
@@ -510,5 +502,7 @@ This is the initial release.
    https://github.com/zhmcclient/zhmc-ansible-modules/releases
 .. _Galaxy:
    https://galaxy.ansible.com/ibm/ibm_zhmc
+.. _AnsibleHub:
+   https://console.redhat.com/ansible/automation-hub/repo/published/ibm/ibm_zhmc
 .. _Pypi:
    https://pypi.org/project/zhmc-ansible-modules/
