@@ -432,7 +432,7 @@ local clone of the zhmc-ansible-modules Git repo.
     and insert the following section before the top-most section, and update
     the version to a draft version of the version that is being started:
 
-    .. code-block:: rst
+    .. code-block:: text
 
         Version M.N.U-dev1
         ------------------
@@ -440,6 +440,8 @@ local clone of the zhmc-ansible-modules Git repo.
         This version contains all fixes up to version M.N-1.x.
 
         Released: not yet
+
+        Availability: `AnsibleHub`_, `Galaxy`_, `GitHub`_
 
         **Incompatible changes:**
 
