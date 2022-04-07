@@ -15,7 +15,9 @@
 
 # Ansible validate-modules (no imports, invoked via validate-modules script)
 mock>=2.0.0
-voluptuous>=0.11.7
+# voluptous 0.13.0 uses 'enum' module which is not available on py27 (it also does not use enum34 for backport)
+voluptuous>=0.11.7,<0.13.0; python_version == '2.7'
+voluptuous>=0.11.7; python_version >= '3.5'
 
 # Unit test (imports into testcases):
 # packaging is specified in requirements.txt
@@ -108,7 +110,7 @@ ansible-doc-extractor>=0.1.4; python_version >= '3.6'
 sphinx-rtd-theme>=0.5.0; python_version >= '3.6'
 # Getting sphinx-versions from this git repo addresses some issues.
 # TODO: Remove getting sphinx-versions from this git repo.
-git+https://github.com/andy-maier/sphinx-versions.git@andy-fixes#egg=sphinx-versions; python_version >= '3.6'
+git+https://github.com/andy-maier/sphinx-versions.git@1.1.3.post-am2#egg=sphinx-versions; python_version >= '3.6'
 
 # PyLint (no imports, invoked via pylint script)
 # Pylint requires astroid
