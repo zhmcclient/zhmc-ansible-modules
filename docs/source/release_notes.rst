@@ -53,6 +53,9 @@ Released: not yet
 * Docs: Increased minimum version of Sphinx to 4.1.0 to fix an issue with
   renamed filters in Jinja2 3.1.0.
 
+* Docs/dev: Pinned voluptous to <0.13.0 on Python 2.7. Increased sphinx-versions
+  to 1.1.3.post-am2 for fix for Click 8.1.0. (issue #488)
+
 **Enhancements:**
 
 * Added a new zhmc_lpar Ansible module for managing LPARs on CPCs in classic
