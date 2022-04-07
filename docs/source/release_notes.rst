@@ -20,6 +20,31 @@ Releases
 ========
 
 
+Version 1.0.1-dev1
+------------------
+
+Released: not yet
+
+Availability: `AnsibleHub`_, `Galaxy`_, `GitHub`_
+
+**Incompatible changes:**
+
+**Deprecations:**
+
+**Bug fixes:**
+
+**Enhancements:**
+
+**Cleanup:**
+
+**Known issues:**
+
+* See `list of open issues`_.
+
+.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
+
+
+
 Version 1.0.0
 -------------
 
