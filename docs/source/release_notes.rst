@@ -27,7 +27,7 @@ This version contains all fixes up to version 1.0.x.
 
 Released: not yet
 
-Availability: `AnsibleHub`_, `Galaxy`_, `GitHub`_
+Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Incompatible changes:**
 
@@ -57,7 +57,7 @@ This version contains all fixes up to version 0.10.1.
 
 Released: 2022-04-08
 
-Availability: `AnsibleHub`_, `Galaxy`_, `GitHub`_
+Availability: `Galaxy`_, `GitHub`_
 
 **Bug fixes:**
 
@@ -532,7 +532,7 @@ This is the initial release.
    https://github.com/zhmcclient/zhmc-ansible-modules/releases
 .. _Galaxy:
    https://galaxy.ansible.com/ibm/ibm_zhmc
-.. _AnsibleHub:
+.. _AutomationHub:
    https://console.redhat.com/ansible/automation-hub/repo/published/ibm/ibm_zhmc
 .. _Pypi:
    https://pypi.org/project/zhmc-ansible-modules/
