@@ -18,12 +18,15 @@ description: This collection can manage platform resources on IBM Z and LinuxONE
 license:
   - "Apache-2.0"
 
+# Ansible Automation Hub requires at least one tag from a standard tag list;
+# this collection specifies 'infrastructure'.
 tags:
   [
     ibm,
     z,
     dpm,
-    hmc
+    hmc,
+    infrastructure
   ]
 
 # The URL of the originating SCM repository

@@ -35,6 +35,10 @@ Availability: `AnsibleHub`_, `Galaxy`_, `GitHub`_
 
 **Bug fixes:**
 
+* Added a tag 'infrastructure' to the collection metadata (tags field in
+  galaxy.yml) - Ansible Automation Hub requires at least one tag from a
+  standard tag list to be specified.
+
 **Enhancements:**
 
 **Cleanup:**
