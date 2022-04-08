@@ -441,7 +441,7 @@ local clone of the zhmc-ansible-modules Git repo.
 
         Released: not yet
 
-        Availability: `AnsibleHub`_, `Galaxy`_, `GitHub`_
+        Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
         **Incompatible changes:**
 
