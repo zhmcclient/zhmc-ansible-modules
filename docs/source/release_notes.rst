@@ -20,10 +20,10 @@ Releases
 ========
 
 
-Version 1.0.1
+Version 1.0.2
 -------------
 
-Released: 2022-04-08
+Released: 2022-04-09
 
 Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
