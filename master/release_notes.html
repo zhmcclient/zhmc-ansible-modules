@@ -110,10 +110,22 @@
 <h2>Version 1.1.0-dev1<a class="headerlink" href="#version-1-1-0-dev1" title="Permalink to this headline"></a></h2>
 <p>This version contains all fixes up to version 1.0.x.</p>
 <p>Released: not yet</p>
-<p>Availability: <a class="reference external" href="https://console.redhat.com/ansible/automation-hub/repo/published/ibm/ibm_zhmc">AnsibleHub</a>, <a class="reference external" href="https://galaxy.ansible.com/ibm/ibm_zhmc">Galaxy</a>, <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">GitHub</a></p>
+<p>Availability: <a class="reference external" href="https://console.redhat.com/ansible/automation-hub/repo/published/ibm/ibm_zhmc">AutomationHub</a>, <a class="reference external" href="https://galaxy.ansible.com/ibm/ibm_zhmc">Galaxy</a>, <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">GitHub</a></p>
 <p><strong>Incompatible changes:</strong></p>
 <p><strong>Deprecations:</strong></p>
 <p><strong>Bug fixes:</strong></p>
+<ul class="simple">
+<li><p>Added a tag ‘infrastructure’ to the collection metadata (tags field in
+galaxy.yml) - Ansible Automation Hub requires at least one tag from a
+standard tag list to be specified.</p></li>
+<li><p>Added “make check” for running “flake8” since the “pep8” that is run as
+part of the ansible sanity test does not find some issues.
+Resolved those new issues.</p></li>
+<li><p>Removed the “tools” directory from the temporary archive built for the sanity
+test, and removed the ignore statements for “tools/os_setup.sh” from the
+ignore files because the sanity test on AutomationHub tests against the
+uploaded archive which does not have that script.</p></li>
+</ul>
 <p><strong>Enhancements:</strong></p>
 <p><strong>Cleanup:</strong></p>
 <p><strong>Known issues:</strong></p>
@@ -125,7 +137,7 @@
 <h2>Version 1.0.0<a class="headerlink" href="#version-1-0-0" title="Permalink to this headline"></a></h2>
 <p>This version contains all fixes up to version 0.10.1.</p>
 <p>Released: 2022-04-08</p>
-<p>Availability: <a class="reference external" href="https://console.redhat.com/ansible/automation-hub/repo/published/ibm/ibm_zhmc">AnsibleHub</a>, <a class="reference external" href="https://galaxy.ansible.com/ibm/ibm_zhmc">Galaxy</a>, <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">GitHub</a></p>
+<p>Availability: <a class="reference external" href="https://galaxy.ansible.com/ibm/ibm_zhmc">Galaxy</a>, <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">GitHub</a></p>
 <p><strong>Bug fixes:</strong></p>
 <ul class="simple">
 <li><p>Fixed new Pylint issues reported by Pylint 2.9 and 2.10.</p></li>

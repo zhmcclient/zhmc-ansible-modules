@@ -351,7 +351,7 @@ it. This will cause it to appear in the Release tab.</p>
 <p>You need to be registered on Ansible Galaxy, and your userid there needs to
 be authorized to modify the ‘ibm’ namespace.</p>
 <p>Look up your API Key on <a class="reference external" href="https://galaxy.ansible.com/me/preferences">https://galaxy.ansible.com/me/preferences</a> and upload
-to galaxy while the <cite>GALAXY_TOKEN</cite> environment variable is set to your API
+to Galaxy while the <cite>GALAXY_TOKEN</cite> environment variable is set to your API
 Key:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">GALAXY_TOKEN</span><span class="o">={</span>your-galaxy-api-key<span class="o">}</span> make upload
 </pre></div>
@@ -361,7 +361,24 @@ Key:</p>
 without any development suffix) is shown.</p>
 <p><strong>Attention!!</strong> This only works once for each version. You cannot
 re-release the same version to Ansible Galaxy, or otherwise update it.</p>
-<p>Verify that the released version arrived on Ansible Galaxy at
+<p>Verify that the import on Ansible Galaxy succeeded, by checking the status
+at <a class="reference external" href="https://galaxy.ansible.com/my-imports">https://galaxy.ansible.com/my-imports</a> (you need to log in).</p>
+<p>Verify that the new version is shown on Ansible Galaxy at
+<a class="reference external" href="https://galaxy.ansible.com/ibm/ibm_zhmc/">https://galaxy.ansible.com/ibm/ibm_zhmc/</a>.</p>
+</li>
+<li><p>Publish the collection to Ansible AutomationHub:</p>
+<p>You need to be registered on Ansible AutomationHub, and your userid there
+needs to be authorized to modify the ‘ibm’ namespace.</p>
+<p>Go to <a class="reference external" href="https://console.redhat.com/ansible/automation-hub/repo/published/ibm">https://console.redhat.com/ansible/automation-hub/repo/published/ibm</a>
+and log in.</p>
+<p>Click the “Upload Collection” button and select the distribution archive
+<cite>dist/ibm-ibm_zhmc-M.N.U.tar.gz</cite> (which has been built by the previous step).</p>
+<p>The import page at
+<a class="reference external" href="https://console.redhat.com/ansible/automation-hub/my-imports?namespace=ibm">https://console.redhat.com/ansible/automation-hub/my-imports?namespace=ibm</a>
+should now show the new version with status “Pending”. Wait until the
+import processing has completed, and verify that it succeeded.</p>
+<p>The approval status should now be “waiting for approval”, and once it has
+been approved it should be public on Ansible AutomationHub at
 <a class="reference external" href="https://galaxy.ansible.com/ibm/ibm_zhmc/">https://galaxy.ansible.com/ibm/ibm_zhmc/</a></p>
 </li>
 </ol>
@@ -434,7 +451,7 @@ This version contains all fixes up to version M.N-1.x.
 
 Released: not yet
 
-Availability: `AnsibleHub`_, `Galaxy`_, `GitHub`_
+Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Incompatible changes:**
 
