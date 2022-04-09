@@ -52,6 +52,8 @@ Note: Before version 0.9.0, the Ansible modules in this collection have been
 distributed as the `zhmc-ansible-modules package on Pypi`_.
 Starting with version 0.9.0, the Ansible modules are no longer distributed on
 Pypi, but as the `ibm.ibm_zhmc collection on Ansible Galaxy`_.
+Starting with version 1.0.0, the Ansible modules are additionally distributed
+as the `ibm.ibm_zhmc collection on Ansible AutomationHub`_.
 
 Features
 ========
@@ -124,6 +126,8 @@ please open an issue in the `issue tracker`_.
    https://opensource.org/licenses/Apache-2.0
 .. _ibm.ibm_zhmc collection on Ansible Galaxy:
    https://galaxy.ansible.com/ibm/ibm_zhmc/
+.. _ibm.ibm_zhmc collection on Ansible AutomationHub:
+   https://console.redhat.com/ansible/automation-hub/repo/published/ibm/ibm_zhmc/
 .. _zhmc-ansible-modules package on Pypi:
    https://pypi.org/project/zhmc-ansible-modules/
 .. _Ansible:
