@@ -441,16 +441,14 @@ lpar:
     }
 """
 
-from collections import OrderedDict  # noqa: E402
 import logging  # noqa: E402
 import traceback  # noqa: E402
 from ansible.module_utils.basic import AnsibleModule  # noqa: E402
-from operator import itemgetter  # noqa: E402
 
 from ..module_utils.common import log_init, Error, ParameterError, \
     StatusError, ensure_lpar_inactive, ensure_lpar_active, ensure_lpar_loaded, \
-    eq_hex, get_hmc_auth, get_session, \
-    to_unicode, process_normal_property, missing_required_lib  # noqa: E402
+    get_hmc_auth, get_session, to_unicode, process_normal_property, \
+    missing_required_lib  # noqa: E402
 
 try:
     import requests.packages.urllib3

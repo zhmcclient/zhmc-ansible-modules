@@ -184,9 +184,8 @@ import logging  # noqa: E402
 import traceback  # noqa: E402
 from ansible.module_utils.basic import AnsibleModule  # noqa: E402
 
-from ..module_utils.common import log_init, Error, ParameterError, \
-    VersionError, get_hmc_auth, get_session, to_unicode, \
-    process_normal_property, missing_required_lib  # noqa: E402
+from ..module_utils.common import log_init, Error, VersionError, \
+    get_hmc_auth, get_session, missing_required_lib  # noqa: E402
 
 try:
     import requests.packages.urllib3
