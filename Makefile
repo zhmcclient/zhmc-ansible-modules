@@ -182,7 +182,8 @@ help:
 	@echo '  PACKAGE_LEVEL="latest" - Default: Install latest version of dependent Python packages'
 	@echo '  PYTHON_CMD=... - Name of python command. Default: python'
 	@echo '  PIP_CMD=... - Name of pip command. Default: pip'
-	@echo '  GALAXY_TOKEN=... - Your Ansible Galaxy token, required for upload (see https://galaxy.ansible.com/me/preferences)'
+	@echo '  GALAXY_TOKEN=... - Your Ansible Galaxy API token, required for upload (see https://galaxy.ansible.com/me/preferences)'
+	@echo '  AUTOMATIONHUB_TOKEN=... - Your Ansible AutomationHub API token, required for upload (see https://cloud.redhat.com/ansible/automation-hub/token)'
 	@echo 'Invocation of ansible commands from within repo main directory:'
 	@echo '  export ANSIBLE_LIBRARY="$$(pwd)/$(module_py_dir);$$ANSIBLE_LIBRARY"'
 	@echo '  # currently: ANSIBLE_LIBRARY=$(ANSIBLE_LIBRARY)'
@@ -243,16 +244,23 @@ end2end: _check_version develop_$(pymn).done
 
 .PHONY: upload
 upload: _check_version _check_galaxy_token $(dist_file)
-ifeq (,$(findstring .dev,$(collection_version)))
-	@echo '==> This will publish collection $(collection_full_name) version $(collection_version) on Ansible Galaxy!'
+ifneq ($(findstring dev,$(collection_version)),)
+	$(error Error: A development version $(collection_version) of collection $(collection_full_name) cannot be published on Ansible Galaxy or AutomationHub - follow the release instructions in docs/source/development.rst)
+endif
+ifndef GALAXY_TOKEN
+	$(error Error: Environment variable GALAXY_TOKEN with your Galaxy API token is required for uploading to Ansible Galaxy - get one on https://galaxy.ansible.com/me/preferences)
+endif
+ifndef AUTOMATIONHUB_TOKEN
+	$(error Error: Environment variable AUTOMATIONHUB_TOKEN with your AutomationHub API token is required for uploading to Ansible AutomationHub - get one on https://cloud.redhat.com/ansible/automation-hub/token)
+endif
+	@echo '==> This will publish collection $(collection_full_name) version $(collection_version) on Ansible Galaxy and AutomationHub'
 	@echo -n '==> Continue? [yN] '
 	@bash -c 'read answer; if [[ "$$answer" != "y" ]]; then echo "Aborted."; false; fi'
-	ansible-galaxy collection publish --token $(GALAXY_TOKEN) $(dist_file)
-	@echo 'Done: Published collection $(collection_full_name) version $(collection_version) on Ansible Galaxy'
+	@echo ''
+	ansible-galaxy collection publish --server https://galaxy.ansible.com/ --token $(GALAXY_TOKEN) $(dist_file)
+	ansible-galaxy collection publish --server https://console.redhat.com/api/automation-hub/ --token $(AUTOMATIONHUB_TOKEN) $(dist_file)
+	@echo 'Done: Published collection $(collection_full_name) version $(collection_version) on Ansible Galaxy and AutomationHub'
 	@echo '$@ done.'
-else
-	$(error Error: A development version $(collection_version) of collection $(collection_full_name) cannot be published on Ansible Galaxy!)
-endif
 
 # The second rm command of each type is for files that were used before 1.0.0, to make it easier to switch.
 .PHONY: clobber
