@@ -107,6 +107,11 @@ jobs:
       run: |
         echo "Package dependency tree of installed Python packages:"
         pipdeptree --all
+    - name: Run check
+      env:
+        PACKAGE_LEVEL: ${{ matrix.package_level }}
+      run: |
+        make check
     - name: Run sanity
       # Notes on running 'make sanity':
       # * Excluded on Python 2.7 and 3.5 due to pylint 2.7 checks being referenced.

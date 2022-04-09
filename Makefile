@@ -98,6 +98,9 @@ ifndef TESTHMC
   TESTHMC := $(default_test_hmc)
 endif
 
+# Flake8 options
+flake8_opts := --max-line-length 160 --config /dev/null --ignore E402,E741,W503,W504
+
 # Sanity test directory
 # Note: 'ansible-test sanity' requires the collection to be tested to be
 #       located in {...}/collections/ansible_collections/{namespace}/{name}.
@@ -158,16 +161,17 @@ help:
 	@echo 'Collection version will be:          $(collection_version)'
 	@echo 'Currently active Python environment: Python $(python_m_n_version)'
 	@echo 'Valid targets are:'
-	@echo '  develop    - Set up the development environment'
 	@echo '  install    - Install collection and its dependent Python packages'
+	@echo '  develop    - Set up the development environment'
+	@echo '  dist       - Build the collection distribution archive in: $(dist_dir)'
+	@echo '  test       - Run unit and function tests with test coverage'
+	@echo '  check      - Run flake8'
+	@echo '  sanity     - Run Ansible sanity tests (includes pep8, pylint, validate-modules)'
 	@echo '  docs       - Build the documentation for all enabled (docs/source/conf.py) versions in: $(doc_build_dir) using remote repo'
 	@echo '  docslocal  - Build the documentation from local repo contents in: $(doc_build_local_dir)'
 	@echo '  linkcheck  - Check links in documentation'
-	@echo '  test       - Run unit and function tests with test coverage'
-	@echo '  sanity     - Run Ansible sanity tests (includes flake8, pylint, validate-modules)'
 	@echo '  all        - Do all of the above'
 	@echo '  end2end    - Run end2end tests'
-	@echo '  dist       - Build the collection distribution archive in: $(dist_dir)'
 	@echo '  upload     - Publish the collection to Ansible Galaxy'
 	@echo '  clobber    - Remove any produced files'
 	@echo 'Environment variables:'
@@ -185,7 +189,7 @@ help:
 	@echo '  ansible-playbook playbooks/....'
 
 .PHONY: all
-all: develop install docs linkcheck test sanity
+all: install develop dist test check sanity docs docslocal linkcheck
 	@echo '$@ done.'
 
 .PHONY: install
@@ -210,13 +214,19 @@ test: _check_version develop_$(pymn).done
 	bash -c 'PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. pytest $(pytest_cov_opts) $(pytest_opts) $(test_dir)/unit $(test_dir)/function'
 	@echo '$@ done.'
 
+.PHONY: check
+check: _check_version develop_$(pymn).done
+	flake8 $(flake8_opts) $(src_py_dir) $(test_dir)
+	@echo '$@ done.'
+
 .PHONY:	sanity
 sanity: _check_version develop_$(pymn).done
+	# The sanity check requires the .git directory to be present.
 	rm -f $(sanity_tar_file)
-	tar -rf $(sanity_tar_file) --exclude=tmp_workspace.tar --exclude=$(doc_build_dir) --exclude=$(sanity_dir) .
+	tar -rf $(sanity_tar_file) .git .gitignore bindep.txt galaxy.yml requirements.txt collections docs meta plugins tests
 	rm -rf $(sanity_dir)
 	mkdir -p $(sanity_dir)
-	tar -xvf $(sanity_tar_file) --directory $(sanity_dir)
+	tar -xf $(sanity_tar_file) --directory $(sanity_dir)
 	sh -c "cd $(sanity_dir); ansible-test sanity --verbose --truncate 0 --local --python $(python_m_n_version)"
 ifeq ($(PACKAGE_LEVEL),latest)
   # On minimum package level (i.e. Ansible 2.9), the pylint check fails with:
@@ -316,4 +326,4 @@ endif
 docslocal: _check_version develop_$(pymn).done $(doc_rst_files) $(doc_source_dir)/conf.py
 	rm -rf $(doc_build_local_dir)
 	sphinx-build -b html $(sphinx_opts) $(doc_source_dir) $(doc_build_local_dir)
-	open $(doc_build_local_dir)/index.html
+#	open $(doc_build_local_dir)/index.html
