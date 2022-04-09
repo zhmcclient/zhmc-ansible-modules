@@ -337,7 +337,7 @@ local clone of the zhmc-ansible-modules Git repo.
     be authorized to modify the 'ibm' namespace.
 
     Look up your API Key on https://galaxy.ansible.com/me/preferences and upload
-    to galaxy while the `GALAXY_TOKEN` environment variable is set to your API
+    to Galaxy while the `GALAXY_TOKEN` environment variable is set to your API
     Key:
 
     .. code-block:: sh
@@ -352,7 +352,30 @@ local clone of the zhmc-ansible-modules Git repo.
     **Attention!!** This only works once for each version. You cannot
     re-release the same version to Ansible Galaxy, or otherwise update it.
 
-    Verify that the released version arrived on Ansible Galaxy at
+    Verify that the import on Ansible Galaxy succeeded, by checking the status
+    at https://galaxy.ansible.com/my-imports (you need to log in).
+
+    Verify that the new version is shown on Ansible Galaxy at
+    https://galaxy.ansible.com/ibm/ibm_zhmc/.
+
+15. Publish the collection to Ansible AutomationHub:
+
+    You need to be registered on Ansible AutomationHub, and your userid there
+    needs to be authorized to modify the 'ibm' namespace.
+
+    Go to https://console.redhat.com/ansible/automation-hub/repo/published/ibm
+    and log in.
+
+    Click the "Upload Collection" button and select the distribution archive
+    `dist/ibm-ibm_zhmc-M.N.U.tar.gz` (which has been built by the previous step).
+
+    The import page at
+    https://console.redhat.com/ansible/automation-hub/my-imports?namespace=ibm
+    should now show the new version with status "Pending". Wait until the
+    import processing has completed, and verify that it succeeded.
+
+    The approval status should now be "waiting for approval", and once it has
+    been approved it should be public on Ansible AutomationHub at
     https://galaxy.ansible.com/ibm/ibm_zhmc/
 
 
