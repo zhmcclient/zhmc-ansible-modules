@@ -39,6 +39,15 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   galaxy.yml) - Ansible Automation Hub requires at least one tag from a
   standard tag list to be specified.
 
+* Added "make check" for running "flake8" since the "pep8" that is run as
+  part of the ansible sanity test does not find some issues.
+  Resolved those new issues.
+
+* Removed the "tools" directory from the temporary archive built for the sanity
+  test, and removed the ignore statements for "tools/os_setup.sh" from the
+  ignore files because the sanity test on AutomationHub tests against the
+  uploaded archive which does not have that script.
+
 **Enhancements:**
 
 **Cleanup:**

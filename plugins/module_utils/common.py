@@ -23,7 +23,6 @@ import logging
 import traceback
 import platform
 import sys
-from datetime import datetime, timedelta
 
 from ansible.module_utils import six
 

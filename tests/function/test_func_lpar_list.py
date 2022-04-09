@@ -24,7 +24,6 @@ __metaclass__ = type
 
 import pytest
 import mock
-import re
 
 from zhmcclient import Client
 from zhmcclient_mock import FakedSession
