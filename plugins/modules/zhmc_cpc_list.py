@@ -189,8 +189,7 @@ import logging  # noqa: E402
 import traceback  # noqa: E402
 from ansible.module_utils.basic import AnsibleModule  # noqa: E402
 
-from ..module_utils.common import log_init, Error, ParameterError, \
-    get_hmc_auth, get_session, to_unicode, process_normal_property, \
+from ..module_utils.common import log_init, Error, get_hmc_auth, get_session, \
     missing_required_lib  # noqa: E402
 
 try:

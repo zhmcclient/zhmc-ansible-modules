@@ -12,7 +12,6 @@ plugins/modules/zhmc_storage_group_attachment.py validate-modules:missing-gplv3-
 plugins/modules/zhmc_storage_volume.py validate-modules:missing-gplv3-license # Licensed under Apache 2.0
 plugins/modules/zhmc_user.py validate-modules:missing-gplv3-license # Licensed under Apache 2.0
 plugins/modules/zhmc_virtual_function.py validate-modules:missing-gplv3-license # Licensed under Apache 2.0
-tools/os_setup.sh shebang # using /bin/bash
 plugins/module_utils/common.py pylint:raise-missing-from
 plugins/modules/zhmc_adapter.py pylint!skip # Unreliable duplicate-code issues
 plugins/modules/zhmc_cpc.py pylint!skip # Unreliable duplicate-code issues
@@ -35,7 +34,6 @@ tests/unit/test_nic.py pylint!skip # Unreliable duplicate-code issues
 tests/unit/test_partition.py pylint!skip # Unreliable duplicate-code issues
 tests/unit/test_virtual_function.py pylint!skip # Unreliable duplicate-code issues
 docs/source/conf.py pylint!skip # Unreliable duplicate-code issues
-tools/version.py pylint!skip # Unreliable duplicate-code issues
 plugins/modules/zhmc_adapter.py validate-modules:import-error # Was broken in Ansible 2.9, fixed in 2.10 via PR 63932
 plugins/modules/zhmc_cpc.py validate-modules:import-error # Was broken in Ansible 2.9, fixed in 2.10 via PR 63932
 plugins/modules/zhmc_cpc_list.py validate-modules:import-error # Was broken in Ansible 2.9, fixed in 2.10 via PR 63932
