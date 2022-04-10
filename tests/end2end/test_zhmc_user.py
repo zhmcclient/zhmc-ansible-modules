@@ -22,9 +22,11 @@ __metaclass__ = type
 import uuid
 import pytest
 import mock
+import random
 import requests.packages.urllib3
 from collections import OrderedDict
 from pprint import pformat
+from ansible.module_utils import six
 import zhmcclient
 from zhmcclient.testutils.hmc_definition_fixtures import hmc_definition, hmc_session  # noqa: F401, E501
 
@@ -207,48 +209,58 @@ def assert_user_props(user_props, expand):
 @pytest.mark.parametrize(
     "expand", [False, True])
 @mock.patch("plugins.modules.zhmc_user.AnsibleModule", autospec=True)
-def test_user_facts(ansible_mod_cls, expand, check_mode, hmc_session):  # noqa: F811, E501
+def test_user_facts(
+        ansible_mod_cls, expand, check_mode, hmc_session):  # noqa: F811, E501
     """
     Test fact gathering on all users of the HMC.
     """
 
     hd = hmc_session.hmc_definition
 
+    hmc_auth = dict(userid=hd.hmc_userid, password=hd.hmc_password)
+    if isinstance(hd.hmc_verify_cert, six.string_types):
+        hmc_auth['ca_certs'] = hd.hmc_verify_cert
+    elif isinstance(hd.hmc_verify_cert, bool):
+        hmc_auth['verify'] = hd.hmc_verify_cert
+
     # Determine an existing user to test.
     client = zhmcclient.Client(hmc_session)
     console = client.consoles.console
+
+    # Pick a random existing user to test
     users = console.users.list()
     assert len(users) >= 1
+    user = random.choice(users)
 
-    for user in users:
+    # Prepare module input parameters (must be all required + optional)
+    params = {
+        'hmc_host': hd.hmc_host,
+        'hmc_auth': hmc_auth,
+        'name': user.name,
+        'state': 'facts',
+        'properties': {},
+        'expand': expand,
+        'log_file': LOG_FILE,
+        '_faked_session': None,
+    }
 
-        # Prepare module input parameters
-        params = {
-            'hmc_host': hd.hmc_host,
-            'hmc_auth': dict(userid=hd.hmc_userid, password=hd.hmc_password),
-            'name': user.name,
-            'state': 'facts',
-            'expand': expand,
-            'log_file': LOG_FILE,
-        }
+    # Prepare mocks for AnsibleModule object
+    mod_obj = mock_ansible_module(ansible_mod_cls, params, check_mode)
 
-        # Prepare mocks for AnsibleModule object
-        mod_obj = mock_ansible_module(ansible_mod_cls, params, check_mode)
+    # Exercise the code to be tested
+    with pytest.raises(SystemExit) as exc_info:
+        zhmc_user.main()
+    exit_code = exc_info.value.args[0]
 
-        # Exercise the code to be tested
-        with pytest.raises(SystemExit) as exc_info:
-            zhmc_user.main()
-        exit_code = exc_info.value.args[0]
+    # Assert module exit code
+    assert exit_code == 0, \
+        "Module unexpectedly failed with this message:\n{0}". \
+        format(get_failure_msg(mod_obj))
 
-        # Assert module exit code
-        assert exit_code == 0, \
-            "Module unexpectedly failed with this message:\n{0}". \
-            format(get_failure_msg(mod_obj))
-
-        # Assert module output
-        changed, user_props = get_module_output(mod_obj)
-        assert changed is False
-        assert_user_props(user_props, expand)
+    # Assert module output
+    changed, user_props = get_module_output(mod_obj)
+    assert changed is False
+    assert_user_props(user_props, expand)
 
 
 USER_ABSENT_PRESENT_TESTCASES = [
@@ -335,8 +347,16 @@ def test_user_absent_present(
     """
     Test the zhmc_user module with all combinations of absent & present state.
     """
-    expand = False  # Expansion is tested elsewhere
+
     hd = hmc_session.hmc_definition
+
+    hmc_auth = dict(userid=hd.hmc_userid, password=hd.hmc_password)
+    if isinstance(hd.hmc_verify_cert, six.string_types):
+        hmc_auth['ca_certs'] = hd.hmc_verify_cert
+    elif isinstance(hd.hmc_verify_cert, bool):
+        hmc_auth['verify'] = hd.hmc_verify_cert
+
+    expand = False  # Expansion is tested elsewhere
     client = zhmcclient.Client(hmc_session)
     console = client.consoles.console
 
@@ -368,16 +388,20 @@ def test_user_absent_present(
 
     try:
 
+        # Prepare module input parameters (must be all required + optional)
         params = {
             'hmc_host': hd.hmc_host,
-            'hmc_auth': dict(userid=hd.hmc_userid, password=hd.hmc_password),
+            'hmc_auth': hmc_auth,
             'name': user_name,
             'state': input_state,
             'expand': expand,
             'log_file': LOG_FILE,
+            '_faked_session': None,
         }
         if input_props is not None:
             params['properties'] = input_props
+        else:
+            params['properties'] = {}
 
         mod_obj = mock_ansible_module(ansible_mod_cls, params, check_mode)
 
