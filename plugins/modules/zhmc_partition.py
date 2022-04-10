@@ -1133,8 +1133,8 @@ def ensure_active(params, check_mode):
     userid, password, ca_certs, verify = get_hmc_auth(params['hmc_auth'])
     cpc_name = params['cpc_name']
     partition_name = params['name']
-    expand_storage_groups = params['expand_storage_groups']
-    expand_crypto_adapters = params['expand_crypto_adapters']
+    expand_storage_groups = params.get('expand_storage_groups', False)
+    expand_crypto_adapters = params.get('expand_crypto_adapters', False)
     _faked_session = params.get('_faked_session', None)
 
     changed = False
@@ -1239,8 +1239,8 @@ def ensure_stopped(params, check_mode):
     userid, password, ca_certs, verify = get_hmc_auth(params['hmc_auth'])
     cpc_name = params['cpc_name']
     partition_name = params['name']
-    expand_storage_groups = params['expand_storage_groups']
-    expand_crypto_adapters = params['expand_crypto_adapters']
+    expand_storage_groups = params.get('expand_storage_groups', False)
+    expand_crypto_adapters = params.get('expand_crypto_adapters', False)
     _faked_session = params.get('_faked_session', None)
 
     changed = False
@@ -1363,8 +1363,8 @@ def facts(params, check_mode):
     userid, password, ca_certs, verify = get_hmc_auth(params['hmc_auth'])
     cpc_name = params['cpc_name']
     partition_name = params['name']
-    expand_storage_groups = params['expand_storage_groups']
-    expand_crypto_adapters = params['expand_crypto_adapters']
+    expand_storage_groups = params.get('expand_storage_groups', False)
+    expand_crypto_adapters = params.get('expand_crypto_adapters', False)
     _faked_session = params.get('_faked_session', None)
 
     changed = False

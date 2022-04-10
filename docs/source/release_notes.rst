@@ -48,6 +48,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   ignore files because the sanity test on AutomationHub tests against the
   uploaded archive which does not have that script.
 
+* Changed the zhmc_partition parameters 'expand_storage_groups'
+  and 'expand_crypto_adapters' to be optional with a default of False,
+  as described in the module documentation. (issue #506)
+
 **Enhancements:**
 
 **Cleanup:**
