@@ -23,9 +23,13 @@ __metaclass__ = type
 
 def mock_ansible_module(ansible_mod_cls, params, check_mode):
     """
-    Prepare mocks for AnsibleModule object.
+    Prepare the mocked AnsibleModule object for the end2end test.
+
+    Note: Since this is a mocked object, the argument_spec defined in the
+    module is not applied, and the params must be the defaulted set of
+    all parameters in the module's argument_spec.
     """
-    mod_obj = ansible_mod_cls.return_value
+    mod_obj = ansible_mod_cls.return_value  # the mocked object
     mod_obj.params = params
     mod_obj.check_mode = check_mode
     mod_obj.fail_json.configure_mock(side_effect=SystemExit(1))

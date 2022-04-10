@@ -86,16 +86,16 @@ test_py_files := \
     $(wildcard $(test_dir)/*/*.py) \
     $(wildcard $(test_dir)/*/*/*.py) \
 
-# Directory with hmc_definitions.yaml file for end2end tests
-default_test_hmc_dir := ../python-zhmcclient/tests
-ifndef TESTHMCDIR
-  TESTHMCDIR := $(default_test_hmc_dir)
+# Path name of default HMC definitions file used for end2end tests.
+default_testhmcfile := ~/.zhmc_hmc_definitions.yaml
+ifndef TESTHMCFILE
+  TESTHMCFILE := $(default_testhmcfile)
 endif
 
-# Nickname of test HMC in hmc_definitions.yaml file for end2end tests
-default_test_hmc := default
+# Default HMC nickname in HMC definitions file
+default_testhmc := default
 ifndef TESTHMC
-  TESTHMC := $(default_test_hmc)
+  TESTHMC := $(default_testhmc)
 endif
 
 # Flake8 options
@@ -144,7 +144,11 @@ dist_dependent_files := \
 sphinx_opts := -v
 
 # Pytest options
-pytest_opts := $(TESTOPTS) -s
+ifdef TESTCASES
+  pytest_opts := --color=yes -s $(TESTOPTS) -k "$(TESTCASES)"
+else
+  pytest_opts := --color=yes -s $(TESTOPTS)
+endif
 ifeq ($(python_m_n_version),3.4)
   pytest_cov_opts :=
 else
@@ -172,14 +176,18 @@ help:
 	@echo '  linkcheck  - Check links in documentation'
 	@echo '  all        - Do all of the above'
 	@echo '  end2end    - Run end2end tests'
-	@echo '  upload     - Publish the collection to Ansible Galaxy'
+	@echo '  upload     - Publish the collection to Ansible Galaxy and AutomationHub'
 	@echo '  clobber    - Remove any produced files'
 	@echo 'Environment variables:'
-	@echo '  TESTHMC=... - Nickname of HMC to be used in end2end tests. Default: $(default_test_hmc)'
-	@echo '  TESTHMCDIR=... - Path name of directory with hmc_definitions.yaml file. Default: $(default_test_hmc_dir)'
-	@echo '  TESTOPTS=... - Additional options for py.test (e.g. "-k test_module.py")'
-	@echo '  PACKAGE_LEVEL="minimum" - Install minimum version of dependent Python packages'
-	@echo '  PACKAGE_LEVEL="latest" - Default: Install latest version of dependent Python packages'
+	@echo "  TESTCASES=... - Testcase filter for pytest -k (e.g. 'test_func' or 'test_mod.py')"
+	@echo "  TESTOPTS=... - Additional options for pytest (e.g. '-x')"
+	@echo "  TESTHMC=... - HMC nickname in HMC definitions file used in end2end tests. Default: $(default_testhmc)"
+	@echo "  TESTHMCFILE=... - Path name of HMC definitions file used in end2end tests. Default: $(default_testhmcfile)"
+	@echo "  PACKAGE_LEVEL - Package level to be used for installing dependent Python"
+	@echo "      packages in 'install' and 'develop' targets:"
+	@echo "        latest - Latest package versions available on Pypi"
+	@echo "        minimum - A minimum version as defined in minimum-constraints.txt"
+	@echo "      Optional, defaults to 'latest'."
 	@echo '  PYTHON_CMD=... - Name of python command. Default: python'
 	@echo '  PIP_CMD=... - Name of pip command. Default: pip'
 	@echo '  GALAXY_TOKEN=... - Your Ansible Galaxy API token, required for upload (see https://galaxy.ansible.com/me/preferences)'
@@ -212,7 +220,7 @@ linkcheck: _check_version develop_$(pymn).done $(doc_rst_files)
 
 .PHONY: test
 test: _check_version develop_$(pymn).done
-	bash -c 'PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. pytest $(pytest_cov_opts) $(pytest_opts) $(test_dir)/unit $(test_dir)/function'
+	bash -c 'PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. TESTHMCFILE=$(TESTHMCFILE) TESTHMC=$(TESTHMC) pytest $(pytest_cov_opts) $(pytest_opts) $(test_dir)/unit $(test_dir)/function'
 	@echo '$@ done.'
 
 .PHONY: check
@@ -239,7 +247,7 @@ endif
 
 .PHONY:	end2end
 end2end: _check_version develop_$(pymn).done
-	bash -c 'PYTHONWARNINGS=default TESTHMCDIR=$(TESTHMCDIR) TESTHMC=$(TESTHMC) py.test -v $(pytest_opts) $(test_dir)/end2end'
+	bash -c 'PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. TESTHMCFILE=$(TESTHMCFILE) TESTHMC=$(TESTHMC) pytest -v $(pytest_opts) $(test_dir)/end2end'
 	@echo '$@ done.'
 
 .PHONY: upload
