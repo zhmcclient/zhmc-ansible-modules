@@ -37,7 +37,23 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   module, and made the module result in check mode consistent with non-check
   mode. (issue #507)
 
+* Test: Added missing env.vars in the pytest invocation for end2end tests.
+
+* Test: Added missing optional module parameters in the end2end tests.
+
+* Test: Added support for specifying 'hmc_auth.ca_certs' and 'hmc_auth.verify'
+  from the 'hmc_verify_cert' parameter in the HMC definition file in
+  end2end test cases for zhmc_partition and zhmc_user.
+
 **Enhancements:**
+
+* Test: Made end2end testing compatible with zhmcclient.testutils support for
+  HMC definition files.
+  The HMC definition file is now by default ~/.hmc_hmc_definitions.yaml, and
+  the env.var to override that is now TESTHMCFILE.
+
+* Test: Added support for a TESTCASES env.var for filtering testcases with the
+  pytest -k option.
 
 **Cleanup:**
 
