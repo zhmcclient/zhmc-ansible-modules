@@ -33,6 +33,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Bug fixes:**
 
+* Fixed the use of incorrectly named attributes and methods in the zhmc_user
+  module, and made the module result in check mode consistent with non-check
+  mode. (issue #507)
+
 **Enhancements:**
 
 **Cleanup:**
