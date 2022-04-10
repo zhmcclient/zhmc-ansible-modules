@@ -688,15 +688,10 @@ def add_artificial_properties(
         if user_pattern_uri is None:
             raise AssertionError()
         user_pattern = console.user_patterns.resource_object(user_pattern_uri)
-        if check_mode:
-            user_properties['user-pattern-name'] = user_pattern.oid
-            if expand:
-                user_properties['user-pattern'] = {}
-        else:
-            user_pattern.pull_full_properties()
-            user_properties['user-pattern-name'] = user_pattern.name
-            if expand:
-                user_properties['user-pattern'] = dict(user_pattern.properties)
+        user_pattern.pull_full_properties()
+        user_properties['user-pattern-name'] = user_pattern.name
+        if expand:
+            user_properties['user-pattern'] = dict(user_pattern.properties)
 
     if auth_type == 'local':
         # For that auth type, the property exists and is non-null.
@@ -706,17 +701,11 @@ def add_artificial_properties(
             raise AssertionError()
         password_rule = console.password_rules.resource_object(
             password_rule_uri)
-        if check_mode:
-            user_properties['password-rule-name'] = \
-                password_rule.uri.split('/')[-1]
-            if expand:
-                user_properties['password-rule'] = {}
-        else:
-            password_rule.pull_full_properties()
-            user_properties['password-rule-name'] = password_rule.name
-            if expand:
-                user_properties['password-rule'] = \
-                    dict(password_rule.properties)
+        password_rule.pull_full_properties()
+        user_properties['password-rule-name'] = password_rule.name
+        if expand:
+            user_properties['password-rule'] = \
+                dict(password_rule.properties)
 
     if auth_type == 'ldap':
         # For that auth type, the property exists and is non-null.
@@ -724,24 +713,19 @@ def add_artificial_properties(
         ldap_srv_def_uri = user.properties['ldap-server-definition-uri']
         if ldap_srv_def_uri is None:
             raise AssertionError()
-        ldap_srv_def = console.ldap_srv_defs.resource_object(ldap_srv_def_uri)
-        if check_mode:
-            user_properties['ldap-server-definition-name'] = ldap_srv_def.oid
-            if expand:
-                user_properties['ldap-server-definition'] = {}
-        else:
-            ldap_srv_def.pull_full_properties()
-            user_properties['ldap-server-definition-name'] = ldap_srv_def.name
-            if expand:
-                user_properties['ldap-server-definition'] = \
-                    dict(ldap_srv_def.properties)
+        ldap_srv_def = console.ldap_server_definitions.resource_object(
+            ldap_srv_def_uri)
+        user_properties['ldap-server-definition-name'] = \
+            ldap_srv_def.get_property('name')
+        if expand:
+            user_properties['ldap-server-definition'] = \
+                dict(ldap_srv_def.get_property('properties'))
 
     user_roles = []
     user_role_uris = user.properties['user-roles']
     for user_role_uri in user_role_uris:
         user_role = console.user_roles.resource_object(user_role_uri)
-        if not check_mode:
-            user_role.pull_full_properties()
+        user_role.pull_full_properties()
         user_roles.append(user_role)
     user_properties['user-role-names'] = [ur.name for ur in user_roles]
     if expand:
