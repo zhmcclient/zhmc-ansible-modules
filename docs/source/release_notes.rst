@@ -48,6 +48,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   ignore files because the sanity test on AutomationHub tests against the
   uploaded archive which does not have that script.
 
+* Fixed the use of incorrectly named attributes and methods in the zhmc_user
+  module, and made the module result in check mode consistent with non-check
+  mode. (issue #507)
+
 **Enhancements:**
 
 **Cleanup:**
