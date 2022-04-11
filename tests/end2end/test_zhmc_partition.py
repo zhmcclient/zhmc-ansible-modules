@@ -21,23 +21,29 @@ __metaclass__ = type
 
 import pytest
 import mock
+import random
 import requests.packages.urllib3
+from ansible.module_utils import six
 import zhmcclient
 from zhmcclient.testutils.hmc_definition_fixtures import hmc_definition, hmc_session  # noqa: F401, E501
-
 from plugins.modules import zhmc_partition
 from .utils import mock_ansible_module, get_failure_msg
 
 requests.packages.urllib3.disable_warnings()
 
 
-# Partition properties that are not always present, nbut only under certain
+# Partition properties that are not always present, but only under certain
 # conditions.
 PARTITION_CONDITIONAL_PROPS = (
     'boot-ftp-password',
     'boot-network-nic-name',
     'boot-storage-hba-name',
     'ssc-master-pw',
+    'ssc-boot-selection',
+    'ssc-host-name',
+    'ssc-ipv4-gateway',
+    'ssc-dns-servers',
+    'ssc-master-userid',
 )
 
 
@@ -101,35 +107,53 @@ def assert_partition_props(partition_props):
 
 @pytest.mark.parametrize(
     "check_mode", [False, True])
+@pytest.mark.parametrize(
+    "partition_type", ['ssc', 'linux'])
 @mock.patch("plugins.modules.zhmc_partition.AnsibleModule", autospec=True)
-def test_partition_facts(ansible_mod_cls, check_mode, hmc_session):  # noqa: F811, E501
+def test_partition_facts(
+        ansible_mod_cls, partition_type, check_mode, hmc_session):  # noqa: F811, E501
     """
     Test fact gathering on a partition.
     """
 
     hd = hmc_session.hmc_definition
 
+    hmc_auth = dict(userid=hd.hmc_userid, password=hd.hmc_password)
+    if isinstance(hd.hmc_verify_cert, six.string_types):
+        hmc_auth['ca_certs'] = hd.hmc_verify_cert
+    elif isinstance(hd.hmc_verify_cert, bool):
+        hmc_auth['verify'] = hd.hmc_verify_cert
+
     # Determine one of the CPCs in the HMC definition file to test
-    cpc_names = hd.cpcs.keys()
+    cpc_names = list(hd.cpcs.keys())
     assert len(cpc_names) >= 1
     cpc_name = cpc_names[0]
 
-    # Determine an existing partition to test. This also validates that
-    # the CPC defined in the HMC definition file actually exists.
     client = zhmcclient.Client(hmc_session)
     cpc = client.cpcs.find_by_name(cpc_name)
+
+    # Determine a random existing partition of the desired type to test.
     partitions = cpc.partitions.list()
     assert len(partitions) >= 1
-    partition = partitions[0]  # Pick first partition in list
+    typed_partitions = [p for p in partitions
+                        if p.get_property('type') == partition_type]
+    if len(typed_partitions) == 0:
+        pytest.skip("CPC '{c}' has no partitions of type '{t}'".
+                    format(c=cpc_name, t=partition_type))
+    partition = random.choice(typed_partitions)
 
-    # Prepare module input parameters
+    # Prepare module input parameters (must be all required + optional)
     params = {
         'hmc_host': hd.hmc_host,
-        'hmc_auth': dict(userid=hd.hmc_userid, password=hd.hmc_password),
+        'hmc_auth': hmc_auth,
         'cpc_name': cpc_name,
         'name': partition.name,
         'state': 'facts',
+        'properties': {},
+        'expand_storage_groups': False,
+        'expand_crypto_adapters': False,
         'log_file': None,
+        '_faked_session': None,
     }
 
     # Prepare mocks for AnsibleModule object
