@@ -128,8 +128,21 @@ uploaded archive which does not have that script.</p></li>
 <li><p>Fixed the use of incorrectly named attributes and methods in the zhmc_user
 module, and made the module result in check mode consistent with non-check
 mode. (issue #507)</p></li>
+<li><p>Test: Added missing env.vars in the pytest invocation for end2end tests.</p></li>
+<li><p>Test: Added missing optional module parameters in the end2end tests.</p></li>
+<li><p>Test: Added support for specifying ‘hmc_auth.ca_certs’ and ‘hmc_auth.verify’
+from the ‘hmc_verify_cert’ parameter in the HMC definition file in
+end2end test cases for zhmc_partition and zhmc_user.</p></li>
 </ul>
 <p><strong>Enhancements:</strong></p>
+<ul class="simple">
+<li><p>Test: Made end2end testing compatible with zhmcclient.testutils support for
+HMC definition files.
+The HMC definition file is now by default ~/.hmc_hmc_definitions.yaml, and
+the env.var to override that is now TESTHMCFILE.</p></li>
+<li><p>Test: Added support for a TESTCASES env.var for filtering testcases with the
+pytest -k option.</p></li>
+</ul>
 <p><strong>Cleanup:</strong></p>
 <p><strong>Known issues:</strong></p>
 <ul class="simple">
