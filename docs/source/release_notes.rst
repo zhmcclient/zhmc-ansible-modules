@@ -60,6 +60,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   from the 'hmc_verify_cert' parameter in the HMC definition file in
   end2end test cases for zhmc_partition and zhmc_user.
 
+* Docs: Fixed incorrect input property names in zhmc_user module.
+  (part of issue #514)
+
 **Enhancements:**
 
 * Test: Made end2end testing compatible with zhmcclient.testutils support for
@@ -69,6 +72,15 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Test: Added support for a TESTCASES env.var for filtering testcases with the
   pytest -k option.
+
+* Added support for specifying user roles as input in the zhmc_user module.
+  User roles can now be specified with their names. They had been displayed
+  on users before. (issue #514)
+
+* Removed check in zhmc_user module for required input properties 'type' and
+  'authentication_type' because for updating existing users they are not
+  needed, and for creating new users, the HMC checks these.
+  (part of issue #514)
 
 **Cleanup:**
 

@@ -66,6 +66,7 @@ STD_USER_INPUT_PROPERTIES = {
     # 'default_group_name': no default group (artificial property)
     'description': "zhmc test user",
     'disabled': False,
+    'user_role_names': ['Standard'],  # (artificial property)
     'authentication_type': 'local',
     'password_rule_name': 'Basic',  # (artificial property)
     'password': 'Bumeran9',
@@ -99,6 +100,7 @@ STD_USER_PROPERTIES = {
     # 'default-group-uri': no default group
     'description': STD_USER_INPUT_PROPERTIES['description'],
     'disabled': STD_USER_INPUT_PROPERTIES['disabled'],
+    # 'user-roles': updated upon use
     'authentication-type': STD_USER_INPUT_PROPERTIES['authentication_type'],
     # 'password-rule-uri': updated upon use
     'password': STD_USER_INPUT_PROPERTIES['password'],
