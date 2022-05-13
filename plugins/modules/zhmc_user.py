@@ -115,15 +115,18 @@ options:
       - "* C(name): Cannot be specified because the name has already been
          specified in the C(name) module parameter."
       - "* C(type): Cannot be changed once the user exists."
-      - "* C(user-pattern-uri): Cannot be set directly, but indirectly via
-         the artificial property C(user-pattern-name)."
-      - "* C(password-rule-uri): Cannot be set directly, but indirectly via
-         the artificial property C(password-rule-name)."
-      - "* C(ldap-server-definition-uri): Cannot be set directly, but
+      - "* C(user_roles): Cannot be set directly, but indirectly via
+         the artificial property C(user_role_names) which replaces the
+         current user roles, if specified."
+      - "* C(user_pattern_uri): Cannot be set directly, but indirectly via
+         the artificial property C(user_pattern_name)."
+      - "* C(password_rule_uri): Cannot be set directly, but indirectly via
+         the artificial property C(password_rule_name)."
+      - "* C(ldap_server_definition_uri): Cannot be set directly, but
          indirectly via the artificial property
-         C(ldap-server-definition-name)."
-      - "* C(default-group-uri): Cannot be set directly, but indirectly via
-         the artificial property C(default-group-name)."
+         C(ldap_server_definition_name)."
+      - "* C(default_group_uri): Cannot be set directly, but indirectly via
+         the artificial property C(default_group_name)."
       - "Properties omitted in this dictionary will remain unchanged when the
          user already exists, and will get the default value defined
          in the data model for users in the :term:`HMC API` when the
@@ -176,7 +179,7 @@ EXAMPLES = """
     name: "{{ my_user_name }}"
     state: absent
 
-- name: Ensure the user exists
+- name: Ensure the user exists and has certain roles
   zhmc_user:
     hmc_host: "{{ my_hmc_host }}"
     hmc_auth: "{{ my_hmc_auth }}"
@@ -186,6 +189,12 @@ EXAMPLES = """
     properties:
       description: "Example user 1"
       type: standard
+      authentication_type: local
+      password_rule_name: Basic
+      password: foobar
+      user_role_names:
+        - hmc-access-administrator-tasks
+        - hmc-all-system-managed-objects
   register: user1
 
 """
@@ -217,6 +226,20 @@ user:
       description: "Additional properties of the user, as described in the
         data model of the 'User' object in the :term:`HMC API` book.
         The property names have hyphens (-) as described in that book."
+    user-role-names:
+      description: "Name of the user roles referenced by property
+        C(user-roles)."
+      type: str
+    user-role-objects:
+      description: "Only if C(expand=true): User roles referenced by property
+        C(user-roles)."
+      type: dict
+      contains:
+        "{property}":
+          description: "Properties of the user role, as described in the
+            data model of the 'User Pattern' object in the :term:`HMC API`
+            book.
+            The property names have hyphens (-) as described in that book."
     user-pattern-name:
       description: "Only for users with C(type=pattern): Name of the user
         pattern referenced by property C(user-pattern-uri)."
@@ -421,6 +444,10 @@ ZHMC_USER_PROPERTIES = {
     'description': (True, True, True, True, None, to_unicode),
     'disabled': (True, True, True, True, None, bool),
     'authentication_type': (True, True, True, True, None, None),
+    'user_roles': (False, False, False, None, None, None),
+    # user_roles: Modified via user_role_names.
+    'user_role_names': (True, True, True, True, None, None),
+    # user_role_names: Artificial property, based on user_roles
     'password_rule_uri': (False, True, True, None, None, None),
     # password_rule_uri: Modified via password_rule_name.
     'password_rule_name': (True, True, True, True, None, None),
@@ -462,7 +489,6 @@ ZHMC_USER_PROPERTIES = {
     'class': (False, False, False, None, None, None),
     'user_pattern_uri': (False, False, False, None, None, None),
     'password_expires': (False, False, False, None, None, None),
-    'user_roles': (False, False, False, None, None, None),
     'replication_overwrite_possible': (False, False, False, None, None, None),
 
     # read-only artificial if-expand properties:
@@ -497,17 +523,22 @@ def process_properties(console, user, params):
       params (dict): Module input parameters.
 
     Returns:
-      tuple of (create_props, update_props), where:
+      tuple of (create_props, update_props, add_roles, rem_roles),
+      where:
         * create_props: dict of properties for
           zhmcclient.UserManager.create()
         * update_props: dict of properties for
           zhmcclient.User.update_properties()
+        * add_roles: list of UserRole objects to be added to user
+        * rem_roles: list of UserRole objects to be removed from user
 
     Raises:
       ParameterError: An issue with the module parameters.
     """
     create_props = {}
     update_props = {}
+    add_roles = []
+    rem_roles = []
 
     # handle 'name' property
     user_name = to_unicode(params['name'])
@@ -525,28 +556,6 @@ def process_properties(console, user, params):
     if input_props is None:
         input_props = {}
 
-    # Check required input properties
-    for prop_name in ('type', 'authentication_type'):
-        if prop_name not in input_props:
-            raise ParameterError(
-                "Property {0!r} is required but is missing in the module "
-                "input parameters.".format(prop_name))
-    auth_type = input_props['authentication_type']
-    if auth_type == 'local':
-        for prop_name in ('password_rule_name', 'password'):
-            if prop_name not in input_props:
-                raise ParameterError(
-                    "Property {0!r} is required for "
-                    "authentication_type='local' but is missing in the "
-                    "module input parameters.".format(prop_name))
-    if auth_type == 'ldap':
-        for prop_name in ('ldap_server_definition_name', ):
-            if prop_name not in input_props:
-                raise ParameterError(
-                    "Property {0!r} is required for "
-                    "authentication_type='ldap' but is missing in the "
-                    "module input parameters.".format(prop_name))
-
     for prop_name in input_props:
 
         if prop_name not in ZHMC_USER_PROPERTIES:
@@ -563,6 +572,37 @@ def process_properties(console, user, params):
                 "parameter.".format(prop_name))
 
         # Process artificial properties allowed in input parameters
+
+        if prop_name == 'user_role_names':
+            user_role_names = input_props[prop_name]
+            all_user_roles = console.user_roles.list()
+            user_roles = []
+            for user_role_name in user_role_names:
+                for r in all_user_roles:
+                    if r.name == user_role_name:
+                        user_roles.append(r)
+                        break
+                else:
+                    raise ParameterError(
+                        "Specified user role {0!r} does not exist.".
+                        format(user_role_name))
+            if user is None:
+                # All roles need to be added to the user
+                add_roles.extend(user_roles)
+            else:
+                current_user_role_uris = user.get_property('user-roles')
+                current_user_roles = [r for r in all_user_roles
+                                      if r.uri in current_user_role_uris]
+                current_user_role_names = [r.name for r in current_user_roles]
+                for user_role in current_user_roles:
+                    if user_role.name not in user_role_names:
+                        # An existing role needs to be removed from the user
+                        rem_roles.append(user_role)
+                for user_role in user_roles:
+                    if user_role.name not in current_user_role_names:
+                        # A new role needs to be added to the user
+                        add_roles.append(user_role)
+            continue
 
         if prop_name == 'user_pattern_name':
             user_pattern_name = input_props[prop_name]
@@ -624,7 +664,7 @@ def process_properties(console, user, params):
         update_props.update(_update_props)
         if _stop:
             raise AssertionError()
-    return create_props, update_props
+    return create_props, update_props, add_roles, rem_roles
 
 
 def add_artificial_properties(
@@ -635,6 +675,9 @@ def add_artificial_properties(
     Upon return, the user_properties dict has been extended by these properties:
 
     Regardless of expand:
+
+    * 'user-role-names': Names of UserRole objects corresponding to the URIs
+      in the 'user-roles' property.
 
     * 'user-pattern-name': Name of UserPattern object corresponding to the URI
       in the 'user-pattern-uri' property. That property only exists for
@@ -654,6 +697,9 @@ def add_artificial_properties(
 
     If expand is True:
 
+    * 'user-role-objects': List of UserRole objects corresponding to the
+      URIs in the 'user-roles' property.
+
     * 'user-pattern': UserPattern object corresponding to the URI in the
       'user-pattern-uri' property. That property only exists for
       type='pattern-based'.
@@ -663,9 +709,6 @@ def add_artificial_properties(
 
     * 'ldap-server-definition': LdapServerDefinition object corresponding to
       the URI in the 'ldap-server-definition-uri' property.
-
-    * 'user-role-objects': List of UserRole objects corresponding to the
-      URIs in the 'user-roles' property.
 
     * 'default-group': Group object corresponding to the URI in the
       'default-group-uri' property.
@@ -790,8 +833,8 @@ def ensure_present(params, check_mode):
         if user is None:
             # It does not exist. Create it and update it if there are
             # update-only properties.
-            create_props, update_props = process_properties(
-                console, user, params)
+            create_props, update_props, add_roles, rem_roles = \
+                process_properties(console, user, params)
             update2_props = {}
             for name, value in update_props.items():
                 if name not in create_props:
@@ -809,12 +852,24 @@ def ensure_present(params, check_mode):
                     console, create_props, update2_props)
             result = dict(user.properties)
             changed = True
+            for role in add_roles:
+                LOGGER.debug(
+                    "Adding role %r to user %r", role.name, user_name)
+                if not check_mode:
+                    user.add_user_role(role)
+                if 'user-roles' not in result:
+                    result['user-roles'] = []
+                result['user-roles'].append(role.uri)
+            if rem_roles:
+                raise AssertionError(
+                    "Unexpected attempt to remove user roles {0!r} from newly "
+                    "created user {1!r}".format(rem_roles, user.name))
         else:
             # It exists. Update its properties.
             user.pull_full_properties()
             result = dict(user.properties)
-            create_props, update_props = process_properties(
-                console, user, params)
+            create_props, update_props, add_roles, rem_roles = \
+                process_properties(console, user, params)
             if create_props:
                 raise AssertionError("Unexpected "
                                      "create_props: %r" % create_props)
@@ -831,6 +886,26 @@ def ensure_present(params, check_mode):
                 else:
                     # Update the local User object's properties
                     result.update(update_props)
+                changed = True
+            for role in add_roles:
+                LOGGER.debug(
+                    "Adding role %r to user %r", role.name, user_name)
+                if not check_mode:
+                    user.add_user_role(role)
+                if 'user-roles' not in result:
+                    result['user-roles'] = []
+                result['user-roles'].append(role.uri)
+                changed = True
+            for role in rem_roles:
+                LOGGER.debug(
+                    "Removing role %r from user %r", role.name, user_name)
+                if not check_mode:
+                    user.remove_user_role(role)
+                if 'user-roles' not in result:
+                    raise AssertionError(
+                        "User {0!r} unexpectedly does not have a "
+                        "'user-roles' property".format(user.name))
+                result['user-roles'].remove(role.uri)
                 changed = True
 
         if not user:

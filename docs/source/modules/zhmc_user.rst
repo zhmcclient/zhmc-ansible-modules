@@ -107,13 +107,15 @@ properties
 
   * ``type``: Cannot be changed once the user exists.
 
-  * ``user-pattern-uri``: Cannot be set directly, but indirectly via the artificial property ``user-pattern-name``.
+  * ``user_roles``: Cannot be set directly, but indirectly via the artificial property ``user_role_names``.
 
-  * ``password-rule-uri``: Cannot be set directly, but indirectly via the artificial property ``password-rule-name``.
+  * ``user_pattern_uri``: Cannot be set directly, but indirectly via the artificial property ``user_pattern_name``.
 
-  * ``ldap-server-definition-uri``: Cannot be set directly, but indirectly via the artificial property ``ldap-server-definition-name``.
+  * ``password_rule_uri``: Cannot be set directly, but indirectly via the artificial property ``password_rule_name``.
 
-  * ``default-group-uri``: Cannot be set directly, but indirectly via the artificial property ``default-group-name``.
+  * ``ldap_server_definition_uri``: Cannot be set directly, but indirectly via the artificial property ``ldap_server_definition_name``.
+
+  * ``default_group_uri``: Cannot be set directly, but indirectly via the artificial property ``default_group_name``.
 
   Properties omitted in this dictionary will remain unchanged when the user already exists, and will get the default value defined in the data model for users in the :term:`HMC API` when the user is being created.
 
@@ -309,6 +311,21 @@ user
 
   {property}
     Additional properties of the user, as described in the data model of the 'User' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
+
+
+  user-role-names
+    Name of the user roles referenced by property ``user-roles``.
+
+    | **type**: str
+
+  user-role-objects
+    Only if ``expand=true``: User roles referenced by property ``user-roles``.
+
+    | **type**: dict
+
+    {property}
+      Properties of the user role, as described in the data model of the 'User Pattern' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
+
 
 
   user-pattern-name
