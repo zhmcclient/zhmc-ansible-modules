@@ -28,7 +28,7 @@ I/O adapters, the Z system itself, or various resources on its Hardware
 Management Console (HMC).
 
 The Ansible modules in this collection are fully
-`idempotent <http://docs.ansible.com/ansible/latest/glossary.html#term-idempotency>`_,
+`idempotent <https://docs.ansible.com/ansible/latest/reference_appendices/glossary.html#term-Idempotency>`_,
 following an important principle for Ansible modules.
 The idempotency of a module allows Ansible playbooks to specify the desired end
 state for a resource, regardless of what the current state is. For example, an
@@ -133,6 +133,6 @@ please open an issue in the `issue tracker`_.
 .. _Ansible:
    https://www.ansible.com/
 .. _IBM Z:
-   http://www.ibm.com/it-infrastructure/z/
+   https://www.ibm.com/it-infrastructure/z
 .. _LinuxONE:
-   http://www.ibm.com/it-infrastructure/linuxone/
+   https://www.ibm.com/it-infrastructure/linuxone/

@@ -45,7 +45,7 @@ Besides having a supported operating system with a supported Python version
 (see :ref:`Supported environments`), it is recommended that you set up a
 `virtual Python environment`_.
 
-.. _virtual Python environment: http://docs.python-guide.org/en/latest/dev/virtualenvs/
+.. _virtual Python environment: https://docs.python-guide.org/dev/virtualenvs/
 
 Then, with a virtual Python environment active, clone the Git repo of this
 project and prepare the development environment with ``make develop``:
