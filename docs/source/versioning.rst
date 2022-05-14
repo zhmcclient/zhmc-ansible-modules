@@ -21,7 +21,7 @@ Versioning
 
 This collection uses the rules of `Semantic Versioning 2.0.0`_ for its version.
 
-.. _Semantic Versioning 2.0.0: http://semver.org/spec/v2.0.0.html
+.. _Semantic Versioning 2.0.0: https://semver.org/spec/v2.0.0.html
 
 This documentation may have been built from a development level of the
 package. You can recognize a development version of this package by the

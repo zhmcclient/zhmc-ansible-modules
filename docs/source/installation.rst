@@ -40,7 +40,7 @@ specific use case, and that it does not pollute your system Python installation
 with other Python packages, keeping the risk of incompatibilities away from
 your system Python.
 
-.. _`virtual Python environment`: http://docs.python-guide.org/en/latest/dev/virtualenvs/
+.. _`virtual Python environment`: https://docs.python-guide.org/dev/virtualenvs/
 
 The following sections describe these two installation methods.
 
@@ -51,12 +51,11 @@ Standard installation with system Python
 All commands shown are to be executed in a terminal or command prompt on the
 control system. The instructions are written for a bash shell.
 
-.. _`Installing the Control Machine`: http://docs.ansible.com/ansible/latest/intro_installation.html#installing-the-control-machine
-
+.. _`Installing Ansible on specific operating systems`: https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-specific-operating-systems
 
 1.  Install Ansible as an operating system package on the control system.
 
-    For details, see `Installing the Control Machine`_.
+    For details, see `Installing Ansible on specific operating systems`_.
 
 2.  Install the **IBM Z HMC collection** from Ansible Galaxy:
 
