@@ -758,11 +758,11 @@ def add_artificial_properties(
             raise AssertionError()
         ldap_srv_def = console.ldap_server_definitions.resource_object(
             ldap_srv_def_uri)
-        user_properties['ldap-server-definition-name'] = \
-            ldap_srv_def.get_property('name')
+        ldap_srv_def.pull_full_properties()
+        user_properties['ldap-server-definition-name'] = ldap_srv_def.name
         if expand:
             user_properties['ldap-server-definition'] = \
-                dict(ldap_srv_def.get_property('properties'))
+                dict(ldap_srv_def.properties)
 
     user_roles = []
     user_role_uris = user.properties['user-roles']
@@ -779,20 +779,102 @@ def add_artificial_properties(
 def create_check_mode_user(console, create_props, update_props):
     """
     Create and return a fake local User object.
+
     This is used when a user needs to be created in check mode.
+
+    This function must be consistent with the behavior of the "Create User"
+    operation on the HMC. HTTP errors the HMC would return are indicated by
+    raising zhmcclient.HTTPError.
     """
-    type_ = create_props['type']
-    props = {}
 
-    # Defaults for some read-only properties
-    if type_ == 'pattern-based':
-        props['user-pattern-uri'] = 'fake-uri-{0}'.format(uuid.uuid4())
-    props['password-expires'] = -1
-    props['user-roles'] = []
-    props['replication-overwrite-possible'] = False
+    input_props = {}
+    input_props.update(create_props)
+    input_props.update(update_props)
 
-    props.update(create_props)
-    props.update(update_props)
+    # Check required input properties
+    missing_props = []
+    for pname in ('name', 'type', 'authentication-type'):
+        if pname not in input_props:
+            missing_props.append(pname)
+    name = input_props['name']
+    user_type = input_props['type']
+    auth_type = input_props['authentication-type']
+    if auth_type == 'local':
+        for pname in ('password-rule-uri', 'password'):
+            if pname not in input_props:
+                missing_props.append(pname)
+    if auth_type == 'ldap':
+        for pname in ('ldap-server-definition-uri'):
+            if pname not in input_props:
+                missing_props.append(pname)
+    mfa_types = input_props.get('mfa-types', [])
+    if 'mfa-server' in mfa_types:
+        for pname in ('primary-mfa-server-definition-uri', 'mfa-policy'):
+            if pname not in input_props:
+                missing_props.append(pname)
+    if missing_props:
+        raise zhmcclient.HTTPError({
+            'http-status': 400,
+            'reason': 4,
+            'message': "Required input properties missing for Create User: {p}".
+            format(p=missing_props),
+        })
+
+    # Defaults for optional properties that are the same in all cases
+    props = {
+        'description': '',
+        'session-timeout': 0,
+        'verify-timeout': 15,
+        'idle-timeout': 0,
+        'max-failed-logins': 3,
+        'disable-delay': 1,
+        'inactivity-timeout': 0,
+        'disruptive-pw-required': True,
+        'disruptive-text-required': False,
+        'allow-remote-access': False,
+        'allow-management-interfaces': False,
+        'max-web-services-api-sessions': 100,
+        'web-services-api-session-idle-timeout': 360,
+        'user-roles': [],
+        'default-group-uri': None,
+        'replication-overwrite-possible': False,  # Default not in WS-API book
+        'multi-factor-authentication-required': False,
+        'email-address': None,
+        'mfa-types': None,
+    }
+
+    # Defaults for optional properties that depend on the case
+    if user_type == 'pattern-based':
+        props['user-pattern-uri'] = None
+    if user_type == 'template':
+        props['user-template-uri'] = None
+    if user_type != 'template':
+        props['disabled'] = False
+    if auth_type == 'local':
+        props['password-rule-uri'] = None
+        props['password'] = None
+        props['password-expires'] = None
+        props['force-password-change'] = True
+        props['min-pw-change-time'] = 0
+    if auth_type == 'ldap':
+        props['ldap-server-definition-uri'] = None
+        if user_type != 'template':
+            props['userid-on-ldap-server'] = ''
+    mfa_required = input_props.get(
+        'multi-factor-authentication-required', False)
+    if mfa_required:
+        props['force-shared-secret-key-change'] = False
+    if 'mfa-server' in mfa_types:
+        props['primary-mfa-server-definition-uri'] = None
+        props['backup-mfa-server-definition-uri'] = None
+        props['mfa-policy'] = None
+        if user_type != 'template':
+            props['mfa-userid'] = name
+        if user_type == 'template':
+            props['mfa-userid-override'] = None
+
+    # Apply specified input properties on top of the defaults
+    props.update(input_props)
 
     user_oid = 'fake-{0}'.format(uuid.uuid4())
     user = console.users.resource_object(user_oid, props=props)

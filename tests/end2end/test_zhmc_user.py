@@ -26,9 +26,10 @@ import random
 import requests.packages.urllib3
 from collections import OrderedDict
 from pprint import pformat
-from ansible.module_utils import six
 import zhmcclient
-from zhmcclient.testutils.hmc_definition_fixtures import hmc_definition, hmc_session  # noqa: F401, E501
+# pylint: disable=line-too-long,unused-import
+from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
+# pylint: enable=line-too-long,unused-import
 
 from plugins.modules import zhmc_user
 from .utils import mock_ansible_module, get_failure_msg
@@ -40,22 +41,38 @@ DEBUG = False
 
 LOG_FILE = 'zhmc_user.log' if DEBUG else None
 
-# User properties that are not always present, but only under certain
-# conditions. This includes artificial properties whose base properties are
-# not always present, or that depend on exand being set.
+# Properties in the returned user facts that are not always present, but
+# only under certain conditions. This includes artificial properties whose base
+# properties are not always present, or that depend on expand being set. The
+# comments state the condition under which the property is present.
 USER_CONDITIONAL_PROPS = (
-    'user-pattern-uri',
-    'user-pattern-name',
-    'user-pattern',
-    'ldap-server-definition-name',
-    'ldap-server-definition',
-    'password',
-    'default-group-name',
-    'default-group',
-    'password-rule',
-    'user-role-objects',
-    'force-shared-secret-key-change',
-    'userid-on-ldap-server',
+    'user-pattern-uri',  # type == 'pattern-based'
+    'user-pattern-name',  # artificial: type == 'pattern-based'
+    'user-pattern',  # artificial: type == 'pattern-based' and expand
+    'user-template-uri',  # type == 'template'
+    'user-template-name',  # artificial: type == 'template'
+    'disabled',  # type != 'template'
+    'password-rule-uri',  # auth-type == 'local'
+    'password-rule-name',  # artificial: auth-type == 'local'
+    'password-rule',  # artificial: auth-type == 'local' and expand
+    'password-expires',  # artificial: auth-type == 'local', but this is not
+    # stated in HMC WS-API book
+    'password',  # never present
+    'force-password-change',  # auth-type == 'local'
+    'ldap-server-definition-uri',  # auth-type == 'ldap'
+    'ldap-server-definition-name',  # artificial: auth-type == 'ldap'
+    'ldap-server-definition',  # artificial: auth-type == 'ldap' and expand
+    'userid-on-ldap-server',  # auth-type == 'ldap' and type != 'template'
+    'min-pw-change-time',  # auth-type == 'local'
+    'user-role-objects',  # artificial: expand
+    'default-group',  # artificial: expand
+    'default-group-name',  # artificial, not yet implemented (TODO: Implement)
+    'force-shared-secret-key-change',  # multi-factor-auth-required == True
+    'primary-mfa-server-definition-uri',  # mfa-types contains "mfa-server"
+    'backup-mfa-server-definition-uri',  # mfa-types contains "mfa-server"
+    'mfa-policy',  # mfa-types contains "mfa-server"
+    'mfa-userid',  # type != "template" and mfa-types contains "mfa-server"
+    'mfa-userid-override',  # type == "template" and mfa-types contains "mfa-server"
 )
 
 
@@ -164,79 +181,100 @@ def get_module_output(mod_obj):
     return func(*call_args[0], **call_args[1])
 
 
-def assert_user_props(user_props, expand):
+def assert_user_props(user_props, expand, where):
     """
     Assert the output object of the zhmc_user module
     """
-    assert isinstance(user_props, dict)  # Dict of User properties
+    assert isinstance(user_props, dict), where  # Dict of User properties
 
     # Assert presence of normal properties in the output
     for prop_name in zhmc_user.ZHMC_USER_PROPERTIES:
         prop_name_hmc = prop_name.replace('_', '-')
         if prop_name_hmc in USER_CONDITIONAL_PROPS:
             continue
-        assert prop_name_hmc in user_props
+        assert prop_name_hmc in user_props, where
 
-    type_ = user_props['type']
+    user_type = user_props['type']
     auth_type = user_props['authentication-type']
 
     # Assert presence of the conditional and artificial properties
 
-    if type_ == 'pattern-based':
-        assert 'user-pattern-uri' in user_props
-        assert 'user-pattern-name' in user_props
+    if user_type == 'pattern-based':
+        assert 'user-pattern-uri' in user_props, where
+        assert 'user-pattern-name' in user_props, where
         if expand:
-            assert 'user-pattern' in user_props
+            assert 'user-pattern' in user_props, where
 
     if auth_type == 'local':
-        assert 'password-rule-uri' in user_props
-        assert 'password-rule-name' in user_props
+        assert 'password-rule-uri' in user_props, where
+        assert 'password-rule-name' in user_props, where
         if expand:
-            assert 'password-rule' in user_props
+            assert 'password-rule' in user_props, where
 
     if auth_type == 'ldap':
-        assert 'ldap-server-definition-uri' in user_props
-        assert 'ldap-server-definition-name' in user_props
+        assert 'ldap-server-definition-uri' in user_props, where
+        assert 'ldap-server-definition-name' in user_props, where
         if expand:
-            assert 'ldap-server-definition' in user_props
+            assert 'ldap-server-definition' in user_props, where
 
-    assert 'user-roles' in user_props  # Base property with the URIs
-    assert 'user-role-names' in user_props
+    assert 'user-roles' in user_props, where  # Base property with the URIs
+    assert 'user-role-names' in user_props, where
     if expand:
-        assert 'user-role-objects' in user_props
+        assert 'user-role-objects' in user_props, where
 
 
 @pytest.mark.parametrize(
-    "check_mode", [True, False])
+    "check_mode", [
+        pytest.param(False, id="check_mode=False"),
+        pytest.param(True, id="check_mode=True"),
+    ]
+)
 @pytest.mark.parametrize(
-    "expand", [False, True])
+    "expand", [
+        pytest.param(False, id="expand=False"),
+        pytest.param(True, id="expand=True"),
+    ]
+)
+@pytest.mark.parametrize(
+    "user_type, auth_type", [
+        pytest.param('standard', 'local', id="user_type=standard,auth_type=local"),
+        pytest.param('standard', 'ldap', id="user_type=standard,auth_type=ldap"),
+        pytest.param('template', 'ldap', id="user_type=template,auth_type=ldap"),
+        pytest.param('pattern-based', 'local', id="user_type=pattern-based,auth_type=local"),
+        pytest.param('pattern-based', 'ldap', id="user_type=pattern-based,auth_type=ldap"),
+        pytest.param('system-defined', 'local', id="user_type=system-defined,auth_type=local"),
+    ]
+)
 @mock.patch("plugins.modules.zhmc_user.AnsibleModule", autospec=True)
 def test_user_facts(
-        ansible_mod_cls, expand, check_mode, hmc_session):  # noqa: F811, E501
+        ansible_mod_cls, user_type, auth_type, expand, check_mode, hmc_session):  # noqa: F811, E501
     """
     Test fact gathering on all users of the HMC.
     """
 
     hd = hmc_session.hmc_definition
+    hmc_host = hd.host
+    hmc_auth = dict(userid=hd.userid, password=hd.password,
+                    ca_certs=hd.ca_certs, verify=hd.verify)
 
-    hmc_auth = dict(userid=hd.hmc_userid, password=hd.hmc_password)
-    if isinstance(hd.hmc_verify_cert, six.string_types):
-        hmc_auth['ca_certs'] = hd.hmc_verify_cert
-    elif isinstance(hd.hmc_verify_cert, bool):
-        hmc_auth['verify'] = hd.hmc_verify_cert
-
-    # Determine an existing user to test.
     client = zhmcclient.Client(hmc_session)
     console = client.consoles.console
 
-    # Pick a random existing user to test
+    # Determine a random existing user of the desired type to test.
     users = console.users.list()
-    assert len(users) >= 1
-    user = random.choice(users)
+    typed_users = [u for u in users
+                   if u.get_property('authentication-type') == auth_type
+                   and u.get_property('type') == user_type]
+    if len(typed_users) == 0:
+        pytest.skip("HMC has no users with type '{ut}' and authentication-type "
+                    "'{at}'".format(ut=user_type, at=auth_type))
+    user = random.choice(typed_users)
+
+    where = "user '{u}'".format(u=user.name)
 
     # Prepare module input parameters (must be all required + optional)
     params = {
-        'hmc_host': hd.hmc_host,
+        'hmc_host': hmc_host,
         'hmc_auth': hmc_auth,
         'name': user.name,
         'state': 'facts',
@@ -256,13 +294,13 @@ def test_user_facts(
 
     # Assert module exit code
     assert exit_code == 0, \
-        "Module unexpectedly failed with this message:\n{0}". \
-        format(get_failure_msg(mod_obj))
+        "{w}: Module failed with exit code {e} and message:\n{m}". \
+        format(w=where, e=exit_code, m=get_failure_msg(mod_obj))
 
     # Assert module output
     changed, user_props = get_module_output(mod_obj)
-    assert changed is False
-    assert_user_props(user_props, expand)
+    assert changed is False, where
+    assert_user_props(user_props, expand, where)
 
 
 USER_ABSENT_PRESENT_TESTCASES = [
@@ -278,7 +316,7 @@ USER_ABSENT_PRESENT_TESTCASES = [
     # - exp_changed (bool): Boolean for expected 'changed' flag.
 
     (
-        "state=present with non-existing user",
+        "Present with non-existing user",
         None,
         None,
         'present',
@@ -287,7 +325,7 @@ USER_ABSENT_PRESENT_TESTCASES = [
         True,
     ),
     (
-        "state=present with existing user, no properties changed",
+        "Present with existing user, no properties changed",
         {},
         {
             'password_rule_name': 'Basic',
@@ -298,7 +336,7 @@ USER_ABSENT_PRESENT_TESTCASES = [
         True,  # due to password
     ),
     (
-        "state=present with existing user, some properties changed",
+        "Present with existing user, some properties changed",
         {
             'session-timeout': 30,
         },
@@ -311,7 +349,7 @@ USER_ABSENT_PRESENT_TESTCASES = [
         True,
     ),
     (
-        "state=absent with existing user",
+        "Absent with existing user",
         {},
         {
             'password_rule_name': 'Basic',
@@ -322,7 +360,7 @@ USER_ABSENT_PRESENT_TESTCASES = [
         True,
     ),
     (
-        "state=absent with non-existing user",
+        "Absent with non-existing user",
         None,
         None,
         'absent',
@@ -334,7 +372,11 @@ USER_ABSENT_PRESENT_TESTCASES = [
 
 
 @pytest.mark.parametrize(
-    "check_mode", [False])
+    "check_mode", [
+        pytest.param(False, id="check_mode=False"),
+        pytest.param(True, id="check_mode=True"),
+    ]
+)
 @pytest.mark.parametrize(
     "desc, initial_user_props, initial_related_names, input_state, "
     "input_props, exp_user_props, exp_changed",
@@ -351,12 +393,9 @@ def test_user_absent_present(
     """
 
     hd = hmc_session.hmc_definition
-
-    hmc_auth = dict(userid=hd.hmc_userid, password=hd.hmc_password)
-    if isinstance(hd.hmc_verify_cert, six.string_types):
-        hmc_auth['ca_certs'] = hd.hmc_verify_cert
-    elif isinstance(hd.hmc_verify_cert, bool):
-        hmc_auth['verify'] = hd.hmc_verify_cert
+    hmc_host = hd.host
+    hmc_auth = dict(userid=hd.userid, password=hd.password,
+                    ca_certs=hd.ca_certs, verify=hd.verify)
 
     expand = False  # Expansion is tested elsewhere
     client = zhmcclient.Client(hmc_session)
@@ -365,26 +404,35 @@ def test_user_absent_present(
     # Create a user name that does not exist
     user_name = new_user_name()
 
+    where = "user '{u}'".format(u=user_name)
+
     # Create initial user, if specified so
     if initial_user_props is not None:
         user_props = STD_USER_PROPERTIES.copy()
         user_props.update(initial_user_props)
         user_props['name'] = user_name
         if user_props['authentication-type'] == 'local':
-            assert 'password' in user_props
-            assert 'password_rule_name' in initial_related_names
+            assert 'password' in user_props, where
+            assert 'password_rule_name' in initial_related_names, where
             password_rule_name = initial_related_names['password_rule_name']
             password_rule = console.password_rules.find_by_name(
                 password_rule_name)
             user_props['password-rule-uri'] = password_rule.uri
         if user_props['authentication-type'] == 'ldap':
-            assert 'ldap_server_definition_name' in initial_related_names
+            assert 'ldap_server_definition_name' in initial_related_names, where
             ldap_srv_def_name = \
                 initial_related_names['ldap_server_definition_name']
             ldap_srv_def = console.ldap_server_definitions.find_by_name(
                 ldap_srv_def_name)
             user_props['ldap-server-definition-uri'] = ldap_srv_def.uri
-        console.users.create(user_props)
+        try:
+            console.users.create(user_props)
+        except zhmcclient.HTTPError as exc:
+            if exc.http_status == 403 and exc.reason == 1:
+                # User is not permitted to create users
+                pytest.skip("HMC user '{u}' is not permitted to create "
+                            "initial test user".
+                            format(u=hd.userid))
     else:
         user_props = None
 
@@ -392,7 +440,7 @@ def test_user_absent_present(
 
         # Prepare module input parameters (must be all required + optional)
         params = {
-            'hmc_host': hd.hmc_host,
+            'hmc_host': hmc_host,
             'hmc_auth': hmc_auth,
             'name': user_name,
             'state': input_state,
@@ -413,8 +461,8 @@ def test_user_absent_present(
         exit_code = exc_info.value.args[0]
 
         assert exit_code == 0, \
-            "Module unexpectedly failed with this message:\n{0}". \
-            format(get_failure_msg(mod_obj))
+            "{w}: Module failed with exit code {e} and message:\n{m}". \
+            format(w=where, e=exit_code, m=get_failure_msg(mod_obj))
 
         changed, output_props = get_module_output(mod_obj)
         if changed != exp_changed:
@@ -437,7 +485,7 @@ def test_user_absent_present(
                        pformat(input_props_sorted.items(), indent=2),
                        pformat(output_props_sorted.items(), indent=2)))
         if input_state == 'present':
-            assert_user_props(output_props, expand)
+            assert_user_props(output_props, expand, where)
 
     finally:
         # Delete user, if it exists

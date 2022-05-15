@@ -67,12 +67,25 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   CryptographyDeprecationWarning raised by ansible, by pinning cryptography
   to <37.0.0 on Python 3.6. (issue #518)
 
+* 'zhmc_user' module: Fixed an error for users with LDAP authentication.
+
+* 'zhmc_user' module: Fixed incorrect default properties for users created in
+  check mode.
+
+* Increased minimum version of zhmcclient from 1.2.0 to 1.3.0 in order to
+  pick up fixes and new functionality.
+
 **Enhancements:**
 
-* Test: Made end2end testing compatible with zhmcclient.testutils support for
-  HMC definition files.
-  The HMC definition file is now by default ~/.hmc_hmc_definitions.yaml, and
-  the env.var to override that is now TESTHMCFILE.
+* Test: Made end2end testing compatible with zhmcclient.testutils support using
+  an Ansible compatible HMC inventory file and an Ansible compatible HMC vault
+  file.
+  The default HMC inventory file is now ~/.zhmc_inventory.yaml and can be
+  changed using the TESTINVENTORY env. var.
+  The default HMC vault file is now ~/.zhmc_vault.yaml and can be
+  changed using the TESTVAULT env. var.
+  The default HMC or group to run the end2end tests against is now 'default'
+  and can be changed using the TESTHMC env. var.
 
 * Test: Added support for a TESTCASES env.var for filtering testcases with the
   pytest -k option.

@@ -20,7 +20,7 @@ requests>=2.22.0; python_version <= '3.9'
 requests>=2.25.0; python_version >= '3.10'
 
 # git+https://github.com/zhmcclient/python-zhmcclient@master#egg=zhmcclient
-zhmcclient>=1.2.0
+zhmcclient>=1.3.0
 
 
 # Indirect dependencies are not specified in this file, unless needed to solve versioning issues:
