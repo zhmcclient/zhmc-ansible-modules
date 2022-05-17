@@ -133,6 +133,8 @@ mode. (issue #507)</p></li>
 <li><p>Test: Added support for specifying ‘hmc_auth.ca_certs’ and ‘hmc_auth.verify’
 from the ‘hmc_verify_cert’ parameter in the HMC definition file in
 end2end test cases for zhmc_partition and zhmc_user.</p></li>
+<li><p>Docs: Fixed incorrect input property names in zhmc_user module.
+(part of issue #514)</p></li>
 </ul>
 <p><strong>Enhancements:</strong></p>
 <ul class="simple">
@@ -142,6 +144,13 @@ The HMC definition file is now by default ~/.hmc_hmc_definitions.yaml, and
 the env.var to override that is now TESTHMCFILE.</p></li>
 <li><p>Test: Added support for a TESTCASES env.var for filtering testcases with the
 pytest -k option.</p></li>
+<li><p>Added support for specifying user roles as input in the zhmc_user module.
+User roles can now be specified with their names. They had been displayed
+on users before. (issue #514)</p></li>
+<li><p>Removed check in zhmc_user module for required input properties ‘type’ and
+‘authentication_type’ because for updating existing users they are not
+needed, and for creating new users, the HMC checks these.
+(part of issue #514)</p></li>
 </ul>
 <p><strong>Cleanup:</strong></p>
 <p><strong>Known issues:</strong></p>
