@@ -20,16 +20,12 @@ Releases
 ========
 
 
-Version 1.0.3-dev1
-------------------
+Version 1.0.3
+-------------
 
-Released: not yet
+Released: 2022-05-31
 
 Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
-
-**Incompatible changes:**
-
-**Deprecations:**
 
 **Bug fixes:**
 
@@ -58,14 +54,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Test: Added support for a TESTCASES env.var for filtering testcases with the
   pytest -k option.
-
-**Cleanup:**
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 1.0.2
