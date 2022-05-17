@@ -45,6 +45,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   from the 'hmc_verify_cert' parameter in the HMC definition file in
   end2end test cases for zhmc_partition and zhmc_user.
 
+* Test: Fixed failure of sanity test on Python 3.6 due to new
+  CryptographyDeprecationWarning raised by ansible, by pinning cryptography
+  to <37.0.0 on Python 3.6. (issue #518)
+
 **Enhancements:**
 
 * Test: Made end2end testing compatible with zhmcclient.testutils support for

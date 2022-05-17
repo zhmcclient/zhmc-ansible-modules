@@ -28,9 +28,12 @@ zhmcclient>=1.2.0
 # cryptography 3.1 has deprecated Python 3.5 support and issues a deprecation
 # warning that causes ansible-test to fail
 # cryptography 3.2 addresses a dependabot security issue
+# cryptography 37.0.0 has deprecated Python 3.6 support and issues a deprecation
+# warning that causes ansible-test to fail
 cryptography>=3.3; python_version == '2.7'
 cryptography>=3.0,<3.1; python_version == '3.5'
-cryptography>=3.4.7; python_version >= '3.6'
+cryptography>=3.4.7,<37.0.0; python_version == '3.6'
+cryptography>=3.4.7; python_version >= '3.7'
 
 
 packaging>=20.0
