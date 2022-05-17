@@ -63,6 +63,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Docs: Fixed incorrect input property names in zhmc_user module.
   (part of issue #514)
 
+* Test: Fixed failure of sanity test on Python 3.6 due to new
+  CryptographyDeprecationWarning raised by ansible, by pinning cryptography
+  to <37.0.0 on Python 3.6. (issue #518)
+
 **Enhancements:**
 
 * Test: Made end2end testing compatible with zhmcclient.testutils support for
