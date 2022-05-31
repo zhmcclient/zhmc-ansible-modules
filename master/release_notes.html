@@ -15,6 +15,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -105,9 +106,9 @@
            <div itemprop="articleBody">
              
   <section id="releases">
-<span id="id1"></span><h1>Releases<a class="headerlink" href="#releases" title="Permalink to this headline"></a></h1>
+<span id="id1"></span><h1>Releases<a class="headerlink" href="#releases" title="Permalink to this heading"></a></h1>
 <section id="version-1-1-0-dev1">
-<h2>Version 1.1.0-dev1<a class="headerlink" href="#version-1-1-0-dev1" title="Permalink to this headline"></a></h2>
+<h2>Version 1.1.0-dev1<a class="headerlink" href="#version-1-1-0-dev1" title="Permalink to this heading"></a></h2>
 <p>This version contains all fixes up to version 1.0.x.</p>
 <p>Released: not yet</p>
 <p>Availability: <a class="reference external" href="https://console.redhat.com/ansible/automation-hub/repo/published/ibm/ibm_zhmc">AutomationHub</a>, <a class="reference external" href="https://galaxy.ansible.com/ibm/ibm_zhmc">Galaxy</a>, <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">GitHub</a></p>
@@ -135,6 +136,9 @@ from the ‘hmc_verify_cert’ parameter in the HMC definition file in
 end2end test cases for zhmc_partition and zhmc_user.</p></li>
 <li><p>Docs: Fixed incorrect input property names in zhmc_user module.
 (part of issue #514)</p></li>
+<li><p>Test: Fixed failure of sanity test on Python 3.6 due to new
+CryptographyDeprecationWarning raised by ansible, by pinning cryptography
+to &lt;37.0.0 on Python 3.6. (issue #518)</p></li>
 </ul>
 <p><strong>Enhancements:</strong></p>
 <ul class="simple">
@@ -159,7 +163,7 @@ needed, and for creating new users, the HMC checks these.
 </ul>
 </section>
 <section id="version-1-0-0">
-<h2>Version 1.0.0<a class="headerlink" href="#version-1-0-0" title="Permalink to this headline"></a></h2>
+<h2>Version 1.0.0<a class="headerlink" href="#version-1-0-0" title="Permalink to this heading"></a></h2>
 <p>This version contains all fixes up to version 0.10.1.</p>
 <p>Released: 2022-04-08</p>
 <p>Availability: <a class="reference external" href="https://galaxy.ansible.com/ibm/ibm_zhmc">Galaxy</a>, <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">GitHub</a></p>
@@ -191,7 +195,7 @@ operational mode. (issue #418)</p></li>
 </ul>
 </section>
 <section id="version-0-10-0">
-<h2>Version 0.10.0<a class="headerlink" href="#version-0-10-0" title="Permalink to this headline"></a></h2>
+<h2>Version 0.10.0<a class="headerlink" href="#version-0-10-0" title="Permalink to this heading"></a></h2>
 <p>This version contains all fixes up to version 0.9.2.</p>
 <p>Released: 2021-06-17</p>
 <p>Availability: <a class="reference external" href="https://galaxy.ansible.com/ibm/ibm_zhmc">Galaxy</a>, <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">GitHub</a></p>
@@ -261,7 +265,7 @@ stable_M.N.</p></li>
 </ul>
 </section>
 <section id="version-0-9-0">
-<h2>Version 0.9.0<a class="headerlink" href="#version-0-9-0" title="Permalink to this headline"></a></h2>
+<h2>Version 0.9.0<a class="headerlink" href="#version-0-9-0" title="Permalink to this heading"></a></h2>
 <p>This version contains all fixes up to version 0.8.3.</p>
 <p>Released: 2020-12-14</p>
 <p>Availability: <a class="reference external" href="https://galaxy.ansible.com/ibm/ibm_zhmc">Galaxy</a>, <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">GitHub</a></p>
@@ -366,7 +370,7 @@ repository: <a class="reference external" href="https://github.com/IBM/z_ansible
 </ul>
 </section>
 <section id="version-0-8-0">
-<h2>Version 0.8.0<a class="headerlink" href="#version-0-8-0" title="Permalink to this headline"></a></h2>
+<h2>Version 0.8.0<a class="headerlink" href="#version-0-8-0" title="Permalink to this heading"></a></h2>
 <p>Released: 2019-04-02</p>
 <p>Availability: <a class="reference external" href="https://pypi.org/project/zhmc-ansible-modules/">Pypi</a>, <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">GitHub</a></p>
 <p><strong>Bug fixes:</strong></p>
@@ -381,7 +385,7 @@ when starting the partition. See issue #112.</p></li>
 </ul>
 </section>
 <section id="version-0-7-0">
-<h2>Version 0.7.0<a class="headerlink" href="#version-0-7-0" title="Permalink to this headline"></a></h2>
+<h2>Version 0.7.0<a class="headerlink" href="#version-0-7-0" title="Permalink to this heading"></a></h2>
 <p>Released: 2019-02-20</p>
 <p>Availability: <a class="reference external" href="https://pypi.org/project/zhmc-ansible-modules/">Pypi</a>, <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">GitHub</a></p>
 <p><strong>Incompatible changes:</strong></p>
@@ -402,7 +406,7 @@ of the zhmc_adapter module.</p></li>
 </ul>
 </section>
 <section id="version-0-6-0">
-<h2>Version 0.6.0<a class="headerlink" href="#version-0-6-0" title="Permalink to this headline"></a></h2>
+<h2>Version 0.6.0<a class="headerlink" href="#version-0-6-0" title="Permalink to this heading"></a></h2>
 <p>Released: 2019-01-07</p>
 <p>Availability: <a class="reference external" href="https://pypi.org/project/zhmc-ansible-modules/">Pypi</a>, <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">GitHub</a></p>
 <p>Fixed this change log in 0.6.1 and 0.7.0</p>
@@ -452,7 +456,7 @@ and how to start a new version.</p></li>
 </ul>
 </section>
 <section id="version-0-5-0">
-<h2>Version 0.5.0<a class="headerlink" href="#version-0-5-0" title="Permalink to this headline"></a></h2>
+<h2>Version 0.5.0<a class="headerlink" href="#version-0-5-0" title="Permalink to this heading"></a></h2>
 <p>Released: 2018-10-24</p>
 <p>Availability: <a class="reference external" href="https://pypi.org/project/zhmc-ansible-modules/">Pypi</a>, <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">GitHub</a></p>
 <p><strong>Incompatible changes:</strong></p>
@@ -473,7 +477,7 @@ new modules ‘zhmc_storage_group’, ‘zhmc_storage_group_attachment’, and
 </ul>
 </section>
 <section id="version-0-4-0">
-<h2>Version 0.4.0<a class="headerlink" href="#version-0-4-0" title="Permalink to this headline"></a></h2>
+<h2>Version 0.4.0<a class="headerlink" href="#version-0-4-0" title="Permalink to this heading"></a></h2>
 <p>Availability: <a class="reference external" href="https://pypi.org/project/zhmc-ansible-modules/">Pypi</a>, <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">GitHub</a></p>
 <p>Released: 2018-03-15</p>
 <p><strong>Bug fixes:</strong></p>
@@ -511,7 +515,7 @@ of the properties of the respective child elements of that partition.
 </ul>
 </section>
 <section id="version-0-3-0">
-<h2>Version 0.3.0<a class="headerlink" href="#version-0-3-0" title="Permalink to this headline"></a></h2>
+<h2>Version 0.3.0<a class="headerlink" href="#version-0-3-0" title="Permalink to this heading"></a></h2>
 <p>Released: 2017-08-16</p>
 <p>Availability: <a class="reference external" href="https://pypi.org/project/zhmc-ansible-modules/">Pypi</a>, <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">GitHub</a></p>
 <p><strong>Incompatible changes:</strong></p>
@@ -533,7 +537,7 @@ property update.</p></li>
 </ul>
 </section>
 <section id="version-0-2-0">
-<h2>Version 0.2.0<a class="headerlink" href="#version-0-2-0" title="Permalink to this headline"></a></h2>
+<h2>Version 0.2.0<a class="headerlink" href="#version-0-2-0" title="Permalink to this heading"></a></h2>
 <p>Released: 2017-07-20</p>
 <p>Availability: <a class="reference external" href="https://pypi.org/project/zhmc-ansible-modules/">Pypi</a>, <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">GitHub</a></p>
 <p>This is the initial release.</p>
