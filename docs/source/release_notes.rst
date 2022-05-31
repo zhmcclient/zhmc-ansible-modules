@@ -20,18 +20,14 @@ Releases
 ========
 
 
-Version 1.1.0-dev1
-------------------
+Version 1.1.0
+-------------
 
-This version contains all fixes up to version 1.0.x.
+This version contains all fixes up to version 1.0.3.
 
-Released: not yet
+Released: 2022-06-01
 
 Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
-
-**Incompatible changes:**
-
-**Deprecations:**
 
 **Bug fixes:**
 
@@ -98,14 +94,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   'authentication_type' because for updating existing users they are not
   needed, and for creating new users, the HMC checks these.
   (part of issue #514)
-
-**Cleanup:**
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 1.0.0
