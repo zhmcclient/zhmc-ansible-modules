@@ -86,17 +86,10 @@ test_py_files := \
     $(wildcard $(test_dir)/*/*.py) \
     $(wildcard $(test_dir)/*/*/*.py) \
 
-# Path name of default HMC definitions file used for end2end tests.
-default_testhmcfile := ~/.zhmc_hmc_definitions.yaml
-ifndef TESTHMCFILE
-  TESTHMCFILE := $(default_testhmcfile)
-endif
-
-# Default HMC nickname in HMC definitions file
+# Defaults for end2end tests - must match the defaults in zhmcclient/testutils.
+default_testinventory := $HOME/.zhmc_inventory.yaml
+default_testvault := $HOME/.zhmc_vault.yaml
 default_testhmc := default
-ifndef TESTHMC
-  TESTHMC := $(default_testhmc)
-endif
 
 # Flake8 options
 flake8_opts := --max-line-length 160 --config /dev/null --ignore E402,E741,W503,W504
@@ -181,8 +174,9 @@ help:
 	@echo 'Environment variables:'
 	@echo "  TESTCASES=... - Testcase filter for pytest -k (e.g. 'test_func' or 'test_mod.py')"
 	@echo "  TESTOPTS=... - Additional options for pytest (e.g. '-x')"
-	@echo "  TESTHMC=... - HMC nickname in HMC definitions file used in end2end tests. Default: $(default_testhmc)"
-	@echo "  TESTHMCFILE=... - Path name of HMC definitions file used in end2end tests. Default: $(default_testhmcfile)"
+	@echo "  TESTHMC=... - HMC group or host name in HMC inventory file to be used in end2end tests. Default: $(default_testhmc)"
+	@echo "  TESTINVENTORY=... - Path name of HMC inventory file used in end2end tests. Default: $(default_testinventory)"
+	@echo "  TESTVAULT=... - Path name of HMC vault file used in end2end tests. Default: $(default_testvault)"
 	@echo "  PACKAGE_LEVEL - Package level to be used for installing dependent Python"
 	@echo "      packages in 'install' and 'develop' targets:"
 	@echo "        latest - Latest package versions available on Pypi"
@@ -220,7 +214,7 @@ linkcheck: _check_version develop_$(pymn).done $(doc_rst_files)
 
 .PHONY: test
 test: _check_version develop_$(pymn).done
-	bash -c 'PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. TESTHMCFILE=$(TESTHMCFILE) TESTHMC=$(TESTHMC) pytest $(pytest_cov_opts) $(pytest_opts) $(test_dir)/unit $(test_dir)/function'
+	bash -c 'PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. pytest $(pytest_cov_opts) $(pytest_opts) $(test_dir)/unit $(test_dir)/function'
 	@echo '$@ done.'
 
 .PHONY: check
@@ -247,7 +241,7 @@ endif
 
 .PHONY:	end2end
 end2end: _check_version develop_$(pymn).done
-	bash -c 'PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. TESTHMCFILE=$(TESTHMCFILE) TESTHMC=$(TESTHMC) pytest -v $(pytest_opts) $(test_dir)/end2end'
+	bash -c 'PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. TESTEND2END_LOAD=true pytest -v $(pytest_opts) $(test_dir)/end2end'
 	@echo '$@ done.'
 
 .PHONY: upload
