@@ -32,7 +32,7 @@
             <a href="../index.html" class="icon icon-home"> IBM Z HMC collection
           </a>
               <div class="version">
-                1.0.3
+                1.1.0
 
               </div>
 <div role="search">
@@ -208,10 +208,11 @@
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: Cannot be specified because the name has already been specified in the <code class="docutils literal notranslate"><span class="pre">name</span></code> module parameter.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: Cannot be changed once the user exists.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">user-pattern-uri</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">user-pattern-name</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">password-rule-uri</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">password-rule-name</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ldap-server-definition-uri</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">ldap-server-definition-name</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">default-group-uri</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">default-group-name</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">user_roles</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">user_role_names</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">user_pattern_uri</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">user_pattern_name</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">password_rule_uri</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">password_rule_name</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ldap_server_definition_uri</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">ldap_server_definition_name</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">default_group_uri</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">default_group_name</span></code>.</p></li>
 </ul>
 <p>Properties omitted in this dictionary will remain unchanged when the user already exists, and will get the default value defined in the data model for users in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> when the user is being created.</p>
 <div class="line-block">
@@ -392,6 +393,20 @@
 </dd>
 <dt>{property}</dt><dd><p>Additional properties of the user, as described in the data model of the ‘User’ object in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
 </dd>
+<dt>user-role-names</dt><dd><p>Name of the user roles referenced by property <code class="docutils literal notranslate"><span class="pre">user-roles</span></code>.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>user-role-objects</dt><dd><p>Only if <code class="docutils literal notranslate"><span class="pre">expand=true</span></code>: User roles referenced by property <code class="docutils literal notranslate"><span class="pre">user-roles</span></code>.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: dict</div>
+</div>
+<dl class="simple">
+<dt>{property}</dt><dd><p>Properties of the user role, as described in the data model of the ‘User Pattern’ object in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+</dd>
+</dl>
+</dd>
 <dt>user-pattern-name</dt><dd><p>Only for users with <code class="docutils literal notranslate"><span class="pre">type=pattern</span></code>: Name of the user pattern referenced by property <code class="docutils literal notranslate"><span class="pre">user-pattern-uri</span></code>.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: str</div>
@@ -468,7 +483,7 @@
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.0.3
+        v: 1.1.0
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -483,6 +498,7 @@
             <dd><a href="../1.0.0/modules/zhmc_user.html">1.0.0</a></dd>
             <dd><a href="../1.0.2/modules/zhmc_user.html">1.0.2</a></dd>
             <dd><a href="../1.0.3/modules/zhmc_user.html">1.0.3</a></dd>
+            <dd><a href="../1.1.0/modules/zhmc_user.html">1.1.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
