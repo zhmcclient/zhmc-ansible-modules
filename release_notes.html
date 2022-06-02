@@ -32,7 +32,7 @@
             <a href="index.html" class="icon icon-home"> IBM Z HMC collection
           </a>
               <div class="version">
-                1.0.2
+                1.0.3
 
               </div>
 <div role="search">
@@ -65,6 +65,7 @@
 <p class="caption" role="heading"><span class="caption-text">Appendices</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Releases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-0-3">Version 1.0.3</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-0-2">Version 1.0.2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-0-0">Version 1.0.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-10-0">Version 0.10.0</a></li>
@@ -107,6 +108,34 @@
              
   <section id="releases">
 <span id="id1"></span><h1>Releases<a class="headerlink" href="#releases" title="Permalink to this heading"></a></h1>
+<section id="version-1-0-3">
+<h2>Version 1.0.3<a class="headerlink" href="#version-1-0-3" title="Permalink to this heading"></a></h2>
+<p>Released: 2022-05-31</p>
+<p>Availability: <a class="reference external" href="https://console.redhat.com/ansible/automation-hub/repo/published/ibm/ibm_zhmc">AutomationHub</a>, <a class="reference external" href="https://galaxy.ansible.com/ibm/ibm_zhmc">Galaxy</a>, <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">GitHub</a></p>
+<p><strong>Bug fixes:</strong></p>
+<ul class="simple">
+<li><p>Fixed the use of incorrectly named attributes and methods in the zhmc_user
+module, and made the module result in check mode consistent with non-check
+mode. (issue #507)</p></li>
+<li><p>Test: Added missing env.vars in the pytest invocation for end2end tests.</p></li>
+<li><p>Test: Added missing optional module parameters in the end2end tests.</p></li>
+<li><p>Test: Added support for specifying ‘hmc_auth.ca_certs’ and ‘hmc_auth.verify’
+from the ‘hmc_verify_cert’ parameter in the HMC definition file in
+end2end test cases for zhmc_partition and zhmc_user.</p></li>
+<li><p>Test: Fixed failure of sanity test on Python 3.6 due to new
+CryptographyDeprecationWarning raised by ansible, by pinning cryptography
+to &lt;37.0.0 on Python 3.6. (issue #518)</p></li>
+</ul>
+<p><strong>Enhancements:</strong></p>
+<ul class="simple">
+<li><p>Test: Made end2end testing compatible with zhmcclient.testutils support for
+HMC definition files.
+The HMC definition file is now by default ~/.hmc_hmc_definitions.yaml, and
+the env.var to override that is now TESTHMCFILE.</p></li>
+<li><p>Test: Added support for a TESTCASES env.var for filtering testcases with the
+pytest -k option.</p></li>
+</ul>
+</section>
 <section id="version-1-0-2">
 <h2>Version 1.0.2<a class="headerlink" href="#version-1-0-2" title="Permalink to this heading"></a></h2>
 <p>Released: 2022-04-09</p>
@@ -535,7 +564,7 @@ property update.</p></li>
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.0.2
+        v: 1.0.3
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -549,6 +578,7 @@ property update.</p></li>
             <dd><a href="0.10.1/release_notes.html">0.10.1</a></dd>
             <dd><a href="1.0.0/release_notes.html">1.0.0</a></dd>
             <dd><a href="1.0.2/release_notes.html">1.0.2</a></dd>
+            <dd><a href="1.0.3/release_notes.html">1.0.3</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
