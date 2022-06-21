@@ -169,7 +169,8 @@ help:
 	@echo '  linkcheck  - Check links in documentation'
 	@echo '  all        - Do all of the above'
 	@echo '  end2end    - Run end2end tests'
-	@echo '  upload     - Publish the collection to Ansible Galaxy and AutomationHub'
+	@echo '  upload     - Publish the collection to Ansible Galaxy'
+	@echo '  uploadhub  - Publish the collection to Ansible AutomationHub'
 	@echo '  clobber    - Remove any produced files'
 	@echo 'Environment variables:'
 	@echo "  TESTCASES=... - Testcase filter for pytest -k (e.g. 'test_func' or 'test_mod.py')"
@@ -245,23 +246,37 @@ end2end: _check_version develop_$(pymn).done
 	@echo '$@ done.'
 
 .PHONY: upload
-upload: _check_version _check_galaxy_token $(dist_file)
+upload: _check_version $(dist_file)
 ifneq ($(findstring dev,$(collection_version)),)
-	$(error Error: A development version $(collection_version) of collection $(collection_full_name) cannot be published on Ansible Galaxy or AutomationHub - follow the release instructions in docs/source/development.rst)
+	$(error Error: A development version $(collection_version) of collection $(collection_full_name) cannot be published on Ansible Galaxy)
 endif
 ifndef GALAXY_TOKEN
 	$(error Error: Environment variable GALAXY_TOKEN with your Galaxy API token is required for uploading to Ansible Galaxy - get one on https://galaxy.ansible.com/me/preferences)
 endif
-ifndef AUTOMATIONHUB_TOKEN
-	$(error Error: Environment variable AUTOMATIONHUB_TOKEN with your AutomationHub API token is required for uploading to Ansible AutomationHub - get one on https://cloud.redhat.com/ansible/automation-hub/token)
-endif
-	@echo '==> This will publish collection $(collection_full_name) version $(collection_version) on Ansible Galaxy and AutomationHub'
+	@echo '==> This will publish collection $(collection_full_name) version $(collection_version) on Ansible Galaxy'
 	@echo -n '==> Continue? [yN] '
 	@bash -c 'read answer; if [[ "$$answer" != "y" ]]; then echo "Aborted."; false; fi'
 	@echo ''
 	ansible-galaxy collection publish --server https://galaxy.ansible.com/ --token $(GALAXY_TOKEN) $(dist_file)
+	@echo 'Done: Published collection $(collection_full_name) version $(collection_version) on Ansible Galaxy'
+	@echo '$@ done.'
+
+.PHONY: uploadhub
+uploadhub: _check_version $(dist_file)
+ifneq ($(findstring dev,$(collection_version)),)
+	$(error Error: A development version $(collection_version) of collection $(collection_full_name) cannot be published on Ansible AutomationHub)
+endif
+ifndef AUTOMATIONHUB_TOKEN
+	$(error Error: Environment variable AUTOMATIONHUB_TOKEN with your Ansible AutomationHub API token is required for uploading to Ansible AutomationHub - get one on https://cloud.redhat.com/ansible/automation-hub/token)
+endif
+	@echo '==> This will publish collection $(collection_full_name) version $(collection_version) on Ansible AutomationHub'
+	@echo -n '==> Continue? [yN] '
+	@bash -c 'read answer; if [[ "$$answer" != "y" ]]; then echo "Aborted."; false; fi'
+	@echo ''
+	@echo 'Note: If the following upload fails, upload the collection manually as described in docs/source/development.rst'
+	@echo ''
 	ansible-galaxy collection publish --server https://console.redhat.com/api/automation-hub/ --token $(AUTOMATIONHUB_TOKEN) $(dist_file)
-	@echo 'Done: Published collection $(collection_full_name) version $(collection_version) on Ansible Galaxy and AutomationHub'
+	@echo 'Done: Published collection $(collection_full_name) version $(collection_version) on Ansible AutomationHub'
 	@echo '$@ done.'
 
 # The second rm command of each type is for files that were used before 1.0.0, to make it easier to switch.
@@ -282,14 +297,6 @@ dist: _check_version $(dist_file)
 _check_version:
 ifeq (,$(collection_version))
 	$(error Error: Collection version could not be determined)
-else
-	@true >/dev/null
-endif
-
-.PHONY: _check_galaxy_token
-_check_galaxy_token:
-ifeq (,$(GALAXY_TOKEN))
-	$(error Error: GALAXY_TOKEN env var needs to be set to your Ansible Galaxy API Key, see https://galaxy.ansible.com/me/preferences)
 else
 	@true >/dev/null
 endif
