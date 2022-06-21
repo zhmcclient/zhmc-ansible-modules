@@ -46,9 +46,16 @@ https://console.redhat.com/api/automation-hub/v3/collections/<NS>/<COLL>/ as fol
         "version": "1.0.0",
     }
 }
--->
-[![Version on Galaxy](https://img.shields.io/badge/dynamic/json?style=flat&label=galaxy&prefix=v&url=https://galaxy.ansible.com/api/v2/collections/ibm/ibm_zhmc/&query=latest_version.version)](https://galaxy.ansible.com/ibm/ibm_zhmc/ "Version on Galaxy")
+
+That would result in the following markup:
+
 [![Version on AutomationHub](https://img.shields.io/badge/dynamic/json?style=flat&label=hub&prefix=v&url=https://console.redhat.com/api/automation-hub/v3/collections/ibm/ibm_zhmc/&query=highest_version.version)](https://console.redhat.com/ansible/automation-hub/repo/published/ibm/ibm_zhmc/ "Version on AutomationHub")
+
+However, for now this does not work, so it has been removed again from the README page.
+For details, see the discussion at https://github.com/ansible-collections/overview/discussions/202
+-->
+
+[![Version on Galaxy](https://img.shields.io/badge/dynamic/json?style=flat&label=galaxy&prefix=v&url=https://galaxy.ansible.com/api/v2/collections/ibm/ibm_zhmc/&query=latest_version.version)](https://galaxy.ansible.com/ibm/ibm_zhmc/ "Version on Galaxy")
 [![Test status (master)](https://github.com/zhmcclient/zhmc-ansible-modules/workflows/test/badge.svg?branch=master)](https://github.com/zhmcclient/zhmc-ansible-modules/actions?query=workflow%3Atest "Test status (master)")
 [![Docs status (master)](https://github.com/zhmcclient/zhmc-ansible-modules/workflows/docs/badge.svg?branch=master)](https://github.com/zhmcclient/zhmc-ansible-modules/actions?query=workflow%3Adocs "Docs status (master)")
 [![Test coverage (master)](https://img.shields.io/coveralls/zhmcclient/zhmc-ansible-modules.svg)](https://coveralls.io/github/zhmcclient/zhmc-ansible-modules "Test coverage (master)")
