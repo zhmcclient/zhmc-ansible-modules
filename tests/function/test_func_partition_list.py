@@ -14,7 +14,7 @@
 # limitations under the License.
 
 """
-Function tests for the 'zhmc_lpar_list' Ansible module.
+Function tests for the 'zhmc_partition_list' Ansible module.
 """
 
 # pylint: disable=bad-option-value,redundant-u-string-prefix
@@ -28,7 +28,7 @@ import mock
 from zhmcclient import Client
 from zhmcclient_mock import FakedSession
 
-from plugins.modules import zhmc_lpar_list
+from plugins.modules import zhmc_partition_list
 
 from .func_utils import mock_ansible_module
 
@@ -55,7 +55,7 @@ FAKED_SESSION_KWARGS = dict(
     api_version=FAKED_CONSOLE_API_VERSION,
 )
 
-# Faked CPC in classic mode.
+# Faked CPC in DPM mode.
 # (with property names as specified in HMC data model)
 # Note that its SE version may be older than the minimum required HMC version.
 FAKED_CPC_1_NAME = 'cpc-name-1'
@@ -66,27 +66,27 @@ FAKED_CPC_1 = {
     'object-uri': FAKED_CPC_1_URI,
     'class': 'cpc',
     'name': FAKED_CPC_1_NAME,
-    'description': 'CPC #1 in classic mode',
+    'description': 'CPC #1 in DPM mode',
     'status': 'active',
-    'dpm-enabled': False,
+    'dpm-enabled': True,
     'is-ensemble-member': False,
-    'iml-mode': 'esa390',
+    'iml-mode': 'dpm',
     'se-version': '2.13.0',
     'has-unacceptable-status': False,
 }
 
-# Faked LPAR that is used for these tests.
-# The LPAR is an SSC type LPAR with a small subset of properties.
-FAKED_LPAR_1_NAME = 'LPAR1'
-FAKED_LPAR_1_OID = 'fake-lpar1'
-FAKED_LPAR_1_URI = '/api/logical-partitions/' + FAKED_LPAR_1_OID
-FAKED_LPAR_1 = {
-    'object-id': FAKED_LPAR_1_OID,
-    'object-uri': FAKED_LPAR_1_URI,
+# Faked partition that is used for these tests.
+# The partition is an SSC type partition with a small subset of properties.
+FAKED_PART_1_NAME = 'PART1'
+FAKED_PART_1_OID = 'fake-part1'
+FAKED_PART_1_URI = '/api/logical-partitions/' + FAKED_PART_1_OID
+FAKED_PART_1 = {
+    'object-id': FAKED_PART_1_OID,
+    'object-uri': FAKED_PART_1_URI,
     'parent': FAKED_CPC_1_URI,
     'class': 'logical-partition',
-    'name': FAKED_LPAR_1_NAME,
-    'description': 'Lpar #1',
+    'name': FAKED_PART_1_NAME,
+    'description': 'Partition #1',
     'acceptable-status': ['operating'],
     'status': ['operating'],
 }
@@ -113,13 +113,13 @@ def get_failure_msg(mod_obj):
 
 def get_module_output(mod_obj):
     """
-    Return the module output as a tuple (changed, lpars) (i.e.
+    Return the module output as a tuple (changed, partitions) (i.e.
     the arguments of the call to exit_json()).
     If the module failed, return None.
     """
 
-    def func(changed, lpars):
-        return changed, lpars
+    def func(changed, partitions):
+        return changed, partitions
 
     if not mod_obj.exit_json.called:
         return None
@@ -130,9 +130,9 @@ def get_module_output(mod_obj):
     return func(*call_args[0], **call_args[1])
 
 
-class TestLparList(object):
+class TestPartitionList(object):
     """
-    All tests for LPAR List.
+    All tests for partition List.
     """
 
     def setup_method(self):
@@ -144,18 +144,18 @@ class TestLparList(object):
         self.console = self.session.hmc.consoles.add(FAKED_CONSOLE)
         self.faked_cpc = self.session.hmc.cpcs.add(FAKED_CPC_1)
         self.cpc = self.client.cpcs.find_by_name(FAKED_CPC_1_NAME)
-        self.faked_lpars = []
-        self.faked_lpars.append(self.session.hmc.cpcs.add(FAKED_LPAR_1))
+        self.faked_partitions = []
+        self.faked_partitions.append(self.session.hmc.cpcs.add(FAKED_PART_1))
 
     @pytest.mark.parametrize(
         "check_mode", [False, True])
     @pytest.mark.parametrize(
         "cpc_name", [None, FAKED_CPC_1_NAME])
-    @mock.patch("plugins.modules.zhmc_lpar_list.AnsibleModule",
+    @mock.patch("plugins.modules.zhmc_partition_list.AnsibleModule",
                 autospec=True)
-    def test_lpar_list(self, ansible_mod_cls, cpc_name, check_mode):
+    def test_partition_list(self, ansible_mod_cls, cpc_name, check_mode):
         """
-        Tests for LPAR list.
+        Tests for partition list.
         """
 
         # Set some expectations for this test from its parametrization
@@ -177,7 +177,7 @@ class TestLparList(object):
 
         # Exercise the code to be tested
         with pytest.raises(SystemExit) as exc_info:
-            zhmc_lpar_list.main()
+            zhmc_partition_list.main()
         exit_code = exc_info.value.args[0]
 
         # Assert module exit code
@@ -187,27 +187,27 @@ class TestLparList(object):
             format(exit_code, exp_exit_code, get_failure_msg(mod_obj))
 
         # Assert module output
-        changed, lpar_list = get_module_output(mod_obj)
+        changed, partition_list = get_module_output(mod_obj)
         assert changed == exp_changed
 
-        # Assert returned list of LPARs
-        exp_lpars = self.cpc.lpars.list()
-        lpar_names = []
-        for lpar_props in lpar_list:
-            assert 'name' in lpar_props
-            lpar_names.append(lpar_props['name'])
-        exp_lpar_names = [lpar.name for lpar in exp_lpars]
-        assert lpar_names == exp_lpar_names
+        # Assert returned list of partitions
+        exp_partitions = self.cpc.partitions.list()
+        partition_names = []
+        for partition_props in partition_list:
+            assert 'name' in partition_props
+            partition_names.append(partition_props['name'])
+        exp_partition_names = [partition.name for partition in exp_partitions]
+        assert partition_names == exp_partition_names
 
-        # Assert returned LPAR properties
-        for lpar_props in lpar_list:
-            lpar_name = lpar_props['name']
-            exp_lpars_1 = [lpar for lpar in exp_lpars
-                           if lpar.name == lpar_name]
-            assert len(exp_lpars_1) == 1
-            exp_lpar = exp_lpars_1[0]
-            for pname, pvalue in lpar_props.items():
+        # Assert returned partition properties
+        for partition_props in partition_list:
+            partition_name = partition_props['name']
+            exp_partitions_1 = [partition for partition in exp_partitions
+                                if partition.name == partition_name]
+            assert len(exp_partitions_1) == 1
+            exp_partition = exp_partitions_1[0]
+            for pname, pvalue in partition_props.items():
                 pname_hmc = pname.replace('_', '-')
-                exp_value = exp_lpar.get_property(pname_hmc)
+                exp_value = exp_partition.get_property(pname_hmc)
                 assert pvalue == exp_value, \
                     "For property: {0!r}".format(pname)

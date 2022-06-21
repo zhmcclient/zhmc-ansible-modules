@@ -37,6 +37,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Enhancements:**
 
+* Added a new 'zhmc_partition_list' Ansible module for listing partitions on
+  CPCs in DPM mode. This speeds up execution time compared to obtaining them
+  from the facts returned by 'zhmc_cpc'. (issue #526)
+
 **Cleanup:**
 
 **Known issues:**
