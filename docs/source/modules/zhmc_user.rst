@@ -107,7 +107,7 @@ properties
 
   * ``type``: Cannot be changed once the user exists.
 
-  * ``user_roles``: Cannot be set directly, but indirectly via the artificial property ``user_role_names``.
+  * ``user_roles``: Cannot be set directly, but indirectly via the artificial property ``user_role_names`` which replaces the current user roles, if specified.
 
   * ``user_pattern_uri``: Cannot be set directly, but indirectly via the artificial property ``user_pattern_name``.
 
@@ -164,7 +164,7 @@ Examples
        name: "{{ my_user_name }}"
        state: absent
 
-   - name: Ensure the user exists
+   - name: Ensure the user exists and has certain roles
      zhmc_user:
        hmc_host: "{{ my_hmc_host }}"
        hmc_auth: "{{ my_hmc_auth }}"
@@ -174,6 +174,12 @@ Examples
        properties:
          description: "Example user 1"
          type: standard
+         authentication_type: local
+         password_rule_name: Basic
+         password: foobar
+         user_role_names:
+           - hmc-access-administrator-tasks
+           - hmc-all-system-managed-objects
      register: user1
 
 
