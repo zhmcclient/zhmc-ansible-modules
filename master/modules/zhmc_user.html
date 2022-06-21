@@ -208,7 +208,7 @@
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: Cannot be specified because the name has already been specified in the <code class="docutils literal notranslate"><span class="pre">name</span></code> module parameter.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: Cannot be changed once the user exists.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">user_roles</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">user_role_names</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">user_roles</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">user_role_names</span></code> which replaces the current user roles, if specified.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">user_pattern_uri</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">user_pattern_name</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">password_rule_uri</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">password_rule_name</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ldap_server_definition_uri</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">ldap_server_definition_name</span></code>.</p></li>
@@ -255,7 +255,7 @@
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_user_name</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span><span class="w"></span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ensure the user exists</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ensure the user exists and has certain roles</span><span class="w"></span>
 <span class="w">  </span><span class="nt">zhmc_user</span><span class="p">:</span><span class="w"></span>
 <span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
 <span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
@@ -265,6 +265,12 @@
 <span class="w">    </span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
 <span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Example</span><span class="nv"> </span><span class="s">user</span><span class="nv"> </span><span class="s">1&quot;</span><span class="w"></span>
 <span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">standard</span><span class="w"></span>
+<span class="w">      </span><span class="nt">authentication_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">local</span><span class="w"></span>
+<span class="w">      </span><span class="nt">password_rule_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Basic</span><span class="w"></span>
+<span class="w">      </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">foobar</span><span class="w"></span>
+<span class="w">      </span><span class="nt">user_role_names</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hmc-access-administrator-tasks</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hmc-all-system-managed-objects</span><span class="w"></span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user1</span><span class="w"></span>
 </pre></div>
 </div>

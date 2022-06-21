@@ -348,17 +348,15 @@ git checkout <span class="si">${</span><span class="nv">BRANCH</span><span class
 it. This will cause it to appear in the Release tab.</p>
 <p>You can see the tags in GitHub via Code -&gt; Releases -&gt; Tags.</p>
 </li>
-<li><p>Publish the collection to Ansible Galaxy and AutomationHub:</p>
-<p>You need to be registered on Ansible Galaxy and on Ansible AutomationHub,
+<li><p>Publish the collection to Ansible Galaxy:</p>
+<p>You need to be registered on Ansible Galaxy,
 and your userid there needs to be authorized to modify the ‘ibm’ namespace.</p>
-<p>You need to have the following environment variables set:</p>
+<p>You need to have the following environment variable set:</p>
 <ul class="simple">
 <li><p>GALAXY_TOKEN - Your API token for Ansible Galaxy - get one
 at <a class="reference external" href="https://galaxy.ansible.com/me/preferences">https://galaxy.ansible.com/me/preferences</a></p></li>
-<li><p>AUTOMATIONHUB_TOKEN - Your API token for Ansible AutomationHub - get one
-at <a class="reference external" href="https://cloud.redhat.com/ansible/automation-hub/token">https://cloud.redhat.com/ansible/automation-hub/token</a></p></li>
 </ul>
-<p>To upload the collection to both Ansible Galaxy and AutomationHub, execute:</p>
+<p>To upload the collection to Ansible Galaxy, execute:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>make upload
 </pre></div>
 </div>
@@ -369,14 +367,45 @@ re-release the same version more than once.</p>
 at <a class="reference external" href="https://galaxy.ansible.com/my-imports">https://galaxy.ansible.com/my-imports</a> (you need to log in).</p>
 <p>Verify that the new version is shown on Ansible Galaxy at
 <a class="reference external" href="https://galaxy.ansible.com/ibm/ibm_zhmc/">https://galaxy.ansible.com/ibm/ibm_zhmc/</a> .</p>
+</li>
+<li><p>Publish the collection to Ansible AutomationHub:</p>
+<p>You need to have an account on <a class="reference external" href="https://console.redhat.com">https://console.redhat.com</a>, and your
+userid there needs to be authorized to modify the ‘ibm’ namespace.</p>
+<p>You need to have the following environment variable set:</p>
+<ul class="simple">
+<li><p>AUTOMATIONHUB_TOKEN - Your API token for Ansible AutomationHub - get one
+at <a class="reference external" href="https://cloud.redhat.com/ansible/automation-hub/token">https://cloud.redhat.com/ansible/automation-hub/token</a></p></li>
+</ul>
+<p>To upload the collection to Ansible AutomationHub, execute:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>make uploadhub
+</pre></div>
+</div>
+<p>This will show the collection version and will ask for confirmation.</p>
+<p>If this command-driven upload fails, upload the collection manually as
+follows:</p>
+<ul>
+<li><p>Open <a class="reference external" href="https://console.redhat.com/ansible/automation-hub/repo/published/ibm">https://console.redhat.com/ansible/automation-hub/repo/published/ibm</a>
+and log in to your account.</p></li>
+<li><p>Click on the “Upload Collection” button at the top right of the page,
+and in the file selection dialog that pops up, select the distribution
+archive for the version you want to upload. That archive has been built
+during the <cite>make upload</cite> in the previous step, and its file name is:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>dist/ibm-ibm_zhmc-{M}.{N}.{U}.tar.gz
+</pre></div>
+</div>
+</li>
+</ul>
+<p><strong>Attention!!</strong> This only works once for each version. You cannot
+re-release the same version more than once.</p>
 <p>Verify that the import on Ansible AutomationHub succeeded, by checking the
 status at
 <a class="reference external" href="https://console.redhat.com/ansible/automation-hub/my-imports?namespace=ibm">https://console.redhat.com/ansible/automation-hub/my-imports?namespace=ibm</a>
-(you need to log in). After the import succeeded, the release must still be
-approved by RedHat before it is published, so the approval status should
-show “waiting for approval”.</p>
-<p>Once it has been approved, verify that the new version is shown on Ansible
-AutomationHub at
+(you need to log in).</p>
+<p>After the import succeeded, the release must still be approved by RedHat
+before it is published, so the approval status should now show
+“waiting for approval”.</p>
+<p>The RedHat team should approve the release within a day or so. Once it has
+been approved, the new version will be visible on Ansible AutomationHub at
 <a class="reference external" href="https://console.redhat.com/ansible/automation-hub/repo/published/ibm/ibm_zhmc">https://console.redhat.com/ansible/automation-hub/repo/published/ibm/ibm_zhmc</a> .</p>
 </li>
 </ol>
