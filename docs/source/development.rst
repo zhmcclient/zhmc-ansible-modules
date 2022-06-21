@@ -331,20 +331,17 @@ local clone of the zhmc-ansible-modules Git repo.
 
     You can see the tags in GitHub via Code -> Releases -> Tags.
 
-14. Publish the collection to Ansible Galaxy and AutomationHub:
+14. Publish the collection to Ansible Galaxy:
 
-    You need to be registered on Ansible Galaxy and on Ansible AutomationHub,
+    You need to be registered on Ansible Galaxy,
     and your userid there needs to be authorized to modify the 'ibm' namespace.
 
-    You need to have the following environment variables set:
+    You need to have the following environment variable set:
 
     * GALAXY_TOKEN - Your API token for Ansible Galaxy - get one
       at https://galaxy.ansible.com/me/preferences
 
-    * AUTOMATIONHUB_TOKEN - Your API token for Ansible AutomationHub - get one
-      at https://cloud.redhat.com/ansible/automation-hub/token
-
-    To upload the collection to both Ansible Galaxy and AutomationHub, execute:
+    To upload the collection to Ansible Galaxy, execute:
 
     .. code-block:: sh
 
@@ -361,15 +358,53 @@ local clone of the zhmc-ansible-modules Git repo.
     Verify that the new version is shown on Ansible Galaxy at
     https://galaxy.ansible.com/ibm/ibm_zhmc/ .
 
+15. Publish the collection to Ansible AutomationHub:
+
+    You need to have an account on https://console.redhat.com, and your
+    userid there needs to be authorized to modify the 'ibm' namespace.
+
+    You need to have the following environment variable set:
+
+    * AUTOMATIONHUB_TOKEN - Your API token for Ansible AutomationHub - get one
+      at https://cloud.redhat.com/ansible/automation-hub/token
+
+    To upload the collection to Ansible AutomationHub, execute:
+
+    .. code-block:: sh
+
+        make uploadhub
+
+    This will show the collection version and will ask for confirmation.
+
+    If this command-driven upload fails, upload the collection manually as
+    follows:
+
+    * Open https://console.redhat.com/ansible/automation-hub/repo/published/ibm
+      and log in to your account.
+
+    * Click on the "Upload Collection" button at the top right of the page,
+      and in the file selection dialog that pops up, select the distribution
+      archive for the version you want to upload. That archive has been built
+      during the `make upload` in the previous step, and its file name is:
+
+      .. code-block:: text
+
+          dist/ibm-ibm_zhmc-{M}.{N}.{U}.tar.gz
+
+    **Attention!!** This only works once for each version. You cannot
+    re-release the same version more than once.
+
     Verify that the import on Ansible AutomationHub succeeded, by checking the
     status at
     https://console.redhat.com/ansible/automation-hub/my-imports?namespace=ibm
-    (you need to log in). After the import succeeded, the release must still be
-    approved by RedHat before it is published, so the approval status should
-    show "waiting for approval".
+    (you need to log in).
 
-    Once it has been approved, verify that the new version is shown on Ansible
-    AutomationHub at
+    After the import succeeded, the release must still be approved by RedHat
+    before it is published, so the approval status should now show
+    "waiting for approval".
+
+    The RedHat team should approve the release within a day or so. Once it has
+    been approved, the new version will be visible on Ansible AutomationHub at
     https://console.redhat.com/ansible/automation-hub/repo/published/ibm/ibm_zhmc .
 
 
