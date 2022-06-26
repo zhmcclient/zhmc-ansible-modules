@@ -83,7 +83,7 @@ STD_USER_INPUT_PROPERTIES = {
     # 'default_group_name': no default group (artificial property)
     'description': "zhmc test user",
     'disabled': False,
-    'user_role_names': ['Standard'],  # (artificial property)
+    'user_role_names': ['hmc-all-system-managed-objects'],  # (artificial prop)
     'authentication_type': 'local',
     'password_rule_name': 'Basic',  # (artificial property)
     'password': 'Bumeran9',
@@ -260,6 +260,8 @@ def test_user_facts(
     client = zhmcclient.Client(hmc_session)
     console = client.consoles.console
 
+    faked_session = hmc_session if hd.mock_file else None
+
     # Determine a random existing user of the desired type to test.
     users = console.users.list()
     typed_users = [u for u in users
@@ -281,7 +283,7 @@ def test_user_facts(
         'properties': {},
         'expand': expand,
         'log_file': LOG_FILE,
-        '_faked_session': None,
+        '_faked_session': faked_session,
     }
 
     # Prepare mocks for AnsibleModule object
@@ -397,6 +399,8 @@ def test_user_absent_present(
     hmc_auth = dict(userid=hd.userid, password=hd.password,
                     ca_certs=hd.ca_certs, verify=hd.verify)
 
+    faked_session = hmc_session if hd.mock_file else None
+
     expand = False  # Expansion is tested elsewhere
     client = zhmcclient.Client(hmc_session)
     console = client.consoles.console
@@ -446,7 +450,7 @@ def test_user_absent_present(
             'state': input_state,
             'expand': expand,
             'log_file': LOG_FILE,
-            '_faked_session': None,
+            '_faked_session': faked_session,
         }
         if input_props is not None:
             params['properties'] = input_props

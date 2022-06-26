@@ -44,6 +44,15 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Added support for Ansible 6.0.0 by adding an ignore-2.13.txt file to the
   sanity tests. (issue #533)
 
+* Added a new make target 'end2end_mocked' that runs the end2end
+  tests against mock environments defined with a new HMC inventory file
+  (mocked_inventory.yaml) and a new HMC vault file (mocked_vault.yaml),
+  and new mock files mocked_z14_classic.yaml and mocked_z14_dpm.yaml.
+  (part of issue #396)
+
+* Increased the minimum version of zhmcclient to 1.3.1, in order to pick
+  up fixes. (part of issue #396)
+
 **Cleanup:**
 
 **Known issues:**

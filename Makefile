@@ -168,7 +168,8 @@ help:
 	@echo '  docslocal  - Build the documentation from local repo contents in: $(doc_build_local_dir)'
 	@echo '  linkcheck  - Check links in documentation'
 	@echo '  all        - Do all of the above'
-	@echo '  end2end    - Run end2end tests'
+	@echo '  end2end    - Run end2end tests using environment defined by TESTINVENTORY'
+	@echo '  end2end_mocked - Run end2end tests using mocked environment'
 	@echo '  upload     - Publish the collection to Ansible Galaxy'
 	@echo '  uploadhub  - Publish the collection to Ansible AutomationHub'
 	@echo '  clobber    - Remove any produced files'
@@ -243,6 +244,11 @@ endif
 .PHONY:	end2end
 end2end: _check_version develop_$(pymn).done
 	bash -c 'PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. TESTEND2END_LOAD=true pytest -v $(pytest_opts) $(test_dir)/end2end'
+	@echo '$@ done.'
+
+.PHONY:	end2end_mocked
+end2end_mocked: _check_version develop_$(pymn).done
+	bash -c 'PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. TESTEND2END_LOAD=true TESTINVENTORY=$(test_dir)/end2end/mocked_inventory.yaml TESTVAULT=$(test_dir)/end2end/mocked_vault.yaml pytest -v $(pytest_opts) $(test_dir)/end2end'
 	@echo '$@ done.'
 
 .PHONY: upload
