@@ -53,6 +53,12 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Increased the minimum version of zhmcclient to 1.3.1, in order to pick
   up fixes. (part of issue #396)
 
+* Added a new module 'zhmc_password_rule' that supports creating/updating,
+  deleting, and gathering facts of a password rule on the HMC. (issue #363)
+
+* Added a new module 'zhmc_password_rule_list' that supports listing the names
+  of password rules on the HMC. (issue #363)
+
 **Cleanup:**
 
 **Known issues:**
