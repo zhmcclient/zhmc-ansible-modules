@@ -35,6 +35,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Enhancements:**
 
+* Added support for Ansible 6.0.0 by adding an ignore-2.13.txt file to the
+  sanity tests. (issue #533)
+
 **Cleanup:**
 
 **Known issues:**
