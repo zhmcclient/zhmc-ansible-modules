@@ -138,6 +138,12 @@ jobs:
         # TESTCASES: test_partition.py
       run: |
         make test
+    - name: Run mocked end2end test
+      env:
+        PACKAGE_LEVEL: ${{ matrix.package_level }}
+        # TESTCASES: test_partition.py
+      run: |
+        make end2end_mocked
     - name: Send coverage result to coveralls.io
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

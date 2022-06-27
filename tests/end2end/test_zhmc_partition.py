@@ -143,6 +143,8 @@ def test_partition_facts(
         hmc_auth = dict(userid=hd.userid, password=hd.password,
                         ca_certs=hd.ca_certs, verify=hd.verify)
 
+        faked_session = session if hd.mock_file else None
+
         # Determine a random existing partition of the desired type to test.
         partitions = cpc.partitions.list()
         typed_partitions = [p for p in partitions
@@ -165,7 +167,7 @@ def test_partition_facts(
             'expand_storage_groups': False,
             'expand_crypto_adapters': False,
             'log_file': None,
-            '_faked_session': None,
+            '_faked_session': faked_session,
         }
 
         # Prepare mocks for AnsibleModule object
