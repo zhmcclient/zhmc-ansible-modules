@@ -61,6 +61,12 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Added the end2end_mocked tests to the coverage data reported to coveralls.io.
 
+* Added a new module 'zhmc_user_role' that supports creating/updating,
+  deleting, and gathering facts of a user role on the HMC. (issue #362)
+
+* Added a new module 'zhmc_user_role_list' that supports listing the names
+  of user roles on the HMC. (issue #362)
+
 **Cleanup:**
 
 **Known issues:**
