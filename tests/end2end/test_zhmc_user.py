@@ -85,7 +85,7 @@ STD_USER_INPUT_PROPERTIES = {
     'disabled': False,
     'user_role_names': ['hmc-all-system-managed-objects'],  # (artificial prop)
     'authentication_type': 'local',
-    'password_rule_name': 'Basic',  # (artificial property)
+    'password_rule_name': 'Standard',  # (artificial property)
     'password': 'Bumeran9',
     'force_password_change': True,
     # 'ldap_server_definition_name': no LDAP (artificial property)
@@ -330,7 +330,7 @@ USER_ABSENT_PRESENT_TESTCASES = [
         "Present with existing user, no properties changed",
         {},
         {
-            'password_rule_name': 'Basic',
+            'password_rule_name': 'Standard',
         },
         'present',
         STD_USER_INPUT_PROPERTIES,
@@ -343,7 +343,7 @@ USER_ABSENT_PRESENT_TESTCASES = [
             'session-timeout': 30,
         },
         {
-            'password_rule_name': 'Basic',
+            'password_rule_name': 'Standard',
         },
         'present',
         STD_USER_INPUT_PROPERTIES,
@@ -354,7 +354,7 @@ USER_ABSENT_PRESENT_TESTCASES = [
         "Absent with existing user",
         {},
         {
-            'password_rule_name': 'Basic',
+            'password_rule_name': 'Standard',
         },
         'absent',
         None,

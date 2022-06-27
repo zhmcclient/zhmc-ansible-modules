@@ -187,9 +187,37 @@ hmc_definition:
         - properties:
             element-id: passwordrule1
             name: Password rule 1
+
         - properties:
             element-id: Basic
             name: Basic
+=======
+            type: "user-defined"
+            description: "Password rule 1"
+            expiration: 186
+            min-length: 6
+            max-length: 30
+            consecutive-characters: 2
+            history-count: 4
+            similarity-count: 0
+            case-sensitive: false
+            character-rules: []
+            replication-overwrite-possible: false
+        - properties:
+            element-id: Standard
+            name: Standard
+            type: "system-defined"
+            description: "Standard password rule definition"
+            expiration: 90
+            min-length: 16
+            max-length: 32
+            consecutive-characters: 0
+            history-count: 2
+            similarity-count: 2
+            case-sensitive: true
+            character-rules: []
+            replication-overwrite-possible: true
+
 
       tasks:
         - properties:
