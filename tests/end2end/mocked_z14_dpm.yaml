@@ -177,6 +177,36 @@ hmc_definition:
                 permitted-object-type: object-class
               - permitted-object: cpc
                 permitted-object-type: object-class
+        - properties:
+            # class: created automatically
+            # parent: created automatically
+            # object-uri: created automatically
+            object-id: hmc-operator-tasks
+            name: hmc-operator-tasks
+            description: "Operator Tasks"
+            associated-system-defined-user-role-uri: null
+            is-inheritance-enabled: false
+            is-locked: false
+            replication-overwrite-possible: false
+            type: system-defined
+            permissions: []
+        - properties:
+            # class: created automatically
+            # parent: created automatically
+            # object-uri: created automatically
+            object-id: hmc-access-administrator-tasks
+            name: hmc-access-administrator-tasks
+            description: "Access Administrator Tasks"
+            associated-system-defined-user-role-uri: null
+            is-inheritance-enabled: false
+            is-locked: false
+            replication-overwrite-possible: false
+            type: system-defined
+            permissions:
+              - permitted-object: partition
+                permitted-object-type: object-class
+              - permitted-object: cpc
+                permitted-object-type: object-class
 
       user_patterns:
         - properties:
@@ -199,7 +229,7 @@ hmc_definition:
             character-rules: []
             replication-overwrite-possible: false
         - properties:
-            element-id: Standard
+            element-id: standard
             name: Standard
             type: "system-defined"
             description: "Standard password rule definition"
@@ -250,7 +280,7 @@ hmc_definition:
         # object-uri: created automatically
         object-id: cpc1
         name: "CPC1"
-        description: "Faked CPC CPC1 (z13 in DPM mode)"
+        description: "Mocked CPC1 (z14 in DPM mode)"
         acceptable-status: [active]
         additional-status: ''
         auto-start-list: []
@@ -460,7 +490,7 @@ hmc_definition:
             # object-uri: created automatically
             object-id: osa1
             name: "OSA1"
-            description: "Faked OSA adapter OSA1 in CPC1"
+            description: "Mocked OSA adapter OSA1 in CPC1"
             adapter-id: "108"
             status: active
             state: online
@@ -475,17 +505,17 @@ hmc_definition:
             - properties:
                 element-id: port0
                 name: "Port 0"
-                description: "Faked port 0 of OSA adapter OSA1 in CPC1"
+                description: "Mocked port 0 of OSA adapter OSA1 in CPC1"
                 index: 0
             - properties:
                 element-id: port1
                 name: "Port 1"
-                description: "Faked port 1 of OSA adapter OSA1 in CPC1"
+                description: "Mocked port 1 of OSA adapter OSA1 in CPC1"
                 index: 1
         - properties:
             object-id: fcp1
             name: "FCP1"
-            description: "Faked FCP adapter FCP1 in CPC1"
+            description: "Mocked FCP adapter FCP1 in CPC1"
             adapter-id: "118"
             status: active
             state: online
@@ -500,14 +530,14 @@ hmc_definition:
             - properties:
                 element-id: port0
                 name: "Port 0"
-                description: "Faked port 0 of FCP adapter FCP1 in CPC1"
+                description: "Mocked port 0 of FCP adapter FCP1 in CPC1"
                 index: 0
 
       virtual_switches:
         - properties:
             object-id: vs-osa1
             name: "Virtual Switch for OSA1"
-            description: "Faked Virtual Switch for OSA adapter OSA1 in CPC1"
+            description: "Mocked Virtual Switch for OSA adapter OSA1 in CPC1"
             backing-adapter-uri: /api/adapters/osa1
             port: 0
 
