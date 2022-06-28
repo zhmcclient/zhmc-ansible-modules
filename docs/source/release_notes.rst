@@ -50,7 +50,7 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   and new mock files mocked_z14_classic.yaml and mocked_z14_dpm.yaml.
   (part of issue #396)
 
-* Increased the minimum version of zhmcclient to 1.3.1, in order to pick
+* Increased the minimum version of zhmcclient to 1.3.2, in order to pick
   up fixes. (part of issue #396)
 
 * Added a new module 'zhmc_password_rule' that supports creating/updating,
