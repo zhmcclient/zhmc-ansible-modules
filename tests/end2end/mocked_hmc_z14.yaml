@@ -1,14 +1,12 @@
----
 # Definition of a mocked HMC for end2end tests run by GitHub Actions.
 # The file must have the format defined in FAKED_HMC_DEFINITION_SCHEMA in
 # zhmcclient_mock/_session.py of the python-zhmcclient project.
 #
-# This mocked HMC manages a single z14 in DPM mode.
+# This mocked HMC manages a single z14 in classic mode.
 
 hmc_definition:
-  host: hmc1
+  host: hmc_z14
   api_version: '2.40'
-
   consoles:
     - properties:
         # class: created automatically
@@ -272,7 +270,6 @@ hmc_definition:
                 fulfillment-state: complete
                 site: 10.0
                 usage: boot
-
   cpcs:
     - properties:
         # class: created automatically
@@ -280,7 +277,7 @@ hmc_definition:
         # object-uri: created automatically
         object-id: cpc1
         name: "CPC1"
-        description: "Mocked CPC1 (z14 in DPM mode)"
+        description: "Mocked CPC1 (z14 in classic mode)"
         acceptable-status: [active]
         additional-status: ''
         auto-start-list: []
@@ -299,6 +296,240 @@ hmc_definition:
         cpc-power-saving-state: high-performance
         cpc-power-saving: high-performance
         cpc-serial-number: "0000000CPC1"
+        degraded-status: [not-degraded]
+        dpm-enabled: false
+        has-automatic-se-switch-enabled: false
+        has-hardware-messages: true
+        has-temporary-capacity-change-allowed: false
+        has-unacceptable-status: true
+        iml-mode: lpar
+        is-cbu-activated: false
+        is-cbu-enabled: false
+        is-cbu-installed: false
+        is-cpacf-enabled: true
+        is-ensemble-member: false
+        is-locked: false
+        is-on-off-cod-activated: false
+        is-on-off-cod-enabled: true
+        is-on-off-cod-installed: false
+        is-real-cbu-available: false
+        is-service-required: true
+        lan-interface1-address: 00106f0d81cb
+        lan-interface1-type: ethernet
+        lan-interface2-address: 00106f0d81cc
+        lan-interface2-type: ethernet
+        last-energy-advice-time: 1654609202407
+        machine-model: 'M01'
+        machine-serial-number: "0000000CPC1"
+        machine-type: '3906'
+        management-enablement-level: manage
+        maximum-alternate-storage-sites: 1
+        maximum-hipersockets: 32
+        maximum-partitions: 85
+        msu-permanent-plus-billable: 3068
+        msu-permanent-plus-temporary: 3068
+        msu-permanent: 3068
+        network1-ipv4-alt-ipaddr: null
+        network1-ipv4-mask: 255.255.254.0
+        network1-ipv4-pri-ipaddr: 9.152.151.39
+        network2-ipv4-alt-ipaddr: null
+        network2-ipv4-mask: 0.0.0.0
+        network2-ipv4-pri-ipaddr: null
+        network2-ipv6-info: []
+        on-off-cod-activation-date: 0
+        processor-count-aap: 0
+        processor-count-cbp: 0
+        processor-count-defective: 0
+        processor-count-general-purpose: 20
+        processor-count-icf: 0
+        processor-count-ifl: 10
+        processor-count-iip: 3
+        processor-count-pending-aap: 0
+        processor-count-pending-cbp: 0
+        processor-count-pending-general-purpose: 0
+        processor-count-pending-icf: 0
+        processor-count-pending-ifl: 0
+        processor-count-pending-iip: 0
+        processor-count-pending-service-assist: 0
+        processor-count-pending: 0
+        processor-count-service-assist: 5
+        processor-count-spare: 0
+        se-version: 2.14.1
+        software-model-permanent-plus-billable: '720'
+        software-model-permanent-plus-temporary: '720'
+        software-model-permanent: '720'
+        status: active
+        storage-customer-available: 1105920
+        storage-customer-central: 16384
+        storage-customer-expanded: 0
+        storage-customer: 1114112
+        storage-hardware-system-area: 196608
+        storage-total-installed: 1310720
+        storage-vfm-increment-size: 16
+        storage-vfm-total: 0
+        zcpc-ambient-temperature: 24.0
+        zcpc-dew-point: 12.199999809265137
+        zcpc-exhaust-temperature: 30.0
+        zcpc-heat-load-forced-air: 19865
+        zcpc-heat-load-water: 0
+        zcpc-heat-load: 19865
+        zcpc-humidity: 47
+        zcpc-maximum-potential-heat-load: 25714
+        zcpc-maximum-potential-power: 7531
+        zcpc-power-cap-allowed: null
+        zcpc-power-cap-current: null
+        zcpc-power-cap-maximum: null
+        zcpc-power-cap-minimum: null
+        zcpc-power-capping-state: null
+        zcpc-power-consumption: 5818
+        zcpc-power-rating: 28000
+        zcpc-power-save-allowed: under-group-control
+        zcpc-power-saving-state: high-performance
+        zcpc-power-saving: high-performance
+        available-features-list:
+          - name: dpm-storage-management
+            description: The DPM storage management approach in which FCP and FICON storage
+              resources are defined in Storage Groups, which are attached to Partitions.
+            state: false
+        ec-mcl-description:
+          action:
+            - pending: false
+              type: channel-config
+              activation: current
+            - pending: false
+              type: coupling-facility-reactivation
+              activation: current
+            - pending: false
+              type: power-on-reset-tracking
+              activation: current
+            - pending: false
+              type: zhybrid-blades-activation
+              activation: current
+            - pending: false
+              type: channel-config
+              activation: next
+            - pending: false
+              type: coupling-facility-reactivation
+              activation: next
+            - pending: false
+              type: power-on-reset-tracking
+              activation: next
+            - pending: false
+              type: zhybrid-blades-activation
+              activation: next
+          ec:
+            - number: P41414
+              part-number: 01LL001
+              mcl:
+                - level: '373'
+                  type: retrieved
+                  last-update: 1650509077817
+                - level: '373'
+                  type: activated
+                  last-update: 1650531050817
+                - level: '364'
+                  type: accepted
+                  last-update: 1649742886817
+                - level: '373'
+                  type: installable-concurrent
+                  last-update: 943916400817
+                - level: '365'
+                  type: removable-concurrent
+                  last-update: 943916400817
+              description: SE Framework
+              type: Base EC
+            - number: P41415
+              part-number: 01LL002
+              mcl:
+                - level: '000'
+                  type: retrieved
+                  last-update: null
+                - level: '000'
+                  type: activated
+                  last-update: null
+                - level: '000'
+                  type: accepted
+                  last-update: null
+                - level: '000'
+                  type: installable-concurrent
+                  last-update: null
+                - level: '000'
+                  type: removable-concurrent
+                  last-update: null
+              description: Concurrent Upgrade Sync Point
+              type: Other Optional EC
+        network1-ipv6-info:
+          - prefix: 64
+            pri-ip-address: fe80::210:6fff:fe0d:81cb%eth0
+            type: link-local
+            alt-ip-address: fe80::210:6fff:fe0d:820b%eth0
+      lpars:
+        - properties:
+            object-id: lpar1
+            name: "LPAR1"
+            partition-number: 0x41
+            partition-identifier: 0x41
+            status: "operating"
+            activation-mode: "linux"
+            next-activation-profile-name: "LPAR1"
+            last-used-activation-profile: "LPAR1"
+        - properties:
+            object-id: lpar2
+            name: "LPAR2"
+            partition-number: 0x42
+            partition-identifier: 0x42
+            status: "not-activated"
+            activation-mode: "not-set"
+            next-activation-profile-name: "LPAR2"
+            last-used-activation-profile: "LPAR2"
+      reset_activation_profiles:
+        - properties:
+            name: "CPC1"
+            iocds-name: "ABC"
+      load_activation_profiles:
+        - properties:
+            name: "STANDARDLOAD"
+            ipl-type: "ipltype-standard"
+            ipl-address: "189AB"
+        - properties:
+            name: "SCSILOAD"
+            ipl-type: "ipltype-scsi"
+            worldwide-port-name: "1234"
+            logical-unit-number: "1234"
+            boot-record-lba: "1234"
+            disk-partition-id: 0
+      image_activation_profiles:
+        - properties:
+            name: "LPAR1"
+            # TODO: Add more properties
+        - properties:
+            name: "LPAR2"
+            # TODO: Add more properties
+    - properties:
+        # class: created automatically
+        # parent: created automatically
+        # object-uri: created automatically
+        object-id: cpc2
+        name: "CPC2"
+        description: "Mocked CPC2 (z14 in DPM mode)"
+        acceptable-status: [active]
+        additional-status: ''
+        auto-start-list: []
+        cbu-activation-date: 0
+        cbu-expiration-date: 0
+        cbu-number-of-tests-left: 0
+        cpc-node-descriptor: '00'
+        cpc-power-cap-allowed: null
+        cpc-power-cap-current: null
+        cpc-power-cap-maximum: null
+        cpc-power-cap-minimum: null
+        cpc-power-capping-state: null
+        cpc-power-consumption: 5818
+        cpc-power-rating: 28000
+        cpc-power-save-allowed: allowed
+        cpc-power-saving-state: high-performance
+        cpc-power-saving: high-performance
+        cpc-serial-number: "0000000CPC2"
         degraded-status: [not-degraded]
         dpm-enabled: true
         has-automatic-se-switch-enabled: false
@@ -323,7 +554,7 @@ hmc_definition:
         lan-interface2-type: ethernet
         last-energy-advice-time: 1654609202407
         machine-model: 'M01'
-        machine-serial-number: "0000000CPC1"
+        machine-serial-number: "0000000CPC2"
         machine-type: '3906'
         management-enablement-level: manage
         maximum-alternate-storage-sites: 1
@@ -466,7 +697,6 @@ hmc_definition:
             pri-ip-address: fe80::210:6fff:fe0d:81cb%eth0
             type: link-local
             alt-ip-address: fe80::210:6fff:fe0d:820b%eth0
-
       capacity_groups:
         - properties:
             # class: created automatically
@@ -482,7 +712,6 @@ hmc_definition:
             short-name: TESTGRPT
             partition-uris:
               - /api/partitions/0a796b76-e9e6-11eb-80e2-00106f0d81c9
-
       adapters:
         - properties:
             # class: created automatically
@@ -490,7 +719,7 @@ hmc_definition:
             # object-uri: created automatically
             object-id: osa1
             name: "OSA1"
-            description: "Mocked OSA adapter OSA1 in CPC1"
+            description: "Mocked OSA adapter OSA1 in CPC2"
             adapter-id: "108"
             status: active
             state: online
@@ -505,17 +734,17 @@ hmc_definition:
             - properties:
                 element-id: port0
                 name: "Port 0"
-                description: "Mocked port 0 of OSA adapter OSA1 in CPC1"
+                description: "Mocked port 0 of OSA adapter OSA1 in CPC2"
                 index: 0
             - properties:
                 element-id: port1
                 name: "Port 1"
-                description: "Mocked port 1 of OSA adapter OSA1 in CPC1"
+                description: "Mocked port 1 of OSA adapter OSA1 in CPC2"
                 index: 1
         - properties:
             object-id: fcp1
             name: "FCP1"
-            description: "Mocked FCP adapter FCP1 in CPC1"
+            description: "Mocked FCP adapter FCP1 in CPC2"
             adapter-id: "118"
             status: active
             state: online
@@ -530,17 +759,15 @@ hmc_definition:
             - properties:
                 element-id: port0
                 name: "Port 0"
-                description: "Mocked port 0 of FCP adapter FCP1 in CPC1"
+                description: "Mocked port 0 of FCP adapter FCP1 in CPC2"
                 index: 0
-
       virtual_switches:
         - properties:
             object-id: vs-osa1
             name: "Virtual Switch for OSA1"
-            description: "Mocked Virtual Switch for OSA adapter OSA1 in CPC1"
+            description: "Mocked Virtual Switch for OSA adapter OSA1 in CPC2"
             backing-adapter-uri: /api/adapters/osa1
             port: 0
-
       partitions:
         - properties:
             # class: created automatically
@@ -552,7 +779,7 @@ hmc_definition:
             # storage-group-uris: created automatically
             object-id: part1
             name: "PART1"
-            description: "Linux partition PART1 on CPC1"
+            description: "Linux partition PART1 on CPC2"
             acceptable-status: [active]
             access-basic-counter-set: false
             access-basic-sampling: false
@@ -625,7 +852,6 @@ hmc_definition:
                   storage resources are defined in Storage Groups, which are attached to
                   Partitions.
                 state: true
-
           nics:
             - properties:
                 element-id: nic1
@@ -634,7 +860,6 @@ hmc_definition:
                 type: osd
                 device-number: '0010'
                 virtual-switch-uri: /api/virtual-switches/vs-osa1
-
         - properties:
             # class: created automatically
             # parent: created automatically
@@ -645,7 +870,7 @@ hmc_definition:
             # storage-group-uris: created automatically
             object-id: part2
             name: "PART2"
-            description: "SSC partition PART2 on CPC1"
+            description: "SSC partition PART2 on CPC2"
             acceptable-status: [active]
             access-basic-counter-set: false
             access-basic-sampling: false
@@ -718,7 +943,6 @@ hmc_definition:
                   storage resources are defined in Storage Groups, which are attached to
                   Partitions.
                 state: true
-
           nics:
             - properties:
                 element-id: nic1

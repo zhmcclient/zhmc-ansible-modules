@@ -25,11 +25,7 @@
 #   default path name used.
 
 hmc_auth:
-  mocked_z14_classic:
-    userid: ensadmin
-    password: password
-    verify: false
-  mocked_z14_dpm:
+  mocked_hmc_z14:
     userid: ensadmin
     password: password
     verify: false
