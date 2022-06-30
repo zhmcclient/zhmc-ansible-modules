@@ -163,11 +163,6 @@ partitions:
       description: Indicates whether the current status of the partition is
         unacceptable, based on its 'acceptable-status' property.
       type: bool
-    activation_mode:
-      description: The activation mode of the partition. For details, see the
-        description of the 'activation-mode' property in the data model of the
-        'Logical Partition' resource (see :term:`HMC API`).
-      type: str
   sample:
     [
         {
@@ -176,7 +171,6 @@ partitions:
             "se_version": "2.15.0",
             "status": "active",
             "has_unacceptable_status": False,
-            "activation_mode": 'linux'
         }
     ]
 """
@@ -265,7 +259,6 @@ def perform_list(params):
                 "status": partition.get_property('status'),
                 "has_unacceptable_status": partition.get_property(
                     'has-unacceptable-status'),
-                "activation_mode": partition.get_property('activation-mode'),
             }
             partition_list.append(partition_properties)
 
