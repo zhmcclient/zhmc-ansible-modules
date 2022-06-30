@@ -33,22 +33,17 @@
 
 all:
   hosts:
-    mocked_z14_classic:
-      description: "Mocked z14 in classic mode"
-      mock_file: "mocked_z14_classic.yaml"
+    mocked_hmc_z14:
+      description: "Mocked HMC with z14 in classic mode and z14 in DPM mode"
+      mock_file: "mocked_hmc_z14.yaml"
       cpcs:
         CPC1:
-          machine_type: "2964"
+          machine_type: "3906"
           dpm_enabled: false
-    mocked_z14_dpm:
-      description: "Mocked z14 in DPM mode"
-      mock_file: "mocked_z14_dpm.yaml"
-      cpcs:
-        CPC1:
+        CPC2:
           machine_type: "3906"
           dpm_enabled: true
   children:
     default:
       hosts:
-        mocked_z14_classic:
-        mocked_z14_dpm:
+        mocked_hmc_z14:
