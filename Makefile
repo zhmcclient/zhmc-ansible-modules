@@ -137,15 +137,19 @@ dist_dependent_files := \
 sphinx_opts := -v
 
 # Pytest options
+coverage_rc_file := .coveragerc
 ifdef TESTCASES
   pytest_opts := --color=yes -s $(TESTOPTS) -k "$(TESTCASES)"
 else
   pytest_opts := --color=yes -s $(TESTOPTS)
 endif
+# Note: The --cov-report=html option creates an HTML coverage report in the htmlcov
+#       directory, but it is incorrect in case the coverage data file is appended
+#       to. The 'coverage html' command fixes that.
 ifeq ($(python_m_n_version),3.4)
   pytest_cov_opts :=
 else
-  pytest_cov_opts := --cov $(module_py_dir) --cov-config .coveragerc --cov-report=html:htmlcov
+  pytest_cov_opts := --cov $(module_py_dir) --cov-append --cov-config $(coverage_rc_file) --cov-report=html
 endif
 
 # No built-in rules needed:
@@ -161,15 +165,15 @@ help:
 	@echo '  install    - Install collection and its dependent Python packages'
 	@echo '  develop    - Set up the development environment'
 	@echo '  dist       - Build the collection distribution archive in: $(dist_dir)'
-	@echo '  test       - Run unit and function tests with test coverage'
 	@echo '  check      - Run flake8'
 	@echo '  sanity     - Run Ansible sanity tests (includes pep8, pylint, validate-modules)'
 	@echo '  docs       - Build the documentation for all enabled (docs/source/conf.py) versions in: $(doc_build_dir) using remote repo'
 	@echo '  docslocal  - Build the documentation from local repo contents in: $(doc_build_local_dir)'
 	@echo '  linkcheck  - Check links in documentation'
+	@echo '  test       - Run unit and function tests with test coverage'
+	@echo '  end2end_mocked - Run end2end tests using mocked environment'
 	@echo '  all        - Do all of the above'
 	@echo '  end2end    - Run end2end tests using environment defined by TESTINVENTORY'
-	@echo '  end2end_mocked - Run end2end tests using mocked environment'
 	@echo '  upload     - Publish the collection to Ansible Galaxy'
 	@echo '  uploadhub  - Publish the collection to Ansible AutomationHub'
 	@echo '  clobber    - Remove any produced files'
@@ -194,7 +198,7 @@ help:
 	@echo '  ansible-playbook playbooks/....'
 
 .PHONY: all
-all: install develop dist test check sanity docs docslocal linkcheck
+all: install develop dist check sanity docs docslocal linkcheck test end2end_mocked
 	@echo '$@ done.'
 
 .PHONY: install
@@ -217,6 +221,7 @@ linkcheck: _check_version develop_$(pymn).done $(doc_rst_files)
 .PHONY: test
 test: _check_version develop_$(pymn).done
 	bash -c 'PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. pytest $(pytest_cov_opts) $(pytest_opts) $(test_dir)/unit $(test_dir)/function'
+	coverage html --rcfile $(coverage_rc_file)
 	@echo '$@ done.'
 
 .PHONY: check
@@ -248,7 +253,8 @@ end2end: _check_version develop_$(pymn).done
 
 .PHONY:	end2end_mocked
 end2end_mocked: _check_version develop_$(pymn).done
-	bash -c 'PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. TESTEND2END_LOAD=true TESTINVENTORY=$(test_dir)/end2end/mocked_inventory.yaml TESTVAULT=$(test_dir)/end2end/mocked_vault.yaml pytest -v $(pytest_opts) $(test_dir)/end2end'
+	bash -c 'PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. TESTEND2END_LOAD=true TESTINVENTORY=$(test_dir)/end2end/mocked_inventory.yaml TESTVAULT=$(test_dir)/end2end/mocked_vault.yaml pytest -v $(pytest_cov_opts) $(pytest_opts) $(test_dir)/end2end'
+	coverage html --rcfile $(coverage_rc_file)
 	@echo '$@ done.'
 
 .PHONY: upload

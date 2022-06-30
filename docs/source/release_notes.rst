@@ -59,6 +59,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Added a new module 'zhmc_password_rule_list' that supports listing the names
   of password rules on the HMC. (issue #363)
 
+* Added the end2end_mocked tests to the coverage data reported to coveralls.io.
+
 **Cleanup:**
 
 **Known issues:**
