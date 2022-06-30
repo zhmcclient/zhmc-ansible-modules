@@ -67,6 +67,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Added a new module 'zhmc_user_role_list' that supports listing the names
   of user roles on the HMC. (issue #362)
 
+* Merged function tests into end2end tests to remove duplicate test cases.
+
 **Cleanup:**
 
 **Known issues:**

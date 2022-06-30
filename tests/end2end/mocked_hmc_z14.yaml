@@ -473,6 +473,7 @@ hmc_definition:
             activation-mode: "linux"
             next-activation-profile-name: "LPAR1"
             last-used-activation-profile: "LPAR1"
+            has-unacceptable-status: false
         - properties:
             object-id: lpar2
             name: "LPAR2"
@@ -482,6 +483,7 @@ hmc_definition:
             activation-mode: "not-set"
             next-activation-profile-name: "LPAR2"
             last-used-activation-profile: "LPAR2"
+            has-unacceptable-status: true
       reset_activation_profiles:
         - properties:
             name: "CPC1"

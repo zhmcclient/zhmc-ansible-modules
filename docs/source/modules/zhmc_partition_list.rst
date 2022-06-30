@@ -156,7 +156,6 @@ partitions
 
         [
             {
-                "activation_mode": "linux",
                 "cpc_name": "CPC1",
                 "has_unacceptable_status": false,
                 "name": "partition1",
@@ -189,10 +188,5 @@ partitions
     Indicates whether the current status of the partition is unacceptable, based on its 'acceptable-status' property.
 
     | **type**: bool
-
-  activation_mode
-    The activation mode of the partition. For details, see the description of the 'activation-mode' property in the data model of the 'Logical Partition' resource (see :term:`HMC API`).
-
-    | **type**: str
 
 
