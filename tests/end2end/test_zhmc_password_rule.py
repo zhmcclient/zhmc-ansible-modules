@@ -132,10 +132,10 @@ def assert_pwrule_props(pwrule_props, where):
     ]
 )
 @mock.patch("plugins.modules.zhmc_password_rule.AnsibleModule", autospec=True)
-def test_user_pwrule_facts(
+def test_zhmc_password_rule_facts(
         ansible_mod_cls, check_mode, hmc_session):  # noqa: F811, E501
     """
-    Test fact gathering on all password rules of the HMC.
+    Test the zhmc_password_rule module with state=facts.
     """
 
     hd = hmc_session.hmc_definition
@@ -252,15 +252,14 @@ PWRULE_ABSENT_PRESENT_TESTCASES = [
     "input_props, exp_pwrule_props, exp_changed",
     PWRULE_ABSENT_PRESENT_TESTCASES)
 @mock.patch("plugins.modules.zhmc_password_rule.AnsibleModule", autospec=True)
-def test_user_pwrule_absent_present(
+def test_zhmc_password_rule_absent_present(
         ansible_mod_cls,
         desc, initial_pwrule_props, input_state,
         input_props, exp_pwrule_props, exp_changed,
         check_mode,
         hmc_session):  # noqa: F811, E501
     """
-    Test the zhmc_password_rule module with all combinations of absent &
-    present state.
+    Test the zhmc_password_rule module with state=absent/present.
     """
 
     hd = hmc_session.hmc_definition

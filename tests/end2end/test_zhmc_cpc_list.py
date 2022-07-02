@@ -121,13 +121,14 @@ def assert_cpc_list(
     "include_unmanaged_cpcs", [
         pytest.param(False, id="include_unmanaged_cpcs=False"),
         pytest.param(True, id="include_unmanaged_cpcs=True"),
+        pytest.param(None, id="include_unmanaged_cpcs=None"),
     ]
 )
 @mock.patch("plugins.modules.zhmc_cpc_list.AnsibleModule", autospec=True)
-def test_user_cpc_list(
+def test_zhmc_cpc_list(
         ansible_mod_cls, include_unmanaged_cpcs, check_mode, hmc_session):  # noqa: F811, E501
     """
-    Test listing of CPCs of the HMC.
+    Test the zhmc_cpc_list module with managed and unmanaged CPCs.
     """
 
     hd = hmc_session.hmc_definition
@@ -157,10 +158,11 @@ def test_user_cpc_list(
     params = {
         'hmc_host': hmc_host,
         'hmc_auth': hmc_auth,
-        'include_unmanaged_cpcs': include_unmanaged_cpcs,
         'log_file': LOG_FILE,
         '_faked_session': faked_session,
     }
+    if include_unmanaged_cpcs is not None:
+        params['include_unmanaged_cpcs'] = include_unmanaged_cpcs
 
     # Prepare mocks for AnsibleModule object
     mod_obj = mock_ansible_module(ansible_mod_cls, params, check_mode)
