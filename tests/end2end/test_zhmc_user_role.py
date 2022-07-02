@@ -133,10 +133,10 @@ def assert_urole_props(urole_props, exp_urole_props, where):
     ]
 )
 @mock.patch("plugins.modules.zhmc_user_role.AnsibleModule", autospec=True)
-def test_user_urole_facts(
+def test_zhmc_user_role_facts(
         ansible_mod_cls, check_mode, hmc_session):  # noqa: F811, E501
     """
-    Test fact gathering on all user roles of the HMC.
+    Test the zhmc_user_role module with state=facts.
     """
 
     hd = hmc_session.hmc_definition
@@ -252,15 +252,14 @@ UROLE_ABSENT_PRESENT_TESTCASES = [
     "input_props, exp_urole_props, exp_changed",
     UROLE_ABSENT_PRESENT_TESTCASES)
 @mock.patch("plugins.modules.zhmc_user_role.AnsibleModule", autospec=True)
-def test_user_urole_absent_present(
+def test_zhmc_user_role_absent_present(
         ansible_mod_cls,
         desc, initial_urole_props, input_state,
         input_props, exp_urole_props, exp_changed,
         check_mode,
         hmc_session):  # noqa: F811, E501
     """
-    Test the zhmc_user_role module with all combinations of absent &
-    present state.
+    Test the zhmc_user_role module with state=absent/present.
     """
 
     hd = hmc_session.hmc_definition

@@ -90,10 +90,10 @@ def assert_urole_list(urole_list, exp_urole_dict):
 )
 @mock.patch("plugins.modules.zhmc_user_role_list.AnsibleModule",
             autospec=True)
-def test_user_urole_list(
+def test_zhmc_user_role_list(
         ansible_mod_cls, check_mode, hmc_session):  # noqa: F811, E501
     """
-    Test listing of user roles of the HMC.
+    Test the zhmc_user_role_list module.
     """
 
     hd = hmc_session.hmc_definition

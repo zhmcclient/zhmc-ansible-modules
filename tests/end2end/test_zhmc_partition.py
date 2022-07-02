@@ -126,10 +126,10 @@ def assert_partition_props(partition_props, where):
     ]
 )
 @mock.patch("plugins.modules.zhmc_partition.AnsibleModule", autospec=True)
-def test_partition_facts(
+def test_zhmc_partition_facts(
         ansible_mod_cls, partition_type, check_mode, dpm_mode_cpcs):  # noqa: F811, E501
     """
-    Test fact gathering on a partition.
+    Test the zhmc_partition module with state=facts on DPM mode CPCs.
     """
     if not dpm_mode_cpcs:
         pytest.skip("HMC definition does not include any CPCs in DPM mode")

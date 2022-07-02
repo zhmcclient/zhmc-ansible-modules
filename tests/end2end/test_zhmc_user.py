@@ -246,10 +246,10 @@ def assert_user_props(user_props, expand, where):
     ]
 )
 @mock.patch("plugins.modules.zhmc_user.AnsibleModule", autospec=True)
-def test_user_facts(
+def test_zhmc_user_facts(
         ansible_mod_cls, user_type, auth_type, expand, check_mode, hmc_session):  # noqa: F811, E501
     """
-    Test fact gathering on all users of the HMC.
+    Test the zhmc_user module with state=facts.
     """
 
     hd = hmc_session.hmc_definition
@@ -384,14 +384,14 @@ USER_ABSENT_PRESENT_TESTCASES = [
     "input_props, exp_user_props, exp_changed",
     USER_ABSENT_PRESENT_TESTCASES)
 @mock.patch("plugins.modules.zhmc_user.AnsibleModule", autospec=True)
-def test_user_absent_present(
+def test_zhmc_user_absent_present(
         ansible_mod_cls,
         desc, initial_user_props, initial_related_names, input_state,
         input_props, exp_user_props, exp_changed,
         check_mode,
         hmc_session):  # noqa: F811, E501
     """
-    Test the zhmc_user module with all combinations of absent & present state.
+    Test the zhmc_user module with state=absent/present.
     """
 
     hd = hmc_session.hmc_definition

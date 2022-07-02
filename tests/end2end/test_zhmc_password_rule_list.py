@@ -90,10 +90,10 @@ def assert_pwrule_list(pwrule_list, exp_pwrule_dict):
 )
 @mock.patch("plugins.modules.zhmc_password_rule_list.AnsibleModule",
             autospec=True)
-def test_user_pwrule_list(
+def test_zhmc_password_rule_list(
         ansible_mod_cls, check_mode, hmc_session):  # noqa: F811, E501
     """
-    Test listing of password rules of the HMC.
+    Test the zhmc_password_rule_list module.
     """
 
     hd = hmc_session.hmc_definition

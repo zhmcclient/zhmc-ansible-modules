@@ -115,10 +115,10 @@ def assert_lpar_list(lpar_list, cpc_name, se_version, exp_lpars_dict):
     ]
 )
 @mock.patch("plugins.modules.zhmc_lpar_list.AnsibleModule", autospec=True)
-def test_user_lpar_list(
+def test_zhmc_lpar_list(
         ansible_mod_cls, check_mode, with_cpc, classic_mode_cpcs):  # noqa: F811, E501
     """
-    Test listing of LPARs of the classic mode CPCs on the HMC.
+    Test the zhmc_lpar_list module with classic mode CPCs.
     """
     if not classic_mode_cpcs:
         pytest.skip("HMC definition does not include any CPCs in classic mode")
