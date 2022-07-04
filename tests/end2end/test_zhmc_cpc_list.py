@@ -63,6 +63,11 @@ def assert_cpc_list(
     Assert the output of the zhmc_cpc_list module
     """
 
+    # Apply default for include_unmanaged_cpcs parameter
+    # (explicit is better than implicit)
+    if include_unmanaged_cpcs is None:
+        include_unmanaged_cpcs = False
+
     assert isinstance(cpc_list, list)
 
     exp_len = len(exp_cpc_dict)
@@ -151,7 +156,6 @@ def test_zhmc_cpc_list(
     exp_um_cpcs = client.consoles.console.list_unmanaged_cpcs()
     exp_um_cpcs_dict = {}
     for cpc in exp_um_cpcs:
-        cpc.pull_full_properties()
         exp_um_cpcs_dict[cpc.name] = cpc
 
     # Prepare module input parameters (must be all required + optional)
