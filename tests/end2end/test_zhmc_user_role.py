@@ -23,8 +23,8 @@ import uuid
 import pytest
 import mock
 import random
-import requests.packages.urllib3
 from pprint import pformat
+import requests.packages.urllib3
 import zhmcclient
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
@@ -36,7 +36,7 @@ from .utils import mock_ansible_module, get_failure_msg
 requests.packages.urllib3.disable_warnings()
 
 # Print debug messages
-DEBUG = True
+DEBUG = False
 
 LOG_FILE = 'zhmc_user_role.log' if DEBUG else None
 
@@ -103,7 +103,9 @@ def assert_urole_props(urole_props, exp_urole_props, where):
     """
     Assert the properties of the output object of the zhmc_user_role module
     """
+
     assert isinstance(urole_props, dict), where  # Dict of User role props
+
     # Assert presence of properties in the output
     for prop_name in zhmc_user_role.ZHMC_USER_ROLE_PROPERTIES:
         prop_name_hmc = prop_name.replace('_', '-')
