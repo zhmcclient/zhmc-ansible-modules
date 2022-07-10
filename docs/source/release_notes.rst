@@ -33,6 +33,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Bug fixes:**
 
+* Fixed that every module invocation created an additional log handler, thus
+  duplicating log entries. This only affected the end2end tests, but not when
+  used in Ansible playbooks. (issue #552)
+
 **Enhancements:**
 
 * Added support for Ansible 6.0.0 by adding an ignore-2.13.txt file to the
