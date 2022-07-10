@@ -799,9 +799,23 @@ def log_init(logger_name, log_file=None):
     logger = logging.getLogger(logger_name)
     logger.setLevel(logging.DEBUG)
     if handler:
-        logger.addHandler(handler)
+        ensure_one_handler(logger, handler)
 
     logger = logging.getLogger('zhmcclient.hmc')
     logger.setLevel(logging.DEBUG)
     if handler:
+        ensure_one_handler(logger, handler)
+
+
+def ensure_one_handler(logger, handler):
+    """
+    Ensure that the logger has the specified handler exactly once. The handler
+    must be a FileHandler, and the handler is recognized by the file name it
+    logs to (i.e. the new and existing handler may be different Python objects).
+    """
+    for hdlr in logger.handlers:
+        if isinstance(hdlr, logging.FileHandler) and \
+                hdlr.stream.name == handler.stream.name:
+            break
+    else:
         logger.addHandler(handler)
