@@ -116,6 +116,11 @@
 <p><strong>Incompatible changes:</strong></p>
 <p><strong>Deprecations:</strong></p>
 <p><strong>Bug fixes:</strong></p>
+<ul class="simple">
+<li><p>Fixed that every module invocation created an additional log handler, thus
+duplicating log entries. This only affected the end2end tests, but not when
+used in Ansible playbooks. (issue #552)</p></li>
+</ul>
 <p><strong>Enhancements:</strong></p>
 <ul class="simple">
 <li><p>Added a new ‘zhmc_partition_list’ Ansible module for listing partitions on
