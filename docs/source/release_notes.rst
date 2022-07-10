@@ -73,6 +73,15 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Merged function tests into end2end tests to remove duplicate test cases.
 
+* Removed the restriction that the zhmc_partition_list and zhmc_lpar_list
+  modules were supported only with HMC versions 2.14.0 and newer. These modules
+  are now supprted with all HMC versions (issue #549)
+
+* Removed the restriction that the 'se-version' property in the result of the
+  zhmc_partition_list and zhmc_lpar_list modules was provided only with HMC
+  versions 2.14.1 and newer. The property is now provided with all HMC versions.
+  (issue #549)
+
 **Cleanup:**
 
 **Known issues:**
