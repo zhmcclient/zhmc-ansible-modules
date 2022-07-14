@@ -34,15 +34,17 @@ module: zhmc_partition_list
 version_added: "2.9.0"
 short_description: List partitions
 description:
-  - List permitted partitions on a CPC (Z system) or on all managed CPCs.
+  - List partitions on a specific CPC (Z system) or on all managed CPCs.
   - CPCs in classic mode are ignored (i.e. do not lead to a failure).
   - Partitions for which the user has no object access permission are ignored
     (i.e. do not lead to a failure).
+  - The module works for any HMC version. On HMCs with version 2.14.0 or higher,
+    the "List Permitted Partitions" opration is used. On older HMCs, the
+    managed CPCs are listed and the partitions on each CPC.
 author:
   - Andreas Maier (@andy-maier)
 requirements:
   - Access to the WS API of the HMC (see :term:`HMC API`).
-  - The HMC version must be 2.14.0 or higher.
 options:
   hmc_host:
     description:
@@ -151,8 +153,7 @@ partitions:
       description: "Name of the parent CPC of the partition"
       type: str
     se_version:
-      description: "SE version of the parent CPC of the partition (since HMC/SE
-        2.14.1, otherwise None)"
+      description: "SE version of the parent CPC of the partition"
       type: str
     status:
       description: The current status of the partition. For details, see the
@@ -179,7 +180,7 @@ import logging  # noqa: E402
 import traceback  # noqa: E402
 from ansible.module_utils.basic import AnsibleModule  # noqa: E402
 
-from ..module_utils.common import log_init, Error, VersionError, \
+from ..module_utils.common import log_init, Error, \
     get_hmc_auth, get_session, missing_required_lib  # noqa: E402
 
 try:
@@ -221,37 +222,53 @@ def perform_list(params):
     try:
         client = zhmcclient.Client(session)
 
-        # Check minimum required HMC version. The "List Permitted Logical
-        # Partitions" operation used by this module was added in HMC 2.14.0.
+        # The "List Permitted Partitions" operation was added in HMC
+        # version 2.14.0. The operation depends only on the HMC version and not
+        # on the SE/CPC version, so it is supported e.g. for a 2.14 HMC managing
+        # a z13 CPC.
         hmc_version = client.query_api_version()['hmc-version']
         hmc_version_info = [int(x) for x in hmc_version.split('.')]
         if hmc_version_info < [2, 14, 0]:
-            raise VersionError(
-                "The HMC version is {0}, but the minimum required version "
-                "for the zhmc_partition_list module is 2.14.0".
-                format(hmc_version))
-
-        partition_list = []
-
-        if cpc_name:
-            LOGGER.debug("Listing permitted partitions of CPC %s", cpc_name)
-            filter_args = {'cpc-name': cpc_name}
+            # List the partitions in the traditional way
+            if cpc_name:
+                LOGGER.debug("Listing partitions of CPC %s", cpc_name)
+                cpc = client.cpcs.find(name=cpc_name)
+                partitions = cpc.partitions.list()
+            else:
+                LOGGER.debug("Listing partitions of all managed CPCs")
+                cpcs = client.cpcs.list()
+                partitions = []
+                for cpc in cpcs:
+                    partitions.extend(cpc.partitions.list())
         else:
-            LOGGER.debug("Listing permitted partitions of all managed CPCs")
-            filter_args = None
-        partitions = client.consoles.console.list_permitted_partitions(
-            filter_args=filter_args)
+            # List the partitions using the new operation
+            if cpc_name:
+                LOGGER.debug("Listing permitted partitions of CPC %s", cpc_name)
+                filter_args = {'cpc-name': cpc_name}
+            else:
+                LOGGER.debug("Listing permitted partitions of all managed CPCs")
+                filter_args = None
+            partitions = client.consoles.console.list_permitted_partitions(
+                filter_args=filter_args)
         # The default exception handling is sufficient for the above.
 
+        se_versions = {}
+        partition_list = []
         for partition in partitions:
+
             # se-version has been added to the result of List Permitted
-            # Partitions in HMC/SE 2.14.1. We want to get it if present,
-            # without triggering a full pull of partition properties.
+            # Partitions in HMC/SE 2.14.1. Before that, it triggers the
+            # retrieval of CPC properties.
             parent_cpc = partition.manager.cpc
-            if 'se-version' in parent_cpc.properties:
-                se_version = parent_cpc.get_property('se-version')
-            else:
-                se_version = None
+            try:
+                se_version = se_versions[parent_cpc.name]
+            except KeyError:
+                try:
+                    se_version = partition.properties['se-version']
+                except KeyError:
+                    se_version = parent_cpc.get_property('se-version')
+                se_versions[parent_cpc.name] = se_version
+
             partition_properties = {
                 "name": partition.name,
                 "cpc_name": parent_cpc.name,

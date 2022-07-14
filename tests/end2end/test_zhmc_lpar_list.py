@@ -58,47 +58,52 @@ def get_module_output(mod_obj):
     return func(*call_args[0], **call_args[1])
 
 
-def assert_lpar_list(lpar_list, cpc_name, se_version, exp_lpars_dict):
+def assert_lpar_list(lpar_list, exp_lpar_dict):
     """
     Assert the output of the zhmc_lpar_list module
+
+    Parameters:
+      lpar_list(list): Result of zhmc_lpar_list module, a list
+        of LPAR properties as documented (in HMC notation with dashes).
+      exp_lpar_dict(dict): Expected properties for each expected result
+        item. Key: tuple(CPC name, LPAR name), Value: All properties
+        of the LPAR plus artificial properties (in HMC notation with
+        dashes).
     """
 
     assert isinstance(lpar_list, list)
 
-    exp_lpar_names = list(exp_lpars_dict)
-    assert len(lpar_list) == len(exp_lpar_names)
+    exp_cpc_part_names = list(exp_lpar_dict)
+    cpc_part_names = [(pi.get('cpc_name', None), pi.get('name', None))
+                      for pi in lpar_list]
+    assert set(cpc_part_names) == set(exp_cpc_part_names)
 
     for lpar_item in lpar_list:
+        lpar_name = lpar_item.get('name', None)
+        cpc_name = lpar_item.get('cpc_name', None)
+        cpc_part_name = (cpc_name, lpar_name)
 
-        assert 'name' in lpar_item, \
-            "Returned LPAR {ri!r} does not have a 'name' property". \
-            format(ri=lpar_item)
-        lpar_name = lpar_item['name']
+        assert lpar_name is not None, \
+            "Returned LPAR {pi!r} does not have a 'name' property". \
+            format(pi=lpar_item)
 
-        assert lpar_name in exp_lpars_dict, \
-            "Result contains unexpected LPAR: {rn!r}". \
-            format(rn=lpar_name)
+        assert cpc_part_name in exp_lpar_dict, \
+            "Result contains unexpected LPAR {p!r} in CPC {c!r}". \
+            format(p=lpar_name, c=cpc_name)
 
-        exp_lpar = exp_lpars_dict[lpar_name]
+        exp_lpar_props = exp_lpar_dict[cpc_part_name]
 
         for pname, pvalue in lpar_item.items():
 
-            # Verify artificial properties
-            if pname == 'cpc_name':
-                assert pvalue == cpc_name
-                continue
-            if pname == 'se_version':
-                assert pvalue == se_version
-                continue
-
             # Verify normal properties
             pname_hmc = pname.replace('_', '-')
-            assert pname_hmc in exp_lpar.properties, \
-                "Unexpected property {pn!r} in result LPAR {rn!r}, expected properties: {ep!r}". \
-                format(pn=pname_hmc, rn=lpar_name, ep=', '.join(exp_lpar.properties.keys()))
-            exp_value = exp_lpar.properties[pname_hmc]
+            assert pname_hmc in exp_lpar_props, \
+                "Unexpected property {pn!r} in result LPAR {rn!r}". \
+                format(pn=pname_hmc, rn=lpar_name)
+            exp_value = exp_lpar_props[pname_hmc]
             assert pvalue == exp_value, \
-                "Incorrect value for property {pn!r} of result LPAR {rn!r}". \
+                "Incorrect value for property {pn!r} of result LPAR " \
+                "{rn!r}". \
                 format(pn=pname_hmc, rn=lpar_name)
 
 
@@ -138,15 +143,48 @@ def test_zhmc_lpar_list(
         faked_session = session if hd.mock_file else None
 
         # Determine the expected LPARs on the HMC
-        if with_cpc:
-            filter_args = {'cpc-name': cpc.name}
-            exp_lpars = console.list_permitted_lpars(filter_args=filter_args)
+        if DEBUG:
+            print("Debug: Listing expected LPARs")
+        hmc_version = client.query_api_version()['hmc-version']
+        hmc_version_info = [int(x) for x in hmc_version.split('.')]
+        if hmc_version_info < [2, 14, 0]:
+            # List the LPARs in the traditional way
+            if with_cpc:
+                exp_lpars = cpc.lpars.list()
+            else:
+                cpcs_ = client.cpcs.list()
+                exp_lpars = []
+                for cpc_ in cpcs_:
+                    exp_lpars.extend(cpc_.lpars.list())
         else:
-            exp_lpars = console.list_permitted_lpars()
-        exp_lpars_dict = {}
+            # List the LPARs using the new operation
+            if with_cpc:
+                filter_args = {'cpc-name': cpc.name}
+            else:
+                filter_args = None
+            exp_lpars = console.list_permitted_lpars(filter_args=filter_args)
+        exp_lpar_dict = {}
+        se_versions = {}
         for lpar in exp_lpars:
+            if DEBUG:
+                print("Debug: Getting expected properties of LPAR {l!r} on "
+                      "CPC {c!r}".format(l=lpar.name, c=cpc.name))
             lpar.pull_full_properties()
-            exp_lpars_dict[lpar.name] = lpar
+            cpc = lpar.manager.parent
+            try:
+                se_version = se_versions[cpc.name]
+            except KeyError:
+                if DEBUG:
+                    print("Debug: Getting expected se-version of CPC {c!r}".
+                          format(c=cpc.name))
+                se_version = cpc.get_property('se-version')
+                se_versions[cpc.name] = se_version
+            exp_properties = {}
+            exp_properties.update(lpar.properties)
+            exp_properties['cpc-name'] = cpc.name
+            exp_properties['se-version'] = se_version
+            exp_cpc_lpar_name = (cpc.name, lpar.name)
+            exp_lpar_dict[exp_cpc_lpar_name] = exp_properties
 
         # Prepare module input parameters (must be all required + optional)
         params = {
@@ -175,6 +213,4 @@ def test_zhmc_lpar_list(
         changed, lpar_list = get_module_output(mod_obj)
         assert changed is False
 
-        cpc_name = cpc.name
-        se_version = cpc.get_property('se-version')
-        assert_lpar_list(lpar_list, cpc_name, se_version, exp_lpars_dict)
+        assert_lpar_list(lpar_list, exp_lpar_dict)
