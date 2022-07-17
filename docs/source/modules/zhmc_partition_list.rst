@@ -16,16 +16,16 @@ zhmc_partition_list -- List partitions
 
 Synopsis
 --------
-- List permitted partitions on a CPC (Z system) or on all managed CPCs.
+- List partitions on a specific CPC (Z system) or on all managed CPCs.
 - CPCs in classic mode are ignored (i.e. do not lead to a failure).
 - Partitions for which the user has no object access permission are ignored (i.e. do not lead to a failure).
+- The module works for any HMC version. On HMCs with version 2.14.0 or higher, the "List Permitted Partitions" opration is used. On older HMCs, the managed CPCs are listed and the partitions on each CPC.
 
 
 Requirements
 ------------
 
 - Access to the WS API of the HMC (see :term:`HMC API`).
-- The HMC version must be 2.14.0 or higher.
 
 
 
@@ -175,7 +175,7 @@ partitions
     | **type**: str
 
   se_version
-    SE version of the parent CPC of the partition (since HMC/SE 2.14.1, otherwise None)
+    SE version of the parent CPC of the partition
 
     | **type**: str
 

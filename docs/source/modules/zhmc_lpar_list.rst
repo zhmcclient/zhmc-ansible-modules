@@ -16,16 +16,16 @@ zhmc_lpar_list -- List LPARs
 
 Synopsis
 --------
-- List permitted LPARs on a CPC (Z system) or on all managed CPCs.
+- List LPARs on a specific CPC (Z system) or on all managed CPCs.
 - CPCs in DPM mode are ignored (i.e. do not lead to a failure).
 - LPARs for which the user has no object access permission are ignored (i.e. do not lead to a failure).
+- The module works for any HMC version. On HMCs with version 2.14.0 or higher, the "List Permitted Logical Partitions" opration is used. On older HMCs, the managed CPCs are listed and the LPARs on each CPC.
 
 
 Requirements
 ------------
 
 - Access to the WS API of the HMC (see :term:`HMC API`).
-- The HMC version must be 2.14.0 or higher.
 
 
 
@@ -176,7 +176,7 @@ lpars
     | **type**: str
 
   se_version
-    SE version of the parent CPC of the LPAR (since HMC/SE 2.14.1, otherwise None)
+    SE version of the parent CPC of the LPAR
 
     | **type**: str
 
