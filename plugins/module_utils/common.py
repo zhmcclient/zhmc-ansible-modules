@@ -240,7 +240,8 @@ def stop_partition(partition, check_mode):
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
     changed = False
-    partition.pull_full_properties()
+    if not check_mode:
+        partition.pull_full_properties()
     status = partition.get_property('status')
     if status in BAD_STATUSES:
         raise StatusError(
@@ -261,6 +262,9 @@ def stop_partition(partition, check_mode):
                     "an inactive status after waiting for its starting to "
                     "complete; current status is: {1!r}".
                     format(partition.name, status))
+        else:
+            status = 'stopped'
+        partition.update_properties_local({'status': status})
         changed = True
     elif status == 'stopping':
         if not check_mode:
@@ -273,6 +277,9 @@ def stop_partition(partition, check_mode):
                     "an inactive status after waiting for its stopping to "
                     "complete; current status is: {1!r}".
                     format(partition.name, status))
+        else:
+            status = 'stopped'
+        partition.update_properties_local({'status': status})
         changed = True
     else:
         # status in START_END_STATUSES
@@ -285,6 +292,9 @@ def stop_partition(partition, check_mode):
                     "Could not get partition {0!r} from {1!r} status into "
                     "an inactive status; current status is: {2!r}".
                     format(partition.name, previous_status, status))
+        else:
+            status = 'stopped'
+        partition.update_properties_local({'status': status})
         changed = True
     return changed
 
@@ -313,7 +323,8 @@ def start_partition(partition, check_mode):
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
     changed = False
-    partition.pull_full_properties()
+    if not check_mode:
+        partition.pull_full_properties()
     status = partition.get_property('status')
     if status in BAD_STATUSES:
         raise StatusError(
@@ -334,6 +345,9 @@ def start_partition(partition, check_mode):
                     "an active status after waiting for its stopping to "
                     "complete; current status is: {1!r}".
                     format(partition.name, status))
+        else:
+            status = 'active'
+        partition.update_properties_local({'status': status})
         changed = True
     elif status == 'starting':
         if not check_mode:
@@ -346,6 +360,9 @@ def start_partition(partition, check_mode):
                     "an active status after waiting for its starting to "
                     "complete; current status is: {1!r}".
                     format(partition.name, status))
+        else:
+            status = 'active'
+        partition.update_properties_local({'status': status})
         changed = True
     else:
         # status in STOP_END_STATUSES
@@ -358,6 +375,9 @@ def start_partition(partition, check_mode):
                     "Could not get partition {0!r} from {1!r} status into "
                     "an active status; current status is: {2!r}".
                     format(partition.name, previous_status, status))
+        else:
+            status = 'active'
+        partition.update_properties_local({'status': status})
         changed = True
     return changed
 
@@ -682,7 +702,8 @@ def process_normal_property(
       resource_properties (dict): Dictionary of property definitions for the
         resource type (e.g. ZHMC_PARTITION_PROPERTIES). Each value must be a
         tuple (allowed, create, update, update_while_active, eq_func,
-        type_cast). For details, see the modules using this function.
+        type_cast, required(o), default(o)). For details, see the modules
+        using this function. (o) means optional.
 
       input_props (dict): New properties.
 
@@ -706,8 +727,17 @@ def process_normal_property(
     update_props = {}
     deactivate = False
 
-    allowed, create, update, update_while_active, eq_func, type_cast = \
-        resource_properties[prop_name]
+    p = resource_properties[prop_name]
+    allowed, create, update, update_while_active, eq_func, type_cast = p[0:6]
+    # Note: If and when required/default are be used here:
+    # try:
+    #     required = p[6]
+    # except IndexError:
+    #     required = False
+    # try:
+    #     default = p[7]
+    # except IndexError:
+    #     default = None
 
     # Double check that the property is not a read-only property
     if not allowed:
