@@ -137,16 +137,16 @@
 <section id="synopsis">
 <h2><a class="toc-backref" href="#id1">Synopsis</a><a class="headerlink" href="#synopsis" title="Permalink to this heading"></a></h2>
 <ul class="simple">
-<li><p>List permitted LPARs on a CPC (Z system) or on all managed CPCs.</p></li>
+<li><p>List LPARs on a specific CPC (Z system) or on all managed CPCs.</p></li>
 <li><p>CPCs in DPM mode are ignored (i.e. do not lead to a failure).</p></li>
 <li><p>LPARs for which the user has no object access permission are ignored (i.e. do not lead to a failure).</p></li>
+<li><p>The module works for any HMC version. On HMCs with version 2.14.0 or higher, the “List Permitted Logical Partitions” opration is used. On older HMCs, the managed CPCs are listed and the LPARs on each CPC.</p></li>
 </ul>
 </section>
 <section id="requirements">
 <h2><a class="toc-backref" href="#id2">Requirements</a><a class="headerlink" href="#requirements" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p>Access to the WS API of the HMC (see <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a>).</p></li>
-<li><p>The HMC version must be 2.14.0 or higher.</p></li>
 </ul>
 </section>
 <section id="parameters">
@@ -273,7 +273,7 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>se_version</dt><dd><p>SE version of the parent CPC of the LPAR (since HMC/SE 2.14.1, otherwise None)</p>
+<dt>se_version</dt><dd><p>SE version of the parent CPC of the LPAR</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: str</div>
 </div>
