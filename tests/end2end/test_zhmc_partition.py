@@ -24,6 +24,7 @@ import copy
 import pytest
 import mock
 import random
+import pdb
 from pprint import pformat
 import requests.packages.urllib3
 import zhmcclient
@@ -45,18 +46,26 @@ LOG_FILE = 'zhmc_partition.log' if DEBUG_LOG else None
 # Partition properties that are not always present, but only under certain
 # conditions.
 PARTITION_CONDITIONAL_PROPS = (
-    'boot-ftp-password',
     'boot-network-nic-name',
     'boot-storage-hba-name',
-    'ssc-boot-selection',
-    'ssc-host-name',
-    'ssc-ipv4-gateway',
-    'ssc-dns-servers',
-    'ssc-master-userid',
+    'boot-storage-volume',  # added in z14
+    'boot-load-parameters',  # added in z14
+    'permit-ecc-key-import-functions',  # added in z15
+    'ssc-boot-selection',  # only present for type=ssc
+    'ssc-host-name',  # only present for type=ssc
+    'ssc-ipv4-gateway',  # only present for type=ssc
+    'ssc-ipv6-gateway',  # only present for type=ssc, added in z14
+    'ssc-dns-servers',  # only present for type=ssc
+    'ssc-master-userid',  # only present for type=ssc
+    'secure-boot',  # added in SE/CPC 2.15.0
+    'secure-execution',  # added in SE/CPC 2.15.0
+    'tape-link-uris',  # added in z15
+    'partition-link-uris',  # added in z16
 )
 # Partition properties that are never returned.
 PARTITION_WRITEONLY_PROPS = (
     'ssc-master-pw',
+    'boot-ftp-password',
 )
 
 # Artificial partition properties (added by the module).
@@ -279,7 +288,7 @@ def assert_partition_props(act_props, exp_props, where):
             continue
         where_prop = where + \
             ", property {p!r} missing in partition properties {pp!r}". \
-            format(p=prop_name, pp=act_props)
+            format(p=prop_name_hmc, pp=act_props)
         assert prop_name_hmc in act_props, where_prop
 
     # Assert the expected property values for non-artificial properties
@@ -298,7 +307,7 @@ def assert_partition_props(act_props, exp_props, where):
         where_prop = where + \
             ", Unexpected value of property {p!r}: Expected: {e!r}, " \
             "Actual: {a!r}". \
-            format(p=prop_name, e=exp_value, a=act_value)
+            format(p=prop_name_hmc, e=exp_value, a=act_value)
         assert act_value == exp_value, where_prop
 
     # Assert type of the artificial properties in the output
@@ -408,6 +417,7 @@ PARTITION_STATE_TESTCASES = [
     # - exp_props (dict): HMC-formatted properties for expected
     #   properties of created partition.
     # - exp_changed (bool): Boolean for expected 'changed' flag.
+    # - run: Indicates whether the test should be run, or 'pdb' for debugger.
 
     (
         "state=stopped for Linux partition with non-existing partition",
@@ -415,6 +425,7 @@ PARTITION_STATE_TESTCASES = [
         'stopped',
         STD_LINUX_PARTITION_MODULE_INPUT_PROPS,
         STD_LINUX_PARTITION_HMC_INPUT_PROPS,
+        True,
         True,
     ),
     (
@@ -425,6 +436,7 @@ PARTITION_STATE_TESTCASES = [
         None,
         STD_LINUX_PARTITION_HMC_INPUT_PROPS,
         False,
+        True,
     ),
     (
         "state=stopped for Linux partition with existing stopped partition, "
@@ -436,6 +448,7 @@ PARTITION_STATE_TESTCASES = [
         STD_LINUX_PARTITION_MODULE_INPUT_PROPS,
         STD_LINUX_PARTITION_HMC_INPUT_PROPS,
         True,
+        True,
     ),
     (
         "state=stopped for SSC partition with non-existing partition",
@@ -443,6 +456,7 @@ PARTITION_STATE_TESTCASES = [
         'stopped',
         STD_SSC_PARTITION_MODULE_INPUT_PROPS,
         STD_SSC_PARTITION_HMC_INPUT_PROPS,
+        True,
         True,
     ),
     # Note: state=active for a non-existing SSC partition requires the addition
@@ -457,6 +471,7 @@ PARTITION_STATE_TESTCASES = [
         None,
         STD_SSC_PARTITION_HMC_INPUT_PROPS,
         False,
+        True,
     ),
     (
         "state=active for SSC partition with existing stopped partition, "
@@ -465,6 +480,7 @@ PARTITION_STATE_TESTCASES = [
         'active',
         None,
         STD_SSC_PARTITION_HMC_INPUT_PROPS,
+        True,
         True,
     ),
     (
@@ -477,6 +493,7 @@ PARTITION_STATE_TESTCASES = [
         STD_SSC_PARTITION_MODULE_INPUT_PROPS,
         STD_SSC_PARTITION_HMC_INPUT_PROPS,
         True,
+        True,
     ),
     (
         "state=absent with existing stopped Linux partition",
@@ -484,6 +501,7 @@ PARTITION_STATE_TESTCASES = [
         'absent',
         None,
         None,
+        True,
         True,
     ),
     (
@@ -493,6 +511,7 @@ PARTITION_STATE_TESTCASES = [
         None,
         None,
         True,
+        True,
     ),
     (
         "state=absent with non-existing partition",
@@ -501,6 +520,7 @@ PARTITION_STATE_TESTCASES = [
         None,
         None,
         False,
+        True,
     ),
 ]
 
@@ -508,26 +528,28 @@ PARTITION_STATE_TESTCASES = [
 @pytest.mark.parametrize(
     "check_mode", [
         pytest.param(False, id="check_mode=False"),
-        # TODO: Enable check mode once properly supported by the module:
-        # pytest.param(True, id="check_mode=True"),
+        pytest.param(True, id="check_mode=True"),
     ]
 )
 @pytest.mark.parametrize(
-    "desc, initial_props, input_state, "
-    "input_props, exp_props, exp_changed",
+    "desc, initial_props, input_state, input_props, exp_props, exp_changed, "
+    "run",
     PARTITION_STATE_TESTCASES)
 @mock.patch("plugins.modules.zhmc_partition.AnsibleModule", autospec=True)
 def test_zhmc_partition_state(
         ansible_mod_cls,
-        desc, initial_props, input_state, input_props,
-        exp_props, exp_changed, check_mode,
-        dpm_mode_cpcs):  # noqa: F811, E501
+        desc, initial_props, input_state, input_props, exp_props, exp_changed,
+        run,
+        check_mode, dpm_mode_cpcs):  # noqa: F811, E501
     """
     Test the zhmc_partition module with different initial and target state.
     """
 
     if not dpm_mode_cpcs:
         pytest.skip("HMC definition does not include any CPCs in DPM mode")
+
+    if not run:
+        pytest.skip("Testcase disabled: {0}".format(desc))
 
     for cpc in dpm_mode_cpcs:
         assert cpc.dpm_enabled
@@ -573,9 +595,14 @@ def test_zhmc_partition_state(
 
             mod_obj = mock_ansible_module(ansible_mod_cls, params, check_mode)
 
-            # Exercise the code to be tested
             with pytest.raises(SystemExit) as exc_info:
+
+                if run == 'pdb':
+                    pdb.set_trace()
+
+                # Exercise the code to be tested
                 zhmc_partition.main()
+
             exit_code = exc_info.value.args[0]
 
             if exit_code != 0:
@@ -678,8 +705,8 @@ PARTITION_UPDATE_ITEMS_BASE = [
     # TODO: Ensure the partition ID is not used yet
     # {'partition_id': '7F'},
     # {'autogenerate_partition_id': False},
-    {'ifl_processors': 1},
-    {'ifl_processors': ("2", 2)},
+    {'ifl_processors': 3},
+    {'ifl_processors': ("4", 4)},
     # TODO: Switching processor type requires partition to be stopped.
     #       Create separate tests for that.
     # {'cp_processors': 1, 'ifl_processors': 0},
@@ -689,8 +716,8 @@ PARTITION_UPDATE_ITEMS_BASE = [
     # {'reserve_resources': True},
     # {'processor_mode': 'dedicated'},
     # {'processor_mode': 'shared'},
-    {'initial_memory': 8192, 'maximum_memory': 8192},
-    {'initial_memory': ("4096", 4096), 'maximum_memory': ("4096", 4096)},
+    {'initial_memory': 6144, 'maximum_memory': 6144},
+    {'initial_memory': ("8192", 8192), 'maximum_memory': ("8192", 8192)},
     # TODO: reserve_resources=True may fail with 409,116 due to not enough
     #       resources. Create separate tests for that.
     # {'reserve_resources': True},
@@ -777,8 +804,7 @@ NON_RETRIEVABLE_PROPS = ('boot_ftp_password', 'ssc_master_pw')
 @pytest.mark.parametrize(
     "check_mode", [
         pytest.param(False, id="check_mode=False"),
-        # TODO: Enable check mode once properly supported by the module:
-        # pytest.param(True, id="check_mode=True"),
+        pytest.param(True, id="check_mode=True"),
     ]
 )
 @pytest.mark.parametrize(
@@ -885,7 +911,7 @@ def test_zhmc_partition_properties(
                         new_value = value_item
                         new_hmc_value = value_item
                     allowed, create, update, update_while_active, eq_func, \
-                        type_cast = \
+                        type_cast, required, default = \
                         zhmc_partition.ZHMC_PARTITION_PROPERTIES[prop_name]
 
                     # Note that update_while_active will be handled in the
