@@ -485,6 +485,9 @@ partition:
 from collections import OrderedDict  # noqa: E402
 import logging  # noqa: E402
 import traceback  # noqa: E402
+import uuid
+import random
+import types
 from ansible.module_utils.basic import AnsibleModule  # noqa: E402
 from operator import itemgetter  # noqa: E402
 
@@ -512,6 +515,66 @@ LOGGER_NAME = 'zhmc_partition'
 
 LOGGER = logging.getLogger(LOGGER_NAME)
 
+
+def required_boot_storage_adapter(partition_properties):
+    """
+    Indicates whether 'boot_storage_adapter' is a required input parameter.
+    """
+    boot_device = partition_properties.get('boot-device')
+    return boot_device == 'storage-adapter'
+
+
+def required_partition_id(partition_properties):
+    """
+    Indicates whether 'partition_id' is a required input parameter.
+    """
+    auto_generate = partition_properties.get('autogenerate-partition-id', True)
+    return not auto_generate
+
+
+def required_ifl_processors(partition_properties):
+    """
+    Indicates whether 'ifl_processors' is a required input parameter.
+    """
+    cp_processors = partition_properties.get('cp-processors', 0)
+    return cp_processors == 0
+
+
+def required_cp_processors(partition_properties):
+    """
+    Indicates whether 'cp_processors' is a required input parameter.
+    """
+    ifl_processors = partition_properties.get('ifl-processors', 0)
+    return ifl_processors == 0
+
+
+def required_boot_ftp(partition_properties):
+    """
+    Indicates whether 'boot_ftp_*' are required input parameters.
+    """
+    boot_device = partition_properties.get('boot-device')
+    return boot_device == 'ftp'
+
+
+def required_boot_removable_media(partition_properties):
+    """
+    Indicates whether 'boot_removable_media*' are required input parameters.
+    """
+    boot_device = partition_properties.get('boot-device')
+    return boot_device == 'removable-media'
+
+
+def required_type_ssc(partition_properties):
+    """
+    Indicates whether 'ssc_*' are required input parameters.
+    """
+    part_type = partition_properties.get('type', 'linux')
+    return part_type == 'ssc'
+
+
+# Marker in ZHMC_PARTITION_PROPERTIES.default to indicate special handling
+SPECIAL_DEFAULT = 'special_default'
+
 # Dictionary of properties of partition resources, in this format:
 #   name: (allowed, create, update, update_while_active, eq_func, type_cast)
 # where:
@@ -533,106 +596,317 @@ LOGGER = logging.getLogger(LOGGER_NAME)
 #     means to use it directly. This can be used for example to convert
 #     integers provided as strings by Ansible back into integers (that is a
 #     current deficiency of Ansible).
+#   create_required: Indicates whether the property is required in the HMC
+#     create operation. None for artificial properties. Can be a function that
+#     returns True or False, if it depends.
+#     depends whether the property is required.
+#   create_default: Default value for optional create properties. None for
+#     required and artificial properties. Can be a function that returns a
+#     default value, if it depends.
 ZHMC_PARTITION_PROPERTIES = {
 
     # create-only properties:
-    'type': (True, True, False, None, None, None),  # cannot change type
+    'type': (
+        True, True, False, None, None, None,
+        False, 'linux'),
 
     # update-only properties:
     'boot_network_device': (
-        False, False, True, True, None, None),  # via boot_network_nic_name
+        # Updated via boot_network_nic_name
+        False, False, True, True, None, None,
+        False, None),
     'boot_network_nic_name': (
-        True, False, True, True, None, to_unicode),  # artificial property
+        # Artificial property
+        True, False, True, True, None, to_unicode,
+        None, None),
     'boot_storage_device': (
-        False, False, True, True, None, None),  # via boot_storage_hba_name
+        # Updated via boot_storage_hba_name
+        False, False, True, True, None, None,
+        False, None),
     'boot_storage_hba_name': (
-        True, False, True, True, None, to_unicode),  # artificial property
+        True, False, True, True, None, to_unicode,
+        None, None),  # artificial property
+    'boot_storage_volume': (
+        # Was added in API version 2.23 (HMC 2.14.0)
+        False, False, True, True, None, None,
+        False, None),  # via boot_storage_volume_name
+    'boot_storage_volume_name': (
+        # Artificial property
+        True, False, True, True, None, to_unicode,
+        None, None),
     'crypto_configuration': (
-        True, False, False, None, None,
-        None),  # Contains artificial properties, type_cast ignored
-    'acceptable_status': (True, False, True, True, None, None),
-    'processor_management_enabled': (True, False, True, True, None, None),
-    'ifl_absolute_processor_capping': (True, False, True, True, None, None),
+        # Contains artificial properties, type_cast ignored
+        True, False, False, None, None, None,
+        False, None),
+    'acceptable_status': (
+        # TODO: Default value
+        True, False, True, True, None, None,
+        False, []),
+    'processor_management_enabled': (
+        True, False, True, True, None, None,
+        False, False),
+    'ifl_absolute_processor_capping': (
+        True, False, True, True, None, None,
+        False, False),
     'ifl_absolute_processor_capping_value': (
-        True, False, True, True, None, float),
-    'ifl_processing_weight_capped': (True, False, True, True, None, None),
-    'minimum_ifl_processing_weight': (True, False, True, True, None, int),
-    'maximum_ifl_processing_weight': (True, False, True, True, None, int),
-    'initial_ifl_processing_weight': (True, False, True, True, None, int),
-    'cp_absolute_processor_capping': (True, False, True, True, None, None),
+        True, False, True, True, None, float,
+        False, 1.0),
+    'ifl_processing_weight_capped': (
+        True, False, True, True, None, None,
+        False, False),
+    'minimum_ifl_processing_weight': (
+        True, False, True, True, None, int,
+        False, 1),
+    'maximum_ifl_processing_weight': (
+        True, False, True, True, None, int,
+        False, 999),
+    'initial_ifl_processing_weight': (
+        True, False, True, True, None, int,
+        False, 100),
+    'cp_absolute_processor_capping': (
+        True, False, True, True, None, None,
+        False, False),
     'cp_absolute_processor_capping_value': (
-        True, False, True, True, None, float),
-    'cp_processing_weight_capped': (True, False, True, True, None, None),
-    'minimum_cp_processing_weight': (True, False, True, True, None, int),
-    'maximum_cp_processing_weight': (True, False, True, True, None, int),
-    'initial_cp_processing_weight': (True, False, True, True, None, int),
-    'boot_logical_unit_number': (True, False, True, True, eq_hex, None),
-    'boot_world_wide_port_name': (True, False, True, True, eq_hex, None),
-    'boot_os_specific_parameters': (True, False, True, True, None, to_unicode),
-    'boot_iso_ins_file': (True, False, True, True, None, to_unicode),
-    'ssc_boot_selection': (True, False, True, True, None, None),
+        True, False, True, True, None, float,
+        False, 1.0),
+    'cp_processing_weight_capped': (
+        True, False, True, True, None, None,
+        False, False),
+    'minimum_cp_processing_weight': (
+        True, False, True, True, None, int,
+        False, 1),
+    'maximum_cp_processing_weight': (
+        True, False, True, True, None, int,
+        False, 999),
+    'initial_cp_processing_weight': (
+        True, False, True, True, None, int,
+        False, 100),
+    'boot_logical_unit_number': (
+        True, False, True, True, eq_hex, None,
+        required_boot_storage_adapter, ''),
+    'boot_world_wide_port_name': (
+        True, False, True, True, eq_hex, None,
+        required_boot_storage_adapter, ''),
+    'boot_load_parameters': (
+        # Was added in API version 2.23 (HMC 2.14.0)
+        True, False, True, True, None, to_unicode,
+        False, ''),
+    'boot_os_specific_parameters': (
+        True, False, True, True, None, to_unicode,
+        False, ''),
+    'boot_iso_ins_file': (
+        True, False, True, True, None, to_unicode,
+        False, None),
+    'ssc_boot_selection': (
+        True, False, True, True, None, None,
+        False, 'installer'),
 
     # create+update properties:
     'name': (
-        False, True, True, True, None, None),  # provided in 'name' module parm
-    'description': (True, True, True, True, None, to_unicode),
-    'short_name': (True, True, True, False, None, None),
-    'partition_id': (True, True, True, False, None, None),
-    'autogenerate_partition_id': (True, True, True, False, None, None),
-    'ifl_processors': (True, True, True, True, None, int),
-    'cp_processors': (True, True, True, True, None, int),
-    'processor_mode': (True, True, True, False, None, None),
-    'initial_memory': (True, True, True, True, None, int),
-    'maximum_memory': (True, True, True, False, None, int),
-    'reserve_resources': (True, True, True, True, None, None),
-    'boot_device': (True, True, True, True, None, None),
-    'boot_timeout': (True, True, True, True, None, int),
-    'boot_ftp_host': (True, True, True, True, None, to_unicode),
-    'boot_ftp_username': (True, True, True, True, None, to_unicode),
-    'boot_ftp_password': (True, True, True, True, None, to_unicode),
-    'boot_ftp_insfile': (True, True, True, True, None, to_unicode),
-    'boot_removable_media': (True, True, True, True, None, to_unicode),
-    'boot_removable_media_type': (True, True, True, True, None, None),
-    'boot_configuration_selector': (True, True, True, True, None, int),
-    'boot_record_lba': (True, True, True, True, None, None),
-    'access_global_performance_data': (True, True, True, True, None, None),
-    'permit_cross_partition_commands': (True, True, True, True, None, None),
-    'access_basic_counter_set': (True, True, True, True, None, None),
-    'access_problem_state_counter_set': (True, True, True, True, None, None),
-    'access_crypto_activity_counter_set': (True, True, True, True, None, None),
-    'access_extended_counter_set': (True, True, True, True, None, None),
-    'access_coprocessor_group_set': (True, True, True, True, None, None),
-    'access_basic_sampling': (True, True, True, True, None, None),
-    'access_diagnostic_sampling': (True, True, True, True, None, None),
-    'permit_des_key_import_functions': (True, True, True, True, None, None),
-    'permit_aes_key_import_functions': (True, True, True, True, None, None),
-    'ssc_host_name': (True, True, True, True, None, to_unicode),
-    'ssc_ipv4_gateway': (True, True, True, True, None, to_unicode),
-    'ssc_dns_servers': (True, True, True, True, None, to_unicode),
-    'ssc_master_userid': (True, True, True, True, None, to_unicode),
-    'ssc_master_pw': (True, True, True, True, None, to_unicode),
+        # Note: Provided in 'name' module parm
+        False, True, True, True, None, None,
+        True, None),
+    'description': (
+        True, True, True, True, None, to_unicode,
+        False, ''),
+    'short_name': (
+        True, True, True, False, None, None,
+        False, SPECIAL_DEFAULT),
+    'partition_id': (
+        True, True, True, False, None, None,
+        required_partition_id, SPECIAL_DEFAULT),
+    'autogenerate_partition_id': (
+        True, True, True, False, None, None,
+        False, True),
+    'ifl_processors': (
+        True, True, True, True, None, int,
+        required_ifl_processors, 0),
+    'cp_processors': (
+        True, True, True, True, None, int,
+        required_cp_processors, 0),
+    'processor_mode': (
+        True, True, True, False, None, None,
+        False, 'shared'),
+    'initial_memory': (
+        True, True, True, True, None, int,
+        True, None),
+    'maximum_memory': (
+        True, True, True, False, None, int,
+        True, None),
+    'reserve_resources': (
+        True, True, True, True, None, None,
+        False, False),
+    'boot_device': (
+        True, True, True, True, None, None,
+        False, 'none'),
+    'boot_timeout': (
+        True, True, True, True, None, int,
+        False, 60),
+    'boot_ftp_host': (
+        True, True, True, True, None, to_unicode,
+        required_boot_ftp, None),
+    'boot_ftp_username': (
+        True, True, True, True, None, to_unicode,
+        required_boot_ftp, None),
+    'boot_ftp_password': (
+        True, True, True, True, None, to_unicode,
+        required_boot_ftp, None),
+    'boot_ftp_insfile': (
+        True, True, True, True, None, to_unicode,
+        required_boot_ftp, None),
+    'boot_removable_media': (
+        True, True, True, True, None, to_unicode,
+        required_boot_removable_media, None),
+    'boot_removable_media_type': (
+        True, True, True, True, None, None,
+        required_boot_removable_media, None),
+    'boot_configuration_selector': (
+        True, True, True, True, None, int,
+        False, 0),
+    'boot_record_lba': (
+        True, True, True, True, None, None,
+        False, 0),
+    'access_global_performance_data': (
+        True, True, True, True, None, None,
+        False, False),
+    'permit_cross_partition_commands': (
+        True, True, True, True, None, None,
+        False, False),
+    'access_basic_counter_set': (
+        True, True, True, True, None, None,
+        False, False),
+    'access_problem_state_counter_set': (
+        True, True, True, True, None, None,
+        False, False),
+    'access_crypto_activity_counter_set': (
+        True, True, True, True, None, None,
+        False, False),
+    'access_extended_counter_set': (
+        True, True, True, True, None, None,
+        False, False),
+    'access_coprocessor_group_set': (
+        True, True, True, True, None, None,
+        False, False),
+    'access_basic_sampling': (
+        True, True, True, True, None, None,
+        False, False),
+    'access_diagnostic_sampling': (
+        True, True, True, True, None, None,
+        False, False),
+    'permit_des_key_import_functions': (
+        True, True, True, False, None, None,
+        False, True),
+    'permit_aes_key_import_functions': (
+        True, True, True, False, None, None,
+        False, True),
+    'permit_ecc_key_import_functions': (
+        # Was added in API version 3.2 (HMC 2.15.0)
+        True, True, True, True, None, None,
+        False, True),
+    'ssc_host_name': (
+        True, True, True, True, None, to_unicode,
+        required_type_ssc, SPECIAL_DEFAULT),
+    'ssc_ipv4_gateway': (
+        True, True, True, True, None, to_unicode,
+        False, None),
+    'ssc_ipv6_gateway': (
+        # Was added in HMC 2.14.0
+        True, True, True, True, None, to_unicode,
+        False, None),
+    'ssc_dns_servers': (
+        True, True, True, True, None, to_unicode,
+        False, []),
+    'ssc_master_userid': (
+        True, True, True, True, None, to_unicode,
+        required_type_ssc, SPECIAL_DEFAULT),
+    'ssc_master_pw': (
+        True, True, True, True, None, to_unicode,
+        required_type_ssc, SPECIAL_DEFAULT),
+    'secure_boot': (
+        # Added in SE/CPC 2.15.0
+        True, True, True, True, None, None,
+        False, False),
 
     # read-only properties:
-    'object_uri': (False, False, False, None, None, None),
-    'object_id': (False, False, False, None, None, None),
-    'parent': (False, False, False, None, None, None),
-    'class': (False, False, False, None, None, None),
-    'status': (False, False, False, None, None, None),
-    'has_unacceptable_status': (False, False, False, None, None, None),
-    'is_locked': (False, False, False, None, None, None),
-    'os_name': (False, False, False, None, None, None),
-    'os_type': (False, False, False, None, None, None),
-    'os_version': (False, False, False, None, None, None),
-    'degraded_adapters': (False, False, False, None, None, None),
-    'current_ifl_processing_weight': (False, False, False, None, None, None),
-    'current_cp_processing_weight': (False, False, False, None, None, None),
-    'reserved_memory': (False, False, False, None, None, None),
-    'auto_start': (False, False, False, None, None, None),
-    'boot_iso_image_name': (False, False, False, None, None, None),
-    'threads_per_processor': (False, False, False, None, None, None),
-    'virtual_function_uris': (False, False, False, None, None, None),
-    'nic_uris': (False, False, False, None, None, None),
-    'hba_uris': (False, False, False, None, None, None),
+    'object_uri': (
+        False, False, False, None, None, None,
+        False, SPECIAL_DEFAULT),
+    'object_id': (
+        False, False, False, None, None, None,
+        False, SPECIAL_DEFAULT),
+    'parent': (
+        False, False, False, None, None, None,
+        False, SPECIAL_DEFAULT),
+    'class': (
+        False, False, False, None, None, None,
+        False, 'partition'),
+    'status': (
+        False, False, False, None, None, None,
+        False, 'stopped'),
+    'has_unacceptable_status': (
+        False, False, False, None, None, None,
+        False, False),
+    'is_locked': (
+        False, False, False, None, None, None,
+        False, False),
+    'os_name': (
+        False, False, False, None, None, None,
+        False, ''),
+    'os_type': (
+        False, False, False, None, None, None,
+        False, ''),
+    'os_version': (
+        False, False, False, None, None, None,
+        False, ''),
+    'degraded_adapters': (
+        False, False, False, None, None, None,
+        False, []),
+    'current_ifl_processing_weight': (
+        False, False, False, None, None, None,
+        False, 100),
+    'current_cp_processing_weight': (
+        False, False, False, None, None, None,
+        False, 100),
+    'reserved_memory': (
+        False, False, False, None, None, None,
+        False, SPECIAL_DEFAULT),
+    'auto_start': (
+        False, False, False, None, None, None,
+        False, False),
+    'secure_execution': (
+        # Added in SE/CPC 2.15.0
+        False, False, False, None, None, None,
+        False, None),
+    'boot_iso_image_name': (
+        # Note: Property is updated via mount/unmount operations
+        False, False, False, None, None, None,
+        False, None),
+    'threads_per_processor': (
+        False, False, False, None, None, None,
+        False, SPECIAL_DEFAULT),
+    'virtual_function_uris': (
+        False, False, False, None, None, None,
+        False, []),
+    'nic_uris': (
+        False, False, False, None, None, None,
+        False, []),
+    'hba_uris': (
+        False, False, False, None, None, None,
+        False, []),
+    'storage_group_uris': (
+        False, False, False, None, None, None,
+        False, []),
+    'tape_link_uris': (
+        # Was added in API version 3.10 (HMC 2.15.0)
+        False, False, False, None, None, None,
+        False, []),
+    'partition_link_uris': (
+        # Was added in API version 4.1 (HMC 2.16.0)
+        False, False, False, None, None, None,
+        False, []),
+    'available_features_list': (
+        False, False, False, None, None, None,
+        False, []),
 }
 
 
@@ -706,8 +980,8 @@ def process_properties(cpc, partition, params):
                 "Property {0!r} is not defined in the data model for "
                 "partitions.".format(prop_name))
 
-        allowed, create, update, update_while_active, eq_func, type_cast = \
-            ZHMC_PARTITION_PROPERTIES[prop_name]
+        allowed, create, update, update_while_active, eq_func, type_cast, \
+            required, default = ZHMC_PARTITION_PROPERTIES[prop_name]
 
         if not allowed:
             raise ParameterError(
@@ -923,6 +1197,24 @@ def process_properties(cpc, partition, params):
     return create_props, update_props, stop, crypto_changes
 
 
+def get_crypto_config(partition):
+    """
+    Return the value of the 'crypto-configuration' property of the Partition
+    object, and if not set return it initialized and empty.
+    """
+    ret_crypto_config = {
+        'crypto-adapter-uris': [],
+        'crypto-domain-configurations': [],
+    }
+    crypto_config = partition.properties.get('crypto-configuration')
+    if crypto_config:
+        ret_crypto_config['crypto-adapter-uris'].extend(
+            crypto_config.get('crypto-adapter-uris', []))
+        ret_crypto_config['crypto-domain-configurations'].extend(
+            crypto_config.get('crypto-domain-configurations', []))
+    return ret_crypto_config
+
+
 def change_crypto_config(partition, crypto_changes, check_mode):
     """
     Change the crypto configuration of the partition as specified.
@@ -942,6 +1234,18 @@ def change_crypto_config(partition, crypto_changes, check_mode):
         if not check_mode:
             partition.increase_crypto_config(add_adapters,
                                              add_domain_configs)
+        else:
+            crypto_config = get_crypto_config(partition)
+            adapter_uris = crypto_config['crypto-adapter-uris']
+            domain_configs = crypto_config['crypto-domain-configurations']
+            for _ad in add_adapters:
+                if _ad.uri not in adapter_uris:
+                    adapter_uris.append(_ad.uri)
+            for dc in add_domain_configs:
+                if dc not in domain_configs:
+                    domain_configs.append(dc)
+            partition.update_properties_local(
+                {'crypto-configuration': crypto_config})
         changed = True
 
     if change_domain_configs:
@@ -955,12 +1259,33 @@ def change_crypto_config(partition, crypto_changes, check_mode):
             if not check_mode:
                 partition.change_crypto_domain_config(domain_index,
                                                       access_mode)
+            else:
+                crypto_config = get_crypto_config(partition)
+                domain_configs = crypto_config['crypto-domain-configurations']
+                for dc in domain_configs:
+                    if dc['domain-index'] == domain_index:
+                        dc['access-mode'] = access_mode
+                partition.update_properties_local(
+                    {'crypto-configuration': crypto_config})
         changed = True
 
     if remove_adapters or remove_domain_indexes:
         if not check_mode:
             partition.decrease_crypto_config(remove_adapters,
                                              remove_domain_indexes)
+        else:
+            crypto_config = get_crypto_config(partition)
+            adapter_uris = crypto_config['crypto-adapter-uris']
+            domain_configs = crypto_config['crypto-domain-configurations']
+            for _ad in remove_adapters:
+                if _ad.uri in adapter_uris:
+                    adapter_uris.remove(_ad.uri)
+            for remove_di in remove_domain_indexes:
+                for i, dc in enumerate(domain_configs):
+                    if dc['domain-index'] == remove_di:
+                        del domain_configs[i]
+            partition.update_properties_local(
+                {'crypto-configuration': crypto_config})
         changed = True
 
     return changed
@@ -985,6 +1310,9 @@ def add_artificial_properties(
         * 'adapter-id'
 
     * 'virtual-functions': List of VirtualFunction objects of the partition.
+
+    * 'boot-storage-volume-name': Name of the object with the URI specified
+      in 'boot-storage-volume', or None.
 
     and if expand_storage_groups is True:
 
@@ -1054,6 +1382,17 @@ def add_artificial_properties(
         vfs_prop.append(dict(vf.properties))
     partition_properties['virtual-functions'] = vfs_prop
 
+    # Set 'boot-storage-volume-name'
+    bsv_uri = partition.prop('boot-storage-volume', None)
+    if bsv_uri:
+        sg_uri = bsv_uri.split('/storage-volumes/')[0]
+        storage_group = console.storage_groups.resource_object(sg_uri)
+        bsv = storage_group.storage_volumes.find(**{'element-uri': bsv_uri})
+        bsv_name = bsv.name
+    else:
+        bsv_name = None
+    partition_properties['boot-storage-volume-name'] = bsv_name
+
     if expand_storage_groups:
         sgs_prop = []
         for sg_uri in partition.properties['storage-group-uris']:
@@ -1118,6 +1457,108 @@ def add_artificial_properties(
             partition_properties['crypto-configuration'] = cc
 
 
+def create_check_mode_partition(cpc, create_props, update_props):
+    """
+    Create and return a fake local Partition object.
+
+    This is used when a partition needs to be created in check mode.
+
+    This function must be consistent with the behavior of the "Create Partition"
+    operation on the HMC. HTTP errors the HMC would return are indicated by
+    raising zhmcclient.HTTPError.
+    """
+
+    input_props = {}
+    input_props.update(create_props)
+    input_props.update(update_props)
+
+    missing_props = []
+
+    # Handle direct requiredness, direct defaults specified in prop defs
+    for prop_name in ZHMC_PARTITION_PROPERTIES:
+        prop_hmc_name = prop_name.replace('_', '-')
+        prop_defs = ZHMC_PARTITION_PROPERTIES[prop_name]
+        required = prop_defs[6]
+        default = prop_defs[7]
+
+        if not isinstance(required, types.FunctionType) and required and \
+                prop_hmc_name not in input_props:
+            missing_props.append(prop_name)
+
+        if default != SPECIAL_DEFAULT:
+            input_props.setdefault(prop_hmc_name, default)
+
+    if missing_props:
+        raise ParameterError(
+            "Required partition properties missing in module input: {p}".
+            format(p=', '.join(missing_props)))
+
+    # Handle SPECIAL_DEFAULT properties
+    oid = '{0}'.format(uuid.uuid4())
+    uri = '/api/partitions/{0}'.format(oid)
+    input_props['object-id'] = oid
+    input_props['object-uri'] = uri
+    input_props['parent'] = cpc.uri
+    input_props['reserved-memory'] = \
+        input_props['maximum-memory'] - input_props['initial-memory']
+
+    # Note: If the partition has never been activated, 0 is returned. After the
+    # initial activation, the value is controlled by the SMT setting in the OS.
+    # Since we cannot simulate an OS in check mode, we always return 0.
+    input_props['threads-per-processor'] = 0
+
+    # TODO: Use a default for 'partition-id' that is guaranteed unique in CPC
+    if input_props['autogenerate-partition-id']:
+        input_props['partition-id'] = 'FF'
+
+    # TODO: Use a default for 'short-name' that is guaranteed unique in CPC
+    name = input_props['name']
+    input_props['short-name'] = \
+        '{0}{1:04X}'.format(name, random.randint(0, 16 ^ 4))
+
+    # Handle function-based requiredness specified in prop defs
+    for prop_name in ZHMC_PARTITION_PROPERTIES:
+        prop_hmc_name = prop_name.replace('_', '-')
+        prop_defs = ZHMC_PARTITION_PROPERTIES[prop_name]
+        required = prop_defs[6]
+
+        if isinstance(required, types.FunctionType):
+            required_ = required(input_props)
+            if required_ and prop_hmc_name not in input_props:
+                missing_props.append(prop_name)
+
+    if required_boot_ftp(input_props):
+        if input_props['boot-ftp-host'] is None:
+            missing_props.append('boot_ftp_host')
+        if input_props['boot-ftp-username'] is None:
+            missing_props.append('boot_ftp_username')
+        if input_props['boot-ftp-password'] is None:
+            missing_props.append('boot_ftp_password')
+        if input_props['boot-ftp-insfile'] is None:
+            missing_props.append('boot_ftp_insfile')
+
+    if required_boot_removable_media(input_props):
+        if input_props['boot-removable-media'] is None:
+            missing_props.append('boot_removable_media')
+        if input_props['boot-removable-media-type'] is None:
+            missing_props.append('boot_removable_media_type')
+
+    if required_boot_storage_adapter(input_props):
+        if input_props['boot-logical-unit-number'] == '':
+            missing_props.append('boot_logical_unit_number')
+        if input_props['boot-world-wide-port-name'] == '':
+            missing_props.append('boot_world_wide_port_name')
+
+    if missing_props:
+        raise ParameterError(
+            "Required partition properties missing in module input: {p}".
+            format(p=', '.join(missing_props)))
+
+    partition = cpc.partitions.resource_object(oid, props=input_props)
+
+    return partition
+
+
 def ensure_active(params, check_mode):
     """
     Ensure that the partition exists, is active or degraded, and has the
@@ -1156,25 +1597,23 @@ def ensure_active(params, check_mode):
         if not partition:
             # It does not exist. Create it and update it if there are
             # update-only properties.
+            create_props, update_props, stop, crypto_changes = \
+                process_properties(cpc, partition, params)
+            update2_props = {}
+            for name, value in update_props.items():
+                if name not in create_props:
+                    update2_props[name] = value
             if not check_mode:
-                create_props, update_props, stop, crypto_changes = \
-                    process_properties(cpc, partition, params)
                 partition = cpc.partitions.create(create_props)
-                update2_props = {}
-                for name, value in update_props.items():
-                    if name not in create_props:
-                        update2_props[name] = value
                 if update2_props:
                     partition.update_properties(update2_props)
-                # We refresh the properties after the update, in case an
-                # input property value gets changed (for example, the
-                # partition does that with memory properties).
-                partition.pull_full_properties()
                 if crypto_changes:
                     change_crypto_config(partition, crypto_changes, check_mode)
+                # Properties are refreshed further down
             else:
-                # TODO: Show props in module result also in check mode.
-                pass
+                # Create a Partition object locally
+                partition = create_check_mode_partition(
+                    cpc, create_props, update2_props)
             changed = True
         else:
             # It exists. Stop if needed due to property update requirements,
@@ -1182,6 +1621,8 @@ def ensure_active(params, check_mode):
             # properties.
             create_props, update_props, stop, crypto_changes = \
                 process_properties(cpc, partition, params)
+            # Note: create_props in this case only contains 'name' and can be
+            # ignored.
             if update_props:
                 if not check_mode:
                     if stop:
@@ -1189,34 +1630,36 @@ def ensure_active(params, check_mode):
                     else:
                         wait_for_transition_completion(partition)
                     partition.update_properties(update_props)
-                    # We refresh the properties after the update, in case an
-                    # input property value gets changed (for example, the
-                    # partition does that with memory properties).
-                    partition.pull_full_properties()
+                    # Properties are refreshed further down
                 else:
-                    # TODO: Show updated props in mod.result also in chk.mode
-                    pass
+                    # Update the local object's properties
+                    partition.update_properties_local(update_props)
                 changed = True
             if crypto_changes:
                 changed |= change_crypto_config(partition, crypto_changes,
                                                 check_mode)
 
-        if partition:
-            changed |= start_partition(partition, check_mode)
+        if not partition:
+            raise AssertionError()
 
-        if partition and not check_mode:
+        changed |= start_partition(partition, check_mode)
+
+        if not check_mode:
+
+            # Properties are refreshed only when not in check mode, because
+            # in check mode we have local (client-side) changes that are not
+            # in the HMC.
             partition.pull_full_properties()
+
             status = partition.get_property('status')
             if status not in ('active', 'degraded'):
                 raise StatusError(
                     "Could not get partition {0!r} into an active state, "
                     "status is: {1!r}".format(partition.name, status))
 
-        if partition:
-            result = dict(partition.properties)
-            add_artificial_properties(
-                result, partition, expand_storage_groups,
-                expand_crypto_adapters)
+        result = dict(partition.properties)
+        add_artificial_properties(
+            result, partition, expand_storage_groups, expand_crypto_adapters)
 
         return changed, result
 
@@ -1262,45 +1705,61 @@ def ensure_stopped(params, check_mode):
         if not partition:
             # It does not exist. Create it and update it if there are
             # update-only properties.
+            create_props, update_props, stop, crypto_changes = \
+                process_properties(cpc, partition, params)
+            update2_props = {}
+            for name, value in update_props.items():
+                if name not in create_props:
+                    update2_props[name] = value
             if not check_mode:
-                create_props, update_props, stop, crypto_changes = \
-                    process_properties(cpc, partition, params)
                 partition = cpc.partitions.create(create_props)
-                update2_props = {}
-                for name, value in update_props.items():
-                    if name not in create_props:
-                        update2_props[name] = value
                 if update2_props:
                     partition.update_properties(update2_props)
-                if crypto_changes:
-                    change_crypto_config(partition, crypto_changes, check_mode)
+                # Properties are refreshed further down
+            else:
+                # Create a Partition object locally
+                partition = create_check_mode_partition(
+                    cpc, create_props, update2_props)
             changed = True
+            if crypto_changes:
+                change_crypto_config(partition, crypto_changes, check_mode)
         else:
             # It exists. Stop it and update its properties.
             create_props, update_props, stop, crypto_changes = \
                 process_properties(cpc, partition, params)
+            # Note: create_props in this case only contains 'name' and can be
+            # ignored.
             changed |= stop_partition(partition, check_mode)
             if update_props:
                 if not check_mode:
                     partition.update_properties(update_props)
+                    # Properties are refreshed further down
+                else:
+                    # Update the local object's properties
+                    partition.update_properties_local(update_props)
                 changed = True
             if crypto_changes:
                 changed |= change_crypto_config(partition, crypto_changes,
                                                 check_mode)
 
-        if partition and not check_mode:
+        if not partition:
+            raise AssertionError()
+
+        if not check_mode:
+            # Properties are refreshed only when not in check mode, because
+            # in check mode we have local (client-side) changes that are not
+            # in the HMC.
             partition.pull_full_properties()
+
             status = partition.get_property('status')
             if status not in ('stopped'):
                 raise StatusError(
                     "Could not get partition {0!r} into a stopped state, "
                     "status is: {1!r}".format(partition.name, status))
 
-        if partition:
-            result = dict(partition.properties)
-            add_artificial_properties(
-                result, partition, expand_storage_groups,
-                expand_crypto_adapters)
+        result = dict(partition.properties)
+        add_artificial_properties(
+            result, partition, expand_storage_groups, expand_crypto_adapters)
 
         return changed, result
 

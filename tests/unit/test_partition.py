@@ -22,6 +22,11 @@ __metaclass__ = type
 
 import unittest
 import mock
+import re
+import pdb
+import pytest
+import zhmcclient
+import zhmcclient_mock
 
 from plugins.modules import zhmc_partition
 from plugins.module_utils import common as module_utils
@@ -307,6 +312,385 @@ class TestZhmcPartitionPerformTask(unittest.TestCase):
         # Assert no call to the other action functions
         assert(ensure_active_func.called is False)
         assert(ensure_stopped_func.called is False)
+
+
+# Faked CPC in DPM mode that is used for all tests
+# (with property names as specified in HMC data model)
+FAKED_CPC_1_OID = 'fake-cpc-1'
+FAKED_CPC_1_URI = '/api/cpcs/' + FAKED_CPC_1_OID
+FAKED_CPC_1 = {
+    'object-id': FAKED_CPC_1_OID,
+    'object-uri': FAKED_CPC_1_URI,
+    'class': 'cpc',
+    'name': 'cpc-name-1',
+    'description': 'CPC #1 in DPM mode',
+    'status': 'active',
+    'dpm-enabled': True,
+    'is-ensemble-member': False,
+    'iml-mode': 'dpm',
+}
+
+# FakedSession() init arguments
+FAKED_SESSION_KWARGS = dict(
+    host='fake-host',
+    hmc_name='faked-hmc-name',
+    hmc_version='2.13.1',
+    api_version='1.8'
+)
+
+
+def mocked_cpc():
+    """
+    Create and return a mocked Cpc object.
+    """
+    session = zhmcclient_mock.FakedSession(**FAKED_SESSION_KWARGS)
+    client = zhmcclient.Client(session)
+    session.hmc.cpcs.add(FAKED_CPC_1)
+    cpcs = client.cpcs.list()
+    assert len(cpcs) == 1
+    cpc = cpcs[0]
+    return cpc
+
+
+PARTITION_CREATE_CHECK_MODE_PARTITION_TESTCASES = [
+    # Testcases for test_partition_create_check_mode_partition()
+    # The list items are tuples with the following items:
+    # - desc (string): description of the testcase.
+    # - create_props (dict): HMC-formatted properties for the create_props
+    #   parameter of the function.
+    # - update_props (dict): HMC-formatted properties for the update_props
+    #   parameter of the function.
+    # - exp_props (dict): HMC-formatted properties for expected
+    #   properties of created partition.
+    # - exp_exc_type: Expected exception type, or None for no exc. expected.
+    # - exp_exc_pattern: Expected exception message pattern, or None for no
+    #   exception expected.
+    # - run: Indicates whether the test should be run, or 'pdb' for debugger.
+
+    (
+        "No input properties",
+        {},
+        {},
+        None,
+        module_utils.ParameterError,
+        "Required.*properties.*missing.* "
+        "(?=.* name)(?=.* initial_memory)(?=.* maximum_memory)",
+        True,
+    ),
+    (
+        "Memory-related required input properties missing",
+        {
+            'name': 'name1',
+            'ifl-processors': 1,
+        },
+        {},
+        None,
+        module_utils.ParameterError,
+        "Required.*properties.*missing.* "
+        "(?=.* initial_memory)(?=.* maximum_memory)",
+        True,
+    ),
+    (
+        "Minimum set of required input properties as create_props",
+        {
+            'name': 'name1',
+            'ifl-processors': 1,
+            'initial-memory': 4096,
+            'maximum-memory': 4096,
+        },
+        {},
+        {
+            'name': 'name1',
+            'ifl-processors': 1,
+            'initial-memory': 4096,
+            'maximum-memory': 4096,
+            # some defaulted values:
+            'type': 'linux',
+            'cp-processors': 0,
+            'reserved-memory': 0,
+            'threads-per-processor': 0,
+        },
+        None,
+        None,
+        True,
+    ),
+    (
+        "SSC partition with missing required SSC-specific properties",
+        {
+            'name': 'name1',
+            'ifl-processors': 1,
+            'initial-memory': 4096,
+            'maximum-memory': 4096,
+            'type': 'ssc',
+        },
+        {},
+        None,
+        module_utils.ParameterError,
+        "Required.*properties.*missing.* "
+        "(?=.* ssc_host_name)(?=.* ssc_master_userid)(?=.* ssc_master_pw)",
+        True,
+    ),
+    (
+        "SSC partition with all required SSC-specific properties",
+        {
+            'name': 'name1',
+            'ifl-processors': 1,
+            'initial-memory': 4096,
+            'maximum-memory': 8192,
+            'type': 'ssc',
+            'ssc-host-name': 'host1',
+            'ssc-master-userid': 'user1',
+            'ssc-master-pw': 'pw1',
+        },
+        {},
+        {
+            'name': 'name1',
+            'ifl-processors': 1,
+            'cp-processors': 0,
+            'initial-memory': 4096,
+            'maximum-memory': 8192,
+            'reserved-memory': 4096,
+            'type': 'ssc',
+            'ssc-host-name': 'host1',
+            'ssc-master-userid': 'user1',
+            'ssc-master-pw': 'pw1',
+        },
+        None,
+        None,
+        True,
+    ),
+    (
+        "Partition with auto-generate of partition ID disabled and missing "
+        "required partition ID property",
+        {
+            'name': 'name1',
+            'ifl-processors': 1,
+            'initial-memory': 4096,
+            'maximum-memory': 4096,
+            'autogenerate-partition-id': False,
+        },
+        {},
+        None,
+        module_utils.ParameterError,
+        "Required.*properties.*missing.* partition_id",
+        True,
+    ),
+    (
+        "Partition with auto-generate of partition ID disabled and required "
+        "partition ID property",
+        {
+            'name': 'name1',
+            'ifl-processors': 1,
+            'initial-memory': 4096,
+            'maximum-memory': 4096,
+            'autogenerate-partition-id': False,
+            'partition-id': '42',
+        },
+        {},
+        {
+            'name': 'name1',
+            'ifl-processors': 1,
+            'cp-processors': 0,
+            'initial-memory': 4096,
+            'maximum-memory': 4096,
+            'autogenerate-partition-id': False,
+            'partition-id': '42',
+        },
+        None,
+        None,
+        True,
+    ),
+    (
+        "FTP boot partition with missing required FTP boot specific properties",
+        {
+            'name': 'name1',
+            'ifl-processors': 1,
+            'initial-memory': 4096,
+            'maximum-memory': 4096,
+            'boot-device': 'ftp',
+        },
+        {},
+        None,
+        module_utils.ParameterError,
+        "Required.*properties.*missing.* "
+        "(?=.* boot_ftp_host)(?=.* boot_ftp_username)(?=.* boot_ftp_password)"
+        "(?=.* boot_ftp_insfile)",
+        True,
+    ),
+    (
+        "FTP boot partition with all required FTP boot specific properties",
+        {
+            'name': 'name1',
+            'ifl-processors': 1,
+            'initial-memory': 4096,
+            'maximum-memory': 4096,
+            'boot-device': 'ftp',
+            'boot-ftp-host': 'host1',
+            'boot-ftp-username': 'user1',
+            'boot-ftp-password': 'pw1',
+            'boot-ftp-insfile': 'ins1',
+        },
+        {},
+        {
+            'name': 'name1',
+            'ifl-processors': 1,
+            'cp-processors': 0,
+            'initial-memory': 4096,
+            'maximum-memory': 4096,
+            'boot-device': 'ftp',
+            'boot-ftp-host': 'host1',
+            'boot-ftp-username': 'user1',
+            'boot-ftp-password': 'pw1',
+            'boot-ftp-insfile': 'ins1',
+        },
+        None,
+        None,
+        True,
+    ),
+    (
+        "removable-media boot partition with missing required boot properties",
+        {
+            'name': 'name1',
+            'ifl-processors': 1,
+            'initial-memory': 4096,
+            'maximum-memory': 4096,
+            'boot-device': 'removable-media',
+        },
+        {},
+        None,
+        module_utils.ParameterError,
+        "Required.*properties.*missing.* "
+        "(?=.* boot_removable_media)(?=.* boot_removable_media_type)",
+        True,
+    ),
+    (
+        "removable-media boot partition with all required boot properties",
+        {
+            'name': 'name1',
+            'ifl-processors': 1,
+            'initial-memory': 4096,
+            'maximum-memory': 4096,
+            'boot-device': 'removable-media',
+            'boot-removable-media': 'media1',
+            'boot-removable-media-type': 'usb',
+        },
+        {},
+        {
+            'name': 'name1',
+            'ifl-processors': 1,
+            'cp-processors': 0,
+            'initial-memory': 4096,
+            'maximum-memory': 4096,
+            'boot-device': 'removable-media',
+            'boot-removable-media': 'media1',
+            'boot-removable-media-type': 'usb',
+        },
+        None,
+        None,
+        True,
+    ),
+    (
+        "storage-adapter boot partition with missing required boot properties",
+        {
+            'name': 'name1',
+            'ifl-processors': 1,
+            'initial-memory': 4096,
+            'maximum-memory': 4096,
+            'boot-device': 'storage-adapter',
+        },
+        {},
+        None,
+        module_utils.ParameterError,
+        "Required.*properties.*missing.* "
+        "(?=.* boot_logical_unit_number)(?=.* boot_world_wide_port_name)",
+        True,
+    ),
+    (
+        "storage-adapter boot partition with all required boot properties",
+        {
+            'name': 'name1',
+            'ifl-processors': 1,
+            'initial-memory': 4096,
+            'maximum-memory': 4096,
+            'boot-device': 'storage-adapter',
+            'boot-logical-unit-number': '01',
+            'boot-world-wide-port-name': '02',
+        },
+        {},
+        {
+            'name': 'name1',
+            'ifl-processors': 1,
+            'cp-processors': 0,
+            'initial-memory': 4096,
+            'maximum-memory': 4096,
+            'boot-device': 'storage-adapter',
+            'boot-logical-unit-number': '01',
+            'boot-world-wide-port-name': '02',
+        },
+        None,
+        None,
+        True,
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "desc, create_props, update_props, exp_props, exp_exc_type, "
+    "exp_exc_pattern, run",
+    PARTITION_CREATE_CHECK_MODE_PARTITION_TESTCASES)
+def test_partition_create_check_mode_partition(
+        desc, create_props, update_props, exp_props, exp_exc_type,
+        exp_exc_pattern, run):
+    """
+    Test the create_check_mode_partition() function.
+    """
+
+    cpc = mocked_cpc()
+
+    if not run:
+        pytest.skip("Testcase disabled: {0}".format(desc))
+
+    if exp_exc_type:
+
+        with pytest.raises(exp_exc_type) as exc_info:
+
+            if run == 'pdb':
+                pdb.set_trace()
+
+            # The function to be tested
+            part_obj = zhmc_partition.create_check_mode_partition(
+                cpc, create_props, update_props)
+
+        exc = exc_info.value
+        exc_msg = str(exc)
+        assert re.match(exp_exc_pattern, exc_msg), \
+            "Unexpected message in exception {0}:\n" \
+            "  Expctd pattern: {1}\n" \
+            "  Actual message: {2}". \
+            format(exc.__class__.__name__, exp_exc_pattern, exc_msg)
+
+    else:
+
+        if run == 'pdb':
+            pdb.set_trace()
+
+        # The function to be tested
+        part_obj = zhmc_partition.create_check_mode_partition(
+            cpc, create_props, update_props)
+
+        act_props = dict(part_obj.properties)
+        if exp_props:
+            for prop_hmc_name in exp_props:
+
+                assert prop_hmc_name in act_props, \
+                    "Property {0} missing in result:\n" \
+                    "{1}".format(prop_hmc_name, act_props)
+
+                prop_value = act_props[prop_hmc_name]
+                exp_prop_value = exp_props[prop_hmc_name]
+                assert prop_value == exp_prop_value, \
+                    "Unexpected value for property {0}: {1}". \
+                    format(prop_hmc_name, exp_prop_value)
 
 
 # The other functions of the module are tested with function tests.
