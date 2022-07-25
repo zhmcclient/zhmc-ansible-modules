@@ -20,16 +20,12 @@ Releases
 ========
 
 
-Version 1.1.1-dev1
-------------------
+Version 1.1.1
+-------------
 
-Released: not yet
+Released: 2022-07-25
 
 Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
-
-**Incompatible changes:**
-
-**Deprecations:**
 
 **Bug fixes:**
 
@@ -44,14 +40,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Added support for Ansible 6.0.0 by adding an ignore-2.13.txt file to the
   sanity tests. (issue #533)
-
-**Cleanup:**
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 1.1.0
