@@ -2,7 +2,7 @@ namespace: ibm
 
 name: ibm_zhmc
 
-version: 1.1.1
+version: 1.1.2-dev1
 
 readme: README.md
 
