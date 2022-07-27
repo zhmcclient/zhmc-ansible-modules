@@ -803,6 +803,7 @@ hmc_definition:
             boot-logical-unit-number: ''
             boot-network-device: null
             boot-os-specific-parameters: ''
+            boot-load-parameters: ''
             boot-record-lba: '0'
             boot-removable-media-type: null
             boot-removable-media: null
@@ -848,6 +849,8 @@ hmc_definition:
             status: stopped
             threads-per-processor: 1
             type: linux
+            ssc-ipv4-gateway: null
+            ssc-ipv6-gateway: null
             available-features-list:
               - name: dpm-storage-management
                 description: The DPM storage management approach in which FCP and FICON
@@ -894,6 +897,7 @@ hmc_definition:
             boot-logical-unit-number: ''
             boot-network-device: null
             boot-os-specific-parameters: ''
+            boot-load-parameters: ''
             boot-record-lba: '0'
             boot-removable-media-type: null
             boot-removable-media: null
@@ -939,6 +943,8 @@ hmc_definition:
             status: stopped
             threads-per-processor: 1
             type: ssc
+            ssc-ipv4-gateway: 10.11.12.13
+            ssc-ipv6-gateway: "10::11"
             available-features-list:
               - name: dpm-storage-management
                 description: The DPM storage management approach in which FCP and FICON

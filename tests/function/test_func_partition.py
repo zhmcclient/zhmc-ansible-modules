@@ -127,6 +127,8 @@ FAKED_PARTITION_1 = {
     'boot-removable-media': None,
     'boot-removable-media-type': None,
     'boot-timeout': 60,
+    'boot-storage-volume': None,
+    'boot-storage-volume-name': None,
     'boot-storage-device': None,
     'boot-logical-unit-number': '',
     'boot-world-wide-port-name': '',
@@ -1384,11 +1386,11 @@ class TestPartition(object):
             self.setup_crypto_adapter(adapter_props)
 
         # Set some expectations for this test from its parametrization
-        exp_status = (PARTITION_STATUS_FROM_STATE[initial_state] if check_mode
-                      else PARTITION_STATUS_FROM_STATE[desired_state])
+        exp_status = PARTITION_STATUS_FROM_STATE[desired_state]
 
         # Adjust expected changes - the exp_changed argument only indicates the
-        # expectation for changes to the crypto config property.
+        # expectation for changes to the crypto config property, so we add
+        # the effect of other changes.
         if desired_state != initial_state:
             exp_changed = True
 
@@ -1433,24 +1435,23 @@ class TestPartition(object):
         changed, part_props = get_module_output(mod_obj)
         assert changed == exp_changed
         assert part_props != {}
-        if not check_mode:
-            assert part_props['status'] == exp_status
-            assert part_props['name'] == params['name']
-            for prop_name in exp_properties:
+        assert part_props['status'] == exp_status
+        assert part_props['name'] == params['name']
+        for prop_name in exp_properties:
 
-                # Because we built the expected properties from the initial
-                # properties (adding the crypto_config property we test),
-                # we need to skip the 'status' property (it would still show
-                # the initial value).
-                if prop_name == 'status':
-                    continue
+            # Because we built the expected properties from the initial
+            # properties (adding the crypto_config property we test),
+            # we need to skip the 'status' property (it would still show
+            # the initial value).
+            if prop_name == 'status':
+                continue
 
-                hmc_prop_name = prop_name.replace('_', '-')
-                assert hmc_prop_name in part_props
-                result_property = part_props[hmc_prop_name]
-                exp_property = exp_properties[prop_name]
-                assert result_property == exp_property, \
-                    "Property: {0}".format(prop_name)
+            hmc_prop_name = prop_name.replace('_', '-')
+            assert hmc_prop_name in part_props
+            result_property = part_props[hmc_prop_name]
+            exp_property = exp_properties[prop_name]
+            assert result_property == exp_property, \
+                "Property: {0}".format(prop_name)
 
         # Assert the partition resource
         if not check_mode:

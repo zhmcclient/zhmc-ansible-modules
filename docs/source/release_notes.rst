@@ -39,6 +39,22 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   duplicating log entries. This only affected the end2end tests, but not when
   used in Ansible playbooks. (issue #552)
 
+* In the zhmc_partition module, fixed that the artificial property
+  'boot-storage-volume-name' was not included in the result.
+  (related to issue #550)
+
+* In the zhmc_partition module, fixed the support for check mode and added
+  tests. (issue #550)
+
+* In the zhmc_partition module, added missing z14, z15 and z16 input properties:
+  'boot_storage_volume', 'boot_storage_volume_name', 'boot_load_parameters',
+  'permit_ecc_key_import_functions', 'ssc_ipv6_gateway', 'secure_boot',
+  'secure_execution', 'storage_group_uris', 'tape_link_uris',
+  'partition_link_uris', 'available_features_list'. (related to issue #550)
+
+* Test: Added missing z14 partition properties to the mock definition file
+  tests/end2end/mocked_hmc_z14.yaml. (related to issue #550)
+
 **Enhancements:**
 
 * Added a new 'zhmc_partition_list' Ansible module for listing partitions on
