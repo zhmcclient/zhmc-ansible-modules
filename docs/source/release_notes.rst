@@ -49,6 +49,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Test: Added missing z14 partition properties to the mock definition file
   tests/end2end/mocked_hmc_z14.yaml. (related to issue #550)
 
+* Fixed a flake8 AttributeError when using importlib-metadata 5.0.0 on
+  Python >=3.7, by pinning importlib-metadata to <5.0.0 on these Python
+  versions.
+
 **Enhancements:**
 
 **Cleanup:**
