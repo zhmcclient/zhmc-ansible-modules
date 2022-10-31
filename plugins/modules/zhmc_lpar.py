@@ -38,7 +38,8 @@ description:
   - Update modifiable properties of an active LPAR.
   - Activate an LPAR and update its properties.
   - Load an LPAR and update its properties.
-  - Deactivate an LPAR.
+  - Deactivate an LPAR using the 'Deactivate Logical Partition' operation.
+  - Initialize for load using the 'Reset Clear' or 'Reset Normal' operations.
 author:
   - Andreas Maier (@andy-maier)
 requirements:
@@ -111,18 +112,34 @@ options:
   state:
     description:
       - "The desired state for the LPAR:"
-      - "* C(inactive): Ensures that the LPAR is inactive (i.e. status is
-         'not-activated'). Properties cannot be updated. The LPAR is
-         deactivated if needed."
-      - "* C(active): Ensures that the LPAR is at least activated (i.e. status
+      - "* C(inactive): Ensures that the LPAR is inactive (i.e. status
+         'not-activated'), unless the LPAR is currently operating and the
+         C(force) parameter was not set to True. Properties cannot be updated.
+         The LPAR is deactivated if needed."
+      - "* C(reset_clear): Initialize the LPAR for loading by performing a
+         'Reset Clear' operation (clearing its pending interruptions,
+         resetting its channel subsystem, resetting its processors, clearing
+         its memory), unless the LPAR is currently loaded (i.e. status is
+         'operating' or 'acceptable') and the C(force) parameter was not set to
+         True. Properties cannot be updated. After successful execution of the
+         'Reset Normal' operation, the LPAR will be inactive (i.e. status
+         'not-activated')."
+      - "* C(reset_normal): Initialize the LPAR for loading by performing a
+         'Reset Normal' operation (clearing its pending interruptions,
+         resetting its channel subsystem, resetting its processors), unless the
+         LPAR is currently loaded (i.e. status is 'operating' or 'acceptable')
+         and the C(force) parameter was not set to True. Properties cannot be
+         updated. After successful execution of the 'Reset Normal' operation,
+         the LPAR  will be inactive (i.e. status 'not-activated')."
+      - "* C(active): Ensures that the LPAR is at least active (i.e. status
          is 'not-operating', 'operating' or 'acceptable'), and then ensures
          that the LPAR properties have the specified values. The LPAR is
-         activated if needed. If it was already loaded or if auto-load is
-         set, the LPAR will end up loaded."
+         activated if needed. If auto-load is set in the activation profile,
+         the LPAR will also be loaded."
       - "* C(loaded): Ensures that the LPAR is loaded (i.e. status is
          'operating' or 'acceptable'), and then ensures that the LPAR properties
          have the specified values. The LPAR is first activated if needed, and
-         then loaded if needed (when auto-load is not set)."
+         then loaded if needed."
       - "* C(set): Ensures that the LPAR properties have the specified
          values. Requires that the LPAR is at least active (i.e. status is
          'not-operating', 'operating' or 'acceptable') but does not activate
@@ -131,7 +148,8 @@ options:
       - "In all cases, the LPAR must exist."
     type: str
     required: true
-    choices: ['inactive', 'active', 'loaded', 'set', 'facts']
+    choices: ['inactive', 'reset_clear', 'reset_normal', 'active', 'loaded',
+              'set', 'facts']
   activation_profile_name:
     description:
       - "The name of the image or load activation profile to be used when the
@@ -147,17 +165,28 @@ options:
     default: null
   force:
     description:
-      - "Controls what happens when the LPAR was already active:"
-      - "If True, the parameters from the specified or defaulted image or load
-         activation profile will be applied."
-      - "If False, the parameters from the previously used activation profile
-         remain applied and will not be changed. The previously used activation
-         profile is shown in the 'last-used-activation-profile' property of the
-         LPAR."
-      - "TODO: Verify these statements"
+      - "Controls whether operations that change the LPAR status are performed
+        when the LPAR is currently loaded (i.e. status 'operating' or
+        'acceptable'):"
+      - "If True, such operations are performed regardless of the current LPAR
+        status."
+      - "If False, such operations are performed only if the LPAR is not
+        currently loaded, and are rejected otherwise."
     type: bool
     required: false
     default: false
+  os_ipl_token:
+    description:
+      - "Setting this parameter for C(state=reset_clear) or
+        C(state=reset_normal) requests that the corresponding HMC operations
+        only be performed if the provided value matches the current value of
+        the 'os-ipl-token' property of the LPAR, and be rejected otherwise.
+        Note that the 'os-ipl-token' property of the LPAR is set by the
+        operating system and is set only by some operating systems, such as
+        z/OS. This parameter is ignored for other C(state) values."
+    type: str
+    required: false
+    default: null
   properties:
     description:
       - "Dictionary with new values for the LPAR properties, for
@@ -230,6 +259,24 @@ EXAMPLES = """
     cpc_name: "{{ my_cpc_name }}"
     name: "{{ my_lpar_name }}"
     state: loaded
+  register: lpar1
+
+- name: Ensure the LPAR is initialized for loading, clearing its memory
+  zhmc_lpar:
+    hmc_host: "{{ my_hmc_host }}"
+    hmc_auth: "{{ my_hmc_auth }}"
+    cpc_name: "{{ my_cpc_name }}"
+    name: "{{ my_lpar_name }}"
+    state: reset_clear
+  register: lpar1
+
+- name: Ensure the LPAR is initialized for loading, not clearing its memory
+  zhmc_lpar:
+    hmc_host: "{{ my_hmc_host }}"
+    hmc_auth: "{{ my_hmc_auth }}"
+    cpc_name: "{{ my_cpc_name }}"
+    name: "{{ my_lpar_name }}"
+    state: reset_normal
   register: lpar1
 
 - name: Ensure the CP sharing weight of the LPAR is 30
@@ -751,6 +798,106 @@ def ensure_inactive(params, check_mode):
         session.logoff()
 
 
+def perform_reset_clear(params, check_mode):
+    """
+    Perform the 'Reset Clear' HMC operation.
+    No properties can be updated.
+
+    Raises:
+      ParameterError: An issue with the module parameters.
+      StatusError: An issue with the LPAR status.
+      zhmcclient.Error: Any zhmcclient exception can happen.
+    """
+
+    host = params['hmc_host']
+    userid, password, ca_certs, verify = get_hmc_auth(params['hmc_auth'])
+    cpc_name = params['cpc_name']
+    lpar_name = params['name']
+    force = params['force']
+    os_ipl_token = params['os_ipl_token']
+    _faked_session = params.get('_faked_session', None)
+
+    properties = params.get('properties', None)
+    if properties:
+        raise ParameterError(
+            "Properties must not be specified for state=reset_clear with "
+            "LPAR {0!r}.".format(lpar_name))
+
+    changed = False
+    result = {}
+
+    session = get_session(
+        _faked_session, host, userid, password, ca_certs, verify)
+    try:
+        client = zhmcclient.Client(session)
+        cpc = client.cpcs.find(name=cpc_name)
+        lpar = cpc.lpars.find(name=lpar_name)
+        # The default exception handling is sufficient for the above.
+
+        # If we got here, the LPAR exists.
+
+        # Perform the 'Reset Clear' operation on the LPAR.
+        if not check_mode:
+            lpar.reset_clear(force=force, os_ipl_token=os_ipl_token)
+        changed = True
+        result = {}
+
+        return changed, result
+
+    finally:
+        session.logoff()
+
+
+def perform_reset_normal(params, check_mode):
+    """
+    Perform the 'Reset Normal' HMC operation.
+    No properties can be updated.
+
+    Raises:
+      ParameterError: An issue with the module parameters.
+      StatusError: An issue with the LPAR status.
+      zhmcclient.Error: Any zhmcclient exception can happen.
+    """
+
+    host = params['hmc_host']
+    userid, password, ca_certs, verify = get_hmc_auth(params['hmc_auth'])
+    cpc_name = params['cpc_name']
+    lpar_name = params['name']
+    force = params['force']
+    os_ipl_token = params['os_ipl_token']
+    _faked_session = params.get('_faked_session', None)
+
+    properties = params.get('properties', None)
+    if properties:
+        raise ParameterError(
+            "Properties must not be specified for state=reset_normal with "
+            "LPAR {0!r}.".format(lpar_name))
+
+    changed = False
+    result = {}
+
+    session = get_session(
+        _faked_session, host, userid, password, ca_certs, verify)
+    try:
+        client = zhmcclient.Client(session)
+        cpc = client.cpcs.find(name=cpc_name)
+        lpar = cpc.lpars.find(name=lpar_name)
+        # The default exception handling is sufficient for the above.
+
+        # If we got here, the LPAR exists.
+
+        # Perform the 'Reset Clear' operation on the LPAR.
+        if not check_mode:
+            lpar.reset_normal(force=force, os_ipl_token=os_ipl_token)
+        changed = True
+        result = {}
+
+        return changed, result
+
+    finally:
+        session.logoff()
+
+
 def ensure_active(params, check_mode):
     """
     Ensure that the LPAR is active and has the specified properties.
@@ -998,6 +1145,8 @@ def perform_task(params, check_mode):
     """
     actions = {
         'inactive': ensure_inactive,
+        'reset_clear': perform_reset_clear,
+        'reset_normal': perform_reset_normal,
         'active': ensure_active,
         'loaded': ensure_loaded,
         'set': ensure_set,
@@ -1026,11 +1175,14 @@ def main():
         name=dict(required=True, type='str'),
         state=dict(
             required=True, type='str',
-            choices=['inactive', 'active', 'loaded', 'set', 'facts']),
+            choices=['inactive', 'reset_clear', 'reset_normal', 'active',
+                     'loaded', 'set', 'facts']),
         activation_profile_name=dict(
             required=False, type='str',
             default=DEFAULT_ACTIVATION_PROFILE_NAME),
         force=dict(required=False, type='bool', default=DEFAULT_FORCE),
+        os_ipl_token=dict(required=False, type='str', default=None),
+        # Note: os_ipl_token is not a secret
         properties=dict(required=False, type='dict', default={}),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),

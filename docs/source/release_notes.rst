@@ -106,7 +106,16 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   versions 2.14.1 and newer. The property is now provided with all HMC versions.
   (issue #549)
 
+* Added support for 'reset_clear' and 'reset_normal' state in the zhmc_lpar
+  module to support the "Reset Clear" and "Reset Normal" HMC operations.
+  Along with that, added support for a new optional 'os_ipl_token' input
+  parameter to support the respective HMC operation parameter.
+  (issue #556)
+
 **Cleanup:**
+
+* Clarified the description of input parameters of the zhmc_lpar module.
+  (part of issue #556)
 
 **Known issues:**
 

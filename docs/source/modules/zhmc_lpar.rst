@@ -20,7 +20,8 @@ Synopsis
 - Update modifiable properties of an active LPAR.
 - Activate an LPAR and update its properties.
 - Load an LPAR and update its properties.
-- Deactivate an LPAR.
+- Deactivate an LPAR using the 'Deactivate Logical Partition' operation.
+- Initialize for load using the 'Reset Clear' or 'Reset Normal' operations.
 
 
 Requirements
@@ -104,11 +105,15 @@ name
 state
   The desired state for the LPAR:
 
-  * ``inactive``: Ensures that the LPAR is inactive (i.e. status is 'not-activated'). Properties cannot be updated. The LPAR is deactivated if needed.
+  * ``inactive``: Ensures that the LPAR is inactive (i.e. status 'not-activated'), unless the LPAR is currently operating and the ``force`` parameter was not set to True. Properties cannot be updated. The LPAR is deactivated if needed.
 
-  * ``active``: Ensures that the LPAR is at least activated (i.e. status is 'not-operating', 'operating' or 'acceptable'), and then ensures that the LPAR properties have the specified values. The LPAR is activated if needed. If it was already loaded or if auto-load is set, the LPAR will end up loaded.
+  * ``reset_clear``: Initialize the LPAR for loading by performing a 'Reset Clear' operation (clearing its pending interruptions, resetting its channel subsystem, resetting its processors, clearing its memory), unless the LPAR is currently loaded (i.e. status is 'operating' or 'acceptable') and the ``force`` parameter was not set to True. Properties cannot be updated. After successful execution of the 'Reset Normal' operation, the LPAR will be inactive (i.e. status 'not-activated').
 
-  * ``loaded``: Ensures that the LPAR is loaded (i.e. status is 'operating' or 'acceptable'), and then ensures that the LPAR properties have the specified values. The LPAR is first activated if needed, and then loaded if needed (when auto-load is not set).
+  * ``reset_normal``: Initialize the LPAR for loading by performing a 'Reset Normal' operation (clearing its pending interruptions, resetting its channel subsystem, resetting its processors), unless the LPAR is currently loaded (i.e. status is 'operating' or 'acceptable') and the ``force`` parameter was not set to True. Properties cannot be updated. After successful execution of the 'Reset Normal' operation, the LPAR  will be inactive (i.e. status 'not-activated').
+
+  * ``active``: Ensures that the LPAR is at least active (i.e. status is 'not-operating', 'operating' or 'acceptable'), and then ensures that the LPAR properties have the specified values. The LPAR is activated if needed. If auto-load is set in the activation profile, the LPAR will also be loaded.
+
+  * ``loaded``: Ensures that the LPAR is loaded (i.e. status is 'operating' or 'acceptable'), and then ensures that the LPAR properties have the specified values. The LPAR is first activated if needed, and then loaded if needed.
 
   * ``set``: Ensures that the LPAR properties have the specified values. Requires that the LPAR is at least active (i.e. status is 'not-operating', 'operating' or 'acceptable') but does not activate the LPAR if that is not the case.
 
@@ -118,7 +123,7 @@ state
 
   | **required**: True
   | **type**: str
-  | **choices**: inactive, active, loaded, set, facts
+  | **choices**: inactive, reset_clear, reset_normal, active, loaded, set, facts
 
 
 activation_profile_name
@@ -135,16 +140,21 @@ activation_profile_name
 
 
 force
-  Controls what happens when the LPAR was already active:
+  Controls whether operations that change the LPAR status are performed when the LPAR is currently loaded (i.e. status 'operating' or 'acceptable'):
 
-  If True, the parameters from the specified or defaulted image or load activation profile will be applied.
+  If True, such operations are performed regardless of the current LPAR status.
 
-  If False, the parameters from the previously used activation profile remain applied and will not be changed. The previously used activation profile is shown in the 'last-used-activation-profile' property of the LPAR.
-
-  TODO: Verify these statements
+  If False, such operations are performed only if the LPAR is not currently loaded, and are rejected otherwise.
 
   | **required**: False
   | **type**: bool
+
+
+os_ipl_token
+  Setting this parameter for ``state=reset_clear`` or ``state=reset_normal`` requests that the corresponding HMC operations only be performed if the provided value matches the current value of the 'os-ipl-token' property of the LPAR, and be rejected otherwise. Note that the 'os-ipl-token' property of the LPAR is set by the operating system and is set only by some operating systems, such as z/OS. This parameter is ignored for other ``state`` values.
+
+  | **required**: False
+  | **type**: str
 
 
 properties
@@ -215,6 +225,24 @@ Examples
        cpc_name: "{{ my_cpc_name }}"
        name: "{{ my_lpar_name }}"
        state: loaded
+     register: lpar1
+
+   - name: Ensure the LPAR is initialized for loading, clearing its memory:
+     zhmc_lpar:
+       hmc_host: "{{ my_hmc_host }}"
+       hmc_auth: "{{ my_hmc_auth }}"
+       cpc_name: "{{ my_cpc_name }}"
+       name: "{{ my_lpar_name }}"
+       state: reset_clear
+     register: lpar1
+
+   - name: Ensure the LPAR is initialized for loading, not clearing its memory:
+     zhmc_lpar:
+       hmc_host: "{{ my_hmc_host }}"
+       hmc_auth: "{{ my_hmc_auth }}"
+       cpc_name: "{{ my_cpc_name }}"
+       name: "{{ my_lpar_name }}"
+       state: reset_normal
      register: lpar1
 
    - name: Ensure the CP sharing weight of the LPAR is 30
