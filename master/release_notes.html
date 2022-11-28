@@ -97,8 +97,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Releases</li>
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Releases</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -136,6 +136,8 @@ tests/end2end/mocked_hmc_z14.yaml. (related to issue #550)</p></li>
 <li><p>Fixed a flake8 AttributeError when using importlib-metadata 5.0.0 on
 Python &gt;=3.7, by pinning importlib-metadata to &lt;5.0.0 on these Python
 versions.</p></li>
+<li><p>Temporarily disabled the sanity tests on all Ansible 7 (ansible-core 2.14)
+test environments. See issue #579 for the overall issue.</p></li>
 </ul>
 <p><strong>Enhancements:</strong></p>
 <ul class="simple">
