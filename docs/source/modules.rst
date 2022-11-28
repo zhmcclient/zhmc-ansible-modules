@@ -53,6 +53,7 @@ Modules supported only with CPCs in DPM operational mode:
    :glob:
 
    modules/zhmc_adapter
+   modules/zhmc_adapter_list
    modules/zhmc_crypto_attachment
    modules/zhmc_hba
    modules/zhmc_nic

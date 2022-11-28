@@ -114,6 +114,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   parameter to support the respective HMC operation parameter.
   (issue #556)
 
+* Added a new 'zhmc_adapter_list' Ansible module for listing adapters on
+  CPCs in DPM mode. This speeds up execution time compared to obtaining them
+  from the facts returned by 'zhmc_cpc'. (issue #576)
+
 **Cleanup:**
 
 * Clarified the description of input parameters of the zhmc_lpar module.
