@@ -59,6 +59,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   Python >=3.7, by pinning importlib-metadata to <5.0.0 on these Python
   versions.
 
+* Temporarily disabled the sanity tests on all Ansible 7 (ansible-core 2.14)
+  test environments. See issue #579 for the overall issue.
+
+
 **Enhancements:**
 
 * Added a new 'zhmc_partition_list' Ansible module for listing partitions on
