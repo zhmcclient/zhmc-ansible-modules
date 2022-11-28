@@ -38,7 +38,7 @@ try:
     IMP_ZHMCCLIENT_MOCK = True
 except ImportError:
     IMP_ZHMCCLIENT_MOCK = False
-    IMP_ZHMCCLIENT_ERR_MOCK = traceback.format_exc()
+    IMP_ZHMCCLIENT_MOCK_ERR = traceback.format_exc()
 
 
 class Error(Exception):
@@ -95,7 +95,22 @@ LPAR_LOADED_END_STATUSES = ('operating', 'acceptable', 'exceptions')
 LPAR_BAD_STATUSES = tuple()
 
 
+def common_fail_on_import_errors(module):
+    """
+    Check for import errors in this module.
+    """
+    if not IMP_ZHMCCLIENT:
+        module.fail_json(msg=missing_required_lib("zhmcclient"),
+                         exception=IMP_ZHMCCLIENT_ERR)
+    if not IMP_ZHMCCLIENT_MOCK:
+        module.fail_json(msg=missing_required_lib("zhmcclient_mock"),
+                         exception=IMP_ZHMCCLIENT_MOCK_ERR)
+
+
 def missing_required_lib(library, reason=None, url=None):
+    """
+    Return a message for a missing Python library (= module).
+    """
     hostname = platform.node()
     msg = "Failed to import the required Python library " \
           "(%s) on %s's Python %s." % (library, hostname, sys.executable)
