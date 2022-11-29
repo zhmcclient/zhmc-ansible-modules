@@ -584,8 +584,9 @@ def process_properties(console, user, params):
                         break
                 else:
                     raise ParameterError(
-                        "Specified user role {0!r} does not exist.".
-                        format(user_role_name))
+                        "User role {0!r} specified in parameter "
+                        "{1!r} does not exist.".
+                        format(user_role_name, prop_name))
             if user is None:
                 # All roles need to be added to the user
                 add_roles.extend(user_roles)
@@ -607,8 +608,14 @@ def process_properties(console, user, params):
         if prop_name == 'user_pattern_name':
             user_pattern_name = input_props[prop_name]
             if user_pattern_name:
-                user_pattern = console.user_patterns.find_by_name(
-                    user_pattern_name)
+                try:
+                    user_pattern = console.user_patterns.find_by_name(
+                        user_pattern_name)
+                except zhmcclient.NotFound:
+                    raise ParameterError(
+                        "User pattern {0!r} specified in parameter "
+                        "{1!r} does not exist.".
+                        format(user_pattern_name, prop_name))
                 user_pattern_uri = user_pattern.uri
             else:
                 user_pattern_uri = None
@@ -621,8 +628,14 @@ def process_properties(console, user, params):
         if prop_name == 'password_rule_name':
             password_rule_name = input_props[prop_name]
             if password_rule_name:
-                password_rule = console.password_rules.find_by_name(
-                    password_rule_name)
+                try:
+                    password_rule = console.password_rules.find_by_name(
+                        password_rule_name)
+                except zhmcclient.NotFound:
+                    raise ParameterError(
+                        "Password rule {0!r} specified in parameter "
+                        "{1!r} does not exist.".
+                        format(password_rule_name, prop_name))
                 password_rule_uri = password_rule.uri
             else:
                 password_rule_uri = None
@@ -635,8 +648,14 @@ def process_properties(console, user, params):
         if prop_name == 'ldap_server_definition_name':
             ldap_srv_def_name = input_props[prop_name]
             if ldap_srv_def_name:
-                ldap_srv_def = console.ldap_server_definitions.find_by_name(
-                    ldap_srv_def_name)
+                try:
+                    ldap_srv_def = console.ldap_server_definitions.find_by_name(
+                        ldap_srv_def_name)
+                except zhmcclient.NotFound:
+                    raise ParameterError(
+                        "LDAP server definition {0!r} specified in parameter "
+                        "{1!r} does not exist.".
+                        format(ldap_srv_def_name, prop_name))
                 ldap_srv_def_uri = ldap_srv_def.uri
             else:
                 ldap_srv_def_uri = None
@@ -728,41 +747,50 @@ def add_artificial_properties(
         # For that type, the property exists, but may be null.
         # Note: For other types, the property does not exist.
         user_pattern_uri = user.properties['user-pattern-uri']
-        if user_pattern_uri is None:
-            raise AssertionError()
-        user_pattern = console.user_patterns.resource_object(user_pattern_uri)
-        user_pattern.pull_full_properties()
-        user_properties['user-pattern-name'] = user_pattern.name
-        if expand:
-            user_properties['user-pattern'] = dict(user_pattern.properties)
+        if user_pattern_uri is not None:
+            user_pattern = console.user_patterns.resource_object(user_pattern_uri)
+            user_pattern.pull_full_properties()
+            user_properties['user-pattern-name'] = user_pattern.name
+            if expand:
+                user_properties['user-pattern'] = dict(user_pattern.properties)
+        else:
+            user_properties['user-pattern-name'] = None
+            if expand:
+                user_properties['user-pattern'] = None
 
     if auth_type == 'local':
         # For that auth type, the property exists and is non-null.
         # Note: For other auth types, the property does not exist.
         password_rule_uri = user.properties['password-rule-uri']
-        if password_rule_uri is None:
-            raise AssertionError()
-        password_rule = console.password_rules.resource_object(
-            password_rule_uri)
-        password_rule.pull_full_properties()
-        user_properties['password-rule-name'] = password_rule.name
-        if expand:
-            user_properties['password-rule'] = \
-                dict(password_rule.properties)
+        if password_rule_uri is not None:
+            password_rule = console.password_rules.resource_object(
+                password_rule_uri)
+            password_rule.pull_full_properties()
+            user_properties['password-rule-name'] = password_rule.name
+            if expand:
+                user_properties['password-rule'] = \
+                    dict(password_rule.properties)
+        else:
+            user_properties['password-rule-name'] = None
+            if expand:
+                user_properties['password-rule'] = None
 
     if auth_type == 'ldap':
         # For that auth type, the property exists and is non-null.
         # Note: For other auth types, the property exists and is null.
         ldap_srv_def_uri = user.properties['ldap-server-definition-uri']
-        if ldap_srv_def_uri is None:
-            raise AssertionError()
-        ldap_srv_def = console.ldap_server_definitions.resource_object(
-            ldap_srv_def_uri)
-        ldap_srv_def.pull_full_properties()
-        user_properties['ldap-server-definition-name'] = ldap_srv_def.name
-        if expand:
-            user_properties['ldap-server-definition'] = \
-                dict(ldap_srv_def.properties)
+        if ldap_srv_def_uri is not None:
+            ldap_srv_def = console.ldap_server_definitions.resource_object(
+                ldap_srv_def_uri)
+            ldap_srv_def.pull_full_properties()
+            user_properties['ldap-server-definition-name'] = ldap_srv_def.name
+            if expand:
+                user_properties['ldap-server-definition'] = \
+                    dict(ldap_srv_def.properties)
+        else:
+            user_properties['ldap-server-definition-name'] = None
+            if expand:
+                user_properties['ldap-server-definition'] = None
 
     user_roles = []
     user_role_uris = user.properties['user-roles']
