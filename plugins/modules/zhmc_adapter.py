@@ -276,7 +276,9 @@ adapter:
           description: "Additional properties of the port, as described in the
             data model of the 'Network Port' or 'Storage Port' element object
             of the 'Adapter' object in the :term:`HMC API` book.
-            The property names have hyphens (-) as described in that book."
+            The property names have hyphens (-) as described in that book.
+            In case of unconfigured FICON adapters, the property list is
+            short."
   sample:
     {
         "adapter-family": "ficon",
@@ -532,6 +534,26 @@ def identify_adapter(cpc, name, match_props):
     return adapter
 
 
+def get_adapter_ports(adapter):
+    """
+    Retrieve the ports of an adapter from the HMC.
+
+    Returns:
+      list of dict with all port properties. In case of unconfigured FICON
+      adapters, the property list is short (from list()).
+    """
+    ports = adapter.ports.list()
+    result_ports = []
+    for port in ports:
+        # FICON adapters in unconfigured state reject the "Get Storage Port
+        # Properties" operation with HTTP Error 404,4 "Get for Storage Port
+        # Properties is not supported for this card type".
+        if adapter.get_property('type') != 'not-configured':
+            port.pull_full_properties()
+        result_ports.append(dict(port.properties))
+    return result_ports
+
+
 def ensure_set(params, check_mode):
     """
     Identify the target adapter (that must exist) and ensure that the specified
@@ -595,14 +617,7 @@ def ensure_set(params, check_mode):
             adapter.pull_full_properties()
             result = dict(adapter.properties)  # from actual values
 
-        ports = adapter.ports.list()
-        result_ports = []
-        for port in ports:
-            # TODO: Disabling the following line mitigates the recent issue
-            #       with HTTP error 404,4 when retrieving port properties.
-            # port.pull_full_properties()
-            result_ports.append(dict(port.properties))
-        result['ports'] = result_ports
+        result['ports'] = get_adapter_ports(adapter)
 
         return changed, result
 
@@ -731,12 +746,7 @@ def ensure_present(params, check_mode):
                 result = dict(adapter.properties)  # from actual values
 
         if adapter:
-            ports = adapter.ports.list()
-            result_ports = []
-            for port in ports:
-                port.pull_full_properties()
-                result_ports.append(dict(port.properties))
-            result['ports'] = result_ports
+            result['ports'] = get_adapter_ports(adapter)
         else:
             # For now, we return no ports when creating in check mode
             result['ports'] = {}
@@ -815,13 +825,7 @@ def facts(params, check_mode):
 
         adapter.pull_full_properties()
         result = dict(adapter.properties)
-
-        ports = adapter.ports.list()
-        result_ports = []
-        for port in ports:
-            port.pull_full_properties()
-            result_ports.append(dict(port.properties))
-        result['ports'] = result_ports
+        result['ports'] = get_adapter_ports(adapter)
 
         return False, result
 

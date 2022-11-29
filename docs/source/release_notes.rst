@@ -65,6 +65,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Improved error handling when the zhmcclient_mock module is missing.
   (issue #574)
 
+* Made the zhmc_adapter module tolerant against unconfigured FICON adapters
+  to avoid HTTP error 404,4 "Get for Storage Port Properties is not supported
+  for this card type". (issue #580)
+
 **Enhancements:**
 
 * Added a new 'zhmc_partition_list' Ansible module for listing partitions on
