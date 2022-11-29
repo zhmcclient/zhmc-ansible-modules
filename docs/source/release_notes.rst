@@ -69,6 +69,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   to avoid HTTP error 404,4 "Get for Storage Port Properties is not supported
   for this card type". (issue #580)
 
+* Made the zhmc_user module tolerant against unusual cases such as local
+  auth without password rule. (issue #564)
+
 **Enhancements:**
 
 * Added a new 'zhmc_partition_list' Ansible module for listing partitions on
@@ -121,6 +124,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Added a new 'zhmc_adapter_list' Ansible module for listing adapters on
   CPCs in DPM mode. This speeds up execution time compared to obtaining them
   from the facts returned by 'zhmc_cpc'. (issue #576)
+
+* Improved the error handling of the zhmc_user module when specified
+  user roles, user patterns, password rules, or LDAP server definitions
+  do not exist. (related to issue #564)
 
 **Cleanup:**
 
