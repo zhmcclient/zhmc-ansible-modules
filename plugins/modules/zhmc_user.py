@@ -385,7 +385,7 @@ from ansible.module_utils.basic import AnsibleModule  # noqa: E402
 
 from ..module_utils.common import log_init, Error, ParameterError, \
     get_hmc_auth, get_session, to_unicode, process_normal_property, \
-    missing_required_lib  # noqa: E402
+    missing_required_lib, common_fail_on_import_errors  # noqa: E402
 
 try:
     import requests.packages.urllib3
@@ -1135,6 +1135,8 @@ def main():
     if not IMP_ZHMCCLIENT:
         module.fail_json(msg=missing_required_lib("zhmcclient"),
                          exception=IMP_ZHMCCLIENT_ERR)
+
+    common_fail_on_import_errors(module)
 
     log_file = module.params['log_file']
     log_init(LOGGER_NAME, log_file)

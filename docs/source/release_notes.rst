@@ -62,6 +62,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Temporarily disabled the sanity tests on all Ansible 7 (ansible-core 2.14)
   test environments. See issue #579 for the overall issue.
 
+* Improved error handling when the zhmcclient_mock module is missing.
+  (issue #574)
 
 **Enhancements:**
 
