@@ -37,3 +37,4 @@ plugins/modules/zhmc_storage_group.py validate-modules:return-syntax-error  # Mi
 plugins/modules/zhmc_storage_volume.py validate-modules:return-syntax-error  # Missing type on generic {property}
 plugins/modules/zhmc_user.py validate-modules:return-syntax-error  # Missing type on generic {property}
 plugins/modules/zhmc_virtual_function.py validate-modules:return-syntax-error  # Missing type on generic {property}
+plugins/modules/zhmc_lpar.py validate-modules:no-log-needed  # os_ipl_token in argument_spec is not a secret
