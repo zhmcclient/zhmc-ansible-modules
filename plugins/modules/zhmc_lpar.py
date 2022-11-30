@@ -169,6 +169,55 @@ options:
     type: str
     required: false
     default: null
+  load_address:
+    description:
+      - "The hexadecimal address of an I/O device that provides access to the
+        control program to be loaded, for C(state=loaded)."
+      - "This parameter is not allowed for the other C(state) values."
+      - "This parameter is used only when explicitly loading the LPAR (i.e.
+        when the LPAR dos not have auto-load set) and is ignored otherwise."
+      - "For z13 and older generations, this parameter is required. Starting
+        with z14, this parameter is optional and defaults to the load address
+        specified in the 'last-used-load-address' property of the LPAR."
+    type: str
+    required: false
+    default: null
+  load_parameter:
+    description:
+      - "A parameter string that is passed to the control program when loading
+        it, for C(state=loaded)."
+      - "This parameter is not allowed for the other C(state) values."
+      - "This parameter is used only when explicitly loading the LPAR (i.e.
+        when the LPAR dos not have auto-load set) and is ignored otherwise."
+    type: str
+    required: false
+    default: null
+  clear_indicator:
+    description:
+      - "Controls whether memory is cleared before performing the load, for
+        C(state=loaded)."
+      - "This parameter is not allowed for the other C(state) values."
+      - "This parameter is used only when explicitly loading the LPAR (i.e.
+        when the LPAR dos not have auto-load set) and is ignored otherwise."
+    type: bool
+    required: false
+    default: true
+  store_status_indicator:
+    description:
+      - "Controls whether the current values of CPU timer, clock comparator,
+        program status word, and the contents of the processor registers are
+        stored to their assigned absolute storage locations, for
+        C(state=loaded)."
+      - "This parameter is not allowed for the other C(state) values."
+    type: bool
+    required: false
+    default: false
+  timeout:
+    description:
+      - "Timeout in seconds, for activate (if needed) and for load (if needed)."
+    type: int
+    required: false
+    default: 60
   force:
     description:
       - "Controls whether operations that change the LPAR status are performed
@@ -903,6 +952,7 @@ def ensure_active(params, check_mode):
     cpc_name = params['cpc_name']
     lpar_name = params['name']
     activation_profile_name = params['activation_profile_name']
+    timeout = params['timeout']
     force = params['force']
 
     changed = False
@@ -921,6 +971,7 @@ def ensure_active(params, check_mode):
         changed |= ensure_lpar_active(
             LOGGER, lpar, check_mode,
             activation_profile_name=activation_profile_name,
+            timeout=timeout,
             force=force)
 
         # Update the properties of the LPAR.
@@ -960,6 +1011,11 @@ def ensure_loaded(params, check_mode):
     cpc_name = params['cpc_name']
     lpar_name = params['name']
     activation_profile_name = params['activation_profile_name']
+    load_address = params['load_address']
+    load_parameter = params['load_parameter']
+    clear_indicator = params['clear_indicator']
+    store_status_indicator = params['store_status_indicator']
+    timeout = params['timeout']
     force = params['force']
 
     changed = False
@@ -978,6 +1034,11 @@ def ensure_loaded(params, check_mode):
         changed |= ensure_lpar_loaded(
             LOGGER, lpar, check_mode,
             activation_profile_name=activation_profile_name,
+            load_address=load_address,
+            load_parameter=load_parameter,
+            clear_indicator=clear_indicator,
+            store_status_indicator=store_status_indicator,
+            timeout=timeout,
             force=force)
 
         # Update the properties of the LPAR.
@@ -1141,6 +1202,13 @@ def main():
                      'loaded', 'set', 'facts']),
         activation_profile_name=dict(
             required=False, type='str', default=None),
+        load_address=dict(required=False, type='str', default=None),
+        load_parameter=dict(required=False, type='str', default=None),
+        clear_indicator=dict(
+            required=False, type='bool', default=True),
+        store_status_indicator=dict(
+            required=False, type='bool', default=False),
+        timeout=dict(required=False, type='int', default=60),
         force=dict(required=False, type='bool', default=False),
         os_ipl_token=dict(required=False, type='str', default=None),
         # Note: os_ipl_token is not a secret

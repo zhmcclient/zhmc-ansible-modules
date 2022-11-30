@@ -140,6 +140,59 @@ activation_profile_name
   | **type**: str
 
 
+load_address
+  The hexadecimal address of an I/O device that provides access to the control program to be loaded, for \ :literal:`state=loaded`\ .
+
+  This parameter is not allowed for the other \ :literal:`state`\  values.
+
+  This parameter is used only when explicitly loading the LPAR (i.e. when the LPAR dos not have auto-load set) and is ignored otherwise.
+
+  For z13 and older generations, this parameter is required. Starting with z14, this parameter is optional and defaults to the load address specified in the 'last-used-load-address' property of the LPAR.
+
+  | **required**: False
+  | **type**: str
+
+
+load_parameter
+  A parameter string that is passed to the control program when loading it, for \ :literal:`state=loaded`\ .
+
+  This parameter is not allowed for the other \ :literal:`state`\  values.
+
+  This parameter is used only when explicitly loading the LPAR (i.e. when the LPAR dos not have auto-load set) and is ignored otherwise.
+
+  | **required**: False
+  | **type**: str
+
+
+clear_indicator
+  Controls whether memory is cleared before performing the load, for \ :literal:`state=loaded`\ .
+
+  This parameter is not allowed for the other \ :literal:`state`\  values.
+
+  This parameter is used only when explicitly loading the LPAR (i.e. when the LPAR dos not have auto-load set) and is ignored otherwise.
+
+  | **required**: False
+  | **type**: bool
+  | **default**: True
+
+
+store_status_indicator
+  Controls whether the current values of CPU timer, clock comparator, program status word, and the contents of the processor registers are stored to their assigned absolute storage locations, for \ :literal:`state=loaded`\ .
+
+  This parameter is not allowed for the other \ :literal:`state`\  values.
+
+  | **required**: False
+  | **type**: bool
+
+
+timeout
+  Timeout in seconds, for activate (if needed) and for load (if needed).
+
+  | **required**: False
+  | **type**: int
+  | **default**: 60
+
+
 force
   Controls whether operations that change the LPAR status are performed when the LPAR is currently loaded (i.e. status 'operating' or 'acceptable'):
 

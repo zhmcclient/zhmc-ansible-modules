@@ -402,6 +402,11 @@ class TestLpar(object):
             'name': self.lpar_name,
             'state': desired_state,
             'activation_profile_name': None,  # TODO: Add to tests
+            'load_address': None,
+            'load_parameter': None,
+            'clear_indicator': True,
+            'store_status_indicator': False,
+            'timeout': 60,
             'force': False,
             'os_ipl_token': None,
             'properties': input_props,
@@ -482,6 +487,11 @@ class TestLpar(object):
             'name': self.lpar_name,
             'state': desired_state,
             'activation_profile_name': None,  # TODO: Add to tests
+            'load_address': None,
+            'load_parameter': None,
+            'clear_indicator': True,
+            'store_status_indicator': False,
+            'timeout': 60,
             'force': False,
             'os_ipl_token': None,
             'properties': None,
