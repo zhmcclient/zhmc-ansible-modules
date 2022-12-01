@@ -140,6 +140,9 @@ versions.</p></li>
 test environments. See issue #579 for the overall issue.</p></li>
 <li><p>Improved error handling when the zhmcclient_mock module is missing.
 (issue #574)</p></li>
+<li><p>Made the zhmc_adapter module tolerant against unconfigured FICON adapters
+to avoid HTTP error 404,4 “Get for Storage Port Properties is not supported
+for this card type”. (issue #580)</p></li>
 </ul>
 <p><strong>Enhancements:</strong></p>
 <ul class="simple">
@@ -177,6 +180,9 @@ module to support the “Reset Clear” and “Reset Normal” HMC operations.
 Along with that, added support for a new optional ‘os_ipl_token’ input
 parameter to support the respective HMC operation parameter.
 (issue #556)</p></li>
+<li><p>Added a new ‘zhmc_adapter_list’ Ansible module for listing adapters on
+CPCs in DPM mode. This speeds up execution time compared to obtaining them
+from the facts returned by ‘zhmc_cpc’. (issue #576)</p></li>
 </ul>
 <p><strong>Cleanup:</strong></p>
 <ul class="simple">
