@@ -28,16 +28,14 @@ from ansible.module_utils import six
 
 try:
     from zhmcclient import Session
-    IMP_ZHMCCLIENT = True
+    IMP_ZHMCCLIENT_ERR = None
 except ImportError:
-    IMP_ZHMCCLIENT = False
     IMP_ZHMCCLIENT_ERR = traceback.format_exc()
 
 try:
     from zhmcclient_mock import FakedSession
-    IMP_ZHMCCLIENT_MOCK = True
+    IMP_ZHMCCLIENT_MOCK_ERR = None
 except ImportError:
-    IMP_ZHMCCLIENT_MOCK = False
     IMP_ZHMCCLIENT_MOCK_ERR = traceback.format_exc()
 
 
@@ -99,10 +97,10 @@ def common_fail_on_import_errors(module):
     """
     Check for import errors in this module.
     """
-    if not IMP_ZHMCCLIENT:
+    if IMP_ZHMCCLIENT_ERR is not None:
         module.fail_json(msg=missing_required_lib("zhmcclient"),
                          exception=IMP_ZHMCCLIENT_ERR)
-    if not IMP_ZHMCCLIENT_MOCK:
+    if IMP_ZHMCCLIENT_MOCK_ERR is not None:
         module.fail_json(msg=missing_required_lib("zhmcclient_mock"),
                          exception=IMP_ZHMCCLIENT_MOCK_ERR)
 

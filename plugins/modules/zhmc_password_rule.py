@@ -249,16 +249,14 @@ from ..module_utils.common import log_init, Error, ParameterError, \
 
 try:
     import requests.packages.urllib3
-    IMP_URLLIB3 = True
+    IMP_URLLIB3_ERR = None
 except ImportError:
-    IMP_URLLIB3 = False
     IMP_URLLIB3_ERR = traceback.format_exc()
 
 try:
     import zhmcclient
-    IMP_ZHMCCLIENT = True
+    IMP_ZHMCCLIENT_ERR = None
 except ImportError:
-    IMP_ZHMCCLIENT = False
     IMP_ZHMCCLIENT_ERR = traceback.format_exc()
 
 # Python logger name for this module
@@ -658,13 +656,13 @@ def main():
         argument_spec=argument_spec,
         supports_check_mode=True)
 
-    if not IMP_URLLIB3:
+    if IMP_URLLIB3_ERR is not None:
         module.fail_json(msg=missing_required_lib("requests"),
                          exception=IMP_URLLIB3_ERR)
 
     requests.packages.urllib3.disable_warnings()
 
-    if not IMP_ZHMCCLIENT:
+    if IMP_ZHMCCLIENT_ERR is not None:
         module.fail_json(msg=missing_required_lib("zhmcclient"),
                          exception=IMP_ZHMCCLIENT_ERR)
 
