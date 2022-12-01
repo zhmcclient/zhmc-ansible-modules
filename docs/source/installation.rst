@@ -213,11 +213,13 @@ The following operating systems are supported:
 
 The following versions of Ansible are supported:
 
-- Ansible 2.9
-- Ansible 2.10
-- Ansible 3.0 (ansible-base 2.10)
-- Ansible 4.0 (ansible-core 2.11)
-- Ansible 5.0 (ansible-core 2.12)
+- Ansible 2.9 (only up to Python 3.8)
+- Ansible 2.10 (only up to Python 3.8)
+- Ansible 3 (ansible-base 2.10) (only up to Python 3.8)
+- Ansible 4 (ansible-core 2.11) (only up to Python 3.9)
+- Ansible 5 (ansible-core 2.12)
+- Ansible 6 (ansible-core 2.13)
+- Ansible 7 (ansible-core 2.14)
 
 The following Z and LinuxONE machine generations are supported:
 

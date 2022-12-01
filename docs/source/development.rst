@@ -128,6 +128,39 @@ examples:
     $ TESTOPTS='-vv' make test                       # Specify -vv verbosity for pytest
     $ TESTOPTS='-k test_partition.py' make test      # Run only this test source file
 
+The automated tests performed by Github Actions run on a standard set of test
+environments when a PR is created, and on the full set of test environments when
+a release is prepared and in addition on a weekly basis. See the
+``.github/workflows/test.yml`` file for details.
+
+These automated tests use all Ansible versions that are supported, but not in
+all combinations with all Python versions. See the
+``requirements.txt`` and ``minimum-constraint.txt`` files for details.
+
+The following table shows which Ansible versions are tested on which Python
+versions. In addition, this project tests on a well-defined set of minimum
+versions of Python packages, and a set of latest versions of Python packages
+for each Python version.
+
+======  ========  =======  ============
+Python  Packages  ansible  ansible-core
+------  --------  -------  ------------
+2.7     minimum   2.9      2.9
+3.5     minimum   2.9      2.9
+3.6     minimum   2.9      2.9
+3.7     minimum   2.9      2.9
+3.8     minimum   2.9      2.9
+3.9     minimum   4.0      2.11
+3.10    minimum   5.0      2.11
+2.7     latest    2.9      2.9
+3.5     latest    2.9      2.9
+3.6     latest    2.10     2.10
+3.7     latest    4.x      2.11
+3.8     latest    5.x      2.12
+3.9     latest    6.x      2.13
+3.10    latest    7.x      2.14
+======  ========  =======  ============
+
 
 .. _`Releasing a version`:
 

@@ -59,7 +59,10 @@ coveralls>=2.1.2,<3.0.0; python_version >= '3.5'
 # ansible-test
 yamllint>=1.25.0
 pathspec>=0.8.0
-rstcheck>=3.3.1
+# rstcheck 3.5.0 introduced a FutureWarning about Python 3.7 causing ansible sanity check "rstcheck" to fail.
+# ansible sanity check "rstcheck" is used only in ansible <= 2.10.
+rstcheck>=3.3.1,<3.5; python_version >= '3.5' and python_version <= '3.6'  # ansible <= 2.10 (on minimum package levels)
+rstcheck>=3.3.1,<4.0; python_version >= '3.7' and python_version <= '3.9'  # ansible >= 4
 
 # Safety CI by pyup.io
 # safety 1.9.0 removed support for Python 2.7 and 3.4 (and now also enforces that)
@@ -105,7 +108,8 @@ docutils>=0.14; python_version >= '3.6'
 Babel>=2.7.0
 
 # ansible-doc-extractor and it's dependent theme for docs generation (no imports, invoked via script):
-ansible-doc-extractor>=0.1.4; python_version >= '3.6'
+# The Makefile defines in doc_build on which Python versions docs are built. Keep in sync with Makefile and minimum-constraints.txt.
+ansible-doc-extractor>=0.1.8; python_version >= '3.6'
 sphinx-rtd-theme>=0.5.0; python_version >= '3.6'
 # Getting sphinx-versions from this git repo addresses some issues.
 # TODO: Remove getting sphinx-versions from this git repo.
@@ -118,10 +122,16 @@ git+https://github.com/andy-maier/sphinx-versions.git@1.1.3.post-am2#egg=sphinx-
 # Pylint 2.7 / astroid 2.5 removed support for py35
 # Pylint 2.7 introduced the consider-using-generator check, which is raised.
 # Pylint 2.11 introduced the consider-using-f-string check, which is raised.
-# The ansible sanity test with --venv installs Pylint 2.6.0, so that is the
-# version we also use since the issues raised depend on the Pylint version.
-pylint>=2.6.0,<2.7; python_version >= '3.6'
-astroid>=2.4.0,<2.5; python_version >= '3.6'
+# Pylint 2.6 is used by Ansible 4 in its sanity env (lower Ansible versions don't have a sanity env)
+# Pylint 2.9 is used by Ansible 5+6 in its sanity env
+# Pylint 2.15 is used by Ansible 7 in its sanity env
+# Pylint 2.6 is used by Ansible 4 in its sanity env, so we use that as the minimum version on all Python versions
+pylint>=2.6.0,<2.7; python_version >= '3.5' and python_version <= '3.7'  # pylint 2.6
+pylint>=2.6.0,<2.10; python_version >= '3.8' and python_version <= '3.9'  # pylint 2.9
+pylint>=2.6.0,<2.16; python_version >= '3.10'  # pylint 2.15
+astroid>=2.4.0,<2.5; python_version >= '3.5' and python_version <= '3.7'  # astroid 2.4
+astroid>=2.4.0,<2.7; python_version >= '3.8' and python_version <= '3.9'  # astroid 2.6
+astroid>=2.4.0,<2.13; python_version >= '3.10'  # astroid 2.12
 # typed-ast 1.4.0 removed support for Python 3.4.
 typed-ast>=1.3.0,<1.4.0; python_version == '3.4' and implementation_name=='cpython'
 typed-ast>=1.4.0,<1.5.0; python_version >= '3.5' and python_version < '3.8' and implementation_name=='cpython'
@@ -130,16 +140,20 @@ typed-ast>=1.4.0,<1.5.0; python_version >= '3.5' and python_version < '3.8' and 
 # flake8 3.9.0 has removed support for py34 and pip 19.1.1 on py34 does not deal
 # well with its pinned dependencies, so we need to repeat these for py34.
 # flake8 4.0.0 fixes an AttributeError on Python 3.10.
-flake8>=3.8.0; python_version == '2.7'
-flake8>=3.8.0; python_version >= '3.5' and python_version <= '3.9'
-flake8>=4.0.0; python_version >= '3.10'
+# pycodestyle 2.6 (required by flake8 3.8) is used by Ansible 4 in its sanity env, so we use that as the minimum version on all Python versions
+flake8>=3.8.0,<3.9; python_version == '2.7'
+flake8>=3.8.0,<3.9; python_version >= '3.5' and python_version <= '3.8'  # flake8 3.8
+flake8>=3.8.0,<5.0; python_version == '3.9'  # flake8 4.0
+flake8>=3.8.0,<6.0; python_version >= '3.10'  # flake8 5.0
+pycodestyle>=2.6.0,<2.7; python_version == '2.7'
+pycodestyle>=2.6.0,<2.7; python_version >= '3.5' and python_version <= '3.8'  # pycodestyle 2.6
+pycodestyle>=2.6.0,<2.9; python_version == '3.9'  # pycodestyle 2.8
+pycodestyle>=2.6.0,<2.10; python_version >= '3.10'  # pycodestyle 2.9
+pyflakes>=2.2.0,<2.3; python_version == '2.7'
+pyflakes>=2.2.0,<2.3; python_version >= '3.5' and python_version <= '3.8'  # pyflakes 2.2
+pyflakes>=2.2.0,<2.5; python_version == '3.9'  # pyflakes 2.4
+pyflakes>=2.2.0,<2.6; python_version >= '3.10'  # pyflakes 2.5
 mccabe>=0.6.0
-pycodestyle>=2.6.0,<2.8.0; python_version == '2.7'
-pycodestyle>=2.6.0; python_version >= '3.5' and python_version <= '3.9'
-pycodestyle>=2.8.0; python_version >= '3.10'
-pyflakes>=2.2.0,<2.4.0; python_version == '2.7'
-pyflakes>=2.2.0; python_version >= '3.5' and python_version <= '3.9'
-pyflakes>=2.4.0; python_version >= '3.10'
 entrypoints>=0.3.0
 functools32>=3.2.3.post2; python_version == '2.7'  # technically: python_version < '3.2'
 
@@ -156,9 +170,6 @@ readme-renderer>=25.0; python_version >= '3.5'
 
 pyzmq>=16.0.4; python_version <= '3.8'
 pyzmq>=20.0.0; python_version >= '3.9'
-
-# The module.rst.j2 template uses the 'tojson' filter added in Jinja2 2.9
-Jinja2>=2.9
 
 # Package dependency management tools (not used by any make rules)
 pipdeptree>=2.0.0

@@ -237,13 +237,9 @@ sanity: _check_version develop_$(pymn).done
 	rm -rf $(sanity_dir)
 	mkdir -p $(sanity_dir)
 	tar -xf $(sanity_tar_file) --directory $(sanity_dir)
+	echo "Running ansible sanity test with the current Python env"
 	sh -c "cd $(sanity_dir); ansible-test sanity --verbose --truncate 0 --local --python $(python_m_n_version)"
-ifeq ($(PACKAGE_LEVEL),latest)
-  # On minimum package level (i.e. Ansible 2.9), the pylint check fails with:
-  #   internal error with sending report for module ['plugins/module_utils/common.py']
-  #   object of type 'Uninferable' has no len()
-	sh -c "cd $(sanity_dir); ansible-test sanity --verbose --truncate 0 --venv --requirements --python $(python_m_n_version)"
-endif
+	PL=$(PACKAGE_LEVEL) sh -c "if $(PYTHON_CMD) -c \"import sys,os; sys.exit(0 if sys.version_info[0:2]>=(3,9) or (3,7)<=sys.version_info[0:2]<=(3,8) and os.getenv('PL')=='latest' else 1)\"; then echo 'Running ansible sanity test with its own virtual env'; cd $(sanity_dir); ansible-test sanity --verbose --truncate 0 --venv --requirements --python $(python_m_n_version); fi"
 	@echo '$@ done.'
 
 .PHONY:	end2end

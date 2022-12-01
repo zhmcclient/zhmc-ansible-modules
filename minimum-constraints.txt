@@ -87,13 +87,28 @@ wheel==0.33.5; python_version >= '3.8'
 
 # Direct dependencies for installation (must be consistent with requirements.txt)
 
-ansible==2.9.0.0
+# We want to use ansible 2.9 as a minimum version on all Python versions (that support it)
+# Starting with Python 3.9, ansible 4 is needed.
+ansible==2.9.1; python_version == '2.7'  # sanity test is not run here
+ansible==2.9.1; python_version >= '3.5' and python_version <= '3.8'
+ansible==4.0.0; python_version == '3.9'
+ansible==5.0.1; python_version >= '3.10'
+
 requests==2.22.0; python_version <= '3.9'
 requests==2.25.0; python_version >= '3.10'
 
 zhmcclient==1.3.3
 
+
 # Indirect dependencies for installation (must be consistent with requirements.txt)
+
+# Jinja2 is used by ansible/ansible-core and by ansible-doc-extractor.
+Jinja2==2.9; python_version <= '3.8'   # ansible <= 5
+Jinja2==3.0; python_version >= '3.9'   # ansible >= 6
+
+# MarkupSafe is used by Jinja2
+MarkupSafe==1.1.0; python_version <= '3.8'   # ansible <= 5
+MarkupSafe==2.0.0; python_version >= '3.9'   # ansible >= 6
 
 cryptography==3.3; python_version == '2.7'
 cryptography==3.0,<3.1; python_version == '3.5'
@@ -150,7 +165,7 @@ coveralls==2.1.2; python_version >= '3.5'
 # ansible-test
 yamllint==1.25.0
 pathspec==0.8.0
-rstcheck==3.3.1
+rstcheck==3.3.1; python_version <= '3.9'  # ansible <= 2.10 (on minimum package levels)
 
 # Safety CI by pyup.io
 safety==1.8.7; python_version <= '3.4'
@@ -188,22 +203,19 @@ sphinx-rtd-theme==0.5.0; python_version >= '3.6'
 Babel==2.7.0; python_version >= '3.6'
 
 # ansible-doc-extractor and it's dependent theme for docs generation (no imports, invoked via script):
-ansible-doc-extractor==0.1.4; python_version >= '3.6'
+# The Makefile defines in doc_build on which Python versions docs are built. Keep in sync with Makefile and dev-requirements.txt.
+ansible-doc-extractor==0.1.8; python_version >= '3.6'
 
 # PyLint (no imports, invoked via pylint script):
-pylint==2.6.0; python_version >= '3.6'
-astroid==2.4.0; python_version >= '3.6'
-typed-ast==1.3.0; python_version == '3.4' and implementation_name=='cpython'
+pylint==2.6.0; python_version >= '3.5'
+astroid==2.4.0; python_version >= '3.5'
 typed-ast==1.4.0; python_version >= '3.5' and python_version < '3.8' and implementation_name=='cpython'
 
 # Flake8 and dependents (no imports, invoked via flake8 script):
-flake8==3.8.0; python_version <= '3.9'
-flake8==4.0.0; python_version >= '3.10'
+flake8==3.8.0
+pycodestyle==2.6.0
+pyflakes==2.2.0
 mccabe==0.6.0
-pycodestyle==2.6.0; python_version <= '3.9'
-pycodestyle==2.8.0; python_version >= '3.10'
-pyflakes==2.2.0; python_version <= '3.9'
-pyflakes==2.4.0; python_version >= '3.10'
 entrypoints==0.3.0
 functools32==3.2.3.post2; python_version == '2.7'  # technically: python_version < '3.2'
 
@@ -216,10 +228,6 @@ readme-renderer==25.0; python_version >= '3.5'
 
 pyzmq==16.0.4; python_version <= '3.8'
 pyzmq==20.0.0; python_version >= '3.9'
-
-# The module.rst.j2 template uses the 'tojson' filter added in Jinja2 2.9
-Jinja2==2.9; python_version <= '3.9'
-Jinja2==2.10.2; python_version >= '3.10'
 
 # Package dependency management tools (not used by any make rules)
 pipdeptree==2.0.0
@@ -258,7 +266,6 @@ isort==4.3.5
 jsonschema==2.6.0
 lazy-object-proxy==1.4.2
 linecache2==1.0.0
-MarkupSafe==1.1.0
 mistune==0.8.1
 more-itertools==5.0.0
 ordereddict==1.1
