@@ -227,7 +227,7 @@ Examples
        state: loaded
      register: lpar1
 
-   - name: Ensure the LPAR is initialized for loading, clearing its memory:
+   - name: Ensure the LPAR is initialized for loading, clearing its memory
      zhmc_lpar:
        hmc_host: "{{ my_hmc_host }}"
        hmc_auth: "{{ my_hmc_auth }}"
@@ -236,7 +236,7 @@ Examples
        state: reset_clear
      register: lpar1
 
-   - name: Ensure the LPAR is initialized for loading, not clearing its memory:
+   - name: Ensure the LPAR is initialized for loading, not clearing its memory
      zhmc_lpar:
        hmc_host: "{{ my_hmc_host }}"
        hmc_auth: "{{ my_hmc_auth }}"

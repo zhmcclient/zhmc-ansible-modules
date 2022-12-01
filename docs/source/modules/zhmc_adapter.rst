@@ -309,7 +309,7 @@ adapter
       | **type**: str
 
     {property}
-      Additional properties of the port, as described in the data model of the 'Network Port' or 'Storage Port' element object of the 'Adapter' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
+      Additional properties of the port, as described in the data model of the 'Network Port' or 'Storage Port' element object of the 'Adapter' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book. In case of unconfigured FICON adapters, the property list is short.
 
 
 
