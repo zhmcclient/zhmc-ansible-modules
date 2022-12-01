@@ -143,6 +143,8 @@ test environments. See issue #579 for the overall issue.</p></li>
 <li><p>Made the zhmc_adapter module tolerant against unconfigured FICON adapters
 to avoid HTTP error 404,4 “Get for Storage Port Properties is not supported
 for this card type”. (issue #580)</p></li>
+<li><p>Made the zhmc_user module tolerant against unusual cases such as local
+auth without password rule. (issue #564)</p></li>
 </ul>
 <p><strong>Enhancements:</strong></p>
 <ul class="simple">
@@ -183,6 +185,9 @@ parameter to support the respective HMC operation parameter.
 <li><p>Added a new ‘zhmc_adapter_list’ Ansible module for listing adapters on
 CPCs in DPM mode. This speeds up execution time compared to obtaining them
 from the facts returned by ‘zhmc_cpc’. (issue #576)</p></li>
+<li><p>Improved the error handling of the zhmc_user module when specified
+user roles, user patterns, password rules, or LDAP server definitions
+do not exist. (related to issue #564)</p></li>
 </ul>
 <p><strong>Cleanup:</strong></p>
 <ul class="simple">
