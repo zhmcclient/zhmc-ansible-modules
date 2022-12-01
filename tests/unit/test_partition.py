@@ -79,7 +79,7 @@ class TestZhmcPartitionMain(unittest.TestCase):
         exit_code = cm.exception.args[0]
 
         # Assert module exit code
-        assert(exit_code == 0)
+        assert exit_code == 0
 
         # Assert call to AnsibleModule()
         expected_argument_spec = dict(
@@ -106,21 +106,20 @@ class TestZhmcPartitionMain(unittest.TestCase):
             log_file=dict(required=False, type='str', default=None),
             _faked_session=dict(required=False, type='raw'),
         )
-        assert(ansible_mod_cls.call_args ==
-               mock.call(argument_spec=expected_argument_spec,
-                         supports_check_mode=True))
+        assert ansible_mod_cls.call_args == \
+            mock.call(argument_spec=expected_argument_spec,
+                      supports_check_mode=True)
 
         # Assert call to perform_task()
-        assert(perform_task_func.call_args ==
-               mock.call(params, check_mode))
+        assert perform_task_func.call_args == mock.call(params, check_mode)
 
         # Assert call to exit_json()
-        assert(mod_obj.exit_json.call_args ==
-               mock.call(changed=perform_task_changed,
-                         partition=perform_task_result))
+        assert mod_obj.exit_json.call_args == \
+            mock.call(changed=perform_task_changed,
+                      partition=perform_task_result)
 
         # Assert no call to fail_json()
-        assert(mod_obj.fail_json.called is False)
+        assert mod_obj.fail_json.called is False
 
     @mock.patch("plugins.modules.zhmc_partition.perform_task",
                 autospec=True)
@@ -162,18 +161,17 @@ class TestZhmcPartitionMain(unittest.TestCase):
         exit_code = cm.exception.args[0]
 
         # Assert module exit code
-        assert(exit_code == 1)
+        assert exit_code == 1
 
         # Assert call to perform_task()
-        assert(perform_task_func.call_args ==
-               mock.call(params, check_mode))
+        assert perform_task_func.call_args == mock.call(params, check_mode)
 
         # Assert call to fail_json()
-        assert(mod_obj.fail_json.call_args ==
-               mock.call(msg="ParameterError: fake message"))
+        assert mod_obj.fail_json.call_args == \
+            mock.call(msg="ParameterError: fake message")
 
         # Assert no call to exit_json()
-        assert(mod_obj.exit_json.called is False)
+        assert mod_obj.exit_json.called is False
 
 
 class TestZhmcPartitionPerformTask(unittest.TestCase):
@@ -214,16 +212,15 @@ class TestZhmcPartitionPerformTask(unittest.TestCase):
             params, check_mode)
 
         # Assert return values
-        assert(actual_changed == changed)
-        assert(actual_result == result)
+        assert actual_changed == changed
+        assert actual_result == result
 
         # Assert call to the desired action function
-        assert(ensure_active_func.call_args ==
-               mock.call(params, check_mode))
+        assert ensure_active_func.call_args == mock.call(params, check_mode)
 
         # Assert no call to the other action functions
-        assert(ensure_stopped_func.called is False)
-        assert(ensure_absent_func.called is False)
+        assert ensure_stopped_func.called is False
+        assert ensure_absent_func.called is False
 
     @mock.patch("plugins.modules.zhmc_partition.ensure_absent",
                 autospec=True)
@@ -258,16 +255,15 @@ class TestZhmcPartitionPerformTask(unittest.TestCase):
             params, check_mode)
 
         # Assert return values
-        assert(actual_changed == changed)
-        assert(actual_result == result)
+        assert actual_changed == changed
+        assert actual_result == result
 
         # Assert call to the desired action function
-        assert(ensure_stopped_func.call_args ==
-               mock.call(params, check_mode))
+        assert ensure_stopped_func.call_args == mock.call(params, check_mode)
 
         # Assert no call to the other action functions
-        assert(ensure_active_func.called is False)
-        assert(ensure_absent_func.called is False)
+        assert ensure_active_func.called is False
+        assert ensure_absent_func.called is False
 
     @mock.patch("plugins.modules.zhmc_partition.ensure_absent",
                 autospec=True)
@@ -302,16 +298,15 @@ class TestZhmcPartitionPerformTask(unittest.TestCase):
             params, check_mode)
 
         # Assert return values
-        assert(actual_changed == changed)
-        assert(actual_result == result)
+        assert actual_changed == changed
+        assert actual_result == result
 
         # Assert call to the desired action function
-        assert(ensure_absent_func.call_args ==
-               mock.call(params, check_mode))
+        assert ensure_absent_func.call_args == mock.call(params, check_mode)
 
         # Assert no call to the other action functions
-        assert(ensure_active_func.called is False)
-        assert(ensure_stopped_func.called is False)
+        assert ensure_active_func.called is False
+        assert ensure_stopped_func.called is False
 
 
 # Faked CPC in DPM mode that is used for all tests
