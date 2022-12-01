@@ -72,6 +72,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Made the zhmc_user module tolerant against unusual cases such as local
   auth without password rule. (issue #564)
 
+* Updated the set of supported Ansible versions listed in the Installation
+  section of the documentation to add recent Ansible versions up to Ansible 7.
+
 **Enhancements:**
 
 * Added a new 'zhmc_partition_list' Ansible module for listing partitions on
@@ -128,6 +131,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Improved the error handling of the zhmc_user module when specified
   user roles, user patterns, password rules, or LDAP server definitions
   do not exist. (related to issue #564)
+
+* Increased the set of tested Ansible versions to now include all major versions
+  that are supported, from Ansible 2.9 to Ansible 7.
 
 **Cleanup:**
 
