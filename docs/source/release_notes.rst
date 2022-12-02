@@ -139,6 +139,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Simplified the publishing of the collection.
 
+* Upgraded zhmcclient to 1.5.0 to pick up fixes.
+
 **Cleanup:**
 
 * Clarified the description of input parameters of the zhmc_lpar module.
