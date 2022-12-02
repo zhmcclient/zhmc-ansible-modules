@@ -135,6 +135,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Increased the set of tested Ansible versions to now include all major versions
   that are supported, from Ansible 2.9 to Ansible 7.
 
+* Added tests for Python 3.11.
+
 **Cleanup:**
 
 * Clarified the description of input parameters of the zhmc_lpar module.

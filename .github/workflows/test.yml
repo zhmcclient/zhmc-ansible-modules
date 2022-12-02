@@ -29,13 +29,13 @@ jobs:
         if [[ "${{ github.event_name }}" == "schedule" || "${{ github.head_ref }}" =~ ^release_ ]]; then \
           echo "::set-output name=matrix::{ \
             \"os\": [ \"ubuntu-latest\", \"macos-latest\" ], \
-            \"python-version\": [ \"2.7\", \"3.5\", \"3.6\", \"3.7\", \"3.8\", \"3.9\", \"3.10\" ], \
+            \"python-version\": [ \"2.7\", \"3.5\", \"3.6\", \"3.7\", \"3.8\", \"3.9\", \"3.10\", \"3.11\" ], \
             \"package_level\": [ \"minimum\", \"latest\" ] \
           }"; \
         else \
           echo "::set-output name=matrix::{ \
             \"os\": [ \"ubuntu-latest\" ], \
-            \"python-version\": [ \"2.7\", \"3.5\", \"3.6\", \"3.7\", \"3.8\", \"3.9\", \"3.10\" ], \
+            \"python-version\": [ \"2.7\", \"3.5\", \"3.6\", \"3.7\", \"3.8\", \"3.9\", \"3.10\", \"3.11\" ], \
             \"package_level\": [ \"minimum\", \"latest\" ], \
             \"include\": [ \
               { \

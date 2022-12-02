@@ -26,7 +26,9 @@ funcsigs>=1.0.2; python_version < '3.3'
 # pytest 4.3.1 solves an issue on Python 3 with minimum package levels
 pytest>=4.3.1,<5.0.0; python_version < '3.5'
 pytest>=4.3.1; python_version >= '3.5' and python_version <= '3.6'
-pytest>=4.4.0; python_version >= '3.7'
+pytest>=4.4.0; python_version >= '3.7' and python_version <= '3.9'
+pytest>=6.2.5; python_version == '3.10'
+pytest>=7.0.0; python_version >= '3.11'
 testfixtures>=6.9.0
 # colorama 0.4.0 removed support for Python 3.4
 colorama>=0.3.9,<0.4.0; python_version <= '3.4'
@@ -95,15 +97,19 @@ tox>=2.5.0
 #       since Sphinx 1.8, and was removed in Sphinx 4.0, and reintroduced as
 #       deprecated in Sphinx 4.3.0.
 # Note: Sphinx 4.1.0 added support for Jinja2 3.1.0 which renamed some filters
+# Sphinx 5.1.0 is the first one allowing docutils 0.19
 Sphinx>=4.1.0; python_version >= '3.6' and python_version <= '3.9'
-Sphinx>=4.3.0; python_version >= '3.10'
+Sphinx>=4.3.0; python_version == '3.10'
+Sphinx>=5.1.0; python_version >= '3.11'
 sphinxcontrib-fulltoc>=1.2.0; python_version >= '3.6'
 sphinxcontrib-websupport>=1.1.2; python_version >= '3.6'
 Pygments>=2.5.1; python_version >= '3.6'
 # GitPython is used in conf.py
 # GitPython 2.1.8 adds support for PackingType packed-Refs that is used with git 2.18.
 GitPython>=2.1.15; python_version >= '3.6'
-docutils>=0.14; python_version >= '3.6'
+# docutils 0.19 is needed on Python 3.11
+docutils>=0.14; python_version >= '3.6' and python_version <= '3.10'
+docutils>=0.19; python_version >= '3.11'
 # Babel 2.7.0 fixes an ImportError for MutableMapping which starts failing on Python 3.10
 Babel>=2.7.0
 
@@ -168,8 +174,10 @@ readme-renderer>=23.0; python_version == '2.7'
 readme-renderer>=23.0,<25.0; python_version == '3.4'
 readme-renderer>=25.0; python_version >= '3.5'
 
+# pyzmq 23.0.0 introduced Python 3.11 support
 pyzmq>=16.0.4; python_version <= '3.8'
-pyzmq>=20.0.0; python_version >= '3.9'
+pyzmq>=20.0.0; python_version >= '3.9' and python_version <= '3.10'
+pyzmq>=23.0.0; python_version >= '3.11'
 
 # Package dependency management tools (not used by any make rules)
 pipdeptree>=2.0.0
