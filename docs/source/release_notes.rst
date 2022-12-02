@@ -139,6 +139,11 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Simplified the publishing of the collection.
 
+* Stated support for the classic-mode only machine generations z196 / z114 /
+  zEC12 / zBC12.
+
+* Stated support for machine generation z16 / LinuxONE 4.
+
 **Cleanup:**
 
 * Clarified the description of input parameters of the zhmc_lpar module.
