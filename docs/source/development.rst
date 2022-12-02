@@ -151,7 +151,7 @@ Python  Packages  ansible  ansible-core
 3.7     minimum   2.9      2.9
 3.8     minimum   2.9      2.9
 3.9     minimum   4.0      2.11
-3.10    minimum   5.0      2.11
+3.10    minimum   5.0      2.12
 2.7     latest    2.9      2.9
 3.5     latest    2.9      2.9
 3.6     latest    2.10     2.10
