@@ -20,18 +20,14 @@ Releases
 ========
 
 
-Version 1.2.0-dev1
-------------------
+Version 1.2.0
+-------------
 
-This version contains all fixes up to version 1.1.x.
+This version contains all fixes up to version 1.1.1.
 
-Released: not yet
+Released: 2022-12-06
 
 Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
-
-**Incompatible changes:**
-
-**Deprecations:**
 
 **Bug fixes:**
 
@@ -152,12 +148,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Clarified the description of input parameters of the zhmc_lpar module.
   (part of issue #556)
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 1.1.0
