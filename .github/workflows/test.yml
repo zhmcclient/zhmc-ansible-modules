@@ -84,22 +84,22 @@ jobs:
       run: |
         echo "Installed Python packages:"
         pip list
-    - name: Install the package and its dependents
+    - name: Development setup
       env:
         PACKAGE_LEVEL: ${{ matrix.package_level }}
       run: |
-        make install
+        make develop
     - name: Show installed package versions
       env:
         PACKAGE_LEVEL: ${{ matrix.package_level }}
       run: |
         echo "Installed Python packages:"
         pip list
-    - name: Development setup
+    - name: Install the package and its dependents
       env:
         PACKAGE_LEVEL: ${{ matrix.package_level }}
       run: |
-        make develop
+        make install
     - name: Show installed package versions
       env:
         PACKAGE_LEVEL: ${{ matrix.package_level }}
