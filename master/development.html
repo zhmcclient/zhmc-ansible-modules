@@ -176,6 +176,102 @@ $ <span class="nv">TESTOPTS</span><span class="o">=</span><span class="s1">&#39;
 $ <span class="nv">TESTOPTS</span><span class="o">=</span><span class="s1">&#39;-k test_partition.py&#39;</span> make <span class="nb">test</span>      <span class="c1"># Run only this test source file</span>
 </pre></div>
 </div>
+<p>The automated tests performed by Github Actions run on a standard set of test
+environments when a PR is created, and on the full set of test environments when
+a release is prepared and in addition on a weekly basis. See the
+<code class="docutils literal notranslate"><span class="pre">.github/workflows/test.yml</span></code> file for details.</p>
+<p>These automated tests use all Ansible versions that are supported, but not in
+all combinations with all Python versions. See the
+<code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> and <code class="docutils literal notranslate"><span class="pre">minimum-constraint.txt</span></code> files for details.</p>
+<p>The following table shows which Ansible versions are tested on which Python
+versions. In addition, this project tests on a well-defined set of minimum
+versions of Python packages, and a set of latest versions of Python packages
+for each Python version.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 24%" />
+<col style="width: 21%" />
+<col style="width: 36%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>Python</p></td>
+<td><p>Packages</p></td>
+<td><p>ansible</p></td>
+<td><p>ansible-core</p></td>
+</tr>
+<tr class="row-even"><td><p>2.7</p></td>
+<td><p>minimum</p></td>
+<td><p>2.9</p></td>
+<td><p>2.9</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.5</p></td>
+<td><p>minimum</p></td>
+<td><p>2.9</p></td>
+<td><p>2.9</p></td>
+</tr>
+<tr class="row-even"><td><p>3.6</p></td>
+<td><p>minimum</p></td>
+<td><p>2.9</p></td>
+<td><p>2.9</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.7</p></td>
+<td><p>minimum</p></td>
+<td><p>2.9</p></td>
+<td><p>2.9</p></td>
+</tr>
+<tr class="row-even"><td><p>3.8</p></td>
+<td><p>minimum</p></td>
+<td><p>2.9</p></td>
+<td><p>2.9</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.9</p></td>
+<td><p>minimum</p></td>
+<td><p>4.0</p></td>
+<td><p>2.11</p></td>
+</tr>
+<tr class="row-even"><td><p>3.10</p></td>
+<td><p>minimum</p></td>
+<td><p>5.0</p></td>
+<td><p>2.11</p></td>
+</tr>
+<tr class="row-odd"><td><p>2.7</p></td>
+<td><p>latest</p></td>
+<td><p>2.9</p></td>
+<td><p>2.9</p></td>
+</tr>
+<tr class="row-even"><td><p>3.5</p></td>
+<td><p>latest</p></td>
+<td><p>2.9</p></td>
+<td><p>2.9</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.6</p></td>
+<td><p>latest</p></td>
+<td><p>2.10</p></td>
+<td><p>2.10</p></td>
+</tr>
+<tr class="row-even"><td><p>3.7</p></td>
+<td><p>latest</p></td>
+<td><p>4.x</p></td>
+<td><p>2.11</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.8</p></td>
+<td><p>latest</p></td>
+<td><p>5.x</p></td>
+<td><p>2.12</p></td>
+</tr>
+<tr class="row-even"><td><p>3.9</p></td>
+<td><p>latest</p></td>
+<td><p>6.x</p></td>
+<td><p>2.13</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.10</p></td>
+<td><p>latest</p></td>
+<td><p>7.x</p></td>
+<td><p>2.14</p></td>
+</tr>
+</tbody>
+</table>
 </section>
 <section id="releasing-a-version">
 <span id="id6"></span><h2>Releasing a version<a class="headerlink" href="#releasing-a-version" title="Permalink to this heading"></a></h2>
