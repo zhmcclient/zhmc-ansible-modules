@@ -137,6 +137,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Added tests for Python 3.11.
 
+* Simplified the publishing of the collection.
+
 **Cleanup:**
 
 * Clarified the description of input parameters of the zhmc_lpar module.
