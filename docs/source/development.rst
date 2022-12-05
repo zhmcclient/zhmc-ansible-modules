@@ -259,160 +259,72 @@ local clone of the zhmc-ansible-modules Git repo.
       add text for any known issues you want users to know about.
     * Remove all empty list items.
 
-5.  When releasing based on the master branch, edit the GitHub workflow file
-    ``test.yml``:
+5.  Commit your changes and push the topic branch to the remote repo:
 
     .. code-block:: sh
 
-        vi .github/workflows/test.yml
-
-    and in the ``on`` section, increase the version of the ``stable_*`` branch
-    to the new stable branch ``stable_M.N`` created earlier:
-
-    .. code-block:: yaml
-
-        on:
-          schedule:
-            . . .
-          push:
-            branches: [ master, stable_M.N ]
-          pull_request:
-            branches: [ master, stable_M.N ]
-
-6.  When releasing based on the master branch, edit the GitHub workflow file
-    ``docs.yml``:
-
-    .. code-block:: sh
-
-        vi .github/workflows/docs.yml
-
-    and in the ``on`` section, increase the version of the ``stable_*`` branch
-    to the new stable branch ``stable_M.N`` created earlier:
-
-    .. code-block:: yaml
-
-        on:
-          push:
-            # PR merge to these branches triggers this workflow
-            branches: [ master, stable_M.N ]
-
-7.  Commit your changes and push the topic branch to the remote repo:
-
-    .. code-block:: sh
-
-        git status  # Double check the changed files
         git commit -asm "Release ${MNU}"
         git push --set-upstream origin release_${MNU}
 
-8.  On GitHub, create a Pull Request for branch ``release_M.N.U``. This will
-    trigger the CI runs.
+6.  On GitHub, create a Pull Request for branch ``release_M.N.U``.
 
     Important: When creating Pull Requests, GitHub by default targets the
     ``master`` branch. When releasing based on a stable branch, you need to
     change the target branch of the Pull Request to ``stable_M.N``.
 
-9.  On GitHub, close milestone ``M.N.U``.
+    The PR creation will cause the "test" workflow to run. That workflow runs
+    tests for all defined environments, since it discovers by the branch name
+    that this is a PR for a release.
 
-10. The items in this step should be performed within no more than 1 minute, so
-    that the documentation that is built uses the new version tag.
+7.  On GitHub, once the checks for that Pull Request have succeeded, merge the
+    Pull Request (no review is needed). This automatically deletes the branch
+    on GitHub.
 
-    * On GitHub, once the checks for the Pull Request for branch ``start_M.N.U``
-      have succeeded, merge the Pull Request (no review is needed). This
-      automatically deletes the branch on GitHub.
+    If the PR did not succeed, fix the issues.
 
-      This also triggers a build of the documentation and subsequent publishing
-      to Github pages. This build takes more than 1 minute to get to the
-      point where it needs the new version tag that is added in the next item.
+8.  On GitHub, close milestone ``M.N.U``.
 
-    * Add a new tag for the version that is being released and push it to
-      the remote repo:
+    Verify that the milestone has no open items anymore. If it does have open
+    items, investigate why and fix.
 
-      .. code-block:: sh
-
-          git checkout ${BRANCH}
-          git pull
-          git tag -f ${MNU}
-          git push -f --tags
-
-    * Wait for the docs workflow named "Release M.N.U" to complete, on
-      https://github.com/zhmcclient/zhmc-ansible-modules/actions/workflows/docs.yml,
-      and once it is complete, double check whether you see the new version
-      in the release notes at
-      https://zhmcclient.github.io/zhmc-ansible-modules/release_notes.html.
-
-      If you do not see the new release notes, the build was faster than the
-      pushing of the new tag, and this can be fixed by simply re-running
-      the docs workflow via the corresponding button in GitHub Actions.
-
-11. Clean up the local repo:
+9.  Publish the collection to Ansible Galaxy
 
     .. code-block:: sh
 
-        git branch -d release_${MNU}
-
-12. When releasing based on the master branch, create and push a new stable
-    branch for the same minor version:
-
-    .. code-block:: sh
-
-        git checkout -b stable_${MN}
-        git push --set-upstream origin stable_${MN}
         git checkout ${BRANCH}
+        git pull
+        git branch -D release_${MNU}
+        git branch -D -r origin/release_${MNU}
+        git tag -f ${MNU}
+        git push -f --tags
 
-    Note that no GitHub Pull Request is created for any ``stable_*`` branch.
+    Pushing the new tag will cause the "publish" workflow to run. That workflow
+    builds the collection, publishes it on Ansible Galaxy, creates a release for
+    it on Github, and finally creates a new stable branch on Github if the master
+    branch was released.
 
-13. On GitHub, edit the new tag ``M.N.U``, and create a release description on
-    it. This will cause it to appear in the Release tab.
+10. Verify the publishing
 
-    You can see the tags in GitHub via Code -> Releases -> Tags.
+    * Verify that the new version is available on Ansible Galaxy at
+      https://galaxy.ansible.com/ibm/ibm_zhmc/
 
-14. Publish the collection to Ansible Galaxy:
+      If the new version is not shown there, verify that the import on Ansible
+      Galaxy succeeded, by checking the status at
+      https://galaxy.ansible.com/my-imports (you need to log in).
 
-    You need to be registered on Ansible Galaxy,
-    and your userid there needs to be authorized to modify the 'ibm' namespace.
+    * Verify that the new version has a release on Github at
+      https://github.com/zhmcclient/python-zhmcclient/releases
 
-    You need to have the following environment variable set:
+    * Verify that the new version has documentation on Github pages at
+      https://zhmcclient.github.io/zhmc-ansible-modules/release_notes.html
 
-    * GALAXY_TOKEN - Your API token for Ansible Galaxy - get one
-      at https://galaxy.ansible.com/me/preferences
+11. Publish the collection to Ansible AutomationHub
 
-    To upload the collection to Ansible Galaxy, execute:
-
-    .. code-block:: sh
-
-        make upload
-
-    This will show the collection version and will ask for confirmation.
-
-    **Attention!!** This only works once for each version. You cannot
-    re-release the same version more than once.
-
-    Verify that the import on Ansible Galaxy succeeded, by checking the status
-    at https://galaxy.ansible.com/my-imports (you need to log in).
-
-    Verify that the new version is shown on Ansible Galaxy at
-    https://galaxy.ansible.com/ibm/ibm_zhmc/ .
-
-15. Publish the collection to Ansible AutomationHub:
+    This needs to be done in addition to the prior publish step, and it
+    has not successfully been automated as of today.
 
     You need to have an account on https://console.redhat.com, and your
     userid there needs to be authorized to modify the 'ibm' namespace.
-
-    You need to have the following environment variable set:
-
-    * AUTOMATIONHUB_TOKEN - Your API token for Ansible AutomationHub - get one
-      at https://cloud.redhat.com/ansible/automation-hub/token
-
-    To upload the collection to Ansible AutomationHub, execute:
-
-    .. code-block:: sh
-
-        make uploadhub
-
-    This will show the collection version and will ask for confirmation.
-
-    If this command-driven upload fails, upload the collection manually as
-    follows:
 
     * Open https://console.redhat.com/ansible/automation-hub/repo/published/ibm
       and log in to your account.
