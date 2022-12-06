@@ -180,7 +180,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         INPUT_TAG_NAME: ${{ steps.set-tag.outputs.result }}
         INPUT_NAME: "Release ${{ steps.set-tag.outputs.result }}"
-        INPUT_BODY: "Change log https://python-zhmcclient.readthedocs.io/en/${{ steps.set-tag.outputs.result }}/changes.html"
+        INPUT_BODY: "Change log https://zhmcclient.github.io/zhmc-ansible-modules/${{ steps.set-tag.outputs.result }}/release_notes.html"
 
     #-------- Creation of stable branch
     - name: Create new stable branch when releasing master branch
