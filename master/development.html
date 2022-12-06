@@ -33,7 +33,7 @@
             <a href="index.html" class="icon icon-home"> IBM Z HMC collection
           </a>
               <div class="version">
-                1.2.0
+                1.3.0-dev1
 
               </div>
 <div role="search">
@@ -136,8 +136,8 @@ on GitHub Pages at <a class="reference external" href="https://zhmcclient.github
 <p>That web site represents a defined set of versions of this collection and
 automatically gets updated whenever a pull request gets merged into the
 repository branch that corresponds to the version. The automatic update
-mechanism is implemented in the GitHub Actions workflow file
-<code class="docutils literal notranslate"><span class="pre">.github/workflows/docs.yml</span></code>.</p>
+mechanism is implemented in the GitHub Actions workflow “publish” (in file
+<code class="docutils literal notranslate"><span class="pre">.github/workflows/publish.yml</span></code>).</p>
 <p>The versions to be represented on that site are defined in <code class="docutils literal notranslate"><span class="pre">docs/source/conf.py</span></code>
 in the section for “sphinx-versioning”.</p>
 <p>In order to build this “versioned” documentation locally, issue:</p>
@@ -163,10 +163,12 @@ has been built successfully.</p>
 <p>Again, an invocation of Make runs against the currently active Python environment.</p>
 <p>There are four kinds of tests currently, available as make targets:</p>
 <ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">check</span></code> - Run flake8</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">linkcheck</span></code> - Check links in documentation</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">test</span></code> - Run unit and function tests with test coverage</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">sanity</span></code> - Run Ansible sanity tests (includes flake8, pylint, validate-modules)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">end2end</span></code> - Run end2end tests (against a real environment)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">test</span></code> - Run unit and function tests with test coverage</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">end2end_mocked</span></code> - Run end2end tests against a mocked environment</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">end2end</span></code> - Run end2end tests against an environment defined by TESTHMC</p></li>
 </ul>
 <p>For the unit and function tests, the testcases and options for pytest
 can be specified via the environment variable <code class="docutils literal notranslate"><span class="pre">TESTOPTS</span></code>, as shown in these
@@ -408,7 +410,7 @@ Galaxy succeeded, by checking the status at
 <a class="reference external" href="https://galaxy.ansible.com/my-imports">https://galaxy.ansible.com/my-imports</a> (you need to log in).</p>
 </li>
 <li><p>Verify that the new version has a release on Github at
-<a class="reference external" href="https://github.com/zhmcclient/python-zhmcclient/releases">https://github.com/zhmcclient/python-zhmcclient/releases</a></p></li>
+<a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">https://github.com/zhmcclient/zhmc-ansible-modules/releases</a></p></li>
 <li><p>Verify that the new version has documentation on Github pages at
 <a class="reference external" href="https://zhmcclient.github.io/zhmc-ansible-modules/release_notes.html">https://zhmcclient.github.io/zhmc-ansible-modules/release_notes.html</a></p></li>
 </ul>
@@ -418,13 +420,18 @@ Galaxy succeeded, by checking the status at
 has not successfully been automated as of today.</p>
 <p>You need to have an account on <a class="reference external" href="https://console.redhat.com">https://console.redhat.com</a>, and your
 userid there needs to be authorized to modify the ‘ibm’ namespace.</p>
+<ul class="simple">
+<li><p>Buuild the distribution archive locally:</p></li>
+</ul>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>make dist
+</pre></div>
+</div>
 <ul>
 <li><p>Open <a class="reference external" href="https://console.redhat.com/ansible/automation-hub/repo/published/ibm">https://console.redhat.com/ansible/automation-hub/repo/published/ibm</a>
 and log in to your account.</p></li>
 <li><p>Click on the “Upload Collection” button at the top right of the page,
 and in the file selection dialog that pops up, select the distribution
-archive for the version you want to upload. That archive has been built
-during the <cite>make upload</cite> in the previous step, and its file name is:</p>
+archive for the version you want to upload:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>dist/ibm-ibm_zhmc-{M}.{N}.{U}.tar.gz
 </pre></div>
 </div>
@@ -547,8 +554,7 @@ including the description of development/alpha/etc suffixes, as described
 in <a class="reference external" href="https://semver.org/">https://semver.org/</a></p>
 </li>
 <li><p>Commit your changes and push them to the remote repo:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git status  <span class="c1"># Double check the changed files</span>
-git commit -asm <span class="s2">&quot;Start </span><span class="si">${</span><span class="nv">MNU</span><span class="si">}</span><span class="s2">&quot;</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git commit -asm <span class="s2">&quot;Start </span><span class="si">${</span><span class="nv">MNU</span><span class="si">}</span><span class="s2">&quot;</span>
 git push --set-upstream origin start_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
 </pre></div>
 </div>
@@ -571,7 +577,8 @@ automatically deletes the branch on GitHub.</p></li>
 <li><p>Update and clean up the local repo:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git checkout <span class="si">${</span><span class="nv">BRANCH</span><span class="si">}</span>
 git pull
-git branch -d start_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
+git branch -D start_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
+git branch -D -r origin/start_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
 </pre></div>
 </div>
 </li>
@@ -625,6 +632,7 @@ git branch -d start_<span class="si">${</span><span class="nv">MNU</span><span c
             <dd><a href="../1.1.0/development.html">1.1.0</a></dd>
             <dd><a href="../1.1.1/development.html">1.1.1</a></dd>
             <dd><a href="../1.2.0/development.html">1.2.0</a></dd>
+            <dd><a href="../1.2.1/development.html">1.2.1</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
