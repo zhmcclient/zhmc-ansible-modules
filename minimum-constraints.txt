@@ -89,6 +89,8 @@ wheel==0.33.5; python_version >= '3.8'
 
 # We want to use ansible 2.9 as a minimum version on all Python versions (that support it)
 # Starting with Python 3.9, ansible 4 is needed.
+# The sanity check of ansible 4 supports Python only up to 3.9, so Python 3.10 requires ansible 5.
+# The sanity check of ansible 5 supports Python only up to 3.10, so Python 3.11 requires ansible 6.
 ansible==2.9.1; python_version == '2.7'  # sanity test is not run here
 ansible==2.9.1; python_version >= '3.5' and python_version <= '3.8'
 ansible==4.0.0; python_version == '3.9'
