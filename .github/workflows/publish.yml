@@ -73,12 +73,11 @@ jobs:
             })
           }
           catch(err) {
-            result = false
-            console.log(result+" (stable branch does not exist: "+err+")")
-            return result
+            console.log("false (stable branch does not exist: "+err+")")
+            return false
           }
-          console.log(result+" (stable branch exists but is not the tagged one")
           const result = (resp.data.object.sha == "${{ github.sha }}")
+          console.log(result)
           return result
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
