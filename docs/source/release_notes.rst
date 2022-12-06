@@ -20,16 +20,12 @@ Releases
 ========
 
 
-Version 1.2.1-dev1
-------------------
+Version 1.2.1
+-------------
 
-Released: not yet
+Released: 2022-12-06
 
 Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
-
-**Incompatible changes:**
-
-**Deprecations:**
 
 **Bug fixes:**
 
@@ -37,16 +33,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   to a different Ansible version in order to broaden the test coverage. The
   test coverage across Ansible versions is now defined separately from the
   Ansible versions required for installing the collection.
-
-**Enhancements:**
-
-**Cleanup:**
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 1.2.0
