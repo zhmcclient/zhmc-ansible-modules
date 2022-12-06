@@ -65,13 +65,20 @@ jobs:
       with:
         result-encoding: string
         script: |
-          const resp = await github.rest.git.getRef({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            ref: "heads/${{ steps.set-stable-branch.outputs.result }}",
-          })
+          try {
+            const resp = await github.rest.git.getRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: "heads/${{ steps.set-stable-branch.outputs.result }}",
+            })
+          }
+          catch(err) {
+            result = false
+            console.log(result+" (stable branch does not exist: "+err+")")
+            return result
+          }
+          console.log(result+" (stable branch exists but is not the tagged one")
           const result = (resp.data.object.sha == "${{ github.sha }}")
-          console.log(result)
           return result
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
