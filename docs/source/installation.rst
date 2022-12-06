@@ -223,6 +223,9 @@ The following versions of Ansible are supported:
 
 The following Z and LinuxONE machine generations are supported:
 
+- z196 / z114
+- zEC12 / zBC12
 - z13 / z13s / Emperor / Rockhopper
 - z14 / Emperor II / Rockhopper II
 - z15 / LinuxONE III
+- z16 / LinuxONE 4
