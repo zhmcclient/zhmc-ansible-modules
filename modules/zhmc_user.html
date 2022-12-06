@@ -21,7 +21,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="zhmc_cpc – Manage CPCs" href="zhmc_cpc.html" />
+    <link rel="next" title="zhmc_password_rule – Create HMC password rules" href="zhmc_password_rule.html" />
     <link rel="prev" title="Modules" href="../modules.html" /> 
 </head>
 
@@ -33,7 +33,7 @@
             <a href="../index.html" class="icon icon-home"> IBM Z HMC collection
           </a>
               <div class="version">
-                1.1.1
+                1.2.0
 
               </div>
 <div role="search">
@@ -59,13 +59,19 @@
 <li class="toctree-l3"><a class="reference internal" href="#return-values">Return Values</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_password_rule.html">zhmc_password_rule – Create HMC password rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_password_rule_list.html">zhmc_password_rule_list – List Password Rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_user_role.html">zhmc_user_role – Create HMC user roles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_user_role_list.html">zhmc_user_role_list – List HMC user roles</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_cpc.html">zhmc_cpc – Manage CPCs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_cpc_list.html">zhmc_cpc_list – List CPCs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_adapter.html">zhmc_adapter – Update adapters and create Hipersocket adapters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_adapter_list.html">zhmc_adapter_list – List adapters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_crypto_attachment.html">zhmc_crypto_attachment – Attach crypto resources to partitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_hba.html">zhmc_hba – Create HBAs in partitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_nic.html">zhmc_nic – Create NICs in partitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_partition.html">zhmc_partition – Create partitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_partition_list.html">zhmc_partition_list – List partitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group.html">zhmc_storage_group – Create storage groups</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Attach storage groups to partitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_volume.html">zhmc_storage_volume – Create storage volumes</a></li>
@@ -209,7 +215,7 @@
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: Cannot be specified because the name has already been specified in the <code class="docutils literal notranslate"><span class="pre">name</span></code> module parameter.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: Cannot be changed once the user exists.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">user_roles</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">user_role_names</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">user_roles</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">user_role_names</span></code> which replaces the current user roles, if specified.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">user_pattern_uri</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">user_pattern_name</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">password_rule_uri</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">password_rule_name</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ldap_server_definition_uri</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">ldap_server_definition_name</span></code>.</p></li>
@@ -256,7 +262,7 @@
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_user_name</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span><span class="w"></span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ensure the user exists</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ensure the user exists and has certain roles</span><span class="w"></span>
 <span class="w">  </span><span class="nt">zhmc_user</span><span class="p">:</span><span class="w"></span>
 <span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
 <span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
@@ -266,6 +272,12 @@
 <span class="w">    </span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
 <span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Example</span><span class="nv"> </span><span class="s">user</span><span class="nv"> </span><span class="s">1&quot;</span><span class="w"></span>
 <span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">standard</span><span class="w"></span>
+<span class="w">      </span><span class="nt">authentication_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">local</span><span class="w"></span>
+<span class="w">      </span><span class="nt">password_rule_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Basic</span><span class="w"></span>
+<span class="w">      </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">foobar</span><span class="w"></span>
+<span class="w">      </span><span class="nt">user_role_names</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hmc-access-administrator-tasks</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hmc-all-system-managed-objects</span><span class="w"></span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user1</span><span class="w"></span>
 </pre></div>
 </div>
@@ -461,7 +473,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../modules.html" class="btn btn-neutral float-left" title="Modules" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="zhmc_cpc.html" class="btn btn-neutral float-right" title="zhmc_cpc – Manage CPCs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="zhmc_password_rule.html" class="btn btn-neutral float-right" title="zhmc_password_rule – Create HMC password rules" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
@@ -484,7 +496,7 @@
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.1.1
+        v: 1.2.0
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -501,6 +513,7 @@
             <dd><a href="../1.0.3/modules/zhmc_user.html">1.0.3</a></dd>
             <dd><a href="../1.1.0/modules/zhmc_user.html">1.1.0</a></dd>
             <dd><a href="../1.1.1/modules/zhmc_user.html">1.1.1</a></dd>
+            <dd><a href="../1.2.0/modules/zhmc_user.html">1.2.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

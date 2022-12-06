@@ -33,7 +33,7 @@
             <a href="index.html" class="icon icon-home"> IBM Z HMC collection
           </a>
               <div class="version">
-                1.1.1
+                1.2.0
 
               </div>
 <div role="search">
@@ -66,7 +66,7 @@
 <p class="caption" role="heading"><span class="caption-text">Appendices</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Releases</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-1-1">Version 1.1.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-2-0">Version 1.2.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-1-0">Version 1.1.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-0-0">Version 1.0.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-10-0">Version 0.10.0</a></li>
@@ -109,22 +109,98 @@
              
   <section id="releases">
 <span id="id1"></span><h1>Releases<a class="headerlink" href="#releases" title="Permalink to this heading"></a></h1>
-<section id="version-1-1-1">
-<h2>Version 1.1.1<a class="headerlink" href="#version-1-1-1" title="Permalink to this heading"></a></h2>
-<p>Released: 2022-07-25</p>
+<section id="version-1-2-0">
+<h2>Version 1.2.0<a class="headerlink" href="#version-1-2-0" title="Permalink to this heading"></a></h2>
+<p>This version contains all fixes up to version 1.1.1.</p>
+<p>Released: 2022-12-06</p>
 <p>Availability: <a class="reference external" href="https://console.redhat.com/ansible/automation-hub/repo/published/ibm/ibm_zhmc">AutomationHub</a>, <a class="reference external" href="https://galaxy.ansible.com/ibm/ibm_zhmc">Galaxy</a>, <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">GitHub</a></p>
 <p><strong>Bug fixes:</strong></p>
 <ul class="simple">
 <li><p>Fixed that every module invocation created an additional log handler, thus
 duplicating log entries. This only affected the end2end tests, but not when
 used in Ansible playbooks. (issue #552)</p></li>
-<li><p>Increased the minimum version of zhmcclient to 1.3.3, in order to pick
-up fixes and improvements in mock support.</p></li>
+<li><p>In the zhmc_partition module, fixed that the artificial property
+‘boot-storage-volume-name’ was not included in the result.
+(related to issue #550)</p></li>
+<li><p>In the zhmc_partition module, fixed the support for check mode and added
+tests. (issue #550)</p></li>
+<li><p>In the zhmc_partition module, added missing z14, z15 and z16 input properties:
+‘boot_storage_volume’, ‘boot_storage_volume_name’, ‘boot_load_parameters’,
+‘permit_ecc_key_import_functions’, ‘ssc_ipv6_gateway’, ‘secure_boot’,
+‘secure_execution’, ‘storage_group_uris’, ‘tape_link_uris’,
+‘partition_link_uris’, ‘available_features_list’. (related to issue #550)</p></li>
+<li><p>Test: Added missing z14 partition properties to the mock definition file
+tests/end2end/mocked_hmc_z14.yaml. (related to issue #550)</p></li>
+<li><p>Fixed a flake8 AttributeError when using importlib-metadata 5.0.0 on
+Python &gt;=3.7, by pinning importlib-metadata to &lt;5.0.0 on these Python
+versions.</p></li>
+<li><p>Temporarily disabled the sanity tests on all Ansible 7 (ansible-core 2.14)
+test environments. See issue #579 for the overall issue.</p></li>
+<li><p>Improved error handling when the zhmcclient_mock module is missing.
+(issue #574)</p></li>
+<li><p>Made the zhmc_adapter module tolerant against unconfigured FICON adapters
+to avoid HTTP error 404,4 “Get for Storage Port Properties is not supported
+for this card type”. (issue #580)</p></li>
+<li><p>Made the zhmc_user module tolerant against unusual cases such as local
+auth without password rule. (issue #564)</p></li>
+<li><p>Updated the set of supported Ansible versions listed in the Installation
+section of the documentation to add recent Ansible versions up to Ansible 7.</p></li>
 </ul>
 <p><strong>Enhancements:</strong></p>
 <ul class="simple">
+<li><p>Added a new ‘zhmc_partition_list’ Ansible module for listing partitions on
+CPCs in DPM mode. This speeds up execution time compared to obtaining them
+from the facts returned by ‘zhmc_cpc’. (issue #526)</p></li>
 <li><p>Added support for Ansible 6.0.0 by adding an ignore-2.13.txt file to the
 sanity tests. (issue #533)</p></li>
+<li><p>Added a new make target ‘end2end_mocked’ that runs the end2end
+tests against mock environments defined with a new HMC inventory file
+(mocked_inventory.yaml) and a new HMC vault file (mocked_vault.yaml),
+and new mock files mocked_z14_classic.yaml and mocked_z14_dpm.yaml.
+(part of issue #396)</p></li>
+<li><p>Increased the minimum version of zhmcclient to 1.3.3, in order to pick
+up fixes. (part of issue #396)</p></li>
+<li><p>Added a new module ‘zhmc_password_rule’ that supports creating/updating,
+deleting, and gathering facts of a password rule on the HMC. (issue #363)</p></li>
+<li><p>Added a new module ‘zhmc_password_rule_list’ that supports listing the names
+of password rules on the HMC. (issue #363)</p></li>
+<li><p>Added the end2end_mocked tests to the coverage data reported to coveralls.io.</p></li>
+<li><p>Added a new module ‘zhmc_user_role’ that supports creating/updating,
+deleting, and gathering facts of a user role on the HMC. (issue #362)</p></li>
+<li><p>Added a new module ‘zhmc_user_role_list’ that supports listing the names
+of user roles on the HMC. (issue #362)</p></li>
+<li><p>Merged function tests into end2end tests to remove duplicate test cases.</p></li>
+<li><p>Removed the restriction that the zhmc_partition_list and zhmc_lpar_list
+modules were supported only with HMC versions 2.14.0 and newer. These modules
+are now supprted with all HMC versions (issue #549)</p></li>
+<li><p>Removed the restriction that the ‘se-version’ property in the result of the
+zhmc_partition_list and zhmc_lpar_list modules was provided only with HMC
+versions 2.14.1 and newer. The property is now provided with all HMC versions.
+(issue #549)</p></li>
+<li><p>Added support for ‘reset_clear’ and ‘reset_normal’ state in the zhmc_lpar
+module to support the “Reset Clear” and “Reset Normal” HMC operations.
+Along with that, added support for a new optional ‘os_ipl_token’ input
+parameter to support the respective HMC operation parameter.
+(issue #556)</p></li>
+<li><p>Added a new ‘zhmc_adapter_list’ Ansible module for listing adapters on
+CPCs in DPM mode. This speeds up execution time compared to obtaining them
+from the facts returned by ‘zhmc_cpc’. (issue #576)</p></li>
+<li><p>Improved the error handling of the zhmc_user module when specified
+user roles, user patterns, password rules, or LDAP server definitions
+do not exist. (related to issue #564)</p></li>
+<li><p>Increased the set of tested Ansible versions to now include all major versions
+that are supported, from Ansible 2.9 to Ansible 7.</p></li>
+<li><p>Added tests for Python 3.11.</p></li>
+<li><p>Simplified the publishing of the collection.</p></li>
+<li><p>Stated support for the classic-mode only machine generations z196 / z114 /
+zEC12 / zBC12.</p></li>
+<li><p>Stated support for machine generation z16 / LinuxONE 4.</p></li>
+<li><p>Upgraded zhmcclient to 1.5.0 to pick up fixes.</p></li>
+</ul>
+<p><strong>Cleanup:</strong></p>
+<ul class="simple">
+<li><p>Clarified the description of input parameters of the zhmc_lpar module.
+(part of issue #556)</p></li>
 </ul>
 </section>
 <section id="version-1-1-0">
@@ -595,7 +671,7 @@ property update.</p></li>
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.1.1
+        v: 1.2.0
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -612,6 +688,7 @@ property update.</p></li>
             <dd><a href="1.0.3/release_notes.html">1.0.3</a></dd>
             <dd><a href="1.1.0/release_notes.html">1.1.0</a></dd>
             <dd><a href="1.1.1/release_notes.html">1.1.1</a></dd>
+            <dd><a href="1.2.0/release_notes.html">1.2.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

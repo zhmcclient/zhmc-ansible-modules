@@ -21,7 +21,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="zhmc_crypto_attachment – Attach crypto resources to partitions" href="zhmc_crypto_attachment.html" />
+    <link rel="next" title="zhmc_adapter_list – List adapters" href="zhmc_adapter_list.html" />
     <link rel="prev" title="zhmc_cpc_list – List CPCs" href="zhmc_cpc_list.html" /> 
 </head>
 
@@ -33,7 +33,7 @@
             <a href="../index.html" class="icon icon-home"> IBM Z HMC collection
           </a>
               <div class="version">
-                1.1.1
+                1.2.0
 
               </div>
 <div role="search">
@@ -52,6 +52,10 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../modules.html">Modules</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="zhmc_user.html">zhmc_user – Create HMC users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_password_rule.html">zhmc_password_rule – Create HMC password rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_password_rule_list.html">zhmc_password_rule_list – List Password Rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_user_role.html">zhmc_user_role – Create HMC user roles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_user_role_list.html">zhmc_user_role_list – List HMC user roles</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_cpc.html">zhmc_cpc – Manage CPCs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_cpc_list.html">zhmc_cpc_list – List CPCs</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">zhmc_adapter – Update adapters and create Hipersocket adapters</a><ul>
@@ -62,10 +66,12 @@
 <li class="toctree-l3"><a class="reference internal" href="#return-values">Return Values</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_adapter_list.html">zhmc_adapter_list – List adapters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_crypto_attachment.html">zhmc_crypto_attachment – Attach crypto resources to partitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_hba.html">zhmc_hba – Create HBAs in partitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_nic.html">zhmc_nic – Create NICs in partitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_partition.html">zhmc_partition – Create partitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_partition_list.html">zhmc_partition_list – List partitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group.html">zhmc_storage_group – Create storage groups</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Attach storage groups to partitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_volume.html">zhmc_storage_volume – Create storage volumes</a></li>
@@ -387,7 +393,7 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>{property}</dt><dd><p>Additional properties of the port, as described in the data model of the ‘Network Port’ or ‘Storage Port’ element object of the ‘Adapter’ object in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<dt>{property}</dt><dd><p>Additional properties of the port, as described in the data model of the ‘Network Port’ or ‘Storage Port’ element object of the ‘Adapter’ object in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book. The property names have hyphens (-) as described in that book. In case of unconfigured FICON adapters, the property list is short.</p>
 </dd>
 </dl>
 </dd>
@@ -402,7 +408,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="zhmc_cpc_list.html" class="btn btn-neutral float-left" title="zhmc_cpc_list – List CPCs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="zhmc_crypto_attachment.html" class="btn btn-neutral float-right" title="zhmc_crypto_attachment – Attach crypto resources to partitions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="zhmc_adapter_list.html" class="btn btn-neutral float-right" title="zhmc_adapter_list – List adapters" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
@@ -425,7 +431,7 @@
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.1.1
+        v: 1.2.0
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -442,6 +448,7 @@
             <dd><a href="../1.0.3/modules/zhmc_adapter.html">1.0.3</a></dd>
             <dd><a href="../1.1.0/modules/zhmc_adapter.html">1.1.0</a></dd>
             <dd><a href="../1.1.1/modules/zhmc_adapter.html">1.1.1</a></dd>
+            <dd><a href="../1.2.0/modules/zhmc_adapter.html">1.2.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

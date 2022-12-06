@@ -33,7 +33,7 @@
             <a href="index.html" class="icon icon-home"> IBM Z HMC collection
           </a>
               <div class="version">
-                1.2.0-dev1
+                1.2.0
 
               </div>
 <div role="search">
@@ -66,7 +66,7 @@
 <p class="caption" role="heading"><span class="caption-text">Appendices</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Releases</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-2-0-dev1">Version 1.2.0-dev1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-2-0">Version 1.2.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-1-0">Version 1.1.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-0-0">Version 1.0.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-10-0">Version 0.10.0</a></li>
@@ -109,13 +109,11 @@
              
   <section id="releases">
 <span id="id1"></span><h1>Releases<a class="headerlink" href="#releases" title="Permalink to this heading"></a></h1>
-<section id="version-1-2-0-dev1">
-<h2>Version 1.2.0-dev1<a class="headerlink" href="#version-1-2-0-dev1" title="Permalink to this heading"></a></h2>
-<p>This version contains all fixes up to version 1.1.x.</p>
-<p>Released: not yet</p>
+<section id="version-1-2-0">
+<h2>Version 1.2.0<a class="headerlink" href="#version-1-2-0" title="Permalink to this heading"></a></h2>
+<p>This version contains all fixes up to version 1.1.1.</p>
+<p>Released: 2022-12-06</p>
 <p>Availability: <a class="reference external" href="https://console.redhat.com/ansible/automation-hub/repo/published/ibm/ibm_zhmc">AutomationHub</a>, <a class="reference external" href="https://galaxy.ansible.com/ibm/ibm_zhmc">Galaxy</a>, <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">GitHub</a></p>
-<p><strong>Incompatible changes:</strong></p>
-<p><strong>Deprecations:</strong></p>
 <p><strong>Bug fixes:</strong></p>
 <ul class="simple">
 <li><p>Fixed that every module invocation created an additional log handler, thus
@@ -193,15 +191,16 @@ do not exist. (related to issue #564)</p></li>
 <li><p>Increased the set of tested Ansible versions to now include all major versions
 that are supported, from Ansible 2.9 to Ansible 7.</p></li>
 <li><p>Added tests for Python 3.11.</p></li>
+<li><p>Simplified the publishing of the collection.</p></li>
+<li><p>Stated support for the classic-mode only machine generations z196 / z114 /
+zEC12 / zBC12.</p></li>
+<li><p>Stated support for machine generation z16 / LinuxONE 4.</p></li>
+<li><p>Upgraded zhmcclient to 1.5.0 to pick up fixes.</p></li>
 </ul>
 <p><strong>Cleanup:</strong></p>
 <ul class="simple">
 <li><p>Clarified the description of input parameters of the zhmc_lpar module.
 (part of issue #556)</p></li>
-</ul>
-<p><strong>Known issues:</strong></p>
-<ul class="simple">
-<li><p>See <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/issues">list of open issues</a>.</p></li>
 </ul>
 </section>
 <section id="version-1-1-0">
@@ -689,6 +688,7 @@ property update.</p></li>
             <dd><a href="../1.0.3/release_notes.html">1.0.3</a></dd>
             <dd><a href="../1.1.0/release_notes.html">1.1.0</a></dd>
             <dd><a href="../1.1.1/release_notes.html">1.1.1</a></dd>
+            <dd><a href="../1.2.0/release_notes.html">1.2.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
