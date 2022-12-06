@@ -33,11 +33,16 @@ ifeq ($(PACKAGE_LEVEL),minimum)
   pip_level_opts := -c minimum-constraints.txt
   pip_level_opts_new :=
 else
-  ifeq ($(PACKAGE_LEVEL),latest)
-    pip_level_opts := --upgrade
-    pip_level_opts_new := --upgrade-strategy eager
+  ifeq ($(PACKAGE_LEVEL),ansible)
+    pip_level_opts := -c ansible-constraints.txt
+    pip_level_opts_new :=
   else
-    $(error Error: Invalid value for PACKAGE_LEVEL variable: $(PACKAGE_LEVEL))
+    ifeq ($(PACKAGE_LEVEL),latest)
+      pip_level_opts := --upgrade
+      pip_level_opts_new := --upgrade-strategy eager
+    else
+      $(error Error: Invalid value for PACKAGE_LEVEL variable: $(PACKAGE_LEVEL))
+    endif
   endif
 endif
 

@@ -35,6 +35,11 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Bug fixes:**
 
+* Unpinned Ansible again. It was pinned in version 1.2.0 on each Python version
+  to a different Ansible version in order to broaden the test coverage. The
+  test coverage across Ansible versions is now defined separately from the
+  Ansible versions required for installing the collection.
+
 **Enhancements:**
 
 **Cleanup:**
