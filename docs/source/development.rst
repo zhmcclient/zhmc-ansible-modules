@@ -313,7 +313,7 @@ local clone of the zhmc-ansible-modules Git repo.
       https://galaxy.ansible.com/my-imports (you need to log in).
 
     * Verify that the new version has a release on Github at
-      https://github.com/zhmcclient/python-zhmcclient/releases
+      https://github.com/zhmcclient/zhmc-ansible-modules/releases
 
     * Verify that the new version has documentation on Github pages at
       https://zhmcclient.github.io/zhmc-ansible-modules/release_notes.html
@@ -326,13 +326,18 @@ local clone of the zhmc-ansible-modules Git repo.
     You need to have an account on https://console.redhat.com, and your
     userid there needs to be authorized to modify the 'ibm' namespace.
 
+    * Buuild the distribution archive locally:
+
+    .. code-block:: sh
+
+        make dist
+
     * Open https://console.redhat.com/ansible/automation-hub/repo/published/ibm
       and log in to your account.
 
     * Click on the "Upload Collection" button at the top right of the page,
       and in the file selection dialog that pops up, select the distribution
-      archive for the version you want to upload. That archive has been built
-      during the `make upload` in the previous step, and its file name is:
+      archive for the version you want to upload:
 
       .. code-block:: text
 
@@ -479,7 +484,6 @@ local clone of the zhmc-ansible-modules Git repo.
 
     .. code-block:: sh
 
-        git status  # Double check the changed files
         git commit -asm "Start ${MNU}"
         git push --set-upstream origin start_${MNU}
 
@@ -508,4 +512,5 @@ local clone of the zhmc-ansible-modules Git repo.
 
         git checkout ${BRANCH}
         git pull
-        git branch -d start_${MNU}
+        git branch -D start_${MNU}
+        git branch -D -r origin/start_${MNU}
