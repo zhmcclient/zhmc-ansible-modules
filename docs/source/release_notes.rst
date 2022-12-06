@@ -20,16 +20,12 @@ Releases
 ========
 
 
-Version 1.1.2-dev1
-------------------
+Version 1.1.2
+-------------
 
-Released: not yet
+Released: 2022-12-06
 
 Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
-
-**Incompatible changes:**
-
-**Deprecations:**
 
 **Bug fixes:**
 
@@ -52,16 +48,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Fixed a flake8 AttributeError when using importlib-metadata 5.0.0 on
   Python >=3.7, by pinning importlib-metadata to <5.0.0 on these Python
   versions.
-
-**Enhancements:**
-
-**Cleanup:**
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 1.1.1
