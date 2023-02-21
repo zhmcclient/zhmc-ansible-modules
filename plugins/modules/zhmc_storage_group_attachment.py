@@ -46,11 +46,13 @@ author:
   - Andreas Scheuring (@scheuran)
   - Juergen Leopold (@leopoldjuergen)
 requirements:
-  - Access to the WS API of the HMC of the targeted Z system
-    (see :term:`HMC API`).
   - The targeted Z system must be of generation z14 or later (to have the
     "dpm-storage-management" firmware feature) and must be in the Dynamic
     Partition Manager (DPM) operational mode.
+  - "The HMC userid must have these task permissions:
+    'Configure Storage - System Programmer', 'Partition Details'."
+  - "The HMC userid must have object-access permissions to these objects:
+    Target partitions, target storage groups, target CPCs."
 options:
   hmc_host:
     description:

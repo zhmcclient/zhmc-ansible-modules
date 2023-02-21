@@ -34,8 +34,8 @@ module: zhmc_cpc
 version_added: "2.9.0"
 short_description: Manage CPCs
 description:
-  - Deactivate a CPC (Z system).
-  - Activate a CPC and update its properties.
+  - Deactivate/Stop a CPC (Z system).
+  - Activate/Start a CPC and update its properties.
   - Gather facts about a CPC, and for DPM operational mode, including its
     adapters, partitions and storage groups.
   - Update the properties of a CPC.
@@ -43,8 +43,13 @@ author:
   - Andreas Maier (@andy-maier)
   - Andreas Scheuring (@scheuran)
 requirements:
-  - Access to the WS API of the HMC of the targeted CPC (see :term:`HMC API`).
-  - The targeted CPC can be in any operational mode (classic, DPM).
+  - "The HMC userid must have these task permissions:
+    'CPC Details'. For CPCs in DMP mode: 'Start', 'Stop'. For CPCs in classic
+    mode: 'Activate', 'Deactivate'."
+  - "The HMC userid must have object-access permissions to these objects:
+    Target CPCs. For CPCs in DMP mode: Adapters, partitions, storage groups of
+    target CPCs. For CPCs in classic mode: LPARs, activation profiles of
+    target CPCs."
 options:
   hmc_host:
     description:

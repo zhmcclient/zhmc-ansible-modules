@@ -37,14 +37,19 @@ description:
   - Gather facts about an adapter of a CPC (Z system), including its ports.
   - Update the properties of an adapter and its ports.
   - Create or delete a Hipersocket adapter.
+seealso:
+  - module: zhmc_adapter_list
 author:
   - Andreas Maier (@andy-maier)
   - Andreas Scheuring (@scheuran)
 requirements:
-  - Access to the WS API of the HMC of the targeted Z system
-    (see :term:`HMC API`).
   - The targeted Z system must be in the Dynamic Partition Manager (DPM)
     operational mode.
+  - "The HMC userid must have these task permissions:
+    'Adapter Details', 'Create HiperSockets Adapter',
+    'Delete HiperSockets Adapter', 'Configure Storage - System Programmer'."
+  - "The HMC userid must have object-access permissions to these objects:
+    Target adapters, CPCs of target adapters."
 options:
   hmc_host:
     description:
@@ -95,7 +100,7 @@ options:
     required: true
   cpc_name:
     description:
-      - The name of the target CPC.
+      - The name of the CPC with the target adapter.
     type: str
     required: true
   match:

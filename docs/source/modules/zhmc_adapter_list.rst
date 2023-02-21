@@ -24,7 +24,7 @@ Synopsis
 Requirements
 ------------
 
-- Access to the WS API of the HMC (see :term:`HMC API`).
+- The HMC userid must have object-access permissions to these objects: Target adapters, CPCs of target adapters (only for z13 and older).
 
 
 
@@ -166,6 +166,12 @@ Examples
 
 
 
+See Also
+--------
+
+.. seealso::
+
+   - :ref:`zhmc_adapter_module`
 
 
 
