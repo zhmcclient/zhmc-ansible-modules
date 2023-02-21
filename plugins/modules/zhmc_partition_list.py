@@ -41,10 +41,13 @@ description:
   - The module works for any HMC version. On HMCs with version 2.14.0 or higher,
     the "List Permitted Partitions" opration is used. On older HMCs, the
     managed CPCs are listed and the partitions on each CPC.
+seealso:
+  - module: zhmc_partition
 author:
   - Andreas Maier (@andy-maier)
 requirements:
-  - Access to the WS API of the HMC (see :term:`HMC API`).
+  - "The HMC userid must have object-access permissions to these objects:
+    Target partitions, CPCs of target partitions (only for z13 and older)."
 options:
   hmc_host:
     description:

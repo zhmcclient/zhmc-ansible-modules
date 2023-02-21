@@ -23,8 +23,8 @@ Synopsis
 Requirements
 ------------
 
-- Access to the WS API of the HMC of the targeted Z system (see :term:`HMC API`).
-- The targeted Z system can be in any operational mode (classic, DPM)
+- The HMC userid must have these task permissions: 'Manage Users' (for standard users), 'Manage User Templates' (for template users).
+- For updating its own HMC password, it is sufficient if the HMC userid has task permission for Manage Users or object-access permission for its own User object.
 
 
 

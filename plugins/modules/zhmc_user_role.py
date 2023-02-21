@@ -39,9 +39,8 @@ description:
 author:
   - Andreas Maier (@andy-maier)
 requirements:
-  - Access to the WS API of the HMC of the targeted Z system
-    (see :term:`HMC API`).
-  - The targeted Z system can be in any operational mode (classic, DPM)
+  - "The HMC userid must have these task permissions:
+    'Manage User Roles'."
 options:
   hmc_host:
     description:

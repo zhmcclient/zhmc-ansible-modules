@@ -43,20 +43,14 @@ description:
 author:
   - Andreas Maier (@andy-maier)
 requirements:
-  - Access to the WS API of the HMC of the targeted CPC (see :term:`HMC API`).
   - The targeted CPC must be in the classic operational mode.
-  - "The HMC userid must have the following HMC permissions:"
-  - Object-access permission to the target LPAR and its parent CPC.
-  - If the 'next-activation-profile-name' property is to be updated, task
-    permission for the 'Change Object Options' task or the 'Customize/Delete
-    Activation Profiles' task.
-  - If any of the 'zaware-...' properties is to be updated, task permission for
-    the 'Firmware Details' task.
-  - If any of the numbers of allocated or reserved cores is is to be updated,
-    task permission for the 'Logical Processor Add' task.
-  - If the LPAR needs to be activated, task permission for the 'Activate' task.
-  - If the LPAR needs to be deactivated, task permission for the 'Deactivate'
-    task.
+  - "The HMC userid must have these task permissions:
+    'Activate', 'Deactivate', 'Logical Processor Add' (if cores are updated),
+    'Firmware Details' (if 'zaware-...' properties are updated),
+    'Change Object Options' or 'Customize/Delete Activation Profiles' (if
+    'next-activation-profile-name' property is updated)."
+  - "The HMC userid must have object-access permissions to these objects:
+    Target LPARs, CPCs of target LPARs."
 options:
   hmc_host:
     description:

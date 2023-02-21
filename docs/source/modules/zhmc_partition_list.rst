@@ -25,7 +25,7 @@ Synopsis
 Requirements
 ------------
 
-- Access to the WS API of the HMC (see :term:`HMC API`).
+- The HMC userid must have object-access permissions to these objects: Target partitions, CPCs of target partitions (only for z13 and older).
 
 
 
@@ -124,6 +124,12 @@ Examples
 
 
 
+See Also
+--------
+
+.. seealso::
+
+   - :ref:`zhmc_partition_module`
 
 
 

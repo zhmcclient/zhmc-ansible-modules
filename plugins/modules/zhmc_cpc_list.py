@@ -39,7 +39,8 @@ description:
 author:
   - Andreas Maier (@andy-maier)
 requirements:
-  - Access to the WS API of the HMC (see :term:`HMC API`).
+  - "The HMC userid must have object-access permissions to these objects:
+    Target CPCs."
 options:
   hmc_host:
     description:

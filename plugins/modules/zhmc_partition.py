@@ -35,11 +35,13 @@ version_added: "2.9.0"
 short_description: Create partitions
 description:
   - Gather facts about a partition of a CPC (Z system), including its HBAs,
-    NICs, and virtual functions.
+    NICs, virtual functions, and crypto configuration including crypto
+    adapters.
   - Create, update, or delete a partition. The HBAs, NICs, and virtual
    functions of the partition are managed by separate Ansible modules.
   - Start or stop a partition.
 seealso:
+  - module: zhmc_partition_list
   - module: zhmc_hba
   - module: zhmc_nic
   - module: zhmc_virtual_function
@@ -48,10 +50,14 @@ author:
   - Andreas Scheuring (@scheuran)
   - Juergen Leopold (@leopoldjuergen)
 requirements:
-  - Access to the WS API of the HMC of the targeted Z system
-    (see :term:`HMC API`).
   - The targeted Z system must be in the Dynamic Partition Manager (DPM)
     operational mode.
+  - "The HMC userid must have these task permissions:
+    'New Partition', 'Delete Partition', 'Partition Details',
+    'Start Partition', 'Stop Partition', 'Dump Partition', 'PSW Restart'."
+  - "The HMC userid must have object-access permissions to these objects:
+    Target partitions, CPCs of target partitions, Crypto adapters of target
+    partitions."
 options:
   hmc_host:
     description:

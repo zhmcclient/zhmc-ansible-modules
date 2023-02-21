@@ -23,8 +23,7 @@ Synopsis
 Requirements
 ------------
 
-- Access to the WS API of the HMC of the targeted Z system (see :term:`HMC API`).
-- The targeted Z system can be in any operational mode (classic, DPM)
+- The HMC userid must have these task permissions: 'Manage Password Rules'.
 
 
 

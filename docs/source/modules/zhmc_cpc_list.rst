@@ -22,7 +22,7 @@ Synopsis
 Requirements
 ------------
 
-- Access to the WS API of the HMC (see :term:`HMC API`).
+- The HMC userid must have object-access permissions to these objects: Target CPCs.
 
 
 

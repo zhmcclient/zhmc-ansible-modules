@@ -43,10 +43,13 @@ author:
   - Andreas Maier (@andy-maier)
   - Andreas Scheuring (@scheuran)
 requirements:
-  - Access to the WS API of the HMC of the targeted Z system
-    (see :term:`HMC API`).
   - The targeted Z system must be in the Dynamic Partition Manager (DPM)
     operational mode.
+  - "The HMC userid must have these task permissions:
+    'Partition Details'."
+  - "The HMC userid must have object-access permissions to these objects:
+    Target partitions, target crypto adapters, CPC with target partitions and
+    adapters."
 options:
   hmc_host:
     description:

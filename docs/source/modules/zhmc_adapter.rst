@@ -24,8 +24,9 @@ Synopsis
 Requirements
 ------------
 
-- Access to the WS API of the HMC of the targeted Z system (see :term:`HMC API`).
 - The targeted Z system must be in the Dynamic Partition Manager (DPM) operational mode.
+- The HMC userid must have these task permissions: 'Adapter Details', 'Create HiperSockets Adapter', 'Delete HiperSockets Adapter', 'Configure Storage - System Programmer'.
+- The HMC userid must have object-access permissions to these objects: Target adapters, CPCs of target adapters.
 
 
 
@@ -86,7 +87,7 @@ name
 
 
 cpc_name
-  The name of the target CPC.
+  The name of the CPC with the target adapter.
 
   | **required**: True
   | **type**: str
@@ -219,6 +220,12 @@ Examples
 
 
 
+See Also
+--------
+
+.. seealso::
+
+   - :ref:`zhmc_adapter_list_module`
 
 
 

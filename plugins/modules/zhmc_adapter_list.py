@@ -42,10 +42,13 @@ description:
   - CPCs in classic mode are ignored (i.e. do not lead to a failure).
   - Adapters for which the user has no object access permission are ignored
     (i.e. do not lead to a failure).
+seealso:
+  - module: zhmc_adapter
 author:
   - Andreas Maier (@andy-maier)
 requirements:
-  - Access to the WS API of the HMC (see :term:`HMC API`).
+  - "The HMC userid must have object-access permissions to these objects:
+    Target adapters, CPCs of target adapters (only for z13 and older)."
 options:
   hmc_host:
     description:
