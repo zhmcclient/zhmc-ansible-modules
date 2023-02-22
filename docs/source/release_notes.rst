@@ -47,6 +47,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Docs/dev: Changed sphinx-versions to use the PEP 440 compliant tag 1.1.3.post2
   from our fork.
 
+* Addressed issues in test workflow reported by Github Actions. (issue #616)
+
 **Known issues:**
 
 * See `list of open issues`_.
