@@ -32,6 +32,7 @@ Modules targeting the HMC (i.e. not a specific CPC):
    :glob:
 
    modules/zhmc_user
+   modules/zhmc_user_list
    modules/zhmc_password_rule
    modules/zhmc_password_rule_list
    modules/zhmc_user_role
