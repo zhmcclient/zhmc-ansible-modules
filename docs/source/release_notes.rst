@@ -42,6 +42,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Enhancements:**
 
+* Added a new module 'zhmc_user_list' for listing the HMC users.
+
 **Cleanup:**
 
 * Docs/dev: Changed sphinx-versions to use the PEP 440 compliant tag 1.1.3.post2
