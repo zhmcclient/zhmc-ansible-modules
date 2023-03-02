@@ -256,6 +256,11 @@ jobs:
         PACKAGE_LEVEL: ${{ matrix.package_level }}
       run: |
         make sanity
+    - name: Run check_reqs
+      env:
+        PACKAGE_LEVEL: ${{ matrix.package_level }}
+      run: |
+        make check_reqs
     - name: Run docs
       env:
         PACKAGE_LEVEL: ${{ matrix.package_level }}
