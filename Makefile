@@ -111,6 +111,19 @@ sanity_dir := tmp_sanity/collections/ansible_collections/ibm/ibm_zhmc
 sanity_dir1 := tmp_sanity
 sanity_tar_file := tmp_workspace.tar
 
+# Packages whose dependencies are checked using pip-missing-reqs
+# Pylint is run only on Python>=3.5
+# Sphinx is run only on Python>=3.6
+ifeq ($(python_m_n_version),2.7)
+  check_reqs_packages := pytest coverage coveralls flake8 ansible
+else
+ifeq ($(python_m_n_version),3.5)
+  check_reqs_packages := pytest coverage coveralls flake8 ansible pylint
+else
+  check_reqs_packages := pytest coverage coveralls flake8 ansible pylint sphinx
+endif
+endif
+
 # Directories for documentation
 doc_source_dir := docs/source
 doc_templates_dir := docs/templates
@@ -172,6 +185,7 @@ help:
 	@echo '  dist       - Build the collection distribution archive in: $(dist_dir)'
 	@echo '  check      - Run flake8'
 	@echo '  sanity     - Run Ansible sanity tests (includes pep8, pylint, validate-modules)'
+	@echo '  check_reqs - Perform missing dependency checks'
 	@echo '  docs       - Build the documentation for all enabled (docs/source/conf.py) versions in: $(doc_build_dir) using remote repo'
 	@echo '  docslocal  - Build the documentation from local repo contents in: $(doc_build_local_dir)'
 	@echo '  linkcheck  - Check links in documentation'
@@ -203,7 +217,7 @@ help:
 	@echo '  ansible-playbook playbooks/....'
 
 .PHONY: all
-all: install develop dist check sanity docs docslocal linkcheck test end2end_mocked
+all: install develop dist check sanity check_reqs docs docslocal linkcheck test end2end_mocked
 	@echo '$@ done.'
 
 .PHONY: install
@@ -246,6 +260,25 @@ sanity: _check_version develop_$(pymn).done
 	sh -c "cd $(sanity_dir); ansible-test sanity --verbose --truncate 0 --local --python $(python_m_n_version)"
 	PL=$(PACKAGE_LEVEL) sh -c "if $(PYTHON_CMD) -c \"import sys,os; sys.exit(0 if sys.version_info[0:2]>=(3,9) or (3,7)<=sys.version_info[0:2]<=(3,8) and os.getenv('PL')=='latest' else 1)\"; then echo 'Running ansible sanity test with its own virtual env'; cd $(sanity_dir); ansible-test sanity --verbose --truncate 0 --venv --requirements --python $(python_m_n_version); fi"
 	@echo '$@ done.'
+
+.PHONY: check_reqs
+check_reqs: _check_version develop_$(pymn).done minimum-constraints.txt requirements.txt
+ifeq ($(python_major_version),2)
+	@echo "Makefile: Warning: Skipping the checking of missing dependencies on Python 2.x" >&2
+else
+ifeq ($(PACKAGE_LEVEL),ansible)
+	@echo "Makefile: Warning: Skipping the checking of missing dependencies for PACKAGE_LEVEL=ansible" >&2
+else
+	@echo "Makefile: Checking missing dependencies of this package"
+	pip-missing-reqs $(src_py_dir) --requirements-file=requirements.txt
+	pip-missing-reqs $(src_py_dir) --requirements-file=minimum-constraints.txt
+	@echo "Makefile: Done checking missing dependencies of this package"
+	@echo "Makefile: Checking missing dependencies of some development packages"
+	@rc=0; for pkg in $(check_reqs_packages); do dir=$$($(PYTHON_CMD) -c "import $${pkg} as m,os; dm=os.path.dirname(m.__file__); d=dm if not dm.endswith('site-packages') else m.__file__; print(d)"); cmd="pip-missing-reqs $${dir} --requirements-file=minimum-constraints.txt"; echo $${cmd}; $${cmd}; rc=$$(expr $${rc} + $${?}); done; exit $${rc}
+	@echo "Makefile: Done checking missing dependencies of some development packages"
+endif
+endif
+	@echo "Makefile: $@ done."
 
 .PHONY:	end2end
 end2end: _check_version develop_$(pymn).done

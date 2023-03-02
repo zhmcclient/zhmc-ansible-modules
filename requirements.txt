@@ -19,6 +19,11 @@ ansible>=4.0.0; python_version == '3.9'
 ansible>=5.0.1; python_version == '3.10'
 ansible>=6.0.0; python_version >= '3.11'
 
+# ansible-core is pulled in by ansible>=4.0, and is needed for pip-check-reqs checks.
+ansible-core>=2.11.12; python_version == '3.9'
+ansible-core>=2.12.10; python_version == '3.10'
+ansible-core>=2.14.2; python_version >= '3.11'
+
 # requests 2.22.0 removes the pinning of urllib3 to <1.25.0, and urllib 1.25.9
 #   is required to address safety issues
 # requests 2.25.0 tolerates urllib3 1.26.5 which is needed on Python 3.10 to
@@ -58,7 +63,11 @@ cryptography>=3.4.7; python_version >= '3.7'
 importlib-metadata>=0.12,<5.0.0; python_version <= '3.7'
 importlib-metadata>=1.1.0; python_version >= '3.8'
 
-packaging>=20.0
+# packaging is used by TBD, and for dev also by pytest, pip-check-reqs, sphinx
+# packaging>=20.5 is needed by pip-check-reqs 2.4.3 but it requires only packaging>=16.0
+# packaging 21.0 removed support for Python <3.6
+packaging>=20.5; python_version <= '3.5'
+packaging>=21.0; python_version >= '3.6'
 
 # PyYAML 5.3 fixed narrow build error on Python 2.7
 # PyYAML 5.3.1 addressed issue 38100 reported by safety
