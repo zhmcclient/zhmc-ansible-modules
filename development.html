@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Development &mdash; IBM Z HMC collection  documentation</title>
@@ -12,10 +12,8 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -30,15 +28,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> IBM Z HMC collection
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            IBM Z HMC collection
           </a>
               <div class="version">
-                1.2.1
+                1.3.0
 
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -91,7 +93,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">Development</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -119,9 +121,9 @@ project are also considered developers for the purpose of this section.</p>
 <a class="reference external" href="https://docs.python-guide.org/dev/virtualenvs/">virtual Python environment</a>.</p>
 <p>Then, with a virtual Python environment active, clone the Git repo of this
 project and prepare the development environment with <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">develop</span></code>:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ git clone git@github.com:zhmcclient/zhmc-ansible-modules.git
-$ <span class="nb">cd</span> zhmc-ansible-modules
-$ make develop
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>git@github.com:zhmcclient/zhmc-ansible-modules.git
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>zhmc-ansible-modules
+$<span class="w"> </span>make<span class="w"> </span>develop
 </pre></div>
 </div>
 <p>This will install all prerequisites the project needs for its development.</p>
@@ -136,12 +138,12 @@ on GitHub Pages at <a class="reference external" href="https://zhmcclient.github
 <p>That web site represents a defined set of versions of this collection and
 automatically gets updated whenever a pull request gets merged into the
 repository branch that corresponds to the version. The automatic update
-mechanism is implemented in the GitHub Actions workflow file
-<code class="docutils literal notranslate"><span class="pre">.github/workflows/docs.yml</span></code>.</p>
+mechanism is implemented in the GitHub Actions workflow “publish” (in file
+<code class="docutils literal notranslate"><span class="pre">.github/workflows/publish.yml</span></code>).</p>
 <p>The versions to be represented on that site are defined in <code class="docutils literal notranslate"><span class="pre">docs/source/conf.py</span></code>
 in the section for “sphinx-versioning”.</p>
 <p>In order to build this “versioned” documentation locally, issue:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ make docs
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>make<span class="w"> </span>docs
 </pre></div>
 </div>
 <p>The top-level document to open with a web browser will be
@@ -151,7 +153,7 @@ directory.</p>
 <p>In order to see the effects of some change in your Git work directory, there
 is a second documentation build that builds an “unversioned” documentation
 from the content of your Git work directory:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ make docslocal
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>make<span class="w"> </span>docslocal
 </pre></div>
 </div>
 <p>The top-level document to open with a web browser will be
@@ -163,17 +165,19 @@ has been built successfully.</p>
 <p>Again, an invocation of Make runs against the currently active Python environment.</p>
 <p>There are four kinds of tests currently, available as make targets:</p>
 <ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">check</span></code> - Run flake8</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">linkcheck</span></code> - Check links in documentation</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">test</span></code> - Run unit and function tests with test coverage</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">sanity</span></code> - Run Ansible sanity tests (includes flake8, pylint, validate-modules)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">end2end</span></code> - Run end2end tests (against a real environment)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">test</span></code> - Run unit and function tests with test coverage</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">end2end_mocked</span></code> - Run end2end tests against a mocked environment</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">end2end</span></code> - Run end2end tests against an environment defined by TESTHMC</p></li>
 </ul>
 <p>For the unit and function tests, the testcases and options for pytest
 can be specified via the environment variable <code class="docutils literal notranslate"><span class="pre">TESTOPTS</span></code>, as shown in these
 examples:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ make <span class="nb">test</span>                                      <span class="c1"># Run all unit and function tests</span>
-$ <span class="nv">TESTOPTS</span><span class="o">=</span><span class="s1">&#39;-vv&#39;</span> make <span class="nb">test</span>                       <span class="c1"># Specify -vv verbosity for pytest</span>
-$ <span class="nv">TESTOPTS</span><span class="o">=</span><span class="s1">&#39;-k test_partition.py&#39;</span> make <span class="nb">test</span>      <span class="c1"># Run only this test source file</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>make<span class="w"> </span><span class="nb">test</span><span class="w">                                      </span><span class="c1"># Run all unit and function tests</span>
+$<span class="w"> </span><span class="nv">TESTOPTS</span><span class="o">=</span><span class="s1">&#39;-vv&#39;</span><span class="w"> </span>make<span class="w"> </span><span class="nb">test</span><span class="w">                       </span><span class="c1"># Specify -vv verbosity for pytest</span>
+$<span class="w"> </span><span class="nv">TESTOPTS</span><span class="o">=</span><span class="s1">&#39;-k test_partition.py&#39;</span><span class="w"> </span>make<span class="w"> </span><span class="nb">test</span><span class="w">      </span><span class="c1"># Run only this test source file</span>
 </pre></div>
 </div>
 <p>The automated tests performed by Github Actions run on a standard set of test
@@ -188,12 +192,6 @@ versions. In addition, this project tests on a well-defined set of minimum
 versions of Python packages, and a set of latest versions of Python packages
 for each Python version.</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 18%" />
-<col style="width: 24%" />
-<col style="width: 21%" />
-<col style="width: 36%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>Python</p></td>
 <td><p>Packages</p></td>
@@ -330,23 +328,23 @@ branch of its minor version:</p>
 </div>
 </li>
 <li><p>Create a topic branch for the version that is being released:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git checkout <span class="si">${</span><span class="nv">BRANCH</span><span class="si">}</span>
-git pull
-git checkout -b release_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>checkout<span class="w"> </span><span class="si">${</span><span class="nv">BRANCH</span><span class="si">}</span>
+git<span class="w"> </span>pull
+git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>release_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
 </pre></div>
 </div>
 </li>
 <li><p>Edit the Galaxy metadata file:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>vi galaxy.yml
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>vi<span class="w"> </span>galaxy.yml
 </pre></div>
 </div>
 <p>and set the ‘version’ parameter to the version that is being released:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">M.N.U</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">M.N.U</span>
 </pre></div>
 </div>
 </li>
 <li><p>Edit the change log:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>vi docs/source/release_notes.rst
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>vi<span class="w"> </span>docs/source/release_notes.rst
 </pre></div>
 </div>
 <p>and make the following changes in the section of the version that is being
@@ -363,8 +361,8 @@ add text for any known issues you want users to know about.</p></li>
 </ul>
 </li>
 <li><p>Commit your changes and push the topic branch to the remote repo:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git commit -asm <span class="s2">&quot;Release </span><span class="si">${</span><span class="nv">MNU</span><span class="si">}</span><span class="s2">&quot;</span>
-git push --set-upstream origin release_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>commit<span class="w"> </span>-asm<span class="w"> </span><span class="s2">&quot;Release </span><span class="si">${</span><span class="nv">MNU</span><span class="si">}</span><span class="s2">&quot;</span>
+git<span class="w"> </span>push<span class="w"> </span>--set-upstream<span class="w"> </span>origin<span class="w"> </span>release_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
 </pre></div>
 </div>
 </li>
@@ -386,12 +384,12 @@ on GitHub.</p>
 items, investigate why and fix.</p>
 </li>
 <li><p>Publish the collection to Ansible Galaxy</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git checkout <span class="si">${</span><span class="nv">BRANCH</span><span class="si">}</span>
-git pull
-git branch -D release_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
-git branch -D -r origin/release_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
-git tag -f <span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
-git push -f --tags
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>checkout<span class="w"> </span><span class="si">${</span><span class="nv">BRANCH</span><span class="si">}</span>
+git<span class="w"> </span>pull
+git<span class="w"> </span>branch<span class="w"> </span>-D<span class="w"> </span>release_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
+git<span class="w"> </span>branch<span class="w"> </span>-D<span class="w"> </span>-r<span class="w"> </span>origin/release_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
+git<span class="w"> </span>tag<span class="w"> </span>-f<span class="w"> </span><span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
+git<span class="w"> </span>push<span class="w"> </span>-f<span class="w"> </span>--tags
 </pre></div>
 </div>
 <p>Pushing the new tag will cause the “publish” workflow to run. That workflow
@@ -408,7 +406,7 @@ Galaxy succeeded, by checking the status at
 <a class="reference external" href="https://galaxy.ansible.com/my-imports">https://galaxy.ansible.com/my-imports</a> (you need to log in).</p>
 </li>
 <li><p>Verify that the new version has a release on Github at
-<a class="reference external" href="https://github.com/zhmcclient/python-zhmcclient/releases">https://github.com/zhmcclient/python-zhmcclient/releases</a></p></li>
+<a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">https://github.com/zhmcclient/zhmc-ansible-modules/releases</a></p></li>
 <li><p>Verify that the new version has documentation on Github pages at
 <a class="reference external" href="https://zhmcclient.github.io/zhmc-ansible-modules/release_notes.html">https://zhmcclient.github.io/zhmc-ansible-modules/release_notes.html</a></p></li>
 </ul>
@@ -418,13 +416,18 @@ Galaxy succeeded, by checking the status at
 has not successfully been automated as of today.</p>
 <p>You need to have an account on <a class="reference external" href="https://console.redhat.com">https://console.redhat.com</a>, and your
 userid there needs to be authorized to modify the ‘ibm’ namespace.</p>
+<ul class="simple">
+<li><p>Buuild the distribution archive locally:</p></li>
+</ul>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>dist
+</pre></div>
+</div>
 <ul>
 <li><p>Open <a class="reference external" href="https://console.redhat.com/ansible/automation-hub/repo/published/ibm">https://console.redhat.com/ansible/automation-hub/repo/published/ibm</a>
 and log in to your account.</p></li>
 <li><p>Click on the “Upload Collection” button at the top right of the page,
 and in the file selection dialog that pops up, select the distribution
-archive for the version you want to upload. That archive has been built
-during the <cite>make upload</cite> in the previous step, and its file name is:</p>
+archive for the version you want to upload:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>dist/ibm-ibm_zhmc-{M}.{N}.{U}.tar.gz
 </pre></div>
 </div>
@@ -494,14 +497,14 @@ branch of its minor version:</p>
 </div>
 </li>
 <li><p>Create a topic branch for the version that is being started:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git checkout <span class="si">${</span><span class="nv">BRANCH</span><span class="si">}</span>
-git pull
-git checkout -b start_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>checkout<span class="w"> </span><span class="si">${</span><span class="nv">BRANCH</span><span class="si">}</span>
+git<span class="w"> </span>pull
+git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>start_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
 </pre></div>
 </div>
 </li>
 <li><p>Edit the change log:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>vi docs/source/release_notes.rst
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>vi<span class="w"> </span>docs/source/release_notes.rst
 </pre></div>
 </div>
 <p>and insert the following section before the top-most section, and update
@@ -534,12 +537,12 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 </div>
 </li>
 <li><p>Edit the Galaxy metadata file:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>vi galaxy.yml
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>vi<span class="w"> </span>galaxy.yml
 </pre></div>
 </div>
 <p>and update the version to a draft version of the version that is being
 started:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">M.N.U-dev1</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">M.N.U-dev1</span>
 </pre></div>
 </div>
 <p>Note: The version must follow the rules for semantic versioning 2.0
@@ -547,9 +550,8 @@ including the description of development/alpha/etc suffixes, as described
 in <a class="reference external" href="https://semver.org/">https://semver.org/</a></p>
 </li>
 <li><p>Commit your changes and push them to the remote repo:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git status  <span class="c1"># Double check the changed files</span>
-git commit -asm <span class="s2">&quot;Start </span><span class="si">${</span><span class="nv">MNU</span><span class="si">}</span><span class="s2">&quot;</span>
-git push --set-upstream origin start_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>commit<span class="w"> </span>-asm<span class="w"> </span><span class="s2">&quot;Start </span><span class="si">${</span><span class="nv">MNU</span><span class="si">}</span><span class="s2">&quot;</span>
+git<span class="w"> </span>push<span class="w"> </span>--set-upstream<span class="w"> </span>origin<span class="w"> </span>start_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
 </pre></div>
 </div>
 </li>
@@ -569,9 +571,10 @@ milestone, or to have no milestone.</p></li>
 have succeeded, merge the Pull Request (no review is needed). This
 automatically deletes the branch on GitHub.</p></li>
 <li><p>Update and clean up the local repo:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git checkout <span class="si">${</span><span class="nv">BRANCH</span><span class="si">}</span>
-git pull
-git branch -d start_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>checkout<span class="w"> </span><span class="si">${</span><span class="nv">BRANCH</span><span class="si">}</span>
+git<span class="w"> </span>pull
+git<span class="w"> </span>branch<span class="w"> </span>-D<span class="w"> </span>start_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
+git<span class="w"> </span>branch<span class="w"> </span>-D<span class="w"> </span>-r<span class="w"> </span>origin/start_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
 </pre></div>
 </div>
 </li>
@@ -607,7 +610,7 @@ git branch -d start_<span class="si">${</span><span class="nv">MNU</span><span c
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.2.1
+        v: 1.3.0
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -626,6 +629,7 @@ git branch -d start_<span class="si">${</span><span class="nv">MNU</span><span c
             <dd><a href="1.1.1/development.html">1.1.1</a></dd>
             <dd><a href="1.2.0/development.html">1.2.0</a></dd>
             <dd><a href="1.2.1/development.html">1.2.1</a></dd>
+            <dd><a href="1.3.0/development.html">1.3.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

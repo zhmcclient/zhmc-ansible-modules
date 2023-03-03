@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>IBM Z HMC collection &mdash; IBM Z HMC collection  documentation</title>
@@ -12,10 +12,8 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -29,15 +27,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="#" class="icon icon-home"> IBM Z HMC collection
+
+          
+          
+          <a href="#" class="icon icon-home">
+            IBM Z HMC collection
           </a>
               <div class="version">
-                1.2.1
+                1.3.0
 
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -82,7 +84,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="#" class="icon icon-home"></a></li>
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">IBM Z HMC collection</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -137,6 +139,9 @@ invoke these modules in playbook tasks.</p>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#standard-installation-with-system-python">Standard installation with system Python</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#alternative-installation-with-virtual-python-environment">Alternative installation with virtual Python environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#setting-up-the-hmc">Setting up the HMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#hmc-userid-requirements">HMC userid requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#setting-up-firewalls-or-proxies">Setting up firewalls or proxies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#supported-environments">Supported environments</a></li>
 </ul>
 </li>
@@ -152,6 +157,14 @@ invoke these modules in playbook tasks.</p>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user.html#parameters">Parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user.html#examples">Examples</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_user_list.html">zhmc_user_list – List HMC users</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_list.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_list.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_list.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_list.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_list.html#return-values">Return Values</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="modules/zhmc_password_rule.html">zhmc_password_rule – Create HMC password rules</a><ul>
@@ -207,6 +220,7 @@ invoke these modules in playbook tasks.</p>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter.html#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter.html#parameters">Parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter.html#see-also">See Also</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter.html#return-values">Return Values</a></li>
 </ul>
 </li>
@@ -215,6 +229,7 @@ invoke these modules in playbook tasks.</p>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter_list.html#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter_list.html#parameters">Parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter_list.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter_list.html#see-also">See Also</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter_list.html#return-values">Return Values</a></li>
 </ul>
 </li>
@@ -256,6 +271,7 @@ invoke these modules in playbook tasks.</p>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition_list.html#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition_list.html#parameters">Parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition_list.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition_list.html#see-also">See Also</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition_list.html#return-values">Return Values</a></li>
 </ul>
 </li>
@@ -391,7 +407,7 @@ please open an issue in the <a class="reference external" href="https://github.c
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.2.1
+        v: 1.3.0
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -410,6 +426,7 @@ please open an issue in the <a class="reference external" href="https://github.c
             <dd><a href="1.1.1/index.html">1.1.1</a></dd>
             <dd><a href="1.2.0/index.html">1.2.0</a></dd>
             <dd><a href="1.2.1/index.html">1.2.1</a></dd>
+            <dd><a href="1.3.0/index.html">1.3.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

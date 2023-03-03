@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>zhmc_adapter – Update adapters and create Hipersocket adapters &mdash; IBM Z HMC collection  documentation</title>
@@ -12,10 +12,8 @@
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
@@ -30,7 +28,11 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> IBM Z HMC collection
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            IBM Z HMC collection
           </a>
               <div class="version">
                 1.0.0
@@ -38,7 +40,7 @@
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -106,7 +108,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a></li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../modules.html">Modules</a></li>
       <li class="breadcrumb-item active">zhmc_adapter – Update adapters and create Hipersocket adapters</li>
       <li class="wy-breadcrumbs-aside">
@@ -121,7 +123,7 @@
              
   <section id="zhmc-adapter-update-adapters-and-create-hipersocket-adapters">
 <span id="zhmc-adapter-module"></span><h1>zhmc_adapter – Update adapters and create Hipersocket adapters<a class="headerlink" href="#zhmc-adapter-update-adapters-and-create-hipersocket-adapters" title="Permalink to this heading"></a></h1>
-<div class="contents local topic" id="contents">
+<nav class="contents local" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
 <li><p><a class="reference internal" href="#requirements" id="id2">Requirements</a></p></li>
@@ -129,9 +131,9 @@
 <li><p><a class="reference internal" href="#examples" id="id4">Examples</a></p></li>
 <li><p><a class="reference internal" href="#return-values" id="id5">Return Values</a></p></li>
 </ul>
-</div>
+</nav>
 <section id="synopsis">
-<h2><a class="toc-backref" href="#id1">Synopsis</a><a class="headerlink" href="#synopsis" title="Permalink to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Synopsis</a><a class="headerlink" href="#synopsis" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p>Gather facts about an adapter of a CPC (Z system), including its ports.</p></li>
 <li><p>Update the properties of an adapter and its ports.</p></li>
@@ -139,14 +141,14 @@
 </ul>
 </section>
 <section id="requirements">
-<h2><a class="toc-backref" href="#id2">Requirements</a><a class="headerlink" href="#requirements" title="Permalink to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Requirements</a><a class="headerlink" href="#requirements" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p>Access to the WS API of the HMC of the targeted Z system (see <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a>).</p></li>
 <li><p>The targeted Z system must be in the Dynamic Partition Manager (DPM) operational mode.</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2><a class="toc-backref" href="#id3">Parameters</a><a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Parameters</a><a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h2>
 <dl>
 <dt>hmc_host</dt><dd><p>The hostname or IP address of the HMC.</p>
 <div class="line-block">
@@ -244,69 +246,69 @@
 </dl>
 </section>
 <section id="examples">
-<h2><a class="toc-backref" href="#id4">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span><span class="w"></span>
-<span class="c1"># Note: The following examples assume that some variables named &#39;my_*&#39; are set.</span><span class="w"></span>
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+<span class="c1"># Note: The following examples assume that some variables named &#39;my_*&#39; are set.</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Gather facts about an existing adapter</span><span class="w"></span>
-<span class="w">  </span><span class="nt">zhmc_adapter</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">cpc_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_adapter_name</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">facts</span><span class="w"></span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">adapter1</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Gather facts about an existing adapter</span>
+<span class="w">  </span><span class="nt">zhmc_adapter</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">cpc_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_adapter_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">facts</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">adapter1</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ensure an existing adapter has the desired property values</span><span class="w"></span>
-<span class="w">  </span><span class="nt">zhmc_adapter</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">cpc_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_adapter_name</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">set</span><span class="w"></span>
-<span class="w">    </span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;This</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">adapter</span><span class="nv"> </span><span class="cp">{{</span> <span class="nv">my_adapter_name</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">adapter1</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ensure an existing adapter has the desired property values</span>
+<span class="w">  </span><span class="nt">zhmc_adapter</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">cpc_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_adapter_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">set</span>
+<span class="w">    </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;This</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">adapter</span><span class="nv"> </span><span class="cp">{{</span> <span class="nv">my_adapter_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">adapter1</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Ensure</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">existing</span><span class="nv"> </span><span class="s">adapter</span><span class="nv"> </span><span class="s">identified</span><span class="nv"> </span><span class="s">by</span><span class="nv"> </span><span class="s">its</span><span class="nv"> </span><span class="s">name</span><span class="nv"> </span><span class="s">or</span><span class="nv"> </span><span class="s">adapter</span><span class="nv"> </span><span class="s">ID</span><span class="nv"> </span><span class="s">has</span><span class="w"></span>
-<span class="w">         </span><span class="s">the</span><span class="nv"> </span><span class="s">desired</span><span class="nv"> </span><span class="s">name</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">property</span><span class="nv"> </span><span class="s">values&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">zhmc_adapter</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">cpc_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_adapter_name</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">match</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">adapter_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;12C&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">set</span><span class="w"></span>
-<span class="w">    </span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;This</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">adapter</span><span class="nv"> </span><span class="cp">{{</span> <span class="nv">my_adapter_name</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">adapter1</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Ensure</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">existing</span><span class="nv"> </span><span class="s">adapter</span><span class="nv"> </span><span class="s">identified</span><span class="nv"> </span><span class="s">by</span><span class="nv"> </span><span class="s">its</span><span class="nv"> </span><span class="s">name</span><span class="nv"> </span><span class="s">or</span><span class="nv"> </span><span class="s">adapter</span><span class="nv"> </span><span class="s">ID</span><span class="nv"> </span><span class="s">has</span>
+<span class="w">         </span><span class="s">the</span><span class="nv"> </span><span class="s">desired</span><span class="nv"> </span><span class="s">name</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">property</span><span class="nv"> </span><span class="s">values&quot;</span>
+<span class="w">  </span><span class="nt">zhmc_adapter</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">cpc_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_adapter_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">match</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">adapter_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;12C&quot;</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">set</span>
+<span class="w">    </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;This</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">adapter</span><span class="nv"> </span><span class="cp">{{</span> <span class="nv">my_adapter_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">adapter1</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Ensure</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">Hipersockets</span><span class="nv"> </span><span class="s">adapter</span><span class="nv"> </span><span class="s">exists</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">has</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">desired</span><span class="nv"> </span><span class="s">property</span><span class="w"></span>
-<span class="w">         </span><span class="s">values&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">zhmc_adapter</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">cpc_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_adapter_name</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
-<span class="w">    </span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hipersockets</span><span class="w"></span>
-<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;This</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">Hipersockets</span><span class="nv"> </span><span class="s">adapter</span><span class="nv"> </span><span class="cp">{{</span> <span class="nv">my_adapter_name</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">adapter1</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Ensure</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">Hipersockets</span><span class="nv"> </span><span class="s">adapter</span><span class="nv"> </span><span class="s">exists</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">has</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">desired</span><span class="nv"> </span><span class="s">property</span>
+<span class="w">         </span><span class="s">values&quot;</span>
+<span class="w">  </span><span class="nt">zhmc_adapter</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">cpc_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_adapter_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hipersockets</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;This</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">Hipersockets</span><span class="nv"> </span><span class="s">adapter</span><span class="nv"> </span><span class="cp">{{</span> <span class="nv">my_adapter_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">adapter1</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Ensure</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">Hipersockets</span><span class="nv"> </span><span class="s">adapter</span><span class="nv"> </span><span class="s">does</span><span class="nv"> </span><span class="s">not</span><span class="nv"> </span><span class="s">exist&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">zhmc_adapter</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">cpc_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_adapter_name</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Ensure</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">Hipersockets</span><span class="nv"> </span><span class="s">adapter</span><span class="nv"> </span><span class="s">does</span><span class="nv"> </span><span class="s">not</span><span class="nv"> </span><span class="s">exist&quot;</span>
+<span class="w">  </span><span class="nt">zhmc_adapter</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">cpc_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_adapter_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
 </pre></div>
 </div>
 </section>
 <section id="return-values">
-<h2><a class="toc-backref" href="#id5">Return Values</a><a class="headerlink" href="#return-values" title="Permalink to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">Return Values</a><a class="headerlink" href="#return-values" title="Permalink to this heading"></a></h2>
 <dl>
 <dt>changed</dt><dd><p>Indicates if any change has been made by the module. For <code class="docutils literal notranslate"><span class="pre">state=facts</span></code>, always will be false.</p>
 <div class="line-block">
@@ -328,43 +330,43 @@
 <div class="line"><strong>sample</strong>:</div>
 </div>
 <blockquote>
-<div><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;adapter-family&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ficon&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;adapter-id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;120&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;allowed-capacity&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">64</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;card-location&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A14B-D112-J.01&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;channel-path-id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;09&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;class&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;adapter&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;configured-capacity&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">14</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;detected-card-type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ficon-express-16s-plus&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;maximum-total-capacity&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">254</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FCP_120_SAN1_02&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;object-id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dfb2147a-e578-11e8-a87c-00106f239c31&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;object-uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/api/adapters/dfb2147a-e578-11e8-a87c-00106f239c31&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;parent&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/api/cpcs/66942455-4a14-3f99-8904-3e7ed5ca28d7&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;physical-channel-status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operating&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;port-count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;ports&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
-<span class="w">        </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;class&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;storage-port&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;element-id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;element-uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/api/adapters/dfb2147a-e578-11e8-a87c-00106f239c31/storage-ports/0&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;fabric-id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;100088947155A1E9&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;index&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Port 0&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;parent&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/api/adapters/dfb2147a-e578-11e8-a87c-00106f239c31&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">],</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;state&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;online&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;active&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;storage-port-uris&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
-<span class="w">        </span><span class="s2">&quot;/api/adapters/dfb2147a-e578-11e8-a87c-00106f239c31/storage-ports/0&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="p">],</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;fcp&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;used-capacity&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;adapter-family&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ficon&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;adapter-id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;120&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;allowed-capacity&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">64</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;card-location&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A14B-D112-J.01&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;channel-path-id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;09&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;class&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;adapter&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;configured-capacity&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">14</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;detected-card-type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ficon-express-16s-plus&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;maximum-total-capacity&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">254</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FCP_120_SAN1_02&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;object-id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dfb2147a-e578-11e8-a87c-00106f239c31&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;object-uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/api/adapters/dfb2147a-e578-11e8-a87c-00106f239c31&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;parent&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/api/cpcs/66942455-4a14-3f99-8904-3e7ed5ca28d7&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;physical-channel-status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operating&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;port-count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;ports&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;class&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;storage-port&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;element-id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;element-uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/api/adapters/dfb2147a-e578-11e8-a87c-00106f239c31/storage-ports/0&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;fabric-id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;100088947155A1E9&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;index&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Port 0&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;parent&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/api/adapters/dfb2147a-e578-11e8-a87c-00106f239c31&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;state&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;online&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;active&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;storage-port-uris&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;/api/adapters/dfb2147a-e578-11e8-a87c-00106f239c31/storage-ports/0&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;fcp&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;used-capacity&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div></blockquote>
@@ -444,6 +446,7 @@
             <dd><a href="../../1.1.1/modules/zhmc_adapter.html">1.1.1</a></dd>
             <dd><a href="../../1.2.0/modules/zhmc_adapter.html">1.2.0</a></dd>
             <dd><a href="../../1.2.1/modules/zhmc_adapter.html">1.2.1</a></dd>
+            <dd><a href="../../1.3.0/modules/zhmc_adapter.html">1.3.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
