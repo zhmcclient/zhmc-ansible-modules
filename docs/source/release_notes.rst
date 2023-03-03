@@ -20,18 +20,14 @@ Releases
 ========
 
 
-Version 1.3.0-dev1
-------------------
+Version 1.3.0
+-------------
 
-This version contains all fixes up to version 1.2.x.
+This version contains all fixes up to version 1.2.1.
 
-Released: not yet
+Released: 2023-03-03
 
 Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
-
-**Incompatible changes:**
-
-**Deprecations:**
 
 **Bug fixes:**
 
@@ -50,12 +46,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   from our fork.
 
 * Addressed issues in test workflow reported by Github Actions. (issue #616)
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 1.2.0
