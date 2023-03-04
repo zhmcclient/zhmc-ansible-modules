@@ -116,6 +116,7 @@ There are four kinds of tests currently, available as make targets:
 * ``make check`` - Run flake8
 * ``make linkcheck`` - Check links in documentation
 * ``make sanity`` - Run Ansible sanity tests (includes flake8, pylint, validate-modules)
+* ``make check_reqs`` - Run pip-missing-reqs to perform missing dependency checks
 * ``make test`` - Run unit and function tests with test coverage
 * ``make end2end_mocked`` - Run end2end tests against a mocked environment
 * ``make end2end`` - Run end2end tests against an environment defined by TESTHMC
@@ -136,25 +137,18 @@ a release is prepared and in addition on a weekly basis. See the
 ``.github/workflows/test.yml`` file for details.
 
 These automated tests use all Ansible versions that are supported, but not in
-all combinations with all Python versions. See the
-``requirements.txt`` and ``minimum-constraint.txt`` files for details.
+all combinations with all Python versions.
 
-The following table shows which Ansible versions are tested on which Python
-versions. In addition, this project tests on a well-defined set of minimum
-versions of Python packages, and a set of latest versions of Python packages
-for each Python version.
+The following table shows for the full set of test environments which Ansible
+versions are tested on which Python versions. The 'Packages' column indicates
+whether the latest versions of Python packages are used (i.e. what pip installs
+by default, given the ``requirements.txt`` and ``dev-requirements.txt`` files),
+the minimum versions as defined in the ``minimum-constraint.txt`` file, or
+specific Ansible versions as defined in the ``ansible-constraint.txt`` file:
 
 ======  ========  =======  ============
 Python  Packages  ansible  ansible-core
 ------  --------  -------  ------------
-2.7     minimum   2.9      2.9
-3.5     minimum   2.9      2.9
-3.6     minimum   2.9      2.9
-3.7     minimum   2.9      2.9
-3.8     minimum   2.9      2.9
-3.9     minimum   4.0      2.11
-3.10    minimum   5.0      2.12
-3.11    minimum   7.0      2.14
 2.7     latest    2.9      2.9
 3.5     latest    2.9      2.9
 3.6     latest    2.10     2.10
@@ -163,6 +157,22 @@ Python  Packages  ansible  ansible-core
 3.9     latest    6.x      2.13
 3.10    latest    7.x      2.14
 3.11    latest    7.x      2.14
+2.7     minimum   2.9      2.9
+3.5     minimum   2.9      2.9
+3.6     minimum   2.9      2.9
+3.7     minimum   2.9      2.9
+3.8     minimum   2.9      2.9
+3.9     minimum   4.0      2.11
+3.10    minimum   5.0      2.12
+3.11    minimum   7.0      2.14
+2.7     ansible   2.9      2.9
+3.5     ansible   2.9      2.9
+3.6     ansible   2.10     2.10
+3.7     ansible   4.x      2.11
+3.8     ansible   5.x      2.12
+3.9     ansible   6.x      2.13
+3.10    ansible   7.x      2.14
+3.11    ansible   7.x+     2.14+
 ======  ========  =======  ============
 
 
@@ -328,7 +338,7 @@ local clone of the zhmc-ansible-modules Git repo.
     You need to have an account on https://console.redhat.com, and your
     userid there needs to be authorized to modify the 'ibm' namespace.
 
-    * Buuild the distribution archive locally:
+    * Build the distribution archive locally:
 
     .. code-block:: sh
 
