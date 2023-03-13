@@ -255,6 +255,16 @@ jobs:
       run: |
         echo "Package dependency tree of installed Python packages:"
         pipdeptree --all
+    - name: Run safety
+      env:
+        PACKAGE_LEVEL: ${{ matrix.package_level }}
+      run: |
+        make safety
+    - name: Run check_reqs
+      env:
+        PACKAGE_LEVEL: ${{ matrix.package_level }}
+      run: |
+        make check_reqs
     - name: Run check
       env:
         PACKAGE_LEVEL: ${{ matrix.package_level }}
@@ -268,11 +278,6 @@ jobs:
         PACKAGE_LEVEL: ${{ matrix.package_level }}
       run: |
         make sanity
-    - name: Run check_reqs
-      env:
-        PACKAGE_LEVEL: ${{ matrix.package_level }}
-      run: |
-        make check_reqs
     - name: Run docs
       env:
         PACKAGE_LEVEL: ${{ matrix.package_level }}
