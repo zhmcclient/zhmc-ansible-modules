@@ -40,6 +40,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Dev: Added package dependency checking for the remaining Python-based tools
   that are used in the development of this colleciton.
 
+* Added safety checking and addressed any reported issues. (#632)
+
 **Cleanup:**
 
 * Increased minimum versions of pip, setuptools, wheel to more recent versions.
