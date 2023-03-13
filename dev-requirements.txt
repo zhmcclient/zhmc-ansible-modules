@@ -163,7 +163,7 @@ entrypoints>=0.3.0
 functools32>=3.2.3.post2; python_version == '2.7'  # technically: python_version < '3.2'
 
 # Package dependency management tools (not used by any make rules)
-pipdeptree>=2.0.0
+pipdeptree>=2.2.0
 # pip-check-reqs is not used on Python 2.7
 # pip-check-reqs 2.3.2 is needed to have proper support for pip<21.3.
 # pip-check-reqs 2.4.0 requires Python>=3.8.
