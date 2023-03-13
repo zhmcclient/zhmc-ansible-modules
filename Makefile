@@ -348,13 +348,13 @@ else
 endif
 
 install_$(pymn).done: Makefile develop_$(pymn).done $(dist_file) requirements.txt
-	$(PIP_CMD) install $(pip_level_opts) $(pip_level_opts_new) -r requirements.txt
+	$(PYTHON_CMD) -m pip install $(pip_level_opts) $(pip_level_opts_new) -r requirements.txt
 	ansible-galaxy collection install --force $(dist_file)
 	echo "done" >$@
 
 develop_$(pymn).done: Makefile install_pip_$(pymn).done tools/os_setup.sh dev-requirements.txt
 	bash -c 'tools/os_setup.sh'
-	$(PIP_CMD) install $(pip_level_opts) $(pip_level_opts_new) -r dev-requirements.txt
+	$(PYTHON_CMD) -m pip install $(pip_level_opts) $(pip_level_opts_new) -r dev-requirements.txt
 	echo "done" >$@
 
 install_pip_$(pymn).done: Makefile
