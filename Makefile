@@ -65,6 +65,7 @@ collection_full_name := $(collection_namespace).$(collection_name)
 collection_version := $(shell $(PYTHON_CMD) tools/version.py)
 
 # Python versions
+python_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('{v[0]}.{v[1]}.{v[2]}'.format(v=sys.version_info))")
 python_major_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('%s'%sys.version_info[0])")
 python_m_n_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('%s.%s'%(sys.version_info[0],sys.version_info[1]))")
 pymn := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('py%s%s'%(sys.version_info[0],sys.version_info[1]))")
@@ -110,6 +111,9 @@ flake8_opts := --max-line-length 160 --config /dev/null --ignore E402,E741,W503,
 sanity_dir := tmp_sanity/collections/ansible_collections/ibm/ibm_zhmc
 sanity_dir1 := tmp_sanity
 sanity_tar_file := tmp_workspace.tar
+
+# Safety policy file
+safety_policy_file := .safety-policy.yml
 
 # Packages whose dependencies are checked using pip-missing-reqs
 # Pylint is run only on Python>=3.5
@@ -185,6 +189,7 @@ help:
 	@echo '  dist       - Build the collection distribution archive in: $(dist_dir)'
 	@echo '  check      - Run flake8'
 	@echo '  sanity     - Run Ansible sanity tests (includes pep8, pylint, validate-modules)'
+	@echo '  safety     - Run safety on sources'
 	@echo '  check_reqs - Perform missing dependency checks'
 	@echo '  docs       - Build the documentation for all enabled (docs/source/conf.py) versions in: $(doc_build_dir) using remote repo'
 	@echo '  docslocal  - Build the documentation from local repo contents in: $(doc_build_local_dir)'
@@ -217,7 +222,7 @@ help:
 	@echo '  ansible-playbook playbooks/....'
 
 .PHONY: all
-all: install develop dist check sanity check_reqs docs docslocal linkcheck test end2end_mocked
+all: install develop dist safety check sanity check_reqs docs docslocal linkcheck test end2end_mocked
 	@echo '$@ done.'
 
 .PHONY: install
@@ -247,6 +252,10 @@ test: _check_version develop_$(pymn).done
 check: _check_version develop_$(pymn).done
 	flake8 $(flake8_opts) $(src_py_dir) $(test_dir)
 	@echo '$@ done.'
+
+.PHONY: safety
+safety: safety_$(pymn).done
+	@echo "Makefile: $@ done."
 
 .PHONY:	sanity
 sanity: _check_version develop_$(pymn).done
@@ -361,6 +370,21 @@ install_pip_$(pymn).done: Makefile
 	bash -c 'pv=$$($(PYTHON_CMD) -m pip --version); if [[ $$pv =~ (^pip [1-8]\..*) ]]; then $(PYTHON_CMD) -m pip install pip==9.0.1; fi'
 	$(PYTHON_CMD) -m pip install $(pip_level_opts) pip setuptools wheel
 	echo "done" >$@
+
+safety_$(pymn).done: develop_$(pymn).done Makefile $(safety_policy_file) minimum-constraints.txt
+ifeq ($(python_major_version),2)
+	@echo "Makefile: Warning: Skipping Safety on Python $(python_version)" >&2
+else
+ifeq ($(python_m_n_version),3.5)
+	@echo "Makefile: Warning: Skipping Safety on Python $(python_version)" >&2
+else
+	@echo "Makefile: Running Safety"
+	-$(call RM_FUNC,$@)
+	safety check --policy-file $(safety_policy_file) -r minimum-constraints.txt --full-report
+	echo "done" >$@
+	@echo "Makefile: Done running Safety"
+endif
+endif
 
 $(dist_file): $(dist_dependent_files) galaxy.yml
 	mkdir -p $(dist_dir)
