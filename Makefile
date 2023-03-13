@@ -113,14 +113,14 @@ sanity_tar_file := tmp_workspace.tar
 
 # Packages whose dependencies are checked using pip-missing-reqs
 # Pylint is run only on Python>=3.5
-# Sphinx is run only on Python>=3.6
+# Sphinx and ansible-doc-extractor are run only on Python>=3.6
 ifeq ($(python_m_n_version),2.7)
-  check_reqs_packages := pytest coverage coveralls flake8 ansible
+  check_reqs_packages := ansible ansible_test pip_check_reqs pytest coverage coveralls flake8 ansible
 else
 ifeq ($(python_m_n_version),3.5)
-  check_reqs_packages := pytest coverage coveralls flake8 ansible pylint
+  check_reqs_packages := ansible ansible_test pip_check_reqs pytest coverage coveralls flake8 ansible pylint
 else
-  check_reqs_packages := pytest coverage coveralls flake8 ansible pylint sphinx
+  check_reqs_packages := ansible ansible_test pip_check_reqs pytest coverage coveralls flake8 ansible pylint sphinx ansible_doc_extractor
 endif
 endif
 
