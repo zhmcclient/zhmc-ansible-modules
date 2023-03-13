@@ -42,6 +42,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Cleanup:**
 
+* Increased minimum versions of pip, setuptools, wheel to more recent versions.
+
 **Known issues:**
 
 * See `list of open issues`_.
