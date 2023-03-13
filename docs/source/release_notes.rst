@@ -37,6 +37,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Enhancements:**
 
+* Dev: Added package dependency checking for the remaining Python-based tools
+  that are used in the development of this colleciton.
+
 **Cleanup:**
 
 **Known issues:**
