@@ -260,8 +260,6 @@ def stop_partition(partition, check_mode):
         raise StatusError(
             "Target CPC {0!r} has issues; status of partition {1!r} is: {2!r}".
             format(partition.manager.cpc.name, partition.name, status))
-    elif status in STOP_END_STATUSES:
-        pass
     elif status == 'starting':
         if not check_mode:
             # Let it first finish the starting
