@@ -56,10 +56,10 @@ MarkupSafe>=2.0.0; python_version >= '3.9'   # ansible >= 6
 # cryptography 3.2 addresses a dependabot security issue
 # cryptography 37.0.0 has deprecated Python 3.6 support and issues a deprecation
 # warning that causes ansible-test to fail
-cryptography>=3.3; python_version == '2.7'
+cryptography>=3.3.2; python_version == '2.7'
 cryptography>=3.0,<3.1; python_version == '3.5'
 cryptography>=3.4.7,<37.0.0; python_version == '3.6'
-cryptography>=3.4.7; python_version >= '3.7'
+cryptography>=39.0.1; python_version >= '3.7'
 
 # importlib-metadata is used by jsonschema which is used by zhmcclient
 importlib-metadata>=0.12,<5.0.0; python_version <= '3.7'
