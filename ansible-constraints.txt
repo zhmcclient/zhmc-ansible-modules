@@ -9,12 +9,13 @@
 # Starting with Python 3.9, ansible 4 is needed.
 # The sanity check of ansible 4 supports Python only up to 3.9, so Python 3.10 requires ansible 5.
 # The sanity check of ansible 5 supports Python only up to 3.10, so Python 3.11 requires ansible 6.
-ansible>=2.9.1,<2.10; python_version == '2.7'  # sanity test is not run here
-ansible>=2.9.1,<2.10; python_version == '3.5'  # ansible 2.9 (= core)
-ansible>=2.9.1,<3.0; python_version == '3.6'   # ansible 2.10 (= core)
-ansible-base>=2.9.1,<3.0; python_version == '3.6'   # ansible 2.10 (= core)
-ansible>=2.9.1,<5.0; python_version == '3.7'   # ansible 4 / ansible-core 2.11
-ansible>=2.9.1,<6.0; python_version == '3.8'   # ansible 5 / ansible-core 2.12
+# ansible 2.9.23 resolves several safety issues
+ansible>=2.9.23,<2.10; python_version == '2.7'  # sanity test is not run here
+ansible>=2.9.23,<2.10; python_version == '3.5'  # ansible 2.9 (= core)
+ansible>=2.9.23,<3.0; python_version == '3.6'   # ansible 2.10 (= core)
+ansible-base>=2.9.23,<3.0; python_version == '3.6'   # ansible 2.10 (= core)
+ansible>=2.9.23,<5.0; python_version == '3.7'   # ansible 4 / ansible-core 2.11
+ansible>=2.9.23,<6.0; python_version == '3.8'   # ansible 5 / ansible-core 2.12
 ansible>=4.0.0,<7.0; python_version == '3.9'   # ansible 6 / ansible-core 2.13
 ansible>=5.0.1,<8.0; python_version == '3.10'  # ansible 7 / ansible-core 2.14
 ansible>=7.0.0; python_version >= '3.11'       # ansible 7+ / ansible-core 2.14+
