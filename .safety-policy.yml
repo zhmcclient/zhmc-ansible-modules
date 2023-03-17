@@ -57,6 +57,24 @@ security:
             reason: Fixed GitPython version requires Python>=3.7 and is used there
         53048:
             reason: Fixed cryptography version requires Python>=3.6 and is used there
+        53298:
+            reason: Fixed cryptography version 39.0.1 requires Python>=3.7 (fails on 3.6) and is used there
+        53299:
+            reason: Fixed cryptography version 39.0.1 requires Python>=3.7 (fails on 3.6) and is used there
+        53301:
+            reason: Fixed cryptography version 39.0.1 requires Python>=3.7 (fails on 3.6) and is used there
+        53302:
+            reason: Fixed cryptography version 39.0.1 requires Python>=3.7 (fails on 3.6) and is used there
+        53303:
+            reason: Fixed cryptography version 39.0.1 requires Python>=3.7 (fails on 3.6) and is used there
+        53304:
+            reason: Fixed cryptography version 39.0.1 requires Python>=3.7 (fails on 3.6) and is used there
+        53305:
+            reason: Fixed cryptography version 39.0.1 requires Python>=3.7 (fails on 3.6) and is used there
+        53306:
+            reason: Fixed cryptography version 39.0.1 requires Python>=3.7 (fails on 3.6) and is used there
+        53307:
+            reason: Fixed cryptography version 39.0.1 requires Python>=3.7 (fails on 3.6) and is used there
 
     # Continue with exit code 0 when vulnerabilities are found.
     continue-on-vulnerability-error: False
