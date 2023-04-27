@@ -27,7 +27,7 @@ import sys
 from ansible.module_utils import six
 
 try:
-    from zhmcclient import Session
+    from zhmcclient import Session, ClientAuthError
     IMP_ZHMCCLIENT_ERR = None
 except ImportError:
     IMP_ZHMCCLIENT_ERR = traceback.format_exc()
@@ -124,6 +124,112 @@ def missing_required_lib(library, reason=None, url=None):
     return msg
 
 
+def open_session(params):
+    """
+    Open a session with the HMC and validate session-related parameters.
+
+    This is called by modules in order to communicate with the HMC.
+
+    There are three ways the session can be established:
+
+    * Faked session: If the '_faked_session' item in `params` is present
+      and not `None`, a faked (=mocked) session with that
+      zhmcclient_mock.FakedSession object is returned, and there is no
+      communication with an HMC established. The faked session will not be
+      logged off in close_session(). This is used for testing only.
+
+    * HMC session with module-scope logoff: If the 'session_id' item in
+      `params` is absent or `None`, a zhmcclient.Session object is
+      returned that is set up with a newly created HMC session. That HMC session
+      will be logged off in close_session().
+
+    * HMC session with user-controlled logoff: If the 'session_id' item in
+      `params` is present and not `None`, a zhmcclient.Session object is
+      returned that is set up for this existing HMC session. That HMC session
+      will not be logged off in close_session().
+
+    Parameters:
+      params (dict): Module parameters, with these items:
+        - hmc_host (str): HMC host name or IP address.
+        - hmc_auth (dict): Credentials, either with password or session_id.
+          In case of a password, a new HMC session is created.
+          In case of a session_id, that existing HMC session is used.
+        - _faked_session (zhmcclient_mock.FakedSession): Faked session, if
+          testing.
+
+    Returns:
+      tuple: Tuple with these items:
+      - session (zhmcclient.Session): The session object to use.
+      - logoff (bool): Indicator to logoff in close_session().
+    """
+
+    faked_session = params.get('_faked_session', None)
+    if faked_session is not None:
+        # Faked session
+        if not isinstance(faked_session, FakedSession):
+            raise ParameterError(
+                "Module parameter '_faked_session' must be a FakedSession "
+                "object if specified, but is of type {0}".
+                format(type(faked_session)))
+        logoff = False
+        return faked_session, logoff
+
+    hmc_host = params['hmc_host']
+    hmc_auth = params['hmc_auth']
+    session_id = hmc_auth.get('session_id', None)
+    if session_id is None:
+        # New HMC session with module-scope logoff
+        required_items = ('userid', 'password')
+        missing_required_items = [
+            p for p in required_items if hmc_auth.get(p, None) is None
+        ]
+        if missing_required_items:
+            raise ParameterError(
+                "Module parameter 'hmc_auth' has no 'session_id' item and "
+                "therefore must have items {0!r}, but {1!r} are missing.".
+                format(required_items, missing_required_items))
+        userid = hmc_auth['userid']
+        password = hmc_auth['password']
+        logoff = True
+    else:
+        # Existing HMC session with user-controlled logoff
+        forbidden_items = ('userid', 'password')
+        present_forbidden_items = [
+            p for p in forbidden_items if hmc_auth.get(p, None) is not None
+        ]
+        if present_forbidden_items:
+            raise ParameterError(
+                "Module parameter 'hmc_auth' has the 'session_id' item and "
+                "therefore must not have items {0!r}, but {1!r} are present.".
+                format(forbidden_items, present_forbidden_items))
+        userid = None
+        password = None
+        logoff = False
+
+    ca_certs = hmc_auth.get('ca_certs', None)
+    verify = hmc_auth.get('verify', True)
+    verify_cert = ca_certs if verify else False
+    session = Session(
+        hmc_host, userid, password, verify_cert=verify_cert,
+        session_id=session_id)
+    return session, logoff
+
+
+def close_session(session, logoff):
+    """
+    Close a session with the HMC.
+
+    Parameters:
+      session (zhmcclient.Session): The session object to close.
+      logoff (bool): Indicator to logoff the session.
+    """
+    if logoff:
+        try:
+            session.logoff()
+        except ClientAuthError:
+            pass
+
+
 def eq_hex(hex_actual, hex_new, prop_name):
     """
     Test two hex string values of a property for equality.
@@ -179,40 +285,6 @@ def eq_mac(mac_actual, mac_new, prop_name):
     else:
         mac_new = None
     return mac_actual == mac_new
-
-
-def get_hmc_auth(hmc_auth):
-    """
-    Extract HMC userid and password from the 'hmc_auth' module input
-    parameter.
-
-    Parameters:
-      hmc_auth (dict): value of the 'hmc_auth' module input parameter,
-        which is a dictionary with required items 'userid' and 'password'
-        and optional items 'ca_certs' and 'verify'.
-
-    Returns:
-      tuple(userid, password, ca_certs, verify): A tuple with the respective
-        items of the input dictionary. Optional items are defaulted:
-        - ca_certs: Defaults to None.
-        - verify: Defaults to True.
-
-    Raises:
-      ParameterError: An item in the input dictionary was missing.
-    """
-    try:
-        userid = hmc_auth['userid']
-    except KeyError:
-        raise ParameterError("Required item 'userid' is missing in "
-                             "dictionary module parameter 'hmc_auth'.")
-    try:
-        password = hmc_auth['password']
-    except KeyError:
-        raise ParameterError("Required item 'password' is missing in "
-                             "dictionary module parameter 'hmc_auth'.")
-    ca_certs = hmc_auth.get('ca_certs', None)
-    verify = hmc_auth.get('verify', True)
-    return userid, password, ca_certs, verify
 
 
 def pull_partition_status(partition):
@@ -657,23 +729,6 @@ def ensure_lpar_loaded(
             format(lpar.name, org_status, status))
 
     return changed
-
-
-def get_session(faked_session, host, userid, password, ca_certs, verify):
-    """
-    Return a session object for the HMC.
-
-    Parameters:
-      faked_session (zhmcclient_mock.FakedSession or None):
-        If this object is a `zhmcclient_mock.FakedSession` object, return that
-        object.
-        Else, return a new `zhmcclient.Session` object from the other arguments.
-    """
-    if isinstance(faked_session, FakedSession):
-        return faked_session
-    else:
-        verify_cert = ca_certs if verify else False
-        return Session(host, userid, password, verify_cert=verify_cert)
 
 
 def to_unicode(value):

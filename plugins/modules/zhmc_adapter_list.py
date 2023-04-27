@@ -64,13 +64,25 @@ options:
       userid:
         description:
           - The userid (username) for authenticating with the HMC.
+            This is mutually exclusive with providing C(session_id).
         type: str
-        required: true
+        required: false
+        default: null
       password:
         description:
           - The password for authenticating with the HMC.
+            This is mutually exclusive with providing C(session_id).
         type: str
-        required: true
+        required: false
+        default: null
+      session_id:
+        description:
+          - HMC session ID to be used.
+            This is mutually exclusive with providing C(userid) and C(password)
+            and can be created as described in :ref:`zhmc_session_module`.
+        type: str
+        required: false
+        default: null
       ca_certs:
         description:
           - Path name of certificate file or certificate directory to be used
@@ -229,8 +241,8 @@ import logging  # noqa: E402
 import traceback  # noqa: E402
 from ansible.module_utils.basic import AnsibleModule  # noqa: E402
 
-from ..module_utils.common import log_init, Error, \
-    get_hmc_auth, get_session, missing_required_lib  # noqa: E402
+from ..module_utils.common import log_init, open_session, close_session, \
+    Error, missing_required_lib  # noqa: E402
 
 try:
     import requests.packages.urllib3
@@ -259,8 +271,6 @@ def perform_list(params):
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
 
-    host = params['hmc_host']
-    userid, password, ca_certs, verify = get_hmc_auth(params['hmc_auth'])
     cpc_name = params.get('cpc_name', None)
     name = params.get('name', None)
     adapter_id = params.get('adapter_id', None)
@@ -268,10 +278,7 @@ def perform_list(params):
     type = params.get('type', None)
     status = params.get('status', None)
 
-    _faked_session = params.get('_faked_session', None)  # No default specified
-
-    session = get_session(
-        _faked_session, host, userid, password, ca_certs, verify)
+    session, logoff = open_session(params)
     try:
         client = zhmcclient.Client(session)
         console = client.consoles.console
@@ -334,7 +341,7 @@ def perform_list(params):
         return adapter_list
 
     finally:
-        session.logoff()
+        close_session(session, logoff)
 
 
 def main():
@@ -347,8 +354,11 @@ def main():
             required=True,
             type='dict',
             options=dict(
-                userid=dict(required=True, type='str'),
-                password=dict(required=True, type='str', no_log=True),
+                userid=dict(required=False, type='str', default=None),
+                password=dict(required=False, type='str', default=None,
+                              no_log=True),
+                session_id=dict(required=False, type='str', default=None,
+                                no_log=True),
                 ca_certs=dict(required=False, type='str', default=None),
                 verify=dict(required=False, type='bool', default=True),
             ),
