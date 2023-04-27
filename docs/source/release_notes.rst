@@ -45,6 +45,14 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Improved performance of the 'zhmc_user_role' module for 'state=facts'.
   (issue #660)
 
+* Added a new 'zhmc_session' module for maintaining the HMC session across
+  playbook/role tasks. This can be used to reduce the number of HMC sessions
+  that is created during playbook execution, to one. Without this module,
+  each ibm_zhmc module invocation creates its own separate HMC session.
+  Along with that, added a new 'session_id' input parameter to all existing
+  Ansible modules, that can be provided as an alternative to providing userid
+  and password.
+
 **Cleanup:**
 
 * Increased minimum versions of pip, setuptools, wheel to more recent versions.

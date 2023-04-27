@@ -60,13 +60,25 @@ options:
       userid:
         description:
           - The userid (username) for authenticating with the HMC.
+            This is mutually exclusive with providing C(session_id).
         type: str
-        required: true
+        required: false
+        default: null
       password:
         description:
           - The password for authenticating with the HMC.
+            This is mutually exclusive with providing C(session_id).
         type: str
-        required: true
+        required: false
+        default: null
+      session_id:
+        description:
+          - HMC session ID to be used.
+            This is mutually exclusive with providing C(userid) and C(password)
+            and can be created as described in :ref:`zhmc_session_module`.
+        type: str
+        required: false
+        default: null
       ca_certs:
         description:
           - Path name of certificate file or certificate directory to be used
@@ -386,8 +398,8 @@ import logging  # noqa: E402
 import traceback  # noqa: E402
 from ansible.module_utils.basic import AnsibleModule  # noqa: E402
 
-from ..module_utils.common import log_init, Error, ParameterError, \
-    get_hmc_auth, get_session, to_unicode, process_normal_property, \
+from ..module_utils.common import log_init, open_session, close_session, \
+    Error, ParameterError, to_unicode, process_normal_property, \
     missing_required_lib, common_fail_on_import_errors  # noqa: E402
 
 try:
@@ -920,17 +932,13 @@ def ensure_present(params, check_mode):
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
 
-    host = params['hmc_host']
-    userid, password, ca_certs, verify = get_hmc_auth(params['hmc_auth'])
     user_name = params['name']
     expand = params['expand']
-    _faked_session = params.get('_faked_session', None)
 
     changed = False
     result = {}
 
-    session = get_session(
-        _faked_session, host, userid, password, ca_certs, verify)
+    session, logoff = open_session(params)
     try:
         client = zhmcclient.Client(session)
         console = client.consoles.console
@@ -1027,7 +1035,7 @@ def ensure_present(params, check_mode):
         return changed, result
 
     finally:
-        session.logoff()
+        close_session(session, logoff)
 
 
 def ensure_absent(params, check_mode):
@@ -1039,16 +1047,12 @@ def ensure_absent(params, check_mode):
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
 
-    host = params['hmc_host']
-    userid, password, ca_certs, verify = get_hmc_auth(params['hmc_auth'])
     user_name = params['name']
-    _faked_session = params.get('_faked_session', None)
 
     changed = False
     result = {}
 
-    session = get_session(
-        _faked_session, host, userid, password, ca_certs, verify)
+    session, logoff = open_session(params)
     try:
         client = zhmcclient.Client(session)
         console = client.consoles.console
@@ -1066,7 +1070,7 @@ def ensure_absent(params, check_mode):
         return changed, result
 
     finally:
-        session.logoff()
+        close_session(session, logoff)
 
 
 def facts(params, check_mode):
@@ -1078,17 +1082,13 @@ def facts(params, check_mode):
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
 
-    host = params['hmc_host']
-    userid, password, ca_certs, verify = get_hmc_auth(params['hmc_auth'])
     user_name = params['name']
     expand = params['expand']
-    _faked_session = params.get('_faked_session', None)
 
     changed = False
     result = {}
 
-    session = get_session(
-        _faked_session, host, userid, password, ca_certs, verify)
+    session, logoff = open_session(params)
     try:
         # The default exception handling is sufficient for this code
         client = zhmcclient.Client(session)
@@ -1103,7 +1103,7 @@ def facts(params, check_mode):
         return changed, result
 
     finally:
-        session.logoff()
+        close_session(session, logoff)
 
 
 def perform_task(params, check_mode):
@@ -1136,8 +1136,11 @@ def main():
             required=True,
             type='dict',
             options=dict(
-                userid=dict(required=True, type='str'),
-                password=dict(required=True, type='str', no_log=True),
+                userid=dict(required=False, type='str', default=None),
+                password=dict(required=False, type='str', default=None,
+                              no_log=True),
+                session_id=dict(required=False, type='str', default=None,
+                                no_log=True),
                 ca_certs=dict(required=False, type='str', default=None),
                 verify=dict(required=False, type='bool', default=True),
             ),

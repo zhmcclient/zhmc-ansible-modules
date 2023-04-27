@@ -50,16 +50,23 @@ hmc_auth
 
 
   userid
-    The userid (username) for authenticating with the HMC.
+    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing ``session_id``.
 
-    | **required**: True
+    | **required**: False
     | **type**: str
 
 
   password
-    The password for authenticating with the HMC.
+    The password for authenticating with the HMC. This is mutually exclusive with providing ``session_id``.
 
-    | **required**: True
+    | **required**: False
+    | **type**: str
+
+
+  session_id
+    HMC session ID to be used. This is mutually exclusive with providing ``userid`` and ``password`` and can be created as described in :ref:`zhmc_session_module`.
+
+    | **required**: False
     | **type**: str
 
 

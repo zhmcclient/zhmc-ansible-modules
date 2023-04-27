@@ -25,6 +25,14 @@ The **IBM Z® HMC collection** provides several modules. Reference material for
 each module contains documentation on what parameters the module accepts and
 what will returned.
 
+Module for HMC sessions:
+
+.. toctree::
+   :maxdepth: 1
+   :glob:
+
+   modules/zhmc_session
+
 Modules targeting the HMC (i.e. not a specific CPC):
 
 .. toctree::
