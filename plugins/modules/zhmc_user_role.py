@@ -662,7 +662,19 @@ def create_check_mode_urole(client, create_props, update_props):
     return urole
 
 
-def uri_to_object(client, obj_uri):
+def find_in_obj_list(obj_lists, obj_class, prop_name, prop_value):
+    """
+    Find a zhmcclient.BaseResource object in obj_lists, by matching a property.
+    """
+    for obj in obj_lists[obj_class]:
+        if obj.get_property(prop_name) == prop_value:
+            return obj
+
+    raise zhmcclient.NotFound(
+        "{c} with {p}={v!r}".format(c=obj_class, p=prop_name, v=prop_value))
+
+
+def uri_to_object(obj_lists, client, obj_uri):
     """
     Convert the canonical URI of an HMC object to an zhmcclient object
     representing it. The object will have only minimal properties. An existence
@@ -677,26 +689,24 @@ def uri_to_object(client, obj_uri):
     """
     console = client.consoles.console
     if obj_uri.startswith('/api/cpcs/'):
-        obj = client.cpcs.find(**{'object-uri': obj_uri})
+        if 'cpc' not in obj_lists:
+            obj_lists['cpc'] = client.cpcs.list()
+        obj = find_in_obj_list(obj_lists, 'cpc', 'object-uri', obj_uri)
     elif obj_uri.startswith('/api/console/tasks/'):
-        obj = console.tasks.find(**{'element-uri': obj_uri})
+        if 'task' not in obj_lists:
+            obj_lists['task'] = console.tasks.list()
+        obj = find_in_obj_list(obj_lists, 'task', 'element-uri', obj_uri)
     elif obj_uri.startswith('/api/groups/'):
         raise NotImplementedError(
             "zhmcclient does not support groups")
     elif obj_uri.startswith('/api/partitions/'):
-        obj_list = console.list_permitted_partitions(
-            filter_args={'object-uri': obj_uri})
-        if not obj_list:
-            raise zhmcclient.NotFound(
-                "Partition with object-uri: {u!r}".format(u=obj_uri))
-        obj = obj_list[0]
+        if 'partition' not in obj_lists:
+            obj_lists['partition'] = console.list_permitted_partitions()
+        obj = find_in_obj_list(obj_lists, 'partition', 'object-uri', obj_uri)
     elif obj_uri.startswith('/api/logical-partitions/'):
-        obj_list = console.list_permitted_lpars(
-            filter_args={'object-uri': obj_uri})
-        if not obj_list:
-            raise zhmcclient.NotFound(
-                "LPAR with object-uri: {u!r}".format(u=obj_uri))
-        obj = obj_list[0]
+        if 'lpar' not in obj_lists:
+            obj_lists['lpar'] = console.list_permitted_lpars()
+        obj = find_in_obj_list(obj_lists, 'lpar', 'object-uri', obj_uri)
     elif obj_uri.startswith('/api/adapters/'):
         for cpc in client.cpcs.list():
             try:
@@ -708,9 +718,16 @@ def uri_to_object(client, obj_uri):
             raise zhmcclient.NotFound(
                 "Adapter with object-uri: {u!r}".format(u=obj_uri))
     elif obj_uri.startswith('/api/storage-groups/'):
-        obj = console.storage_groups.find(**{'object-uri': obj_uri})
+        if 'storage-group' not in obj_lists:
+            obj_lists['storage-group'] = console.storage_groups.list()
+        obj = find_in_obj_list(
+            obj_lists, 'storage-group', 'object-uri', obj_uri)
     elif obj_uri.startswith('/api/storage-templates/'):
-        obj = console.storage_group_templates.find(**{'object-uri': obj_uri})
+        if 'storage-template' not in obj_lists:
+            obj_lists['storage-template'] = \
+                console.storage_group_templates.list()
+        obj = find_in_obj_list(
+            obj_lists, 'storage-template', 'object-uri', obj_uri)
     else:
         raise ParameterError(
             "Resource with URI {u!r} not supported for user "
@@ -743,6 +760,13 @@ def current_perm_dict(client, hmc_permissions):
     Raises:
       zhmcclient.NotFound: Resource with that URI was not found on HMC
     """
+
+    # For performance reasons, we maintain the list() results in the following
+    # dict (key: resource class, value: list of zhmcclient objects), so we have
+    # to list the resources on the HMC only once. Using find() with a filter
+    # would list them on every call.
+    obj_lists = {}
+
     cur_perms = {}
     for perm_item in hmc_permissions:
         perm_item2 = dict(perm_item)
@@ -758,7 +782,8 @@ def current_perm_dict(client, hmc_permissions):
             else:
                 pass  # The HMC data model does not define any further options
         if obj_type == 'object':
-            obj = uri_to_object(client, obj_key)  # May raise NotFound
+            # The following may raise NotFound
+            obj = uri_to_object(obj_lists, client, obj_key)
             cur_perms[obj_key] = (opt_kwargs, obj)
         else:  # 'object-class'
             cur_perms[obj_key] = (opt_kwargs, None)
