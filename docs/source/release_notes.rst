@@ -42,6 +42,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Added safety checking and addressed any reported issues. (#632)
 
+* Improved performance of the 'zhmc_user_role' module for 'state=facts'.
+  (issue #660)
+
 **Cleanup:**
 
 * Increased minimum versions of pip, setuptools, wheel to more recent versions.
