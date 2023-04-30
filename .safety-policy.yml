@@ -75,6 +75,14 @@ security:
             reason: Fixed cryptography version 39.0.1 requires Python>=3.7 (fails on 3.6) and is used there
         53307:
             reason: Fixed cryptography version 39.0.1 requires Python>=3.7 (fails on 3.6) and is used there
+        54219:
+            reason: Fixed ansible version is 2.10.0, but need to support ansible 2.9
+        54564:
+            reason: Fixed ansible version is 7.0.0, but need to support ansible 2.9
+        54229:
+            reason: Not yet fixed in any ansible version, but need to support ansible 2.9
+        54230:
+            reason: Not yet fixed in any ansible version, but need to support ansible 2.9
 
     # Continue with exit code 0 when vulnerabilities are found.
     continue-on-vulnerability-error: False
