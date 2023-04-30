@@ -105,8 +105,8 @@ wheel==0.38.1; python_version >= '3.7'
 # Starting with Python 3.9, ansible 4 is needed.
 # The sanity check of ansible 4 supports Python only up to 3.9, so Python 3.10 requires ansible 5.
 # The sanity check of ansible 5 supports Python only up to 3.10, so Python 3.11 requires ansible 6.
-ansible==2.9.23; python_version == '2.7'  # sanity test is not run here
-ansible==2.9.23; python_version >= '3.5' and python_version <= '3.8'
+ansible==2.9.27; python_version == '2.7'  # sanity test is not run here
+ansible==2.9.27; python_version >= '3.5' and python_version <= '3.8'
 ansible==4.0.0; python_version == '3.9'
 ansible==5.0.1; python_version == '3.10'
 ansible==7.0.0; python_version >= '3.11'
@@ -131,8 +131,8 @@ zhmcclient==1.5.0
 # Indirect dependencies for installation (must be consistent with requirements.txt)
 
 # Jinja2 is used by ansible/ansible-core and by ansible-doc-extractor.
-Jinja2==2.9; python_version <= '3.8'   # ansible <= 5
-Jinja2==3.0; python_version >= '3.9'   # ansible >= 6
+Jinja2==2.10.1; python_version <= '3.8'   # ansible <= 5
+Jinja2==3.0.0; python_version >= '3.9'   # ansible >= 6
 
 # MarkupSafe is used by Jinja2
 MarkupSafe==1.1.0; python_version <= '3.8'   # ansible <= 5
