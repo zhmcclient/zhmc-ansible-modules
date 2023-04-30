@@ -42,3 +42,22 @@ tests/unit/test_nic.py pylint!skip # Unreliable duplicate-code issues
 tests/unit/test_partition.py pylint!skip # Unreliable duplicate-code issues
 tests/unit/test_virtual_function.py pylint!skip # Unreliable duplicate-code issues
 docs/source/conf.py pylint!skip # Unreliable duplicate-code issues
+docs/source/modules/zhmc_adapter.rst rstcheck!skip # (json) Expecting property name enclosed in double quotes
+docs/source/modules/zhmc_adapter_list.rst rstcheck!skip # (json) Expecting property name enclosed in double quotes
+docs/source/modules/zhmc_cpc.rst rstcheck!skip # (json) Expecting property name enclosed in double quotes
+docs/source/modules/zhmc_cpc_list.rst rstcheck!skip # (json) Expecting property name enclosed in double quotes
+docs/source/modules/zhmc_crypto_attachment.rst rstcheck!skip # (json) Expecting property name enclosed in double quotes
+docs/source/modules/zhmc_lpar.rst rstcheck!skip # (json) Expecting property name enclosed in double quotes
+docs/source/modules/zhmc_lpar_list.rst rstcheck!skip # (json) Expecting property name enclosed in double quotes
+docs/source/modules/zhmc_nic.rst rstcheck!skip # (json) Expecting property name enclosed in double quotes
+docs/source/modules/zhmc_partition.rst rstcheck!skip # (json) Expecting property name enclosed in double quotes
+docs/source/modules/zhmc_partition_list.rst rstcheck!skip # (json) Expecting property name enclosed in double quotes
+docs/source/modules/zhmc_password_rule.rst rstcheck!skip # (json) Expecting property name enclosed in double quotes
+docs/source/modules/zhmc_password_rule_list.rst rstcheck!skip # (json) Expecting property name enclosed in double quotes
+docs/source/modules/zhmc_storage_group.rst rstcheck!skip # (json) Expecting property name enclosed in double quotes
+docs/source/modules/zhmc_storage_group_attachment.rst rstcheck!skip # (json) Expecting property name enclosed in double quotes
+docs/source/modules/zhmc_storage_volume.rst rstcheck!skip # (json) Expecting property name enclosed in double quotes
+docs/source/modules/zhmc_user.rst rstcheck!skip # (json) Expecting property name enclosed in double quotes
+docs/source/modules/zhmc_user_list.rst rstcheck!skip # (json) Expecting property name enclosed in double quotes
+docs/source/modules/zhmc_user_role.rst rstcheck!skip # (json) Expecting property name enclosed in double quotes
+docs/source/modules/zhmc_user_role_list.rst rstcheck!skip # (json) Expecting property name enclosed in double quotes
