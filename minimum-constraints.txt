@@ -191,7 +191,7 @@ six==1.16.0; python_version >= '3.10'
 coverage==5.0
 pytest-cov==2.7.0
 # coveralls: Retrieved from git repo in dev-requirements.txt for python_version == '2.7'
-coveralls==2.1.2; python_version >= '3.5'
+coveralls==3.3.0; python_version >= '3.5'
 
 # ansible-test
 yamllint==1.25.0
