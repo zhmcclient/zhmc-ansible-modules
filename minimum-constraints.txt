@@ -213,8 +213,7 @@ Sphinx==4.1.0; python_version >= '3.6' and python_version <= '3.9'
 Sphinx==4.3.0; python_version == '3.10'
 Sphinx==5.1.0; python_version >= '3.11'
 docutils==0.14; python_version >= '3.6' and  python_version <= '3.10'
-docutils==0.19; python_version >= '3.11'
-sphinx-git==10.1.1; python_version >= '3.6'
+docutils==0.17; python_version >= '3.11'
 GitPython==2.1.15; python_version == '3.6'
 GitPython==3.1.30; python_version >= '3.7'
 sphinxcontrib-fulltoc==1.2.0; python_version >= '3.6'
@@ -225,7 +224,7 @@ Babel==2.9.1; python_version >= '3.6'
 # ansible-doc-extractor and it's dependent theme for docs generation (no imports, invoked via script):
 # The Makefile defines in doc_build on which Python versions docs are built. Keep in sync with Makefile and dev-requirements.txt.
 ansible-doc-extractor==0.1.8; python_version >= '3.6'
-sphinx-rtd-theme==0.5.0; python_version >= '3.6'
+sphinx-rtd-theme==1.0.0; python_version >= '3.6'
 
 # PyLint (no imports, invoked via pylint script):
 # Pylint is run in ansible sanity test which is run only on Python>=3.7
