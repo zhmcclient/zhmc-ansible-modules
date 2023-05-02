@@ -208,7 +208,8 @@ import traceback  # noqa: E402
 from ansible.module_utils.basic import AnsibleModule  # noqa: E402
 
 from ..module_utils.common import log_init, open_session, close_session, \
-    Error, ParameterError, missing_required_lib  # noqa: E402
+    hmc_auth_parameter, Error, ParameterError, \
+    missing_required_lib  # noqa: E402
 
 try:
     import requests.packages.urllib3
@@ -312,19 +313,7 @@ def main():
     # description of the options in the DOCUMENTATION string.
     argument_spec = dict(
         hmc_host=dict(required=True, type='str'),
-        hmc_auth=dict(
-            required=True,
-            type='dict',
-            options=dict(
-                userid=dict(required=False, type='str', default=None),
-                password=dict(required=False, type='str', default=None,
-                              no_log=True),
-                session_id=dict(required=False, type='str', default=None,
-                                no_log=True),
-                ca_certs=dict(required=False, type='str', default=None),
-                verify=dict(required=False, type='bool', default=True),
-            ),
-        ),
+        hmc_auth=hmc_auth_parameter(),  # same definition as for other modules
         action=dict(required=True, type='str', choices=['create', 'delete']),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),

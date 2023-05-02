@@ -230,6 +230,24 @@ def close_session(session, logoff):
             pass
 
 
+def hmc_auth_parameter():
+    "Return the Ansible module definition of the hmc_auth parameter."
+    hmc_auth = dict(
+        required=True,
+        type='dict',
+        options=dict(
+            userid=dict(required=False, type='str', default=None),
+            password=dict(required=False, type='str', default=None,
+                          no_log=True),
+            session_id=dict(required=False, type='str', default=None,
+                            no_log=True),
+            ca_certs=dict(required=False, type='str', default=None),
+            verify=dict(required=False, type='bool', default=True),
+        ),
+    )
+    return hmc_auth
+
+
 def eq_hex(hex_actual, hex_new, prop_name):
     """
     Test two hex string values of a property for equality.
