@@ -270,8 +270,9 @@ import traceback  # noqa: E402
 from ansible.module_utils.basic import AnsibleModule  # noqa: E402
 
 from ..module_utils.common import log_init, open_session, close_session, \
-    Error, ParameterError, eq_hex, to_unicode, process_normal_property, \
-    missing_required_lib, common_fail_on_import_errors  # noqa: E402
+    hmc_auth_parameter, Error, ParameterError, eq_hex, to_unicode, \
+    process_normal_property, missing_required_lib, \
+    common_fail_on_import_errors  # noqa: E402
 
 try:
     import requests.packages.urllib3
@@ -669,19 +670,7 @@ def main():
     # description of the options in the DOCUMENTATION string.
     argument_spec = dict(
         hmc_host=dict(required=True, type='str'),
-        hmc_auth=dict(
-            required=True,
-            type='dict',
-            options=dict(
-                userid=dict(required=False, type='str', default=None),
-                password=dict(required=False, type='str', default=None,
-                              no_log=True),
-                session_id=dict(required=False, type='str', default=None,
-                                no_log=True),
-                ca_certs=dict(required=False, type='str', default=None),
-                verify=dict(required=False, type='bool', default=True),
-            ),
-        ),
+        hmc_auth=hmc_auth_parameter(),
         cpc_name=dict(required=True, type='str'),
         storage_group_name=dict(required=True, type='str'),
         name=dict(required=True, type='str'),
