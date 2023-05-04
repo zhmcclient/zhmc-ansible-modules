@@ -485,9 +485,9 @@ def test_zhmc_user_absent_present(
                 "Module input properties:\n{3}\n"
                 "Resulting user properties:\n{4}".
                 format(changed, exp_changed,
-                       pformat(user_props_sorted.items(), indent=2),
-                       pformat(input_props_sorted.items(), indent=2),
-                       pformat(output_props_sorted.items(), indent=2)))
+                       pformat(user_props_sorted, indent=2),
+                       pformat(input_props_sorted, indent=2),
+                       pformat(output_props_sorted, indent=2)))
         if input_state == 'present':
             assert_user_props(output_props, expand, where)
 

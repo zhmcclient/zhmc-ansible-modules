@@ -35,6 +35,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Bug fixes:**
 
+* Test: Fixed a bug when displaying details on failed end2end testcases in
+  test_zhmc_password_rule.py and test_zhmc_user.py.
+
 **Enhancements:**
 
 * Dev: Added package dependency checking for the remaining Python-based tools
