@@ -131,6 +131,8 @@ properties
 
 
 expand
+  Deprecated: The ``expand`` parameter is deprecated because the returned password rule, user role, user pattern and LDAP server definition objects have an independent lifecycle, so the same objects are returned when invoking this module in a loop through all users. Use the respective other modules of this collection to get the properties of these objects.
+
   Boolean that controls whether the returned user contains additional artificial properties that expand certain URI or name properties to the full set of resource properties (see description of return values of this module).
 
   | **required**: False
@@ -161,7 +163,6 @@ Examples
        hmc_auth: "{{ my_hmc_auth }}"
        name: "{{ my_user_name }}"
        state: facts
-       expand: true
      register: user1
 
    - name: Ensure the user does not exist
@@ -177,7 +178,6 @@ Examples
        hmc_auth: "{{ my_hmc_auth }}"
        name: "{{ my_user_name }}"
        state: present
-       expand: true
        properties:
          description: "Example user 1"
          type: standard
@@ -243,6 +243,7 @@ user
             "idle-timeout": 0,
             "inactivity-timeout": 0,
             "is-locked": false,
+            "ldap-server-definition-name": null,
             "ldap-server-definition-uri": null,
             "max-failed-logins": 3,
             "max-web-services-api-sessions": 1000,
@@ -253,33 +254,6 @@ user
             "object-uri": "/api/users/91773b88-0c99-11eb-b4d3-00106f237ab1",
             "parent": "/api/console",
             "password-expires": 87,
-            "password-rule": {
-                "case-sensitive": true,
-                "character-rules": [
-                    {
-                        "alphabetic": "required",
-                        "custom-character-sets": [],
-                        "max-characters": 30,
-                        "min-characters": 15,
-                        "numeric": "required",
-                        "special": "required"
-                    }
-                ],
-                "class": "password-rule",
-                "consecutive-characters": 1,
-                "description": "ZaaS password rule definition",
-                "element-id": "518ac1d8-bf98-11e9-b9dd-00106f237ab1",
-                "element-uri": "/api/console/password-rules/518ac1d8-bf98-11e9-b9dd-00106f237ab1",
-                "expiration": 90,
-                "history-count": 10,
-                "max-length": 30,
-                "min-length": 15,
-                "name": "ZaaS",
-                "parent": "/api/console",
-                "replication-overwrite-possible": true,
-                "similarity-count": 0,
-                "type": "user-defined"
-            },
             "password-rule-name": "ZaaS",
             "password-rule-uri": "/api/console/password-rules/518ac1d8-bf98-11e9-b9dd-00106f237ab1",
             "replication-overwrite-possible": true,
@@ -287,27 +261,6 @@ user
             "type": "standard",
             "user-role-names": [
                 "hmc-system-programmer-tasks"
-            ],
-            "user-role-objects": [
-                {
-                    "associated-system-defined-user-role-uri": null,
-                    "class": "user-role",
-                    "description": "Tasks used by system programmers to configure and manage the system",
-                    "is-inheritance-enabled": false,
-                    "is-locked": false,
-                    "name": "hmc-system-programmer-tasks",
-                    "object-id": "19e90e27-1cae-422c-91ba-f76ac7fb8b82",
-                    "object-uri": "/api/user-roles/19e90e27-1cae-422c-91ba-f76ac7fb8b82",
-                    "parent": "/api/console",
-                    "permissions": [
-                        {
-                            "permitted-object": "/api/console/tasks/900e4676-fd59-4e4d-8bf2-03ef73c3a3df",
-                            "permitted-object-type": "object"
-                        }
-                    ],
-                    "replication-overwrite-possible": true,
-                    "type": "system-defined"
-                }
             ],
             "user-roles": [
                 "/api/user-roles/19e90e27-1cae-422c-91ba-f76ac7fb8b82"
@@ -332,6 +285,8 @@ user
     | **type**: str
 
   user-role-objects
+    Deprecated: This result property is deprecated because the ``expand`` parameter is deprecated.
+
     Only if ``expand=true``: User roles referenced by property ``user-roles``.
 
     | **type**: dict
@@ -347,6 +302,8 @@ user
     | **type**: str
 
   user-pattern
+    Deprecated: This result property is deprecated because the ``expand`` parameter is deprecated.
+
     Only for users with ``type=pattern`` and if ``expand=true``: User pattern referenced by property ``user-pattern-uri``.
 
     | **type**: dict
@@ -362,6 +319,8 @@ user
     | **type**: str
 
   password-rule
+    Deprecated: This result property is deprecated because the ``expand`` parameter is deprecated.
+
     Only for users with ``authentication-type=local`` and if ``expand=true``: Password rule referenced by property ``password-rule-uri``.
 
     | **type**: dict
@@ -377,6 +336,8 @@ user
     | **type**: str
 
   ldap-server-definition
+    Deprecated: This result property is deprecated because the ``expand`` parameter is deprecated.
+
     Only for users with ``authentication-type=ldap`` and if ``expand=true``: LDAP server definition referenced by property ``ldap-server-definition-uri``.
 
     | **type**: dict
