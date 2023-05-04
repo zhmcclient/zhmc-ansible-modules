@@ -33,6 +33,11 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Deprecations:**
 
+* Deprecated the 'expand' input parameter of the 'zhmc_user' module. It had
+  been used to expand URLs to independent objects (user roles, password rule,
+  LDAP server definitions) leading to returning the same objects multiple
+  times when invoking the 'zhmc_user' module in a loop. (related to issue #658)
+
 **Bug fixes:**
 
 * Test: Fixed a bug when displaying details on failed end2end testcases in
@@ -45,8 +50,12 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Added safety checking and addressed any reported issues. (#632)
 
-* Improved performance of the 'zhmc_user_role' module for 'state=facts'.
-  (issue #660)
+* Improved performance of the 'zhmc_user' and 'zhmc_user_role' modules for
+  'state=facts'. (issues #660, #658)
+
+* The 'zhmc_user' module with 'state=facts' now returns the artificial name
+  properties always consistent with the presence of the corresponding uri
+  properties. (related to issue #658)
 
 * Added a new 'zhmc_session' module for maintaining the HMC session across
   playbook/role tasks. This can be used to reduce the number of HMC sessions

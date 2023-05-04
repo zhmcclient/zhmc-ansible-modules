@@ -151,6 +151,12 @@ options:
     default: null
   expand:
     description:
+      - "Deprecated: The C(expand) parameter is deprecated because the
+         returned password rule, user role, user pattern and LDAP server
+         definition objects have an independent lifecycle, so the same objects
+         are returned when invoking this module in a loop through all users.
+         Use the respective other modules of this collection to get the
+         properties of these objects."
       - "Boolean that controls whether the returned user contains
          additional artificial properties that expand certain URI or name
          properties to the full set of resource properties (see description of
@@ -184,7 +190,6 @@ EXAMPLES = """
     hmc_auth: "{{ my_hmc_auth }}"
     name: "{{ my_user_name }}"
     state: facts
-    expand: true
   register: user1
 
 - name: Ensure the user does not exist
@@ -200,7 +205,6 @@ EXAMPLES = """
     hmc_auth: "{{ my_hmc_auth }}"
     name: "{{ my_user_name }}"
     state: present
-    expand: true
     properties:
       description: "Example user 1"
       type: standard
@@ -246,8 +250,11 @@ user:
         C(user-roles)."
       type: str
     user-role-objects:
-      description: "Only if C(expand=true): User roles referenced by property
-        C(user-roles)."
+      description:
+        - "Deprecated: This result property is deprecated because the
+           C(expand) parameter is deprecated."
+        - "Only if C(expand=true): User roles referenced by property
+           C(user-roles)."
       type: dict
       contains:
         "{property}":
@@ -260,8 +267,11 @@ user:
         pattern referenced by property C(user-pattern-uri)."
       type: str
     user-pattern:
-      description: "Only for users with C(type=pattern) and if C(expand=true):
-        User pattern referenced by property C(user-pattern-uri)."
+      description:
+        - "Deprecated: This result property is deprecated because the
+           C(expand) parameter is deprecated."
+        - "Only for users with C(type=pattern) and if C(expand=true):
+           User pattern referenced by property C(user-pattern-uri)."
       type: dict
       contains:
         "{property}":
@@ -274,9 +284,12 @@ user:
         the password rule referenced by property C(password-rule-uri)."
       type: str
     password-rule:
-      description: "Only for users with C(authentication-type=local) and if
-        C(expand=true): Password rule referenced by property
-        C(password-rule-uri)."
+      description:
+        - "Deprecated: This result property is deprecated because the
+           C(expand) parameter is deprecated."
+        - "Only for users with C(authentication-type=local) and if
+           C(expand=true): Password rule referenced by property
+           C(password-rule-uri)."
       type: dict
       contains:
         "{property}":
@@ -290,9 +303,12 @@ user:
         C(ldap-server-definition-uri)."
       type: str
     ldap-server-definition:
-      description: "Only for users with C(authentication-type=ldap) and if
-        C(expand=true): LDAP server definition referenced by property
-        C(ldap-server-definition-uri)."
+      description:
+        - "Deprecated: This result property is deprecated because the
+           C(expand) parameter is deprecated."
+        - "Only for users with C(authentication-type=ldap) and if
+           C(expand=true): LDAP server definition referenced by property
+           C(ldap-server-definition-uri)."
       type: dict
       contains:
         "{property}":
@@ -318,6 +334,7 @@ user:
         "idle-timeout": 0,
         "inactivity-timeout": 0,
         "is-locked": false,
+        "ldap-server-definition-name": null,
         "ldap-server-definition-uri": null,
         "max-failed-logins": 3,
         "max-web-services-api-sessions": 1000,
@@ -328,33 +345,6 @@ user:
         "object-uri": "/api/users/91773b88-0c99-11eb-b4d3-00106f237ab1",
         "parent": "/api/console",
         "password-expires": 87,
-        "password-rule": {
-            "case-sensitive": true,
-            "character-rules": [
-                {
-                    "alphabetic": "required",
-                    "custom-character-sets": [],
-                    "max-characters": 30,
-                    "min-characters": 15,
-                    "numeric": "required",
-                    "special": "required"
-                }
-            ],
-            "class": "password-rule",
-            "consecutive-characters": 1,
-            "description": "ZaaS password rule definition",
-            "element-id": "518ac1d8-bf98-11e9-b9dd-00106f237ab1",
-            "element-uri": "/api/console/password-rules/518ac1d8-bf98-11e9-b9dd-00106f237ab1",
-            "expiration": 90,
-            "history-count": 10,
-            "max-length": 30,
-            "min-length": 15,
-            "name": "ZaaS",
-            "parent": "/api/console",
-            "replication-overwrite-possible": true,
-            "similarity-count": 0,
-            "type": "user-defined"
-        },
         "password-rule-name": "ZaaS",
         "password-rule-uri": "/api/console/password-rules/518ac1d8-bf98-11e9-b9dd-00106f237ab1",
         "replication-overwrite-possible": true,
@@ -362,27 +352,6 @@ user:
         "type": "standard",
         "user-role-names": [
             "hmc-system-programmer-tasks",
-        ],
-        "user-role-objects": [
-            {
-                "associated-system-defined-user-role-uri": null,
-                "class": "user-role",
-                "description": "Tasks used by system programmers to configure and manage the system",
-                "is-inheritance-enabled": false,
-                "is-locked": false,
-                "name": "hmc-system-programmer-tasks",
-                "object-id": "19e90e27-1cae-422c-91ba-f76ac7fb8b82",
-                "object-uri": "/api/user-roles/19e90e27-1cae-422c-91ba-f76ac7fb8b82",
-                "parent": "/api/console",
-                "permissions": [
-                    {
-                        "permitted-object": "/api/console/tasks/900e4676-fd59-4e4d-8bf2-03ef73c3a3df",
-                        "permitted-object-type": "object"
-                    }
-                ],
-                "replication-overwrite-possible": true,
-                "type": "system-defined"
-            }
         ],
         "user-roles": [
             "/api/user-roles/19e90e27-1cae-422c-91ba-f76ac7fb8b82"
@@ -707,8 +676,6 @@ def add_artificial_properties(
 
     Upon return, the user_properties dict has been extended by these properties:
 
-    Regardless of expand:
-
     * 'user-role-names': Names of UserRole objects corresponding to the URIs
       in the 'user-roles' property.
 
@@ -728,7 +695,7 @@ def add_artificial_properties(
       TODO: Implement default-group-name; requires support for Group objects in
       zhmcclient
 
-    If expand is True:
+    If C(expand) (deprecated) is True, in addition:
 
     * 'user-role-objects': List of UserRole objects corresponding to the
       URIs in the 'user-roles' property.
@@ -762,15 +729,21 @@ def add_artificial_properties(
         # Note: For other types, the property does not exist.
         user_pattern_uri = user.properties['user-pattern-uri']
         if user_pattern_uri is not None:
-            user_pattern = console.user_patterns.resource_object(user_pattern_uri)
+            user_pattern = \
+                console.user_patterns.resource_object(user_pattern_uri)
+            # We pull the properties, since that is done anyway in .name,
+            # so that in case of expand it is not done twice.
             user_pattern.pull_full_properties()
             user_properties['user-pattern-name'] = user_pattern.name
             if expand:
                 user_properties['user-pattern'] = dict(user_pattern.properties)
-        else:
-            user_properties['user-pattern-name'] = None
-            if expand:
-                user_properties['user-pattern'] = None
+    # Make sure that the artificial properties exist exactly when the uri
+    # property does
+    if 'user-pattern-uri' in user.properties and \
+            'user-pattern-name' not in user_properties:
+        user_properties['user-pattern-name'] = None
+        if expand:
+            user_properties['user-pattern'] = None
 
     if auth_type == 'local':
         # For that auth type, the property exists and is non-null.
@@ -779,15 +752,20 @@ def add_artificial_properties(
         if password_rule_uri is not None:
             password_rule = console.password_rules.resource_object(
                 password_rule_uri)
+            # We pull the properties, since that is done anyway in .name,
+            # so that in case of expand it is not done twice.
             password_rule.pull_full_properties()
             user_properties['password-rule-name'] = password_rule.name
             if expand:
                 user_properties['password-rule'] = \
                     dict(password_rule.properties)
-        else:
-            user_properties['password-rule-name'] = None
-            if expand:
-                user_properties['password-rule'] = None
+    # Make sure that the artificial properties exist exactly when the uri
+    # property does
+    if 'password-rule-uri' in user.properties and \
+            'password-rule-name' not in user_properties:
+        user_properties['password-rule-name'] = None
+        if expand:
+            user_properties['password-rule'] = None
 
     if auth_type == 'ldap':
         # For that auth type, the property exists and is non-null.
@@ -796,26 +774,33 @@ def add_artificial_properties(
         if ldap_srv_def_uri is not None:
             ldap_srv_def = console.ldap_server_definitions.resource_object(
                 ldap_srv_def_uri)
+            # We pull the properties, since that is done anyway in .name,
+            # so that in case of expand it is not done twice.
             ldap_srv_def.pull_full_properties()
             user_properties['ldap-server-definition-name'] = ldap_srv_def.name
             if expand:
                 user_properties['ldap-server-definition'] = \
                     dict(ldap_srv_def.properties)
-        else:
-            user_properties['ldap-server-definition-name'] = None
-            if expand:
-                user_properties['ldap-server-definition'] = None
+    # Make sure that the artificial properties exist exactly when the uri
+    # property does
+    if 'ldap-server-definition-uri' in user.properties and \
+            'ldap-server-definition-name' not in user_properties:
+        user_properties['ldap-server-definition-name'] = None
+        if expand:
+            user_properties['ldap-server-definition'] = None
 
-    user_roles = []
-    user_role_uris = user.properties['user-roles']
-    for user_role_uri in user_role_uris:
-        user_role = console.user_roles.resource_object(user_role_uri)
-        user_role.pull_full_properties()
-        user_roles.append(user_role)
-    user_properties['user-role-names'] = [ur.name for ur in user_roles]
+    all_uroles = console.user_roles.list()
+    all_uroles_by_uri = {}
+    for urole in all_uroles:
+        all_uroles_by_uri[urole.uri] = urole
+    uroles = [all_uroles_by_uri[uri] for uri in user.properties['user-roles']]
+    user_properties['user-role-names'] = [ur.name for ur in uroles]
     if expand:
-        user_properties['user-role-objects'] = \
-            [dict(ur.properties) for ur in user_roles]
+        user_role_objects = []
+        for urole in uroles:
+            urole.pull_full_properties()
+            user_role_objects.append(dict(urole.properties))
+        user_properties['user-role-objects'] = user_role_objects
 
 
 def create_check_mode_user(console, create_props, update_props):
