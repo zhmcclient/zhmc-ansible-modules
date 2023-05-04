@@ -337,9 +337,9 @@ def test_zhmc_password_rule_absent_present(
                 "Module input properties:\n{3}\n"
                 "Resulting password rule properties:\n{4}".
                 format(changed, exp_changed,
-                       pformat(pwrule_props_sorted.items(), indent=2),
-                       pformat(input_props_sorted.items(), indent=2),
-                       pformat(output_props_sorted.items(), indent=2)))
+                       pformat(pwrule_props_sorted, indent=2),
+                       pformat(input_props_sorted, indent=2),
+                       pformat(output_props_sorted, indent=2)))
         if input_state == 'present':
             assert_pwrule_props(output_props, where)
 
