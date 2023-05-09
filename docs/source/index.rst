@@ -95,6 +95,7 @@ invoke these modules in playbook tasks.
    release_notes
    versioning
    bibliography
+   troubleshooting
 
 Copyright
 =========

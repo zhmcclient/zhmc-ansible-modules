@@ -56,6 +56,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   Ansible modules, that can be provided as an alternative to providing userid
   and password.
 
+* Added a troubleshooting section to the docs.
+
 **Cleanup:**
 
 * Increased minimum versions of pip, setuptools, wheel to more recent versions.
