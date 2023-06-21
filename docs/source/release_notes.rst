@@ -36,6 +36,11 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Test: Fixed a bug when displaying details on failed end2end testcases in
   test_zhmc_password_rule.py and test_zhmc_user.py.
 
+* Circumvented the removal of Python 2.7 from the Github Actions plugin
+  setup-python, by using the Docker container python:2.7.18-buster instead,
+  and by adjusting the os_setup.sh script to accomodate the absence of sudo
+  in that container.
+
 **Enhancements:**
 
 * Added support for Ansible version 8 (ansible-core 2.15).
