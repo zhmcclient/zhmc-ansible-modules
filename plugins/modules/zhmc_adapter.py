@@ -582,7 +582,7 @@ def ensure_set(params, check_mode):
 
     cpc_name = params['cpc_name']
     adapter_name = params['name']
-    adapter_match = params['match']
+    adapter_match = params['match'] or {}
 
     changed = False
 
@@ -859,10 +859,10 @@ def main():
         hmc_auth=hmc_auth_parameter(),
         cpc_name=dict(required=True, type='str'),
         name=dict(required=True, type='str'),
-        match=dict(required=False, type='dict', default={}),
+        match=dict(required=False, type='dict', default=None),
         state=dict(required=True, type='str',
                    choices=['set', 'present', 'absent', 'facts']),
-        properties=dict(required=False, type='dict', default={}),
+        properties=dict(required=False, type='dict', default=None),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),
     )

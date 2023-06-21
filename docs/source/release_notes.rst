@@ -67,6 +67,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Added a troubleshooting section to the docs.
 
+* Added support for Ansible version 8 (ansible-core 2.15).
+
 **Cleanup:**
 
 * Increased minimum versions of pip, setuptools, wheel to more recent versions.
