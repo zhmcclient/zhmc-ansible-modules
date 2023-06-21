@@ -38,6 +38,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Enhancements:**
 
+* Added support for Ansible version 8 (ansible-core 2.15).
+
 **Cleanup:**
 
 **Known issues:**
