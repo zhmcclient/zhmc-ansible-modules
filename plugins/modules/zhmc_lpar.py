@@ -709,7 +709,7 @@ def process_properties(cpc, lpar, params):
     lpar_name = to_unicode(params['name'])
 
     # handle the other properties
-    input_props = params.get('properties', {})
+    input_props = params.get('properties', None)
     if input_props is None:
         input_props = {}
     for prop_name in input_props:
@@ -1151,7 +1151,7 @@ def main():
         force=dict(required=False, type='bool', default=DEFAULT_FORCE),
         os_ipl_token=dict(required=False, type='str', default=None),
         # Note: os_ipl_token is not a secret
-        properties=dict(required=False, type='dict', default={}),
+        properties=dict(required=False, type='dict', default=None),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),
     )

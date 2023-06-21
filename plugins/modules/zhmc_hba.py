@@ -360,7 +360,7 @@ def process_properties(partition, hba, params):
     adapter_port_art_name = 'adapter_port'
 
     # handle the other properties
-    input_props = params.get('properties', {})
+    input_props = params.get('properties', None)
     if input_props is None:
         input_props = {}
     for prop_name in input_props:
@@ -594,7 +594,7 @@ def main():
         name=dict(required=True, type='str'),
         state=dict(required=True, type='str',
                    choices=['absent', 'present']),
-        properties=dict(required=False, type='dict', default={}),
+        properties=dict(required=False, type='dict', default=None),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),
     )
