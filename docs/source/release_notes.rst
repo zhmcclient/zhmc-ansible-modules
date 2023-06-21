@@ -41,6 +41,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   and by adjusting the os_setup.sh script to accomodate the absence of sudo
   in that container.
 
+* Increased version of cryptography package to 41.0.0 on Python >=3.7.
+
 **Enhancements:**
 
 * Added support for Ansible version 8 (ansible-core 2.15).
