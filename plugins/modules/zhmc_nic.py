@@ -34,8 +34,9 @@ module: zhmc_nic
 version_added: "2.9.0"
 short_description: Create NICs in partitions
 description:
-  - Create, update, or delete a NIC (virtual Network Interface Card) in a
-    partition of a CPC (Z system).
+  - Gather facts about a NIC (virtual Network Interface Card) in a partition of
+    a CPC (Z system).
+  - Create, update, or delete a NIC in a partition.
   - Note that the Ansible module zhmc_partition can be used to gather facts
     about existing NICs of a partition.
 author:
@@ -128,9 +129,10 @@ options:
          partition."
       - "* C(present): Ensures that the NIC exists in the specified partition
          and has the specified properties."
+      - "* C(facts): Returns the NIC properties."
     type: str
     required: true
-    choices: ["absent", "present"]
+    choices: ["absent", "present", "facts"]
   properties:
     description:
       - "Dictionary with input properties for the NIC, for C(state=present).
@@ -201,6 +203,16 @@ EXAMPLES = """
     partition_name: "{{ my_partition_name }}"
     name: "{{ my_nic_name }}"
     state: absent
+
+- name: Gather facts about a NIC
+  zhmc_partition:
+    hmc_host: "{{ my_hmc_host }}"
+    hmc_auth: "{{ my_hmc_auth }}"
+    cpc_name: "{{ my_cpc_name }}"
+    partition_name: "{{ my_partition_name }}"
+    name: "{{ my_nic_name }}"
+    state: facts
+  register: nic1
 """
 
 RETURN = """
@@ -216,7 +228,7 @@ msg:
 nic:
   description:
     - "For C(state=absent), an empty dictionary."
-    - "For C(state=present), the resource properties of the NIC after any
+    - "For C(state=present|facts), the resource properties of the NIC after any
        changes."
   returned: success
   type: dict
@@ -640,6 +652,40 @@ def ensure_absent(params, check_mode):
         close_session(session, logoff)
 
 
+def facts(params, check_mode):
+    """
+    Return NIC facts.
+
+    Raises:
+      ParameterError: An issue with the module parameters.
+      zhmcclient.Error: Any zhmcclient exception can happen.
+    """
+
+    cpc_name = params['cpc_name']
+    partition_name = params['partition_name']
+    name = params['name']
+
+    changed = False
+    result = {}
+
+    session, logoff = open_session(params)
+    try:
+        # The default exception handling is sufficient for this code
+        client = zhmcclient.Client(session)
+        cpc = client.cpcs.find(name=cpc_name)
+
+        partition = cpc.partitions.find(name=partition_name)
+
+        nic = partition.nics.find(name=name)
+        nic.pull_full_properties()
+
+        result = dict(nic.properties)
+        return changed, result
+
+    finally:
+        close_session(session, logoff)
+
+
 def perform_task(params, check_mode):
     """
     Perform the task for this module, dependent on the 'state' module
@@ -656,6 +702,7 @@ def perform_task(params, check_mode):
     actions = {
         "absent": ensure_absent,
         "present": ensure_present,
+        "facts": facts,
     }
     return actions[params['state']](params, check_mode)
 
@@ -671,7 +718,7 @@ def main():
         partition_name=dict(required=True, type='str'),
         name=dict(required=True, type='str'),
         state=dict(required=True, type='str',
-                   choices=['absent', 'present']),
+                   choices=['absent', 'present', 'facts']),
         properties=dict(required=False, type='dict', default=None),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),

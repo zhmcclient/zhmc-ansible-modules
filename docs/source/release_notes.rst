@@ -76,6 +76,11 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Added support for Ansible version 8 (ansible-core 2.15).
 
+* Added support for "state=facts" to the zhmc_nic module. (issue #671)
+
+* Added a new zhmc_nic_list module for lising the NICs of a partition.
+  (issue #671)
+
 **Cleanup:**
 
 * Increased minimum versions of pip, setuptools, wheel to more recent versions.
