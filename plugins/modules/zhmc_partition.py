@@ -975,7 +975,7 @@ def process_properties(cpc, partition, params):
     # the partition name
 
     # handle the other properties
-    input_props = params.get('properties', {})
+    input_props = params.get('properties', None)
     if input_props is None:
         input_props = {}
     for prop_name in input_props:
@@ -1896,7 +1896,7 @@ def main():
         name=dict(required=True, type='str'),
         state=dict(required=True, type='str',
                    choices=['absent', 'stopped', 'active', 'facts']),
-        properties=dict(required=False, type='dict', default={}),
+        properties=dict(required=False, type='dict', default=None),
         expand_storage_groups=dict(required=False, type='bool', default=False),
         expand_crypto_adapters=dict(required=False, type='bool',
                                     default=False),
