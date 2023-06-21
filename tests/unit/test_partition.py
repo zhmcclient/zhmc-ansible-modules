@@ -98,7 +98,7 @@ class TestZhmcPartitionMain(unittest.TestCase):
             name=dict(required=True, type='str'),
             state=dict(required=True, type='str',
                        choices=['absent', 'stopped', 'active', 'facts']),
-            properties=dict(required=False, type='dict', default={}),
+            properties=dict(required=False, type='dict', default=None),
             expand_storage_groups=dict(required=False, type='bool',
                                        default=False),
             expand_crypto_adapters=dict(required=False, type='bool',

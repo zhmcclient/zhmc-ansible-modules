@@ -742,7 +742,7 @@ def main():
         state=dict(required=True, type='str',
                    choices=['inactive', 'active', 'set', 'facts']),
         activation_profile_name=dict(required=False, type='str', default=None),
-        properties=dict(required=False, type='dict', default={}),
+        properties=dict(required=False, type='dict', default=None),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),
     )
