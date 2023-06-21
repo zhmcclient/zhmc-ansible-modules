@@ -20,16 +20,12 @@ Releases
 ========
 
 
-Version 1.3.1-dev1
-------------------
+Version 1.3.1
+-------------
 
-Released: not yet
+Released: 2023-06-21
 
 Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
-
-**Incompatible changes:**
-
-**Deprecations:**
 
 **Bug fixes:**
 
@@ -46,16 +42,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 **Enhancements:**
 
 * Added support for Ansible version 8 (ansible-core 2.15).
-
-* Added support for Ansible version 8 (ansible-core 2.15).
-
-**Cleanup:**
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 1.3.0
