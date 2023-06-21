@@ -88,17 +88,20 @@ jobs:
               { \
                 \"os\": \"ubuntu-20.04\", \
                 \"python-version\": \"2.7\", \
-                \"package_level\": \"minimum\" \
+                \"package_level\": \"minimum\", \
+                \"container\": {\"image\": \"python:2.7.18-buster\"} \
               }, \
               { \
                 \"os\": \"ubuntu-20.04\", \
                 \"python-version\": \"2.7\", \
-                \"package_level\": \"latest\" \
+                \"package_level\": \"latest\", \
+                \"container\": {\"image\": \"python:2.7.18-buster\"} \
               }, \
               { \
                 \"os\": \"ubuntu-20.04\", \
                 \"python-version\": \"2.7\", \
-                \"package_level\": \"ansible\" \
+                \"package_level\": \"ansible\", \
+                \"container\": {\"image\": \"python:2.7.18-buster\"} \
               }, \
               { \
                 \"os\": \"ubuntu-20.04\", \
@@ -141,12 +144,14 @@ jobs:
               { \
                 \"os\": \"ubuntu-20.04\", \
                 \"python-version\": \"2.7\", \
-                \"package_level\": \"minimum\" \
+                \"package_level\": \"minimum\", \
+                \"container\": {\"image\": \"python:2.7.18-buster\"} \
               }, \
               { \
                 \"os\": \"ubuntu-20.04\", \
                 \"python-version\": \"2.7\", \
-                \"package_level\": \"latest\" \
+                \"package_level\": \"latest\", \
+                \"container\": {\"image\": \"python:2.7.18-buster\"} \
               }, \
               { \
                 \"os\": \"ubuntu-20.04\", \
@@ -211,6 +216,7 @@ jobs:
       max-parallel: 20
       matrix: ${{ fromJson(needs.set_matrix.outputs.matrix) }}
     runs-on: ${{ matrix.os }}
+    container: ${{ matrix.container }}
     env:
       PIP_DISABLE_PIP_VERSION_CHECK: 1
       PIP_NO_PYTHON_VERSION_WARNING: 1
@@ -220,6 +226,7 @@ jobs:
       with:
         fetch-depth: 0
     - name: Set up Python ${{ matrix.python-version }}
+      if: ${{ ! ( matrix.python-version == '2.7' ) }}
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}

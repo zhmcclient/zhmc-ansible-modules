@@ -51,8 +51,19 @@ if [[ -n $(command -v yum 2>/dev/null) ]]; then
   sudo yum makecache fast
   sudo yum -y install libffi-devel
 elif [[ -n $(command -v apt-get 2>/dev/null) ]]; then
-  sudo apt-get --quiet update
-  sudo apt-get --yes install libffi-dev
+  # Note: The python:2.7.18-buster Docker container has no sudo
+  apt -qq list libffi-dev
+  if [[ "$(apt -qq list libffi-dev)" != *"installed"* ]]; then
+    if which sudo >/dev/null; then
+      echo "Installing libffi-dev package"
+      sudo apt-get --quiet update
+      sudo apt-get --yes install libffi-dev
+    else
+      echo "Warning: Not installing libffi-dev package due to missing sudo"
+    fi
+  else
+    echo "libffi-dev package is already installed"
+  fi
 elif [[ -n $(command -v choco 2>/dev/null) ]]; then
   echo "Nothing to install for platform $platform"
 else
