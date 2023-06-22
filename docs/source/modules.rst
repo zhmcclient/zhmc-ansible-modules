@@ -39,6 +39,7 @@ Modules targeting the HMC (i.e. not a specific CPC):
    :maxdepth: 1
    :glob:
 
+   modules/zhmc_console
    modules/zhmc_user
    modules/zhmc_user_list
    modules/zhmc_password_rule
