@@ -137,7 +137,9 @@ a release is prepared and in addition on a weekly basis. See the
 ``.github/workflows/test.yml`` file for details.
 
 These automated tests use all Ansible versions that are supported, but not in
-all combinations with all Python versions.
+all combinations with all Python versions. Also, not all Python and Ansible
+version combinations are tested on all operating systems. For details, see the
+test matrix in the ``.github/workflows/test.yml`` file.
 
 The following table shows for the full set of test environments which Ansible
 versions are tested on which Python versions. The 'Packages' column indicates
