@@ -175,6 +175,8 @@ Python  Packages  ansible  ansible-core
 3.11    ansible   7.x+     2.14+
 ======  ========  =======  ============
 
+Note that not all of these versions are tested on all operating systems. For
+details, look at the test matrix in the ``.github/workflows/test.yml`` file.
 
 .. _`Releasing a version`:
 
