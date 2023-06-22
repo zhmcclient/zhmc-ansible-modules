@@ -20,16 +20,14 @@ Releases
 ========
 
 
-Version 1.4.0-dev1
-------------------
+Version 1.4.0
+-------------
 
-This version contains all fixes up to version 1.3.x.
+This version contains all fixes up to version 1.3.1.
 
-Released: not yet
+Released: 2023-06-22
 
 Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
-
-**Incompatible changes:**
 
 **Deprecations:**
 
@@ -87,12 +85,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 **Cleanup:**
 
 * Increased minimum versions of pip, setuptools, wheel to more recent versions.
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 1.3.0
