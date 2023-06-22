@@ -149,16 +149,16 @@ the minimum versions as defined in the ``minimum-constraint.txt`` file, or
 specific Ansible versions as defined in the ``ansible-constraint.txt`` file:
 
 ======  ========  =======  ============
-Python  Packages  ansible  ansible-core
+Python  Packages  Ansible  Ansible core
 ------  --------  -------  ------------
-2.7     latest    2.9      2.9
-3.5     latest    2.9      2.9
-3.6     latest    2.10     2.10
+2.7     latest    4.x      2.11
+3.5     latest    4.x      2.11
+3.6     latest    4.x      2.11
 3.7     latest    4.x      2.11
-3.8     latest    5.x      2.12
-3.9     latest    6.x      2.13
-3.10    latest    7.x      2.14
-3.11    latest    7.x      2.14
+3.8     latest    6.x      2.13
+3.9     latest    8.x      2.15
+3.10    latest    8.x      2.15
+3.11    latest    8.x      2.15
 2.7     minimum   2.9      2.9
 3.5     minimum   2.9      2.9
 3.6     minimum   2.9      2.9
@@ -168,17 +168,51 @@ Python  Packages  ansible  ansible-core
 3.10    minimum   5.0      2.12
 3.11    minimum   7.0      2.14
 2.7     ansible   2.9      2.9
-3.5     ansible   2.9      2.9
-3.6     ansible   2.10     2.10
+3.5     ansible   2.10     2.10
+3.6     ansible   3.x      2.10
 3.7     ansible   4.x      2.11
 3.8     ansible   5.x      2.12
 3.9     ansible   6.x      2.13
 3.10    ansible   7.x      2.14
-3.11    ansible   7.x+     2.14+
+3.11    ansible   8.x+     2.15+
 ======  ========  =======  ============
 
-Note that not all of these versions are tested on all operating systems. For
-details, look at the test matrix in the ``.github/workflows/test.yml`` file.
+For reference, these tables show supported Python versions for Ansible versions
+and vice versa, for Python and Ansible versions relevant for this collection:
+
+At the time of writing, the latest Python version was 3.11 and the latest
+Ansible version was 8.
+
+=======  =================  =========================
+Ansible  Ansible core       Supported Python versions
+-------  -----------------  -------------------------
+2.9      ansible 2.9        2.7, 3.5 - 3.8
+2.10     ansible 2.10       2.7, 3.5 - 3.8
+3        ansible-base 2.10  2.7, 3.5 - 3.8
+4        ansible-core 2.11  2.7, 3.5 - 3.9 (1)
+5        ansible-core 2.12  3.8 - 3.10 (2)
+6        ansible-core 2.13  3.8 - 3.10 (2)
+7        ansible-core 2.14  3.9 - 3.11+
+8        ansible-core 2.15  3.9 - 3.11+
+=======  =================  =========================
+
+======  ==========================
+Python  Supported Ansible versions
+------  --------------------------
+2.7     2.9, 2.10, 3, 4
+3.5     2.9, 2.10, 3, 4
+3.6     2.9, 2.10, 3, 4
+3.7     2.9, 2.10, 3, 4
+3.8     2.9, 2.10, 3 - 6
+3.9     4 - 8+
+3.10    5 - 8+ (1)
+3.11    7 - 8+ (2)
+======  ==========================
+
+Notes:
+* (1) The sanity test of Ansible 4 supports Python only up to 3.9
+* (2) The sanity test of Ansible 5 and 6 supports Python only up to 3.10
+
 
 .. _`Releasing a version`:
 
