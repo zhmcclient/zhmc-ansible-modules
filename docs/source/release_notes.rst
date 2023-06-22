@@ -46,8 +46,7 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Circumvented the removal of Python 2.7 from the Github Actions plugin
   setup-python, by using the Docker container python:2.7.18-buster instead,
   and by adjusting the os_setup.sh script to accomodate the absence of sudo
-  in that container. As part of that, no longer testing with Python 2.7 on
-  macOS.
+  in that container. As part of that, Python 2.7 on macOS is no longer tested.
 
 * Increased version of cryptography package to 41.0.0 on Python >=3.7.
 
