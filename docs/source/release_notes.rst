@@ -81,6 +81,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Added a new zhmc_nic_list module for lising the NICs of a partition.
   (issue #671)
 
+* Added a new 'zhmc_console' module that provides facts about the targeted HMC.
+  (issue #650)
+
 **Cleanup:**
 
 * Increased minimum versions of pip, setuptools, wheel to more recent versions.
