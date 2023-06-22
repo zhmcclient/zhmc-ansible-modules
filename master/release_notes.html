@@ -36,7 +36,7 @@
             IBM Z HMC collection
           </a>
               <div class="version">
-                1.3.1-dev1
+                1.4.0
 
               </div>
 <div role="search">
@@ -69,7 +69,7 @@
 <p class="caption" role="heading"><span class="caption-text">Appendices</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Releases</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-4-0-dev1">Version 1.4.0-dev1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-4-0">Version 1.4.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-3-0">Version 1.3.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-2-0">Version 1.2.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-1-0">Version 1.1.0</a></li>
@@ -115,12 +115,11 @@
              
   <section id="releases">
 <span id="id1"></span><h1>Releases<a class="headerlink" href="#releases" title="Permalink to this heading"></a></h1>
-<section id="version-1-4-0-dev1">
-<h2>Version 1.4.0-dev1<a class="headerlink" href="#version-1-4-0-dev1" title="Permalink to this heading"></a></h2>
-<p>This version contains all fixes up to version 1.3.x.</p>
-<p>Released: not yet</p>
+<section id="version-1-4-0">
+<h2>Version 1.4.0<a class="headerlink" href="#version-1-4-0" title="Permalink to this heading"></a></h2>
+<p>This version contains all fixes up to version 1.3.1.</p>
+<p>Released: 2023-06-22</p>
 <p>Availability: <a class="reference external" href="https://console.redhat.com/ansible/automation-hub/repo/published/ibm/ibm_zhmc">AutomationHub</a>, <a class="reference external" href="https://galaxy.ansible.com/ibm/ibm_zhmc">Galaxy</a>, <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">GitHub</a></p>
-<p><strong>Incompatible changes:</strong></p>
 <p><strong>Deprecations:</strong></p>
 <ul class="simple">
 <li><p>Deprecated the ‘expand’ input parameter of the ‘zhmc_user’ module. It had
@@ -135,7 +134,7 @@ test_zhmc_password_rule.py and test_zhmc_user.py.</p></li>
 <li><p>Circumvented the removal of Python 2.7 from the Github Actions plugin
 setup-python, by using the Docker container python:2.7.18-buster instead,
 and by adjusting the os_setup.sh script to accomodate the absence of sudo
-in that container.</p></li>
+in that container. As part of that, Python 2.7 on macOS is no longer tested.</p></li>
 <li><p>Increased version of cryptography package to 41.0.0 on Python &gt;=3.7.</p></li>
 </ul>
 <p><strong>Enhancements:</strong></p>
@@ -157,14 +156,15 @@ Ansible modules, that can be provided as an alternative to providing userid
 and password.</p></li>
 <li><p>Added a troubleshooting section to the docs.</p></li>
 <li><p>Added support for Ansible version 8 (ansible-core 2.15).</p></li>
+<li><p>Added support for “state=facts” to the zhmc_nic module. (issue #671)</p></li>
+<li><p>Added a new zhmc_nic_list module for lising the NICs of a partition.
+(issue #671)</p></li>
+<li><p>Added a new ‘zhmc_console’ module that provides facts about the targeted HMC.
+(issue #650)</p></li>
 </ul>
 <p><strong>Cleanup:</strong></p>
 <ul class="simple">
 <li><p>Increased minimum versions of pip, setuptools, wheel to more recent versions.</p></li>
-</ul>
-<p><strong>Known issues:</strong></p>
-<ul class="simple">
-<li><p>See <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/issues">list of open issues</a>.</p></li>
 </ul>
 </section>
 <section id="version-1-3-0">
@@ -773,6 +773,7 @@ property update.</p></li>
             <dd><a href="../1.2.1/release_notes.html">1.2.1</a></dd>
             <dd><a href="../1.3.0/release_notes.html">1.3.0</a></dd>
             <dd><a href="../1.3.1/release_notes.html">1.3.1</a></dd>
+            <dd><a href="../1.4.0/release_notes.html">1.4.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

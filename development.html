@@ -36,7 +36,7 @@
             IBM Z HMC collection
           </a>
               <div class="version">
-                1.3.1
+                1.4.0
 
               </div>
 <div role="search">
@@ -79,6 +79,7 @@
 <li class="toctree-l1"><a class="reference internal" href="release_notes.html">Releases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="versioning.html">Versioning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bibliography.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
 </ul>
 
         </div>
@@ -169,6 +170,7 @@ has been built successfully.</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">check</span></code> - Run flake8</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">linkcheck</span></code> - Check links in documentation</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">sanity</span></code> - Run Ansible sanity tests (includes flake8, pylint, validate-modules)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">check_reqs</span></code> - Run pip-missing-reqs to perform missing dependency checks</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">test</span></code> - Run unit and function tests with test coverage</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">end2end_mocked</span></code> - Run end2end tests against a mocked environment</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">end2end</span></code> - Run end2end tests against an environment defined by TESTHMC</p></li>
@@ -186,18 +188,61 @@ environments when a PR is created, and on the full set of test environments when
 a release is prepared and in addition on a weekly basis. See the
 <code class="docutils literal notranslate"><span class="pre">.github/workflows/test.yml</span></code> file for details.</p>
 <p>These automated tests use all Ansible versions that are supported, but not in
-all combinations with all Python versions. See the
-<code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> and <code class="docutils literal notranslate"><span class="pre">minimum-constraint.txt</span></code> files for details.</p>
-<p>The following table shows which Ansible versions are tested on which Python
-versions. In addition, this project tests on a well-defined set of minimum
-versions of Python packages, and a set of latest versions of Python packages
-for each Python version.</p>
+all combinations with all Python versions. Also, not all Python and Ansible
+version combinations are tested on all operating systems. For details, see the
+test matrix in the <code class="docutils literal notranslate"><span class="pre">.github/workflows/test.yml</span></code> file.</p>
+<p>The following table shows for the full set of test environments which Ansible
+versions are tested on which Python versions. The ‘Packages’ column indicates
+whether the latest versions of Python packages are used (i.e. what pip installs
+by default, given the <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> and <code class="docutils literal notranslate"><span class="pre">dev-requirements.txt</span></code> files),
+the minimum versions as defined in the <code class="docutils literal notranslate"><span class="pre">minimum-constraint.txt</span></code> file, or
+specific Ansible versions as defined in the <code class="docutils literal notranslate"><span class="pre">ansible-constraint.txt</span></code> file:</p>
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p>Python</p></td>
 <td><p>Packages</p></td>
-<td><p>ansible</p></td>
-<td><p>ansible-core</p></td>
+<td><p>Ansible</p></td>
+<td><p>Ansible core</p></td>
+</tr>
+<tr class="row-even"><td><p>2.7</p></td>
+<td><p>latest</p></td>
+<td><p>4.x</p></td>
+<td><p>2.11</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.5</p></td>
+<td><p>latest</p></td>
+<td><p>4.x</p></td>
+<td><p>2.11</p></td>
+</tr>
+<tr class="row-even"><td><p>3.6</p></td>
+<td><p>latest</p></td>
+<td><p>4.x</p></td>
+<td><p>2.11</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.7</p></td>
+<td><p>latest</p></td>
+<td><p>4.x</p></td>
+<td><p>2.11</p></td>
+</tr>
+<tr class="row-even"><td><p>3.8</p></td>
+<td><p>latest</p></td>
+<td><p>6.x</p></td>
+<td><p>2.13</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.9</p></td>
+<td><p>latest</p></td>
+<td><p>8.x</p></td>
+<td><p>2.15</p></td>
+</tr>
+<tr class="row-even"><td><p>3.10</p></td>
+<td><p>latest</p></td>
+<td><p>8.x</p></td>
+<td><p>2.15</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.11</p></td>
+<td><p>latest</p></td>
+<td><p>8.x</p></td>
+<td><p>2.15</p></td>
 </tr>
 <tr class="row-even"><td><p>2.7</p></td>
 <td><p>minimum</p></td>
@@ -240,47 +285,129 @@ for each Python version.</p>
 <td><p>2.14</p></td>
 </tr>
 <tr class="row-even"><td><p>2.7</p></td>
-<td><p>latest</p></td>
+<td><p>ansible</p></td>
 <td><p>2.9</p></td>
 <td><p>2.9</p></td>
 </tr>
 <tr class="row-odd"><td><p>3.5</p></td>
-<td><p>latest</p></td>
-<td><p>2.9</p></td>
-<td><p>2.9</p></td>
+<td><p>ansible</p></td>
+<td><p>2.10</p></td>
+<td><p>2.10</p></td>
 </tr>
 <tr class="row-even"><td><p>3.6</p></td>
-<td><p>latest</p></td>
-<td><p>2.10</p></td>
+<td><p>ansible</p></td>
+<td><p>3.x</p></td>
 <td><p>2.10</p></td>
 </tr>
 <tr class="row-odd"><td><p>3.7</p></td>
-<td><p>latest</p></td>
+<td><p>ansible</p></td>
 <td><p>4.x</p></td>
 <td><p>2.11</p></td>
 </tr>
 <tr class="row-even"><td><p>3.8</p></td>
-<td><p>latest</p></td>
+<td><p>ansible</p></td>
 <td><p>5.x</p></td>
 <td><p>2.12</p></td>
 </tr>
 <tr class="row-odd"><td><p>3.9</p></td>
-<td><p>latest</p></td>
+<td><p>ansible</p></td>
 <td><p>6.x</p></td>
 <td><p>2.13</p></td>
 </tr>
 <tr class="row-even"><td><p>3.10</p></td>
-<td><p>latest</p></td>
+<td><p>ansible</p></td>
 <td><p>7.x</p></td>
 <td><p>2.14</p></td>
 </tr>
 <tr class="row-odd"><td><p>3.11</p></td>
-<td><p>latest</p></td>
-<td><p>7.x</p></td>
-<td><p>2.14</p></td>
+<td><p>ansible</p></td>
+<td><p>8.x+</p></td>
+<td><p>2.15+</p></td>
 </tr>
 </tbody>
 </table>
+<p>For reference, the following two tables show supported Python versions for
+Ansible versions and vice versa, for the Python and Ansible versions that are
+relevant for this collection. At the time of writing, the latest Python version
+is 3.11 and the latest Ansible version is 8.0.</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>Ansible</p></td>
+<td><p>Ansible core</p></td>
+<td><p>Supported Python versions</p></td>
+</tr>
+<tr class="row-even"><td><p>2.9</p></td>
+<td><p>ansible 2.9</p></td>
+<td><p>2.7, 3.5 - 3.8</p></td>
+</tr>
+<tr class="row-odd"><td><p>2.10</p></td>
+<td><p>ansible 2.10</p></td>
+<td><p>2.7, 3.5 - 3.8</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>ansible-base 2.10</p></td>
+<td><p>2.7, 3.5 - 3.8</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>ansible-core 2.11</p></td>
+<td><p>2.7, 3.5 - 3.9 (1)</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>ansible-core 2.12</p></td>
+<td><p>3.8 - 3.10 (2)</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p>ansible-core 2.13</p></td>
+<td><p>3.8 - 3.10 (2)</p></td>
+</tr>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>ansible-core 2.14</p></td>
+<td><p>3.9 - 3.11+</p></td>
+</tr>
+<tr class="row-odd"><td><p>8</p></td>
+<td><p>ansible-core 2.15</p></td>
+<td><p>3.9 - 3.11+</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>Python</p></td>
+<td><p>Supported Ansible versions</p></td>
+</tr>
+<tr class="row-even"><td><p>2.7</p></td>
+<td><p>2.9, 2.10, 3, 4</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.5</p></td>
+<td><p>2.9, 2.10, 3, 4</p></td>
+</tr>
+<tr class="row-even"><td><p>3.6</p></td>
+<td><p>2.9, 2.10, 3, 4</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.7</p></td>
+<td><p>2.9, 2.10, 3, 4</p></td>
+</tr>
+<tr class="row-even"><td><p>3.8</p></td>
+<td><p>2.9, 2.10, 3 - 6</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.9</p></td>
+<td><p>4 - 8+</p></td>
+</tr>
+<tr class="row-even"><td><p>3.10</p></td>
+<td><p>5 - 8+ (1)</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.11</p></td>
+<td><p>7 - 8+ (2)</p></td>
+</tr>
+</tbody>
+</table>
+<p>Notes:</p>
+<ul class="simple">
+<li><p>(1) The sanity test of Ansible 4 supports Python only up to 3.9, so Python
+3.10 requires at least Ansible 5.</p></li>
+<li><p>(2) The sanity test of Ansible 5 and 6 supports Python only up to 3.10, so
+Python 3.11 requires at least Ansible 7.</p></li>
+</ul>
 </section>
 <section id="releasing-a-version">
 <span id="id6"></span><h2>Releasing a version<a class="headerlink" href="#releasing-a-version" title="Permalink to this heading"></a></h2>
@@ -418,7 +545,7 @@ has not successfully been automated as of today.</p>
 <p>You need to have an account on <a class="reference external" href="https://console.redhat.com">https://console.redhat.com</a>, and your
 userid there needs to be authorized to modify the ‘ibm’ namespace.</p>
 <ul class="simple">
-<li><p>Buuild the distribution archive locally:</p></li>
+<li><p>Build the distribution archive locally:</p></li>
 </ul>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>dist
 </pre></div>
@@ -611,7 +738,7 @@ git<span class="w"> </span>branch<span class="w"> </span>-D<span class="w"> </sp
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.3.1
+        v: 1.4.0
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -632,6 +759,7 @@ git<span class="w"> </span>branch<span class="w"> </span>-D<span class="w"> </sp
             <dd><a href="1.2.1/development.html">1.2.1</a></dd>
             <dd><a href="1.3.0/development.html">1.3.0</a></dd>
             <dd><a href="1.3.1/development.html">1.3.1</a></dd>
+            <dd><a href="1.4.0/development.html">1.4.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
