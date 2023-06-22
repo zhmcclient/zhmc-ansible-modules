@@ -177,11 +177,10 @@ Python  Packages  Ansible  Ansible core
 3.11    ansible   8.x+     2.15+
 ======  ========  =======  ============
 
-For reference, these tables show supported Python versions for Ansible versions
-and vice versa, for Python and Ansible versions relevant for this collection:
-
-At the time of writing, the latest Python version was 3.11 and the latest
-Ansible version was 8.
+For reference, the following two tables show supported Python versions for
+Ansible versions and vice versa, for the Python and Ansible versions that are
+relevant for this collection. At the time of writing, the latest Python version
+is 3.11 and the latest Ansible version is 8.0.
 
 =======  =================  =========================
 Ansible  Ansible core       Supported Python versions
@@ -210,8 +209,11 @@ Python  Supported Ansible versions
 ======  ==========================
 
 Notes:
-* (1) The sanity test of Ansible 4 supports Python only up to 3.9
-* (2) The sanity test of Ansible 5 and 6 supports Python only up to 3.10
+
+* (1) The sanity test of Ansible 4 supports Python only up to 3.9, so Python
+  3.10 requires at least Ansible 5.
+* (2) The sanity test of Ansible 5 and 6 supports Python only up to 3.10, so
+  Python 3.11 requires at least Ansible 7.
 
 
 .. _`Releasing a version`:
