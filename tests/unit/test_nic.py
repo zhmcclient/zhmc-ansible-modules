@@ -97,7 +97,7 @@ class TestZhmcNicMain(object):
             partition_name=dict(required=True, type='str'),
             name=dict(required=True, type='str'),
             state=dict(required=True, type='str',
-                       choices=['absent', 'present']),
+                       choices=['absent', 'present', 'facts']),
             properties=dict(required=False, type='dict', default=None),
             log_file=dict(required=False, type='str', default=None),
             _faked_session=dict(required=False, type='raw'),

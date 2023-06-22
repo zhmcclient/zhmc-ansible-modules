@@ -66,6 +66,7 @@ Modules supported only with CPCs in DPM operational mode:
    modules/zhmc_crypto_attachment
    modules/zhmc_hba
    modules/zhmc_nic
+   modules/zhmc_nic_list
    modules/zhmc_partition
    modules/zhmc_partition_list
    modules/zhmc_storage_group

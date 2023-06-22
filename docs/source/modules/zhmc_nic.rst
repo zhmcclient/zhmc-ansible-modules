@@ -16,7 +16,8 @@ zhmc_nic -- Create NICs in partitions
 
 Synopsis
 --------
-- Create, update, or delete a NIC (virtual Network Interface Card) in a partition of a CPC (Z system).
+- Gather facts about a NIC (virtual Network Interface Card) in a partition of a CPC (Z system).
+- Create, update, or delete a NIC in a partition.
 - Note that the Ansible module zhmc_partition can be used to gather facts about existing NICs of a partition.
 
 
@@ -113,9 +114,11 @@ state
 
   * ``present``: Ensures that the NIC exists in the specified partition and has the specified properties.
 
+  * ``facts``: Returns the NIC properties.
+
   | **required**: True
   | **type**: str
-  | **choices**: absent, present
+  | **choices**: absent, present, facts
 
 
 properties
@@ -179,6 +182,16 @@ Examples
        name: "{{ my_nic_name }}"
        state: absent
 
+   - name: Gather facts about a NIC
+     zhmc_partition:
+       hmc_host: "{{ my_hmc_host }}"
+       hmc_auth: "{{ my_hmc_auth }}"
+       cpc_name: "{{ my_cpc_name }}"
+       partition_name: "{{ my_partition_name }}"
+       name: "{{ my_nic_name }}"
+       state: facts
+     register: nic1
+
 
 
 
@@ -207,7 +220,7 @@ msg
 nic
   For ``state=absent``, an empty dictionary.
 
-  For ``state=present``, the resource properties of the NIC after any changes.
+  For ``state=present|facts``, the resource properties of the NIC after any changes.
 
   | **returned**: success
   | **type**: dict
