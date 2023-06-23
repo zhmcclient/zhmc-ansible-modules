@@ -20,16 +20,12 @@ Releases
 ========
 
 
-Version 1.4.1-dev1
-------------------
+Version 1.4.1
+-------------
 
-Released: not yet
+Released: 2023-06-23
 
 Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
-
-**Incompatible changes:**
-
-**Deprecations:**
 
 **Bug fixes:**
 
@@ -37,16 +33,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   on Python >=3.7.
 
 * Fixed issue in the new zhmc_nic_list module that resulted in TypeError.
-
-**Enhancements:**
-
-**Cleanup:**
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 1.4.0
