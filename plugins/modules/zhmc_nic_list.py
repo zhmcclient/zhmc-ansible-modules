@@ -214,35 +214,15 @@ def perform_list(params):
     try:
         client = zhmcclient.Client(session)
 
-        # The "List Permitted Partitions" operation was added in HMC
-        # version 2.14.0. The operation depends only on the HMC version and not
-        # on the SE/CPC version, so it is supported e.g. for a 2.14 HMC managing
-        # a z13 CPC.
-        hmc_version = client.query_api_version()['hmc-version']
-        hmc_version_info = [int(x) for x in hmc_version.split('.')]
-        if hmc_version_info < [2, 14, 0]:
-            # Find the partition via the CPC (traditional way)
-            LOGGER.debug("Finding partition %s via CPC %s",
-                         partition_name, cpc_name)
-            cpc = client.cpcs.find(name=cpc_name)
-            partition = cpc.partitions.find(name=partition_name)
-        else:
-            # Find the partition using the new list operation
-            LOGGER.debug("Finding partition %s via listing permitted "
-                         "partitions of CPC %s", partition_name, cpc_name)
-            filter_args = {
-                'cpc-name': cpc_name,
-                'partition-name': partition_name
-            }
-            partitions = client.consoles.console.list_permitted_partitions(
-                filter_args=filter_args)
-            if len(partitions) == 0:
-                raise zhmcclient.NotFound(
-                    "Partition {0!r} does not exist in CPC {1!r}".
-                    format(partition_name, cpc_name))
-            partition = partitions[0]
+        # TODO: Filtering with list_permitted_partitions() does not work.
+        #       Using traditional approach for the time being.
+        LOGGER.debug("Finding partition %s on CPC %s",
+                     partition_name, cpc_name)
+        cpc = client.cpcs.find(name=cpc_name)
+        partition = cpc.partitions.find(name=partition_name)
         # The default exception handling is sufficient for the above.
 
+        LOGGER.debug("Listing NICs of partition %s", partition.name)
         nics = partition.nics.list()
 
         nic_list = []
