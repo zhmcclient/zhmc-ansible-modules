@@ -36,6 +36,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Addressed safety issues from 6/23, by increasing 'requests' to 2.31.0
   on Python >=3.7.
 
+* Fixed issue in the new zhmc_nic_list module that resulted in TypeError.
+
 **Enhancements:**
 
 **Cleanup:**
