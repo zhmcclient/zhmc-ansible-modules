@@ -119,8 +119,8 @@ resolvelib==0.5.3; python_version == '3.10'
 resolvelib==0.5.3; python_version >= '3.11'
 distlib==0.3.6
 
-requests==2.22.0; python_version <= '3.9'
-requests==2.25.0; python_version >= '3.10'
+requests==2.22.0; python_version <= '3.6'
+requests==2.31.0; python_version >= '3.7'
 
 zhmcclient==1.5.0
 
