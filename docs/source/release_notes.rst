@@ -44,6 +44,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Increased minimum version of cryptography package to 41.0.2 to address an
   issue.
 
+* Picked up zhmcclient version 1.9.0 to get fixes. This required upgrading
+  several other packages.
+
 **Enhancements:**
 
 * Documented the secret variables needed for the Github Actions workflows.
