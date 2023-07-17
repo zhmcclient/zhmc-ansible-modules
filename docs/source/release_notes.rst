@@ -40,6 +40,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Fixed issue in the new zhmc_nic_list module that resulted in TypeError.
 
+* Increased minimum version of cryptography package to 41.0.2 to address an
+  issue.
+
 **Enhancements:**
 
 **Cleanup:**
