@@ -131,10 +131,13 @@ options:
          with the specified CPC, and has the specified properties. The
          attachment state of an already existing storage group to a partition
          is not changed."
+      - "* C(discover): Triggers LUN discovery. If C(discover_wait) is
+         specified, waits for completion of the discovery.
+         Requires that the storage group exists and is of type 'fcp'."
       - "* C(facts): Returns the storage group properties."
     type: str
     required: true
-    choices: ['absent', 'present', 'facts']
+    choices: ['absent', 'present', 'discover', 'facts']
   properties:
     description:
       - "Dictionary with desired properties for the storage group.
@@ -165,6 +168,20 @@ options:
     type: bool
     required: false
     default: false
+  discover_wait:
+    description:
+      - "Boolean that controls whether to wait for completion of the FCP
+         discovery for C(state=discover)."
+    type: bool
+    required: false
+    default: false
+  discover_timeout:
+    description:
+      - "Timeout in seconds for how long to wait for completion of the FCP
+         discovery for C(state=discover)."
+    type: int
+    required: false
+    default: 300
   log_file:
     description:
       - "File path of a log file to which the logic flow of this module as well
@@ -219,6 +236,15 @@ EXAMPLES = """
       max-partitions: 1
   register: sg1
 
+- name: Trigger LUN discovery
+  zhmc_storage_group:
+    hmc_host: "{{ my_hmc_host }}"
+    hmc_auth: "{{ my_hmc_auth }}"
+    cpc_name: "{{ my_cpc_name }}"
+    name: "{{ my_storage_group_name }}"
+    state: discover
+  register: sg1
+
 """
 
 RETURN = """
@@ -234,9 +260,9 @@ msg:
 storage_group:
   description:
     - "For C(state=absent), an empty dictionary."
-    - "For C(state=present|facts), the resource properties of the target
-       storage group after any changes, plus additional artificial properties
-       as described below."
+    - "For C(state=present|facts|discover), the resource properties of the
+       target storage group after any changes, plus additional artificial
+       properties as described below."
   returned: success
   type: dict
   contains:
@@ -933,6 +959,61 @@ def ensure_absent(params, check_mode):
         close_session(session, logoff)
 
 
+def discover(params, check_mode):
+    """
+    Trigger LUN discovery for a FCP storage group and return its current facts.
+
+    Raises:
+      ParameterError: An issue with the module parameters.
+      zhmcclient.Error: Any zhmcclient exception can happen.
+    """
+
+    cpc_name = params['cpc_name']
+    storage_group_name = params['name']
+    expand = params['expand']
+    discover_wait = params['discover_wait']
+    discover_timeout = params['discover_timeout']
+
+    changed = False
+    result = {}
+
+    session, logoff = open_session(params)
+    try:
+        # The default exception handling is sufficient for this code
+        client = zhmcclient.Client(session)
+        console = client.consoles.console
+        cpc = client.cpcs.find(name=cpc_name)
+
+        storage_group = console.storage_groups.find(name=storage_group_name)
+
+        sg_cpc = storage_group.cpc
+        if sg_cpc.uri != cpc.uri:
+            raise ParameterError(
+                "Storage group {0!r} is not associated with the specified "
+                "CPC {1!r}, but with CPC {2!r}.".
+                format(storage_group_name, cpc.name, sg_cpc.name))
+
+        sg_type = storage_group.prop('type')
+        if sg_type != 'fcp':
+            raise ParameterError(
+                "Storage group {0!r} is not of type 'fcp', but {1!r}.".
+                format(storage_group_name, sg_type))
+
+        storage_group.discover_fcp(
+            force_restart=True, wait_for_completion=discover_wait,
+            operation_timeout=discover_timeout)
+
+        storage_group.pull_full_properties()
+
+        result = dict(storage_group.properties)
+        add_artificial_properties(result, storage_group, expand)
+
+        return changed, result
+
+    finally:
+        close_session(session, logoff)
+
+
 def facts(params, check_mode):
     """
     Return facts about a storage group and its storage volumes and virtual
@@ -991,6 +1072,7 @@ def perform_task(params, check_mode):
     actions = {
         "absent": ensure_absent,
         "present": ensure_present,
+        "discover": discover,
         "facts": facts,
     }
     return actions[params['state']](params, check_mode)
@@ -1006,9 +1088,11 @@ def main():
         cpc_name=dict(required=True, type='str'),
         name=dict(required=True, type='str'),
         state=dict(required=True, type='str',
-                   choices=['absent', 'present', 'facts']),
+                   choices=['absent', 'present', 'discover', 'facts']),
         properties=dict(required=False, type='dict', default=None),
         expand=dict(required=False, type='bool', default=False),
+        discover_wait=dict(required=False, type='bool', default=False),
+        discover_timeout=dict(required=False, type='int', default=300),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),
     )

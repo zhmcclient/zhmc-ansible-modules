@@ -106,11 +106,13 @@ state
 
   * ``present``: Ensures that the storage group exists and is associated with the specified CPC, and has the specified properties. The attachment state of an already existing storage group to a partition is not changed.
 
+  * ``discover``: Triggers FCP discovery. If ``discover_wait`` is specified, waits for its completion. Requires that the storage group exists and is of type FCP.
+
   * ``facts``: Returns the storage group properties.
 
   | **required**: True
   | **type**: str
-  | **choices**: absent, present, facts
+  | **choices**: absent, present, discover, facts
 
 
 properties
@@ -133,6 +135,21 @@ expand
 
   | **required**: False
   | **type**: bool
+
+
+discover_wait
+  Boolean that controls whether to wait for completion of the FCP discovery for ``state=discover``.
+
+  | **required**: False
+  | **type**: bool
+
+
+discover_timeout
+  Timeout in seconds for how long to wait for completion of the FCP discovery for ``state=discover``.
+
+  | **required**: False
+  | **type**: int
+  | **default**: 300
 
 
 log_file
@@ -187,6 +204,15 @@ Examples
          max-partitions: 1
      register: sg1
 
+   - name: Trigger FCP discovery
+     zhmc_storage_group:
+       hmc_host: "{{ my_hmc_host }}"
+       hmc_auth: "{{ my_hmc_auth }}"
+       cpc_name: "{{ my_cpc_name }}"
+       name: "{{ my_storage_group_name }}"
+       state: discover
+     register: sg1
+
 
 
 
@@ -224,7 +250,7 @@ msg
 storage_group
   For ``state=absent``, an empty dictionary.
 
-  For ``state=present|facts``, the resource properties of the target storage group after any changes, plus additional artificial properties as described below.
+  For ``state=present|facts|discover``, the resource properties of the target storage group after any changes, plus additional artificial properties as described below.
 
   | **returned**: success
   | **type**: dict
