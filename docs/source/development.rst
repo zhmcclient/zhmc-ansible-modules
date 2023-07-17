@@ -34,6 +34,30 @@ The repository for the **IBM Z HMC collection** is on GitHub:
 https://github.com/zhmcclient/zhmc-ansible-modules
 
 
+.. _`Secret variables`:
+
+Secret variables
+----------------
+
+This Github repo needs the following secret variables to be set in order
+to run its Github Actions workflows successfully:
+
+* ``GALAXY_API_KEY`` - API key for the `Ansible Galaxy <https://galaxy.ansible.com/>`_
+  service. This variable is set at the repo level.
+
+  To get such an API key, you need to have a user on Ansible Galaxy and then go
+  to the user preferences page to view the API key the site has generated for
+  your user.
+
+* ``SLACK_HOOK`` - Slack hook URL to send test result messages to the
+  `#python-zhmcclient-test-status <https://ibm-systems-z.slack.com/archives/C01S7JW1FHS>`_
+  Slack channel. Note that this channel is IBM-internal and looking at it requires
+  an IBM ID. This variable is set at the organisation level.
+
+  To get such a URL, follow the instructions in
+  `Sending messages using Incoming Webhooks <https://api.slack.com/messaging/webhooks>`_
+
+
 .. _`Setting up the development environment`:
 
 Setting up the development environment
