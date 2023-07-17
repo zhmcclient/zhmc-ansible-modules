@@ -29,11 +29,11 @@ ansible-core>=2.14.2; python_version >= '3.11'
 #   is required to address safety issues
 # requests 2.25.0 tolerates urllib3 1.26.5 which is needed on Python 3.10 to
 #   remove ImportWarning in six
-requests>=2.22.0; python_version <= '3.9'
-requests>=2.25.0; python_version >= '3.10'
+requests>=2.25.0; python_version <= '3.6'
+requests>=2.31.0; python_version >= '3.7'
 
 # git+https://github.com/zhmcclient/python-zhmcclient@stable_1.3#egg=zhmcclient
-zhmcclient>=1.5.0
+zhmcclient>=1.9.0
 
 
 # Indirect dependencies are not specified in this file, unless needed to solve versioning issues:
@@ -73,4 +73,9 @@ packaging>=21.0; python_version >= '3.6'
 # PyYAML 5.3 fixed narrow build error on Python 2.7
 # PyYAML 5.3.1 addressed issue 38100 reported by safety
 # PyYAML 5.2 addressed issue 38639 reported by safety
-PyYAML>=5.3.1
+PyYAML>=5.3.1; python_version <= '3.5'
+PyYAML>=5.4; python_version >= '3.6'
+
+python-dateutil>=2.8.2
+jsonschema>=3.0.1,!=4.0.0,!=4.18.1
+urllib3>=1.26.5
