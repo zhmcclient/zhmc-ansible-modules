@@ -51,6 +51,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Documented the secret variables needed for the Github Actions workflows.
 
+* Added support for FCP discovery to the zhmc_storage_group module with a new
+  state 'discover'. (issue #704)
+
 **Cleanup:**
 
 **Known issues:**
