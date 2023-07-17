@@ -261,17 +261,33 @@ check: _check_version develop_$(pymn).done
 safety: safety_$(pymn).done
 	@echo "Makefile: $@ done."
 
+# Excluding Python>=3.10 with minimum package levels because of PyYAML 5.4.1 install issue with Cython 3
+run_sanity_current := $(shell PL=$(PACKAGE_LEVEL) $(PYTHON_CMD) -c "import sys,os; py=sys.version_info[0:2]; pl=os.getenv('PL'); sys.stdout.write('true' if py<=(3,9) or py>=(3,10) and pl=='latest' else 'false')")
+
+# Excluding Python 3.7+3.8 with minimum package levels because ?
+# Excluding Python 3.10 with minimum package levels because of PyYAML 5.4.1 install issue with Cython 3
+run_sanity_virtual := $(shell PL=$(PACKAGE_LEVEL) $(PYTHON_CMD) -c "import sys,os; py=sys.version_info[0:2]; pl=os.getenv('PL'); sys.stdout.write('true' if (3,7)<=py<=(3,8) and pl=='latest' or py==(3,9) or py==(3,10) and pl=='latest' or py>=(3,11) else 'false')")
+
+# The sanity check requires the .git directory to be present.
 .PHONY:	sanity
 sanity: _check_version develop_$(pymn).done
-	# The sanity check requires the .git directory to be present.
 	rm -f $(sanity_tar_file)
 	tar -rf $(sanity_tar_file) .git .gitignore bindep.txt galaxy.yml requirements.txt collections docs meta plugins tests
 	rm -rf $(sanity_dir)
 	mkdir -p $(sanity_dir)
 	tar -xf $(sanity_tar_file) --directory $(sanity_dir)
+ifeq ($(run_sanity_current),true)
 	echo "Running ansible sanity test with the current Python env"
 	sh -c "cd $(sanity_dir); ansible-test sanity --verbose --truncate 0 --local --python $(python_m_n_version)"
-	PL=$(PACKAGE_LEVEL) sh -c "if $(PYTHON_CMD) -c \"import sys,os; sys.exit(0 if sys.version_info[0:2]>=(3,9) or (3,7)<=sys.version_info[0:2]<=(3,8) and os.getenv('PL')=='latest' else 1)\"; then echo 'Running ansible sanity test with its own virtual env'; cd $(sanity_dir); ansible-test sanity --verbose --truncate 0 --venv --requirements --python $(python_m_n_version); fi"
+else
+	echo "Skipping ansible sanity test with the current Python env"
+endif
+ifeq ($(run_sanity_virtual),true)
+	echo 'Running ansible sanity test with its own virtual Python env'
+	sh -c "cd $(sanity_dir); ansible-test sanity --verbose --truncate 0 --venv --requirements --python $(python_m_n_version)"
+else
+	echo "Skipping ansible sanity test with its own virtual Python env"
+endif
 	@echo '$@ done.'
 
 .PHONY: check_reqs
