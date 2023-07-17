@@ -46,6 +46,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Enhancements:**
 
+* Documented the secret variables needed for the Github Actions workflows.
+
 **Cleanup:**
 
 **Known issues:**
