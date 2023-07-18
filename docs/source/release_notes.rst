@@ -20,18 +20,14 @@ Releases
 ========
 
 
-Version 1.5.0-dev1
-------------------
+Version 1.5.0
+-------------
 
-This version contains all fixes up to version 1.4.x.
+This version contains all fixes up to version 1.4.1.
 
-Released: not yet
+Released: 2023-07-18
 
 Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
-
-**Incompatible changes:**
-
-**Deprecations:**
 
 **Bug fixes:**
 
@@ -53,14 +49,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Added support for FCP discovery to the zhmc_storage_group module with a new
   state 'discover'. (issue #704)
-
-**Cleanup:**
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 1.4.0
