@@ -36,7 +36,7 @@
             IBM Z HMC collection
           </a>
               <div class="version">
-                1.5.0-dev1
+                1.5.0
 
               </div>
 <div role="search">
@@ -69,7 +69,7 @@
 <p class="caption" role="heading"><span class="caption-text">Appendices</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Releases</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-5-0-dev1">Version 1.5.0-dev1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-5-0">Version 1.5.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-4-0">Version 1.4.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-3-0">Version 1.3.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-2-0">Version 1.2.0</a></li>
@@ -116,24 +116,27 @@
              
   <section id="releases">
 <span id="id1"></span><h1>Releases<a class="headerlink" href="#releases" title="Permalink to this heading"></a></h1>
-<section id="version-1-5-0-dev1">
-<h2>Version 1.5.0-dev1<a class="headerlink" href="#version-1-5-0-dev1" title="Permalink to this heading"></a></h2>
-<p>This version contains all fixes up to version 1.4.x.</p>
-<p>Released: not yet</p>
+<section id="version-1-5-0">
+<h2>Version 1.5.0<a class="headerlink" href="#version-1-5-0" title="Permalink to this heading"></a></h2>
+<p>This version contains all fixes up to version 1.4.1.</p>
+<p>Released: 2023-07-18</p>
 <p>Availability: <a class="reference external" href="https://console.redhat.com/ansible/automation-hub/repo/published/ibm/ibm_zhmc">AutomationHub</a>, <a class="reference external" href="https://galaxy.ansible.com/ibm/ibm_zhmc">Galaxy</a>, <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">GitHub</a></p>
-<p><strong>Incompatible changes:</strong></p>
-<p><strong>Deprecations:</strong></p>
 <p><strong>Bug fixes:</strong></p>
 <ul class="simple">
-<li><p>Addressed safety issues from 6/23, by increasing ‘requests’ to 2.31.0
-on Python &gt;=3.7.</p></li>
+<li><p>Addressed safety issues from 6+7/2023, by increasing ‘requests’ to 2.31.0
+on Python &gt;=3.7, and ‘cryptography’ to 41.0.2 on Python &gt;=3.7, and by
+increasing other packages only needed for development.</p></li>
 <li><p>Fixed issue in the new zhmc_nic_list module that resulted in TypeError.</p></li>
+<li><p>Increased minimum version of cryptography package to 41.0.2 to address an
+issue.</p></li>
+<li><p>Picked up zhmcclient version 1.9.1 to get fixes. This required upgrading
+several other packages.</p></li>
 </ul>
 <p><strong>Enhancements:</strong></p>
-<p><strong>Cleanup:</strong></p>
-<p><strong>Known issues:</strong></p>
 <ul class="simple">
-<li><p>See <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/issues">list of open issues</a>.</p></li>
+<li><p>Documented the secret variables needed for the Github Actions workflows.</p></li>
+<li><p>Added support for FCP discovery to the zhmc_storage_group module with a new
+state ‘discover’. (issue #704)</p></li>
 </ul>
 </section>
 <section id="version-1-4-0">
@@ -796,6 +799,7 @@ property update.</p></li>
             <dd><a href="../1.3.1/release_notes.html">1.3.1</a></dd>
             <dd><a href="../1.4.0/release_notes.html">1.4.0</a></dd>
             <dd><a href="../1.4.1/release_notes.html">1.4.1</a></dd>
+            <dd><a href="../1.5.0/release_notes.html">1.5.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

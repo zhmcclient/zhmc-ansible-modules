@@ -36,7 +36,7 @@
             IBM Z HMC collection
           </a>
               <div class="version">
-                1.4.1
+                1.5.0
 
               </div>
 <div role="search">
@@ -225,12 +225,13 @@
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">absent</span></code>: Ensures that the storage group does not exist. If the storage group is currently attached to any partitions, the module will fail (this is an idempotency limitation).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">present</span></code>: Ensures that the storage group exists and is associated with the specified CPC, and has the specified properties. The attachment state of an already existing storage group to a partition is not changed.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">discover</span></code>: Triggers FCP discovery. If <code class="docutils literal notranslate"><span class="pre">discover_wait</span></code> is specified, waits for its completion. Requires that the storage group exists and is of type FCP.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">facts</span></code>: Returns the storage group properties.</p></li>
 </ul>
 <div class="line-block">
 <div class="line"><strong>required</strong>: True</div>
 <div class="line"><strong>type</strong>: str</div>
-<div class="line"><strong>choices</strong>: absent, present, facts</div>
+<div class="line"><strong>choices</strong>: absent, present, discover, facts</div>
 </div>
 </dd>
 <dt>properties</dt><dd><p>Dictionary with desired properties for the storage group. Used for <code class="docutils literal notranslate"><span class="pre">state=present</span></code>; ignored for <code class="docutils literal notranslate"><span class="pre">state=absent|facts</span></code>. Dictionary key is the property name with underscores instead of hyphens, and dictionary value is the property value in YAML syntax. Integer properties may also be provided as decimal strings.</p>
@@ -249,6 +250,19 @@
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: bool</div>
+</div>
+</dd>
+<dt>discover_wait</dt><dd><p>Boolean that controls whether to wait for completion of the FCP discovery for <code class="docutils literal notranslate"><span class="pre">state=discover</span></code>.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: bool</div>
+</div>
+</dd>
+<dt>discover_timeout</dt><dd><p>Timeout in seconds for how long to wait for completion of the FCP discovery for <code class="docutils literal notranslate"><span class="pre">state=discover</span></code>.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: int</div>
+<div class="line"><strong>default</strong>: 300</div>
 </div>
 </dd>
 <dt>log_file</dt><dd><p>File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.</p>
@@ -297,6 +311,15 @@
 <span class="w">      </span><span class="nt">connectivity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
 <span class="w">      </span><span class="nt">max-partitions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sg1</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Trigger FCP discovery</span>
+<span class="w">  </span><span class="nt">zhmc_storage_group</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">cpc_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_storage_group_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">discover</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sg1</span>
 </pre></div>
 </div>
 </section>
@@ -324,7 +347,7 @@
 </div>
 </dd>
 <dt>storage_group</dt><dd><p>For <code class="docutils literal notranslate"><span class="pre">state=absent</span></code>, an empty dictionary.</p>
-<p>For <code class="docutils literal notranslate"><span class="pre">state=present|facts</span></code>, the resource properties of the target storage group after any changes, plus additional artificial properties as described below.</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">state=present|facts|discover</span></code>, the resource properties of the target storage group after any changes, plus additional artificial properties as described below.</p>
 <div class="line-block">
 <div class="line"><strong>returned</strong>: success</div>
 <div class="line"><strong>type</strong>: dict</div>
@@ -662,7 +685,7 @@
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.4.1
+        v: 1.5.0
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -685,6 +708,7 @@
             <dd><a href="../1.3.1/modules/zhmc_storage_group.html">1.3.1</a></dd>
             <dd><a href="../1.4.0/modules/zhmc_storage_group.html">1.4.0</a></dd>
             <dd><a href="../1.4.1/modules/zhmc_storage_group.html">1.4.1</a></dd>
+            <dd><a href="../1.5.0/modules/zhmc_storage_group.html">1.5.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
