@@ -187,6 +187,11 @@ jobs:
                 \"os\": \"macos-latest\", \
                 \"python-version\": \"3.10\", \
                 \"package_level\": \"latest\" \
+              }, \
+              { \
+                \"os\": \"windows-latest\", \
+                \"python-version\": \"3.11\", \
+                \"package_level\": \"latest\" \
               } \
             ] \
           }" >> $GITHUB_OUTPUT; \
