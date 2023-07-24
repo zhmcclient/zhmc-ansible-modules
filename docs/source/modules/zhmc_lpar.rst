@@ -53,35 +53,35 @@ hmc_auth
 
 
   userid
-    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing ``session_id``.
+    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`session\_id`\ .
 
     | **required**: False
     | **type**: str
 
 
   password
-    The password for authenticating with the HMC. This is mutually exclusive with providing ``session_id``.
+    The password for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`session\_id`\ .
 
     | **required**: False
     | **type**: str
 
 
   session_id
-    HMC session ID to be used. This is mutually exclusive with providing ``userid`` and ``password`` and can be created as described in :ref:`zhmc_session_module`.
+    HMC session ID to be used. This is mutually exclusive with providing \ :literal:`userid`\  and \ :literal:`password`\  and can be created as described in :ref:\`zhmc\_session\_module\`.
 
     | **required**: False
     | **type**: str
 
 
   ca_certs
-    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the 'REQUESTS_CA_BUNDLE' environment variable or the path name in the 'CURL_CA_BUNDLE' environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
+    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the 'REQUESTS\_CA\_BUNDLE' environment variable or the path name in the 'CURL\_CA\_BUNDLE' environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
 
     | **required**: False
     | **type**: str
 
 
   verify
-    If True (default), verify the HMC certificate as specified in the ``ca_certs`` parameter. If False, ignore what is specified in the ``ca_certs`` parameter and do not verify the HMC certificate.
+    If True (default), verify the HMC certificate as specified in the \ :literal:`ca\_certs`\  parameter. If False, ignore what is specified in the \ :literal:`ca\_certs`\  parameter and do not verify the HMC certificate.
 
     | **required**: False
     | **type**: bool
@@ -106,19 +106,19 @@ name
 state
   The desired state for the LPAR:
 
-  * ``inactive``: Ensures that the LPAR is inactive (i.e. status 'not-activated'), unless the LPAR is currently operating and the ``force`` parameter was not set to True. Properties cannot be updated. The LPAR is deactivated if needed.
+  \* \ :literal:`inactive`\ : Ensures that the LPAR is inactive (i.e. status 'not-activated'), unless the LPAR is currently operating and the \ :literal:`force`\  parameter was not set to True. Properties cannot be updated. The LPAR is deactivated if needed.
 
-  * ``reset_clear``: Initialize the LPAR for loading by performing a 'Reset Clear' operation (clearing its pending interruptions, resetting its channel subsystem, resetting its processors, clearing its memory), unless the LPAR is currently loaded (i.e. status is 'operating' or 'acceptable') and the ``force`` parameter was not set to True. Properties cannot be updated. After successful execution of the 'Reset Normal' operation, the LPAR will be inactive (i.e. status 'not-activated').
+  \* \ :literal:`reset\_clear`\ : Initialize the LPAR for loading by performing a 'Reset Clear' operation (clearing its pending interruptions, resetting its channel subsystem, resetting its processors, clearing its memory), unless the LPAR is currently loaded (i.e. status is 'operating' or 'acceptable') and the \ :literal:`force`\  parameter was not set to True. Properties cannot be updated. After successful execution of the 'Reset Normal' operation, the LPAR will be inactive (i.e. status 'not-activated').
 
-  * ``reset_normal``: Initialize the LPAR for loading by performing a 'Reset Normal' operation (clearing its pending interruptions, resetting its channel subsystem, resetting its processors), unless the LPAR is currently loaded (i.e. status is 'operating' or 'acceptable') and the ``force`` parameter was not set to True. Properties cannot be updated. After successful execution of the 'Reset Normal' operation, the LPAR  will be inactive (i.e. status 'not-activated').
+  \* \ :literal:`reset\_normal`\ : Initialize the LPAR for loading by performing a 'Reset Normal' operation (clearing its pending interruptions, resetting its channel subsystem, resetting its processors), unless the LPAR is currently loaded (i.e. status is 'operating' or 'acceptable') and the \ :literal:`force`\  parameter was not set to True. Properties cannot be updated. After successful execution of the 'Reset Normal' operation, the LPAR  will be inactive (i.e. status 'not-activated').
 
-  * ``active``: Ensures that the LPAR is at least active (i.e. status is 'not-operating', 'operating' or 'acceptable'), and then ensures that the LPAR properties have the specified values. The LPAR is activated if needed. If auto-load is set in the activation profile, the LPAR will also be loaded.
+  \* \ :literal:`active`\ : Ensures that the LPAR is at least active (i.e. status is 'not-operating', 'operating' or 'acceptable'), and then ensures that the LPAR properties have the specified values. The LPAR is activated if needed. If auto-load is set in the activation profile, the LPAR will also be loaded.
 
-  * ``loaded``: Ensures that the LPAR is loaded (i.e. status is 'operating' or 'acceptable'), and then ensures that the LPAR properties have the specified values. The LPAR is first activated if needed, and then loaded if needed.
+  \* \ :literal:`loaded`\ : Ensures that the LPAR is loaded (i.e. status is 'operating' or 'acceptable'), and then ensures that the LPAR properties have the specified values. The LPAR is first activated if needed, and then loaded if needed.
 
-  * ``set``: Ensures that the LPAR properties have the specified values. Requires that the LPAR is at least active (i.e. status is 'not-operating', 'operating' or 'acceptable') but does not activate the LPAR if that is not the case.
+  \* \ :literal:`set`\ : Ensures that the LPAR properties have the specified values. Requires that the LPAR is at least active (i.e. status is 'not-operating', 'operating' or 'acceptable') but does not activate the LPAR if that is not the case.
 
-  * ``facts``: Returns the current LPAR properties.
+  \* \ :literal:`facts`\ : Returns the current LPAR properties.
 
   In all cases, the LPAR must exist.
 
@@ -128,13 +128,13 @@ state
 
 
 activation_profile_name
-  The name of the image or load activation profile to be used when the LPAR needs to be activated, for ``state=active`` and ``state=loaded``.
+  The name of the image or load activation profile to be used when the LPAR needs to be activated, for \ :literal:`state=active`\  and \ :literal:`state=loaded`\ .
 
   Default: The image or load activation profile specified in the 'next-activation-profile-name' property of the LPAR is used when the LPAR needs to be activated.
 
-  If the LPAR was already active, the ``force`` parameter determines what happens.
+  If the LPAR was already active, the \ :literal:`force`\  parameter determines what happens.
 
-  This parameter is not allowed for the other ``state`` values.
+  This parameter is not allowed for the other \ :literal:`state`\  values.
 
   | **required**: False
   | **type**: str
@@ -152,20 +152,20 @@ force
 
 
 os_ipl_token
-  Setting this parameter for ``state=reset_clear`` or ``state=reset_normal`` requests that the corresponding HMC operations only be performed if the provided value matches the current value of the 'os-ipl-token' property of the LPAR, and be rejected otherwise. Note that the 'os-ipl-token' property of the LPAR is set by the operating system and is set only by some operating systems, such as z/OS. This parameter is ignored for other ``state`` values.
+  Setting this parameter for \ :literal:`state=reset\_clear`\  or \ :literal:`state=reset\_normal`\  requests that the corresponding HMC operations only be performed if the provided value matches the current value of the 'os-ipl-token' property of the LPAR, and be rejected otherwise. Note that the 'os-ipl-token' property of the LPAR is set by the operating system and is set only by some operating systems, such as z/OS. This parameter is ignored for other \ :literal:`state`\  values.
 
   | **required**: False
   | **type**: str
 
 
 properties
-  Dictionary with new values for the LPAR properties, for ``state=active``, ``state=loaded`` and ``state=set``. Key is the property name with underscores instead of hyphens, and value is the property value in YAML syntax. Integer properties may also be provided as decimal strings.
+  Dictionary with new values for the LPAR properties, for \ :literal:`state=active`\ , \ :literal:`state=loaded`\  and \ :literal:`state=set`\ . Key is the property name with underscores instead of hyphens, and value is the property value in YAML syntax. Integer properties may also be provided as decimal strings.
 
   The possible input properties in this dictionary are the properties defined as writeable in the data model for LPAR resources (where the property names contain underscores instead of hyphens).
 
   Properties omitted in this dictionary will not be updated.
 
-  This parameter is not allowed for the other ``state`` values.
+  This parameter is not allowed for the other \ :literal:`state`\  values.
 
   | **required**: False
   | **type**: dict
@@ -281,7 +281,7 @@ Return Values
 
 
 changed
-  Indicates if any change has been made by the module. For ``state=facts``, always will be false.
+  Indicates if any change has been made by the module. For \ :literal:`state=facts`\ , always will be false.
 
   | **returned**: always
   | **type**: bool
@@ -295,7 +295,7 @@ msg
 lpar
   The resource properties of the LPAR, after any specified updates have been applied.
 
-  Note that the returned properties may show different values than the ones that were specified as input for the update. For example, memory properties may be rounded up, hexadecimal strings may be shown with a different representation format, and other properties may change as a result of updating some properties. For details, see the data model of the 'Logical Partition' object in the :term:`HMC API` book.
+  Note that the returned properties may show different values than the ones that were specified as input for the update. For example, memory properties may be rounded up, hexadecimal strings may be shown with a different representation format, and other properties may change as a result of updating some properties. For details, see the data model of the 'Logical Partition' object in the :term:\`HMC API\` book.
 
   | **returned**: success
   | **type**: dict
@@ -463,7 +463,7 @@ lpar
     | **type**: str
 
   {property}
-    Additional properties of the LPAR, as described in the data model of the 'Logical Partition' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
+    Additional properties of the LPAR, as described in the data model of the 'Logical Partition' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
 
 

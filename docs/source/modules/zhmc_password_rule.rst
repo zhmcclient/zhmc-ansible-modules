@@ -47,35 +47,35 @@ hmc_auth
 
 
   userid
-    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing ``session_id``.
+    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`session\_id`\ .
 
     | **required**: False
     | **type**: str
 
 
   password
-    The password for authenticating with the HMC. This is mutually exclusive with providing ``session_id``.
+    The password for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`session\_id`\ .
 
     | **required**: False
     | **type**: str
 
 
   session_id
-    HMC session ID to be used. This is mutually exclusive with providing ``userid`` and ``password`` and can be created as described in :ref:`zhmc_session_module`.
+    HMC session ID to be used. This is mutually exclusive with providing \ :literal:`userid`\  and \ :literal:`password`\  and can be created as described in :ref:\`zhmc\_session\_module\`.
 
     | **required**: False
     | **type**: str
 
 
   ca_certs
-    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the 'REQUESTS_CA_BUNDLE' environment variable or the path name in the 'CURL_CA_BUNDLE' environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
+    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the 'REQUESTS\_CA\_BUNDLE' environment variable or the path name in the 'CURL\_CA\_BUNDLE' environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
 
     | **required**: False
     | **type**: str
 
 
   verify
-    If True (default), verify the HMC certificate as specified in the ``ca_certs`` parameter. If False, ignore what is specified in the ``ca_certs`` parameter and do not verify the HMC certificate.
+    If True (default), verify the HMC certificate as specified in the \ :literal:`ca\_certs`\  parameter. If False, ignore what is specified in the \ :literal:`ca\_certs`\  parameter and do not verify the HMC certificate.
 
     | **required**: False
     | **type**: bool
@@ -93,11 +93,11 @@ name
 state
   The desired state for the HMC password rule. All states are fully idempotent within the limits of the properties that can be changed:
 
-  * ``absent``: Ensures that the password rule does not exist.
+  \* \ :literal:`absent`\ : Ensures that the password rule does not exist.
 
-  * ``present``: Ensures that the password rule exists and has the specified properties.
+  \* \ :literal:`present`\ : Ensures that the password rule exists and has the specified properties.
 
-  * ``facts``: Returns the password rule properties.
+  \* \ :literal:`facts`\ : Returns the password rule properties.
 
   | **required**: True
   | **type**: str
@@ -105,13 +105,13 @@ state
 
 
 properties
-  Dictionary with desired properties for the password rule. Used for ``state=present``; ignored for ``state=absent|facts``. Dictionary key is the property name with underscores instead of hyphens, and dictionary value is the property value in YAML syntax. Integer properties may also be provided as decimal strings.
+  Dictionary with desired properties for the password rule. Used for \ :literal:`state=present`\ ; ignored for \ :literal:`state=absent|facts`\ . Dictionary key is the property name with underscores instead of hyphens, and dictionary value is the property value in YAML syntax. Integer properties may also be provided as decimal strings.
 
   The possible input properties in this dictionary are the properties defined as writeable in the data model for Password Rule resources (where the property names contain underscores instead of hyphens), with the following exceptions:
 
-  * ``name``: Cannot be specified because the name has already been specified in the ``name`` module parameter.
+  \* \ :literal:`name`\ : Cannot be specified because the name has already been specified in the \ :literal:`name`\  module parameter.
 
-  Properties omitted in this dictionary will remain unchanged when the password rule already exists, and will get the default value defined in the data model for password rules in the :term:`HMC API` when the password rule is being created.
+  Properties omitted in this dictionary will remain unchanged when the password rule already exists, and will get the default value defined in the data model for password rules in the :term:\`HMC API\` when the password rule is being created.
 
   | **required**: False
   | **type**: dict
@@ -175,7 +175,7 @@ Return Values
 
 
 changed
-  Indicates if any change has been made by the module. For ``state=facts``, always will be false.
+  Indicates if any change has been made by the module. For \ :literal:`state=facts`\ , always will be false.
 
   | **returned**: always
   | **type**: bool
@@ -187,9 +187,9 @@ msg
   | **type**: str
 
 password_rule
-  For ``state=absent``, an empty dictionary.
+  For \ :literal:`state=absent`\ , an empty dictionary.
 
-  For ``state=present|facts``, a dictionary with the resource properties of the target password rule.
+  For \ :literal:`state=present|facts`\ , a dictionary with the resource properties of the target password rule.
 
   | **returned**: success
   | **type**: dict
@@ -247,7 +247,7 @@ password_rule
     | **type**: str
 
   {property}
-    Additional properties of the password rule, as described in the data model of the 'Password Rule' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
+    Additional properties of the password rule, as described in the data model of the 'Password Rule' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
 
 
