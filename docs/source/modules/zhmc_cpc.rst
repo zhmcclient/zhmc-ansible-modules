@@ -20,6 +20,7 @@ Synopsis
 - Activate/Start a CPC and update its properties.
 - Gather facts about a CPC, and for DPM operational mode, including its adapters, partitions and storage groups.
 - Update the properties of a CPC.
+- Upgrade the SE firmware of a CPC.
 
 
 Requirements
@@ -104,9 +105,11 @@ state
 
   \* \ :literal:`facts`\ : Returns the CPC properties including its child resources.
 
+  \* \ :literal:`upgrade`\ : Upgrades the firmware of the HMC and returns the new facts after the upgrade.
+
   | **required**: True
   | **type**: str
-  | **choices**: inactive, active, set, facts
+  | **choices**: inactive, active, set, facts, upgrade
 
 
 activation_profile_name
@@ -129,6 +132,24 @@ properties
 
   | **required**: False
   | **type**: dict
+
+
+bundle_level
+  Name of the bundle to be installed on the SE of the CPC (e.g. 'S71')
+
+  Required for \ :literal:`state=upgrade`\ 
+
+  | **required**: False
+  | **type**: str
+
+
+accept_firmware
+  Accept the previous bundle level before installing the new level.
+
+  Optional for \ :literal:`state=upgrade`\ , default: True
+
+  | **required**: False
+  | **type**: bool
 
 
 log_file
@@ -182,6 +203,15 @@ Examples
          acceptable_status:
           - active
          description: "This is CPC {{ my_cpc_name }}"
+     register: cpc1
+
+   - name: Upgrade the SE firmware and return CPC facts
+     zhmc_cpc:
+       hmc_host: "{{ my_hmc_host }}"
+       hmc_auth: "{{ my_hmc_auth }}"
+       name: "{{ my_cpc_name }}"
+       state: upgrade
+       bundle_level: "S71"
      register: cpc1
 
 

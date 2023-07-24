@@ -39,6 +39,7 @@ description:
   - Gather facts about a CPC, and for DPM operational mode, including its
     adapters, partitions and storage groups.
   - Update the properties of a CPC.
+  - Upgrade the SE firmware of a CPC.
 author:
   - Andreas Maier (@andy-maier)
   - Andreas Scheuring (@scheuran)
@@ -119,8 +120,11 @@ options:
          be changed."
       - "* C(set): Ensures that the CPC has the specified properties."
       - "* C(facts): Returns the CPC properties including its child resources."
+      - "* C(upgrade): Upgrades the firmware of the SE of the CPC and returns
+         the new facts after the upgrade. If the SE firmware is already at the
+         requested bundle level, nothing is changed and the module succeeds."
     type: str
-    choices: ['inactive', 'active', 'set', 'facts']
+    choices: ['inactive', 'active', 'set', 'facts', 'upgrade']
     required: true
   activation_profile_name:
     description:
@@ -149,6 +153,18 @@ options:
     type: dict
     required: false
     default: null
+  bundle_level:
+    description:
+      - "Name of the bundle to be installed on the SE of the CPC (e.g. 'S71')"
+      - "Required for C(state=upgrade)"
+    type: str
+    required: false
+  accept_firmware:
+    description:
+      - "Accept the previous bundle level before installing the new level."
+      - "Optional for C(state=upgrade), default: True"
+    type: bool
+    required: false
   log_file:
     description:
       - "File path of a log file to which the logic flow of this module as well
@@ -202,6 +218,15 @@ EXAMPLES = """
       acceptable_status:
        - active
       description: "This is CPC {{ my_cpc_name }}"
+  register: cpc1
+
+- name: Upgrade the SE firmware and return CPC facts
+  zhmc_cpc:
+    hmc_host: "{{ my_hmc_host }}"
+    hmc_auth: "{{ my_hmc_auth }}"
+    name: "{{ my_cpc_name }}"
+    state: upgrade
+    bundle_level: "S71"
   register: cpc1
 
 """
@@ -501,7 +526,7 @@ def add_artificial_properties(cpc_properties, cpc):
                                         for sg in storage_groups]
 
 
-def ensure_active(params, check_mode):
+def ensure_active(module):
     """
     Ensure the CPC is active, and then set the properties.
 
@@ -511,12 +536,12 @@ def ensure_active(params, check_mode):
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
 
-    cpc_name = params['name']
-    activation_profile_name = params.get('activation_profile_name', None)
+    cpc_name = module.params['name']
+    activation_profile_name = module.params.get('activation_profile_name', None)
 
     changed = False
 
-    session, logoff = open_session(params)
+    session, logoff = open_session(module.params)
     try:
         client = zhmcclient.Client(session)
         cpc = client.cpcs.find(name=cpc_name)
@@ -526,7 +551,7 @@ def ensure_active(params, check_mode):
         cpc_status = cpc.get_property('status')
         if cpc_status in ('not-operating', 'no-power'):
             # CPC is inactive
-            if not check_mode:
+            if not module.check_mode:
                 cpc_dpm_enabled = cpc.get_property('dpm-enabled')
                 if cpc_dpm_enabled:
                     cpc.start()
@@ -555,9 +580,9 @@ def ensure_active(params, check_mode):
         # Set the properties
         cpc.pull_full_properties()
         result = dict(cpc.properties)
-        update_props = process_properties(cpc, params)
+        update_props = process_properties(cpc, module.params)
         if update_props:
-            if not check_mode:
+            if not module.check_mode:
                 cpc.update_properties(update_props)
             # Some updates of CPC properties are not reflected in a new
             # retrieval of properties until after a few seconds (usually the
@@ -574,7 +599,7 @@ def ensure_active(params, check_mode):
         close_session(session, logoff)
 
 
-def ensure_inactive(params, check_mode):
+def ensure_inactive(module):
     """
     Ensure the CPC is inactive. The operational mode is not changed.
 
@@ -584,11 +609,11 @@ def ensure_inactive(params, check_mode):
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
 
-    cpc_name = params['name']
+    cpc_name = module.params['name']
 
     changed = False
 
-    session, logoff = open_session(params)
+    session, logoff = open_session(module.params)
     try:
         client = zhmcclient.Client(session)
         cpc = client.cpcs.find(name=cpc_name)
@@ -602,7 +627,7 @@ def ensure_inactive(params, check_mode):
         elif cpc_status in ('active', 'operating', 'exceptions',
                             'service-required', 'degraded', 'acceptable',
                             'service'):
-            if not check_mode:
+            if not module.check_mode:
                 cpc_dpm_enabled = cpc.get_property('dpm-enabled')
                 if cpc_dpm_enabled:
                     cpc.stop()
@@ -622,7 +647,7 @@ def ensure_inactive(params, check_mode):
         close_session(session, logoff)
 
 
-def ensure_set(params, check_mode):
+def ensure_set(module):
     """
     Identify the target CPC and ensure that the specified properties are set on
     the target CPC.
@@ -633,11 +658,11 @@ def ensure_set(params, check_mode):
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
 
-    cpc_name = params['name']
+    cpc_name = module.params['name']
 
     changed = False
 
-    session, logoff = open_session(params)
+    session, logoff = open_session(module.params)
     try:
         client = zhmcclient.Client(session)
         cpc = client.cpcs.find(name=cpc_name)
@@ -646,9 +671,9 @@ def ensure_set(params, check_mode):
         # Set the properties
         cpc.pull_full_properties()
         result = dict(cpc.properties)
-        update_props = process_properties(cpc, params)
+        update_props = process_properties(cpc, module.params)
         if update_props:
-            if not check_mode:
+            if not module.check_mode:
                 cpc.update_properties(update_props)
             # Some updates of CPC properties are not reflected in a new
             # retrieval of properties until after a few seconds (usually the
@@ -666,7 +691,7 @@ def ensure_set(params, check_mode):
         close_session(session, logoff)
 
 
-def facts(params, check_mode):
+def facts(module):
     """
     Identify the target CPC and return facts about the target CPC and its
     child resources.
@@ -676,9 +701,9 @@ def facts(params, check_mode):
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
 
-    cpc_name = params['name']
+    cpc_name = module.params['name']
 
-    session, logoff = open_session(params)
+    session, logoff = open_session(module.params)
     try:
         client = zhmcclient.Client(session)
         cpc = client.cpcs.find(name=cpc_name)
@@ -694,7 +719,63 @@ def facts(params, check_mode):
         close_session(session, logoff)
 
 
-def perform_task(params, check_mode):
+def upgrade(module):
+    """
+    Upgrades the firmware of the SE of this CPC to a new bundle level.
+
+    Raises:
+      ParameterError: An issue with the module parameters.
+      zhmcclient.Error: Any zhmcclient exception can happen.
+    """
+
+    module.fail_on_missing_params('bundle_level')
+    bundle_level = module.params['bundle_level']
+    accept_firmware = module.params.get('accept_firmware', True)
+    cpc_name = module.params['name']
+
+    session, logoff = open_session(module.params)
+    try:
+        client = zhmcclient.Client(session)
+        console = client.consoles.console
+        cpc = client.cpcs.find(name=cpc_name)
+        # The default exception handling is sufficient for the above.
+
+        ec_mcl = console.prop('ec-mcl-description')
+        hmc_bundle_level = ec_mcl.get('bundle-level', None)
+        if hmc_bundle_level is None:
+            hmc_version = console.prop('version')
+            raise ParameterError(
+                "HMC version {v} does not support firmware upgrade through "
+                "the Web Services API".format(v=hmc_version))
+
+        changed = False
+
+        if not module.check_mode:
+            try:
+                cpc.single_step_install(
+                    bundle_level=bundle_level,
+                    accept_firmware=accept_firmware,
+                    wait_for_completion=True,
+                    operation_timeout=None)
+                changed = True
+            except zhmcclient.HTTPError as exc:
+                if exc.http_status == 400 and exc.reason == 356:
+                    # SE was already at that bundle level
+                    pass
+                else:
+                    raise
+
+        cpc.pull_full_properties()
+        result = dict(cpc.properties)
+        add_artificial_properties(result, cpc)
+
+        return changed, result
+
+    finally:
+        close_session(session, logoff)
+
+
+def perform_task(module):
     """
     Perform the task for this module, dependent on the 'state' module
     parameter.
@@ -711,8 +792,9 @@ def perform_task(params, check_mode):
         "active": ensure_active,
         "set": ensure_set,
         "facts": facts,
+        "upgrade": upgrade,
     }
-    return actions[params['state']](params, check_mode)
+    return actions[module.params['state']](module)
 
 
 def main():
@@ -724,9 +806,11 @@ def main():
         hmc_auth=hmc_auth_parameter(),
         name=dict(required=True, type='str'),
         state=dict(required=True, type='str',
-                   choices=['inactive', 'active', 'set', 'facts']),
+                   choices=['inactive', 'active', 'set', 'facts', 'upgrade']),
         activation_profile_name=dict(required=False, type='str', default=None),
         properties=dict(required=False, type='dict', default=None),
+        bundle_level=dict(required=False, type='str'),
+        accept_firmware=dict(required=False, type='bool'),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),
     )
@@ -756,7 +840,7 @@ def main():
 
     try:
 
-        changed, result = perform_task(module.params, module.check_mode)
+        changed, result = perform_task(module)
 
     except (Error, zhmcclient.Error) as exc:
         # These exceptions are considered errors in the environment or in user
