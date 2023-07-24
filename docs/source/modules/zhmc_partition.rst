@@ -50,35 +50,35 @@ hmc_auth
 
 
   userid
-    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing ``session_id``.
+    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`session\_id`\ .
 
     | **required**: False
     | **type**: str
 
 
   password
-    The password for authenticating with the HMC. This is mutually exclusive with providing ``session_id``.
+    The password for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`session\_id`\ .
 
     | **required**: False
     | **type**: str
 
 
   session_id
-    HMC session ID to be used. This is mutually exclusive with providing ``userid`` and ``password`` and can be created as described in :ref:`zhmc_session_module`.
+    HMC session ID to be used. This is mutually exclusive with providing \ :literal:`userid`\  and \ :literal:`password`\  and can be created as described in :ref:\`zhmc\_session\_module\`.
 
     | **required**: False
     | **type**: str
 
 
   ca_certs
-    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the 'REQUESTS_CA_BUNDLE' environment variable or the path name in the 'CURL_CA_BUNDLE' environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
+    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the 'REQUESTS\_CA\_BUNDLE' environment variable or the path name in the 'CURL\_CA\_BUNDLE' environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
 
     | **required**: False
     | **type**: str
 
 
   verify
-    If True (default), verify the HMC certificate as specified in the ``ca_certs`` parameter. If False, ignore what is specified in the ``ca_certs`` parameter and do not verify the HMC certificate.
+    If True (default), verify the HMC certificate as specified in the \ :literal:`ca\_certs`\  parameter. If False, ignore what is specified in the \ :literal:`ca\_certs`\  parameter and do not verify the HMC certificate.
 
     | **required**: False
     | **type**: bool
@@ -103,13 +103,13 @@ name
 state
   The desired state for the partition. All states are fully idempotent within the limits of the properties that can be changed:
 
-  * ``absent``: Ensures that the partition does not exist in the specified CPC.
+  \* \ :literal:`absent`\ : Ensures that the partition does not exist in the specified CPC.
 
-  * ``stopped``: Ensures that the partition exists in the specified CPC, has the specified properties, and is in one of the inactive statuses ('stopped', 'terminated', 'paused', 'reservation-error').
+  \* \ :literal:`stopped`\ : Ensures that the partition exists in the specified CPC, has the specified properties, and is in one of the inactive statuses ('stopped', 'terminated', 'paused', 'reservation-error').
 
-  * ``active``: Ensures that the partition exists in the specified CPC, has the specified properties, and is in one of the active statuses ('active', 'degraded').
+  \* \ :literal:`active`\ : Ensures that the partition exists in the specified CPC, has the specified properties, and is in one of the active statuses ('active', 'degraded').
 
-  * ``facts``: Returns the partition properties and the properties of its child resources (HBAs, NICs, and virtual functions).
+  \* \ :literal:`facts`\ : Returns the partition properties and the properties of its child resources (HBAs, NICs, and virtual functions).
 
   | **required**: True
   | **type**: str
@@ -117,39 +117,39 @@ state
 
 
 properties
-  Dictionary with input properties for the partition, for ``state=stopped`` and ``state=active``. Key is the property name with underscores instead of hyphens, and value is the property value in YAML syntax. Integer properties may also be provided as decimal strings. Will be ignored for ``state=absent``.
+  Dictionary with input properties for the partition, for \ :literal:`state=stopped`\  and \ :literal:`state=active`\ . Key is the property name with underscores instead of hyphens, and value is the property value in YAML syntax. Integer properties may also be provided as decimal strings. Will be ignored for \ :literal:`state=absent`\ .
 
   The possible input properties in this dictionary are the properties defined as writeable in the data model for Partition resources (where the property names contain underscores instead of hyphens), with the following exceptions:
 
-  * ``name``: Cannot be specified because the name has already been specified in the ``name`` module parameter.
+  \* \ :literal:`name`\ : Cannot be specified because the name has already been specified in the \ :literal:`name`\  module parameter.
 
-  * ``type``: Cannot be changed once the partition exists, because updating it is not supported.
+  \* \ :literal:`type`\ : Cannot be changed once the partition exists, because updating it is not supported.
 
-  * ``boot_storage_device``: Cannot be specified because this information is specified using the artificial property ``boot_storage_hba_name``.
+  \* \ :literal:`boot\_storage\_device`\ : Cannot be specified because this information is specified using the artificial property \ :literal:`boot\_storage\_hba\_name`\ .
 
-  * ``boot_network_device``: Cannot be specified because this information is specified using the artificial property ``boot_network_nic_name``.
+  \* \ :literal:`boot\_network\_device`\ : Cannot be specified because this information is specified using the artificial property \ :literal:`boot\_network\_nic\_name`\ .
 
-  * ``boot_storage_hba_name``: The name of the HBA whose URI is used to construct ``boot_storage_device``. Specifying it requires that the partition exists.
+  \* \ :literal:`boot\_storage\_hba\_name`\ : The name of the HBA whose URI is used to construct \ :literal:`boot\_storage\_device`\ . Specifying it requires that the partition exists.
 
-  * ``boot_network_nic_name``: The name of the NIC whose URI is used to construct ``boot_network_device``. Specifying it requires that the partition exists.
+  \* \ :literal:`boot\_network\_nic\_name`\ : The name of the NIC whose URI is used to construct \ :literal:`boot\_network\_device`\ . Specifying it requires that the partition exists.
 
-  * ``crypto_configuration``: The crypto configuration for the partition, in the format of the ``crypto-configuration`` property of the partition (see :term:`HMC API` for details), with the exception that adapters are specified with their names in field ``crypto_adapter_names`` instead of their URIs in field ``crypto_adapter_uris``. If the ``crypto_adapter_names`` field is null, all crypto adapters of the CPC will be used.
+  \* \ :literal:`crypto\_configuration`\ : The crypto configuration for the partition, in the format of the \ :literal:`crypto-configuration`\  property of the partition (see :term:\`HMC API\` for details), with the exception that adapters are specified with their names in field \ :literal:`crypto\_adapter\_names`\  instead of their URIs in field \ :literal:`crypto\_adapter\_uris`\ . If the \ :literal:`crypto\_adapter\_names`\  field is null, all crypto adapters of the CPC will be used.
 
-  Properties omitted in this dictionary will remain unchanged when the partition already exists, and will get the default value defined in the data model for partitions in the :term:`HMC API` when the partition is being created.
+  Properties omitted in this dictionary will remain unchanged when the partition already exists, and will get the default value defined in the data model for partitions in the :term:\`HMC API\` when the partition is being created.
 
   | **required**: False
   | **type**: dict
 
 
 expand_storage_groups
-  Boolean that controls whether the returned partition contains an additional artificial property 'storage-groups' that is the list of storage groups attached to the partition, with properties as described for the zhmc_storage_group module with expand=true.
+  Boolean that controls whether the returned partition contains an additional artificial property 'storage-groups' that is the list of storage groups attached to the partition, with properties as described for the zhmc\_storage\_group module with expand=true.
 
   | **required**: False
   | **type**: bool
 
 
 expand_crypto_adapters
-  Boolean that controls whether the returned partition contains an additional artificial property 'crypto-adapters' in its 'crypto-configuration' property that is the list of crypto adapters attached to the partition, with properties as described for the zhmc_adapter module.
+  Boolean that controls whether the returned partition contains an additional artificial property 'crypto-adapters' in its 'crypto-configuration' property that is the list of crypto adapters attached to the partition, with properties as described for the zhmc\_adapter module.
 
   | **required**: False
   | **type**: bool
@@ -272,7 +272,7 @@ Return Values
 
 
 changed
-  Indicates if any change has been made by the module. For ``state=facts``, always will be false.
+  Indicates if any change has been made by the module. For \ :literal:`state=facts`\ , always will be false.
 
   | **returned**: always
   | **type**: bool
@@ -284,9 +284,9 @@ msg
   | **type**: str
 
 partition
-  For ``state=absent``, an empty dictionary.
+  For \ :literal:`state=absent`\ , an empty dictionary.
 
-  For ``state=stopped|active|facts``, the resource properties of the partition after any changes, including its child resources as described below.
+  For \ :literal:`state=stopped|active|facts`\ , the resource properties of the partition after any changes, including its child resources as described below.
 
   | **returned**: success
   | **type**: dict
@@ -435,7 +435,7 @@ partition
     | **type**: str
 
   {property}
-    Additional properties of the partition, as described in the data model of the 'Partition' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
+    Additional properties of the partition, as described in the data model of the 'Partition' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
 
   hbas
@@ -450,7 +450,7 @@ partition
       | **type**: str
 
     {property}
-      Additional properties of the HBA, as described in the data model of the 'HBA' element object of the 'Partition' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
+      Additional properties of the HBA, as described in the data model of the 'HBA' element object of the 'Partition' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
 
 
@@ -466,7 +466,7 @@ partition
       | **type**: str
 
     {property}
-      Additional properties of the NIC, as described in the data model of the 'NIC' element object of the 'Partition' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
+      Additional properties of the NIC, as described in the data model of the 'NIC' element object of the 'Partition' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
 
 
@@ -482,7 +482,7 @@ partition
       | **type**: str
 
     {property}
-      Additional properties of the virtual function, as described in the data model of the 'Virtual Function' element object of the 'Partition' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
+      Additional properties of the virtual function, as described in the data model of the 'Virtual Function' element object of the 'Partition' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
 
 

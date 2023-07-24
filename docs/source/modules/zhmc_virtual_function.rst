@@ -17,7 +17,7 @@ zhmc_virtual_function -- Create virtual functions in partitions
 Synopsis
 --------
 - Create, update, or delete a virtual function in a partition of a CPC (Z system).
-- Note that the Ansible module zhmc_partition can be used to gather facts about existing virtual functions of a partition.
+- Note that the Ansible module zhmc\_partition can be used to gather facts about existing virtual functions of a partition.
 
 
 Requirements
@@ -49,35 +49,35 @@ hmc_auth
 
 
   userid
-    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing ``session_id``.
+    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`session\_id`\ .
 
     | **required**: False
     | **type**: str
 
 
   password
-    The password for authenticating with the HMC. This is mutually exclusive with providing ``session_id``.
+    The password for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`session\_id`\ .
 
     | **required**: False
     | **type**: str
 
 
   session_id
-    HMC session ID to be used. This is mutually exclusive with providing ``userid`` and ``password`` and can be created as described in :ref:`zhmc_session_module`.
+    HMC session ID to be used. This is mutually exclusive with providing \ :literal:`userid`\  and \ :literal:`password`\  and can be created as described in :ref:\`zhmc\_session\_module\`.
 
     | **required**: False
     | **type**: str
 
 
   ca_certs
-    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the 'REQUESTS_CA_BUNDLE' environment variable or the path name in the 'CURL_CA_BUNDLE' environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
+    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the 'REQUESTS\_CA\_BUNDLE' environment variable or the path name in the 'CURL\_CA\_BUNDLE' environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
 
     | **required**: False
     | **type**: str
 
 
   verify
-    If True (default), verify the HMC certificate as specified in the ``ca_certs`` parameter. If False, ignore what is specified in the ``ca_certs`` parameter and do not verify the HMC certificate.
+    If True (default), verify the HMC certificate as specified in the \ :literal:`ca\_certs`\  parameter. If False, ignore what is specified in the \ :literal:`ca\_certs`\  parameter and do not verify the HMC certificate.
 
     | **required**: False
     | **type**: bool
@@ -109,9 +109,9 @@ name
 state
   The desired state for the virtual function. All states are fully idempotent within the limits of the properties that can be changed:
 
-  * ``absent``: Ensures that the virtual function does not exist in the specified partition.
+  \* \ :literal:`absent`\ : Ensures that the virtual function does not exist in the specified partition.
 
-  * ``present``: Ensures that the virtual function exists in the specified partition and has the specified properties.
+  \* \ :literal:`present`\ : Ensures that the virtual function exists in the specified partition and has the specified properties.
 
   | **required**: True
   | **type**: str
@@ -119,15 +119,15 @@ state
 
 
 properties
-  Dictionary with input properties for the virtual function, for ``state=present``. Key is the property name with underscores instead of hyphens, and value is the property value in YAML syntax. Integer properties may also be provided as decimal strings. Will be ignored for ``state=absent``.
+  Dictionary with input properties for the virtual function, for \ :literal:`state=present`\ . Key is the property name with underscores instead of hyphens, and value is the property value in YAML syntax. Integer properties may also be provided as decimal strings. Will be ignored for \ :literal:`state=absent`\ .
 
   The possible input properties in this dictionary are the properties defined as writeable in the data model for Virtual Function resources (where the property names contain underscores instead of hyphens), with the following exceptions:
 
-  * ``name``: Cannot be specified because the name has already been specified in the ``name`` module parameter.
+  \* \ :literal:`name`\ : Cannot be specified because the name has already been specified in the \ :literal:`name`\  module parameter.
 
-  * ``adapter_uri``: Cannot be specified because this information is specified using the artificial property ``adapter_name``.
+  \* \ :literal:`adapter\_uri`\ : Cannot be specified because this information is specified using the artificial property \ :literal:`adapter\_name`\ .
 
-  * ``adapter_name``: The name of the adapter that backs the target virtual function.
+  \* \ :literal:`adapter\_name`\ : The name of the adapter that backs the target virtual function.
 
   Properties omitted in this dictionary will remain unchanged when the virtual function already exists, and will get the default value defined in the data model for virtual functions when the virtual function is being created.
 
@@ -190,7 +190,7 @@ Return Values
 
 
 changed
-  Indicates if any change has been made by the module. For ``state=facts``, always will be false.
+  Indicates if any change has been made by the module. For \ :literal:`state=facts`\ , always will be false.
 
   | **returned**: always
   | **type**: bool
@@ -202,9 +202,9 @@ msg
   | **type**: str
 
 virtual_function
-  For ``state=absent``, an empty dictionary.
+  For \ :literal:`state=absent`\ , an empty dictionary.
 
-  For ``state=present``, the resource properties of the virtual function after any changes.
+  For \ :literal:`state=present`\ , the resource properties of the virtual function after any changes.
 
   | **returned**: success
   | **type**: dict
@@ -215,7 +215,7 @@ virtual_function
     | **type**: str
 
   {property}
-    Additional properties of the virtual function, as described in the data model of the 'Virtual Function' element object of the 'Partition' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
+    Additional properties of the virtual function, as described in the data model of the 'Virtual Function' element object of the 'Partition' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
 
 
