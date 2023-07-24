@@ -4,8 +4,8 @@
 .. _zhmc_console_module:
 
 
-zhmc_console -- Get facts about the HMC
-=======================================
+zhmc_console -- Manage the HMC
+==============================
 
 
 
@@ -17,12 +17,14 @@ zhmc_console -- Get facts about the HMC
 Synopsis
 --------
 - Get facts about the targeted HMC.
+- Upgrade the firmware of the targeted HMC.
 
 
 Requirements
 ------------
 
-- No specific task or object-access permissions are required.
+- For \ :literal:`state=facts`\ , no specific task or object-access permissions are required.
+- For \ :literal:`state=upgrade`\ , task permission to the 'Single Step Console Internal Code' task is required.
 
 
 
@@ -83,13 +85,47 @@ hmc_auth
 
 
 state
-  The desired state for the HMC. For consistency with other modules, and for extensibility, this parameter is required even though it has only one value:
+  The action to be performed on the HMC:
 
   \* \ :literal:`facts`\ : Returns facts about the HMC.
 
+  \* \ :literal:`upgrade`\ : Upgrades the firmware of the HMC and returns the new facts after the upgrade.
+
   | **required**: True
   | **type**: str
-  | **choices**: facts
+  | **choices**: facts, upgrade
+
+
+bundle_level
+  Name of the bundle to be installed on the HMC (e.g. 'H71')
+
+  Required for \ :literal:`state=upgrade`\ 
+
+  | **required**: False
+  | **type**: str
+
+
+backup_location_type
+  Type of backup location for the HMC backup that is performed:
+
+  \* 'ftp': The FTP server that was used for the last console backup as defined on the 'Configure Backup Settings' user interface task in the HMC GUI.
+
+  \* 'usb': The USB storage device mounted to the HMC.
+
+  Optional for \ :literal:`state=upgrade`\ , default: 'usb'
+
+  | **required**: False
+  | **type**: str
+  | **choices**: ftp, usb
+
+
+accept_firmware
+  Accept the previous bundle level before installing the new level.
+
+  Optional for \ :literal:`state=upgrade`\ , default: True
+
+  | **required**: False
+  | **type**: bool
 
 
 log_file
@@ -115,6 +151,14 @@ Examples
        hmc_host: "{{ my_hmc_host }}"
        hmc_auth: "{{ my_hmc_auth }}"
        state: facts
+     register: hmc1
+
+   - name: Upgrade the HMC firmware and return facts
+     zhmc_console:
+       hmc_host: "{{ my_hmc_host }}"
+       hmc_auth: "{{ my_hmc_auth }}"
+       state: upgrade
+       bundle_level: "H71"
      register: hmc1
 
 

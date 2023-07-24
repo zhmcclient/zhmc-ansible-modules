@@ -37,6 +37,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Enhancements:**
 
+* Added support for upgrading HMC firmware to the zhmc_console module and
+  for upgrading the SE firmware to the ibm_cpc module, with a new state value
+  'upgrade' (issue #719)
+
 **Cleanup:**
 
 **Known issues:**

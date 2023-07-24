@@ -32,13 +32,17 @@ DOCUMENTATION = """
 ---
 module: zhmc_console
 version_added: "2.9.0"
-short_description: Get facts about the HMC
+short_description: Manage the HMC
 description:
   - Get facts about the targeted HMC.
+  - Upgrade the firmware of the targeted HMC.
 author:
   - Andreas Maier (@andy-maier)
 requirements:
-  - "No specific task or object-access permissions are required."
+  - "For C(state=facts), no specific task or object-access permissions are
+     required."
+  - "For C(state=upgrade), task permission to the 'Single Step Console
+     Internal Code' task is required."
 options:
   hmc_host:
     description:
@@ -95,13 +99,37 @@ options:
         default: true
   state:
     description:
-      - "The desired state for the HMC. For consistency with other modules,
-         and for extensibility, this parameter is required even though it has
-         only one value:"
+      - "The action to be performed on the HMC:"
       - "* C(facts): Returns facts about the HMC."
+      - "* C(upgrade): Upgrades the firmware of the HMC and returns the new
+         facts after the upgrade. If the HMC firmware is already at the
+         requested bundle level, nothing is changed and the module succeeds."
     type: str
-    choices: ['facts']
+    choices: ['facts', 'upgrade']
     required: true
+  bundle_level:
+    description:
+      - "Name of the bundle to be installed on the HMC (e.g. 'H71')"
+      - "Required for C(state=upgrade)"
+    type: str
+    required: false
+  backup_location_type:
+    description:
+      - "Type of backup location for the HMC backup that is performed:"
+      - "* 'ftp': The FTP server that was used for the last console backup as
+         defined on the 'Configure Backup Settings' user interface task in the
+         HMC GUI."
+      - "* 'usb': The USB storage device mounted to the HMC."
+      - "Optional for C(state=upgrade), default: 'usb'"
+    type: str
+    choices: ['ftp', 'usb']
+    required: false
+  accept_firmware:
+    description:
+      - "Accept the previous bundle level before installing the new level."
+      - "Optional for C(state=upgrade), default: True"
+    type: bool
+    required: false
   log_file:
     description:
       - "File path of a log file to which the logic flow of this module as well
@@ -127,6 +155,14 @@ EXAMPLES = """
     hmc_host: "{{ my_hmc_host }}"
     hmc_auth: "{{ my_hmc_auth }}"
     state: facts
+  register: hmc1
+
+- name: Upgrade the HMC firmware and return facts
+  zhmc_console:
+    hmc_host: "{{ my_hmc_host }}"
+    hmc_auth: "{{ my_hmc_auth }}"
+    state: upgrade
+    bundle_level: "H71"
   register: hmc1
 """
 
@@ -182,7 +218,7 @@ import traceback  # noqa: E402
 from ansible.module_utils.basic import AnsibleModule  # noqa: E402
 
 from ..module_utils.common import log_init, open_session, close_session, \
-    hmc_auth_parameter, Error, missing_required_lib, \
+    hmc_auth_parameter, Error, ParameterError, missing_required_lib, \
     common_fail_on_import_errors  # noqa: E402
 
 try:
@@ -216,7 +252,7 @@ def add_artificial_properties(console_properties, console):
     console_properties['api_version'] = dict(version_props)
 
 
-def facts(params, check_mode):
+def facts(module):
     """
     Identify the target HMC and return facts about the target HMC and its
     child resources.
@@ -226,7 +262,7 @@ def facts(params, check_mode):
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
 
-    session, logoff = open_session(params)
+    session, logoff = open_session(module.params)
     try:
         client = zhmcclient.Client(session)
         console = client.consoles.console
@@ -242,7 +278,65 @@ def facts(params, check_mode):
         close_session(session, logoff)
 
 
-def perform_task(params, check_mode):
+def upgrade(module):
+    """
+    Upgrades the firmware on this HMC to a new bundle level.
+
+    Raises:
+      ParameterError: An issue with the module parameters.
+      zhmcclient.Error: Any zhmcclient exception can happen.
+    """
+
+    module.fail_on_missing_params('bundle_level')
+    bundle_level = module.params['bundle_level']
+    accept_firmware = module.params.get('accept_firmware', True)
+    backup_location_type = module.params.get('backup_location_type', 'usb')
+
+    session, logoff = open_session(module.params)
+    try:
+        client = zhmcclient.Client(session)
+        console = client.consoles.console
+        # The default exception handling is sufficient for the above.
+
+        ec_mcl = console.prop('ec-mcl-description')
+        hmc_bundle_level = ec_mcl.get('bundle-level', None)
+        if hmc_bundle_level is None:
+            hmc_version = console.prop('version')
+            raise ParameterError(
+                "HMC version {v} does not support firmware upgrade through "
+                "the Web Services API".format(v=hmc_version))
+
+        changed = False
+
+        if not module.check_mode:
+            # This may restart the HMC, but zhmcclient will re-establish the
+            # session.
+            try:
+                console.single_step_install(
+                    bundle_level=bundle_level,
+                    accept_firmware=accept_firmware,
+                    backup_location_type=backup_location_type,
+                    wait_for_completion=True,
+                    operation_timeout=None)
+                changed = True
+            except zhmcclient.HTTPError as exc:
+                if exc.http_status == 400 and exc.reason == 356:
+                    # HMC was already at that bundle level
+                    pass
+                else:
+                    raise
+
+        console.pull_full_properties()
+        result = dict(console.properties)
+        add_artificial_properties(result, console)
+
+        return changed, result
+
+    finally:
+        close_session(session, logoff)
+
+
+def perform_task(module):
     """
     Perform the task for this module, dependent on the 'state' module
     parameter.
@@ -256,8 +350,9 @@ def perform_task(params, check_mode):
     """
     actions = {
         "facts": facts,
+        "upgrade": upgrade,
     }
-    return actions[params['state']](params, check_mode)
+    return actions[module.params['state']](module)
 
 
 def main():
@@ -267,7 +362,11 @@ def main():
     argument_spec = dict(
         hmc_host=dict(required=True, type='str'),
         hmc_auth=hmc_auth_parameter(),
-        state=dict(required=True, type='str', choices=['facts']),
+        state=dict(required=True, type='str', choices=['facts', 'upgrade']),
+        bundle_level=dict(required=False, type='str'),
+        backup_location_type=dict(
+            required=False, type='str', choices=['ftp', 'usb']),
+        accept_firmware=dict(required=False, type='bool'),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),
     )
@@ -297,7 +396,7 @@ def main():
 
     try:
 
-        changed, result = perform_task(module.params, module.check_mode)
+        changed, result = perform_task(module)
 
     except (Error, zhmcclient.Error) as exc:
         # These exceptions are considered errors in the environment or in user
