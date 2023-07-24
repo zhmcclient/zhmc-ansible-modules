@@ -46,35 +46,35 @@ hmc_auth
 
 
   userid
-    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing ``session_id``.
+    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`session\_id`\ .
 
     | **required**: False
     | **type**: str
 
 
   password
-    The password for authenticating with the HMC. This is mutually exclusive with providing ``session_id``.
+    The password for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`session\_id`\ .
 
     | **required**: False
     | **type**: str
 
 
   session_id
-    HMC session ID to be used. This is mutually exclusive with providing ``userid`` and ``password`` and can be created as described in :ref:`zhmc_session_module`.
+    HMC session ID to be used. This is mutually exclusive with providing \ :literal:`userid`\  and \ :literal:`password`\  and can be created as described in :ref:\`zhmc\_session\_module\`.
 
     | **required**: False
     | **type**: str
 
 
   ca_certs
-    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the 'REQUESTS_CA_BUNDLE' environment variable or the path name in the 'CURL_CA_BUNDLE' environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
+    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the 'REQUESTS\_CA\_BUNDLE' environment variable or the path name in the 'CURL\_CA\_BUNDLE' environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
 
     | **required**: False
     | **type**: str
 
 
   verify
-    If True (default), verify the HMC certificate as specified in the ``ca_certs`` parameter. If False, ignore what is specified in the ``ca_certs`` parameter and do not verify the HMC certificate.
+    If True (default), verify the HMC certificate as specified in the \ :literal:`ca\_certs`\  parameter. If False, ignore what is specified in the \ :literal:`ca\_certs`\  parameter and do not verify the HMC certificate.
 
     | **required**: False
     | **type**: bool
@@ -85,7 +85,7 @@ hmc_auth
 state
   The desired state for the HMC. For consistency with other modules, and for extensibility, this parameter is required even though it has only one value:
 
-  * ``facts``: Returns facts about the HMC.
+  \* \ :literal:`facts`\ : Returns facts about the HMC.
 
   | **required**: True
   | **type**: str
@@ -131,7 +131,7 @@ Return Values
 
 
 changed
-  Indicates if any change has been made by the module. For ``state=facts``, always will be false.
+  Indicates if any change has been made by the module. For \ :literal:`state=facts`\ , always will be false.
 
   | **returned**: always
   | **type**: bool
@@ -165,7 +165,7 @@ hmc
     | **type**: str
 
   {property}
-    Additional properties of the Console object representing the targeted HMC, as described in the data model of the 'Console' object in the :term:`HMC API` book. Note that the set of properties has been extended over the past HMC versions, so you will get less properties on older HMC versions. The property names have hyphens (-) as described in that book.
+    Additional properties of the Console object representing the targeted HMC, as described in the data model of the 'Console' object in the :term:\`HMC API\` book. Note that the set of properties has been extended over the past HMC versions, so you will get less properties on older HMC versions. The property names have hyphens (-) as described in that book.
 
 
   api_version
@@ -174,7 +174,7 @@ hmc
     | **type**: dict
 
     {property}
-      The properties returned from the 'Query API Version' operation, as described in the :term:`HMC API` book. Note that the set of properties has been extended over the past HMC versions, so you will get less properties on older HMC versions. The property names have hyphens (-) as described in that book.
+      The properties returned from the 'Query API Version' operation, as described in the :term:\`HMC API\` book. Note that the set of properties has been extended over the past HMC versions, so you will get less properties on older HMC versions. The property names have hyphens (-) as described in that book.
 
 
 

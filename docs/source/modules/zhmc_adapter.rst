@@ -50,35 +50,35 @@ hmc_auth
 
 
   userid
-    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing ``session_id``.
+    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`session\_id`\ .
 
     | **required**: False
     | **type**: str
 
 
   password
-    The password for authenticating with the HMC. This is mutually exclusive with providing ``session_id``.
+    The password for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`session\_id`\ .
 
     | **required**: False
     | **type**: str
 
 
   session_id
-    HMC session ID to be used. This is mutually exclusive with providing ``userid`` and ``password`` and can be created as described in :ref:`zhmc_session_module`.
+    HMC session ID to be used. This is mutually exclusive with providing \ :literal:`userid`\  and \ :literal:`password`\  and can be created as described in :ref:\`zhmc\_session\_module\`.
 
     | **required**: False
     | **type**: str
 
 
   ca_certs
-    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the 'REQUESTS_CA_BUNDLE' environment variable or the path name in the 'CURL_CA_BUNDLE' environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
+    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the 'REQUESTS\_CA\_BUNDLE' environment variable or the path name in the 'CURL\_CA\_BUNDLE' environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
 
     | **required**: False
     | **type**: str
 
 
   verify
-    If True (default), verify the HMC certificate as specified in the ``ca_certs`` parameter. If False, ignore what is specified in the ``ca_certs`` parameter and do not verify the HMC certificate.
+    If True (default), verify the HMC certificate as specified in the \ :literal:`ca\_certs`\  parameter. If False, ignore what is specified in the \ :literal:`ca\_certs`\  parameter and do not verify the HMC certificate.
 
     | **required**: False
     | **type**: bool
@@ -101,15 +101,15 @@ cpc_name
 
 
 match
-  Only for ``state=set``: Match properties for identifying the target adapter in the set of adapters in the CPC, if an adapter with the name specified in the ``name`` module parameter does not exist in that set. This parameter will be ignored otherwise.
+  Only for \ :literal:`state=set`\ : Match properties for identifying the target adapter in the set of adapters in the CPC, if an adapter with the name specified in the \ :literal:`name`\  module parameter does not exist in that set. This parameter will be ignored otherwise.
 
-  Use of this parameter allows renaming an adapter: The ``name`` module parameter specifies the new name of the target adapter, and the ``match`` module parameter identifies the adapter to be renamed. This can be combined with other property updates by using the ``properties`` module parameter.
+  Use of this parameter allows renaming an adapter: The \ :literal:`name`\  module parameter specifies the new name of the target adapter, and the \ :literal:`match`\  module parameter identifies the adapter to be renamed. This can be combined with other property updates by using the \ :literal:`properties`\  module parameter.
 
   The parameter is a dictionary. The key of each dictionary item is the property name as specified in the data model for adapter resources, with underscores instead of hyphens. The value of each dictionary item is the match value for the property (in YAML syntax). Integer properties may also be provided as decimal strings.
 
   The specified match properties follow the rules of filtering for the zhmcclient library as described in https://python-zhmcclient.readthedocs.io/en/stable/concepts.html#filtering
 
-  The possible match properties are all properties in the data model for adapter resources, including ``name``.
+  The possible match properties are all properties in the data model for adapter resources, including \ :literal:`name`\ .
 
   | **required**: False
   | **type**: dict
@@ -118,13 +118,13 @@ match
 state
   The desired state for the adapter. All states are fully idempotent within the limits of the properties that can be changed:
 
-  * ``set``: Ensures that an existing adapter has the specified properties.
+  \* \ :literal:`set`\ : Ensures that an existing adapter has the specified properties.
 
-  * ``present``: Ensures that a Hipersockets adapter exists and has the specified properties.
+  \* \ :literal:`present`\ : Ensures that a Hipersockets adapter exists and has the specified properties.
 
-  * ``absent``: Ensures that a Hipersockets adapter does not exist.
+  \* \ :literal:`absent`\ : Ensures that a Hipersockets adapter does not exist.
 
-  * ``facts``: Returns the adapter properties including its ports.
+  \* \ :literal:`facts`\ : Returns the adapter properties including its ports.
 
   | **required**: True
   | **type**: str
@@ -132,17 +132,17 @@ state
 
 
 properties
-  Only for ``state=set|present``: New values for the properties of the adapter. Properties omitted in this dictionary will remain unchanged. This parameter will be ignored for other states.
+  Only for \ :literal:`state=set|present`\ : New values for the properties of the adapter. Properties omitted in this dictionary will remain unchanged. This parameter will be ignored for other states.
 
   The parameter is a dictionary. The key of each dictionary item is the property name as specified in the data model for adapter resources, with underscores instead of hyphens. The value of each dictionary item is the property value (in YAML syntax). Integer properties may also be provided as decimal strings.
 
   The possible properties in this dictionary are the properties defined as writeable in the data model for adapter resources, with the following exceptions:
 
-  * ``name``: Cannot be specified as a property because the name has already been specified in the ``name`` module parameter.
+  \* \ :literal:`name`\ : Cannot be specified as a property because the name has already been specified in the \ :literal:`name`\  module parameter.
 
-  * ``type``: The desired adapter type can be specified in order to support adapters that can change their type (e.g. the FICON Express adapter can change its type between 'not-configured', 'fcp' and 'fc').
+  \* \ :literal:`type`\ : The desired adapter type can be specified in order to support adapters that can change their type (e.g. the FICON Express adapter can change its type between 'not-configured', 'fcp' and 'fc').
 
-  * ``crypto_type``: The crypto type can be specified in order to support the ability of the Crypto Express adapters to change their crypto type. Valid values are 'ep11', 'cca' and 'acc'. Changing to 'acc' will zeroize the crypto adapter.
+  \* \ :literal:`crypto\_type`\ : The crypto type can be specified in order to support the ability of the Crypto Express adapters to change their crypto type. Valid values are 'ep11', 'cca' and 'acc'. Changing to 'acc' will zeroize the crypto adapter.
 
   | **required**: False
   | **type**: dict
@@ -242,7 +242,7 @@ Return Values
 
 
 changed
-  Indicates if any change has been made by the module. For ``state=facts``, always will be false.
+  Indicates if any change has been made by the module. For \ :literal:`state=facts`\ , always will be false.
 
   | **returned**: always
   | **type**: bool
@@ -254,9 +254,9 @@ msg
   | **type**: str
 
 adapter
-  For ``state=absent``, an empty dictionary.
+  For \ :literal:`state=absent`\ , an empty dictionary.
 
-  For ``state=set|present|facts``, the adapter and its ports.
+  For \ :literal:`state=set|present|facts`\ , the adapter and its ports.
 
   | **returned**: success
   | **type**: dict
@@ -308,7 +308,7 @@ adapter
     | **type**: str
 
   {property}
-    Additional properties of the adapter, as described in the data model of the 'Adapter' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
+    Additional properties of the adapter, as described in the data model of the 'Adapter' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
 
   ports
@@ -323,7 +323,7 @@ adapter
       | **type**: str
 
     {property}
-      Additional properties of the port, as described in the data model of the 'Network Port' or 'Storage Port' element object of the 'Adapter' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book. In case of unconfigured FICON adapters, the property list is short.
+      Additional properties of the port, as described in the data model of the 'Network Port' or 'Storage Port' element object of the 'Adapter' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book. In case of unconfigured FICON adapters, the property list is short.
 
 
 

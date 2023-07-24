@@ -49,35 +49,35 @@ hmc_auth
 
 
   userid
-    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing ``session_id``.
+    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`session\_id`\ .
 
     | **required**: False
     | **type**: str
 
 
   password
-    The password for authenticating with the HMC. This is mutually exclusive with providing ``session_id``.
+    The password for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`session\_id`\ .
 
     | **required**: False
     | **type**: str
 
 
   session_id
-    HMC session ID to be used. This is mutually exclusive with providing ``userid`` and ``password`` and can be created as described in :ref:`zhmc_session_module`.
+    HMC session ID to be used. This is mutually exclusive with providing \ :literal:`userid`\  and \ :literal:`password`\  and can be created as described in :ref:\`zhmc\_session\_module\`.
 
     | **required**: False
     | **type**: str
 
 
   ca_certs
-    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the 'REQUESTS_CA_BUNDLE' environment variable or the path name in the 'CURL_CA_BUNDLE' environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
+    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the 'REQUESTS\_CA\_BUNDLE' environment variable or the path name in the 'CURL\_CA\_BUNDLE' environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
 
     | **required**: False
     | **type**: str
 
 
   verify
-    If True (default), verify the HMC certificate as specified in the ``ca_certs`` parameter. If False, ignore what is specified in the ``ca_certs`` parameter and do not verify the HMC certificate.
+    If True (default), verify the HMC certificate as specified in the \ :literal:`ca\_certs`\  parameter. If False, ignore what is specified in the \ :literal:`ca\_certs`\  parameter and do not verify the HMC certificate.
 
     | **required**: False
     | **type**: bool
@@ -102,13 +102,13 @@ name
 state
   The desired state for the storage group. All states are fully idempotent within the limits of the properties that can be changed, unless otherwise stated:
 
-  * ``absent``: Ensures that the storage group does not exist. If the storage group is currently attached to any partitions, the module will fail (this is an idempotency limitation).
+  \* \ :literal:`absent`\ : Ensures that the storage group does not exist. If the storage group is currently attached to any partitions, the module will fail (this is an idempotency limitation).
 
-  * ``present``: Ensures that the storage group exists and is associated with the specified CPC, and has the specified properties. The attachment state of an already existing storage group to a partition is not changed.
+  \* \ :literal:`present`\ : Ensures that the storage group exists and is associated with the specified CPC, and has the specified properties. The attachment state of an already existing storage group to a partition is not changed.
 
-  * ``discover``: Triggers FCP discovery. If ``discover_wait`` is specified, waits for its completion. Requires that the storage group exists and is of type FCP.
+  \* \ :literal:`discover`\ : Triggers LUN discovery. If \ :literal:`discover\_wait`\  is specified, waits for completion of the discovery. Requires that the storage group exists and is of type 'fcp'.
 
-  * ``facts``: Returns the storage group properties.
+  \* \ :literal:`facts`\ : Returns the storage group properties.
 
   | **required**: True
   | **type**: str
@@ -116,15 +116,15 @@ state
 
 
 properties
-  Dictionary with desired properties for the storage group. Used for ``state=present``; ignored for ``state=absent|facts``. Dictionary key is the property name with underscores instead of hyphens, and dictionary value is the property value in YAML syntax. Integer properties may also be provided as decimal strings.
+  Dictionary with desired properties for the storage group. Used for \ :literal:`state=present`\ ; ignored for \ :literal:`state=absent|facts`\ . Dictionary key is the property name with underscores instead of hyphens, and dictionary value is the property value in YAML syntax. Integer properties may also be provided as decimal strings.
 
   The possible input properties in this dictionary are the properties defined as writeable in the data model for Storage Group resources (where the property names contain underscores instead of hyphens), with the following exceptions:
 
-  * ``name``: Cannot be specified because the name has already been specified in the ``name`` module parameter.
+  \* \ :literal:`name`\ : Cannot be specified because the name has already been specified in the \ :literal:`name`\  module parameter.
 
-  * ``type``: Cannot be changed once the storage group exists.
+  \* \ :literal:`type`\ : Cannot be changed once the storage group exists.
 
-  Properties omitted in this dictionary will remain unchanged when the storage group already exists, and will get the default value defined in the data model for storage groups in the :term:`HMC API` when the storage group is being created.
+  Properties omitted in this dictionary will remain unchanged when the storage group already exists, and will get the default value defined in the data model for storage groups in the :term:\`HMC API\` when the storage group is being created.
 
   | **required**: False
   | **type**: dict
@@ -138,14 +138,14 @@ expand
 
 
 discover_wait
-  Boolean that controls whether to wait for completion of the FCP discovery for ``state=discover``.
+  Boolean that controls whether to wait for completion of the FCP discovery for \ :literal:`state=discover`\ .
 
   | **required**: False
   | **type**: bool
 
 
 discover_timeout
-  Timeout in seconds for how long to wait for completion of the FCP discovery for ``state=discover``.
+  Timeout in seconds for how long to wait for completion of the FCP discovery for \ :literal:`state=discover`\ .
 
   | **required**: False
   | **type**: int
@@ -204,7 +204,7 @@ Examples
          max-partitions: 1
      register: sg1
 
-   - name: Trigger FCP discovery
+   - name: Trigger LUN discovery
      zhmc_storage_group:
        hmc_host: "{{ my_hmc_host }}"
        hmc_auth: "{{ my_hmc_auth }}"
@@ -223,7 +223,7 @@ Notes
 .. note::
    This module manages only the knowledge of the Z system about its storage, but does not perform any actions against the storage subsystems or SAN switches attached to the Z system.
 
-   Attachment of storage groups to and from partitions is managed by the Ansible module zhmc_storage_group_attachment.
+   Attachment of storage groups to and from partitions is managed by the Ansible module zhmc\_storage\_group\_attachment.
 
 
 
@@ -236,7 +236,7 @@ Return Values
 
 
 changed
-  Indicates if any change has been made by the module. For ``state=facts``, always will be false.
+  Indicates if any change has been made by the module. For \ :literal:`state=facts`\ , always will be false.
 
   | **returned**: always
   | **type**: bool
@@ -248,9 +248,9 @@ msg
   | **type**: str
 
 storage_group
-  For ``state=absent``, an empty dictionary.
+  For \ :literal:`state=absent`\ , an empty dictionary.
 
-  For ``state=present|facts|discover``, the resource properties of the target storage group after any changes, plus additional artificial properties as described below.
+  For \ :literal:`state=present|facts|discover`\ , the resource properties of the target storage group after any changes, plus additional artificial properties as described below.
 
   | **returned**: success
   | **type**: dict
@@ -472,7 +472,7 @@ storage_group
     | **type**: str
 
   {property}
-    Additional properties of the storage group, as described in the data model of the 'Storage Group' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
+    Additional properties of the storage group, as described in the data model of the 'Storage Group' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
 
   attached-partition-names
@@ -482,7 +482,7 @@ storage_group
     | **elements**: str
 
   candidate-adapter-ports
-    Only present if ``expand=true``: List of candidate storage adapter ports of the storage group.
+    Only present if \ :literal:`expand=true`\ : List of candidate storage adapter ports of the storage group.
 
     | **returned**: success+expand
     | **type**: list
@@ -499,7 +499,7 @@ storage_group
       | **type**: int
 
     {property}
-      Additional properties of the storage port, as described in the data model of the 'Storage Port' element object of the 'Adapter' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
+      Additional properties of the storage port, as described in the data model of the 'Storage Port' element object of the 'Adapter' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
 
     parent-adapter
@@ -513,13 +513,13 @@ storage_group
         | **type**: str
 
       {property}
-        Additional properties of the storage adapter, as described in the data model of the 'Adapter' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
+        Additional properties of the storage adapter, as described in the data model of the 'Adapter' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
 
 
 
   storage-volumes
-    Only present if ``expand=true``: Storage volumes of the storage group.
+    Only present if \ :literal:`expand=true`\ : Storage volumes of the storage group.
 
     | **returned**: success+expand
     | **type**: list
@@ -531,31 +531,31 @@ storage_group
       | **type**: str
 
     {property}
-      Additional properties of the storage volume, as described in the data model of the 'Storage Volume' element object of the 'Storage Group' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
+      Additional properties of the storage volume, as described in the data model of the 'Storage Volume' element object of the 'Storage Group' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
 
 
   virtual-storage-resources
-    Only present if ``expand=true``: Virtual storage resources of the storage group.
+    Only present if \ :literal:`expand=true`\ : Virtual storage resources of the storage group.
 
     | **returned**: success+expand
     | **type**: list
     | **elements**: dict
 
     {property}
-      Properties of the virtual storage resource, as described in the data model of the 'Virtual Storage Resource' element object of the 'Storage Group' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
+      Properties of the virtual storage resource, as described in the data model of the 'Virtual Storage Resource' element object of the 'Storage Group' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
 
 
   attached-partitions
-    Only present if ``expand=true``: Partitions to which the storage group is attached.
+    Only present if \ :literal:`expand=true`\ : Partitions to which the storage group is attached.
 
     | **returned**: success+expand
     | **type**: list
     | **elements**: dict
 
     {property}
-      Properties of the partition, as described in the data model of the 'Partition' object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.
+      Properties of the partition, as described in the data model of the 'Partition' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
 
 
