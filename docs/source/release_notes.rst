@@ -20,34 +20,18 @@ Releases
 ========
 
 
-Version 1.6.0-dev1
-------------------
+Version 1.6.0
+-------------
 
-This version contains all fixes up to version 1.5.x.
-
-Released: not yet
+Released: 2306-08-04
 
 Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
-
-**Incompatible changes:**
-
-**Deprecations:**
-
-**Bug fixes:**
 
 **Enhancements:**
 
 * Added support for upgrading HMC firmware to the zhmc_console module and
   for upgrading the SE firmware to the ibm_cpc module, with a new state value
   'upgrade'. Increased minimum zhmcclient version to 1.10.0 (issue #719)
-
-**Cleanup:**
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 1.5.0
