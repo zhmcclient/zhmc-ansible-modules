@@ -300,8 +300,7 @@ ifeq ($(PACKAGE_LEVEL),ansible)
 else
 	@echo "Makefile: Checking missing dependencies of this package"
 	pip-missing-reqs $(src_py_dir) --requirements-file=requirements.txt
-# TODO: Enable again once zhmcclient 1.10.0 is released
-#	pip-missing-reqs $(src_py_dir) --requirements-file=minimum-constraints.txt
+	pip-missing-reqs $(src_py_dir) --requirements-file=minimum-constraints.txt
 	@echo "Makefile: Done checking missing dependencies of this package"
 	@echo "Makefile: Checking missing dependencies of some development packages"
 	@rc=0; for pkg in $(check_reqs_packages); do dir=$$($(PYTHON_CMD) -c "import $${pkg} as m,os; dm=os.path.dirname(m.__file__); d=dm if not dm.endswith('site-packages') else m.__file__; print(d)"); cmd="pip-missing-reqs $${dir} --requirements-file=minimum-constraints.txt"; echo $${cmd}; $${cmd}; rc=$$(expr $${rc} + $${?}); done; exit $${rc}
