@@ -20,7 +20,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="zhmc_console – Get facts about the HMC" href="zhmc_console.html" />
+    <link rel="next" title="zhmc_console – Manage the HMC" href="zhmc_console.html" />
     <link rel="prev" title="Modules" href="../modules.html" /> 
 </head>
 
@@ -36,7 +36,7 @@
             IBM Z HMC collection
           </a>
               <div class="version">
-                1.5.0
+                1.6.0
 
               </div>
 <div role="search">
@@ -61,7 +61,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#return-values">Return Values</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_console.html">zhmc_console – Get facts about the HMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_console.html">zhmc_console – Manage the HMC</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_user.html">zhmc_user – Create HMC users</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_user_list.html">zhmc_user_list – List HMC users</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_password_rule.html">zhmc_password_rule – Create HMC password rules</a></li>
@@ -204,10 +204,8 @@
 </dl>
 </dd>
 <dt>action</dt><dd><p>The action to perform for the HMC session. Since an HMC session does not have a name, it is not possible to specify the desired end state in an idempotent manner, so this module uses actions:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">create</span></code>: Create a new session on the HMC and verify that the credentials are valid. Requires <code class="docutils literal notranslate"><span class="pre">hmc_auth.userid</span></code> and <code class="docutils literal notranslate"><span class="pre">hmc_auth.password</span></code> and uses <code class="docutils literal notranslate"><span class="pre">hmc_auth.ca_certs</span></code> and <code class="docutils literal notranslate"><span class="pre">hmc_auth.verify</span></code> if provided.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">delete</span></code>: Delete the specified session on the HMC. No longer existing sessions are tolerated. Requires <code class="docutils literal notranslate"><span class="pre">hmc_auth.session_id</span></code>.</p></li>
-</ul>
+<p>* <code class="docutils literal notranslate"><span class="pre">create</span></code>: Create a new session on the HMC and verify that the credentials are valid. Requires <code class="docutils literal notranslate"><span class="pre">hmc_auth.userid</span></code> and <code class="docutils literal notranslate"><span class="pre">hmc_auth.password</span></code> and uses <code class="docutils literal notranslate"><span class="pre">hmc_auth.ca_certs</span></code> and <code class="docutils literal notranslate"><span class="pre">hmc_auth.verify</span></code> if provided.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">delete</span></code>: Delete the specified session on the HMC. No longer existing sessions are tolerated. Requires <code class="docutils literal notranslate"><span class="pre">hmc_auth.session_id</span></code>.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: True</div>
 <div class="line"><strong>type</strong>: str</div>
@@ -314,7 +312,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../modules.html" class="btn btn-neutral float-left" title="Modules" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="zhmc_console.html" class="btn btn-neutral float-right" title="zhmc_console – Get facts about the HMC" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="zhmc_console.html" class="btn btn-neutral float-right" title="zhmc_console – Manage the HMC" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
@@ -337,7 +335,7 @@
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.5.0
+        v: 1.6.0
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -361,6 +359,7 @@
             <dd><a href="../1.4.0/modules/zhmc_session.html">1.4.0</a></dd>
             <dd><a href="../1.4.1/modules/zhmc_session.html">1.4.1</a></dd>
             <dd><a href="../1.5.0/modules/zhmc_session.html">1.5.0</a></dd>
+            <dd><a href="../1.6.0/modules/zhmc_session.html">1.6.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

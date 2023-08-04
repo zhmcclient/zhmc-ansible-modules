@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>zhmc_console – Get facts about the HMC &mdash; IBM Z HMC collection  documentation</title>
+  <title>zhmc_console – Manage the HMC &mdash; IBM Z HMC collection  documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/banner.css" type="text/css" />
@@ -36,7 +36,7 @@
             IBM Z HMC collection
           </a>
               <div class="version">
-                1.5.0
+                1.6.0
 
               </div>
 <div role="search">
@@ -55,7 +55,7 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../modules.html">Modules</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="zhmc_session.html">zhmc_session – Manage HMC sessions across tasks</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">zhmc_console – Get facts about the HMC</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">zhmc_console – Manage the HMC</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#parameters">Parameters</a></li>
@@ -122,7 +122,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../modules.html">Modules</a></li>
-      <li class="breadcrumb-item active">zhmc_console – Get facts about the HMC</li>
+      <li class="breadcrumb-item active">zhmc_console – Manage the HMC</li>
       <li class="wy-breadcrumbs-aside">
               <!-- User defined GitHub URL -->
               <a href="https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_console.py" class="fa fa-github"> Edit on GitHub</a>
@@ -133,8 +133,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="zhmc-console-get-facts-about-the-hmc">
-<span id="zhmc-console-module"></span><h1>zhmc_console – Get facts about the HMC<a class="headerlink" href="#zhmc-console-get-facts-about-the-hmc" title="Permalink to this heading"></a></h1>
+  <section id="zhmc-console-manage-the-hmc">
+<span id="zhmc-console-module"></span><h1>zhmc_console – Manage the HMC<a class="headerlink" href="#zhmc-console-manage-the-hmc" title="Permalink to this heading"></a></h1>
 <nav class="contents local" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
@@ -148,12 +148,14 @@
 <h2><a class="toc-backref" href="#id1" role="doc-backlink">Synopsis</a><a class="headerlink" href="#synopsis" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p>Get facts about the targeted HMC.</p></li>
+<li><p>Upgrade the firmware of the targeted HMC.</p></li>
 </ul>
 </section>
 <section id="requirements">
 <h2><a class="toc-backref" href="#id2" role="doc-backlink">Requirements</a><a class="headerlink" href="#requirements" title="Permalink to this heading"></a></h2>
 <ul class="simple">
-<li><p>No specific task or object-access permissions are required.</p></li>
+<li><p>For <code class="docutils literal notranslate"><span class="pre">state=facts</span></code>, no specific task or object-access permissions are required.</p></li>
+<li><p>For <code class="docutils literal notranslate"><span class="pre">state=upgrade</span></code>, task permission to the ‘Single Step Console Internal Code’ task is required.</p></li>
 </ul>
 </section>
 <section id="parameters">
@@ -183,7 +185,7 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>session_id</dt><dd><p>HMC session ID to be used. This is mutually exclusive with providing <code class="docutils literal notranslate"><span class="pre">userid</span></code> and <code class="docutils literal notranslate"><span class="pre">password</span></code> and can be created as described in <a class="reference internal" href="zhmc_session.html#zhmc-session-module"><span class="std std-ref">zhmc_session – Manage HMC sessions across tasks</span></a>.</p>
+<dt>session_id</dt><dd><p>HMC session ID to be used. This is mutually exclusive with providing <code class="docutils literal notranslate"><span class="pre">userid</span></code> and <code class="docutils literal notranslate"><span class="pre">password</span></code> and can be created as described in :ref:`zhmc_session_module`.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: str</div>
@@ -204,14 +206,37 @@
 </dd>
 </dl>
 </dd>
-<dt>state</dt><dd><p>The desired state for the HMC. For consistency with other modules, and for extensibility, this parameter is required even though it has only one value:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">facts</span></code>: Returns facts about the HMC.</p></li>
-</ul>
+<dt>state</dt><dd><p>The action to be performed on the HMC:</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">facts</span></code>: Returns facts about the HMC.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">upgrade</span></code>: Upgrades the firmware of the HMC and returns the new facts after the upgrade.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: True</div>
 <div class="line"><strong>type</strong>: str</div>
-<div class="line"><strong>choices</strong>: facts</div>
+<div class="line"><strong>choices</strong>: facts, upgrade</div>
+</div>
+</dd>
+<dt>bundle_level</dt><dd><p>Name of the bundle to be installed on the HMC (e.g. ‘H71’)</p>
+<p>Required for <code class="docutils literal notranslate"><span class="pre">state=upgrade</span></code></p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>backup_location_type</dt><dd><p>Type of backup location for the HMC backup that is performed:</p>
+<p>* ‘ftp’: The FTP server that was used for the last console backup as defined on the ‘Configure Backup Settings’ user interface task in the HMC GUI.</p>
+<p>* ‘usb’: The USB storage device mounted to the HMC.</p>
+<p>Optional for <code class="docutils literal notranslate"><span class="pre">state=upgrade</span></code>, default: ‘usb’</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: str</div>
+<div class="line"><strong>choices</strong>: ftp, usb</div>
+</div>
+</dd>
+<dt>accept_firmware</dt><dd><p>Accept the previous bundle level before installing the new level.</p>
+<p>Optional for <code class="docutils literal notranslate"><span class="pre">state=upgrade</span></code>, default: True</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: bool</div>
 </div>
 </dd>
 <dt>log_file</dt><dd><p>File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.</p>
@@ -232,6 +257,14 @@
 <span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
 <span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">facts</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hmc1</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Upgrade the HMC firmware and return facts</span>
+<span class="w">  </span><span class="nt">zhmc_console</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">upgrade</span>
+<span class="w">    </span><span class="nt">bundle_level</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;H71&quot;</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hmc1</span>
 </pre></div>
 </div>
@@ -274,14 +307,14 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>{property}</dt><dd><p>Additional properties of the Console object representing the targeted HMC, as described in the data model of the ‘Console’ object in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book. Note that the set of properties has been extended over the past HMC versions, so you will get less properties on older HMC versions. The property names have hyphens (-) as described in that book.</p>
+<dt>{property}</dt><dd><p>Additional properties of the Console object representing the targeted HMC, as described in the data model of the ‘Console’ object in the :term:`HMC API` book. Note that the set of properties has been extended over the past HMC versions, so you will get less properties on older HMC versions. The property names have hyphens (-) as described in that book.</p>
 </dd>
 <dt>api_version</dt><dd><p>Additional facts from the ‘Query API Version’ operation.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: dict</div>
 </div>
 <dl class="simple">
-<dt>{property}</dt><dd><p>The properties returned from the ‘Query API Version’ operation, as described in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book. Note that the set of properties has been extended over the past HMC versions, so you will get less properties on older HMC versions. The property names have hyphens (-) as described in that book.</p>
+<dt>{property}</dt><dd><p>The properties returned from the ‘Query API Version’ operation, as described in the :term:`HMC API` book. Note that the set of properties has been extended over the past HMC versions, so you will get less properties on older HMC versions. The property names have hyphens (-) as described in that book.</p>
 </dd>
 </dl>
 </dd>
@@ -343,6 +376,7 @@
             <dd><a href="../../1.4.0/modules/zhmc_console.html">1.4.0</a></dd>
             <dd><a href="../../1.4.1/modules/zhmc_console.html">1.4.1</a></dd>
             <dd><a href="../../1.5.0/modules/zhmc_console.html">1.5.0</a></dd>
+            <dd><a href="../../1.6.0/modules/zhmc_console.html">1.6.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

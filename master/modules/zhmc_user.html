@@ -21,7 +21,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="zhmc_user_list – List HMC users" href="zhmc_user_list.html" />
-    <link rel="prev" title="zhmc_console – Get facts about the HMC" href="zhmc_console.html" /> 
+    <link rel="prev" title="zhmc_console – Manage the HMC" href="zhmc_console.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -36,7 +36,7 @@
             IBM Z HMC collection
           </a>
               <div class="version">
-                1.5.0
+                1.6.0
 
               </div>
 <div role="search">
@@ -55,7 +55,7 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../modules.html">Modules</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="zhmc_session.html">zhmc_session – Manage HMC sessions across tasks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_console.html">zhmc_console – Get facts about the HMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_console.html">zhmc_console – Manage the HMC</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">zhmc_user – Create HMC users</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#requirements">Requirements</a></li>
@@ -185,7 +185,7 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>session_id</dt><dd><p>HMC session ID to be used. This is mutually exclusive with providing <code class="docutils literal notranslate"><span class="pre">userid</span></code> and <code class="docutils literal notranslate"><span class="pre">password</span></code> and can be created as described in <a class="reference internal" href="zhmc_session.html#zhmc-session-module"><span class="std std-ref">zhmc_session – Manage HMC sessions across tasks</span></a>.</p>
+<dt>session_id</dt><dd><p>HMC session ID to be used. This is mutually exclusive with providing <code class="docutils literal notranslate"><span class="pre">userid</span></code> and <code class="docutils literal notranslate"><span class="pre">password</span></code> and can be created as described in :ref:`zhmc_session_module`.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: str</div>
@@ -213,11 +213,9 @@
 </div>
 </dd>
 <dt>state</dt><dd><p>The desired state for the HMC user. All states are fully idempotent within the limits of the properties that can be changed:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">absent</span></code>: Ensures that the user does not exist.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">present</span></code>: Ensures that the user exists and has the specified properties.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">facts</span></code>: Returns the user properties.</p></li>
-</ul>
+<p>* <code class="docutils literal notranslate"><span class="pre">absent</span></code>: Ensures that the user does not exist.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">present</span></code>: Ensures that the user exists and has the specified properties.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">facts</span></code>: Returns the user properties.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: True</div>
 <div class="line"><strong>type</strong>: str</div>
@@ -226,16 +224,14 @@
 </dd>
 <dt>properties</dt><dd><p>Dictionary with desired properties for the user. Used for <code class="docutils literal notranslate"><span class="pre">state=present</span></code>; ignored for <code class="docutils literal notranslate"><span class="pre">state=absent|facts</span></code>. Dictionary key is the property name with underscores instead of hyphens, and dictionary value is the property value in YAML syntax. Integer properties may also be provided as decimal strings.</p>
 <p>The possible input properties in this dictionary are the properties defined as writeable in the data model for User resources (where the property names contain underscores instead of hyphens), with the following exceptions:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: Cannot be specified because the name has already been specified in the <code class="docutils literal notranslate"><span class="pre">name</span></code> module parameter.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: Cannot be changed once the user exists.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">user_roles</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">user_role_names</span></code> which replaces the current user roles, if specified.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">user_pattern_uri</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">user_pattern_name</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">password_rule_uri</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">password_rule_name</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ldap_server_definition_uri</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">ldap_server_definition_name</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">default_group_uri</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">default_group_name</span></code>.</p></li>
-</ul>
-<p>Properties omitted in this dictionary will remain unchanged when the user already exists, and will get the default value defined in the data model for users in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> when the user is being created.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">name</span></code>: Cannot be specified because the name has already been specified in the <code class="docutils literal notranslate"><span class="pre">name</span></code> module parameter.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">type</span></code>: Cannot be changed once the user exists.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">user_roles</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">user_role_names</span></code> which replaces the current user roles, if specified.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">user_pattern_uri</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">user_pattern_name</span></code>.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">password_rule_uri</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">password_rule_name</span></code>.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">ldap_server_definition_uri</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">ldap_server_definition_name</span></code>.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">default_group_uri</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">default_group_name</span></code>.</p>
+<p>Properties omitted in this dictionary will remain unchanged when the user already exists, and will get the default value defined in the data model for users in the :term:`HMC API` when the user is being created.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: dict</div>
@@ -370,7 +366,7 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>{property}</dt><dd><p>Additional properties of the user, as described in the data model of the ‘User’ object in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<dt>{property}</dt><dd><p>Additional properties of the user, as described in the data model of the ‘User’ object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.</p>
 </dd>
 <dt>user-role-names</dt><dd><p>Name of the user roles referenced by property <code class="docutils literal notranslate"><span class="pre">user-roles</span></code>.</p>
 <div class="line-block">
@@ -383,7 +379,7 @@
 <div class="line"><strong>type</strong>: dict</div>
 </div>
 <dl class="simple">
-<dt>{property}</dt><dd><p>Properties of the user role, as described in the data model of the ‘User Pattern’ object in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<dt>{property}</dt><dd><p>Properties of the user role, as described in the data model of the ‘User Pattern’ object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.</p>
 </dd>
 </dl>
 </dd>
@@ -398,7 +394,7 @@
 <div class="line"><strong>type</strong>: dict</div>
 </div>
 <dl class="simple">
-<dt>{property}</dt><dd><p>Properties of the user pattern, as described in the data model of the ‘User Pattern’ object in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<dt>{property}</dt><dd><p>Properties of the user pattern, as described in the data model of the ‘User Pattern’ object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.</p>
 </dd>
 </dl>
 </dd>
@@ -413,7 +409,7 @@
 <div class="line"><strong>type</strong>: dict</div>
 </div>
 <dl class="simple">
-<dt>{property}</dt><dd><p>Properties of the password rule, as described in the data model of the ‘Password Rule’ object in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<dt>{property}</dt><dd><p>Properties of the password rule, as described in the data model of the ‘Password Rule’ object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.</p>
 </dd>
 </dl>
 </dd>
@@ -428,7 +424,7 @@
 <div class="line"><strong>type</strong>: dict</div>
 </div>
 <dl class="simple">
-<dt>{property}</dt><dd><p>Properties of the LDAP server definition, as described in the data model of the ‘LDAP Server Definition’ object in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<dt>{property}</dt><dd><p>Properties of the LDAP server definition, as described in the data model of the ‘LDAP Server Definition’ object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.</p>
 </dd>
 </dl>
 </dd>
@@ -442,7 +438,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="zhmc_console.html" class="btn btn-neutral float-left" title="zhmc_console – Get facts about the HMC" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="zhmc_console.html" class="btn btn-neutral float-left" title="zhmc_console – Manage the HMC" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="zhmc_user_list.html" class="btn btn-neutral float-right" title="zhmc_user_list – List HMC users" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
@@ -490,6 +486,7 @@
             <dd><a href="../../1.4.0/modules/zhmc_user.html">1.4.0</a></dd>
             <dd><a href="../../1.4.1/modules/zhmc_user.html">1.4.1</a></dd>
             <dd><a href="../../1.5.0/modules/zhmc_user.html">1.5.0</a></dd>
+            <dd><a href="../../1.6.0/modules/zhmc_user.html">1.6.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

@@ -36,7 +36,7 @@
             IBM Z HMC collection
           </a>
               <div class="version">
-                1.5.0
+                1.6.0
 
               </div>
 <div role="search">
@@ -55,7 +55,7 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../modules.html">Modules</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="zhmc_session.html">zhmc_session – Manage HMC sessions across tasks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_console.html">zhmc_console – Get facts about the HMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_console.html">zhmc_console – Manage the HMC</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_user.html">zhmc_user – Create HMC users</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_user_list.html">zhmc_user_list – List HMC users</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_password_rule.html">zhmc_password_rule – Create HMC password rules</a></li>
@@ -184,7 +184,7 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>session_id</dt><dd><p>HMC session ID to be used. This is mutually exclusive with providing <code class="docutils literal notranslate"><span class="pre">userid</span></code> and <code class="docutils literal notranslate"><span class="pre">password</span></code> and can be created as described in <a class="reference internal" href="zhmc_session.html#zhmc-session-module"><span class="std std-ref">zhmc_session – Manage HMC sessions across tasks</span></a>.</p>
+<dt>session_id</dt><dd><p>HMC session ID to be used. This is mutually exclusive with providing <code class="docutils literal notranslate"><span class="pre">userid</span></code> and <code class="docutils literal notranslate"><span class="pre">password</span></code> and can be created as described in :ref:`zhmc_session_module`.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: str</div>
@@ -212,11 +212,9 @@
 </div>
 </dd>
 <dt>state</dt><dd><p>The desired state for the HMC user role. All states are fully idempotent within the limits of the properties that can be changed:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">absent</span></code>: Ensures that the user role does not exist.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">present</span></code>: Ensures that the user role exists and has the specified properties.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">facts</span></code>: Returns the user role properties.</p></li>
-</ul>
+<p>* <code class="docutils literal notranslate"><span class="pre">absent</span></code>: Ensures that the user role does not exist.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">present</span></code>: Ensures that the user role exists and has the specified properties.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">facts</span></code>: Returns the user role properties.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: True</div>
 <div class="line"><strong>type</strong>: str</div>
@@ -225,13 +223,11 @@
 </dd>
 <dt>properties</dt><dd><p>Dictionary with desired properties for the user role. Used for <code class="docutils literal notranslate"><span class="pre">state=present</span></code>; ignored for <code class="docutils literal notranslate"><span class="pre">state=absent|facts</span></code>. Dictionary key is the property name with underscores instead of hyphens, and dictionary value is the property value in YAML syntax. Integer properties may also be provided as decimal strings.</p>
 <p>The possible input properties in this dictionary are the properties defined as writeable in the data model for user role resources (where the property names contain underscores instead of hyphens), with the following exceptions:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: Cannot be specified because the name has already been specified in the <code class="docutils literal notranslate"><span class="pre">name</span></code> module parameter.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">associated_system_defined_user_role_uri</span></code>: Cannot be specified because this information is specified using the artificial property <code class="docutils literal notranslate"><span class="pre">associated_system_defined_user_role_name</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">associated_system_defined_user_role_name</span></code>: The name of the associated system-defined user role.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">permissions</span></code>: Can be specified as if it were writeable.</p></li>
-</ul>
-<p>Properties omitted in this dictionary will remain unchanged when the user role already exists, and will get the default value defined in the data model for user roles in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> when the user role is being created.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">name</span></code>: Cannot be specified because the name has already been specified in the <code class="docutils literal notranslate"><span class="pre">name</span></code> module parameter.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">associated_system_defined_user_role_uri</span></code>: Cannot be specified because this information is specified using the artificial property <code class="docutils literal notranslate"><span class="pre">associated_system_defined_user_role_name</span></code>.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">associated_system_defined_user_role_name</span></code>: The name of the associated system-defined user role.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">permissions</span></code>: Can be specified as if it were writeable.</p>
+<p>Properties omitted in this dictionary will remain unchanged when the user role already exists, and will get the default value defined in the data model for user roles in the :term:`HMC API` when the user role is being created.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: dict</div>
@@ -251,7 +247,7 @@
 </div>
 </dd>
 <dt>permissions</dt><dd><p>The permissions for this user role.</p>
-<p>This property is represented different from its description in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a>: The property is a list of permissions. Each list item is a dictionary that specifies a single permission item, any required scoping items, and optional option items.</p>
+<p>This property is represented different from its description in the :term:`HMC API`: The property is a list of permissions. Each list item is a dictionary that specifies a single permission item, any required scoping items, and optional option items.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: list</div>
@@ -459,7 +455,7 @@
 </div>
 </dd>
 <dt>permissions</dt><dd><p>The permissions for this user role.</p>
-<p>This property is represented different from its description in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a>: The property is a list of permissions. Each list item is a dictionary that specifies a single permission item, any needed scoping items, and any applicable option items.</p>
+<p>This property is represented different from its description in the :term:`HMC API`: The property is a list of permissions. Each list item is a dictionary that specifies a single permission item, any needed scoping items, and any applicable option items.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: list</div>
 <div class="line"><strong>elements</strong>: dict</div>
@@ -528,7 +524,7 @@
 </dd>
 </dl>
 </dd>
-<dt>{property}</dt><dd><p>Additional properties of the user role, as described in the data model of the ‘User Role’ object in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<dt>{property}</dt><dd><p>Additional properties of the user role, as described in the data model of the ‘User Role’ object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.</p>
 </dd>
 </dl>
 </dd>
@@ -588,6 +584,7 @@
             <dd><a href="../../1.4.0/modules/zhmc_user_role.html">1.4.0</a></dd>
             <dd><a href="../../1.4.1/modules/zhmc_user_role.html">1.4.1</a></dd>
             <dd><a href="../../1.5.0/modules/zhmc_user_role.html">1.5.0</a></dd>
+            <dd><a href="../../1.6.0/modules/zhmc_user_role.html">1.6.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

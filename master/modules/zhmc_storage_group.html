@@ -36,7 +36,7 @@
             IBM Z HMC collection
           </a>
               <div class="version">
-                1.5.0
+                1.6.0
 
               </div>
 <div role="search">
@@ -55,7 +55,7 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../modules.html">Modules</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="zhmc_session.html">zhmc_session – Manage HMC sessions across tasks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_console.html">zhmc_console – Get facts about the HMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_console.html">zhmc_console – Manage the HMC</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_user.html">zhmc_user – Create HMC users</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_user_list.html">zhmc_user_list – List HMC users</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_password_rule.html">zhmc_password_rule – Create HMC password rules</a></li>
@@ -188,7 +188,7 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>session_id</dt><dd><p>HMC session ID to be used. This is mutually exclusive with providing <code class="docutils literal notranslate"><span class="pre">userid</span></code> and <code class="docutils literal notranslate"><span class="pre">password</span></code> and can be created as described in <a class="reference internal" href="zhmc_session.html#zhmc-session-module"><span class="std std-ref">zhmc_session – Manage HMC sessions across tasks</span></a>.</p>
+<dt>session_id</dt><dd><p>HMC session ID to be used. This is mutually exclusive with providing <code class="docutils literal notranslate"><span class="pre">userid</span></code> and <code class="docutils literal notranslate"><span class="pre">password</span></code> and can be created as described in :ref:`zhmc_session_module`.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: str</div>
@@ -222,12 +222,10 @@
 </div>
 </dd>
 <dt>state</dt><dd><p>The desired state for the storage group. All states are fully idempotent within the limits of the properties that can be changed, unless otherwise stated:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">absent</span></code>: Ensures that the storage group does not exist. If the storage group is currently attached to any partitions, the module will fail (this is an idempotency limitation).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">present</span></code>: Ensures that the storage group exists and is associated with the specified CPC, and has the specified properties. The attachment state of an already existing storage group to a partition is not changed.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">discover</span></code>: Triggers FCP discovery. If <code class="docutils literal notranslate"><span class="pre">discover_wait</span></code> is specified, waits for its completion. Requires that the storage group exists and is of type FCP.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">facts</span></code>: Returns the storage group properties.</p></li>
-</ul>
+<p>* <code class="docutils literal notranslate"><span class="pre">absent</span></code>: Ensures that the storage group does not exist. If the storage group is currently attached to any partitions, the module will fail (this is an idempotency limitation).</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">present</span></code>: Ensures that the storage group exists and is associated with the specified CPC, and has the specified properties. The attachment state of an already existing storage group to a partition is not changed.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">discover</span></code>: Triggers LUN discovery. If <code class="docutils literal notranslate"><span class="pre">discover_wait</span></code> is specified, waits for completion of the discovery. Requires that the storage group exists and is of type ‘fcp’.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">facts</span></code>: Returns the storage group properties.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: True</div>
 <div class="line"><strong>type</strong>: str</div>
@@ -236,11 +234,9 @@
 </dd>
 <dt>properties</dt><dd><p>Dictionary with desired properties for the storage group. Used for <code class="docutils literal notranslate"><span class="pre">state=present</span></code>; ignored for <code class="docutils literal notranslate"><span class="pre">state=absent|facts</span></code>. Dictionary key is the property name with underscores instead of hyphens, and dictionary value is the property value in YAML syntax. Integer properties may also be provided as decimal strings.</p>
 <p>The possible input properties in this dictionary are the properties defined as writeable in the data model for Storage Group resources (where the property names contain underscores instead of hyphens), with the following exceptions:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: Cannot be specified because the name has already been specified in the <code class="docutils literal notranslate"><span class="pre">name</span></code> module parameter.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: Cannot be changed once the storage group exists.</p></li>
-</ul>
-<p>Properties omitted in this dictionary will remain unchanged when the storage group already exists, and will get the default value defined in the data model for storage groups in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> when the storage group is being created.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">name</span></code>: Cannot be specified because the name has already been specified in the <code class="docutils literal notranslate"><span class="pre">name</span></code> module parameter.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">type</span></code>: Cannot be changed once the storage group exists.</p>
+<p>Properties omitted in this dictionary will remain unchanged when the storage group already exists, and will get the default value defined in the data model for storage groups in the :term:`HMC API` when the storage group is being created.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: dict</div>
@@ -312,7 +308,7 @@
 <span class="w">      </span><span class="nt">max-partitions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sg1</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Trigger FCP discovery</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Trigger LUN discovery</span>
 <span class="w">  </span><span class="nt">zhmc_storage_group</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
 <span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
@@ -570,7 +566,7 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>{property}</dt><dd><p>Additional properties of the storage group, as described in the data model of the ‘Storage Group’ object in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<dt>{property}</dt><dd><p>Additional properties of the storage group, as described in the data model of the ‘Storage Group’ object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.</p>
 </dd>
 <dt>attached-partition-names</dt><dd><p>Names of the partitions to which the storage group is attached.</p>
 <div class="line-block">
@@ -595,7 +591,7 @@
 <div class="line"><strong>type</strong>: int</div>
 </div>
 </dd>
-<dt>{property}</dt><dd><p>Additional properties of the storage port, as described in the data model of the ‘Storage Port’ element object of the ‘Adapter’ object in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<dt>{property}</dt><dd><p>Additional properties of the storage port, as described in the data model of the ‘Storage Port’ element object of the ‘Adapter’ object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.</p>
 </dd>
 <dt>parent-adapter</dt><dd><p>Storage adapter of the candidate port.</p>
 <div class="line-block">
@@ -607,7 +603,7 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>{property}</dt><dd><p>Additional properties of the storage adapter, as described in the data model of the ‘Adapter’ object in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<dt>{property}</dt><dd><p>Additional properties of the storage adapter, as described in the data model of the ‘Adapter’ object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.</p>
 </dd>
 </dl>
 </dd>
@@ -625,7 +621,7 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>{property}</dt><dd><p>Additional properties of the storage volume, as described in the data model of the ‘Storage Volume’ element object of the ‘Storage Group’ object in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<dt>{property}</dt><dd><p>Additional properties of the storage volume, as described in the data model of the ‘Storage Volume’ element object of the ‘Storage Group’ object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.</p>
 </dd>
 </dl>
 </dd>
@@ -636,7 +632,7 @@
 <div class="line"><strong>elements</strong>: dict</div>
 </div>
 <dl class="simple">
-<dt>{property}</dt><dd><p>Properties of the virtual storage resource, as described in the data model of the ‘Virtual Storage Resource’ element object of the ‘Storage Group’ object in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<dt>{property}</dt><dd><p>Properties of the virtual storage resource, as described in the data model of the ‘Virtual Storage Resource’ element object of the ‘Storage Group’ object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.</p>
 </dd>
 </dl>
 </dd>
@@ -647,7 +643,7 @@
 <div class="line"><strong>elements</strong>: dict</div>
 </div>
 <dl class="simple">
-<dt>{property}</dt><dd><p>Properties of the partition, as described in the data model of the ‘Partition’ object in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<dt>{property}</dt><dd><p>Properties of the partition, as described in the data model of the ‘Partition’ object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.</p>
 </dd>
 </dl>
 </dd>
@@ -709,6 +705,7 @@
             <dd><a href="../../1.4.0/modules/zhmc_storage_group.html">1.4.0</a></dd>
             <dd><a href="../../1.4.1/modules/zhmc_storage_group.html">1.4.1</a></dd>
             <dd><a href="../../1.5.0/modules/zhmc_storage_group.html">1.5.0</a></dd>
+            <dd><a href="../../1.6.0/modules/zhmc_storage_group.html">1.6.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

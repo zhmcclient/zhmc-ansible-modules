@@ -36,7 +36,7 @@
             IBM Z HMC collection
           </a>
               <div class="version">
-                1.5.0
+                1.6.0
 
               </div>
 <div role="search">
@@ -55,7 +55,7 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../modules.html">Modules</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="zhmc_session.html">zhmc_session – Manage HMC sessions across tasks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_console.html">zhmc_console – Get facts about the HMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_console.html">zhmc_console – Manage the HMC</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_user.html">zhmc_user – Create HMC users</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_user_list.html">zhmc_user_list – List HMC users</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_password_rule.html">zhmc_password_rule – Create HMC password rules</a></li>
@@ -189,7 +189,7 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>session_id</dt><dd><p>HMC session ID to be used. This is mutually exclusive with providing <code class="docutils literal notranslate"><span class="pre">userid</span></code> and <code class="docutils literal notranslate"><span class="pre">password</span></code> and can be created as described in <a class="reference internal" href="zhmc_session.html#zhmc-session-module"><span class="std std-ref">zhmc_session – Manage HMC sessions across tasks</span></a>.</p>
+<dt>session_id</dt><dd><p>HMC session ID to be used. This is mutually exclusive with providing <code class="docutils literal notranslate"><span class="pre">userid</span></code> and <code class="docutils literal notranslate"><span class="pre">password</span></code> and can be created as described in :ref:`zhmc_session_module`.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: str</div>
@@ -223,12 +223,10 @@
 </div>
 </dd>
 <dt>state</dt><dd><p>The desired state for the partition. All states are fully idempotent within the limits of the properties that can be changed:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">absent</span></code>: Ensures that the partition does not exist in the specified CPC.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">stopped</span></code>: Ensures that the partition exists in the specified CPC, has the specified properties, and is in one of the inactive statuses (‘stopped’, ‘terminated’, ‘paused’, ‘reservation-error’).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">active</span></code>: Ensures that the partition exists in the specified CPC, has the specified properties, and is in one of the active statuses (‘active’, ‘degraded’).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">facts</span></code>: Returns the partition properties and the properties of its child resources (HBAs, NICs, and virtual functions).</p></li>
-</ul>
+<p>* <code class="docutils literal notranslate"><span class="pre">absent</span></code>: Ensures that the partition does not exist in the specified CPC.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">stopped</span></code>: Ensures that the partition exists in the specified CPC, has the specified properties, and is in one of the inactive statuses (‘stopped’, ‘terminated’, ‘paused’, ‘reservation-error’).</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">active</span></code>: Ensures that the partition exists in the specified CPC, has the specified properties, and is in one of the active statuses (‘active’, ‘degraded’).</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">facts</span></code>: Returns the partition properties and the properties of its child resources (HBAs, NICs, and virtual functions).</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: True</div>
 <div class="line"><strong>type</strong>: str</div>
@@ -237,16 +235,14 @@
 </dd>
 <dt>properties</dt><dd><p>Dictionary with input properties for the partition, for <code class="docutils literal notranslate"><span class="pre">state=stopped</span></code> and <code class="docutils literal notranslate"><span class="pre">state=active</span></code>. Key is the property name with underscores instead of hyphens, and value is the property value in YAML syntax. Integer properties may also be provided as decimal strings. Will be ignored for <code class="docutils literal notranslate"><span class="pre">state=absent</span></code>.</p>
 <p>The possible input properties in this dictionary are the properties defined as writeable in the data model for Partition resources (where the property names contain underscores instead of hyphens), with the following exceptions:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: Cannot be specified because the name has already been specified in the <code class="docutils literal notranslate"><span class="pre">name</span></code> module parameter.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: Cannot be changed once the partition exists, because updating it is not supported.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">boot_storage_device</span></code>: Cannot be specified because this information is specified using the artificial property <code class="docutils literal notranslate"><span class="pre">boot_storage_hba_name</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">boot_network_device</span></code>: Cannot be specified because this information is specified using the artificial property <code class="docutils literal notranslate"><span class="pre">boot_network_nic_name</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">boot_storage_hba_name</span></code>: The name of the HBA whose URI is used to construct <code class="docutils literal notranslate"><span class="pre">boot_storage_device</span></code>. Specifying it requires that the partition exists.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">boot_network_nic_name</span></code>: The name of the NIC whose URI is used to construct <code class="docutils literal notranslate"><span class="pre">boot_network_device</span></code>. Specifying it requires that the partition exists.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">crypto_configuration</span></code>: The crypto configuration for the partition, in the format of the <code class="docutils literal notranslate"><span class="pre">crypto-configuration</span></code> property of the partition (see <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> for details), with the exception that adapters are specified with their names in field <code class="docutils literal notranslate"><span class="pre">crypto_adapter_names</span></code> instead of their URIs in field <code class="docutils literal notranslate"><span class="pre">crypto_adapter_uris</span></code>. If the <code class="docutils literal notranslate"><span class="pre">crypto_adapter_names</span></code> field is null, all crypto adapters of the CPC will be used.</p></li>
-</ul>
-<p>Properties omitted in this dictionary will remain unchanged when the partition already exists, and will get the default value defined in the data model for partitions in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> when the partition is being created.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">name</span></code>: Cannot be specified because the name has already been specified in the <code class="docutils literal notranslate"><span class="pre">name</span></code> module parameter.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">type</span></code>: Cannot be changed once the partition exists, because updating it is not supported.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">boot_storage_device</span></code>: Cannot be specified because this information is specified using the artificial property <code class="docutils literal notranslate"><span class="pre">boot_storage_hba_name</span></code>.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">boot_network_device</span></code>: Cannot be specified because this information is specified using the artificial property <code class="docutils literal notranslate"><span class="pre">boot_network_nic_name</span></code>.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">boot_storage_hba_name</span></code>: The name of the HBA whose URI is used to construct <code class="docutils literal notranslate"><span class="pre">boot_storage_device</span></code>. Specifying it requires that the partition exists.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">boot_network_nic_name</span></code>: The name of the NIC whose URI is used to construct <code class="docutils literal notranslate"><span class="pre">boot_network_device</span></code>. Specifying it requires that the partition exists.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">crypto_configuration</span></code>: The crypto configuration for the partition, in the format of the <code class="docutils literal notranslate"><span class="pre">crypto-configuration</span></code> property of the partition (see :term:`HMC API` for details), with the exception that adapters are specified with their names in field <code class="docutils literal notranslate"><span class="pre">crypto_adapter_names</span></code> instead of their URIs in field <code class="docutils literal notranslate"><span class="pre">crypto_adapter_uris</span></code>. If the <code class="docutils literal notranslate"><span class="pre">crypto_adapter_names</span></code> field is null, all crypto adapters of the CPC will be used.</p>
+<p>Properties omitted in this dictionary will remain unchanged when the partition already exists, and will get the default value defined in the data model for partitions in the :term:`HMC API` when the partition is being created.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: dict</div>
@@ -532,7 +528,7 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>{property}</dt><dd><p>Additional properties of the partition, as described in the data model of the ‘Partition’ object in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<dt>{property}</dt><dd><p>Additional properties of the partition, as described in the data model of the ‘Partition’ object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.</p>
 </dd>
 <dt>hbas</dt><dd><p>HBAs of the partition. If the CPC does not have the storage-management feature enabled (ie. before z15), the list is empty.</p>
 <div class="line-block">
@@ -545,7 +541,7 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>{property}</dt><dd><p>Additional properties of the HBA, as described in the data model of the ‘HBA’ element object of the ‘Partition’ object in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<dt>{property}</dt><dd><p>Additional properties of the HBA, as described in the data model of the ‘HBA’ element object of the ‘Partition’ object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.</p>
 </dd>
 </dl>
 </dd>
@@ -560,7 +556,7 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>{property}</dt><dd><p>Additional properties of the NIC, as described in the data model of the ‘NIC’ element object of the ‘Partition’ object in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<dt>{property}</dt><dd><p>Additional properties of the NIC, as described in the data model of the ‘NIC’ element object of the ‘Partition’ object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.</p>
 </dd>
 </dl>
 </dd>
@@ -575,7 +571,7 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>{property}</dt><dd><p>Additional properties of the virtual function, as described in the data model of the ‘Virtual Function’ element object of the ‘Partition’ object in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<dt>{property}</dt><dd><p>Additional properties of the virtual function, as described in the data model of the ‘Virtual Function’ element object of the ‘Partition’ object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.</p>
 </dd>
 </dl>
 </dd>
@@ -613,7 +609,7 @@
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.5.0
+        v: 1.6.0
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -637,6 +633,7 @@
             <dd><a href="../1.4.0/modules/zhmc_partition.html">1.4.0</a></dd>
             <dd><a href="../1.4.1/modules/zhmc_partition.html">1.4.1</a></dd>
             <dd><a href="../1.5.0/modules/zhmc_partition.html">1.5.0</a></dd>
+            <dd><a href="../1.6.0/modules/zhmc_partition.html">1.6.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

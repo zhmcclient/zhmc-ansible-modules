@@ -36,7 +36,7 @@
             IBM Z HMC collection
           </a>
               <div class="version">
-                1.5.0
+                1.6.0
 
               </div>
 <div role="search">
@@ -55,7 +55,7 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../modules.html">Modules</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="zhmc_session.html">zhmc_session – Manage HMC sessions across tasks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_console.html">zhmc_console – Get facts about the HMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_console.html">zhmc_console – Manage the HMC</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_user.html">zhmc_user – Create HMC users</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_user_list.html">zhmc_user_list – List HMC users</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_password_rule.html">zhmc_password_rule – Create HMC password rules</a></li>
@@ -190,7 +190,7 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>session_id</dt><dd><p>HMC session ID to be used. This is mutually exclusive with providing <code class="docutils literal notranslate"><span class="pre">userid</span></code> and <code class="docutils literal notranslate"><span class="pre">password</span></code> and can be created as described in <a class="reference internal" href="zhmc_session.html#zhmc-session-module"><span class="std std-ref">zhmc_session – Manage HMC sessions across tasks</span></a>.</p>
+<dt>session_id</dt><dd><p>HMC session ID to be used. This is mutually exclusive with providing <code class="docutils literal notranslate"><span class="pre">userid</span></code> and <code class="docutils literal notranslate"><span class="pre">password</span></code> and can be created as described in :ref:`zhmc_session_module`.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: str</div>
@@ -224,15 +224,13 @@
 </div>
 </dd>
 <dt>state</dt><dd><p>The desired state for the LPAR:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">inactive</span></code>: Ensures that the LPAR is inactive (i.e. status ‘not-activated’), unless the LPAR is currently operating and the <code class="docutils literal notranslate"><span class="pre">force</span></code> parameter was not set to True. Properties cannot be updated. The LPAR is deactivated if needed.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">reset_clear</span></code>: Initialize the LPAR for loading by performing a ‘Reset Clear’ operation (clearing its pending interruptions, resetting its channel subsystem, resetting its processors, clearing its memory), unless the LPAR is currently loaded (i.e. status is ‘operating’ or ‘acceptable’) and the <code class="docutils literal notranslate"><span class="pre">force</span></code> parameter was not set to True. Properties cannot be updated. After successful execution of the ‘Reset Normal’ operation, the LPAR will be inactive (i.e. status ‘not-activated’).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">reset_normal</span></code>: Initialize the LPAR for loading by performing a ‘Reset Normal’ operation (clearing its pending interruptions, resetting its channel subsystem, resetting its processors), unless the LPAR is currently loaded (i.e. status is ‘operating’ or ‘acceptable’) and the <code class="docutils literal notranslate"><span class="pre">force</span></code> parameter was not set to True. Properties cannot be updated. After successful execution of the ‘Reset Normal’ operation, the LPAR  will be inactive (i.e. status ‘not-activated’).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">active</span></code>: Ensures that the LPAR is at least active (i.e. status is ‘not-operating’, ‘operating’ or ‘acceptable’), and then ensures that the LPAR properties have the specified values. The LPAR is activated if needed. If auto-load is set in the activation profile, the LPAR will also be loaded.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">loaded</span></code>: Ensures that the LPAR is loaded (i.e. status is ‘operating’ or ‘acceptable’), and then ensures that the LPAR properties have the specified values. The LPAR is first activated if needed, and then loaded if needed.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">set</span></code>: Ensures that the LPAR properties have the specified values. Requires that the LPAR is at least active (i.e. status is ‘not-operating’, ‘operating’ or ‘acceptable’) but does not activate the LPAR if that is not the case.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">facts</span></code>: Returns the current LPAR properties.</p></li>
-</ul>
+<p>* <code class="docutils literal notranslate"><span class="pre">inactive</span></code>: Ensures that the LPAR is inactive (i.e. status ‘not-activated’), unless the LPAR is currently operating and the <code class="docutils literal notranslate"><span class="pre">force</span></code> parameter was not set to True. Properties cannot be updated. The LPAR is deactivated if needed.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">reset_clear</span></code>: Initialize the LPAR for loading by performing a ‘Reset Clear’ operation (clearing its pending interruptions, resetting its channel subsystem, resetting its processors, clearing its memory), unless the LPAR is currently loaded (i.e. status is ‘operating’ or ‘acceptable’) and the <code class="docutils literal notranslate"><span class="pre">force</span></code> parameter was not set to True. Properties cannot be updated. After successful execution of the ‘Reset Normal’ operation, the LPAR will be inactive (i.e. status ‘not-activated’).</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">reset_normal</span></code>: Initialize the LPAR for loading by performing a ‘Reset Normal’ operation (clearing its pending interruptions, resetting its channel subsystem, resetting its processors), unless the LPAR is currently loaded (i.e. status is ‘operating’ or ‘acceptable’) and the <code class="docutils literal notranslate"><span class="pre">force</span></code> parameter was not set to True. Properties cannot be updated. After successful execution of the ‘Reset Normal’ operation, the LPAR  will be inactive (i.e. status ‘not-activated’).</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">active</span></code>: Ensures that the LPAR is at least active (i.e. status is ‘not-operating’, ‘operating’ or ‘acceptable’), and then ensures that the LPAR properties have the specified values. The LPAR is activated if needed. If auto-load is set in the activation profile, the LPAR will also be loaded.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">loaded</span></code>: Ensures that the LPAR is loaded (i.e. status is ‘operating’ or ‘acceptable’), and then ensures that the LPAR properties have the specified values. The LPAR is first activated if needed, and then loaded if needed.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">set</span></code>: Ensures that the LPAR properties have the specified values. Requires that the LPAR is at least active (i.e. status is ‘not-operating’, ‘operating’ or ‘acceptable’) but does not activate the LPAR if that is not the case.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">facts</span></code>: Returns the current LPAR properties.</p>
 <p>In all cases, the LPAR must exist.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: True</div>
@@ -380,7 +378,7 @@
 </div>
 </dd>
 <dt>lpar</dt><dd><p>The resource properties of the LPAR, after any specified updates have been applied.</p>
-<p>Note that the returned properties may show different values than the ones that were specified as input for the update. For example, memory properties may be rounded up, hexadecimal strings may be shown with a different representation format, and other properties may change as a result of updating some properties. For details, see the data model of the ‘Logical Partition’ object in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book.</p>
+<p>Note that the returned properties may show different values than the ones that were specified as input for the update. For example, memory properties may be rounded up, hexadecimal strings may be shown with a different representation format, and other properties may change as a result of updating some properties. For details, see the data model of the ‘Logical Partition’ object in the :term:`HMC API` book.</p>
 <div class="line-block">
 <div class="line"><strong>returned</strong>: success</div>
 <div class="line"><strong>type</strong>: dict</div>
@@ -549,7 +547,7 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>{property}</dt><dd><p>Additional properties of the LPAR, as described in the data model of the ‘Logical Partition’ object in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<dt>{property}</dt><dd><p>Additional properties of the LPAR, as described in the data model of the ‘Logical Partition’ object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.</p>
 </dd>
 </dl>
 </dd>
@@ -609,6 +607,7 @@
             <dd><a href="../../1.4.0/modules/zhmc_lpar.html">1.4.0</a></dd>
             <dd><a href="../../1.4.1/modules/zhmc_lpar.html">1.4.1</a></dd>
             <dd><a href="../../1.5.0/modules/zhmc_lpar.html">1.5.0</a></dd>
+            <dd><a href="../../1.6.0/modules/zhmc_lpar.html">1.6.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

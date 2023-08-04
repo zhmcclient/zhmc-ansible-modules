@@ -36,7 +36,7 @@
             IBM Z HMC collection
           </a>
               <div class="version">
-                1.5.0
+                1.6.0
 
               </div>
 <div role="search">
@@ -55,7 +55,7 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../modules.html">Modules</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="zhmc_session.html">zhmc_session – Manage HMC sessions across tasks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_console.html">zhmc_console – Get facts about the HMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_console.html">zhmc_console – Manage the HMC</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_user.html">zhmc_user – Create HMC users</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_user_list.html">zhmc_user_list – List HMC users</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_password_rule.html">zhmc_password_rule – Create HMC password rules</a></li>
@@ -151,6 +151,7 @@
 <li><p>Activate/Start a CPC and update its properties.</p></li>
 <li><p>Gather facts about a CPC, and for DPM operational mode, including its adapters, partitions and storage groups.</p></li>
 <li><p>Update the properties of a CPC.</p></li>
+<li><p>Upgrade the SE firmware of a CPC.</p></li>
 </ul>
 </section>
 <section id="requirements">
@@ -187,7 +188,7 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>session_id</dt><dd><p>HMC session ID to be used. This is mutually exclusive with providing <code class="docutils literal notranslate"><span class="pre">userid</span></code> and <code class="docutils literal notranslate"><span class="pre">password</span></code> and can be created as described in <a class="reference internal" href="zhmc_session.html#zhmc-session-module"><span class="std std-ref">zhmc_session – Manage HMC sessions across tasks</span></a>.</p>
+<dt>session_id</dt><dd><p>HMC session ID to be used. This is mutually exclusive with providing <code class="docutils literal notranslate"><span class="pre">userid</span></code> and <code class="docutils literal notranslate"><span class="pre">password</span></code> and can be created as described in :ref:`zhmc_session_module`.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: str</div>
@@ -215,16 +216,15 @@
 </div>
 </dd>
 <dt>state</dt><dd><p>The desired state for the CPC. All states are fully idempotent within the limits of the properties that can be changed:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">inactive</span></code>: Ensures the CPC is inactive.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">active</span></code>: Ensures the CPC is active and then ensures that the CPC has the specified properties. The operational mode of the CPC cannot be changed.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">set</span></code>: Ensures that the CPC has the specified properties.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">facts</span></code>: Returns the CPC properties including its child resources.</p></li>
-</ul>
+<p>* <code class="docutils literal notranslate"><span class="pre">inactive</span></code>: Ensures the CPC is inactive.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">active</span></code>: Ensures the CPC is active and then ensures that the CPC has the specified properties. The operational mode of the CPC cannot be changed.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">set</span></code>: Ensures that the CPC has the specified properties.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">facts</span></code>: Returns the CPC properties including its child resources.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">upgrade</span></code>: Upgrades the firmware of the HMC and returns the new facts after the upgrade.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: True</div>
 <div class="line"><strong>type</strong>: str</div>
-<div class="line"><strong>choices</strong>: inactive, active, set, facts</div>
+<div class="line"><strong>choices</strong>: inactive, active, set, facts, upgrade</div>
 </div>
 </dd>
 <dt>activation_profile_name</dt><dd><p>The name of the reset activation profile to be used when activating the CPC in the classic operational mode, for <code class="docutils literal notranslate"><span class="pre">state=active</span></code>. This parameter is ignored when the CPC is in classic mode and was already active, and when the CPC is in DPM mode.</p>
@@ -241,6 +241,20 @@
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: dict</div>
+</div>
+</dd>
+<dt>bundle_level</dt><dd><p>Name of the bundle to be installed on the SE of the CPC (e.g. ‘S71’)</p>
+<p>Required for <code class="docutils literal notranslate"><span class="pre">state=upgrade</span></code></p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>accept_firmware</dt><dd><p>Accept the previous bundle level before installing the new level.</p>
+<p>Optional for <code class="docutils literal notranslate"><span class="pre">state=upgrade</span></code>, default: True</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: bool</div>
 </div>
 </dd>
 <dt>log_file</dt><dd><p>File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.</p>
@@ -289,6 +303,15 @@
 <span class="w">      </span><span class="nt">acceptable_status</span><span class="p">:</span>
 <span class="w">       </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">active</span>
 <span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;This</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">CPC</span><span class="nv"> </span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cpc1</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Upgrade the SE firmware and return CPC facts</span>
+<span class="w">  </span><span class="nt">zhmc_cpc</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">upgrade</span>
+<span class="w">    </span><span class="nt">bundle_level</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;S71&quot;</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cpc1</span>
 </pre></div>
 </div>
@@ -376,9 +399,9 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>{property}</dt><dd><p>Additional properties of the CPC, as described in the data model of the ‘CPC’ object in the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<dt>{property}</dt><dd><p>Additional properties of the CPC, as described in the data model of the ‘CPC’ object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.</p>
 </dd>
-<dt>adapters</dt><dd><p>The adapters of the CPC, with a subset of their properties. For details, see the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book.</p>
+<dt>adapters</dt><dd><p>The adapters of the CPC, with a subset of their properties. For details, see the :term:`HMC API` book.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: list</div>
 <div class="line"><strong>elements</strong>: dict</div>
@@ -416,7 +439,7 @@
 </dd>
 </dl>
 </dd>
-<dt>partitions</dt><dd><p>The defined partitions of the CPC, with a subset of their properties. For details, see the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book.</p>
+<dt>partitions</dt><dd><p>The defined partitions of the CPC, with a subset of their properties. For details, see the :term:`HMC API` book.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: list</div>
 <div class="line"><strong>elements</strong>: dict</div>
@@ -444,7 +467,7 @@
 </dd>
 </dl>
 </dd>
-<dt>storage-groups</dt><dd><p>The storage groups associated with the CPC, with a subset of their properties. For details, see the <a class="reference internal" href="../bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book.</p>
+<dt>storage-groups</dt><dd><p>The storage groups associated with the CPC, with a subset of their properties. For details, see the :term:`HMC API` book.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: list</div>
 <div class="line"><strong>elements</strong>: dict</div>
@@ -511,7 +534,7 @@
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.5.0
+        v: 1.6.0
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -535,6 +558,7 @@
             <dd><a href="../1.4.0/modules/zhmc_cpc.html">1.4.0</a></dd>
             <dd><a href="../1.4.1/modules/zhmc_cpc.html">1.4.1</a></dd>
             <dd><a href="../1.5.0/modules/zhmc_cpc.html">1.5.0</a></dd>
+            <dd><a href="../1.6.0/modules/zhmc_cpc.html">1.6.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
