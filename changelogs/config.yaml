@@ -1,0 +1,40 @@
+# Config file for antsibull-changelog
+
+# The title property defaults to "Ansible" if not set. The tool adds the following:
+# - A code name (not clear where that is set)
+# - The collection version, with 'changelog_filename_version_depth' parts.
+# - The string " Release Notes".
+title: "ibm.ibm_zhmc"
+changelog_filename_version_depth: 0
+
+changelog_filename_template: ../CHANGELOG.rst
+changes_file: changelog.yaml
+changes_format: combined
+ignore_other_fragment_extensions: true
+keep_fragments: false
+mention_ancestor: false
+new_plugins_after_name: removed_features
+notesdir: fragments
+prelude_section_name: release_summary
+prelude_section_title: Release Summary
+sanitize_changelog: true
+trivial_section_name: trivial
+use_fqcn: true
+
+sections:
+- - major_changes
+  - Major Changes
+- - minor_changes
+  - Minor Changes
+- - breaking_changes
+  - Breaking Changes
+- - deprecated_features
+  - Deprecated Features
+- - removed_features
+  - Removed Features
+- - security_fixes
+  - Security Fixes
+- - bugfixes
+  - Bugfixes
+- - known_issues
+  - Known Issues
