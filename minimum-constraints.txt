@@ -268,7 +268,7 @@ bleach==3.3.0; python_version == '2.7'
 bleach==3.3.0; python_version >= '3.5'
 # certifi 2022.12.07 fixes safety issue 52365
 certifi==2019.9.11; python_version <= '3.5'
-certifi==2022.12.07; python_version >= '3.6'
+certifi==2023.07.22; python_version >= '3.6'
 chardet==3.0.3
 clint==0.5.1
 configparser==4.0.2
