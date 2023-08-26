@@ -157,14 +157,14 @@ safety_develop_policy_file := .safety-policy-develop.yml
 
 # Packages whose dependencies are checked using pip-missing-reqs
 ifeq ($(python_m_n_version),3.9)
-  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor pylint safety bandit ansible_test
+  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor pylint safety bandit ansible_test antsibull_changelog
 else ifeq ($(python_m_n_version),3.10)
-  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor pylint safety bandit ansible_test ansiblelint
+  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor pylint safety bandit ansible_test antsibull_changelog ansiblelint
 else ifeq ($(python_m_n_version),3.11)
-  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor pylint safety bandit ansible_test ansiblelint
+  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor pylint safety bandit ansible_test antsibull_changelog ansiblelint
 else
 # sphinx is excluded for Python >=3.12 because pip-missing-reqs 2.5 reports missing sphinx-versions package (rightfully)
-  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 ansible_doc_extractor pylint safety bandit ansible_test ansiblelint
+  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 ansible_doc_extractor pylint safety bandit ansible_test antsibull_changelog ansiblelint
 endif
 
 # Directories for documentation
@@ -242,6 +242,7 @@ help:
 	@echo "  safety     - Run safety for install and all"
 	@echo "  bandit     - Run bandit checker"
 	@echo "  check_reqs - Perform missing dependency checks"
+	@echo "  check_frag - Run antsibull-changelog lint on change log fragments"
 	@echo "  docs       - Build the documentation for all enabled (docs/source/conf.py) versions in: $(doc_build_dir) using remote repo"
 	@echo "  docslocal  - Build the documentation from local repo contents in: $(doc_build_local_dir)"
 	@echo "  linkcheck  - Check links in documentation"
@@ -278,7 +279,7 @@ help:
 	@echo "  ansible-playbook playbooks/...."
 
 .PHONY: all
-all: install develop dist safety bandit check pylint sanity ansible_lint check_reqs docs docslocal linkcheck test end2end_mocked
+all: install develop dist safety bandit check check_frag pylint sanity ansible_lint check_reqs docs docslocal linkcheck test end2end_mocked
 	@echo "Makefile: $@ done."
 
 .PHONY: platform
@@ -418,6 +419,12 @@ else
 endif
 	@echo "Makefile: $@ done."
 
+.PHONY: check_frag
+check_frag: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
+	@echo "Makefile: Checking changelog fragments"
+	antsibull-changelog lint -vv
+	@echo "Makefile: $@ done."
+
 .PHONY:	end2end
 end2end: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 	bash -c "PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. TESTEND2END_LOAD=true pytest -v $(pytest_cov_opts) $(pytest_opts) $(test_dir)/end2end"
@@ -550,11 +557,13 @@ $(module_rst_dir)/%.rst: $(module_py_dir)/%.py $(module_rst_dir) $(doc_templates
 
 # .nojekyll file disables GitHub pages jekyll pre-processing
 $(doc_build_dir)/index.html: Makefile $(doc_rst_files) $(doc_source_dir)/conf.py
+	antsibull-changelog generate --reload-plugins -vv
 	sphinx-versioning -l $(doc_source_dir)/conf.py build $(doc_source_dir) $(doc_build_dir) -- $(sphinx_opts)
 	touch $(doc_build_dir)/.nojekyll
 
 .PHONY: docslocal
 docslocal: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(doc_rst_files) $(doc_source_dir)/conf.py
 	rm -rf $(doc_build_local_dir)
+	antsibull-changelog generate --reload-plugins -vv
 	sphinx-build -b html $(sphinx_opts) $(doc_source_dir) $(doc_build_local_dir)
 #	open $(doc_build_local_dir)/index.html

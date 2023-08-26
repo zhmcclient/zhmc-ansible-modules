@@ -39,6 +39,14 @@ yamllint==1.26.3; python_version >= '3.10'
 pathspec==0.9.0
 # rstcheck is used only in ansible <= 2.10 / ansible <= 4
 
+# antsibull-changelog
+antsibull-changelog==0.32.0
+semantic-version==2.10.0
+rstcheck==6.2.5
+rstcheck-core==1.2.2
+antsibull-fileutils==1.4.0
+antsibull-docutils==1.3.0
+
 # ansible-lint
 ansible-lint==6.14.0; python_version >= '3.10'
 black==24.3.0; python_version >= '3.10'
@@ -116,6 +124,7 @@ pip-check-reqs==2.5.3; python_version >= '3.12'
 
 # Indirect dependencies for development that are not in requirements-develop.txt and not in minimum-constraints-install.txt
 
+aiofiles==24.1.0
 alabaster==0.7.9
 annotated-types==0.4.0
 anyio==4.10.0
@@ -164,6 +173,8 @@ stevedore==5.2.0
 tenacity==8.5.0
 toml==0.10.0
 tqdm==4.67.1
+types-docutils==0.18.3
+typing-inspection==0.4.1
 wcwidth==0.1.7
 webencodings==0.5.1
 zipp==3.19.1
