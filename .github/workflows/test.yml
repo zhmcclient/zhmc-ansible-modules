@@ -257,6 +257,11 @@ jobs:
         PACKAGE_LEVEL: ${{ matrix.package_level }}
       run: |
         make check_reqs
+    - name: Run check_frag
+      env:
+        PACKAGE_LEVEL: ${{ matrix.package_level }}
+      run: |
+        make check_frag
     - name: Run check
       env:
         PACKAGE_LEVEL: ${{ matrix.package_level }}

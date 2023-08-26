@@ -125,9 +125,9 @@ ifeq ($(python_m_n_version),3.5)
   check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8
 else
 ifeq ($(python_m_n_version),3.6)
-  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor
+  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor antsibull_changelog
 else
-  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor ansible_test pylint
+  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor antsibull_changelog ansible_test pylint
 endif
 endif
 endif
@@ -195,6 +195,7 @@ help:
 	@echo '  sanity     - Run Ansible sanity tests (includes pep8, pylint, validate-modules)'
 	@echo '  safety     - Run safety on sources'
 	@echo '  check_reqs - Perform missing dependency checks'
+	@echo '  check_frag - Run antsibull-changelog lint on change log fragments'
 	@echo '  docs       - Build the documentation for all enabled (docs/source/conf.py) versions in: $(doc_build_dir) using remote repo'
 	@echo '  docslocal  - Build the documentation from local repo contents in: $(doc_build_local_dir)'
 	@echo '  linkcheck  - Check links in documentation'
@@ -226,7 +227,7 @@ help:
 	@echo '  ansible-playbook playbooks/....'
 
 .PHONY: all
-all: install develop dist safety check sanity check_reqs docs docslocal linkcheck test end2end_mocked
+all: install develop dist safety check sanity check_reqs check_frag docs docslocal linkcheck test end2end_mocked
 	@echo '$@ done.'
 
 .PHONY: install
@@ -306,6 +307,16 @@ else
 	@rc=0; for pkg in $(check_reqs_packages); do dir=$$($(PYTHON_CMD) -c "import $${pkg} as m,os; dm=os.path.dirname(m.__file__); d=dm if not dm.endswith('site-packages') else m.__file__; print(d)"); cmd="pip-missing-reqs $${dir} --requirements-file=minimum-constraints.txt"; echo $${cmd}; $${cmd}; rc=$$(expr $${rc} + $${?}); done; exit $${rc}
 	@echo "Makefile: Done checking missing dependencies of some development packages"
 endif
+endif
+	@echo "Makefile: $@ done."
+
+.PHONY: check_frag
+check_frag: _check_version develop_$(pymn).done
+ifneq ($(doc_build),true)
+	@echo "Makefile: Warning: Skipping the checking of changelog fragments on Python $(python_m_n_version)"
+else
+	@echo "Makefile: Checking changelog fragments"
+	antsibull-changelog lint -vv
 endif
 	@echo "Makefile: $@ done."
 
@@ -425,6 +436,7 @@ $(doc_build_dir)/index.html: $(doc_rst_files) $(doc_source_dir)/conf.py
 ifneq ($(doc_build),true)
 	@echo "makefile: Warning: Skipping docs build on Python $(python_m_n_version)"
 else
+	antsibull-changelog generate --reload-plugins -vv
 	sphinx-versioning -l $(doc_source_dir)/conf.py build $(doc_source_dir) $(doc_build_dir)
 	touch $(doc_build_dir)/.nojekyll
 endif
@@ -432,5 +444,6 @@ endif
 .PHONY: docslocal
 docslocal: _check_version develop_$(pymn).done $(doc_rst_files) $(doc_source_dir)/conf.py
 	rm -rf $(doc_build_local_dir)
+	antsibull-changelog generate --reload-plugins -vv
 	sphinx-build -b html $(sphinx_opts) $(doc_source_dir) $(doc_build_local_dir)
 #	open $(doc_build_local_dir)/index.html

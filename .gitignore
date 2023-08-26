@@ -23,6 +23,7 @@ tmp_*
 /tests/output/
 /AUTHORS
 /ChangeLog
+/changelogs/.plugin-cache.yaml
 /build/
 /gh-pages/
 /docs_local

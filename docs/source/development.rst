@@ -317,23 +317,50 @@ local clone of the zhmc-ansible-modules Git repo.
 
         version: M.N.U
 
-4.  Edit the change log:
+4.  Update the change log:
 
-    .. code-block:: sh
+    * Add the new version and the changelog fragments to the changelog file:
 
-        vi docs/source/release_notes.rst
+      .. code-block:: sh
 
-    and make the following changes in the section of the version that is being
-    released:
+          antsibull-changelog release -vv
 
-    * Finalize the version.
-    * Change the release date to today's date.
-    * Make sure that all changes are described.
-    * Make sure the items shown in the change log are relevant for and
-      understandable by users.
-    * In the "Known issues" list item, remove the link to the issue tracker and
-      add text for any known issues you want users to know about.
-    * Remove all empty list items.
+      This removes the changelog fragment files.
+
+    * Edit the changelog file:
+
+      .. code-block:: sh
+
+          vi changelogs/changelog.yaml
+
+      and add a ``release_summary`` item in the section for the version that is being
+      released, as follows:
+
+      .. code-block:: yaml
+
+          M.N.U:
+            changes:
+              minor_changes:
+              - . . .
+              - . . .
+              release_summary: Released on 2023-08-26.
+                Functional enhancements and bug fixes.
+                This version contains all fixes up to version M.N-1.x.
+            fragments:
+            - . . .
+            - . . .
+            release_date: '2023-08-26'
+
+      The date for "Released on" should be the same date as in ``release_date``.
+
+      The sentence "This version contains ..." is only needed if there have been
+      releases of fix versions on the prior minor version.
+
+    * Generate/update CHANGELOG.rst:
+
+      .. code-block:: sh
+
+          make docslocal
 
 5.  Commit your changes and push the topic branch to the remote repo:
 
