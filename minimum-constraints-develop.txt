@@ -39,6 +39,12 @@ yamllint==1.26.3; python_version >= '3.10'
 pathspec==0.9.0
 rstcheck==3.3.1; python_version <= '3.9'  # ansible <= 2.10 (on minimum package levels)
 
+# antsibull-changelog
+antsibull-changelog==0.17.0
+semantic-version==2.10.0
+# antsibull-changelog also uses rstcheck
+rstcheck-core==1.0.3
+
 # ansible-lint
 ansible-lint==6.14.0; python_version >= '3.10'
 black==22.8.0; python_version >= '3.10'
