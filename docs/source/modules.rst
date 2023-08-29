@@ -46,6 +46,8 @@ Modules targeting the HMC (i.e. not a specific CPC):
    modules/zhmc_password_rule_list
    modules/zhmc_user_role
    modules/zhmc_user_role_list
+   modules/zhmc_ldap_server_definition
+   modules/zhmc_ldap_server_definition_list
 
 Modules supported with CPCs in any operational mode:
 
