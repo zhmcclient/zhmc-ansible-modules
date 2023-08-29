@@ -47,6 +47,15 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Test: Clarified in make help that coverage data is added by each test.
   Enabled end2end test for test coverage.
 
+* Increased minimum version of zhmcclient to 1.10.1 to pick up fixes for
+  mock support for LDAP Server Definitions.
+
+* zhmc_ldap_server_definition - Added support for retrieving, creating and
+  deleting LDAP Server Definitions (issue 364).
+
+* zhmc_ldap_server_definition_list - Added support for listing LDAP Server
+  Definitions (issue 364).
+
 **Cleanup:**
 
 * Test: Changed identification of adapters in end2end test module
