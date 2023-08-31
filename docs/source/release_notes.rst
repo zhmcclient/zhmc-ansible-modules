@@ -54,6 +54,11 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   adapter names to accomodate a system on the test floor that currently has
   that bug.
 
+* Test: Always provided optional module input parameters in end2end tests. This
+  allows modules to rely on optional parameters being provided with their
+  default values by the calling Ansible environent. Changed the modules to rely
+  on that.
+
 **Known issues:**
 
 * See `list of open issues`_.

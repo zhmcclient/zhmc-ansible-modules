@@ -316,21 +316,22 @@ def test_zhmc_user_role_absent_present(
     try:
 
         # Prepare module input parameters (must be all required + optional)
+        if input_props2 is not None:
+            if not input_props2['associated_system_defined_user_role_name']:
+                input_props2['associated_system_defined_user_role_name'] = \
+                    sys_urole.name
+            _properties = input_props2
+        else:
+            _properties = None
         params = {
             'hmc_host': hmc_host,
             'hmc_auth': hmc_auth,
             'name': urole_name,
             'state': input_state,
+            'properties': _properties,
             'log_file': LOG_FILE,
             '_faked_session': faked_session,
         }
-        if input_props2 is not None:
-            if not input_props2['associated_system_defined_user_role_name']:
-                input_props2['associated_system_defined_user_role_name'] = \
-                    sys_urole.name
-            params['properties'] = input_props2
-        else:
-            params['properties'] = {}
 
         mod_obj = mock_ansible_module(ansible_mod_cls, params, check_mode)
 

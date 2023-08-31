@@ -137,6 +137,7 @@ options:
       - "This parameter is not allowed for the other C(state) values."
     type: str
     required: false
+    default: null
   properties:
     description:
       - "Only for C(state=set) and C(state=active): New values for the
@@ -159,12 +160,14 @@ options:
       - "Required for C(state=upgrade)"
     type: str
     required: false
+    default: null
   accept_firmware:
     description:
       - "Accept the previous bundle level before installing the new level."
       - "Optional for C(state=upgrade), default: True"
     type: bool
     required: false
+    default: true
   log_file:
     description:
       - "File path of a log file to which the logic flow of this module as well
@@ -176,8 +179,8 @@ options:
   _faked_session:
     description:
       - "An internal parameter used for testing the module."
-    required: false
     type: raw
+    required: false
     default: null
 """
 
@@ -468,7 +471,7 @@ def process_properties(cpc, params):
       ParameterError: An issue with the module parameters.
     """
 
-    input_props = params.get('properties', None)
+    input_props = params['properties']
     if input_props is None:
         input_props = {}
 
@@ -537,7 +540,7 @@ def ensure_active(module):
     """
 
     cpc_name = module.params['name']
-    activation_profile_name = module.params.get('activation_profile_name', None)
+    activation_profile_name = module.params['activation_profile_name']
 
     changed = False
 
@@ -730,7 +733,7 @@ def upgrade(module):
 
     module.fail_on_missing_params('bundle_level')
     bundle_level = module.params['bundle_level']
-    accept_firmware = module.params.get('accept_firmware', True)
+    accept_firmware = module.params['accept_firmware']
     cpc_name = module.params['name']
 
     session, logoff = open_session(module.params)
@@ -809,8 +812,8 @@ def main():
                    choices=['inactive', 'active', 'set', 'facts', 'upgrade']),
         activation_profile_name=dict(required=False, type='str', default=None),
         properties=dict(required=False, type='dict', default=None),
-        bundle_level=dict(required=False, type='str'),
-        accept_firmware=dict(required=False, type='bool'),
+        bundle_level=dict(required=False, type='str', default=None),
+        accept_firmware=dict(required=False, type='bool', default=True),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),
     )

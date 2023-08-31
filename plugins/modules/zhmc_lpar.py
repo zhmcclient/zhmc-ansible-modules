@@ -176,8 +176,8 @@ options:
         'acceptable'):"
       - "If True, such operations are performed regardless of the current LPAR
         status."
-      - "If False, such operations are performed only if the LPAR is not
-        currently loaded, and are rejected otherwise."
+      - "If False (default), such operations are performed only if the LPAR is
+        not currently loaded, and are rejected otherwise."
     type: bool
     required: false
     default: false
@@ -219,8 +219,8 @@ options:
   _faked_session:
     description:
       - "An internal parameter used for testing the module."
-    required: false
     type: raw
+    required: false
     default: null
 """
 
@@ -521,10 +521,6 @@ LOGGER_NAME = 'zhmc_lpar'
 
 LOGGER = logging.getLogger(LOGGER_NAME)
 
-# Defaults for module input parameters
-DEFAULT_ACTIVATION_PROFILE_NAME = None
-DEFAULT_FORCE = False
-
 # Dictionary of properties of LPAR resources, in this format:
 #   name: (allowed, create, update, update_while_active, eq_func, type_cast)
 # where:
@@ -709,7 +705,7 @@ def process_properties(cpc, lpar, params):
     lpar_name = to_unicode(params['name'])
 
     # handle the other properties
-    input_props = params.get('properties', None)
+    input_props = params['properties']
     if input_props is None:
         input_props = {}
     for prop_name in input_props:
@@ -772,7 +768,7 @@ def ensure_inactive(params, check_mode):
     cpc_name = params['cpc_name']
     lpar_name = params['name']
 
-    properties = params.get('properties', None)
+    properties = params['properties']
     if properties:
         raise ParameterError(
             "Properties must not be specified for state=inactive with "
@@ -815,7 +811,7 @@ def perform_reset_clear(params, check_mode):
     force = params['force']
     os_ipl_token = params['os_ipl_token']
 
-    properties = params.get('properties', None)
+    properties = params['properties']
     if properties:
         raise ParameterError(
             "Properties must not be specified for state=reset_clear with "
@@ -861,7 +857,7 @@ def perform_reset_normal(params, check_mode):
     force = params['force']
     os_ipl_token = params['os_ipl_token']
 
-    properties = params.get('properties', None)
+    properties = params['properties']
     if properties:
         raise ParameterError(
             "Properties must not be specified for state=reset_normal with "
@@ -906,9 +902,8 @@ def ensure_active(params, check_mode):
 
     cpc_name = params['cpc_name']
     lpar_name = params['name']
-    activation_profile_name = params.get(
-        'activation_profile_name', DEFAULT_ACTIVATION_PROFILE_NAME)
-    force = params.get('force', DEFAULT_FORCE)
+    activation_profile_name = params['activation_profile_name']
+    force = params['force']
 
     changed = False
     result = {}
@@ -964,9 +959,8 @@ def ensure_loaded(params, check_mode):
 
     cpc_name = params['cpc_name']
     lpar_name = params['name']
-    activation_profile_name = params.get(
-        'activation_profile_name', DEFAULT_ACTIVATION_PROFILE_NAME)
-    force = params.get('force', DEFAULT_FORCE)
+    activation_profile_name = params['activation_profile_name']
+    force = params['force']
 
     changed = False
     result = {}
@@ -1080,7 +1074,7 @@ def facts(params, check_mode):
     cpc_name = params['cpc_name']
     lpar_name = params['name']
 
-    properties = params.get('properties', None)
+    properties = params['properties']
     if properties:
         raise ParameterError(
             "Properties must not be specified for state=facts with "
@@ -1146,9 +1140,8 @@ def main():
             choices=['inactive', 'reset_clear', 'reset_normal', 'active',
                      'loaded', 'set', 'facts']),
         activation_profile_name=dict(
-            required=False, type='str',
-            default=DEFAULT_ACTIVATION_PROFILE_NAME),
-        force=dict(required=False, type='bool', default=DEFAULT_FORCE),
+            required=False, type='str', default=None),
+        force=dict(required=False, type='bool', default=False),
         os_ipl_token=dict(required=False, type='str', default=None),
         # Note: os_ipl_token is not a secret
         properties=dict(required=False, type='dict', default=None),

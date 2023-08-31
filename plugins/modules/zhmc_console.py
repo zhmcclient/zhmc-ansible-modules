@@ -113,6 +113,7 @@ options:
       - "Required for C(state=upgrade)"
     type: str
     required: false
+    default: null
   backup_location_type:
     description:
       - "Type of backup location for the HMC backup that is performed:"
@@ -124,12 +125,14 @@ options:
     type: str
     choices: ['ftp', 'usb']
     required: false
+    default: 'usb'
   accept_firmware:
     description:
       - "Accept the previous bundle level before installing the new level."
       - "Optional for C(state=upgrade), default: True"
     type: bool
     required: false
+    default: true
   log_file:
     description:
       - "File path of a log file to which the logic flow of this module as well
@@ -141,8 +144,8 @@ options:
   _faked_session:
     description:
       - "An internal parameter used for testing the module."
-    required: false
     type: raw
+    required: false
     default: null
 """
 
@@ -289,8 +292,8 @@ def upgrade(module):
 
     module.fail_on_missing_params('bundle_level')
     bundle_level = module.params['bundle_level']
-    accept_firmware = module.params.get('accept_firmware', True)
-    backup_location_type = module.params.get('backup_location_type', 'usb')
+    accept_firmware = module.params['accept_firmware']
+    backup_location_type = module.params['backup_location_type']
 
     session, logoff = open_session(module.params)
     try:
@@ -363,10 +366,10 @@ def main():
         hmc_host=dict(required=True, type='str'),
         hmc_auth=hmc_auth_parameter(),
         state=dict(required=True, type='str', choices=['facts', 'upgrade']),
-        bundle_level=dict(required=False, type='str'),
+        bundle_level=dict(required=False, type='str', default=None),
         backup_location_type=dict(
-            required=False, type='str', choices=['ftp', 'usb']),
-        accept_firmware=dict(required=False, type='bool'),
+            required=False, type='str', choices=['ftp', 'usb'], default='usb'),
+        accept_firmware=dict(required=False, type='bool', default=True),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),
     )

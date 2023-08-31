@@ -156,8 +156,8 @@ options:
   _faked_session:
     description:
       - "An internal parameter used for testing the module."
-    required: false
     type: raw
+    required: false
     default: null
 """
 
@@ -271,12 +271,12 @@ def perform_list(params):
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
 
-    cpc_name = params.get('cpc_name', None)
-    name = params.get('name', None)
-    adapter_id = params.get('adapter_id', None)
-    adapter_family = params.get('adapter_family', None)
-    type = params.get('type', None)
-    status = params.get('status', None)
+    cpc_name = params['cpc_name']
+    name = params['name']
+    adapter_id = params['adapter_id']
+    adapter_family = params['adapter_family']
+    type = params['type']
+    status = params['status']
 
     session, logoff = open_session(params)
     try:

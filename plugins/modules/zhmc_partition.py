@@ -184,8 +184,8 @@ options:
          an additional artificial property 'storage-groups' that is the list
          of storage groups attached to the partition, with properties as
          described for the zhmc_storage_group module with expand=true."
-    required: false
     type: bool
+    required: false
     default: false
   expand_crypto_adapters:
     description:
@@ -194,8 +194,8 @@ options:
          'crypto-configuration' property that is the list
          of crypto adapters attached to the partition, with properties as
          described for the zhmc_adapter module."
-    required: false
     type: bool
+    required: false
     default: false
   log_file:
     description:
@@ -208,8 +208,8 @@ options:
   _faked_session:
     description:
       - "An internal parameter used for testing the module."
-    required: false
     type: raw
+    required: false
     default: null
 """
 
@@ -987,7 +987,7 @@ def process_properties(cpc, partition, params):
     # the partition name
 
     # handle the other properties
-    input_props = params.get('properties', None)
+    input_props = params['properties']
     if input_props is None:
         input_props = {}
     for prop_name in input_props:

@@ -114,8 +114,8 @@ options:
   _faked_session:
     description:
       - "An internal parameter used for testing the module."
-    required: false
     type: raw
+    required: false
     default: null
 """
 
@@ -234,7 +234,7 @@ def perform_list(params):
     """
 
     session, logoff = open_session(params)
-    include_unmanaged_cpcs = params.get('include_unmanaged_cpcs', False)
+    include_unmanaged_cpcs = params['include_unmanaged_cpcs']
 
     try:
         client = zhmcclient.Client(session)

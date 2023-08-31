@@ -393,7 +393,7 @@ class TestLpar(object):
                 input_props[prop_name] = value
                 exp_props[hmc_prop_name] = value
 
-        # Prepare module input parameters
+        # Prepare module input parameters (must be all required + optional)
         params = {
             'hmc_host': 'fake-host',
             'hmc_auth': dict(userid='fake-userid',
@@ -402,6 +402,8 @@ class TestLpar(object):
             'name': self.lpar_name,
             'state': desired_state,
             'activation_profile_name': None,  # TODO: Add to tests
+            'force': False,
+            'os_ipl_token': None,
             'properties': input_props,
             'log_file': None,
             '_faked_session': self.session,
@@ -471,7 +473,7 @@ class TestLpar(object):
         # Set some expectations for this test from its parametrization#
         exp_exit_code = 0
 
-        # Prepare module input parameters
+        # Prepare module input parameters (must be all required + optional)
         params = {
             'hmc_host': 'fake-host',
             'hmc_auth': dict(userid='fake-userid',
@@ -480,6 +482,9 @@ class TestLpar(object):
             'name': self.lpar_name,
             'state': desired_state,
             'activation_profile_name': None,  # TODO: Add to tests
+            'force': False,
+            'os_ipl_token': None,
+            'properties': None,
             'log_file': None,
             '_faked_session': self.session,
         }

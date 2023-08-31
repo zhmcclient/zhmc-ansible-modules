@@ -589,11 +589,10 @@ def test_zhmc_partition_state(
                 'state': input_state,
                 'expand_storage_groups': False,
                 'expand_crypto_adapters': False,
+                'properties': input_props2,
                 'log_file': LOG_FILE,
                 '_faked_session': faked_session,
             }
-            if input_props2 is not None:
-                params['properties'] = input_props2
 
             mod_obj = mock_ansible_module(ansible_mod_cls, params, check_mode)
 
