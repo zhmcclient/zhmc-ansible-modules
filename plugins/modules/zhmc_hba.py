@@ -170,8 +170,8 @@ options:
   _faked_session:
     description:
       - "An internal parameter used for testing the module."
-    required: false
     type: raw
+    required: false
     default: null
 """
 
@@ -360,7 +360,7 @@ def process_properties(partition, hba, params):
     adapter_port_art_name = 'adapter_port'
 
     # handle the other properties
-    input_props = params.get('properties', None)
+    input_props = params['properties']
     if input_props is None:
         input_props = {}
     for prop_name in input_props:

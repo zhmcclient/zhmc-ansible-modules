@@ -191,11 +191,10 @@ def test_zhmc_partition_list(
         params = {
             'hmc_host': hmc_host,
             'hmc_auth': hmc_auth,
+            'cpc_name': cpc.name if with_cpc else None,
             'log_file': LOG_FILE,
             '_faked_session': faked_session,
         }
-        if with_cpc:
-            params['cpc_name'] = cpc.name
 
         # Prepare mocks for AnsibleModule object
         mod_obj = mock_ansible_module(ansible_mod_cls, params, check_mode)

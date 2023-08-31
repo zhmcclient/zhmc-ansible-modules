@@ -388,14 +388,17 @@ class TestCpc(object):
         self.cpc = cpcs[0]
         self.cpc.pull_full_properties()
 
-        # Prepare module input parameters
+        # Prepare module input parameters (must be all required + optional)
         params = {
             'hmc_host': 'fake-host',
             'hmc_auth': dict(userid='fake-userid',
                              password='fake-password'),
             'name': self.cpc.name,
             'state': input_state,
+            'activation_profile_name': None,
             'properties': input_properties,
+            'bundle_level': None,
+            'accept_firmware': True,
             'log_file': None,
             '_faked_session': self.session,
         }

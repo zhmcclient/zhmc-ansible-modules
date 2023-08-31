@@ -120,8 +120,8 @@ options:
   _faked_session:
     description:
       - "An internal parameter used for testing the module."
-    required: false
     type: raw
+    required: false
     default: null
 """
 
@@ -226,7 +226,7 @@ def perform_list(params):
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
 
-    cpc_name = params.get('cpc_name', None)
+    cpc_name = params['cpc_name']
 
     session, logoff = open_session(params)
     try:

@@ -142,8 +142,8 @@ options:
   _faked_session:
     description:
       - "An internal parameter used for testing the module."
-    required: false
     type: raw
+    required: false
     default: null
 """
 
@@ -380,7 +380,7 @@ def process_properties(console, pwrule, params):
         pass
 
     # handle the other properties
-    input_props = params.get('properties', None)
+    input_props = params['properties']
     if input_props is None:
         input_props = {}
 

@@ -160,7 +160,7 @@ def test_zhmc_password_rule_facts(
         'hmc_auth': hmc_auth,
         'name': pwrule.name,
         'state': 'facts',
-        'properties': {},
+        'properties': None,
         'log_file': LOG_FILE,
         '_faked_session': faked_session,
     }
@@ -301,13 +301,10 @@ def test_zhmc_password_rule_absent_present(
             'hmc_auth': hmc_auth,
             'name': pwrule_name,
             'state': input_state,
+            'properties': input_props,
             'log_file': LOG_FILE,
             '_faked_session': faked_session,
         }
-        if input_props is not None:
-            params['properties'] = input_props
-        else:
-            params['properties'] = {}
 
         mod_obj = mock_ansible_module(ansible_mod_cls, params, check_mode)
 

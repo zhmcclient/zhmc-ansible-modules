@@ -104,15 +104,15 @@ options:
         type: bool
         required: false
         default: true
+  cpc_name:
+    description:
+      - The name of the CPC with the target adapter.
+    type: str
+    required: true
   name:
     description:
       - The name of the target adapter. In case of renaming an adapter, this is
         the new name of the adapter.
-    type: str
-    required: true
-  cpc_name:
-    description:
-      - The name of the CPC with the target adapter.
     type: str
     required: true
   match:
@@ -483,7 +483,7 @@ def process_properties(adapter, params):
         update_props['name'] = adapter_name
 
     # handle the other input properties
-    input_props = params.get('properties', None)
+    input_props = params['properties']
     if input_props is None:
         input_props = {}
     for prop_name in input_props:
@@ -668,7 +668,7 @@ def ensure_present(params, check_mode):
             # creating one we check the 'type' input property to verify that
             # the intention is really Hipersockets creation, and not just a
             # mispelled name.
-            input_props = params.get('properties', None)
+            input_props = params['properties']
             if input_props is None:
                 adapter_type = None
             else:

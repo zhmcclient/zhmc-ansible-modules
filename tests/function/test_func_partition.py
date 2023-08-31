@@ -881,7 +881,7 @@ class TestPartition(object):
         self.setup_hba()
         self.setup_nic()
 
-        # Prepare module input parameters
+        # Prepare module input parameters (must be all required + optional)
         params = {
             'hmc_host': 'fake-host',
             'hmc_auth': dict(userid='fake-userid',
@@ -889,6 +889,7 @@ class TestPartition(object):
             'cpc_name': self.cpc.name,
             'name': self.partition_name,
             'state': desired_state,
+            'properties': None,
             'expand_storage_groups': expand_storage_groups,
             'expand_crypto_adapters': expand_crypto_adapters,
             'log_file': None,
@@ -1033,7 +1034,7 @@ class TestPartition(object):
         if 'maximum_memory' not in props:
             props['maximum_memory'] = 512
 
-        # Prepare module input parameters
+        # Prepare module input parameters (must be all required + optional)
         params = {
             'hmc_host': 'fake-host',
             'hmc_auth': dict(userid='fake-userid',
@@ -1103,7 +1104,7 @@ class TestPartition(object):
             'boot_world_wide_port_name': '1023456789abcdef',
         }
 
-        # Prepare module input parameters
+        # Prepare module input parameters (must be all required + optional)
         params = {
             'hmc_host': 'fake-host',
             'hmc_auth': dict(userid='fake-userid',
@@ -1182,7 +1183,7 @@ class TestPartition(object):
             'boot_world_wide_port_name': '1023456789abcdef',
         }
 
-        # Prepare module input parameters
+        # Prepare module input parameters (must be all required + optional)
         params = {
             'hmc_host': 'fake-host',
             'hmc_auth': dict(userid='fake-userid',
@@ -1248,7 +1249,7 @@ class TestPartition(object):
             'boot_network_device': self.nic.uri,  # real prop for artif. prop.
         }
 
-        # Prepare module input parameters
+        # Prepare module input parameters (must be all required + optional)
         params = {
             'hmc_host': 'fake-host',
             'hmc_auth': dict(userid='fake-userid',
@@ -1325,7 +1326,7 @@ class TestPartition(object):
             'boot_network_nic_name': 'invalid-nic-name',  # artif. prop.
         }
 
-        # Prepare module input parameters
+        # Prepare module input parameters (must be all required + optional)
         params = {
             'hmc_host': 'fake-host',
             'hmc_auth': dict(userid='fake-userid',
@@ -1403,7 +1404,7 @@ class TestPartition(object):
             exp_properties = {}
         exp_properties['crypto-configuration'] = exp_config
 
-        # Prepare module input parameters
+        # Prepare module input parameters (must be all required + optional)
         params = {
             'hmc_host': 'fake-host',
             'hmc_auth': dict(userid='fake-userid',
@@ -1590,7 +1591,7 @@ class TestPartition(object):
         for adapter_props in adapters:
             self.setup_crypto_adapter(adapter_props)
 
-        # Prepare module input parameters
+        # Prepare module input parameters (must be all required + optional)
         params = {
             'hmc_host': 'fake-host',
             'hmc_auth': dict(userid='fake-userid',

@@ -162,11 +162,10 @@ def test_zhmc_cpc_list(
     params = {
         'hmc_host': hmc_host,
         'hmc_auth': hmc_auth,
+        'include_unmanaged_cpcs': include_unmanaged_cpcs,
         'log_file': LOG_FILE,
         '_faked_session': faked_session,
     }
-    if include_unmanaged_cpcs is not None:
-        params['include_unmanaged_cpcs'] = include_unmanaged_cpcs
 
     # Prepare mocks for AnsibleModule object
     mod_obj = mock_ansible_module(ansible_mod_cls, params, check_mode)

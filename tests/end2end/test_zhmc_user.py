@@ -280,7 +280,7 @@ def test_zhmc_user_facts(
         'hmc_auth': hmc_auth,
         'name': user.name,
         'state': 'facts',
-        'properties': {},
+        'properties': None,
         'expand': expand,
         'log_file': LOG_FILE,
         '_faked_session': faked_session,
@@ -448,14 +448,11 @@ def test_zhmc_user_absent_present(
             'hmc_auth': hmc_auth,
             'name': user_name,
             'state': input_state,
+            'properties': input_props,
             'expand': expand,
             'log_file': LOG_FILE,
             '_faked_session': faked_session,
         }
-        if input_props is not None:
-            params['properties'] = input_props
-        else:
-            params['properties'] = {}
 
         mod_obj = mock_ansible_module(ansible_mod_cls, params, check_mode)
 
