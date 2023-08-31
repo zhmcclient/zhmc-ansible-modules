@@ -41,6 +41,11 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Cleanup:**
 
+* Test: Changed identification of adapters in end2end test module
+  test_zhmc_adapter_list.py to be based on adapter IDs (PCHIDs) instead of
+  adapter names to accomodate a system on the test floor that currently has
+  that bug.
+
 **Known issues:**
 
 * See `list of open issues`_.
