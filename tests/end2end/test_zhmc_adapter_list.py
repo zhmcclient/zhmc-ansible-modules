@@ -66,45 +66,45 @@ def assert_adapter_list(adapter_list, exp_adapter_dict):
       adapter_list(list): Result of zhmc_adapter_list module, a list
         of adapter properties as documented (in HMC notation with dashes).
       exp_adapter_dict(dict): Expected properties for each expected result
-        item. Key: tuple(CPC name, adapter name), Value: All properties
+        item. Key: tuple(CPC name, adapter ID), Value: All properties
         of the adapter plus artificial properties (in HMC notation with
         dashes).
     """
 
     assert isinstance(adapter_list, list)
 
-    exp_cpc_adapter_names = list(exp_adapter_dict)
-    cpc_adapter_names = [(pi.get('cpc_name', None), pi.get('name', None))
+    exp_cpc_adapter_keys = list(exp_adapter_dict)
+    cpc_adapter_keys = [(pi.get('cpc_name', None), pi.get('adapter_id', None))
                          for pi in adapter_list]
-    assert set(cpc_adapter_names) == set(exp_cpc_adapter_names)
+    assert set(cpc_adapter_keys) == set(exp_cpc_adapter_keys)
 
     for adapter_item in adapter_list:
-        adapter_name = adapter_item.get('name', None)
+        adapter_id = adapter_item.get('adapter_id', None)
         cpc_name = adapter_item.get('cpc_name', None)
-        cpc_adapter_name = (cpc_name, adapter_name)
+        cpc_adapter_key = (cpc_name, adapter_id)
 
-        assert adapter_name is not None, \
-            "Returned adapter {pi!r} does not have a 'name' property". \
+        assert adapter_id is not None, \
+            "Returned adapter {pi!r} does not have an 'adapter_id' property". \
             format(pi=adapter_item)
 
-        assert cpc_adapter_name in exp_adapter_dict, \
-            "Result contains unexpected adapter {p!r} in CPC {c!r}". \
-            format(p=adapter_name, c=cpc_name)
+        assert cpc_adapter_key in exp_adapter_dict, \
+            "Result contains unexpected adapter ID {p!r} in CPC {c!r}". \
+            format(p=adapter_id, c=cpc_name)
 
-        exp_adapter_props = exp_adapter_dict[cpc_adapter_name]
+        exp_adapter_props = exp_adapter_dict[cpc_adapter_key]
 
         for pname, pvalue in adapter_item.items():
 
             # Verify normal properties
             pname_hmc = pname.replace('_', '-')
             assert pname_hmc in exp_adapter_props, \
-                "Unexpected property {pn!r} in result adapter {rn!r}". \
-                format(pn=pname_hmc, rn=adapter_name)
+                "Unexpected property {pn!r} in result adapter ID {rn!r}". \
+                format(pn=pname_hmc, rn=adapter_id)
             exp_value = exp_adapter_props[pname_hmc]
             assert pvalue == exp_value, \
-                "Incorrect value for property {pn!r} of result adapter " \
+                "Incorrect value for property {pn!r} of result adapter ID " \
                 "{rn!r}". \
-                format(pn=pname_hmc, rn=adapter_name)
+                format(pn=pname_hmc, rn=adapter_id)
 
 
 @pytest.mark.parametrize(
@@ -181,6 +181,13 @@ def test_zhmc_adapter_list(
                 filter_args_list['cpc-name'] = cpc.name
             exp_adapters = console.list_permitted_adapters(
                 filter_args=filter_args_list)
+
+        # Expected adapters dict.
+        # Key: tuple(cpc name, adapter ID). Adapter ID instead of adapter name
+        #      is used to tolerate the error that systems have duplicate adapter
+        #      names.
+        # Value: Dict of adapter properties using HMC notation (hyphens), plus
+        #      'cpc-name'.
         exp_adapter_dict = {}
         for adapter in exp_adapters:
             if DEBUG:
@@ -191,17 +198,18 @@ def test_zhmc_adapter_list(
             exp_properties = {}
             exp_properties.update(adapter.properties)
             exp_properties['cpc-name'] = cpc.name
-            exp_cpc_adapter_name = (cpc.name, adapter.name)
-            exp_adapter_dict[exp_cpc_adapter_name] = exp_properties
+            exp_cpc_adapter_key = (cpc.name, adapter.properties['adapter-id'])
+            exp_adapter_dict[exp_cpc_adapter_key] = exp_properties
 
         # Check that regexp is supported for the 'name' filter. This is done by
         # ensuring that the expected adapters are as expected.
         if filters == {'name': '.*'} and with_cpc:
             all_adapters = cpc.adapters.list()
-            all_adapter_names = [ad.name for ad in all_adapters].sort()
-            exp_adapter_names = \
+            all_adapter_ids = [ad.properties['adapter-id']
+                               for ad in all_adapters].sort()
+            exp_adapter_ids = \
                 [item[1] for item in exp_adapter_dict.keys()].sort()
-            assert exp_adapter_names == all_adapter_names, \
+            assert exp_adapter_ids == all_adapter_ids, \
                 "cpc.adapters.list() with 'name' filter does not seem to " \
                 "support regular expressions"
 
