@@ -39,6 +39,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Enhancements:**
 
+* Docs: Clarified that firmware upgrades of SE and HMC do nothing and succeed
+  if the firmware was already at the desired bundle level.
+
 **Cleanup:**
 
 **Known issues:**
