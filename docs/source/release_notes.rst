@@ -35,6 +35,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Fixed safety issues from 2023-09-06.
 
+* Test: Circumvented a pip-check-reqs issue by excluding its version 2.5.0.
+
 **Enhancements:**
 
 **Cleanup:**
