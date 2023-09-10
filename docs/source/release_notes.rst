@@ -44,6 +44,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Docs: Clarified that firmware upgrades of SE and HMC do nothing and succeed
   if the firmware was already at the desired bundle level.
 
+* Test: Clarified in make help that coverage data is added by each test.
+  Enabled end2end test for test coverage.
+
 **Cleanup:**
 
 **Known issues:**
