@@ -75,7 +75,7 @@ def assert_adapter_list(adapter_list, exp_adapter_dict):
 
     exp_cpc_adapter_keys = list(exp_adapter_dict)
     cpc_adapter_keys = [(pi.get('cpc_name', None), pi.get('adapter_id', None))
-                         for pi in adapter_list]
+                        for pi in adapter_list]
     assert set(cpc_adapter_keys) == set(exp_cpc_adapter_keys)
 
     for adapter_item in adapter_list:
