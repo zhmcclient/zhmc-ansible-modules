@@ -94,6 +94,15 @@ cpc_name
   | **type**: str
 
 
+full_properties
+  If True, all properties of each LPAR will be returned. Default: False.
+
+  Note: Setting this to True causes a loop of 'Get Logical Partition Properties' operations to be executed.
+
+  | **required**: False
+  | **type**: bool
+
+
 log_file
   File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.
 
@@ -201,5 +210,9 @@ lpars
     The activation mode of the LPAR. For details, see the description of the 'activation-mode' property in the data model of the 'Logical Partition' resource (see :term:\`HMC API\`).
 
     | **type**: str
+
+  {additional_property}
+    Additional properties requested via \ :literal:`full\_properties`\ . The property names will have underscores instead of hyphens.
+
 
 

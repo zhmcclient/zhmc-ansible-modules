@@ -47,14 +47,14 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Enhancements:**
 
+* Increased minimum version of zhmcclient to 1.11.1 to pick up fixes for
+  mock support for LDAP Server Definitions, and new functionality.
+
 * Docs: Clarified that firmware upgrades of SE and HMC do nothing and succeed
   if the firmware was already at the desired bundle level.
 
 * Test: Clarified in make help that coverage data is added by each test.
   Enabled end2end test for test coverage.
-
-* Increased minimum version of zhmcclient to 1.10.1 to pick up fixes for
-  mock support for LDAP Server Definitions.
 
 * zhmc_ldap_server_definition - Added support for retrieving, creating and
   deleting LDAP Server Definitions (issue 364).
@@ -63,6 +63,13 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   Definitions (issue 364).
 
 * zhmc_user_role: Added support for user role permissions based on groups.
+
+* Added support for requesting full properties with a new "full_properties"
+  input parameter for the list modules. (issue #651)
+
+* Added support for requesting specific additional properties with a new
+  "additional_properties" input parameter for the zhmc_adapter_list and
+  zhmc_partition_list modules. (issue #651)
 
 **Cleanup:**
 

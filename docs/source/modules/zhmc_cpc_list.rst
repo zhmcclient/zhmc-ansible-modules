@@ -89,6 +89,15 @@ include_unmanaged_cpcs
   | **type**: bool
 
 
+full_properties
+  If True, all properties of each CPC will be returned. Default: False.
+
+  Note: Setting this to True causes a loop of 'Get CPC Properties' operations to be executed.
+
+  | **required**: False
+  | **type**: bool
+
+
 log_file
   File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.
 
@@ -200,5 +209,9 @@ cpcs
     The SE version of the CPC, as a string 'M.N.U'. Only included for managed CPCs.
 
     | **type**: str
+
+  {additional_property}
+    Additional properties requested via \ :literal:`full\_properties`\ . The property names will have underscores instead of hyphens.
+
 
 

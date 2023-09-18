@@ -40,3 +40,11 @@ plugins/modules/zhmc_storage_volume.py validate-modules:return-syntax-error  # M
 plugins/modules/zhmc_user.py validate-modules:return-syntax-error  # Missing type on generic {property}
 plugins/modules/zhmc_virtual_function.py validate-modules:return-syntax-error  # Missing type on generic {property}
 plugins/modules/zhmc_lpar.py validate-modules:no-log-needed  # os_ipl_token in argument_spec is not a secret
+plugins/modules/zhmc_adapter_list.py validate-modules:return-syntax-error  # Missing type on generic {additional_property}
+plugins/modules/zhmc_cpc_list.py validate-modules:return-syntax-error  # Missing type on generic {additional_property}
+plugins/modules/zhmc_lpar_list.py validate-modules:return-syntax-error  # Missing type on generic {additional_property}
+plugins/modules/zhmc_nic_list.py validate-modules:return-syntax-error  # Missing type on generic {additional_property}
+plugins/modules/zhmc_partition_list.py validate-modules:return-syntax-error  # Missing type on generic {additional_property}
+plugins/modules/zhmc_password_rule_list.py validate-modules:return-syntax-error  # Missing type on generic {additional_property}
+plugins/modules/zhmc_user_list.py validate-modules:return-syntax-error  # Missing type on generic {additional_property}
+plugins/modules/zhmc_user_role_list.py validate-modules:return-syntax-error  # Missing type on generic {additional_property}

@@ -981,7 +981,9 @@ def result_permissions(perm_dict):
         elif isinstance(obj, zhmcclient.Task):
             item = {'task': obj.name}
             item.update(opt_kwargs)
-        # zhmcclient.Group not implemented:
+        elif isinstance(obj, zhmcclient.Group):
+            item = {'group': obj.name}
+            item.update(opt_kwargs)
         elif isinstance(obj, zhmcclient.Partition):
             cpc = obj.manager.parent
             item = {'partition': obj.name, 'cpc': cpc.name}

@@ -59,29 +59,59 @@ def get_module_output(mod_obj):
 
 def assert_pwrule_list(pwrule_list, exp_pwrule_dict):
     """
-    Assert the output of the zhmc_password_rule_list module
+    Assert the output of the zhmc_password_rule_list module.
+
+    Parameters:
+
+      pwrule_list(list): Result of zhmc_password_rule_list module, as a list of
+        dicts of password rule properties as documented (with underscores in
+        their names).
+
+      exp_pwrule_dict(dict): Expected password rules with their properties.
+        Key: password rule name.
+        Value: Dict of expected password rule properties (including any
+        artificial properties, all with underscores in their names).
     """
+
     assert isinstance(pwrule_list, list)
-    assert len(pwrule_list) == len(exp_pwrule_dict)
+
+    exp_pwrule_names = list(exp_pwrule_dict.keys())
+    pwrule_names = [ri.get('name', None) for ri in pwrule_list]
+    assert set(pwrule_names) == set(exp_pwrule_names)
+
     for pwrule_item in pwrule_list:
-        assert 'name' in pwrule_item, \
+        pwrule_name = pwrule_item.get('name', None)
+
+        assert pwrule_name is not None, \
             "Returned password rule {ri!r} does not have a 'name' property". \
             format(ri=pwrule_item)
-        pwrule_name = pwrule_item['name']
+
         assert pwrule_name in exp_pwrule_dict, \
-            "Unexpected returned password rule {rn!r}". \
+            "Result contains unexpected password rule {rn!r}". \
             format(rn=pwrule_name)
-        exp_pwrule = exp_pwrule_dict[pwrule_name]
+
+        exp_pwrule_properties = exp_pwrule_dict[pwrule_name]
         for pname, pvalue in pwrule_item.items():
-            assert pname in exp_pwrule.properties, \
+            assert '-' not in pname, \
+                "Property {pn!r} in password rule {rn!r} is returned with " \
+                "hyphens in the property name". \
+                format(pn=pname, rn=pwrule_name)
+            assert pname in exp_pwrule_properties, \
                 "Unexpected property {pn!r} in password rule {rn!r}". \
                 format(pn=pname, rn=pwrule_name)
-            exp_value = exp_pwrule.properties[pname]
+            exp_value = exp_pwrule_properties[pname]
             assert pvalue == exp_value, \
                 "Incorrect value for property {pn!r} of password rule {rn!r}". \
                 format(pn=pname, rn=pwrule_name)
 
 
+@pytest.mark.parametrize(
+    "property_flags", [
+        pytest.param({}, id="property_flags()"),
+        pytest.param({'full_properties': True},
+                     id="property_flags(full_properties=True)"),
+    ]
+)
 @pytest.mark.parametrize(
     "check_mode", [
         pytest.param(False, id="check_mode=False"),
@@ -91,7 +121,8 @@ def assert_pwrule_list(pwrule_list, exp_pwrule_dict):
 @mock.patch("plugins.modules.zhmc_password_rule_list.AnsibleModule",
             autospec=True)
 def test_zhmc_password_rule_list(
-        ansible_mod_cls, check_mode, hmc_session):  # noqa: F811, E501
+        ansible_mod_cls, check_mode, property_flags,
+        hmc_session):  # noqa: F811, E501
     """
     Test the zhmc_password_rule_list module.
     """
@@ -106,16 +137,23 @@ def test_zhmc_password_rule_list(
 
     faked_session = hmc_session if hd.mock_file else None
 
-    # Determine the actual list of password rules on the HMC.
-    act_pwrules = console.password_rules.list()
-    act_pwrules_dict = {}
-    for r in act_pwrules:
-        act_pwrules_dict[r.name] = r
+    full_properties = property_flags.get('full_properties', False)
+
+    # Determine the expected list of password rules.
+    exp_pwrules = console.password_rules.list(full_properties=full_properties)
+    exp_pwrule_dict = {}
+    for pwrule in exp_pwrules:
+        exp_properties = {}
+        for pname_hmc, pvalue in pwrule.properties.items():
+            pname = pname_hmc.replace('-', '_')
+            exp_properties[pname] = pvalue
+        exp_pwrule_dict[pwrule.name] = exp_properties
 
     # Prepare module input parameters (must be all required + optional)
     params = {
         'hmc_host': hmc_host,
         'hmc_auth': hmc_auth,
+        'full_properties': full_properties,
         'log_file': LOG_FILE,
         '_faked_session': faked_session,
     }
@@ -137,4 +175,4 @@ def test_zhmc_password_rule_list(
     changed, pwrule_list = get_module_output(mod_obj)
     assert changed is False
 
-    assert_pwrule_list(pwrule_list, act_pwrules_dict)
+    assert_pwrule_list(pwrule_list, exp_pwrule_dict)

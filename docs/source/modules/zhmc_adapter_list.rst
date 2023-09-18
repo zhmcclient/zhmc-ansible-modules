@@ -128,6 +128,31 @@ status
   | **type**: str
 
 
+additional_properties
+  List of additional properties to be returned for each adapter, in addition to the default properties (see result description).
+
+  Mutually exclusive with \ :literal:`full\_properties`\ .
+
+  The property names are specified with underscores instead of hyphens.
+
+  Note: The additional properties are passed to the 'List Adapters of a CPC' HMC operation, and do not cause a loop of 'Get Adapter Properties' operations to be executed.
+
+  | **required**: False
+  | **type**: list
+  | **elements**: str
+
+
+full_properties
+  If True, all properties of each adapter will be returned. Default: False.
+
+  Mutually exclusive with \ :literal:`additional\_properties`\ .
+
+  Note: Setting this to True causes a loop of 'Get Adapter Properties' operations to be executed. It is preferrable from a performance perspective to use the \ :literal:`additional\_properties`\  parameter instead.
+
+  | **required**: False
+  | **type**: bool
+
+
 log_file
   File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.
 
@@ -249,5 +274,9 @@ adapters
     The current status of the adapter ('status' property)
 
     | **type**: str
+
+  {additional_property}
+    Additional properties requested via \ :literal:`full\_properties`\  or \ :literal:`additional\_properties`\ . The property names will have underscores instead of hyphens.
+
 
 

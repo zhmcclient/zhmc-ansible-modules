@@ -380,6 +380,7 @@ def test_zhmc_session_sequence(
             'verify': hmc_definition.verify,
         },
         'include_unmanaged_cpcs': False,
+        'full_properties': False,
         'log_file': LOG_FILE,
         '_faked_session': None,
     }
