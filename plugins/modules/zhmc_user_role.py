@@ -710,8 +710,9 @@ def uri_to_object(obj_lists, client, obj_uri):
             obj_lists['task'] = console.tasks.list()
         obj = find_in_obj_list(obj_lists, 'task', 'element-uri', obj_uri)
     elif obj_uri.startswith('/api/groups/'):
-        raise NotImplementedError(
-            "zhmcclient does not support groups")
+        if 'group' not in obj_lists:
+            obj_lists['group'] = console.groups.list()
+        obj = find_in_obj_list(obj_lists, 'group', 'object-uri', obj_uri)
     elif obj_uri.startswith('/api/partitions/'):
         if 'partition' not in obj_lists:
             obj_lists['partition'] = console.list_permitted_partitions()

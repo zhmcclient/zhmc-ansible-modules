@@ -23,6 +23,7 @@ import uuid
 import copy
 import pytest
 import mock
+import re
 import random
 import pdb
 from pprint import pformat
@@ -416,6 +417,8 @@ PARTITION_STATE_TESTCASES = [
     #    partition, or None for no initial partition.
     # - input_props (dict): 'properties' input parameter for zhmc_partition
     #   module.
+    # - exp_msg (string): Expected message pattern in case of module failure,
+    #   or None for module success.
     # - exp_props (dict): HMC-formatted properties for expected
     #   properties of created partition.
     # - exp_changed (bool): Boolean for expected 'changed' flag.
@@ -426,6 +429,7 @@ PARTITION_STATE_TESTCASES = [
         None,
         'stopped',
         STD_LINUX_PARTITION_MODULE_INPUT_PROPS,
+        None,
         STD_LINUX_PARTITION_HMC_INPUT_PROPS,
         True,
         True,
@@ -435,6 +439,7 @@ PARTITION_STATE_TESTCASES = [
         "no properties changed",
         STD_LINUX_PARTITION_HMC_INPUT_PROPS,
         'stopped',
+        None,
         None,
         STD_LINUX_PARTITION_HMC_INPUT_PROPS,
         False,
@@ -448,6 +453,7 @@ PARTITION_STATE_TESTCASES = [
         }),
         'stopped',
         STD_LINUX_PARTITION_MODULE_INPUT_PROPS,
+        None,
         STD_LINUX_PARTITION_HMC_INPUT_PROPS,
         True,
         True,
@@ -457,6 +463,7 @@ PARTITION_STATE_TESTCASES = [
         None,
         'stopped',
         STD_SSC_PARTITION_MODULE_INPUT_PROPS,
+        None,
         STD_SSC_PARTITION_HMC_INPUT_PROPS,
         True,
         True,
@@ -471,6 +478,7 @@ PARTITION_STATE_TESTCASES = [
         STD_SSC_PARTITION_HMC_INPUT_PROPS,
         'stopped',
         None,
+        None,
         STD_SSC_PARTITION_HMC_INPUT_PROPS,
         False,
         True,
@@ -481,6 +489,7 @@ PARTITION_STATE_TESTCASES = [
         STD_SSC_PARTITION_HMC_INPUT_PROPS,
         'active',
         None,
+        None,  # Code ignores "HTTPError: 409,131"
         STD_SSC_PARTITION_HMC_INPUT_PROPS,
         True,
         True,
@@ -493,6 +502,7 @@ PARTITION_STATE_TESTCASES = [
         }),
         'stopped',
         STD_SSC_PARTITION_MODULE_INPUT_PROPS,
+        None,
         STD_SSC_PARTITION_HMC_INPUT_PROPS,
         True,
         True,
@@ -501,6 +511,7 @@ PARTITION_STATE_TESTCASES = [
         "state=absent with existing stopped Linux partition",
         STD_LINUX_PARTITION_HMC_INPUT_PROPS,
         'absent',
+        None,
         None,
         None,
         True,
@@ -512,6 +523,7 @@ PARTITION_STATE_TESTCASES = [
         'absent',
         None,
         None,
+        None,
         True,
         True,
     ),
@@ -519,6 +531,7 @@ PARTITION_STATE_TESTCASES = [
         "state=absent with non-existing partition",
         None,
         'absent',
+        None,
         None,
         None,
         False,
@@ -534,14 +547,14 @@ PARTITION_STATE_TESTCASES = [
     ]
 )
 @pytest.mark.parametrize(
-    "desc, initial_props, input_state, input_props, exp_props, exp_changed, "
-    "run",
+    "desc, initial_props, input_state, input_props, exp_msg, exp_props, "
+    "exp_changed, run",
     PARTITION_STATE_TESTCASES)
 @mock.patch("plugins.modules.zhmc_partition.AnsibleModule", autospec=True)
 def test_zhmc_partition_state(
         ansible_mod_cls,
-        desc, initial_props, input_state, input_props, exp_props, exp_changed,
-        run,
+        desc, initial_props, input_state, input_props, exp_msg, exp_props,
+        exp_changed, run,
         check_mode, dpm_mode_cpcs):  # noqa: F811, E501
     """
     Test the zhmc_partition module with different initial and target state.
@@ -612,33 +625,50 @@ def test_zhmc_partition_state(
                     pytest.skip("HMC user '{u}' is not permitted to create "
                                 "test partition".
                                 format(u=hd.userid))
-                raise AssertionError(
-                    "{w}: Module failed with exit code {e} and message:\n{m}".
-                    format(w=where, e=exit_code, m=msg))
+                if msg.startswith('HTTPError: 409,131'):
+                    # SSC partitions boot the built-in installer. However,
+                    # there seems to be an issue where the SSC partition fails
+                    # to start with "HTTPError: 409,131: The operating system in
+                    # the partition failed to load. The partition is stopped.".
+                    # Reported as STG Defect 1071321, and ignored in this test.
+                    print("Warning: Ignoring module failure: {m}".format(m=msg))
+                    return
+                assert exp_msg is not None, \
+                    "{w}: Module should have succeeded but failed with exit " \
+                    "code {e} and message:\n{m}". \
+                    format(w=where, e=exit_code, m=msg)
+                assert re.search(exp_msg, msg), \
+                    "{w}: Module failed as expected, but the error message " \
+                    "is unexpected:\n{m}".format(w=where, m=msg)
+            else:
+                assert exp_msg is None, \
+                    "{w}: Module should have failed but succeeded. Expected " \
+                    "failure message pattern:\n{em!r} ". \
+                    format(w=where, em=exp_msg)
 
-            changed, output_props = get_module_output(mod_obj)
-            if changed != exp_changed:
-                initial_props_sorted = \
-                    dict(sorted(initial_props.items(), key=lambda x: x[0])) \
-                    if initial_props is not None else None
-                input_props_sorted = \
-                    dict(sorted(input_props2.items(), key=lambda x: x[0])) \
-                    if input_props2 is not None else None
-                output_props_sorted = \
-                    dict(sorted(output_props.items(), key=lambda x: x[0])) \
-                    if output_props is not None else None
-                raise AssertionError(
-                    "Unexpected change flag returned: actual: {0}, "
-                    "expected: {1}\n"
-                    "Initial partition properties:\n{2}\n"
-                    "Module input properties:\n{3}\n"
-                    "Resulting partition properties:\n{4}".
-                    format(changed, exp_changed,
-                           pformat(initial_props_sorted, indent=2),
-                           pformat(input_props_sorted, indent=2),
-                           pformat(output_props_sorted, indent=2)))
-            if input_state != 'absent':
-                assert_partition_props(output_props, exp_props, where)
+                changed, output_props = get_module_output(mod_obj)
+                if changed != exp_changed:
+                    initial_props_sorted = \
+                        dict(sorted(initial_props.items(), key=lambda x: x[0]))\
+                        if initial_props is not None else None
+                    input_props_sorted = \
+                        dict(sorted(input_props2.items(), key=lambda x: x[0])) \
+                        if input_props2 is not None else None
+                    output_props_sorted = \
+                        dict(sorted(output_props.items(), key=lambda x: x[0])) \
+                        if output_props is not None else None
+                    raise AssertionError(
+                        "Unexpected change flag returned: actual: {0}, "
+                        "expected: {1}\n"
+                        "Initial partition properties:\n{2}\n"
+                        "Module input properties:\n{3}\n"
+                        "Resulting partition properties:\n{4}".
+                        format(changed, exp_changed,
+                               pformat(initial_props_sorted, indent=2),
+                               pformat(input_props_sorted, indent=2),
+                               pformat(output_props_sorted, indent=2)))
+                if input_state != 'absent':
+                    assert_partition_props(output_props, exp_props, where)
 
         finally:
             teardown_partition(hd, cpc, partition_name)

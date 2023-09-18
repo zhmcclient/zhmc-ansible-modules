@@ -39,6 +39,12 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Test: Circumvented a pip-check-reqs issue by excluding its version 2.5.0.
 
+* Test: Fixed end2end tests in modules test_zhmc_partition.py,
+  test_zhmc_session.py, and test_zhmc_user.py.
+
+* Docs: Removed incorrect 'userid' property from return value documentation of
+  zhmc_session module.
+
 **Enhancements:**
 
 * Docs: Clarified that firmware upgrades of SE and HMC do nothing and succeed
@@ -55,6 +61,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * zhmc_ldap_server_definition_list - Added support for listing LDAP Server
   Definitions (issue 364).
+
+* zhmc_user_role: Added support for user role permissions based on groups.
 
 **Cleanup:**
 

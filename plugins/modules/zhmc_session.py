@@ -196,7 +196,6 @@ hmc_auth:
       type: bool
   sample:
     {
-      "userid": "my_user",
       "session_id": "xyz.........",
       "verify": true,
       "ca_certs": null
