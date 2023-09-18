@@ -75,7 +75,6 @@ USER_CONDITIONAL_PROPS = (
     'mfa-userid-override',  # type == "template" and mfa-types contains "mfa-server"
 )
 
-
 # A standard test user, as specified for the 'properties' module input parm
 STD_USER_INPUT_PROPERTIES = {
     'type': 'standard',
@@ -86,7 +85,9 @@ STD_USER_INPUT_PROPERTIES = {
     'user_role_names': ['hmc-all-system-managed-objects'],  # (artificial prop)
     'authentication_type': 'local',
     'password_rule_name': 'Standard',  # (artificial property)
-    'password': 'Bumeran9',
+    # 'password' is added when needed (otherwise updating to the same password
+    # causes HTTPError: 400,311: "The logon password does not conform to the
+    # password rule in effect for the user"
     'force_password_change': True,
     # 'ldap_server_definition_name': no LDAP (artificial property)
     # 'userid_on_ldap_server': no LDAP
@@ -108,6 +109,8 @@ STD_USER_INPUT_PROPERTIES = {
     'email_address': None,
 }
 
+STD_USER_INPUT_PROPERTIES_WITH_PW = dict(STD_USER_INPUT_PROPERTIES)
+STD_USER_INPUT_PROPERTIES_WITH_PW['password'] = "Bumerang9x"
 
 # A standard test user consistent with STD_USER_INPUT_PROPERTIES, but
 # specified with HMC properties.
@@ -120,7 +123,7 @@ STD_USER_PROPERTIES = {
     # 'user-roles': updated upon use
     'authentication-type': STD_USER_INPUT_PROPERTIES['authentication_type'],
     # 'password-rule-uri': updated upon use
-    'password': STD_USER_INPUT_PROPERTIES['password'],
+    # 'password': is added when needed
     'force-password-change': \
     STD_USER_INPUT_PROPERTIES['force_password_change'],
     # 'ldap-server-definition-uri': no LDAP
@@ -149,6 +152,9 @@ STD_USER_PROPERTIES = {
     # 'force-shared-secret-key-change': no multi factor auth
     'email-address': STD_USER_INPUT_PROPERTIES['email_address'],
 }
+
+STD_USER_PROPERTIES_WITH_PW = dict(STD_USER_PROPERTIES)
+STD_USER_PROPERTIES_WITH_PW['password'] = "Bumerang9x"
 
 
 def updated_copy(dict1, dict2):
@@ -322,7 +328,7 @@ USER_ABSENT_PRESENT_TESTCASES = [
         None,
         None,
         'present',
-        STD_USER_INPUT_PROPERTIES,
+        STD_USER_INPUT_PROPERTIES_WITH_PW,
         STD_USER_PROPERTIES,
         True,
     ),
@@ -412,7 +418,7 @@ def test_zhmc_user_absent_present(
 
     # Create initial user, if specified so
     if initial_user_props is not None:
-        user_props = STD_USER_PROPERTIES.copy()
+        user_props = STD_USER_PROPERTIES_WITH_PW.copy()
         user_props.update(initial_user_props)
         user_props['name'] = user_name
         if user_props['authentication-type'] == 'local':
