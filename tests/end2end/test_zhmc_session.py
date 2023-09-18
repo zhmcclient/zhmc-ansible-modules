@@ -108,7 +108,6 @@ TESTCASES_ZHMC_SESSION_SINGLE = [
         0, None,
         False,
         {
-            'userid': FROM_HMC_DEFINITION,
             'ca_certs': FROM_HMC_DEFINITION,
             'verify': FROM_HMC_DEFINITION,
             'session_id': SESSION_ID_PATTERN,
@@ -166,7 +165,7 @@ TESTCASES_ZHMC_SESSION_SINGLE = [
         None
     ),
     (
-        "Successful delete with session ID and all other parms",
+        "Failed delete with session ID because userid also provided",
         True,
         {
             'hmc_auth': {
@@ -177,10 +176,11 @@ TESTCASES_ZHMC_SESSION_SINGLE = [
             },
             'action': 'delete',
         },
-        0, None,
+        1,
+        "ParameterError.*'hmc_auth' has the 'session_id' item.* but "
+        ".'userid'. are present",
         False,
         {
-            'userid': None,
             'ca_certs': None,
             'verify': None,
             'session_id': None,
@@ -200,7 +200,6 @@ TESTCASES_ZHMC_SESSION_SINGLE = [
         0, None,
         False,
         {
-            'userid': None,
             'ca_certs': None,
             'verify': None,
             'session_id': None,
@@ -339,6 +338,7 @@ def test_zhmc_session_sequence(
         'hmc_auth': {
             'userid': hmc_definition.userid,
             'password': hmc_definition.password,
+            'session_id': None,
             'ca_certs': hmc_definition.ca_certs,
             'verify': hmc_definition.verify,
         },
@@ -359,9 +359,9 @@ def test_zhmc_session_sequence(
     changed, hmc_auth = get_session_module_output(mod_obj)
     assert changed is False
 
-    session_id = hmc_auth['session_id']
+    assert set(hmc_auth.keys()) == {'session_id', 'ca_certs', 'verify'}
 
-    assert hmc_auth['userid'] is not None
+    session_id = hmc_auth['session_id']
     assert SESSION_ID_PATTERN.match(session_id)
     assert hmc_auth['ca_certs'] is None or \
         isinstance(hmc_auth['ca_certs'], str)
@@ -373,11 +373,13 @@ def test_zhmc_session_sequence(
     params = {
         'hmc_host': hmc_definition.host,
         'hmc_auth': {
-            'userid': hmc_definition.userid,
+            'userid': None,
+            'password': None,
             'session_id': session_id,
             'ca_certs': hmc_definition.ca_certs,
             'verify': hmc_definition.verify,
         },
+        'include_unmanaged_cpcs': False,
         'log_file': LOG_FILE,
         '_faked_session': None,
     }
@@ -401,10 +403,11 @@ def test_zhmc_session_sequence(
     params = {
         'hmc_host': hmc_definition.host,
         'hmc_auth': {
-            'userid': hmc_definition.userid,
+            'userid': None,
+            'password': None,
             'session_id': session_id,
-            'ca_certs': hmc_definition.ca_certs,
-            'verify': hmc_definition.verify,
+            'ca_certs': None,
+            'verify': None,
         },
         'action': 'delete',
         'log_file': LOG_FILE,
@@ -423,7 +426,8 @@ def test_zhmc_session_sequence(
     changed, hmc_auth = get_session_module_output(mod_obj)
     assert changed is False
 
-    assert hmc_auth['userid'] is None
+    assert set(hmc_auth.keys()) == {'session_id', 'ca_certs', 'verify'}
+
     assert hmc_auth['session_id'] is None
     assert hmc_auth['ca_certs'] is None
     assert hmc_auth['verify'] is None
