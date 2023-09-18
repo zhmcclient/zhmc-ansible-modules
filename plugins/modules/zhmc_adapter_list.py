@@ -145,6 +145,30 @@ options:
     type: str
     required: false
     default: null
+  additional_properties:
+    description:
+      - List of additional properties to be returned for each adapter, in
+        addition to the default properties (see result description).
+      - Mutually exclusive with C(full_properties).
+      - The property names are specified with underscores instead of hyphens.
+      - "Note: The additional properties are passed to the 'List Adapters of a
+        CPC' HMC operation, and do not cause a loop of 'Get Adapter Properties'
+        operations to be executed."
+    type: list
+    elements: str
+    required: false
+    default: []
+  full_properties:
+    description:
+      - "If True, all properties of each adapter will be returned.
+        Default: False."
+      - Mutually exclusive with C(additional_properties).
+      - "Note: Setting this to True causes a loop of 'Get Adapter Properties'
+        operations to be executed. It is preferrable from a performance
+        perspective to use the C(additional_properties) parameter instead."
+    type: bool
+    required: false
+    default: false
   log_file:
     description:
       - "File path of a log file to which the logic flow of this module as well
@@ -224,6 +248,10 @@ adapters:
     status:
       description: "The current status of the adapter ('status' property)"
       type: str
+    "{additional_property}":
+      description: Additional properties requested via C(full_properties) or
+        C(additional_properties).
+        The property names will have underscores instead of hyphens.
   sample:
     [
         {
@@ -242,7 +270,8 @@ import traceback  # noqa: E402
 from ansible.module_utils.basic import AnsibleModule  # noqa: E402
 
 from ..module_utils.common import log_init, open_session, close_session, \
-    hmc_auth_parameter, Error, missing_required_lib  # noqa: E402
+    hmc_auth_parameter, Error, ParameterError, \
+    missing_required_lib  # noqa: E402
 
 try:
     import requests.packages.urllib3
@@ -277,6 +306,14 @@ def perform_list(params):
     adapter_family = params['adapter_family']
     type = params['type']
     status = params['status']
+    additional_properties = \
+        [p.replace('_', '-') for p in params['additional_properties']]
+    full_properties = params['full_properties']
+
+    if additional_properties and full_properties:
+        raise ParameterError(
+            "The 'additional_properties' and 'full_properties' module "
+            "parameters are mutually exclusive but both are specified.")
 
     session, logoff = open_session(params)
     try:
@@ -308,13 +345,20 @@ def perform_list(params):
             if cpc_name:
                 LOGGER.debug("Listing adapters of CPC %s", cpc_name)
                 cpc = client.cpcs.find(name=cpc_name)
-                adapters = cpc.adapters.list(filter_args=filter_args)
+                adapters = cpc.adapters.list(
+                    filter_args=filter_args,
+                    additional_properties=additional_properties,
+                    full_properties=full_properties)
             else:
                 LOGGER.debug("Listing adapters of all managed CPCs")
                 cpcs = client.cpcs.list()
                 adapters = []
                 for cpc in cpcs:
-                    adapters.extend(cpc.adapters.list(filter_args=filter_args))
+                    _adapters = cpc.adapters.list(
+                        filter_args=filter_args,
+                        additional_properties=additional_properties,
+                        full_properties=full_properties)
+                    adapters.extend(_adapters)
         else:
             # List the adapters using the new operation
             if cpc_name:
@@ -322,20 +366,23 @@ def perform_list(params):
                 filter_args['cpc-name'] = cpc_name
             else:
                 LOGGER.debug("Listing permitted adapters of all managed CPCs")
-            adapters = console.list_permitted_adapters(filter_args=filter_args)
+            adapters = console.list_permitted_adapters(
+                filter_args=filter_args,
+                additional_properties=additional_properties,
+                full_properties=full_properties)
         # The default exception handling is sufficient for the above.
 
         adapter_list = []
         for adapter in adapters:
             parent_cpc = adapter.manager.cpc
+
             adapter_properties = {
-                "name": adapter.name,
                 "cpc_name": parent_cpc.name,
-                "adapter_id": adapter.get_property('adapter-id'),
-                "adapter_family": adapter.get_property('adapter-family'),
-                "type": adapter.get_property('type'),
-                "status": adapter.get_property('status'),
             }
+            for pname_hmc, pvalue in adapter.properties.items():
+                pname = pname_hmc.replace('-', '_')
+                adapter_properties[pname] = pvalue
+
             adapter_list.append(adapter_properties)
 
         return adapter_list
@@ -357,6 +404,9 @@ def main():
         adapter_family=dict(required=False, type='str', default=None),
         type=dict(required=False, type='str', default=None),
         status=dict(required=False, type='str', default=None),
+        additional_properties=dict(
+            required=False, type='list', elements='str', default=[]),
+        full_properties=dict(required=False, type='bool', default=False),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),
     )

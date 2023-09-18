@@ -103,6 +103,15 @@ options:
     type: bool
     required: false
     default: false
+  full_properties:
+    description:
+      - "If True, all properties of each CPC will be returned.
+        Default: False."
+      - "Note: Setting this to True causes a loop of 'Get CPC Properties'
+        operations to be executed."
+    type: bool
+    required: false
+    default: false
   log_file:
     description:
       - "File path of a log file to which the logic flow of this module as well
@@ -181,6 +190,9 @@ cpcs:
       description: The SE version of the CPC, as a string 'M.N.U'.
         Only included for managed CPCs.
       type: str
+    "{additional_property}":
+      description: Additional properties requested via C(full_properties).
+        The property names will have underscores instead of hyphens.
   sample:
     [
         {
@@ -235,6 +247,7 @@ def perform_list(params):
 
     session, logoff = open_session(params)
     include_unmanaged_cpcs = params['include_unmanaged_cpcs']
+    full_properties = params['full_properties']
 
     try:
         client = zhmcclient.Client(session)
@@ -242,18 +255,17 @@ def perform_list(params):
         cpc_list = []
 
         # List the managed CPCs
-        cpcs = client.cpcs.list()
+        cpcs = client.cpcs.list(full_properties=full_properties)
         # The default exception handling is sufficient for the above.
         for cpc in cpcs:
+
             cpc_properties = {
-                "name": cpc.name,
                 "is_managed": True,
-                "status": cpc.get_property('status'),
-                "has_unacceptable_status": cpc.get_property(
-                    'has-unacceptable-status'),
-                "dpm_enabled": cpc.get_property('dpm-enabled'),
-                "se_version": cpc.get_property('se-version'),
             }
+            for pname_hmc, pvalue in cpc.properties.items():
+                pname = pname_hmc.replace('-', '_')
+                cpc_properties[pname] = pvalue
+
             cpc_list.append(cpc_properties)
 
         # List the unmanaged CPCs
@@ -261,10 +273,14 @@ def perform_list(params):
             cpcs = client.consoles.console.list_unmanaged_cpcs()
             # The default exception handling is sufficient for the above.
             for cpc in cpcs:
+
                 cpc_properties = {
-                    "name": cpc.name,
                     "is_managed": False,
                 }
+                for pname_hmc, pvalue in cpc.properties.items():
+                    pname = pname_hmc.replace('-', '_')
+                    cpc_properties[pname] = pvalue
+
                 cpc_list.append(cpc_properties)
 
         return cpc_list
@@ -281,6 +297,7 @@ def main():
         hmc_host=dict(required=True, type='str'),
         hmc_auth=hmc_auth_parameter(),
         include_unmanaged_cpcs=dict(required=False, type='bool', default=False),
+        full_properties=dict(required=False, type='bool', default=False),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),
     )

@@ -109,6 +109,30 @@ options:
     type: str
     required: false
     default: null
+  additional_properties:
+    description:
+      - List of additional properties to be returned for each partition, in
+        addition to the default properties (see result description).
+      - Mutually exclusive with C(full_properties).
+      - The property names are specified with underscores instead of hyphens.
+      - "Note: The additional properties are passed to the 'List Partitions of a
+        CPC' HMC operation, and do not cause a loop of 'Get Partition
+        Properties' operations to be executed."
+    type: list
+    elements: str
+    required: false
+    default: []
+  full_properties:
+    description:
+      - "If True, all properties of each partition will be returned.
+        Default: False."
+      - Mutually exclusive with C(additional_properties).
+      - "Note: Setting this to True causes a loop of 'Get Partition Properties'
+        operations to be executed. It is preferrable from a performance
+        perspective to use the C(additional_properties) parameter instead."
+    type: bool
+    required: false
+    default: false
   log_file:
     description:
       - "File path of a log file to which the logic flow of this module as well
@@ -179,6 +203,10 @@ partitions:
       description: Indicates whether the current status of the partition is
         unacceptable, based on its 'acceptable-status' property.
       type: bool
+    "{additional_property}":
+      description: Additional properties requested via C(full_properties) or
+        C(additional_properties).
+        The property names will have underscores instead of hyphens.
   sample:
     [
         {
@@ -196,7 +224,7 @@ import traceback  # noqa: E402
 from ansible.module_utils.basic import AnsibleModule  # noqa: E402
 
 from ..module_utils.common import log_init, open_session, close_session, \
-    hmc_auth_parameter, Error, missing_required_lib, \
+    hmc_auth_parameter, Error, ParameterError, missing_required_lib, \
     common_fail_on_import_errors  # noqa: E402
 
 try:
@@ -227,6 +255,14 @@ def perform_list(params):
     """
 
     cpc_name = params['cpc_name']
+    additional_properties = \
+        [p.replace('_', '-') for p in params['additional_properties']]
+    full_properties = params['full_properties']
+
+    if additional_properties and full_properties:
+        raise ParameterError(
+            "The 'additional_properties' and 'full_properties' module "
+            "parameters are mutually exclusive but both are specified.")
 
     session, logoff = open_session(params)
     try:
@@ -238,20 +274,26 @@ def perform_list(params):
         # a z13 CPC.
         hmc_version = client.query_api_version()['hmc-version']
         hmc_version_info = [int(x) for x in hmc_version.split('.')]
-        if hmc_version_info < [2, 14, 0]:
+        if hmc_version_info < [2, 14, 0] or additional_properties:
             # List the partitions in the traditional way
             if cpc_name:
                 LOGGER.debug("Listing partitions of CPC %s", cpc_name)
                 cpc = client.cpcs.find(name=cpc_name)
-                partitions = cpc.partitions.list()
+                partitions = cpc.partitions.list(
+                    additional_properties=additional_properties,
+                    full_properties=full_properties)
             else:
                 LOGGER.debug("Listing partitions of all managed CPCs")
                 cpcs = client.cpcs.list()
                 partitions = []
                 for cpc in cpcs:
-                    partitions.extend(cpc.partitions.list())
+                    _partitions = cpc.partitions.list(
+                        additional_properties=additional_properties,
+                        full_properties=full_properties)
+                    partitions.extend(_partitions)
         else:
-            # List the partitions using the new operation
+            # List the partitions using the new operation.
+            # Note: That operation does not support additional-properties.
             if cpc_name:
                 LOGGER.debug("Listing permitted partitions of CPC %s", cpc_name)
                 filter_args = {'cpc-name': cpc_name}
@@ -259,7 +301,8 @@ def perform_list(params):
                 LOGGER.debug("Listing permitted partitions of all managed CPCs")
                 filter_args = None
             partitions = client.consoles.console.list_permitted_partitions(
-                filter_args=filter_args)
+                filter_args=filter_args,
+                full_properties=full_properties)
         # The default exception handling is sufficient for the above.
 
         se_versions = {}
@@ -280,13 +323,13 @@ def perform_list(params):
                 se_versions[parent_cpc.name] = se_version
 
             partition_properties = {
-                "name": partition.name,
                 "cpc_name": parent_cpc.name,
                 "se_version": se_version,
-                "status": partition.get_property('status'),
-                "has_unacceptable_status": partition.get_property(
-                    'has-unacceptable-status'),
             }
+            for pname_hmc, pvalue in partition.properties.items():
+                pname = pname_hmc.replace('-', '_')
+                partition_properties[pname] = pvalue
+
             partition_list.append(partition_properties)
 
         return partition_list
@@ -303,6 +346,9 @@ def main():
         hmc_host=dict(required=True, type='str'),
         hmc_auth=hmc_auth_parameter(),
         cpc_name=dict(required=False, type='str', default=None),
+        additional_properties=dict(
+            required=False, type='list', elements='str', default=[]),
+        full_properties=dict(required=False, type='bool', default=False),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),
     )

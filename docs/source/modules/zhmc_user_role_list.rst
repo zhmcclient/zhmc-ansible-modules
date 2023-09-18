@@ -82,6 +82,15 @@ hmc_auth
 
 
 
+full_properties
+  If True, all properties of each user role will be returned. Default: False.
+
+  Note: Setting this to True causes a loop of 'Get User Role Properties' operations to be executed.
+
+  | **required**: False
+  | **type**: bool
+
+
 log_file
   File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.
 
@@ -161,5 +170,9 @@ user_roles
     Type of the user role ('system-defined', 'user-defined')
 
     | **type**: str
+
+  {additional_property}
+    Additional properties requested via \ :literal:`full\_properties`\ . The property names will have underscores instead of hyphens.
+
 
 

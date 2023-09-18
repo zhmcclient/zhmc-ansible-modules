@@ -63,54 +63,68 @@ def assert_lpar_list(lpar_list, exp_lpar_dict):
     Assert the output of the zhmc_lpar_list module
 
     Parameters:
-      lpar_list(list): Result of zhmc_lpar_list module, a list
-        of LPAR properties as documented (in HMC notation with dashes).
-      exp_lpar_dict(dict): Expected properties for each expected result
-        item. Key: tuple(CPC name, LPAR name), Value: All properties
-        of the LPAR plus artificial properties (in HMC notation with
-        dashes).
+
+      lpar_list(list): Result of zhmc_lpar_list module, as a list of
+        dicts of LPAR properties as documented (with underscores in their
+        names).
+
+      exp_lpar_dict(dict): Expected LPARs with their properties.
+        Key: tuple(CPC name, LPAR name).
+        Value: Dict of expected LPAR properties (including any artificial
+        properties, all with underscores in their names).
     """
 
     assert isinstance(lpar_list, list)
 
-    exp_cpc_part_names = list(exp_lpar_dict)
-    cpc_part_names = [(pi.get('cpc_name', None), pi.get('name', None))
-                      for pi in lpar_list]
-    assert set(cpc_part_names) == set(exp_cpc_part_names)
+    exp_lpar_keys = list(exp_lpar_dict.keys())
+    lpar_keys = [(ri.get('cpc_name', None), ri.get('name', None))
+                 for ri in lpar_list]
+    assert set(lpar_keys) == set(exp_lpar_keys)
 
     for lpar_item in lpar_list:
         lpar_name = lpar_item.get('name', None)
         cpc_name = lpar_item.get('cpc_name', None)
-        cpc_part_name = (cpc_name, lpar_name)
+        lpar_key = (cpc_name, lpar_name)
 
         assert lpar_name is not None, \
-            "Returned LPAR {pi!r} does not have a 'name' property". \
-            format(pi=lpar_item)
+            "Returned LPAR {ri!r} does not have a 'name' property". \
+            format(ri=lpar_item)
 
-        assert cpc_part_name in exp_lpar_dict, \
-            "Result contains unexpected LPAR {p!r} in CPC {c!r}". \
-            format(p=lpar_name, c=cpc_name)
+        assert cpc_name is not None, \
+            "Returned LPAR {ri!r} does not have a 'cpc_name' property". \
+            format(ri=lpar_item)
 
-        exp_lpar_props = exp_lpar_dict[cpc_part_name]
+        assert lpar_key in exp_lpar_dict, \
+            "Result contains unexpected LPAR {rn!r} in CPC {cn!r}". \
+            format(rn=lpar_name, cn=cpc_name)
 
+        exp_lpar_properties = exp_lpar_dict[lpar_key]
         for pname, pvalue in lpar_item.items():
-
-            # Verify normal properties
-            pname_hmc = pname.replace('_', '-')
-            assert pname_hmc in exp_lpar_props, \
+            assert '-' not in pname, \
+                "Property {pn!r} in LPAR {rn!r} is returned with " \
+                "hyphens in the property name". \
+                format(pn=pname, rn=lpar_name)
+            assert pname in exp_lpar_properties, \
                 "Unexpected property {pn!r} in result LPAR {rn!r}". \
-                format(pn=pname_hmc, rn=lpar_name)
-            exp_value = exp_lpar_props[pname_hmc]
+                format(pn=pname, rn=lpar_name)
+            exp_value = exp_lpar_properties[pname]
             assert pvalue == exp_value, \
                 "Incorrect value for property {pn!r} of result LPAR " \
                 "{rn!r}". \
-                format(pn=pname_hmc, rn=lpar_name)
+                format(pn=pname, rn=lpar_name)
 
 
 @pytest.mark.parametrize(
     "with_cpc", [
         pytest.param(False, id="with_cpc=False"),
         pytest.param(True, id="with_cpc=True"),
+    ]
+)
+@pytest.mark.parametrize(
+    "property_flags", [
+        pytest.param({}, id="property_flags()"),
+        pytest.param({'full_properties': True},
+                     id="property_flags(full_properties=True)"),
     ]
 )
 @pytest.mark.parametrize(
@@ -121,7 +135,8 @@ def assert_lpar_list(lpar_list, exp_lpar_dict):
 )
 @mock.patch("plugins.modules.zhmc_lpar_list.AnsibleModule", autospec=True)
 def test_zhmc_lpar_list(
-        ansible_mod_cls, check_mode, with_cpc, classic_mode_cpcs):  # noqa: F811, E501
+        ansible_mod_cls, check_mode, property_flags, with_cpc,
+        classic_mode_cpcs):  # noqa: F811, E501
     """
     Test the zhmc_lpar_list module with classic mode CPCs.
     """
@@ -142,6 +157,8 @@ def test_zhmc_lpar_list(
 
         faked_session = session if hd.mock_file else None
 
+        full_properties = property_flags.get('full_properties', False)
+
         # Determine the expected LPARs on the HMC
         if DEBUG:
             print("Debug: Listing expected LPARs")
@@ -150,26 +167,28 @@ def test_zhmc_lpar_list(
         if hmc_version_info < [2, 14, 0]:
             # List the LPARs in the traditional way
             if with_cpc:
-                exp_lpars = cpc.lpars.list()
+                exp_lpars = cpc.lpars.list(full_properties=full_properties)
             else:
-                cpcs_ = client.cpcs.list()
+                cpcs_ = client.cpcs.list(full_properties=full_properties)
                 exp_lpars = []
                 for cpc_ in cpcs_:
-                    exp_lpars.extend(cpc_.lpars.list())
+                    exp_lpars.extend(cpc_.lpars.list(
+                        full_properties=full_properties))
         else:
             # List the LPARs using the new operation
             if with_cpc:
                 filter_args = {'cpc-name': cpc.name}
             else:
                 filter_args = None
-            exp_lpars = console.list_permitted_lpars(filter_args=filter_args)
+            exp_lpars = console.list_permitted_lpars(
+                filter_args=filter_args,
+                full_properties=full_properties)
         exp_lpar_dict = {}
         se_versions = {}
         for lpar in exp_lpars:
             if DEBUG:
                 print("Debug: Getting expected properties of LPAR {l!r} on "
                       "CPC {c!r}".format(l=lpar.name, c=cpc.name))
-            lpar.pull_full_properties()
             cpc = lpar.manager.parent
             try:
                 se_version = se_versions[cpc.name]
@@ -179,18 +198,22 @@ def test_zhmc_lpar_list(
                           format(c=cpc.name))
                 se_version = cpc.get_property('se-version')
                 se_versions[cpc.name] = se_version
-            exp_properties = {}
-            exp_properties.update(lpar.properties)
-            exp_properties['cpc-name'] = cpc.name
-            exp_properties['se-version'] = se_version
-            exp_cpc_lpar_name = (cpc.name, lpar.name)
-            exp_lpar_dict[exp_cpc_lpar_name] = exp_properties
+            exp_properties = {
+                'cpc_name': cpc.name,
+                'se_version': se_version,
+            }
+            for pname_hmc, pvalue in lpar.properties.items():
+                pname = pname_hmc.replace('-', '_')
+                exp_properties[pname] = pvalue
+            exp_lpar_key = (cpc.name, lpar.name)
+            exp_lpar_dict[exp_lpar_key] = exp_properties
 
         # Prepare module input parameters (must be all required + optional)
         params = {
             'hmc_host': hmc_host,
             'hmc_auth': hmc_auth,
             'cpc_name': cpc.name if with_cpc else None,
+            'full_properties': full_properties,
             'log_file': LOG_FILE,
             '_faked_session': faked_session,
         }

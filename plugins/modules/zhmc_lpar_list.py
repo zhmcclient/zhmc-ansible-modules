@@ -107,6 +107,15 @@ options:
     type: str
     required: false
     default: null
+  full_properties:
+    description:
+      - "If True, all properties of each LPAR will be returned.
+        Default: False."
+      - "Note: Setting this to True causes a loop of 'Get Logical Partition
+        Properties' operations to be executed."
+    type: bool
+    required: false
+    default: false
   log_file:
     description:
       - "File path of a log file to which the logic flow of this module as well
@@ -181,6 +190,9 @@ lpars:
         description of the 'activation-mode' property in the data model of the
         'Logical Partition' resource (see :term:`HMC API`).
       type: str
+    "{additional_property}":
+      description: Additional properties requested via C(full_properties).
+        The property names will have underscores instead of hyphens.
   sample:
     [
         {
@@ -230,6 +242,7 @@ def perform_list(params):
     """
 
     cpc_name = params['cpc_name']
+    full_properties = params['full_properties']
 
     session, logoff = open_session(params)
     try:
@@ -246,13 +259,14 @@ def perform_list(params):
             if cpc_name:
                 LOGGER.debug("Listing LPARs of CPC %s", cpc_name)
                 cpc = client.cpcs.find(name=cpc_name)
-                lpars = cpc.lpars.list()
+                lpars = cpc.lpars.list(full_properties=full_properties)
             else:
                 LOGGER.debug("Listing LPARs of all managed CPCs")
                 cpcs = client.cpcs.list()
                 lpars = []
                 for cpc in cpcs:
-                    lpars.extend(cpc.lpars.list())
+                    _lpars = cpc.lpars.list(full_properties=full_properties)
+                    lpars.extend(_lpars)
         else:
             # List the LPARs using the new operation
             if cpc_name:
@@ -262,7 +276,8 @@ def perform_list(params):
                 LOGGER.debug("Listing permitted LPARs of all managed CPCs")
                 filter_args = None
             lpars = client.consoles.console.list_permitted_lpars(
-                filter_args=filter_args)
+                filter_args=filter_args,
+                full_properties=full_properties)
         # The default exception handling is sufficient for the above.
 
         lpar_list = []
@@ -272,15 +287,15 @@ def perform_list(params):
             # retrieval of CPC properties.
             parent_cpc = lpar.manager.cpc
             se_version = parent_cpc.get_property('se-version')
+
             lpar_properties = {
-                "name": lpar.name,
                 "cpc_name": parent_cpc.name,
                 "se_version": se_version,
-                "status": lpar.get_property('status'),
-                "has_unacceptable_status": lpar.get_property(
-                    'has-unacceptable-status'),
-                "activation_mode": lpar.get_property('activation-mode'),
             }
+            for pname_hmc, pvalue in lpar.properties.items():
+                pname = pname_hmc.replace('-', '_')
+                lpar_properties[pname] = pvalue
+
             lpar_list.append(lpar_properties)
 
         return lpar_list
@@ -297,6 +312,7 @@ def main():
         hmc_host=dict(required=True, type='str'),
         hmc_auth=hmc_auth_parameter(),
         cpc_name=dict(required=False, type='str', default=None),
+        full_properties=dict(required=False, type='bool', default=False),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),
     )

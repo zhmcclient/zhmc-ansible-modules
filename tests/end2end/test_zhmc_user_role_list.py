@@ -71,17 +71,36 @@ def assert_urole_list(urole_list, exp_urole_dict):
         assert urole_name in exp_urole_dict, \
             "Unexpected returned user role {rn!r}". \
             format(rn=urole_name)
+
         exp_urole = exp_urole_dict[urole_name]
+
+        # Convert expected properties to underscore names
+        exp_urole_properties = {}
+        for pname_hmc, pvalue in exp_urole.properties.items():
+            pname = pname_hmc.replace('-', '_')
+            exp_urole_properties[pname] = pvalue
+
         for pname, pvalue in urole_item.items():
-            assert pname in exp_urole.properties, \
+            assert '-' not in pname, \
+                "Property {pn!r} in user role {rn!r} is returned with " \
+                "hyphens in the property name". \
+                format(pn=pname, rn=urole_name)
+            assert pname in exp_urole_properties, \
                 "Unexpected property {pn!r} in user role {rn!r}". \
                 format(pn=pname, rn=urole_name)
-            exp_value = exp_urole.properties[pname]
+            exp_value = exp_urole_properties[pname]
             assert pvalue == exp_value, \
                 "Incorrect value for property {pn!r} of user role {rn!r}". \
                 format(pn=pname, rn=urole_name)
 
 
+@pytest.mark.parametrize(
+    "property_flags", [
+        pytest.param({}, id="property_flags()"),
+        pytest.param({'full_properties': True},
+                     id="property_flags(full_properties=True)"),
+    ]
+)
 @pytest.mark.parametrize(
     "check_mode", [
         pytest.param(False, id="check_mode=False"),
@@ -91,7 +110,8 @@ def assert_urole_list(urole_list, exp_urole_dict):
 @mock.patch("plugins.modules.zhmc_user_role_list.AnsibleModule",
             autospec=True)
 def test_zhmc_user_role_list(
-        ansible_mod_cls, check_mode, hmc_session):  # noqa: F811, E501
+        ansible_mod_cls, check_mode, property_flags,
+        hmc_session):  # noqa: F811, E501
     """
     Test the zhmc_user_role_list module.
     """
@@ -106,8 +126,10 @@ def test_zhmc_user_role_list(
 
     faked_session = hmc_session if hd.mock_file else None
 
+    full_properties = property_flags.get('full_properties', False)
+
     # Determine the actual list of user roles on the HMC.
-    act_uroles = console.user_roles.list()
+    act_uroles = console.user_roles.list(full_properties=full_properties)
     act_uroles_dict = {}
     for r in act_uroles:
         act_uroles_dict[r.name] = r
@@ -116,6 +138,7 @@ def test_zhmc_user_role_list(
     params = {
         'hmc_host': hmc_host,
         'hmc_auth': hmc_auth,
+        'full_properties': full_properties,
         'log_file': LOG_FILE,
         '_faked_session': faked_session,
     }

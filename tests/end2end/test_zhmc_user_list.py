@@ -59,29 +59,67 @@ def get_module_output(mod_obj):
 
 def assert_user_list(user_list, exp_user_dict):
     """
-    Assert the output of the zhmc_user_list module
+    Assert the output of the zhmc_user_list module.
+
+    Parameters:
+
+      user_list(list): Result of zhmc_user_list module, as a list of
+        dicts of user properties as documented (with underscores in
+        their names).
+
+      exp_user_dict(dict): Expected users with their properties.
+        Key: user name.
+        Value: Dict of expected user properties (including any
+        artificial properties, all with underscores in their names).
     """
+
     assert isinstance(user_list, list)
-    assert len(user_list) == len(exp_user_dict)
+
+    exp_user_names = list(exp_user_dict.keys())
+    user_names = [ri.get('name', None) for ri in user_list]
+    assert set(user_names) == set(exp_user_names)
+
     for user_item in user_list:
-        assert 'name' in user_item, \
-            "Returned user {i!r} does not have a 'name' property". \
-            format(i=user_item)
-        user_name = user_item['name']
+        user_name = user_item.get('name', None)
+        user_type = user_item.get('type', None)
+
+        assert user_name is not None, \
+            "Returned user {ri!r} does not have a 'name' property". \
+            format(ri=user_item)
+
         assert user_name in exp_user_dict, \
-            "Unexpected returned user {n!r}". \
-            format(n=user_name)
-        exp_user = exp_user_dict[user_name]
+            "Unexpected returned user {rn!r}". \
+            format(rn=user_name)
+
+        exp_user_properties = exp_user_dict[user_name]
         for pname, pvalue in user_item.items():
-            assert pname in exp_user.properties, \
+            assert '-' not in pname, \
+                "Property {pn!r} in user {rn!r} is returned with " \
+                "hyphens in the property name". \
+                format(pn=pname, rn=user_name)
+            assert pname in exp_user_properties, \
                 "Unexpected property {pn!r} in user {n!r}". \
                 format(pn=pname, n=user_name)
-            exp_value = exp_user.properties[pname]
+            exp_value = exp_user_properties[pname]
+
+            if user_type == 'pattern-based' and \
+                    pname in ('object_uri', 'object_id'):
+                # Pattern-based users are re-created upon every login
+                # and each such user has a different object ID.
+                continue
+
             assert pvalue == exp_value, \
                 "Incorrect value for property {pn!r} of user {n!r}". \
                 format(pn=pname, n=user_name)
 
 
+@pytest.mark.parametrize(
+    "property_flags", [
+        pytest.param({}, id="property_flags()"),
+        pytest.param({'full_properties': True},
+                     id="property_flags(full_properties=True)"),
+    ]
+)
 @pytest.mark.parametrize(
     "check_mode", [
         pytest.param(False, id="check_mode=False"),
@@ -91,7 +129,8 @@ def assert_user_list(user_list, exp_user_dict):
 @mock.patch("plugins.modules.zhmc_user_list.AnsibleModule",
             autospec=True)
 def test_zhmc_user_list(
-        ansible_mod_cls, check_mode, hmc_session):  # noqa: F811, E501
+        ansible_mod_cls, check_mode, property_flags,
+        hmc_session):  # noqa: F811, E501
     """
     Test the zhmc_user_list module.
     """
@@ -106,16 +145,23 @@ def test_zhmc_user_list(
 
     faked_session = hmc_session if hd.mock_file else None
 
-    # Determine the actual list of users on the HMC.
-    act_users = console.users.list()
-    act_users_dict = {}
-    for user in act_users:
-        act_users_dict[user.name] = user
+    full_properties = property_flags.get('full_properties', False)
+
+    # Determine the expected list of users.
+    exp_users = console.users.list(full_properties=full_properties)
+    exp_user_dict = {}
+    for user in exp_users:
+        exp_properties = {}
+        for pname_hmc, pvalue in user.properties.items():
+            pname = pname_hmc.replace('-', '_')
+            exp_properties[pname] = pvalue
+        exp_user_dict[user.name] = exp_properties
 
     # Prepare module input parameters (must be all required + optional)
     params = {
         'hmc_host': hmc_host,
         'hmc_auth': hmc_auth,
+        'full_properties': full_properties,
         'log_file': LOG_FILE,
         '_faked_session': faked_session,
     }
@@ -137,4 +183,4 @@ def test_zhmc_user_list(
     changed, user_list = get_module_output(mod_obj)
     assert changed is False
 
-    assert_user_list(user_list, act_users_dict)
+    assert_user_list(user_list, exp_user_dict)

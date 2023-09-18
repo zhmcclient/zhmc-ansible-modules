@@ -93,6 +93,15 @@ options:
         type: bool
         required: false
         default: true
+  full_properties:
+    description:
+      - "If True, all properties of each user will be returned.
+        Default: False."
+      - "Note: Setting this to True causes a loop of 'Get User Properties'
+        operations to be executed."
+    type: bool
+    required: false
+    default: false
   log_file:
     description:
       - "File path of a log file to which the logic flow of this module as well
@@ -143,6 +152,9 @@ users:
       description: "Type of the user ('standard', 'template', 'pattern-based',
         'system-defined')"
       type: str
+    "{additional_property}":
+      description: Additional properties requested via C(full_properties).
+        The property names will have underscores instead of hyphens.
   sample:
     [
         {
@@ -191,6 +203,8 @@ def perform_list(params):
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
 
+    full_properties = params['full_properties']
+
     session, logoff = open_session(params)
     try:
         client = zhmcclient.Client(session)
@@ -199,13 +213,15 @@ def perform_list(params):
         user_list = []
 
         # List the users
-        users = console.users.list()
+        users = console.users.list(full_properties=full_properties)
         # The default exception handling is sufficient for the above.
         for user in users:
-            user_properties = {
-                "name": user.name,
-                "type": user.prop('type'),
-            }
+
+            user_properties = {}
+            for pname_hmc, pvalue in user.properties.items():
+                pname = pname_hmc.replace('-', '_')
+                user_properties[pname] = pvalue
+
             user_list.append(user_properties)
 
         return user_list
@@ -221,6 +237,7 @@ def main():
     argument_spec = dict(
         hmc_host=dict(required=True, type='str'),
         hmc_auth=hmc_auth_parameter(),
+        full_properties=dict(required=False, type='bool', default=False),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),
     )

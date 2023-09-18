@@ -106,6 +106,15 @@ options:
       - "Name of the partition whose NICs are to be listed."
     type: str
     required: true
+  full_properties:
+    description:
+      - "If True, all properties of each NIC will be returned.
+        Default: False."
+      - "Note: Setting this to True causes a loop of 'Get NIC Properties'
+        operations to be executed."
+    type: bool
+    required: false
+    default: false
   log_file:
     description:
       - "File path of a log file to which the logic flow of this module as well
@@ -162,6 +171,9 @@ nics:
     cpc_name:
       description: "Name of the parent CPC of the partition"
       type: str
+    "{additional_property}":
+      description: Additional properties requested via C(full_properties).
+        The property names will have underscores instead of hyphens.
   sample:
     [
         {
@@ -209,6 +221,7 @@ def perform_list(params):
 
     cpc_name = params.get('cpc_name')  # required
     partition_name = params.get('partition_name')  # required
+    full_properties = params['full_properties']
 
     session, logoff = open_session(params)
     try:
@@ -223,16 +236,19 @@ def perform_list(params):
         # The default exception handling is sufficient for the above.
 
         LOGGER.debug("Listing NICs of partition %s", partition.name)
-        nics = partition.nics.list()
+        nics = partition.nics.list(full_properties=full_properties)
 
         nic_list = []
         for nic in nics:
 
             nic_properties = {
-                "name": nic.name,
                 "partition_name": partition_name,
                 "cpc_name": cpc_name,
             }
+            for pname_hmc, pvalue in nic.properties.items():
+                pname = pname_hmc.replace('-', '_')
+                nic_properties[pname] = pvalue
+
             nic_list.append(nic_properties)
 
         return nic_list
@@ -250,6 +266,7 @@ def main():
         hmc_auth=hmc_auth_parameter(),
         cpc_name=dict(required=True, type='str'),
         partition_name=dict(required=True, type='str'),
+        full_properties=dict(required=False, type='bool', default=False),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),
     )
