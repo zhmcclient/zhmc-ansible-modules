@@ -150,6 +150,7 @@ accept_firmware
 
   | **required**: False
   | **type**: bool
+  | **default**: True
 
 
 log_file

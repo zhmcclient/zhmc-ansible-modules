@@ -184,7 +184,6 @@ hmc_auth
         {
             "ca_certs": null,
             "session_id": "xyz.........",
-            "userid": "my_user",
             "verify": true
         }
 

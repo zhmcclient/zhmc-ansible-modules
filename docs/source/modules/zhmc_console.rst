@@ -116,6 +116,7 @@ backup_location_type
 
   | **required**: False
   | **type**: str
+  | **default**: usb
   | **choices**: ftp, usb
 
 
@@ -126,6 +127,7 @@ accept_firmware
 
   | **required**: False
   | **type**: bool
+  | **default**: True
 
 
 log_file
