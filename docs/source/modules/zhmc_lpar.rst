@@ -145,7 +145,7 @@ force
 
   If True, such operations are performed regardless of the current LPAR status.
 
-  If False, such operations are performed only if the LPAR is not currently loaded, and are rejected otherwise.
+  If False (default), such operations are performed only if the LPAR is not currently loaded, and are rejected otherwise.
 
   | **required**: False
   | **type**: bool

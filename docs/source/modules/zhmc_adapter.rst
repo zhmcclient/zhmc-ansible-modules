@@ -86,15 +86,15 @@ hmc_auth
 
 
 
-name
-  The name of the target adapter. In case of renaming an adapter, this is the new name of the adapter.
+cpc_name
+  The name of the CPC with the target adapter.
 
   | **required**: True
   | **type**: str
 
 
-cpc_name
-  The name of the CPC with the target adapter.
+name
+  The name of the target adapter. In case of renaming an adapter, this is the new name of the adapter.
 
   | **required**: True
   | **type**: str
