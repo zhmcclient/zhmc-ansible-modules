@@ -105,7 +105,7 @@ state
 
   \* \ :literal:`facts`\ : Returns the CPC properties including its child resources.
 
-  \* \ :literal:`upgrade`\ : Upgrades the firmware of the HMC and returns the new facts after the upgrade.
+  \* \ :literal:`upgrade`\ : Upgrades the firmware of the SE of the CPC and returns the new facts after the upgrade. If the SE firmware is already at the requested bundle level, nothing is changed and the module succeeds.
 
   | **required**: True
   | **type**: str

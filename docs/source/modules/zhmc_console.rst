@@ -89,7 +89,7 @@ state
 
   \* \ :literal:`facts`\ : Returns facts about the HMC.
 
-  \* \ :literal:`upgrade`\ : Upgrades the firmware of the HMC and returns the new facts after the upgrade.
+  \* \ :literal:`upgrade`\ : Upgrades the firmware of the HMC and returns the new facts after the upgrade. If the HMC firmware is already at the requested bundle level, nothing is changed and the module succeeds.
 
   | **required**: True
   | **type**: str
