@@ -113,10 +113,12 @@ def setup_adapter(hd, cpc, name, properties):
     props = copy.deepcopy(properties)
     props['name'] = name
 
+    adapter_id = None
     try:
 
         try:
             adapter = cpc.adapters.create_hipersocket(props)
+            adapter_id = adapter.prop('adapter-id')
         except zhmcclient.HTTPError as exc:
             if exc.http_status == 403 and exc.reason == 1:
                 # User is not permitted to create adapters
@@ -126,25 +128,30 @@ def setup_adapter(hd, cpc, name, properties):
             else:
                 raise
 
+        if DEBUG:
+            print("Debug: setup_adapter: Created test adapter {n!r} with "
+                  "adapter-id {i!r}".
+                  format(n=adapter.name, i=adapter_id))
+
     except zhmcclient.Error as exc:
-        teardown_adapter(hd, cpc, name)
+        if adapter_id:
+            teardown_adapter(cpc, adapter_id)
         pytest.skip("Error in HMC operation during test adapter setup: {e}".
                     format(e=exc))
 
     return adapter
 
 
-def teardown_adapter(hd, cpc, name):
+def teardown_adapter(cpc, adapter_id):
     """
     Delete a Hipersocket adapter created for test purposes by setup_adapter().
 
-    The adapter is looked up by name. If it was alreay deleted by
-    the test code, that is tolerated.
+    The adapter is looked up by adapter-id. If the adapter was already deleted
+    by the test code, that is tolerated.
 
     Parameters:
-      hd(zhmcclient.testutils.HMCDefinition): HMC definition context.
-      cpc(zhmcclient.Cpc): CPC on which the adapter has been created.
-      name(string): Adapter name.
+      cpc(zhmcclient.Cpc): The CPC of the adapter.
+      adapter_id(string): The adapter-id property of the adapter.
     """
 
     try:
@@ -152,18 +159,21 @@ def teardown_adapter(hd, cpc, name):
         # was possibly deleted by the Ansible module and not through our
         # client instance.
         cpc.adapters.invalidate_cache()
-        adapter = cpc.adapters.find_by_name(name)
+        adapter = cpc.adapters.find(**{'adapter-id': adapter_id})
     except zhmcclient.NotFound:
         return
 
-    if DEBUG:
-        print("Debug: Deleting test adapter {p!r}".format(p=name))
     try:
         adapter.delete()
     except zhmcclient.Error as exc:
-        print("Warning: Deleting test adapter {p!r} on CPC {c!r} failed "
-              "with: {e} - please clean it up manually!".
-              format(p=name, c=cpc.name, e=exc))
+        print("Warning: Deleting test adapter with adapter-id {a!r} on CPC "
+              "{c!r} failed with: {e} - please clean it up manually!".
+              format(a=adapter_id, c=cpc.name, e=exc))
+    else:
+        if DEBUG:
+            print("Debug: teardown_adapter: Deleted test adapter {n!r} with "
+                  "adapter-id {i!r}".
+                  format(n=adapter.name, i=adapter_id))
 
 
 def unique_adapter_name():
@@ -324,7 +334,7 @@ def test_zhmc_adapter_facts(
             'match': None,
             'state': 'facts',
             'properties': None,
-            'log_file': None,
+            'log_file': LOG_FILE,
             '_faked_session': faked_session,
         }
 
@@ -398,6 +408,12 @@ ADAPTER_STATES_TESTCASES = [
     #   or None for no initial adapter.
     # - input_state (string): 'state' input parameter for zhmc_adapter module.
     #   Must be one of: present, absent, set.
+    # - input_name (string): 'name' input parameter for zhmc_adapter
+    #   module. '{name}' syntax can be used to refer to a generated unique name.
+    #   to refer to property values.
+    # - input_match (dict): 'match' input parameter for zhmc_adapter
+    #   module, or None if not to be provided. '{prop-name}' syntax can be used
+    #   to refer to property values.
     # - input_props (dict): 'properties' input parameter for zhmc_adapter
     #   module.
     # - exp_props (dict): Expected properties of the 'adapter' output of the
@@ -412,6 +428,8 @@ ADAPTER_STATES_TESTCASES = [
         "state=present with non-existing adapter",
         None,
         'present',
+        '{name}',
+        None,
         STD_HIPERSOCKET_CREATE_PROPS,
         STD_HIPERSOCKET_EXP_PROPS_HMC,
         True,
@@ -421,24 +439,108 @@ ADAPTER_STATES_TESTCASES = [
         "state=present with existing adapter, no properties changed",
         STD_HIPERSOCKET_CREATE_PROPS_HMC,
         'present',
+        '{name}',
+        None,
         None,
         STD_HIPERSOCKET_EXP_PROPS_HMC,
         False,
         None,
     ),
     (
-        "state=present with existing adapter, update #1",
+        "state=present with existing adapter and property update",
         STD_HIPERSOCKET_CREATE_PROPS_HMC,
         'present',
+        '{name}',
+        None,
         HIPERSOCKET_UPDATE1_INPUT_PROPS,
         HIPERSOCKET_UPDATE1_EXP_PROPS_HMC,
         True,
         None,
     ),
     (
-        "state=set with existing adapter, update #1",
+        "state=set without match with existing adapter",
         STD_HIPERSOCKET_CREATE_PROPS_HMC,
         'set',
+        '{name}',
+        None,
+        HIPERSOCKET_UPDATE1_INPUT_PROPS,
+        HIPERSOCKET_UPDATE1_EXP_PROPS_HMC,
+        True,
+        None,
+    ),
+    (
+        "state=set without match with non-existing adapter",
+        None,
+        'set',
+        '{name}',
+        None,
+        HIPERSOCKET_UPDATE1_INPUT_PROPS,
+        None,
+        None,
+        "NotFound: Could not find Adapter .*",
+    ),
+    (
+        "state=set with match by adapter-id of existing adapter without rename",
+        STD_HIPERSOCKET_CREATE_PROPS_HMC,
+        'set',
+        '{name}',
+        {'adapter_id': '{adapter-id}'},
+        HIPERSOCKET_UPDATE1_INPUT_PROPS,
+        HIPERSOCKET_UPDATE1_EXP_PROPS_HMC,
+        True,
+        None,
+    ),
+    (
+        "state=set with match by adapter-id of existing adapter with rename",
+        STD_HIPERSOCKET_CREATE_PROPS_HMC,
+        'set',
+        '{name}_new',
+        {'adapter_id': '{adapter-id}'},
+        HIPERSOCKET_UPDATE1_INPUT_PROPS,
+        HIPERSOCKET_UPDATE1_EXP_PROPS_HMC,
+        True,
+        None,
+    ),
+    (
+        "state=set with match by adapter-id of existing adapter with rename "
+        "to another existing adapter",
+        STD_HIPERSOCKET_CREATE_PROPS_HMC,
+        'set',
+        '{existing}',
+        {'adapter_id': '{adapter-id}'},
+        HIPERSOCKET_UPDATE1_INPUT_PROPS,
+        None,
+        None,
+        "HTTPError: 400,8: An adapter with the name specified .*",
+    ),
+    (
+        "state=set with match by adapter-id of non-existing adapter",
+        STD_HIPERSOCKET_CREATE_PROPS_HMC,
+        'set',
+        '{name}',
+        {'adapter_id': 'foo'},
+        HIPERSOCKET_UPDATE1_INPUT_PROPS,
+        None,
+        None,
+        "NotFound: Could not find Adapter .*",
+    ),
+    (
+        "state=set with match by object-id of existing adapter without rename",
+        STD_HIPERSOCKET_CREATE_PROPS_HMC,
+        'set',
+        '{name}',
+        {'object_id': '{object-id}'},
+        HIPERSOCKET_UPDATE1_INPUT_PROPS,
+        HIPERSOCKET_UPDATE1_EXP_PROPS_HMC,
+        True,
+        None,
+    ),
+    (
+        "state=set with match by object-id of existing adapter with rename",
+        STD_HIPERSOCKET_CREATE_PROPS_HMC,
+        'set',
+        '{name}_new',
+        {'object_id': '{object-id}'},
         HIPERSOCKET_UPDATE1_INPUT_PROPS,
         HIPERSOCKET_UPDATE1_EXP_PROPS_HMC,
         True,
@@ -448,6 +550,8 @@ ADAPTER_STATES_TESTCASES = [
         "state=absent with existing adapter",
         STD_HIPERSOCKET_CREATE_PROPS_HMC,
         'absent',
+        '{name}',
+        None,
         None,
         None,
         True,
@@ -457,6 +561,8 @@ ADAPTER_STATES_TESTCASES = [
         "state=absent with non-existing adapter",
         None,
         'absent',
+        '{name}',
+        None,
         None,
         None,
         False,
@@ -472,14 +578,14 @@ ADAPTER_STATES_TESTCASES = [
     ]
 )
 @pytest.mark.parametrize(
-    "desc, initial_props, input_state, input_props, exp_props, exp_changed, "
-    "exp_msg_pattern",
+    "desc, initial_props, input_state, input_name, input_match, input_props, "
+    "exp_props, exp_changed, exp_msg_pattern",
     ADAPTER_STATES_TESTCASES)
 @mock.patch("plugins.modules.zhmc_adapter.AnsibleModule", autospec=True)
 def test_zhmc_adapter_states(
         ansible_mod_cls,
-        desc, initial_props, input_state, input_props, exp_props, exp_changed,
-        exp_msg_pattern,
+        desc, initial_props, input_state, input_name, input_match, input_props,
+        exp_props, exp_changed, exp_msg_pattern,
         check_mode, dpm_mode_cpcs):  # noqa: F811, E501
     """
     Test the zhmc_adapter module with state=absent/present on DPM mode CPCs,
@@ -502,31 +608,62 @@ def test_zhmc_adapter_states(
         hmc_version = cpc.manager.console.prop('version')
         hmc_version_info = [int(x) for x in hmc_version.split('.')]
 
+        all_adapters = cpc.adapters.list()
+        existing_adapter = random.choice(all_adapters)
+
         # Create an adapter name that does not exist
-        adapter_name = unique_adapter_name()
+        unique_name = unique_adapter_name()
+        input_name = input_name.replace('{name}', unique_name)
+        input_name = input_name.replace('{existing}', existing_adapter.name)
 
         initial_adapter = None
+        initial_adapter_id = None
+        input_match2 = None
+        module_adapter_id = None
         try:
             # Create initial adapter, if specified so
             if initial_props:
                 initial_adapter = setup_adapter(
-                    hd, cpc, adapter_name, initial_props)
+                    hd, cpc, unique_name, initial_props)
                 # The adapter object provides the expected property values, so
                 # we pull full properties to make sure all are tested.
                 initial_adapter.pull_full_properties()
+                initial_adapter_id = initial_adapter.prop('adapter-id')
 
-            where = "adapter '{a}'".format(a=adapter_name)
+                # Process the {prop-name} values in the 'match' parameter
+                if input_match is not None:
+                    input_match2 = {}
+                    for pname, pvalue in input_match.items():
+                        m = re.search(r'\{(.*?)\}', pvalue)
+                        if m:
+                            pn = m.group(1)
+                            pv = initial_adapter.prop(pn)
+                            if pv is None:
+                                # In mock environments, some properties (e.g.
+                                # 'adapter-id' and 'object-id') are None.
+                                # Skip the test in that case.
+                                # TODO: Remove the skip once implemented.
+                                pytest.skip("Property {pn} is None".
+                                            format(pn=pn))
+                            pvalue = pvalue.replace('{' + pn + '}', pv)
+                        input_match2[pname] = pvalue
+
+            where = "adapter '{a}'".format(a=unique_name)
+
+            if DEBUG:
+                print("Debug: Input parms: match={m}, name={n}".
+                      format(m=input_match2, n=input_name))
 
             # Prepare module input parameters (must be all required + optional)
             params = {
                 'hmc_host': hmc_host,
                 'hmc_auth': hmc_auth,
                 'cpc_name': cpc.name,
-                'name': adapter_name,
-                'match': None,
+                'name': input_name,
+                'match': input_match2,
                 'state': input_state,
                 'properties': input_props,
-                'log_file': None,
+                'log_file': LOG_FILE,
                 '_faked_session': faked_session,
             }
 
@@ -580,11 +717,27 @@ def test_zhmc_adapter_states(
                                pformat(input_props_sorted, indent=2),
                                pformat(output_props_sorted, indent=2)))
 
+                # In case the module itself has created the adapter, we need
+                # to clean it up later, and get its adapter ID for that.
+                module_adapter_id = output_props.get('adapter-id', None)
+
+                # Add 'name' to the expected properties. It will always be
+                # the specified 'name' property (both in rename and non-rename
+                # cases).
+                if exp_props:
+                    exp_props2 = dict(exp_props)
+                    exp_props2['name'] = input_name
+                else:
+                    exp_props2 = None
+
                 if input_state in ('present', 'set'):
                     assert_adapter_props(
-                        output_props, exp_props, hmc_version_info, where)
+                        output_props, exp_props2, hmc_version_info, where)
                 else:
                     assert output_props == {}
 
         finally:
-            teardown_adapter(hd, cpc, adapter_name)
+            if initial_adapter_id:
+                teardown_adapter(cpc, initial_adapter_id)
+            if module_adapter_id:
+                teardown_adapter(cpc, module_adapter_id)
