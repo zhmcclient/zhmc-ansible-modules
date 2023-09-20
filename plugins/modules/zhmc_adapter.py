@@ -421,6 +421,17 @@ ZHMC_ADAPTER_PROPERTIES = {
     'maximum_total_capacity': (False, None, False, None, None, None),
     'physical_channel_status': (False, None, False, None, None, None),
     'udx_loaded': (False, None, False, None, None, None),
+    # Added in HMC 2.15:
+    'ssd-is-installed': (False, None, False, None, None, None),
+    'ssd-capacity': (False, None, False, None, None, None),
+    'ssd-model-number': (False, None, False, None, None, None),
+    'ssd-serial-number': (False, None, False, None, None, None),
+    'ssd-subsystem-vendor-id': (False, None, False, None, None, None),
+    'ssd-vendor-id': (False, None, False, None, None, None),
+    # Added in HMC 2.16:
+    'network-ports': (False, None, False, None, None, None),
+    # 'module-type': (False, None, False, None, None, None),
+    # 'io-domain': (False, None, False, None, None, None),
 }
 
 
@@ -711,7 +722,30 @@ def ensure_present(params, check_mode):
                 result = dict(adapter.properties)  # from actual values
             else:
                 adapter = None
-                result = {}
+                # Default values for a Hipersockets adapter, or None where
+                # the value would be created by the HMC.
+                result = {
+                    'object-uri': None,
+                    'object-id': None,
+                    'parent': cpc.uri,
+                    'class': 'adapter',
+                    'description': '',
+                    'status': None,
+                    'type': 'hipersockets',
+                    'adapter-id': None,
+                    'adapter-family': 'hipersockets',
+                    'detected-card-type': 'hipersockets',
+                    'port-count': 1,
+                    'network-port-uris': [None],
+                    'state': None,
+                    'maximum-transmission-unit-size': 8,
+                    'configured-capacity': None,
+                    'used-capacity': None,
+                    'allowed-capacity': None,
+                    'maximum-total-capacity': None,
+                    'channel-path-id': None,
+                    'physical-channel-status': None,
+                }
                 result.update(create_props)  # from input values
             changed = True
         else:
@@ -754,7 +788,7 @@ def ensure_present(params, check_mode):
             result['ports'] = get_adapter_ports(adapter)
         else:
             # For now, we return no ports when creating in check mode
-            result['ports'] = {}
+            result['ports'] = []
 
         return changed, result
 

@@ -45,7 +45,14 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Enhancements:**
 
+* Increased minimum version of zhmcclient to 1.11.2 to pick up improved mock
+  support for Adapters.
+
 * zhmc_user_role: Added support for user role permissions based on groups.
+
+* zhmc_adapter - Added new properties for z15 (nvme related) and z16
+  ('network-ports'), and improved the output properties for hipersocket
+  create in check mode.
 
 **Cleanup:**
 
