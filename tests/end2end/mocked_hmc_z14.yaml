@@ -723,6 +723,8 @@ hmc_definition:
             name: "OSA1"
             description: "Mocked OSA adapter OSA1 in CPC2"
             adapter-id: "108"
+            channel-path-id: "010"
+            port-count: 2
             status: active
             state: online
             physical-channel-status: operating
@@ -731,6 +733,8 @@ hmc_definition:
             detected-card-type: "osa-express-6s-1000base-t"
             card-location: "A14B-D104J.01-D204J.01"
             configured-capacity: 63
+            used-capacity: 5
+            allowed-capacity: 10
             maximum-total-capacity: 1920
           ports:
             - properties:
@@ -748,6 +752,8 @@ hmc_definition:
             name: "FCP1"
             description: "Mocked FCP adapter FCP1 in CPC2"
             adapter-id: "118"
+            channel-path-id: "020"
+            port-count: 1
             status: active
             state: online
             physical-channel-status: operating
@@ -756,6 +762,8 @@ hmc_definition:
             detected-card-type: "ficon-express-16s"
             card-location: "A14B-D114J.01"
             configured-capacity: 63
+            used-capacity: 5
+            allowed-capacity: 10
             maximum-total-capacity: 1920
           ports:
             - properties:
