@@ -536,15 +536,25 @@ def process_properties(adapter, params):
 
 def identify_adapter(cpc, name, match_props):
     """
-    Identify the target adapter based on its name, or if an adapter with that
-    name does not exist in the CPC, based on its match properties.
+    Identify the target adapter based on its match properties if specified, or
+    else using its name.
+
+    If the adapter could not be identified, None is returned.
+
+    The match properties take precedence in order to properly handle the case
+    where match properties specify an existing adapter and name (the new name)
+    is used by another adapter. In this case, it would be incorrect to
+    identify the adapter by name, since that would incorrectly return the other
+    adapter.
+
+    Returns:
+      zhmcclient.Adapter: The identified adapter.
+
+    Raises:
+      zhmcclient.NotFound: The adapter was not found.
     """
-    try:
-        adapter = cpc.adapters.find(name=name)
-    except zhmcclient.NotFound:
-        if not match_props:
-            raise
-        match_props_hmc = {}
+    filter_args = {}
+    if match_props:
         for prop_name in match_props:
             prop_name_hmc = prop_name.replace('_', '-')
             match_value = match_props[prop_name]
@@ -555,8 +565,11 @@ def identify_adapter(cpc, name, match_props):
                 if type_cast:
                     match_value = type_cast(match_value)
 
-            match_props_hmc[prop_name_hmc] = match_value
-        adapter = cpc.adapters.find(**match_props_hmc)
+            filter_args[prop_name_hmc] = match_value
+    else:
+        filter_args['name'] = name
+
+    adapter = cpc.adapters.find(**filter_args)
     return adapter
 
 
@@ -617,6 +630,26 @@ def ensure_set(params, check_mode):
             if not check_mode:
                 adapter.update_properties(update_props)
             else:
+                # Simulate rejection of renaming the adapter if another
+                # adapter with that name already exists.
+                if 'name' in update_props:
+                    new_name = update_props['name']
+                    if new_name != adapter.name:
+                        try:
+                            cpc.adapters.find(name=new_name)
+                        except zhmcclient.NotFound:
+                            pass
+                        else:
+                            # The exception raised does not need to be a fully
+                            # equipped HTTPError, but just good enough for the
+                            # module to produce its failure message.
+                            raise zhmcclient.HTTPError({
+                                'message': "An adapter with the name specified "
+                                "in the request body already exists on its "
+                                "parent CPC.",
+                                'http-status': 400,
+                                'reason': 8,
+                            })
                 result.update(update_props)  # from input values
             changed = True
 
