@@ -31,6 +31,17 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Incompatible changes:**
 
+* zhmc_adapter - Fixed the 'match' input parameter to have priority over the
+  'name' input parameter. Previously, the 'name' parameter had priority if
+  (and only if) an adapter with that name existed.
+  This bug fix changes the behavior if 'match' is used and another adapter with
+  the new name already exists: Before this change, the other adapter was used
+  and other input properties were updated in that adapter, which in all
+  likelyhood was not intended because it was not the adapter identified by the
+  'match' parameter. With this change, the adapter identified by the 'match'
+  parameter is always used regardless of whether another adapter with that name
+  exists, i.e. the name change in that case will fail.
+
 **Deprecations:**
 
 **Bug fixes:**
@@ -75,6 +86,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * zhmc_adapter - Added new properties for z15 (nvme related) and z16
   ('network-ports'), and improved the output properties for hipersocket
   create in check mode.
+
+* zhmc_adapter - Improved the check mode support: It now recognizes if an
+  adapter gets renamed to another existing adapter and rejects that just
+  as in non-check mode.
 
 **Cleanup:**
 
