@@ -47,8 +47,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Enhancements:**
 
-* Increased minimum version of zhmcclient to 1.11.1 to pick up fixes for
-  mock support for LDAP Server Definitions, and new functionality.
+* Increased minimum version of zhmcclient to 1.11.2 to pick up fixes for
+  mock support for LDAP Server Definitions, improved mock support for Adapters,
+  and new functionality.
 
 * Docs: Clarified that firmware upgrades of SE and HMC do nothing and succeed
   if the firmware was already at the desired bundle level.
@@ -70,6 +71,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Added support for requesting specific additional properties with a new
   "additional_properties" input parameter for the zhmc_adapter_list and
   zhmc_partition_list modules. (issue #651)
+
+* zhmc_adapter - Added new properties for z15 (nvme related) and z16
+  ('network-ports'), and improved the output properties for hipersocket
+  create in check mode.
 
 **Cleanup:**
 
