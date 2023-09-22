@@ -91,6 +91,12 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   adapter gets renamed to another existing adapter and rejects that just
   as in non-check mode.
 
+* Added CHANGELOG.rst file to satisfy requirement for RedHat Automation Hub.
+  For now, it includes release_notes.rst. A transition to fragments-based
+  creation of CHANGELOG.rst is postponed because the unified documentation
+  for the IBM Z set of collections first needs to find a common solution
+  for all of its collections.
+
 **Cleanup:**
 
 * Test: Changed identification of adapters in end2end test module
