@@ -129,7 +129,11 @@ properties
 
   \* \ :literal:`boot\_network\_device`\ : Cannot be specified because this information is specified using the artificial property \ :literal:`boot\_network\_nic\_name`\ .
 
-  \* \ :literal:`boot\_storage\_hba\_name`\ : The name of the HBA whose URI is used to construct \ :literal:`boot\_storage\_device`\ . Specifying it requires that the partition exists.
+  \* \ :literal:`boot\_storage\_hba\_name`\ : The name of the HBA whose URI is used to construct \ :literal:`boot\_storage\_device`\ . Specifying it requires that the partition exists. Only valid when the partition is on a z13.
+
+  \* \ :literal:`boot\_storage\_group\_name`\ : The name of the storage group that contains the boot volume specified with \ :literal:`boot\_storage\_volume\_name`\ .
+
+  \* \ :literal:`boot\_storage\_volume\_name`\ : The name of the storage volume in storage group \ :literal:`boot\_storage\_group\_name`\  whose URI is used to construct \ :literal:`boot\_storage\_volume`\ . This property is mutually exclusive with \ :literal:`boot\_storage\_volume`\ . Specifying it requires that the partition and storage group exist. Only valid when the partition is on a z14 or later.
 
   \* \ :literal:`boot\_network\_nic\_name`\ : The name of the NIC whose URI is used to construct \ :literal:`boot\_network\_device`\ . Specifying it requires that the partition exists.
 
@@ -173,11 +177,6 @@ Examples
    ---
    # Note: The following examples assume that some variables named 'my_*' are set.
 
-   # Because configuring LUN masking in the SAN requires the host WWPN, and the
-   # host WWPN is automatically assigned and will be known only after an HBA has
-   # been added to the partition, the partition needs to be created in stopped
-   # state. Also, because the HBA has not yet been created, the boot
-   # configuration cannot be done yet:
    - name: Ensure the partition exists and is stopped
      zhmc_partition:
        hmc_host: "{{ my_hmc_host }}"
@@ -192,11 +191,7 @@ Examples
          maximum_memory: 1024
      register: part1
 
-   # After an HBA has been added (see Ansible module zhmc_hba), and LUN masking
-   # has been configured in the SAN, and a bootable image is available at the
-   # configured LUN and target WWPN, the partition can be configured for boot
-   # from the FCP LUN and can be started:
-   - name: Configure boot device and start the partition
+   - name: Configure an FCP boot volume and start the partition (z14 or later)
      zhmc_partition:
        hmc_host: "{{ my_hmc_host }}"
        hmc_auth: "{{ my_hmc_auth }}"
@@ -204,10 +199,24 @@ Examples
        name: "{{ my_partition_name }}"
        state: active
        properties:
-         boot_device: storage-adapter
-         boot_storage_device_hba_name: hba1
-         boot_logical_unit_number: 00000000001
-         boot_world_wide_port_name: abcdefabcdef
+         boot_device: storage-volume
+         boot_storage_group_name: sg1
+         boot_storage_volume_name: boot1
+     register: part1
+
+   - name: Configure an FTP boot server and start the partition
+     zhmc_partition:
+       hmc_host: "{{ my_hmc_host }}"
+       hmc_auth: "{{ my_hmc_auth }}"
+       cpc_name: "{{ my_cpc_name }}"
+       name: "{{ my_partition_name }}"
+       state: active
+       properties:
+         boot_device: ftp
+         boot_ftp_host: 10.11.12.13
+         boot_ftp_username: ftpuser
+         boot_ftp_password: ftppass
+         boot_ftp_insfile: /insfile
      register: part1
 
    - name: Ensure the partition does not exist
@@ -439,7 +448,7 @@ partition
 
 
   hbas
-    HBAs of the partition. If the CPC does not have the storage-management feature enabled (ie. before z15), the list is empty.
+    HBAs of the partition. If the CPC does not have the storage-management feature enabled (ie. on z13), the list is empty.
 
     | **type**: list
     | **elements**: dict
