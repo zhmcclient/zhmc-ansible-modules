@@ -247,6 +247,22 @@ jobs:
       run: |
         echo "Package dependency tree of installed Python packages:"
         pipdeptree --all
+    - name: Run docs
+      env:
+        PACKAGE_LEVEL: ${{ matrix.package_level }}
+      run: |
+        make docs
+    - name: Check that module .rst files are up to date
+      # Because the Ansible rst generator changed its output over time, we only
+      # check this on the latest Python release with latest package levels.
+      if: ${{ matrix.python-version == '3.11' && matrix.package_level == 'latest' }}
+      env:
+        PACKAGE_LEVEL: ${{ matrix.package_level }}
+      run: |
+        bash -c "if ! git diff --exit-code HEAD docs/source/modules; then
+          echo 'Error: Module .rst files are not up to date in this PR. Run make docslocal to update.';
+          exit 1;
+        fi"
     - name: Run safety
       env:
         PACKAGE_LEVEL: ${{ matrix.package_level }}
@@ -270,11 +286,6 @@ jobs:
         PACKAGE_LEVEL: ${{ matrix.package_level }}
       run: |
         make sanity
-    - name: Run docs
-      env:
-        PACKAGE_LEVEL: ${{ matrix.package_level }}
-      run: |
-        make docs
     - name: Run unit/function test
       env:
         PACKAGE_LEVEL: ${{ matrix.package_level }}

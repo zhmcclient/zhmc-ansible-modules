@@ -103,6 +103,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   default values by the calling Ansible environent. Changed the modules to rely
   on that.
 
+* Test: Added a check in the Actions test workflow for the module .rst files
+  to be up to date in the PR. (issue #755)
+
 **Known issues:**
 
 * See `list of open issues`_.
