@@ -100,7 +100,7 @@ FAKED_PARTITION_1 = {
 
     # The remaining properties get their default values:
     'is-locked': False,
-    'type': 'linux',
+    'type': 'ssc',  # Allows for status 'active'
     'autogenerate-partition-id': True,
     'os-name': '',
     'os-type': '',
@@ -1051,7 +1051,7 @@ class TestPartition(object):
             # properties provided as module input parameter:
             ({'name': 'new-name'}, True, True),
             # create-only properties (tested only when modified):
-            ({'type': 'ssc'}, False, True),
+            ({'type': 'linux'}, False, True),
             # properties handled via their artificial properties:
             ({'boot_network_device': '/api/faked-nic-uri'}, True, True),
             ({'boot_storage_device': '/api/faked-hba-uri'}, True, True),
@@ -1163,6 +1163,10 @@ class TestPartition(object):
         Tests for successful configuration of boot from storage adapter (HBA)
         (z13).
         """
+
+        if initial_state != desired_state and not check_mode:
+            pytest.skip("Async partition start/stop not supported by "
+                        "zhmcclient mock support")
 
         # Prepare the initial partition and HBA before the test is run
         self.setup_partition(initial_state)
@@ -1315,6 +1319,10 @@ class TestPartition(object):
         (z14 or later).
         """
 
+        if initial_state != desired_state and not check_mode:
+            pytest.skip("Async partition start/stop not supported by "
+                        "zhmcclient mock support")
+
         # Prepare the initial partition and HBA before the test is run
         self.setup_partition(initial_state)
         assert self.partition
@@ -1405,6 +1413,10 @@ class TestPartition(object):
         """
         Tests for successful configuration of boot from network.
         """
+
+        if initial_state != desired_state and not check_mode:
+            pytest.skip("Async partition start/stop not supported by "
+                        "zhmcclient mock support")
 
         # Prepare the initial partition and HBA before the test is run
         self.setup_partition(initial_state)
@@ -1555,6 +1567,10 @@ class TestPartition(object):
         """
         Tests for successful crypto configuration.
         """
+
+        if initial_state != desired_state and not check_mode:
+            pytest.skip("Async partition start/stop not supported by "
+                        "zhmcclient mock support")
 
         # Prepare the initial partition and crypto adapters
         self.setup_partition(initial_state,

@@ -68,14 +68,18 @@ class VersionError(Error):
     pass
 
 
-# Partition status values that may happen after Partition.start()
-START_END_STATUSES = ('active', 'degraded')
+# Partition status values that cause failure in any status related method
+PART_BAD_STATUSES = ('communications-not-active', 'status-check')
 
-# Partition status values that may happen after Partition.stop()
-STOP_END_STATUSES = ('stopped', 'terminated', 'paused', 'reservation-error')
+# Possible (not necessarily desired) partition status values after 'starting'
+PART_STARTING_END_STATUSES = (
+    'active', 'degraded', 'reservation-error', 'terminated'
+) + PART_BAD_STATUSES
 
-# Partition status values that indicate CPC issues
-BAD_STATUSES = ('communications-not-active', 'status-check')
+# Possible (not necessarily desired) partition status values after 'stopping'
+PART_STOPPING_END_STATUSES = (
+    'stopped', 'terminated'
+) + PART_BAD_STATUSES
 
 
 # Successful LPAR status values for state=inactive
@@ -309,6 +313,21 @@ def pull_partition_status(partition):
     """
     Retrieve the partition operational status as fast as possible and return
     it.
+
+    Partition status values and their meaning:
+
+    Status             Resources allocated   OS running
+    -----------------------------------------------------------------------
+    stopped            no                    no
+    starting           transitional          transitional
+    stopping           transitional          transitional
+    reservation-error  no                    no
+    active             yes                   yes
+    degraded           yes                   yes
+    terminated         yes                   no
+    paused             yes                   no
+    comm-not-active    unknown               unknown
+    status-check       unknown               unknown
     """
     parts = partition.manager.cpc.partitions.list(
         filter_args={'name': partition.name})
@@ -319,17 +338,38 @@ def pull_partition_status(partition):
     return actual_status
 
 
-def stop_partition(partition, check_mode):
+def stop_partition(logger, partition, check_mode):
     """
-    Ensure that the partition is stopped, by influencing the operational
-    status of the partition, regardless of what its current operational status
-    is.
+    Ensure that the partition is stopped, regardless of what its current
+    operational status is. In some cases, multiple "Stop Partition" operations
+    are performed.
 
-    The resulting operational status will be one of STOP_END_STATUSES.
+    When this method returns, the status of the partition is 'stopped' or
+    'reservation-error'.
+
+    Bad statuses ('comm-not-active', 'status-check') are handled by raising
+    StatusError.
+
+    This method performs the following actions in a loop:
+
+    Status             Action
+    -----------------------------------------------------------------------
+    comm-not-active    Bad status: Raise StatusError
+    status-check       Bad status: Raise StatusError
+    stopped            Success: Return
+    reservation-error  Success: Return
+    starting           Wait for transition completion, check again
+    stopping           Wait for transition completion, check again
+    terminated         Stop Partition, wait for job completion, check again
+    active             Stop Partition, wait for job completion, check again
+    degraded           Stop Partition, wait for job completion, check again
+    paused             Stop Partition, wait for job completion, check again
 
     Parameters:
-      partition (zhmcclient.Partition): The partition (must exist, and its
-        status property is assumed to be current).
+      logger (logging.Logger): The logger to be used.
+
+      partition (zhmcclient.Partition): The partition.
+
       check_mode (bool): Indicates whether the playbook was run in check mode,
         in which case this method does ot actually stop the partition, but
         just returns what would have been done.
@@ -338,81 +378,106 @@ def stop_partition(partition, check_mode):
       bool: Indicates whether the partition was changed.
 
     Raises:
-      StatusError: Partition is in one of BAD_STATUSES or did not reach one of
-        the STOP_END_STATUSES despite attempting it.
+      StatusError: CPC has issues, partition has a bad status.
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
     changed = False
-    if not check_mode:
-        partition.pull_full_properties()
-    status = partition.get_property('status')
-    if status in BAD_STATUSES:
-        raise StatusError(
-            "Target CPC {0!r} has issues; status of partition {1!r} is: {2!r}".
-            format(partition.manager.cpc.name, partition.name, status))
-    elif status in STOP_END_STATUSES:
-        pass
-    elif status == 'starting':
-        if not check_mode:
+    status = pull_partition_status(partition)
+    max_turns = 10
+    turns = 0
+    while turns < max_turns:
+        turns += 1
+        if status in PART_BAD_STATUSES:
+            raise StatusError(
+                "CPC {cn!r} has issues; partition {pn!r} has bad status: {s!r}".
+                format(cn=partition.manager.cpc.name, pn=partition.name,
+                       s=status))
+        elif status in ('stopped', 'reservation-error'):
+            logger.debug("Partition %r on CPC %r is now in status %r",
+                         partition.name, partition.manager.cpc.name, status)
+            break
+        elif status == 'starting':
+            logger.debug("Waiting for completion of starting of partition %r "
+                         "on CPC %r",
+                         partition.name, partition.manager.cpc.name)
             # Let it first finish the starting
-            partition.wait_for_status(START_END_STATUSES)
-            # Then stop it
-            partition.stop()
+            partition.wait_for_status(PART_STARTING_END_STATUSES)
+            # Then stop it in the next loop turn
             status = pull_partition_status(partition)
-            if status not in STOP_END_STATUSES:
-                raise StatusError(
-                    "Could not get partition {0!r} from 'starting' status into "
-                    "an inactive status after waiting for its starting to "
-                    "complete; current status is: {1!r}".
-                    format(partition.name, status))
-        else:
-            status = 'stopped'
-        partition.update_properties_local({'status': status})
-        changed = True
-    elif status == 'stopping':
-        if not check_mode:
+            partition.update_properties_local({'status': status})
+            changed = True
+        elif status == 'stopping':
+            logger.debug("Waiting for completion of stopping of partition %r "
+                         "on CPC %r",
+                         partition.name, partition.manager.cpc.name)
             # Let it finish the stopping
-            partition.wait_for_status(STOP_END_STATUSES)
+            partition.wait_for_status(PART_STOPPING_END_STATUSES)
             status = pull_partition_status(partition)
-            if status not in STOP_END_STATUSES:
-                raise StatusError(
-                    "Could not get partition {0!r} from 'stopping' status into "
-                    "an inactive status after waiting for its stopping to "
-                    "complete; current status is: {1!r}".
-                    format(partition.name, status))
+            partition.update_properties_local({'status': status})
+            changed = True
+        elif status in ('terminated', 'active', 'degraded', 'paused'):
+            logger.debug("Stop partition %r on CPC %r (current status: %r)",
+                         partition.name, partition.manager.cpc.name, status)
+            if not check_mode:
+                job = partition.stop(wait_for_completion=False)
+                job.wait_for_completion()
+                status = pull_partition_status(partition)
+            else:
+                status = 'stopped'
+            partition.update_properties_local({'status': status})
+            changed = True
         else:
-            status = 'stopped'
-        partition.update_properties_local({'status': status})
-        changed = True
+            raise AssertionError(
+                "Partition {pn!r} on CPC {cn!r} has unknown status: {s!r}".
+                format(cn=partition.manager.cpc.name, pn=partition.name,
+                       s=status))
     else:
-        # status in START_END_STATUSES
-        if not check_mode:
-            previous_status = pull_partition_status(partition)
-            partition.stop()
-            status = pull_partition_status(partition)
-            if status not in STOP_END_STATUSES:
-                raise StatusError(
-                    "Could not get partition {0!r} from {1!r} status into "
-                    "an inactive status; current status is: {2!r}".
-                    format(partition.name, previous_status, status))
-        else:
-            status = 'stopped'
-        partition.update_properties_local({'status': status})
-        changed = True
+        raise AssertionError(
+            "Abandoning waiting for the completion of the stop of partition "
+            "{pn!r} on CPC {cn!r} after exhausting state machine loop. "
+            "Current status: {s!r}.".
+            format(cn=partition.manager.cpc.name, pn=partition.name,
+                   s=status))
     return changed
 
 
-def start_partition(partition, check_mode):
+def start_partition(logger, partition, check_mode):
     """
-    Ensure that the partition is started, by influencing the operational
-    status of the partition, regardless of what its current operational status
-    is.
+    Ensure that the partition is started, regardless of what its current
+    operational status is.
 
-    The resulting operational status will be one of START_END_STATUSES.
+    When this method returns, the status of the partition is 'active' or
+    'degraded'.
+
+    Bad statuses ('comm-not-active', 'status-check') are handled by raising
+    StatusError.
+
+    This method performs the following actions in a loop:
+
+    Status             Action
+    -----------------------------------------------------------------------
+    comm-not-active    Bad status: Raise StatusError
+    status-check       Bad status: Raise StatusError
+    active             Success: Return
+    degraded           Success: Return
+    starting           Wait for transition completion, check again
+    stopping           Wait for transition completion, check again
+    terminated         If start was alreday performed: Raise StatusError
+                       Else: Stop Partition, wait for job compl., check again
+    paused             If start was alreday performed: Raise StatusError
+                       Else: Stop Partition, wait for job compl., check again
+    reservation-error  Start Partition, wait for job completion, check again
+    stopped            Start Partition, wait for job completion, check again
+
+    In status 'terminated' and 'paused', an earlier 'Start Partition' causes
+    StatusError to be raised in order to avoid a loop: stopped -> start ->
+    paused -> stop -> stopped.
 
     Parameters:
-      partition (zhmcclient.Partition): The partition (must exist, and its
-        status property is assumed to be current).
+      logger (logging.Logger): The logger to be used.
+
+      partition (zhmcclient.Partition): The partition.
+
       check_mode (bool): Indicates whether the playbook was run in check mode,
         in which case this method does not actually change the partition, but
         just returns what would have been done.
@@ -421,104 +486,180 @@ def start_partition(partition, check_mode):
       bool: Indicates whether the partition was changed.
 
     Raises:
-      StatusError: Partition is in one of BAD_STATUSES or did not reach one of
-        the START_END_STATUSES despite attempting it.
+      StatusError: CPC has issues, partition has a bad status.
+      StatusError: Abandoning reaching paused/terminated after start.
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
     changed = False
-    if not check_mode:
-        partition.pull_full_properties()
-    status = partition.get_property('status')
-    if status in BAD_STATUSES:
-        raise StatusError(
-            "Target CPC {0!r} has issues; status of partition {1!r} is: {2!r}".
-            format(partition.manager.cpc.name, partition.name, status))
-    elif status in START_END_STATUSES:
-        pass
-    elif status == 'stopping':
-        if not check_mode:
+    status = pull_partition_status(partition)
+    max_turns = 10
+    turns = 0
+    tried_start = False
+    while turns < max_turns:
+        turns += 1
+        if status in PART_BAD_STATUSES:
+            raise StatusError(
+                "CPC {cn!r} has issues; partition {pn!r} has bad status: {s!r}".
+                format(cn=partition.manager.cpc.name, pn=partition.name,
+                       s=status))
+        elif status in ('active', 'degraded'):
+            logger.debug("Partition %r on CPC %r is now in status %r",
+                         partition.name, partition.manager.cpc.name, status)
+            break
+        elif status == 'stopping':
+            logger.debug("Waiting for completion of stopping of partition %r "
+                         "on CPC %r",
+                         partition.name, partition.manager.cpc.name)
             # Let it first finish the stopping
-            partition.wait_for_status(STOP_END_STATUSES)
-            # Then start it
-            partition.start()
+            partition.wait_for_status(PART_STOPPING_END_STATUSES)
+            # Then start it in the next loop turn
             status = pull_partition_status(partition)
-            if status not in START_END_STATUSES:
-                raise StatusError(
-                    "Could not get partition {0!r} from 'stopping' status into "
-                    "an active status after waiting for its stopping to "
-                    "complete; current status is: {1!r}".
-                    format(partition.name, status))
-        else:
-            status = 'active'
-        partition.update_properties_local({'status': status})
-        changed = True
-    elif status == 'starting':
-        if not check_mode:
+            partition.update_properties_local({'status': status})
+            changed = True
+        elif status == 'starting':
+            logger.debug("Waiting for completion of starting of partition %r "
+                         "on CPC %r",
+                         partition.name, partition.manager.cpc.name)
             # Let it finish the starting
-            partition.wait_for_status(START_END_STATUSES)
+            partition.wait_for_status(PART_STARTING_END_STATUSES)
             status = pull_partition_status(partition)
-            if status not in START_END_STATUSES:
+            partition.update_properties_local({'status': status})
+            changed = True
+        elif status in ('terminated', 'paused'):
+            if tried_start:
                 raise StatusError(
-                    "Could not get partition {0!r} from 'starting' status into "
-                    "an active status after waiting for its starting to "
-                    "complete; current status is: {1!r}".
-                    format(partition.name, status))
+                    "Abandoning the start of partition {pn!r} on CPC {cn!r} "
+                    "after reaching status {s!r} after an earlier "
+                    "'Start Partition' operation.".
+                    format(cn=partition.manager.cpc.name, pn=partition.name,
+                           s=status))
+
+            logger.debug("Stop partition %r on CPC %r (current status: %r)",
+                         partition.name, partition.manager.cpc.name, status)
+            if not check_mode:
+                job = partition.stop(wait_for_completion=False)
+                job.wait_for_completion()
+                status = pull_partition_status(partition)
+            else:
+                status = 'stopped'
+            partition.update_properties_local({'status': status})
+            changed = True
+        elif status in ('stopped', 'reservation-error'):
+            logger.debug("Start partition %r on CPC %r (current status: %r)",
+                         partition.name, partition.manager.cpc.name, status)
+            if not check_mode:
+                job = partition.start(wait_for_completion=False)
+                job.wait_for_completion()
+                status = pull_partition_status(partition)
+            else:
+                # In check mode, simulate the behavior for linux-type partitions
+                # that have no boot-device set, to go to 'paused' status.
+                if partition.prop('type') == 'linux' \
+                        and partition.prop('boot-device') == 'none':
+                    status = 'paused'
+                else:
+                    status = 'active'
+            partition.update_properties_local({'status': status})
+            changed = True
+            tried_start = True
         else:
-            status = 'active'
-        partition.update_properties_local({'status': status})
-        changed = True
+            raise AssertionError(
+                "Partition {pn!r} on CPC {cn!r} has unknown status: {s!r}".
+                format(cn=partition.manager.cpc.name, pn=partition.name,
+                       s=status))
     else:
-        # status in STOP_END_STATUSES
-        if not check_mode:
-            previous_status = pull_partition_status(partition)
-            partition.start()
-            status = pull_partition_status(partition)
-            if status not in START_END_STATUSES:
-                raise StatusError(
-                    "Could not get partition {0!r} from {1!r} status into "
-                    "an active status; current status is: {2!r}".
-                    format(partition.name, previous_status, status))
-        else:
-            status = 'active'
-        partition.update_properties_local({'status': status})
-        changed = True
+        raise AssertionError(
+            "Abandoning waiting for the completion of the start of partition "
+            "{pn!r} on CPC {cn!r} after exhausting state machine loop. "
+            "Current status: {s!r}.".
+            format(cn=partition.manager.cpc.name, pn=partition.name,
+                   s=status))
     return changed
 
 
-def wait_for_transition_completion(partition):
+def wait_for_transition_completion(logger, partition):
     """
-    If the partition is in a transitional state, wait for completion of that
-    transition. This is required for updating properties.
+    If the partition is in a transitional state ('starting', 'stopping'),
+    wait for completion of that transition.
 
-    The resulting operational status will be one of START_END_STATUSES or
-    STOP_END_STATUSES.
+    This is required for updating properties.
+
+    When this method returns, the status of the partition is one of:
+      'terminated',
+      'paused',
+      'reservation-error',
+      'active',
+      'degraded',
+      'stopped'.
+
+    Bad statuses ('comm-not-active', 'status-check') are handled by raising
+    StatusError.
+
+    This method performs the following actions in a loop:
+
+    Status             Action
+    -----------------------------------------------------------------------
+    comm-not-active    Bad status: Raise StatusError
+    status-check       Bad status: Raise StatusError
+    starting           Wait for transition completion, check again
+    stopping           Wait for transition completion, check again
+    any other          Success: Return
 
     Parameters:
-      partition (zhmcclient.Partition): The partition (must exist, and its
-        status property is assumed to be current).
+      logger (logging.Logger): The logger to be used.
+
+      partition (zhmcclient.Partition): The partition.
 
     Raises:
-      StatusError: Partition is in one of BAD_STATUSES.
+      StatusError: CPC has issues, partition has a bad status.
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
-    partition.pull_full_properties()
-    status = partition.get_property('status')
-    if status in BAD_STATUSES:
-        raise StatusError(
-            "Target CPC {0!r} has issues; status of partition {1!r} is: {2!r}".
-            format(partition.manager.cpc.name, partition.name, status))
-    elif status == 'stopping':
-        partition.wait_for_status(STOP_END_STATUSES)
-    elif status == 'starting':
-        partition.wait_for_status(START_END_STATUSES)
+    status = pull_partition_status(partition)
+    max_turns = 2
+    turns = 0
+    while turns < max_turns:
+        turns += 1
+        if status in PART_BAD_STATUSES:
+            raise StatusError(
+                "CPC {cn!r} has issues; partition {pn!r} has bad status: {s!r}".
+                format(cn=partition.manager.cpc.name, pn=partition.name,
+                       s=status))
+        elif status == 'stopping':
+            logger.debug("Waiting for completion of stopping of partition %r "
+                         "on CPC %r",
+                         partition.name, partition.manager.cpc.name)
+            partition.wait_for_status(PART_STOPPING_END_STATUSES)
+            status = pull_partition_status(partition)
+        elif status == 'starting':
+            logger.debug("Waiting for completion of starting of partition %r "
+                         "on CPC %r",
+                         partition.name, partition.manager.cpc.name)
+            partition.wait_for_status(PART_STARTING_END_STATUSES)
+            status = pull_partition_status(partition)
+        else:
+            break
     else:
-        if not (status in START_END_STATUSES or status in STOP_END_STATUSES):
-            raise AssertionError()
+        raise AssertionError(
+            "Abandoning waiting for the completion of a status transition of "
+            "partition {pn!r} on CPC {cn!r} after exhausting state machine "
+            "loop. Current status: {s!r}.".
+            format(cn=partition.manager.cpc.name, pn=partition.name,
+                   s=status))
 
 
 def pull_lpar_status(lpar):
     """
     Retrieve the LPAR operational status as fast as possible and return it.
+
+    LPAR status values and their meaning:
+
+    Status             Resources allocated   OS running
+    -----------------------------------------------------------------------
+    not-activated      no                    no
+    not-operating      yes                   no
+    operating          yes                   yes
+    acceptable         yes                   yes
+    exceptions         unknown               unknown
     """
     lpars = lpar.manager.cpc.lpars.list(filter_args={'name': lpar.name})
     if len(lpars) != 1:
