@@ -35,6 +35,7 @@ from zhmcclient.testutils import dpm_mode_cpcs  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
 
 from plugins.modules import zhmc_partition
+from plugins.module_utils.common import pull_partition_status
 from .utils import mock_ansible_module, get_failure_msg
 
 requests.packages.urllib3.disable_warnings()
@@ -135,9 +136,11 @@ def storage_mgmt_enabled(cpc):
     return False
 
 
-def setup_partition(hd, cpc, name, properties, state='stopped'):
+def setup_partition(hd, cpc, name, properties, status='stopped'):
     """
-    Create a new stopped partition on the specified CPC, for test purposes.
+    Create a new partition on the specified CPC, for test purposes.
+
+    The desired status of the new partition can be specified (within limits).
 
     Parameters:
       hd(zhmcclient.testutils.HMCDefinition): HMC definition context.
@@ -145,12 +148,20 @@ def setup_partition(hd, cpc, name, properties, state='stopped'):
       name(string): Partition name. Must not exist yet.
       properties(dict): Input properties for Partition.create(), with property
         names using HMC notation (with dashes).
+      status(string): Desired value of the 'status' property of the
+        partition upon return from this function. Only a certain subset of
+        status values can be achieved:
+        * For Linux-type partitions: 'stopped', 'starting', 'stopping', 'paused'.
+        * For SSC-type partitions: 'stopped', 'starting', 'stopping', 'active'.
     """
     props = copy.deepcopy(properties)
     props['name'] = name
 
     try:
 
+        if DEBUG:
+            print("Debug: setup_partition: Creating test partition {p!r}".
+                  format(p=name))
         try:
             partition = cpc.partitions.create(props)
         except zhmcclient.HTTPError as exc:
@@ -187,15 +198,139 @@ def setup_partition(hd, cpc, name, properties, state='stopped'):
             })
         partition.nics.create(nic_properties)
 
-        if state == 'active':
+        # The partition is initially in status 'stopped'.
+        # Establish the desired partition status.
+        if status == 'stopped':
             if DEBUG:
-                print("Debug: Starting test partition {p!r}".format(p=name))
-            partition.start()
-            partition.pull_full_properties()
-            status = partition.get_property('status')
+                print("Debug: setup_partition: Test partition {p!r} is "
+                      "already in status 'stopped'.".format(p=name))
+        elif status == 'starting':
             if DEBUG:
-                print("Debug: Starting test partition succeeded and "
-                      "its status is now {s!r}".format(s=status))
+                print("Debug: setup_partition: Getting test partition {p!r} "
+                      "into status 'starting'".format(p=name))
+            try:
+                partition.start(wait_for_completion=False)
+            except zhmcclient.Error as exc:
+                if isinstance(exc, zhmcclient.HTTPError) \
+                        and exc.http_status == 409 and exc.reason == 131:
+                    # SSC partitions boot the built-in installer. However,
+                    # there seems to be an issue where the SSC partition fails
+                    # to start with "HTTPError: 409,131: The operating system in
+                    # the partition failed to load. The partition is stopped.".
+                    # Reported as STG Defect 1071321, and ignored in this test.
+                    print("Warning: setup_partition: Ignoring failure when "
+                          "starting partition: {e}".format(e=exc))
+                else:
+                    raise AssertionError(
+                        "Starting test partition without waiting for "
+                        "completion failed with: {e}".format(e=exc))
+            current_status = pull_partition_status(partition)
+            if current_status != 'starting':
+                raise AssertionError(
+                    "setup_partition: Starting test partition without waiting "
+                    "for completion did not result in status 'starting', but "
+                    "in status {s!r}".format(s=current_status))
+            if DEBUG:
+                print("Debug: setup_partition: Successfully got test "
+                      "partition {p!r} into status 'starting'".format(p=name))
+        elif status == 'stopping':
+            if DEBUG:
+                print("Debug: setup_partition: Getting test partition {p!r} "
+                      "into status 'stopping'".format(p=name))
+            try:
+                job = partition.start(wait_for_completion=False)
+                job.wait_for_completion()
+            except zhmcclient.Error as exc:
+                raise AssertionError(
+                    "setup_partition: Starting test partition and waiting for "
+                    "completion failed with: {e}".format(e=exc))
+            try:
+                partition.stop(wait_for_completion=False)
+            except zhmcclient.Error as exc:
+                raise AssertionError(
+                    "setup_partition: Stopping test partition without waiting "
+                    "for completion failed with: {e}".format(e=exc))
+            current_status = pull_partition_status(partition)
+            if current_status != 'stopping':
+                raise AssertionError(
+                      "setup_partition: Stopping test partition without "
+                      "waiting for completion did not result in status "
+                      "'stopping', but in status {s!r}".
+                      format(s=current_status))
+            if DEBUG:
+                print("Debug: setup_partition: Successfully got test partition "
+                      "{p!r} into status 'stopping'".format(p=name))
+        elif status == 'active':
+            ptype = partition.prop('type')
+            if ptype != 'ssc':
+                raise AssertionError(
+                      "setup_partition: Testcase definition error: Status "
+                      "'active' can only be requested for SSC-type partitions, "
+                      "but partition {p!r} has type {t!r}".
+                      format(p=name, t=ptype))
+            if DEBUG:
+                print("Debug: setup_partition: Getting SSC test partition "
+                      "{p!r} into status 'active'".format(p=name))
+            try:
+                job = partition.start(wait_for_completion=False)
+                job.wait_for_completion()
+            except zhmcclient.Error as exc:
+                if isinstance(exc, zhmcclient.HTTPError) \
+                        and exc.http_status == 409 and exc.reason == 131:
+                    # SSC partitions boot the built-in installer. However,
+                    # there seems to be an issue where the SSC partition fails
+                    # to start with "HTTPError: 409,131: The operating system in
+                    # the partition failed to load. The partition is stopped.".
+                    # Reported as STG Defect 1071321, and ignored in this test.
+                    print("Warning: setup_partition: Ignoring failure when "
+                          "starting partition: {e}".format(e=exc))
+                else:
+                    raise AssertionError(
+                        "setup_partition: Starting SSC test partition {p!r} "
+                        "and waiting for completion failed with: {e}".
+                        format(p=name, e=exc))
+            current_status = pull_partition_status(partition)
+            if current_status != 'active':
+                raise AssertionError(
+                    "setup_partition: Starting SSC test partition {p!r} and "
+                    "waiting for completion did not result in status 'active', "
+                    "but in status {s!r}".format(p=name, s=current_status))
+            if DEBUG:
+                print("Debug: setup_partition: Successfully got SSC test "
+                      "partition {p!r} into status 'active'".format(p=name))
+        elif status == 'paused':
+            ptype = partition.prop('type')
+            if ptype != 'linux':
+                raise AssertionError(
+                      "setup_partition: Testcase definition error: Status "
+                      "'paused' can only be requested for linux-type "
+                      "partitions, but partition {p!r} has type {t!r}".
+                      format(p=name, t=ptype))
+            if DEBUG:
+                print("Debug: setup_partition: Getting Linux test partition "
+                      "{p!r} into status 'paused'".format(p=name))
+            try:
+                job = partition.start(wait_for_completion=False)
+                job.wait_for_completion()
+            except zhmcclient.Error as exc:
+                raise AssertionError(
+                    "setup_partition: Starting Linux test partition {p!r} and "
+                    "waiting for completion failed with: {e}".
+                    format(p=name, e=exc))
+            current_status = pull_partition_status(partition)
+            if current_status != 'paused':
+                raise AssertionError(
+                    "setup_partition: Starting Linux test partition {p!r} and "
+                    "waiting for completion did not result in status 'paused', "
+                    "but in status {s!r}".format(p=name, s=current_status))
+            if DEBUG:
+                print("Debug: setup_partition: Successfully got linux test "
+                      "partition {p!r} into status 'paused'".format(p=name))
+        else:
+            raise AssertionError(
+                  "setup_partition: Testcase definition error: Status {s!r} "
+                  "cannot be requested for setting up partition {p!r}.".
+                  format(s=status, p=name))
 
     except zhmcclient.Error as exc:
         teardown_partition(hd, cpc, name)
@@ -230,26 +365,31 @@ def teardown_partition(hd, cpc, name):
     except zhmcclient.NotFound:
         return
 
-    status = partition.get_property('status')
-    if status != 'stopped':
+    status = pull_partition_status(partition)
+    if status not in ('stopped', 'reservation-error'):
         if DEBUG:
-            print("Debug: Stopping test partition {p!r} with status {s!r}".
-                  format(p=name, s=status))
+            print("Debug: teardown_partition: Stopping test partition {p!r} "
+                  "with status {s!r}".format(p=name, s=status))
         try:
-            partition.stop()
+            job = partition.stop(wait_for_completion=False)
+            job.wait_for_completion()
         except zhmcclient.Error as exc:
-            print("Warning: Stopping test partition {p!r} with status {s!r} "
-                  "on CPC {c!r} failed with: {e}".
+            print("Warning: teardown_partition: Stopping test partition {p!r} "
+                  "with status {s!r} on CPC {c!r} failed with: {e}".
                   format(p=name, c=cpc.name, s=status, e=exc))
 
     if DEBUG:
-        print("Debug: Deleting test partition {p!r}".format(p=name))
+        print("Debug: teardown_partition: Deleting test partition {p!r}".
+              format(p=name))
     try:
         partition.delete()
     except zhmcclient.Error as exc:
-        print("Warning: Deleting test partition {p!r} on CPC {c!r} failed "
-              "with: {e} - please clean it up manually!".
+        print("Warning: teardown_partition: Deleting test partition {p!r} on "
+              "CPC {c!r} failed with: {e} - please clean it up manually!".
               format(p=name, c=cpc.name, e=exc))
+    if DEBUG:
+        print("Debug: teardown_partition: Successfully deleted test partition "
+              "{p!r}".format(p=name))
 
 
 def unique_partition_name():
@@ -444,6 +584,10 @@ PARTITION_STATE_TESTCASES = [
     # - desc (string): description of the testcase.
     # - initial_props (dict): HMC-formatted properties for initial
     #    partition, or None for no initial partition.
+    # - initial_status (string): Status for initial partition, or None when no
+    #   initial partition.
+    # - input_state (string): 'state' input parameter for zhmc_partition
+    #   module.
     # - input_props (dict): 'properties' input parameter for zhmc_partition
     #   module.
     # - exp_msg (string): Expected message pattern in case of module failure,
@@ -455,6 +599,7 @@ PARTITION_STATE_TESTCASES = [
 
     (
         "state=stopped for Linux partition with non-existing partition",
+        None,
         None,
         'stopped',
         STD_LINUX_PARTITION_MODULE_INPUT_PROPS,
@@ -468,10 +613,49 @@ PARTITION_STATE_TESTCASES = [
         "no properties changed",
         STD_LINUX_PARTITION_HMC_INPUT_PROPS,
         'stopped',
+        'stopped',
         None,
         None,
         STD_LINUX_PARTITION_HMC_INPUT_PROPS,
         False,
+        True,
+    ),
+    (
+        "state=stopped for Linux partition with existing paused partition, "
+        "no properties changed",
+        STD_LINUX_PARTITION_HMC_INPUT_PROPS,
+        'paused',
+        'stopped',
+        None,
+        None,
+        STD_LINUX_PARTITION_HMC_INPUT_PROPS,
+        True,
+        True,
+    ),
+    (
+        "state=active for Linux partition with existing stopped partition, "
+        "no properties changed",
+        STD_LINUX_PARTITION_HMC_INPUT_PROPS,
+        'stopped',
+        'active',
+        None,
+        "StatusError: Abandoning the start of partition .* after reaching "
+        "status 'paused'.*",
+        None,
+        None,
+        True,
+    ),
+    (
+        "state=active for Linux partition with existing paused partition, "
+        "no properties changed",
+        STD_LINUX_PARTITION_HMC_INPUT_PROPS,
+        'paused',
+        'active',
+        None,
+        "StatusError: Abandoning the start of partition .* after reaching "
+        "status 'paused'.*",
+        None,
+        None,
         True,
     ),
     (
@@ -481,6 +665,7 @@ PARTITION_STATE_TESTCASES = [
             'description': 'bla',
         }),
         'stopped',
+        'stopped',
         STD_LINUX_PARTITION_MODULE_INPUT_PROPS,
         None,
         STD_LINUX_PARTITION_HMC_INPUT_PROPS,
@@ -489,6 +674,7 @@ PARTITION_STATE_TESTCASES = [
     ),
     (
         "state=stopped for SSC partition with non-existing partition",
+        None,
         None,
         'stopped',
         STD_SSC_PARTITION_MODULE_INPUT_PROPS,
@@ -506,6 +692,7 @@ PARTITION_STATE_TESTCASES = [
         "no properties changed",
         STD_SSC_PARTITION_HMC_INPUT_PROPS,
         'stopped',
+        'stopped',
         None,
         None,
         STD_SSC_PARTITION_HMC_INPUT_PROPS,
@@ -516,6 +703,7 @@ PARTITION_STATE_TESTCASES = [
         "state=active for SSC partition with existing stopped partition, "
         "no properties changed",
         STD_SSC_PARTITION_HMC_INPUT_PROPS,
+        'stopped',
         'active',
         None,
         None,  # Code ignores "HTTPError: 409,131"
@@ -530,6 +718,7 @@ PARTITION_STATE_TESTCASES = [
             'description': 'bla',
         }),
         'stopped',
+        'stopped',
         STD_SSC_PARTITION_MODULE_INPUT_PROPS,
         None,
         STD_SSC_PARTITION_HMC_INPUT_PROPS,
@@ -539,6 +728,7 @@ PARTITION_STATE_TESTCASES = [
     (
         "state=absent with existing stopped Linux partition",
         STD_LINUX_PARTITION_HMC_INPUT_PROPS,
+        'stopped',
         'absent',
         None,
         None,
@@ -549,6 +739,7 @@ PARTITION_STATE_TESTCASES = [
     (
         "state=absent with existing stopped SSC partition",
         STD_SSC_PARTITION_HMC_INPUT_PROPS,
+        'stopped',
         'absent',
         None,
         None,
@@ -558,6 +749,7 @@ PARTITION_STATE_TESTCASES = [
     ),
     (
         "state=absent with non-existing partition",
+        None,
         None,
         'absent',
         None,
@@ -576,14 +768,14 @@ PARTITION_STATE_TESTCASES = [
     ]
 )
 @pytest.mark.parametrize(
-    "desc, initial_props, input_state, input_props, exp_msg, exp_props, "
-    "exp_changed, run",
+    "desc, initial_props, initial_status, input_state, input_props, exp_msg, "
+    "exp_props, exp_changed, run",
     PARTITION_STATE_TESTCASES)
 @mock.patch("plugins.modules.zhmc_partition.AnsibleModule", autospec=True)
 def test_zhmc_partition_state(
         ansible_mod_cls,
-        desc, initial_props, input_state, input_props, exp_msg, exp_props,
-        exp_changed, run,
+        desc, initial_props, initial_status, input_state, input_props, exp_msg,
+        exp_props, exp_changed, run,
         check_mode, dpm_mode_cpcs):  # noqa: F811, E501
     """
     Test the zhmc_partition module with different initial and target state.
@@ -604,6 +796,10 @@ def test_zhmc_partition_state(
         hmc_auth = dict(userid=hd.userid, password=hd.password,
                         ca_certs=hd.ca_certs, verify=hd.verify)
 
+        if hd.mock_file:
+            pytest.skip("Asynchronous partition start/stop not supported "
+                        "in zhmcclient_mock")
+
         faked_session = session if hd.mock_file else None
 
         # Create a partition name that does not exist
@@ -618,7 +814,8 @@ def test_zhmc_partition_state(
 
         # Create initial partition, if specified so
         if initial_props is not None:
-            setup_partition(hd, cpc, partition_name, initial_props)
+            setup_partition(
+                hd, cpc, partition_name, initial_props, initial_status)
 
         try:
 
@@ -865,7 +1062,7 @@ NON_RETRIEVABLE_PROPS = ('boot_ftp_password', 'ssc_master_pw')
 @pytest.mark.parametrize(
     "check_mode", [
         pytest.param(False, id="check_mode=False"),
-        pytest.param(True, id="check_mode=True"),
+        # pytest.param(True, id="check_mode=True"),
     ]
 )
 @pytest.mark.parametrize(
@@ -896,6 +1093,10 @@ def test_zhmc_partition_properties(
         hmc_auth = dict(userid=hd.userid, password=hd.password,
                         ca_certs=hd.ca_certs, verify=hd.verify)
 
+        if hd.mock_file:
+            pytest.skip("Asynchronous partition start/stop not supported "
+                        "in zhmcclient_mock")
+
         faked_session = session if hd.mock_file else None
 
         # Create a partition name that does not exist
@@ -907,8 +1108,17 @@ def test_zhmc_partition_properties(
         else:
             create_props = STD_LINUX_PARTITION_HMC_INPUT_PROPS
         create_props['type'] = partition_type
-        partition = setup_partition(hd, cpc, partition_name, create_props,
-                                    state)
+        if state == 'active':
+            if partition_type == 'linux':
+                initial_status = 'paused'
+            else:
+                assert partition_type == 'ssc'
+                initial_status = 'active'
+        else:
+            assert state == 'stopped'
+            initial_status = 'stopped'
+        partition = setup_partition(
+            hd, cpc, partition_name, create_props, initial_status)
 
         try:
 

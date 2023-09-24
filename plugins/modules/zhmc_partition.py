@@ -1749,9 +1749,9 @@ def ensure_active(params, check_mode):
             if update_props:
                 if not check_mode:
                     if stop:
-                        stop_partition(partition, check_mode)
+                        stop_partition(LOGGER, partition, check_mode)
                     else:
-                        wait_for_transition_completion(partition)
+                        wait_for_transition_completion(LOGGER, partition)
                     partition.update_properties(update_props)
                     # Properties are refreshed further down
                 else:
@@ -1765,7 +1765,7 @@ def ensure_active(params, check_mode):
         if not partition:
             raise AssertionError()
 
-        changed |= start_partition(partition, check_mode)
+        changed |= start_partition(LOGGER, partition, check_mode)
 
         if not check_mode:
 
@@ -1848,7 +1848,7 @@ def ensure_stopped(params, check_mode):
                 process_properties(cpc, partition, params)
             # Note: create_props in this case only contains 'name' and can be
             # ignored.
-            changed |= stop_partition(partition, check_mode)
+            changed |= stop_partition(LOGGER, partition, check_mode)
             if update_props:
                 if not check_mode:
                     partition.update_properties(update_props)
@@ -1914,7 +1914,7 @@ def ensure_absent(params, check_mode):
             return changed, result
 
         if not check_mode:
-            stop_partition(partition, check_mode)
+            stop_partition(LOGGER, partition, check_mode)
             partition.delete()
         changed = True
 
