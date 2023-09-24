@@ -160,7 +160,15 @@ options:
          is specified using the artificial property C(boot_network_nic_name)."
       - "* C(boot_storage_hba_name): The name of the HBA whose URI is used to
          construct C(boot_storage_device). Specifying it requires that the
-         partition exists."
+         partition exists. Only valid when the partition is on a z13."
+      - "* C(boot_storage_group_name): The name of the storage group that
+         contains the boot volume specified with C(boot_storage_volume_name)."
+      - "* C(boot_storage_volume_name): The name of the storage volume in
+         storage group C(boot_storage_group_name) whose URI is used to
+         construct C(boot_storage_volume). This property is mutually exclusive
+         with C(boot_storage_volume). Specifying it requires that the partition
+         and storage group exist. Only valid when the partition is on a z14 or
+         later."
       - "* C(boot_network_nic_name): The name of the NIC whose URI is used to
          construct C(boot_network_device). Specifying it requires that the
          partition exists."
@@ -217,11 +225,6 @@ EXAMPLES = """
 ---
 # Note: The following examples assume that some variables named 'my_*' are set.
 
-# Because configuring LUN masking in the SAN requires the host WWPN, and the
-# host WWPN is automatically assigned and will be known only after an HBA has
-# been added to the partition, the partition needs to be created in stopped
-# state. Also, because the HBA has not yet been created, the boot
-# configuration cannot be done yet:
 - name: Ensure the partition exists and is stopped
   zhmc_partition:
     hmc_host: "{{ my_hmc_host }}"
@@ -236,11 +239,7 @@ EXAMPLES = """
       maximum_memory: 1024
   register: part1
 
-# After an HBA has been added (see Ansible module zhmc_hba), and LUN masking
-# has been configured in the SAN, and a bootable image is available at the
-# configured LUN and target WWPN, the partition can be configured for boot
-# from the FCP LUN and can be started:
-- name: Configure boot device and start the partition
+- name: Configure an FCP boot volume and start the partition (z14 or later)
   zhmc_partition:
     hmc_host: "{{ my_hmc_host }}"
     hmc_auth: "{{ my_hmc_auth }}"
@@ -248,10 +247,24 @@ EXAMPLES = """
     name: "{{ my_partition_name }}"
     state: active
     properties:
-      boot_device: storage-adapter
-      boot_storage_device_hba_name: hba1
-      boot_logical_unit_number: 00000000001
-      boot_world_wide_port_name: abcdefabcdef
+      boot_device: storage-volume
+      boot_storage_group_name: sg1
+      boot_storage_volume_name: boot1
+  register: part1
+
+- name: Configure an FTP boot server and start the partition
+  zhmc_partition:
+    hmc_host: "{{ my_hmc_host }}"
+    hmc_auth: "{{ my_hmc_auth }}"
+    cpc_name: "{{ my_cpc_name }}"
+    name: "{{ my_partition_name }}"
+    state: active
+    properties:
+      boot_device: ftp
+      boot_ftp_host: 10.11.12.13
+      boot_ftp_username: ftpuser
+      boot_ftp_password: ftppass
+      boot_ftp_insfile: /insfile
   register: part1
 
 - name: Ensure the partition does not exist
@@ -322,7 +335,7 @@ partition:
         The property names have hyphens (-) as described in that book."
     hbas:
       description: "HBAs of the partition. If the CPC does not have the
-        storage-management feature enabled (ie. before z15), the list is
+        storage-management feature enabled (ie. on z13), the list is
         empty."
       type: list
       elements: dict
@@ -645,10 +658,14 @@ ZHMC_PARTITION_PROPERTIES = {
         None, None),  # artificial property
     'boot_storage_volume': (
         # Was added in API version 2.23 (HMC 2.14.0)
-        False, False, True, True, None, None,
-        False, None),  # via boot_storage_volume_name
+        True, False, True, True, None, None,
+        False, None),  # alternatively via boot_storage_group/volume_name
+    'boot_storage_group_name': (
+        # Artificial property, together with boot_storage_volume_name
+        True, False, True, True, None, to_unicode,
+        None, None),
     'boot_storage_volume_name': (
-        # Artificial property
+        # Artificial property, together with boot_storage_group_name
         True, False, True, True, None, to_unicode,
         None, None),
     'crypto_configuration': (
@@ -927,6 +944,16 @@ ZHMC_PARTITION_PROPERTIES = {
 }
 
 
+def storage_mgmt_enabled(cpc):
+    """
+    Return whether the CPC has the 'dpm-storage-management' feature enabled.
+    """
+    for feature_info in cpc.prop('available-features-list', []):
+        if feature_info['name'] == 'dpm-storage-management':
+            return feature_info['state']
+    return False
+
+
 def process_properties(cpc, partition, params):
     """
     Process the properties specified in the 'properties' module parameter,
@@ -986,6 +1013,8 @@ def process_properties(cpc, partition, params):
     # We looked up the partition by name, so we will never have to update
     # the partition name
 
+    console = cpc.manager.console
+
     # handle the other properties
     input_props = params.get('properties', None)
     if input_props is None:
@@ -1013,7 +1042,7 @@ def process_properties(cpc, partition, params):
                     "Artificial property {0!r} can only be specified when the "
                     "partition previously exists.".format(prop_name))
 
-            if partition.hbas is None:
+            if storage_mgmt_enabled(cpc):
                 raise ParameterError(
                     "Artificial property {0!r} can only be specified when the "
                     "'dpm-storage-management' feature is disabled.".
@@ -1033,6 +1062,80 @@ def process_properties(cpc, partition, params):
             hmc_prop_name = 'boot-storage-device'
             if partition.properties.get(hmc_prop_name) != hba.uri:
                 update_props[hmc_prop_name] = hba.uri
+                if not update_while_active:
+                    raise AssertionError()
+
+        elif prop_name == 'boot_storage_group_name':
+            # Process this artificial property
+
+            if 'boot_storage_volume_name' not in input_props:
+                raise ParameterError(
+                    "Artificial property {0!r} can only be specified when "
+                    "'boot_storage_volume_name' is also specified.".
+                    format(prop_name))
+
+            if 'boot_storage_volume' in input_props:
+                raise ParameterError(
+                    "Artificial property {0!r} cannot be specified when "
+                    "'boot_storage_volume' is also specified.".
+                    format(prop_name))
+
+            # nothing else to be done; the properties are handled together
+            # when 'boot_storage_volume_name' is processed.
+
+        elif prop_name == 'boot_storage_volume_name':
+            # Process this artificial property
+
+            try:
+                sg_name = input_props['boot_storage_group_name']
+            except KeyError:
+                raise ParameterError(
+                    "Artificial property {0!r} can only be specified when "
+                    "'boot_storage_group_name' is also specified.".
+                    format(prop_name))
+
+            if 'boot_storage_volume' in input_props:
+                raise ParameterError(
+                    "Artificial property {0!r} cannot be specified when "
+                    "'boot_storage_volume' is also specified.".
+                    format(prop_name))
+
+            if not partition:
+                raise ParameterError(
+                    "Artificial property {0!r} can only be specified when the "
+                    "partition previously exists.".format(prop_name))
+
+            if not storage_mgmt_enabled(cpc):
+                raise ParameterError(
+                    "Artificial property {0!r} can only be specified when the "
+                    "'dpm-storage-management' feature is enabled.".
+                    format(prop_name))
+
+            if type_cast:
+                sg_name = type_cast(sg_name)
+
+            sv_name = input_props[prop_name]
+            if type_cast:
+                sv_name = type_cast(sv_name)
+
+            try:
+                sg = console.storage_groups.find(name=sg_name)
+            except zhmcclient.NotFound:
+                raise ParameterError(
+                    "Artificial property 'boot_storage_group_name' does not "
+                    "name an existing storage group: {0!r}".format(sg_name))
+
+            try:
+                sv = sg.storage_volumes.find(name=sv_name)
+            except zhmcclient.NotFound:
+                raise ParameterError(
+                    "Artificial property 'boot_storage_volume_name' does not "
+                    "name an existing storage volume {0!r} in storage group "
+                    "{1!r}".format(sv_name, sg_name))
+
+            hmc_prop_name = 'boot-storage-volume'
+            if partition.properties.get(hmc_prop_name) != sv.uri:
+                update_props[hmc_prop_name] = sv.uri
                 if not update_while_active:
                     raise AssertionError()
 
@@ -1328,6 +1431,10 @@ def add_artificial_properties(
 
     * 'virtual-functions': List of VirtualFunction objects of the partition.
 
+    * 'boot-storage-group-name': Name of the storage group that contains
+      the storage volume object with the URI specified in 'boot-storage-volume',
+      or None.
+
     * 'boot-storage-volume-name': Name of the object with the URI specified
       in 'boot-storage-volume', or None.
 
@@ -1399,15 +1506,18 @@ def add_artificial_properties(
         vfs_prop.append(dict(vf.properties))
     partition_properties['virtual-functions'] = vfs_prop
 
-    # Set 'boot-storage-volume-name'
+    # Set 'boot-storage-volume-name' and 'boot-storage-group-name'
     bsv_uri = partition.prop('boot-storage-volume', None)
     if bsv_uri:
         sg_uri = bsv_uri.split('/storage-volumes/')[0]
         storage_group = console.storage_groups.resource_object(sg_uri)
         bsv = storage_group.storage_volumes.find(**{'element-uri': bsv_uri})
+        bsg_name = storage_group.name
         bsv_name = bsv.name
     else:
+        bsg_name = None
         bsv_name = None
+    partition_properties['boot-storage-group-name'] = bsg_name
     partition_properties['boot-storage-volume-name'] = bsv_name
 
     if expand_storage_groups:

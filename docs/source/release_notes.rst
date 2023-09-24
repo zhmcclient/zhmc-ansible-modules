@@ -54,6 +54,12 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Docs: Removed incorrect 'userid' property from return value documentation of
   zhmc_session module.
 
+* zhmc_partition: Fixed configuration of boot from storage volume. It can now
+  be configured either by setting the 'boot_storage_volume' input property to
+  the URI of the boot volume, or by setting the 'boot_storage_volume_name'
+  and 'boot_storage_group_name' input properties to the name of the boot volume
+  and its storage group, respectively. (issue #640)
+
 **Enhancements:**
 
 * Increased minimum version of zhmcclient to 1.11.2 to pick up improved mock
