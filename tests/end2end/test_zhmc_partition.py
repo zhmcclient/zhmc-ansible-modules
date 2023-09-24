@@ -74,6 +74,8 @@ PARTITION_ARTIFICIAL_PROPS = (
     'hbas',
     'nics',
     'virtual-functions',
+    'boot-storage-group-name',
+    'boot-storage-volume-name',
 )
 
 # Minimally allowed memory for partitions
@@ -121,6 +123,16 @@ STD_SSC_PARTITION_HMC_INPUT_PROPS = {
     'ssc-master-userid': 'sscuser',
     'ssc-master-pw': 'Need2ChangeSoon!',
 }
+
+
+def storage_mgmt_enabled(cpc):
+    """
+    Return whether the CPC has the 'dpm-storage-management' feature enabled.
+    """
+    for feature_info in cpc.prop('available-features-list', []):
+        if feature_info['name'] == 'dpm-storage-management':
+            return feature_info['state']
+    return False
 
 
 def setup_partition(hd, cpc, name, properties, state='stopped'):
@@ -249,6 +261,15 @@ def unique_partition_name():
     return partition_name
 
 
+def unique_stogrp_name():
+    """
+    Return a unique storage group name.
+    """
+    stogrp_name = 'zhmc_test_sg_{u}'.format(
+        u=str(uuid.uuid4()).replace('-', ''))
+    return stogrp_name
+
+
 def get_module_output(mod_obj):
     """
     Return the module output as a tuple (changed, partition_properties) (i.e.
@@ -330,6 +351,14 @@ def assert_partition_props(act_props, exp_props, where):
         assert isinstance(vf_props_list, list), where  # List of VFs
         for vf_props in vf_props_list:
             assert isinstance(vf_props, dict), where  # Dict of VF properties
+    assert 'boot-storage-group-name' in act_props, where
+    if 'boot-storage-group-name' in exp_props:
+        exp_boot_sg_name = exp_props['boot-storage-group-name']
+        assert act_props['boot-storage-group-name'] == exp_boot_sg_name
+    assert 'boot-storage-volume-name' in act_props, where
+    if 'boot-storage-volume-name' in exp_props:
+        exp_boot_sv_name = exp_props['boot-storage-volume-name']
+        assert act_props['boot-storage-volume-name'] == exp_boot_sv_name
 
 
 @pytest.mark.parametrize(
@@ -1059,4 +1088,160 @@ def test_zhmc_partition_properties(
                 assert_partition_props(output_props, exp_props, where)
 
         finally:
+            teardown_partition(hd, cpc, partition_name)
+
+
+@pytest.mark.parametrize(
+    "check_mode", [
+        pytest.param(False, id="check_mode=False"),
+        pytest.param(True, id="check_mode=True"),
+    ]
+)
+@pytest.mark.parametrize(
+    "via", [
+        pytest.param('uri', id="via=uri"),
+        pytest.param('name', id="via=name"),
+    ]
+)
+@pytest.mark.parametrize(
+    "type_state", [
+        pytest.param(('linux', 'stopped'), id="type=linux,state=stopped"),
+    ]
+)
+@mock.patch("plugins.modules.zhmc_partition.AnsibleModule", autospec=True)
+def test_zhmc_partition_boot_stovol(
+        ansible_mod_cls, type_state, via, check_mode, dpm_mode_cpcs):  # noqa: F811, E501
+    """
+    Test the zhmc_partition module when configuring boot from a storage volume.
+    """
+
+    if not dpm_mode_cpcs:
+        pytest.skip("HMC definition does not include any CPCs in DPM mode")
+
+    partition_type, state = type_state
+
+    for cpc in dpm_mode_cpcs:
+        assert cpc.dpm_enabled
+
+        if not storage_mgmt_enabled(cpc):
+            pytest.skip("CPC {c} does not have the 'dpm-storage-management' "
+                        "feature enabled".format(c=cpc.name))
+
+        console = cpc.manager.console
+        session = cpc.manager.session
+        hd = session.hmc_definition
+        hmc_host = hd.host
+        hmc_auth = dict(userid=hd.userid, password=hd.password,
+                        ca_certs=hd.ca_certs, verify=hd.verify)
+
+        faked_session = session if hd.mock_file else None
+
+        if hd.mock_file:
+            pytest.skip("zhmcclient mock support does not implement "
+                        "storage group attachment")
+
+        # Create a partition name that does not exist
+        partition_name = unique_partition_name()
+
+        # Create initial partition
+        assert partition_type == 'linux'
+        create_props = STD_LINUX_PARTITION_HMC_INPUT_PROPS
+        create_props['type'] = partition_type
+        partition = setup_partition(hd, cpc, partition_name, create_props,
+                                    state)
+
+        stogrp = None
+        try:
+
+            # Create a storage group with a boot volume
+            stogrp_name = unique_stogrp_name()
+            stogrp = console.storage_groups.create({
+                'name': stogrp_name,
+                'cpc-uri': cpc.uri,
+                'type': 'fcp',
+            })
+            boot_volume = stogrp.storage_volumes.create({
+                'name': 'vol1',
+                'size': 8,
+                'usage': 'boot',
+            })
+
+            # Attach the storage group to the partition
+            # Note: It is not fulfilled. Yet, attachment works.
+            partition.attach_storage_group(stogrp)
+
+            if via == 'name':
+                update_props = {
+                    'boot_device': 'storage-volume',
+                    'boot_storage_group_name': stogrp.name,
+                    'boot_storage_volume_name': boot_volume.name,
+                }
+            else:
+                assert via == 'uri'
+                update_props = {
+                    'boot_device': 'storage-volume',
+                    'boot_storage_volume': boot_volume.uri,
+                }
+
+            if DEBUG:
+                print("Debug: Calling module with properties={p!r}".
+                      format(p=update_props))
+
+            # Prepare module input parms (must be all required + optional)
+            params = {
+                'hmc_host': hmc_host,
+                'hmc_auth': hmc_auth,
+                'cpc_name': cpc.name,
+                'name': partition_name,
+                'state': state,  # no state change
+                'properties': update_props,
+                'expand_storage_groups': False,
+                'expand_crypto_adapters': False,
+                'log_file': LOG_FILE,
+                '_faked_session': faked_session,
+            }
+
+            mod_obj = mock_ansible_module(
+                ansible_mod_cls, params, check_mode)
+
+            # Exercise the code to be tested
+            with pytest.raises(SystemExit) as exc_info:
+                zhmc_partition.main()
+            exit_code = exc_info.value.args[0]
+
+            if check_mode:
+                # Check mode of the zhmc_partition module does not implement
+                # the check for the boot volume to be fulfilled.
+                exp_exit_code = 0
+                exp_msg_pattern = None
+            else:
+                # We are in a real HMC environment, without check mode.
+                # The HMC does not allow configuring boot from storage volume
+                # when the volume is not fulfilled.
+                exp_exit_code = 1
+                exp_msg_pattern = "HTTPError: 409,122: Storage volume is not " \
+                    "fulfilled"
+
+            if exit_code != 0:
+                msg = get_failure_msg(mod_obj)
+                if exit_code != exp_exit_code:
+                    raise AssertionError(
+                        "Module unexpectedly failed with exit code {e}, "
+                        "message: {m}".format(e=exit_code, m=msg))
+                if not re.search(exp_msg_pattern, msg):
+                    raise AssertionError(
+                        "Module failed as expected with exit code {e}, but "
+                        "message does not match expected pattern {mp}: {m}".
+                        format(e=exit_code, mp=exp_msg_pattern, m=msg))
+            else:
+                changed, result = get_module_output(mod_obj)
+                if exit_code != exp_exit_code:
+                    raise AssertionError(
+                        "Module unexpectedly succeeded with changed: {c}, "
+                        "result: {r}".format(c=changed, r=result))
+
+        finally:
+            if stogrp:
+                partition.detach_storage_group(stogrp)
+                stogrp.delete()
             teardown_partition(hd, cpc, partition_name)

@@ -52,7 +52,8 @@ FAKED_CONSOLE = {
     'version': '2.13.0',
 }
 
-# Faked CPC in DPM mode that is used for all tests
+# Faked CPC in DPM mode with storage mgmt feature that is used for all tests.
+# Note: The HBA related tests disable the 'dpm-storage-management' feature.
 # (with property names as specified in HMC data model)
 FAKED_CPC_1_OID = 'fake-cpc-1'
 FAKED_CPC_1_URI = '/api/cpcs/' + FAKED_CPC_1_OID
@@ -66,6 +67,13 @@ FAKED_CPC_1 = {
     'dpm-enabled': True,
     'is-ensemble-member': False,
     'iml-mode': 'dpm',
+    'available-features-list': [
+        {
+            'name': 'dpm-storage-management',
+            'description': 'DPM storage management',
+            'state': True,
+        }
+    ],
 }
 
 # Faked partition that is used for these tests. Most properties are set to
@@ -128,7 +136,6 @@ FAKED_PARTITION_1 = {
     'boot-removable-media-type': None,
     'boot-timeout': 60,
     'boot-storage-volume': None,
-    'boot-storage-volume-name': None,
     'boot-storage-device': None,
     'boot-logical-unit-number': '',
     'boot-world-wide-port-name': '',
@@ -164,7 +171,8 @@ FAKED_PARTITION_1 = {
     # 'ssc-master-pw': None,
 }
 
-# Faked HBA that is used for these tests (for partition boot from storage).
+# Faked HBA that is used for these tests (for partition boot from storage
+# adapter (HBA) on z13).
 # Most properties are set to their default values.
 FAKED_HBA_1_NAME = 'hba-1'
 FAKED_HBA_1_OID = 'fake-hba-1'
@@ -179,6 +187,43 @@ FAKED_HBA_1 = {
     'device_number': '012F',
     'wwpn': 'abcdef0123456789',
     'adapter-port-uri': 'faked-adapter-port-uri',
+}
+
+# Faked storage volume and storage group that are used for these tests (for
+# partition boot from storage volume on z14 or later).
+# Most properties are set to their default values.
+FAKED_SG_1_NAME = 'sg-1'
+FAKED_SG_1_OID = 'fake-sg-1'
+FAKED_SG_1_URI = '/api/storage-groups/' + FAKED_SG_1_OID
+FAKED_SV_1_NAME = 'sv-1'
+FAKED_SV_1_OID = 'fake-sv-1'
+FAKED_SV_1_URI = FAKED_SG_1_URI + '/storage-volumes/' + FAKED_SV_1_OID
+FAKED_SG_1 = {
+    'object-id': FAKED_SG_1_OID,
+    'object-uri': FAKED_SG_1_URI,
+    'parent': FAKED_CONSOLE_URI,
+    'class': 'storage-group',
+    'name': FAKED_SG_1_NAME,
+    'description': 'SG #1',
+    'type': 'fcp',
+    'shared': False,
+    'fulfillment-state': 'complete',
+    'storage-volume-uris': [FAKED_SV_1_URI],
+    'virtual-storage-resource-uris': [],
+    'connectivity': 6,
+    'active-connectivity': 0,
+    'max-partitions': 1,
+}
+FAKED_SV_1 = {
+    'element-id': FAKED_SV_1_OID,
+    'element-uri': FAKED_SV_1_URI,
+    'parent': FAKED_SG_1_URI,
+    'class': 'storage-volume',
+    'name': FAKED_SV_1_NAME,
+    'description': 'SV #1',
+    'fulfillment-state': 'complete',
+    'size': 64,
+    'usage': 'boot',
 }
 
 # Faked adapter, port and vswitch used for the OSA NIC.
@@ -780,7 +825,8 @@ class TestPartition(object):
         """
         self.session = FakedSession(**FAKED_SESSION_KWARGS)
         self.client = Client(self.session)
-        self.console = self.session.hmc.consoles.add(FAKED_CONSOLE)
+        self.faked_console = self.session.hmc.consoles.add(FAKED_CONSOLE)
+        self.console = self.client.consoles.list(full_properties=True)[0]
         self.faked_cpc = self.session.hmc.cpcs.add(FAKED_CPC_1)
         cpcs = self.client.cpcs.list()
         assert len(cpcs) == 1
@@ -815,6 +861,8 @@ class TestPartition(object):
         """
         Prepare the faked HBA, on top of the faked partition created by
         setup_partition().
+
+        Also, disable the dpm-storage-management feature in the CPC.
         """
         self.hba_name = FAKED_HBA_1_NAME
         if self.partition:
@@ -823,9 +871,40 @@ class TestPartition(object):
             hbas = self.partition.hbas.list(full_properties=True)
             assert len(hbas) == 1
             self.hba = hbas[0]
+            # Disable the dpm-storage-management feature
+            del self.faked_cpc.properties['available-features-list']
         else:
             self.faked_hba = None
             self.hba = None
+
+    def setup_boot_volume(self):
+        """
+        Prepare the faked boot volume in a faked storage group, and attach
+        the storage group to the partition.
+        """
+        self.sg_name = FAKED_SG_1_NAME
+        self.sv_name = FAKED_SV_1_NAME
+        if self.partition:
+            # Create the storage group
+            self.faked_sg = self.faked_console.storage_groups.add(FAKED_SG_1)
+            sgs = self.console.storage_groups.list(full_properties=True)
+            assert len(sgs) == 1
+            self.sg = sgs[0]
+            # Create the storage volume
+            self.faked_sv = self.faked_sg.storage_volumes.add(FAKED_SV_1)
+            svs = self.sg.storage_volumes.list(full_properties=True)
+            assert len(svs) == 1
+            self.sv = svs[0]
+            # Attach the storage group to the partition.
+            # Note: partition.attach_storage_group() is not yet implemented in
+            # the zhmcclient mock support, so we simulate the attachment.
+            self.faked_partition.properties['storage-group-uris'].append(
+                self.sg.uri)
+        else:
+            self.faked_sg = None
+            self.sg = None
+            self.faked_sv = None
+            self.sv = None
 
     def setup_nic(self):
         """
@@ -944,6 +1023,10 @@ class TestPartition(object):
                 assert len(pvalue) == 0
             elif pname == 'storage-groups':
                 assert len(pvalue) == 0  # Not set up
+            elif pname == 'boot-storage-group-name':
+                pass  # Artificial property
+            elif pname == 'boot-storage-volume-name':
+                pass  # Artificial property
             else:
                 if pname == 'crypto-configuration' and pvalue and \
                         'crypto-adapters' in pvalue:
@@ -1075,10 +1158,11 @@ class TestPartition(object):
         "desired_state", ['stopped', 'active'])
     @mock.patch("plugins.modules.zhmc_partition.AnsibleModule",
                 autospec=True)
-    def test_boot_storage_success(
+    def test_boot_hba_success(
             self, ansible_mod_cls, desired_state, initial_state, check_mode):
         """
-        Tests for successful configuration of boot from storage.
+        Tests for successful configuration of boot from storage adapter (HBA)
+        (z13).
         """
 
         # Prepare the initial partition and HBA before the test is run
@@ -1165,10 +1249,11 @@ class TestPartition(object):
         "desired_state", ['stopped', 'active'])
     @mock.patch("plugins.modules.zhmc_partition.AnsibleModule",
                 autospec=True)
-    def test_boot_storage_error_hba_not_found(
+    def test_boot_hba_error_hba_not_found(
             self, ansible_mod_cls, desired_state, initial_state, check_mode):
         """
-        Tests for successful configuration of boot from storage.
+        Tests for failed configuration of boot from storage adapter (HBA)
+        (z13).
         """
 
         # Prepare the initial partition and HBA before the test is run
@@ -1215,6 +1300,98 @@ class TestPartition(object):
         # Assert the failure message
         msg = get_failure_msg(mod_obj)
         assert msg.startswith("ParameterError:")
+
+    @pytest.mark.parametrize(
+        "check_mode", [False, True])
+    @pytest.mark.parametrize(
+        "initial_state", ['stopped', 'active'])
+    @pytest.mark.parametrize(
+        "desired_state", ['stopped', 'active'])
+    @mock.patch("plugins.modules.zhmc_partition.AnsibleModule",
+                autospec=True)
+    def test_boot_volume_success(
+            self, ansible_mod_cls, desired_state, initial_state, check_mode):
+        """
+        Tests for successful configuration of boot from storage volume
+        (z14 or later).
+        """
+
+        # Prepare the initial partition and HBA before the test is run
+        self.setup_partition(initial_state)
+        assert self.partition
+        self.setup_boot_volume()
+
+        # Set some expectations for this test from its parametrization
+        exp_status = (PARTITION_STATUS_FROM_STATE[initial_state] if check_mode
+                      else PARTITION_STATUS_FROM_STATE[desired_state])
+
+        properties = {
+            'boot_device': 'storage-volume',
+            'boot_storage_group_name': self.sg_name,  # artif. prop.
+            'boot_storage_volume_name': self.sv_name,  # artif. prop.
+        }
+
+        exp_properties = {
+            'boot_device': 'storage-volume',
+            'boot_storage_group_name': self.sg_name,  # artif. prop.
+            'boot_storage_volume_name': self.sv_name,  # artif. prop.
+            'boot_storage_volume': self.sv.uri,  # real prop for artif. prop.
+        }
+
+        # Prepare module input parameters (must be all required + optional)
+        params = {
+            'hmc_host': 'fake-host',
+            'hmc_auth': dict(userid='fake-userid',
+                             password='fake-password'),
+            'cpc_name': self.cpc.name,
+            'name': self.partition_name,
+            'state': desired_state,
+            'properties': properties,
+            'expand_storage_groups': False,
+            'expand_crypto_adapters': False,
+            'log_file': None,
+            '_faked_session': self.session,
+        }
+
+        # Prepare mocks for AnsibleModule object
+        mod_obj = mock_ansible_module(ansible_mod_cls, params, check_mode)
+
+        # Exercise the code to be tested
+        with pytest.raises(SystemExit) as exc_info:
+            zhmc_partition.main()
+        exit_code = exc_info.value.args[0]
+
+        # Assert module exit code
+        assert exit_code == 0, \
+            "Module unexpectedly failed with this message:\n{0}". \
+            format(get_failure_msg(mod_obj))
+
+        # Assert module output
+        changed, part_props = get_module_output(mod_obj)
+        assert changed
+        assert part_props != {}
+        if not check_mode:
+            assert part_props['status'] == exp_status
+            assert part_props['name'] == params['name']
+            for prop_name, exp_value in exp_properties.items():
+                hmc_prop_name = prop_name.replace('_', '-')
+                assert part_props[hmc_prop_name] == exp_value, \
+                    "Property: {0}".format(prop_name)
+
+        # Assert the partition resource
+        if not check_mode:
+            parts = self.cpc.partitions.list()
+            assert len(parts) == 1
+            part = parts[0]
+            part.pull_full_properties()
+            assert part.properties['status'] == exp_status
+            assert part.properties['name'] == params['name']
+            for prop_name, exp_value in exp_properties.items():
+                hmc_prop_name = prop_name.replace('_', '-')
+                if hmc_prop_name in part.properties:
+                    # only if not an artificial property
+                    assert part.properties[hmc_prop_name] == exp_value, \
+                        "Property: {0}".format(prop_name)
 
     @pytest.mark.parametrize(
         "check_mode", [False, True])
