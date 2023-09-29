@@ -115,15 +115,23 @@ state
 
 
 adapter_count
-  Only for \ :literal:`state=attached`\ : The number of crypto adapters the partition needs to have attached. The special value -1 means all adapters of the desired crypto type in the CPC. The \ :literal:`adapter\_names`\  and \ :literal:`adapter\_count`\  parameters are mutually exclusive; if neither is specified the default for \ :literal:`adapter\_count`\  applies.
+  Only for \ :literal:`state=attached`\ : The number of crypto adapters the partition needs to have attached. The special value -1 means all adapters of the desired crypto type in the CPC. The \ :literal:`adapter\_names`\  and \ :literal:`adapter\_count`\  parameters are mutually exclusive and one of them must be specified.
 
   | **required**: False
   | **type**: int
-  | **default**: -1
+
+
+crypto_type
+  Only for \ :literal:`state=attached`\ : The crypto type of the crypto adapters that will be selected from when \ :literal:`adapter\_count`\  is specified. Ignored when \ :literal:`adapter\_names`\  is specified.
+
+  | **required**: False
+  | **type**: str
+  | **default**: ep11
+  | **choices**: ep11, cca, acc
 
 
 adapter_names
-  Only for \ :literal:`state=attached`\ : The names of the crypto adapters the partition needs to have attached. The \ :literal:`adapter\_names`\  and \ :literal:`adapter\_count`\  parameters are mutually exclusive; if neither is specified the default for \ :literal:`adapter\_count`\  applies.
+  Only for \ :literal:`state=attached`\ : The names of the crypto adapters the partition needs to have attached. The \ :literal:`adapter\_names`\  and \ :literal:`adapter\_count`\  parameters are mutually exclusive and one of them must be specified.
 
   | **required**: False
   | **type**: list
@@ -146,15 +154,6 @@ access_mode
   | **type**: str
   | **default**: usage
   | **choices**: usage, control
-
-
-crypto_type
-  Only for \ :literal:`state=attached`\ : The crypto type of the crypto adapters that will be considered for attaching.
-
-  | **required**: False
-  | **type**: str
-  | **default**: ep11
-  | **choices**: ep11, cca, acc
 
 
 log_file
@@ -220,14 +219,13 @@ Examples
        domain_range: 0,-1
        access_mode: usage
 
-   - name: Ensure domains 0-max on two specific ep11 adapters are attached
+   - name: Ensure domains 0-max on two specific adapters are attached
      zhmc_crypto_attachment:
        hmc_host: "{{ my_hmc_host }}"
        hmc_auth: "{{ my_hmc_auth }}"
        cpc_name: "{{ my_cpc_name }}"
        partition_name: "{{ my_second_partition_name }}"
        state: attached
-       crypto_type: ep11
        adapter_names: [CRYP00, CRYP01]
        domain_range: 0,-1
        access_mode: usage
