@@ -42,6 +42,13 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   parameter is always used regardless of whether another adapter with that name
   exists, i.e. the name change in that case will fail.
 
+* zhmc_crypto_attachment - Now, one of the 'adapter_count' or 'adapter_names'
+  parameters must be specified. Previously, not providing any of them
+  resulted in a default of adapter_count = -1 (all adapters of the specified
+  crypto type). That made it impossible to properly check for whether both
+  had been specified when dapter_count was specified with its default -1.
+  To use all adapters now, explicitly specify 'adapter_count: -1'.
+
 **Deprecations:**
 
 **Bug fixes:**
@@ -90,6 +97,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * zhmc_adapter - Improved the check mode support: It now recognizes if an
   adapter gets renamed to another existing adapter and rejects that just
   as in non-check mode.
+
+* zhmc_crypto_attachment - The 'crypto_type' parameter is now ignored when
+  'adapter_names' is specified. That allows specifying adapter names without
+  having to know their crypto type.
 
 * Added CHANGELOG.rst file to satisfy requirement for RedHat Automation Hub.
   For now, it includes release_notes.rst. A transition to fragments-based

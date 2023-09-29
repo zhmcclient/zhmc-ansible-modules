@@ -135,18 +135,25 @@ options:
          The special value -1 means all adapters of the desired crypto type in
          the CPC.
          The C(adapter_names) and C(adapter_count) parameters are mutually
-         exclusive; if neither is specified the default for C(adapter_count)
-         applies."
+         exclusive and one of them must be specified."
     type: int
     required: false
-    default: -1
+    default: null
+  crypto_type:
+    description:
+      - "Only for C(state=attached): The crypto type of the crypto adapters
+         that will be selected from when C(adapter_count) is specified.
+         Ignored when C(adapter_names) is specified."
+    type: str
+    required: false
+    default: 'ep11'
+    choices: ['ep11', 'cca', 'acc']
   adapter_names:
     description:
       - "Only for C(state=attached): The names of the crypto adapters the
          partition needs to have attached.
          The C(adapter_names) and C(adapter_count) parameters are mutually
-         exclusive; if neither is specified the default for C(adapter_count)
-         applies."
+         exclusive and one of them must be specified."
     type: list
     elements: str
     required: false
@@ -171,14 +178,6 @@ options:
     required: false
     default: 'usage'
     choices: ['usage', 'control']
-  crypto_type:
-    description:
-      - "Only for C(state=attached): The crypto type of the crypto adapters
-         that will be considered for attaching."
-    type: str
-    required: false
-    default: 'ep11'
-    choices: ['ep11', 'cca', 'acc']
   log_file:
     description:
       - "File path of a log file to which the logic flow of this module as well
@@ -244,14 +243,13 @@ EXAMPLES = """
     domain_range: 0,-1
     access_mode: usage
 
-- name: Ensure domains 0-max on two specific ep11 adapters are attached
+- name: Ensure domains 0-max on two specific adapters are attached
   zhmc_crypto_attachment:
     hmc_host: "{{ my_hmc_host }}"
     hmc_auth: "{{ my_hmc_auth }}"
     cpc_name: "{{ my_cpc_name }}"
     partition_name: "{{ my_second_partition_name }}"
     state: attached
-    crypto_type: ep11
     adapter_names: [CRYP00, CRYP01]
     domain_range: 0,-1
     access_mode: usage
@@ -518,7 +516,17 @@ def ensure_attached(params, check_mode):
             "The 'domain_range' parameter must be a list containing two "
             "integer numbers, but is: {0!r}".format(domain_range))
 
-    hmc_crypto_type = CRYPTO_TYPES_MOD2HMC[crypto_type]
+    if adapter_count and adapter_names:
+        raise ParameterError(
+            "The 'adapter_count' and 'adapter_names' parameters are "
+            "mutually exclusive, but both have been specified: "
+            "adapter_count={0!r}, adapter_names={1!r}".
+            format(adapter_count, adapter_names))
+
+    # Ignore crypto_type if adapter_names is specified
+    if adapter_names:
+        crypto_type = None
+
     hmc_access_mode = ACCESS_MODES_MOD2HMC[access_mode]
 
     changed = False
@@ -532,16 +540,16 @@ def ensure_attached(params, check_mode):
         partition = cpc.partitions.find(name=partition_name)
         # The default exception handling is sufficient for the above.
 
-        # Determine all crypto adapters of the specified crypto type.
         filter_args = {
             'adapter-family': 'crypto',
-            'crypto-type': hmc_crypto_type,
         }
+        if crypto_type:
+            filter_args['crypto-type'] = CRYPTO_TYPES_MOD2HMC[crypto_type]
         all_adapters = cpc.adapters.list(filter_args=filter_args,
                                          full_properties=True)
         if not all_adapters:
-            raise Error("No crypto adapters of type {0!r} found on CPC {1!r} ".
-                        format(crypto_type, cpc_name))
+            raise Error("No crypto adapters found on CPC {0!r} ".
+                        format(cpc_name))
 
         all_adapters_dict = {a.name: a for a in all_adapters}
 
@@ -561,20 +569,10 @@ def ensure_attached(params, check_mode):
                 "of the range must be less than the higher boundary (={1})".
                 format(domain_range_lo, domain_range_hi))
 
-        # Parameter checking on adapter count and adapter names.
-        # (can be done only now because it requires the number of adapters).
-        if adapter_count != -1:
-            # The adapter_count parameter was specified.
-            # Note: Specifying it with its default value counts as not
-            # specified!
-            if not adapter_names:
-                # The adapter_names parameter was also specified.
-                raise ParameterError(
-                    "The 'adapter_count' and 'adapter_names' parameters are "
-                    "mutually exclusive, but both have been specified: "
-                    "adapter_count={0!r}, adapter_names={1!r}".
-                    format(adapter_count, adapter_names))
-            elif adapter_count < 1:
+        # Parameter checking on adapter count.
+        # (can be done only now because it requires the adapters listed)
+        if adapter_count:
+            if adapter_count < 1:
                 raise ParameterError(
                     "The 'adapter_count' parameter must be at least 1, but "
                     "is: {0}".
@@ -586,26 +584,16 @@ def ensure_attached(params, check_mode):
                     "{2!r}, but is {3}".
                     format(len(all_adapters), crypto_type, cpc_name,
                            adapter_count))
-        elif adapter_names:
-            # Only the adapter_names parameter was specified.
-            adapter_count = len(adapter_names)
-        else:
-            # Neither of the adapter_count and adapter_names parameters were
-            # specified.
-            adapter_count = len(all_adapters)
 
-        # At this point, we have:
-        # - adapter_count is a valid number 1..max in all cases.
-        # - adapter_names is [] if the adapters do not matter or is a
-        #   list of existing adapter names of length adapter_count.
-
-        # Verify the specified adapters exist
-        for aname in adapter_names:
-            if aname not in all_adapters_dict:
-                raise ParameterError(
-                    "The 'adapter_name' parameter specifies an adapter "
-                    "named {0!r} that does not exist in CPC {1!r}".
-                    format(aname, cpc_name))
+        # Verify the specified adapter names exist.
+        # (can be done only now because it requires the adapters listed)
+        if adapter_names:
+            for aname in adapter_names:
+                if aname not in all_adapters_dict:
+                    raise ParameterError(
+                        "The 'adapter_names' parameter specifies a crypto"
+                        "adapter named {0!r} that does not exist on CPC {1!r}".
+                        format(aname, cpc_name))
 
         #
         # Get current crypto config of the target partition.
@@ -1071,15 +1059,15 @@ def main():
         partition_name=dict(required=True, type='str'),
         state=dict(required=True, type='str',
                    choices=['attached', 'detached', 'facts']),
-        adapter_count=dict(required=False, type='int', default=-1),
+        adapter_count=dict(required=False, type='int', default=None),
+        crypto_type=dict(required=False, type='str',
+                         choices=['ep11', 'cca', 'acc'], default='ep11'),
         adapter_names=dict(required=False, type='list', elements='str',
                            default=[]),
         domain_range=dict(required=False, type='list', elements='int',
                           default=[0, -1]),
         access_mode=dict(required=False, type='str',
                          choices=['usage', 'control'], default='usage'),
-        crypto_type=dict(required=False, type='str',
-                         choices=['ep11', 'cca', 'acc'], default='ep11'),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),
     )
