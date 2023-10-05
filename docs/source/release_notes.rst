@@ -69,6 +69,12 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   and 'boot_storage_group_name' input properties to the name of the boot volume
   and its storage group, respectively. (issue #640)
 
+* zhmc_partition: Fixed issue that partitions in 'paused' status could not be
+  stopped. As part of that, redesigned the start_partition(), stop_partition()
+  and wait_for_transition_completion() methods to use a simple state machine.
+  This will cause any bad statuses that happen on the way to be raised as
+  exceptions (they were previously returned). (issue #642)
+
 **Enhancements:**
 
 * Increased minimum version of zhmcclient to 1.11.2 to pick up fixes for

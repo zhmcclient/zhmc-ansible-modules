@@ -503,7 +503,7 @@ def ensure_present(params, check_mode):
                     if stop:
                         raise AssertionError()
 
-                    wait_for_transition_completion(partition)
+                    wait_for_transition_completion(LOGGER, partition)
                     hba.update_properties(update_props)
                     # We refresh the properties after the update, in case an
                     # input property value gets changed (for example, the
