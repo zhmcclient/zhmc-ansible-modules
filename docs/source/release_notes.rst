@@ -20,10 +20,10 @@ Releases
 ========
 
 
-Version 1.6.1-dev1
-------------------
+Version 1.6.1
+-------------
 
-Released: not yet
+Released: 2023-10-09
 
 Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
@@ -46,8 +46,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   crypto type). That made it impossible to properly check for whether both
   had been specified when dapter_count was specified with its default -1.
   To use all adapters now, explicitly specify 'adapter_count: -1'.
-
-**Deprecations:**
 
 **Bug fixes:**
 
@@ -104,12 +102,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   test_zhmc_adapter_list.py to be based on adapter IDs (PCHIDs) instead of
   adapter names to accomodate a system on the test floor that currently has
   that bug.
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 1.6.0
