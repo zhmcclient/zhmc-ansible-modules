@@ -724,7 +724,7 @@ def ensure_lpar_inactive(logger, lpar, check_mode):
 
 
 def ensure_lpar_active(
-        logger, lpar, check_mode, activation_profile_name, force):
+        logger, lpar, check_mode, activation_profile_name, timeout, force):
     """
     Ensure that the LPAR is at least active, regardless of what its
     current operational status is.
@@ -755,17 +755,11 @@ def ensure_lpar_active(
         If the LPAR was already active, the `force` parameter determines what
         happens.
 
-      force (bool): Controls what happens when the LPAR was already active:
+      timeout (int): Timeout in seconds, for activate (if needed).
 
-        If True, the parameters from the specified or defaulted image or load
-        activation profile will be applied.
-
-        If False, the parameters from the previously used activation profile
-        remain applied and will not be changed. The previously used activation
-        profile is shown in the 'last-used-activation-profile' property of the
-        LPAR.
-
-        TODO: Verify the statements in the description of the 'force' parameter.
+      force (bool): Controls what happens when the LPAR is already in
+        one of the active statuses: If `True`, the LPAR is re-activated.
+        Otherwise, nothing is done.
 
     Returns:
       bool: Indicates whether the LPAR was changed.
@@ -776,6 +770,7 @@ def ensure_lpar_active(
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
     changed = False
+    check_mode_txt = " (check mode)" if check_mode else ""
     status = org_status = pull_lpar_status(lpar)
 
     if status in LPAR_BAD_STATUSES:
@@ -784,16 +779,34 @@ def ensure_lpar_active(
             format(lpar.manager.cpc.name, lpar.name, status))
 
     if status in LPAR_ACTIVE_END_STATUSES:
-        logger.debug("LPAR %r was already at least active with status %r",
-                     lpar.name, status)
+        if force:
+            logger.debug("LPAR %r is in status %r and force is specified, "
+                         "re-activating it%s",
+                         lpar.name, status, check_mode_txt)
+            if not check_mode:
+                lpar.activate(
+                    activation_profile_name=activation_profile_name,
+                    operation_timeout=timeout,
+                    force=True)
+                status = pull_lpar_status(lpar)
+            changed = True
+        else:
+            logger.debug("LPAR %r is in status %r and force is not specified, "
+                         "doing nothing", lpar.name, status)
         return changed
 
     if status == 'not-activated':
+        logger.debug("LPAR %r is in status %r, activating it%s",
+                     lpar.name, status, check_mode_txt)
         if not check_mode:
             lpar.activate(
-                activation_profile_name=activation_profile_name, force=False)
+                activation_profile_name=activation_profile_name,
+                operation_timeout=timeout)
             status = pull_lpar_status(lpar)
         changed = True
+
+    logger.debug("LPAR %r is now in status %r%s",
+                 lpar.name, status, check_mode_txt)
 
     if not check_mode and status not in LPAR_ACTIVE_END_STATUSES:
         raise StatusError(
@@ -805,7 +818,9 @@ def ensure_lpar_active(
 
 
 def ensure_lpar_loaded(
-        logger, lpar, check_mode, activation_profile_name, force):
+        logger, lpar, check_mode, activation_profile_name, load_address,
+        load_parameter, clear_indicator, store_status_indicator, timeout,
+        force):
     """
     Ensure that the LPAR is loaded, regardless of what its current operational
     status is.
@@ -833,18 +848,34 @@ def ensure_lpar_loaded(
         If the LPAR was already active or loaded, the `force` parameter
         determines what happens.
 
-      force (bool): Controls what happens when the LPAR was already active or
-        loaded:
+      load_address (string): The hexadecimal address of an I/O device that
+        provides access to the control program to be loaded.
 
-        If True, the parameters from the specified or defaulted image or load
-        activation profile will be applied.
+        This parameter is used only when explicitly loading the LPAR (i.e.
+        when the LPAR dos not have auto-load set).
 
-        If False, the parameters from the previously used activation profile
-        remain applied and will not be changed. The previously used activation
-        profile is shown in the 'last-used-activation-profile' property of the
-        LPAR.
+      load_parameter (string): A parameter string that is passed to the
+        control program when loading it.
 
-        TODO: Verify the statements in the description of the 'force' parameter.
+        This parameter is used only when explicitly loading the LPAR (i.e.
+        when the LPAR dos not have auto-load set).
+
+      clear_indicator (bool): Controls whether memory is cleared before
+        performing the load.
+
+        This parameter is used only when explicitly loading the LPAR (i.e.
+        when the LPAR dos not have auto-load set).
+
+      store_status_indicator (bool): Controls whether the current values of
+        CPU timer and other internal resources are stored to their assigned
+        absolute storage locations, for state=loaded.
+
+      timeout (int): Timeout in seconds, for activate (if needed) and for
+        load (if needed).
+
+      force (bool): Controls what happens when the LPAR is already in
+        one of the operating statuses: If `True`, the LPAR is re-loaded.
+        Otherwise, nothing is done.
 
     Returns:
       bool: Indicates whether the LPAR was changed.
@@ -855,6 +886,7 @@ def ensure_lpar_loaded(
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
     changed = False
+    check_mode_txt = " (check mode)" if check_mode else ""
     status = org_status = pull_lpar_status(lpar)
 
     if status in LPAR_BAD_STATUSES:
@@ -863,23 +895,51 @@ def ensure_lpar_loaded(
             format(lpar.manager.cpc.name, lpar.name, status))
 
     if status in LPAR_LOADED_END_STATUSES:
-        logger.debug("LPAR %r was already loaded with status %r",
-                     lpar.name, status)
+        if force:
+            logger.debug("LPAR %r is in status %r and force is specified, "
+                         "re-loading it%s",
+                         lpar.name, status, check_mode_txt)
+            if not check_mode:
+                lpar.load(
+                    load_address=load_address,
+                    load_parameter=load_parameter,
+                    clear_indicator=clear_indicator,
+                    store_status_indicator=store_status_indicator,
+                    operation_timeout=timeout,
+                    force=True)
+                status = pull_lpar_status(lpar)
+            changed = True
+        else:
+            logger.debug("LPAR %r is in status %r and force is not specified, "
+                         "doing nothing", lpar.name, status)
         return changed
 
     if status == 'not-activated':
+        logger.debug("LPAR %r is in status %r, activating it%s",
+                     lpar.name, status, check_mode_txt)
         if not check_mode:
             lpar.activate(
-                activation_profile_name=activation_profile_name, force=False)
+                activation_profile_name=activation_profile_name,
+                operation_timeout=timeout)
             status = pull_lpar_status(lpar)
         changed = True
 
     if status == 'not-operating':
         # The LPAR was defined not to auto-load, so we load it.
+        logger.debug("LPAR %r is in status %r, loading it%s",
+                     lpar.name, status, check_mode_txt)
         if not check_mode:
-            lpar.load()
+            lpar.load(
+                load_address=load_address,
+                load_parameter=load_parameter,
+                clear_indicator=clear_indicator,
+                store_status_indicator=store_status_indicator,
+                operation_timeout=timeout)
             status = pull_lpar_status(lpar)
         changed = True
+
+    logger.debug("LPAR %r is now in status %r%s",
+                 lpar.name, status, check_mode_txt)
 
     if not check_mode and status not in LPAR_LOADED_END_STATUSES:
         raise StatusError(

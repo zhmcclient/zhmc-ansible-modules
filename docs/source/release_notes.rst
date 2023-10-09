@@ -120,6 +120,13 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   for the IBM Z set of collections first needs to find a common solution
   for all of its collections.
 
+* Added new parameters load_address, load_parameter, clear_indicator,
+  store_status_indicator and timeout for the zhmc_lpar module with
+  state=loaded. (issue #556)
+
+* Added new parameter timeout for the zhmc_lpar module with state=active.
+  (issue #556)
+
 **Cleanup:**
 
 * Test: Changed identification of adapters in end2end test module
