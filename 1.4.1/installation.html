@@ -12,11 +12,11 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=7f41d439"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -106,7 +106,7 @@
            <div itemprop="articleBody">
              
   <section id="installation">
-<span id="id1"></span><h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h1>
+<span id="id1"></span><h1>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
 <p>The system Ansible is installed on is called the “control system”. This is
 where Ansible commands (such as <code class="docutils literal notranslate"><span class="pre">ansible-playbook</span></code>) are invoked.</p>
 <p>Ansible is written in Python but invokes Ansible modules always as executables,
@@ -126,7 +126,7 @@ with other Python packages, keeping the risk of incompatibilities away from
 your system Python.</p>
 <p>The following sections describe these two installation methods.</p>
 <section id="standard-installation-with-system-python">
-<h2>Standard installation with system Python<a class="headerlink" href="#standard-installation-with-system-python" title="Permalink to this heading"></a></h2>
+<h2>Standard installation with system Python<a class="headerlink" href="#standard-installation-with-system-python" title="Link to this heading"></a></h2>
 <p>All commands shown are to be executed in a terminal or command prompt on the
 control system. The instructions are written for a bash shell.</p>
 <ol class="arabic">
@@ -164,7 +164,7 @@ system Python:</p>
 </ol>
 </section>
 <section id="alternative-installation-with-virtual-python-environment">
-<h2>Alternative installation with virtual Python environment<a class="headerlink" href="#alternative-installation-with-virtual-python-environment" title="Permalink to this heading"></a></h2>
+<h2>Alternative installation with virtual Python environment<a class="headerlink" href="#alternative-installation-with-virtual-python-environment" title="Link to this heading"></a></h2>
 <p>This section describes the installation of Ansible and the ibm.ibm_zhmc Ansible
 Galaxy collection into a virtual Python environment that is set
 up using <a class="reference external" href="https://virtualenv.pypa.io/">virtualenv</a>.</p>
@@ -245,7 +245,7 @@ active Python:</p>
 </ol>
 </section>
 <section id="setting-up-the-hmc">
-<span id="id2"></span><h2>Setting up the HMC<a class="headerlink" href="#setting-up-the-hmc" title="Permalink to this heading"></a></h2>
+<span id="id2"></span><h2>Setting up the HMC<a class="headerlink" href="#setting-up-the-hmc" title="Link to this heading"></a></h2>
 <p>Usage of this collection requires that the HMC in question is prepared
 accordingly:</p>
 <ul>
@@ -262,7 +262,7 @@ other HMC admin you can go to to get the Web Services API enabled.</p>
 </ul>
 </section>
 <section id="hmc-userid-requirements">
-<span id="id3"></span><h2>HMC userid requirements<a class="headerlink" href="#hmc-userid-requirements" title="Permalink to this heading"></a></h2>
+<span id="id3"></span><h2>HMC userid requirements<a class="headerlink" href="#hmc-userid-requirements" title="Link to this heading"></a></h2>
 <p>The HMC userid used for running the modules of this collection must have the
 following task permissions:</p>
 <blockquote>
@@ -276,7 +276,7 @@ addition have the permissions documented in the description of each module
 permissions needed for all operations of the module.</p>
 </section>
 <section id="setting-up-firewalls-or-proxies">
-<span id="id4"></span><h2>Setting up firewalls or proxies<a class="headerlink" href="#setting-up-firewalls-or-proxies" title="Permalink to this heading"></a></h2>
+<span id="id4"></span><h2>Setting up firewalls or proxies<a class="headerlink" href="#setting-up-firewalls-or-proxies" title="Link to this heading"></a></h2>
 <p>If you have to configure firewalls or proxies between the system where you
 run the <code class="docutils literal notranslate"><span class="pre">zhmc_prometheus_exporter</span></code> command and the HMC, the following ports
 need to be opened:</p>
@@ -288,7 +288,7 @@ need to be opened:</p>
 “Connecting to the API message broker” in the <a class="reference internal" href="bibliography.html#term-HMC-API"><span class="xref std std-term">HMC API</span></a> book.</p>
 </section>
 <section id="supported-environments">
-<span id="id5"></span><h2>Supported environments<a class="headerlink" href="#supported-environments" title="Permalink to this heading"></a></h2>
+<span id="id5"></span><h2>Supported environments<a class="headerlink" href="#supported-environments" title="Link to this heading"></a></h2>
 <p>The following versions of Python are supported:</p>
 <ul class="simple">
 <li><p>Python 2.7</p></li>
@@ -376,6 +376,8 @@ need to be opened:</p>
             <dd><a href="installation.html">1.4.1</a></dd>
             <dd><a href="../1.5.0/installation.html">1.5.0</a></dd>
             <dd><a href="../1.6.0/installation.html">1.6.0</a></dd>
+            <dd><a href="../1.6.1/installation.html">1.6.1</a></dd>
+            <dd><a href="../1.7.0/installation.html">1.7.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
