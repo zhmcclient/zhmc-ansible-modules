@@ -20,12 +20,12 @@ Releases
 ========
 
 
-Version 1.7.0-dev1
-------------------
+Version 1.7.0
+-------------
 
-This version contains all fixes up to version 1.6.x.
+This version contains all fixes up to version 1.6.1.
 
-Released: not yet
+Released: 2023-10-09
 
 Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
@@ -48,8 +48,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   crypto type). That made it impossible to properly check for whether both
   had been specified when dapter_count was specified with its default -1.
   To use all adapters now, explicitly specify 'adapter_count: -1'.
-
-**Deprecations:**
 
 **Bug fixes:**
 
@@ -141,12 +139,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Test: Added a check in the Actions test workflow for the module .rst files
   to be up to date in the PR. (issue #755)
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 1.6.0
