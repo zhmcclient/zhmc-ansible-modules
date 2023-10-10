@@ -35,6 +35,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Bug fixes:**
 
+* Fixed link to Ansible Galaxy on README page. (issue #785)
+
 **Enhancements:**
 
 **Cleanup:**
