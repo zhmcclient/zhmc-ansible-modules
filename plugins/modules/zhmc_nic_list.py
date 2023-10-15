@@ -236,7 +236,8 @@ def perform_list(params):
         # The default exception handling is sufficient for the above.
 
         LOGGER.debug("Listing NICs of partition %s", partition.name)
-        nics = partition.nics.list(full_properties=full_properties)
+        # We need to specify full_properties in order to get 'name'
+        nics = partition.nics.list(full_properties=True)
 
         nic_list = []
         for nic in nics:
@@ -244,10 +245,12 @@ def perform_list(params):
             nic_properties = {
                 "partition_name": partition_name,
                 "cpc_name": cpc_name,
+                "name": nic.name,
             }
-            for pname_hmc, pvalue in nic.properties.items():
-                pname = pname_hmc.replace('-', '_')
-                nic_properties[pname] = pvalue
+            if full_properties:
+                for pname_hmc, pvalue in nic.properties.items():
+                    pname = pname_hmc.replace('-', '_')
+                    nic_properties[pname] = pvalue
 
             nic_list.append(nic_properties)
 
