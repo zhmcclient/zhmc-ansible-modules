@@ -263,11 +263,6 @@ jobs:
           echo 'Error: Module .rst files are not up to date in this PR. Run make docslocal to update.';
           exit 1;
         fi"
-    - name: Run check_reqs
-      env:
-        PACKAGE_LEVEL: ${{ matrix.package_level }}
-      run: |
-        make check_reqs
     - name: Run check
       env:
         PACKAGE_LEVEL: ${{ matrix.package_level }}
@@ -306,6 +301,11 @@ jobs:
         COVERALLS_SERVICE_NUMBER: "${{ github.workflow }}-${{ github.run_number }}"
       run: |
         coveralls
+    - name: Run check_reqs
+      env:
+        PACKAGE_LEVEL: ${{ matrix.package_level }}
+      run: |
+        make check_reqs
     - name: Run safety
       env:
         PACKAGE_LEVEL: ${{ matrix.package_level }}
