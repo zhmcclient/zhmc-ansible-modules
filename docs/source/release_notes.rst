@@ -40,6 +40,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Fixed that the 'name' property was missing in result of the 'zhmc_nic_list'
   module.
 
+* Development: Added package level to .done files. (issue #799)
+
 **Enhancements:**
 
 **Cleanup:**
