@@ -42,6 +42,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Enhancements:**
 
+* Added support for Python 3.12. (issue #796)
+
 **Cleanup:**
 
 * Removed documentation and test files (except sanity test ignore files) from

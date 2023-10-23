@@ -127,7 +127,28 @@ else
 ifeq ($(python_m_n_version),3.6)
   check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor
 else
+ifeq ($(python_m_n_version),3.7)
   check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor ansible_test pylint
+else
+ifeq ($(python_m_n_version),3.8)
+  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor ansible_test pylint
+else
+ifeq ($(python_m_n_version),3.9)
+  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor ansible_test pylint
+else
+ifeq ($(python_m_n_version),3.10)
+  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor ansible_test pylint
+else
+ifeq ($(python_m_n_version),3.11)
+  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor ansible_test pylint
+else
+# sphinx is excluded because pip-missing-reqs 2.5 reports missing sphinx-versions package (rightfully)
+  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 ansible_doc_extractor ansible_test pylint
+endif
+endif
+endif
+endif
+endif
 endif
 endif
 endif
@@ -261,11 +282,14 @@ safety: safety_$(pymn).done
 	@echo "Makefile: $@ done."
 
 # Excluding Python>=3.10 with minimum package levels because of PyYAML 5.4.1 install issue with Cython 3
-run_sanity_current := $(shell PL=$(PACKAGE_LEVEL) $(PYTHON_CMD) -c "import sys,os; py=sys.version_info[0:2]; pl=os.getenv('PL'); sys.stdout.write('true' if py<=(3,9) or py>=(3,10) and pl=='latest' else 'false')")
+# Excluding Python>=3.12 because not yet supportd by Ansible
+run_sanity_current := $(shell PL=$(PACKAGE_LEVEL) $(PYTHON_CMD) -c "import sys,os; py=sys.version_info[0:2]; pl=os.getenv('PL'); sys.stdout.write('true' if py<=(3,9) or (3,10)<=py<=(3,11) and pl=='latest' else 'false')")
 
+# Excluding Python <=3.6 because ?
 # Excluding Python 3.7+3.8 with minimum package levels because ?
 # Excluding Python 3.10 with minimum package levels because of PyYAML 5.4.1 install issue with Cython 3
-run_sanity_virtual := $(shell PL=$(PACKAGE_LEVEL) $(PYTHON_CMD) -c "import sys,os; py=sys.version_info[0:2]; pl=os.getenv('PL'); sys.stdout.write('true' if (3,7)<=py<=(3,8) and pl=='latest' or py==(3,9) or py==(3,10) and pl=='latest' or py>=(3,11) else 'false')")
+# Excluding Python>=3.12 because not yet supportd by Ansible
+run_sanity_virtual := $(shell PL=$(PACKAGE_LEVEL) $(PYTHON_CMD) -c "import sys,os; py=sys.version_info[0:2]; pl=os.getenv('PL'); sys.stdout.write('true' if (3,7)<=py<=(3,8) and pl=='latest' or py==(3,9) or py==(3,10) and pl=='latest' or py==(3,11) else 'false')")
 
 # The sanity check requires the .git directory to be present.
 .PHONY:	sanity
