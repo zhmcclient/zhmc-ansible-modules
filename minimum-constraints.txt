@@ -7,66 +7,6 @@
 # any dependent packages.
 
 # Dependencies for installation with Pip (must be installed in a separate pip call)
-#
-# Info: OS-installed package versions for some Linux distros:
-# * RHEL/CentOS 7.4.1708:
-#   Python      2.7.5     2013-05-15
-#   pip         8.1.2     2016-05-11 (epel)
-#   setuptools  0.9.8     2013-07-25
-#   wheel       0.24.0    2014-07-06 (epel)
-# * Ubuntu 16.04.03:
-#   Python      2.7.12    2016-11-19
-#   pip         8.1.1     2016-03-17
-#   setuptools  20.7.0    2016-04-10
-#   wheel       0.29.0    2016-02-06
-# * Ubuntu 17.04:
-#   Python      2.7.12    2016-11-19
-#   pip         9.0.1     2016-11-06
-#   setuptools  33.1.1    2017-01-16
-#   wheel       0.29.0    2016-02-06
-# * Ubuntu 18.04:
-#   Python      2.7.15
-#   Python3     3.6.5
-#   pip         9.0.1     (py2+py3)
-#   setuptools  39.0.1    (py2+py3)
-#   wheel       0.30.0    (py2+py3)
-# * Ubuntu 19.04:
-#   Python      2.7.16
-#   Python3     3.7.3
-#   pip         18.1      (py2+py3)
-#   setuptools  40.8.0    (py2+py3)
-#   wheel       0.32.3    (py2+py3)
-# * Versions installed on Python 3.8 on Appveyor
-#   Python38    3.8.0
-#   pip         19.3.1
-#   setuptools  41.6.0
-#   wheel       0.33.6
-#
-# Info: Python version supported by base packages (added / removed)
-# * Python 2.7 support:
-#   pip         ?
-#   setuptools  ? / 45.0.0
-#   wheel       ?
-# * Python 3.4 support:
-#   pip         ? / 19.2
-#   setuptools  ? / 44.0.0
-#   wheel       ? / 0.34.0
-# * Python 3.5 support:
-#   pip         8.0
-#   setuptools  18.3
-#   wheel       0.30.0
-# * Python 3.6 support:
-#   pip         10.0.0
-#   setuptools  34.0.0
-#   wheel       0.30.0
-# * Python 3.7 support:
-#   pip         18.1
-#   setuptools  40.6.0
-#   wheel       0.32.0
-# * Python 3.8 support:
-#   pip         19.3.1
-#   setuptools  41.5.0
-#   wheel       0.33.5
 
 # For the base packages, we use the versions from Ubuntu 18.04 as a general
 # minimum, and then increase it to the first version that introduced support
@@ -76,25 +16,27 @@
 # Pip 20.2 introduced a new resolver whose backtracking had issues that were resolved only in 21.2.2.
 # Pip 21.0 removed support for Python<=3.5
 # pip>=21.0 is needed for the cryptography package on Windows on GitHub Actions.
-# pip 19.2 fixes safety issue 38765
-# pip 21.1 fixes safety issues 42559,40291
 pip==19.3.1; python_version <= '3.5'
 pip==21.2.4; python_version >= '3.6' and python_version <= '3.9'
-pip==23.0.1; python_version >= '3.10'
+pip==23.0.1; python_version >= '3.10' and python_version <= '3.11'
+pip==23.2.0; python_version >= '3.12'
 # setuptools 51.0.0 removed support for py35
 # setuptools 59.7.0 removed support for py36
+# setuptools 68.1.0 removed support for py37
 # setuptools 65.5.1 fixes safety issue 52495. However, using that version causes
-#   the ansible sanity test to fail in the pylint step due to this Python warning
-#   being displayed on stderr:
+#   the ansible sanity test for Ansible 2.9 to fail in the pylint step due to
+#   this Python warning being displayed on stderr:
 #   _distutils_hack/__init__.py:33: UserWarning: Setuptools is replacing distutils
 #   See Ansible issue 71602 which describes that setuptools 50.0.0 introduced
-#   that issue and that it was fixed in setuptools 50.1.0.
-#   Therefore, we stay on an older version of setuptools for the time being.
+#   that issue and that it was supposedly fixed in setuptools 50.1.0.
+#   Therefore, we stay on an older version of setuptools for Ansible 2.9
+#   (i.e. Python 2.7)
+#   The warning reoccurred since then under some (unknown) circumstances.
+# setuptools>=66.1.0 is required on Python 3.12.
 setuptools==39.0.1; python_version == '2.7'
 setuptools==50.3.2; python_version == '3.5'
-setuptools==59.6.0; python_version == '3.6'
-setuptools==59.6.0; python_version >= '3.7'
-# wheel 0.38.1 fixes safety issue 51499
+setuptools==59.6.0; python_version >= '3.6' and python_version <= '3.11'
+setuptools==66.1.0; python_version >= '3.12'
 wheel==0.30.0; python_version <= '3.6'
 wheel==0.38.1; python_version >= '3.7'
 
@@ -141,7 +83,9 @@ cryptography==3.4.7; python_version == '3.6'
 cryptography==41.0.4; python_version >= '3.7'
 
 importlib-metadata==0.12; python_version <= '3.7'
-importlib-metadata==1.1.0; python_version >= '3.8'
+importlib-metadata==1.1.0; python_version >= '3.8' and python_version <= '3.11'
+importlib-metadata==4.8.3; python_version >= '3.12'
+
 packaging==20.5; python_version <= '3.5'
 packaging==21.0; python_version >= '3.6'
 PyYAML==5.3.1
@@ -159,7 +103,7 @@ voluptuous==0.11.7
 
 # Unit test (imports into testcases):
 # packaging is specified above
-funcsigs==1.0.2; python_version < '3.3'
+funcsigs==1.0.2; python_version == '2.7'  # technically: python_version <= '3.2'
 # pytest 5.0.0 has removed support for Python < 3.5
 # pytest 4.3.1 solves an issue on Python 3 with minimum package levels
 # pytest 7.0.0 is needed on Python 3.11 to fix an install error
@@ -182,8 +126,7 @@ pluggy==0.7.1; python_version <= '3.6'
 pluggy==0.13.0; python_version >= '3.7'
 decorator==4.0.11
 
-# six (used by virtualenv, probably others)
-# virtualenv 20.0 requires six>=1.12.0 on py>=3.8
+# six
 six==1.14.0; python_version <= '3.9'
 six==1.16.0; python_version >= '3.10'
 
@@ -229,28 +172,43 @@ antsibull-docs-parser==1.0.0; python_version >= '3.6'
 sphinx-rtd-theme==1.0.0; python_version >= '3.6'
 
 # PyLint (no imports, invoked via pylint script):
-# Pylint is run in ansible sanity test which is run only on Python>=3.7
-pylint==2.6.0; python_version >= '3.5'
-astroid==2.4.0; python_version >= '3.5'
-typed-ast==1.4.0; python_version >= '3.5' and python_version < '3.8' and implementation_name=='cpython'
+# Pylint is run in ansible sanity test which is run only on Python>=3.5
+pylint==2.6.0; python_version >= '3.5' and python_version <= '3.11'
+# pylint==2.6.0; python_version >= '3.5' and python_version <= '3.7'
+# pylint==2.9.0; python_version >= '3.8' and python_version <= '3.9'
+# pylint==2.15.0; python_version >= '3.10' and python_version <= '3.11'
+pylint==3.0.1; python_version >= '3.12'
+astroid==2.4.0; python_version >= '3.5' and python_version <= '3.11'
+# astroid==2.4.0; python_version >= '3.5' and python_version <= '3.7'
+# astroid==2.6.1; python_version >= '3.8' and python_version <= '3.9'
+# astroid==2.12.4; python_version >= '3.10' and python_version <= '3.11'
+astroid==3.0.1; python_version >= '3.12'
+typed-ast==1.4.0; python_version >= '3.5' and python_version <= '3.7' and implementation_name=='cpython'
 # used by pylint 2.14 which requires python_version >= '3.7' and is used by us only on py>=3.10
-dill==0.2; python_version >= '3.10'
-platformdirs==2.2.0; python_version >= '3.10'
+dill==0.2; python_version == '3.11'
+dill==0.3.7; python_version >= '3.12'
+platformdirs==2.2.0; python_version >= '3.10' and python_version <= '3.11'
+platformdirs==3.2.0; python_version >= '3.12'
 tomlkit==0.10.1; python_version >= '3.10'
 tomli==1.1.0; python_version == '3.10'  # not needed on py>3.10
 
 # Flake8 and dependents (no imports, invoked via flake8 script):
-flake8==3.8.0
-pycodestyle==2.6.0
-pyflakes==2.2.0
-mccabe==0.6.0
+flake8==3.8.0; python_version <= '3.11'
+flake8==5.0.0; python_version >= '3.12'
+mccabe==0.6.0; python_version <= '3.11'
+mccabe==0.7.0; python_version >= '3.12'
+pycodestyle==2.6.0; python_version <= '3.11'
+pycodestyle==2.9.0; python_version >= '3.12'
+pyflakes==2.2.0; python_version <= '3.11'
+pyflakes==2.5.0; python_version >= '3.12'
 entrypoints==0.3.0
-functools32==3.2.3.post2; python_version == '2.7'  # technically: python_version < '3.2'
+functools32==3.2.3.post2; python_version == '2.7'  # technically: python_version <= '3.1'
 
 # Package dependency management tools (not used by any make rules)
 pipdeptree==2.2.0
 pip-check-reqs==2.3.2; python_version >= '3.5' and python_version <= '3.7'
-pip-check-reqs==2.4.3; python_version >= '3.8'
+pip-check-reqs==2.4.3; python_version >= '3.8' and python_version <= '3.11'
+pip-check-reqs==2.5.3; python_version >= '3.12'
 
 # Indirect dependencies (not in requirements.txt or dev-requirements.txt)
 
@@ -260,13 +218,12 @@ args==0.1.0
 attrs==18.2.0; python_version <= '3.9'
 attrs==19.2.0; python_version >= '3.10'
 backports-abc==0.5
-backports.functools-lru-cache==1.5; python_version < "3.3"
+backports.functools-lru-cache==1.5; python_version == '2.7'  # technically: python_version <= '3.2'
 backports.shutil-get-terminal-size==1.0.0
 backports.ssl-match-hostname==3.5.0.1
 backports-entry-points-selectable==1.1.1
 bleach==3.3.0; python_version == '2.7'
 bleach==3.3.0; python_version >= '3.5'
-# certifi 2022.12.07 fixes safety issue 52365
 certifi==2019.9.11; python_version <= '3.5'
 certifi==2023.07.22; python_version >= '3.6'
 chardet==3.0.3
@@ -275,10 +232,11 @@ configparser==4.0.2
 contextlib2==0.6.0
 custom-inherit==2.2.2
 docopt==0.6.2
-enum34==1.1.6; python_version < "3.4"
-filelock==3.0.0
+enum34==1.1.6; python_version == '2.7'  # technically: python_version <= '3.3'
+filelock==3.2.0; python_version <= '3.11'
+filelock==3.11.0; python_version >= '3.12'
 future==0.18.3
-futures==3.3.0; python_version < "3.2"
+futures==3.3.0; python_version == '2.7'  # technically: python_version <= '3.1'
 gitdb2==2.0.0; python_version == '3.6'
 gitdb==4.0.8; python_version >= '3.6'
 html5lib==0.999999999
@@ -306,7 +264,7 @@ qtconsole==4.2.1
 scandir==1.9.0; python_version == '2.7'
 sh==1.12.14
 simplegeneric==0.8.1
-singledispatch==3.4.0.3; python_version < "3.4"
+singledispatch==3.4.0.3; python_version == '2.7'  # technically: python_version <= '3.3'
 smmap==3.0.1
 snowballstemmer==1.2.1
 sphinxcontrib-applehelp==1.0.0
@@ -320,10 +278,14 @@ testpath==0.3
 toml==0.10.0
 traceback2==1.4.0
 traitlets==4.3.1
-typing==3.6.1; python_version < '3.5'
+typing==3.6.1; python_version == '2.7'  # technically: python_version <= '3.4'
 typing-extensions==3.7.4.3  # Used in some combinations of Python version and package level
 wcwidth==0.1.7
 webencodings==0.5.1
 widgetsnbextension==1.2.6
-wrapt==1.11.2
+# wrapt is used by astroid
+# pylint 2.9 / astroid 2.6.1 requires wrapt>=1.11,<1.13
+# pylint 2.15 / astroid ? requires wrapt>=1.11,<2
+wrapt==1.11; python_version <= '3.9'
+wrapt==1.14; python_version >= '3.10'
 zipp==0.5.2
