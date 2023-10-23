@@ -151,13 +151,12 @@ doc_rst_files := \
 # The Ansible Galaxy distribution archive
 dist_dir := dist
 dist_file := $(dist_dir)/$(collection_namespace)-$(collection_name)-$(collection_version).tar.gz
+# The dependent files must be in sync with the build_ignore list in galaxy.yml
 dist_dependent_files := \
     README.md \
     requirements.txt \
     $(wildcard *.py) \
     $(src_py_files) \
-    $(test_py_files) \
-    $(doc_rst_files) \
 
 # Sphinx options (besides -M)
 sphinx_opts := -v
@@ -376,8 +375,11 @@ else
 	@true >/dev/null
 endif
 
-install_$(pymn).done: Makefile develop_$(pymn).done $(dist_file) requirements.txt
+install_deps_$(pymn).done: Makefile requirements.txt
 	$(PYTHON_CMD) -m pip install $(pip_level_opts) $(pip_level_opts_new) -r requirements.txt
+	echo "done" >$@
+
+install_$(pymn).done: Makefile install_deps_$(pymn).done $(dist_file) requirements.txt
 	ansible-galaxy collection install --force $(dist_file)
 	echo "done" >$@
 
@@ -406,7 +408,7 @@ else
 endif
 endif
 
-$(dist_file): $(dist_dependent_files) galaxy.yml
+$(dist_file): install_deps_$(pymn).done $(dist_dependent_files) galaxy.yml
 	mkdir -p $(dist_dir)
 	ansible-galaxy collection build --output-path=$(dist_dir) --force .
 

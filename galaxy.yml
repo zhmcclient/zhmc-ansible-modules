@@ -89,3 +89,7 @@ build_ignore:
   - minimum-constraints.txt
   - tools
   - docs_local
+  - docs
+  - tests/end2end
+  - tests/function
+  - tests/unit

@@ -44,6 +44,11 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Cleanup:**
 
+* Removed documentation and test files (except sanity test ignore files) from
+  the collection package that is built, for consistency with the other IBM Z
+  collections and in order to get rid of the dependency to have the doc extractor
+  installed as a dependency to build and install the collection locally.
+
 **Known issues:**
 
 * See `list of open issues`_.
