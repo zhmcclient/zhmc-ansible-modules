@@ -350,7 +350,7 @@ msg
   | **type**: str
 
 lpar
-  The resource properties of the LPAR, after any specified updates have been applied.
+  The resource properties of the LPAR, after any specified updates have been applied, for \ :literal:`state=active`\ , \ :literal:`state=loaded`\  and \ :literal:`state=set`\ . For any other values of \ :literal:`state`\ , the dictionary will be empty.
 
   Note that the returned properties may show different values than the ones that were specified as input for the update. For example, memory properties may be rounded up, hexadecimal strings may be shown with a different representation format, and other properties may change as a result of updating some properties. For details, see the data model of the 'Logical Partition' object in the :term:\`HMC API\` book.
 

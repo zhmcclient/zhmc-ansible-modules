@@ -40,6 +40,7 @@ plugins/modules/zhmc_storage_volume.py validate-modules:return-syntax-error  # M
 plugins/modules/zhmc_user.py validate-modules:return-syntax-error  # Missing type on generic {property}
 plugins/modules/zhmc_virtual_function.py validate-modules:return-syntax-error  # Missing type on generic {property}
 plugins/modules/zhmc_lpar.py validate-modules:no-log-needed  # os_ipl_token in argument_spec is not a secret
+tests/end2end/test_zhmc_lpar.py pylint:forgotten-debug-statement  # Intentional debug call
 tests/end2end/test_zhmc_partition.py pylint:forgotten-debug-statement  # Intentional debug call
 tests/unit/test_partition.py pylint:forgotten-debug-statement  # Intentional debug call
 plugins/modules/zhmc_adapter_list.py validate-modules:return-syntax-error  # Missing type on generic {additional_property}

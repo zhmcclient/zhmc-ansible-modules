@@ -393,7 +393,8 @@ msg:
 lpar:
   description:
     - "The resource properties of the LPAR, after any specified updates have
-       been applied."
+       been applied, for C(state=active), C(state=loaded) and C(state=set).
+       For any other values of C(state), the dictionary will be empty."
     - "Note that the returned properties may show different values than the ones
        that were specified as input for the update. For example, memory
        properties may be rounded up, hexadecimal strings may be shown with a
