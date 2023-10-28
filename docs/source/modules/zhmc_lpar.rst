@@ -108,15 +108,15 @@ state
 
   \* \ :literal:`inactive`\ : Ensures that the LPAR is inactive (i.e. status 'not-activated'), unless the LPAR is currently operating and the \ :literal:`force`\  parameter was not set to True. Properties cannot be updated. The LPAR is deactivated if needed.
 
-  \* \ :literal:`reset\_clear`\ : Initialize the LPAR for loading by performing a 'Reset Clear' operation (clearing its pending interruptions, resetting its channel subsystem, resetting its processors, clearing its memory), unless the LPAR is currently loaded (i.e. status is 'operating' or 'acceptable') and the \ :literal:`force`\  parameter was not set to True. Properties cannot be updated. After successful execution of the 'Reset Normal' operation, the LPAR will be inactive (i.e. status 'not-activated').
+  \* \ :literal:`active`\ : Ensures that the LPAR is at least active (i.e. status is 'not-operating', 'operating' or 'exceptions'), and then ensures that the LPAR properties have the specified values. The LPAR is activated if needed. If auto-load is set in the activation profile, the LPAR will also be loaded.
 
-  \* \ :literal:`reset\_normal`\ : Initialize the LPAR for loading by performing a 'Reset Normal' operation (clearing its pending interruptions, resetting its channel subsystem, resetting its processors), unless the LPAR is currently loaded (i.e. status is 'operating' or 'acceptable') and the \ :literal:`force`\  parameter was not set to True. Properties cannot be updated. After successful execution of the 'Reset Normal' operation, the LPAR  will be inactive (i.e. status 'not-activated').
+  \* \ :literal:`loaded`\ : Ensures that the LPAR is loaded (i.e. status is 'operating' or 'exceptions'), and then ensures that the LPAR properties have the specified values. The LPAR is first activated if needed, and then loaded if needed.
 
-  \* \ :literal:`active`\ : Ensures that the LPAR is at least active (i.e. status is 'not-operating', 'operating' or 'acceptable'), and then ensures that the LPAR properties have the specified values. The LPAR is activated if needed. If auto-load is set in the activation profile, the LPAR will also be loaded.
+  \* \ :literal:`reset\_clear`\ : Performs the 'Reset Clear' HMC operation on the LPAR. This initializes the LPAR for loading by clearing its pending interruptions, resetting its channel subsystem, resetting its processors, and clearing its memory). The LPAR must be in status 'not-operating', 'operating', or 'exceptions'. If the LPAR status is 'operating', the operation will fail unless the \ :literal:`force`\  parameter is set to True. Properties cannot be updated.
 
-  \* \ :literal:`loaded`\ : Ensures that the LPAR is loaded (i.e. status is 'operating' or 'acceptable'), and then ensures that the LPAR properties have the specified values. The LPAR is first activated if needed, and then loaded if needed.
+  \* \ :literal:`reset\_normal`\ : Performs the 'Reset Normal' HMC operation on the LPAR. This initializes the LPAR for loading by clearing its pending interruptions, resetting its channel subsystem, and resetting its processors). It does not clear the memory. The LPAR must be in status 'not-operating', 'operating', or 'exceptions'. If the LPAR status is 'operating', the operation will fail unless the \ :literal:`force`\  parameter is set to True. Properties cannot be updated.
 
-  \* \ :literal:`set`\ : Ensures that the LPAR properties have the specified values. Requires that the LPAR is at least active (i.e. status is 'not-operating', 'operating' or 'acceptable') but does not activate the LPAR if that is not the case.
+  \* \ :literal:`set`\ : Ensures that the LPAR properties have the specified values. Requires that the LPAR is at least active (i.e. status is 'not-operating', 'operating' or 'exceptions') but does not activate the LPAR if that is not the case.
 
   \* \ :literal:`facts`\ : Returns the current LPAR properties.
 
@@ -124,7 +124,7 @@ state
 
   | **required**: True
   | **type**: str
-  | **choices**: inactive, reset_clear, reset_normal, active, loaded, set, facts
+  | **choices**: inactive, active, loaded, reset_clear, reset_normal, set, facts
 
 
 activation_profile_name
@@ -194,7 +194,7 @@ timeout
 
 
 force
-  Controls whether operations that change the LPAR status are performed when the LPAR is currently loaded (i.e. status 'operating' or 'acceptable'):
+  Controls whether operations that change the LPAR status are performed when the LPAR is currently loaded (i.e. status 'operating' or 'exceptions'):
 
   If True, such operations are performed regardless of the current LPAR status.
 

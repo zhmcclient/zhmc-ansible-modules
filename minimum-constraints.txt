@@ -64,7 +64,7 @@ distlib==0.3.6
 requests==2.25.0; python_version <= '3.6'
 requests==2.31.0; python_version >= '3.7'
 
-zhmcclient==1.11.2
+zhmcclient==1.11.3
 
 
 # Indirect dependencies for installation (must be consistent with requirements.txt)
