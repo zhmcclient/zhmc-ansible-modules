@@ -33,7 +33,7 @@ requests>=2.25.0; python_version <= '3.6'
 requests>=2.31.0; python_version >= '3.7'
 
 # zhmcclient @ git+https://github.com/zhmcclient/python-zhmcclient.git@master
-zhmcclient>=1.11.2
+zhmcclient>=1.11.3
 
 
 # Indirect dependencies are not specified in this file, unless needed to solve versioning issues:
