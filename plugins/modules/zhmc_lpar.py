@@ -122,39 +122,38 @@ options:
          'not-activated'), unless the LPAR is currently operating and the
          C(force) parameter was not set to True. Properties cannot be updated.
          The LPAR is deactivated if needed."
-      - "* C(reset_clear): Initialize the LPAR for loading by performing a
-         'Reset Clear' operation (clearing its pending interruptions,
-         resetting its channel subsystem, resetting its processors, clearing
-         its memory), unless the LPAR is currently loaded (i.e. status is
-         'operating' or 'acceptable') and the C(force) parameter was not set to
-         True. Properties cannot be updated. After successful execution of the
-         'Reset Normal' operation, the LPAR will be inactive (i.e. status
-         'not-activated')."
-      - "* C(reset_normal): Initialize the LPAR for loading by performing a
-         'Reset Normal' operation (clearing its pending interruptions,
-         resetting its channel subsystem, resetting its processors), unless the
-         LPAR is currently loaded (i.e. status is 'operating' or 'acceptable')
-         and the C(force) parameter was not set to True. Properties cannot be
-         updated. After successful execution of the 'Reset Normal' operation,
-         the LPAR  will be inactive (i.e. status 'not-activated')."
       - "* C(active): Ensures that the LPAR is at least active (i.e. status
-         is 'not-operating', 'operating' or 'acceptable'), and then ensures
+         is 'not-operating', 'operating' or 'exceptions'), and then ensures
          that the LPAR properties have the specified values. The LPAR is
          activated if needed. If auto-load is set in the activation profile,
          the LPAR will also be loaded."
       - "* C(loaded): Ensures that the LPAR is loaded (i.e. status is
-         'operating' or 'acceptable'), and then ensures that the LPAR properties
+         'operating' or 'exceptions'), and then ensures that the LPAR properties
          have the specified values. The LPAR is first activated if needed, and
          then loaded if needed."
+      - "* C(reset_clear): Performs the 'Reset Clear' HMC operation on the
+         LPAR. This initializes the LPAR for loading by clearing its pending
+         interruptions, resetting its channel subsystem, resetting its
+         processors, and clearing its memory). The LPAR must be in status
+         'not-operating', 'operating', or 'exceptions'. If the LPAR status is
+         'operating' or 'exceptions', the operation will fail unless the
+         C(force) parameter is set to True. Properties cannot be updated."
+      - "* C(reset_normal): Performs the 'Reset Normal' HMC operation on the
+         LPAR. This initializes the LPAR for loading by clearing its pending
+         interruptions, resetting its channel subsystem, and resetting its
+         processors). It does not clear the memory. The LPAR must be in status
+         'not-operating', 'operating', or 'exceptions'. If the LPAR status is
+         'operating' or 'exceptions', the operation will fail unless the
+         C(force) parameter is set to True. Properties cannot be updated."
       - "* C(set): Ensures that the LPAR properties have the specified
          values. Requires that the LPAR is at least active (i.e. status is
-         'not-operating', 'operating' or 'acceptable') but does not activate
+         'not-operating', 'operating' or 'exceptions') but does not activate
          the LPAR if that is not the case."
       - "* C(facts): Returns the current LPAR properties."
       - "In all cases, the LPAR must exist."
     type: str
     required: true
-    choices: ['inactive', 'reset_clear', 'reset_normal', 'active', 'loaded',
+    choices: ['inactive', 'active', 'loaded', 'reset_clear', 'reset_normal',
               'set', 'facts']
   activation_profile_name:
     description:
@@ -222,7 +221,7 @@ options:
     description:
       - "Controls whether operations that change the LPAR status are performed
         when the LPAR is currently loaded (i.e. status 'operating' or
-        'acceptable'):"
+        'exceptions'):"
       - "If True, such operations are performed regardless of the current LPAR
         status."
       - "If False (default), such operations are performed only if the LPAR is
@@ -1107,7 +1106,7 @@ def ensure_set(params, check_mode):
             else:
                 # Simulate the update behavior in check mode
                 status = lpar.properties.get('status', None)
-                if status not in ('not-operating', 'operating', 'acceptable'):
+                if status not in ('not-operating', 'operating', 'exceptions'):
                     raise StatusError(
                         "LPAR {0!r} has status {1} and cannot be updated.".
                         format(lpar_name, status))
