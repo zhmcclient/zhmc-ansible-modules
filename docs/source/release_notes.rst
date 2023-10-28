@@ -44,9 +44,21 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Logging: Fixed the result name in the log message for module success.
 
+* Fixed that the 'zhmc_lpar' module with state=reset_normal/clear waited for
+  LPAR status "operational" which never happened, by picking up the fix
+  in zhmcclient 1.11.3. (issue #801)
+
+* In the description of the 'zhmc_lpar' module, changed incorrect references
+  to the "acceptable" status to be "exceptions".
+
+* Fixed that the 'zhmc_lpar' module with state=set when invoked in check mode
+  rejected the property update in status "exceptions".
+
 **Enhancements:**
 
 * Added support for Python 3.12. (issue #796)
+
+* Increased minimum version of zhmcclient to 1.11.3 to pick up fixes.
 
 **Cleanup:**
 

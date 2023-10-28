@@ -221,6 +221,21 @@ LPAR_STATUS_FROM_STATE = {
     'facts': None,  # Any
 }
 
+FAKED_IMAGRPROFILE_1_OID = FAKED_LPAR_1_NAME
+FAKED_IMAGRPROFILE_1_URI = '/api/cpcs/' + FAKED_CPC_1_OID + '/image-activation-profiles/' + FAKED_IMAGRPROFILE_1_OID
+FAKED_IMAGRPROFILE_1_PROPS = {
+    'element-id': FAKED_IMAGRPROFILE_1_OID,
+    'element-uri': FAKED_IMAGRPROFILE_1_URI,
+    'parent': FAKED_CPC_1_URI,
+    'class': 'image-activation-profile',
+    'name': FAKED_LPAR_1_NAME,
+    'description': 'Image profile for Lpar #1',
+    'ipl-address': '00000',
+    'ipl-parameter': '',
+    'ipl-type': 'ipltype-standard',
+    'load-at-activation': False,
+}
+
 
 def get_failure_msg(mod_obj):
     """
@@ -298,6 +313,9 @@ class TestLpar(object):
         if additional_props:
             lpar_props.update(additional_props)
         self.faked_lpar = self.faked_cpc.lpars.add(lpar_props)
+        self.faked_image_profile = \
+            self.faked_cpc.image_activation_profiles.add(
+                FAKED_IMAGRPROFILE_1_PROPS)
         lpars = self.cpc.lpars.list()
         assert len(lpars) == 1
         self.lpar = lpars[0]
