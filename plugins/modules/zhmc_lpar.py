@@ -125,12 +125,15 @@ options:
       - "* C(active): Ensures that the LPAR is at least active (i.e. status
          is 'not-operating', 'operating' or 'exceptions'), and then ensures
          that the LPAR properties have the specified values. The LPAR is
-         activated if needed. If auto-load is set in the activation profile,
-         the LPAR will also be loaded."
+         activated if needed using the 'Activate Logical Partition' operation.
+         In certain cases, that operation will automatically load the LPAR.
+         For details, see the C(activation_profile_name) parameter."
       - "* C(loaded): Ensures that the LPAR is loaded (i.e. status is
          'operating' or 'exceptions'), and then ensures that the LPAR properties
-         have the specified values. The LPAR is first activated if needed, and
-         then loaded if needed."
+         have the specified values. The LPAR is first activated if needed using
+         the 'Activate Logical Partition' operation, and then loaded if needed
+         using the 'Load Logical Partition' operation. For details, see the
+         C(activation_profile_name) parameter."
       - "* C(reset_clear): Performs the 'Reset Clear' HMC operation on the
          LPAR. This initializes the LPAR for loading by clearing its pending
          interruptions, resetting its channel subsystem, resetting its
@@ -159,12 +162,24 @@ options:
     description:
       - "The name of the image or load activation profile to be used when the
          LPAR needs to be activated, for C(state=active) and C(state=loaded)."
+      - "This parameter is not allowed for the other C(state) values."
       - "Default: The image or load activation profile specified in the
          'next-activation-profile-name' property of the LPAR is used when the
          LPAR needs to be activated."
-      - "If the LPAR was already active, the C(force) parameter determines what
-         happens."
-      - "This parameter is not allowed for the other C(state) values."
+      - "For LPARs with activation modes other than SSC or zAware, the following
+         applies:
+         If an image activation profile is specified, the 'load-at-activation'
+         property of the image activation profile determines whether an
+         automatic load is performed, using the load parameters from the image
+         activation profile.
+         If a load activation profile is specified, an automatic load is
+         always performed, using the parameters from the load activation
+         profile."
+      - "For LPARs with activation modes SSC or zAware, the following applies:
+         A load activation profile cannot be specified.
+         The LPAR is always auto-loaded using internal load parameters
+         (ignoring the 'load-at-activation' property and the load-related
+         properties of their image activation profile)."
     type: str
     required: false
     default: null
@@ -173,8 +188,10 @@ options:
       - "The hexadecimal address of an I/O device that provides access to the
         control program to be loaded, for C(state=loaded)."
       - "This parameter is not allowed for the other C(state) values."
-      - "This parameter is used only when explicitly loading the LPAR (i.e.
-        when the LPAR dos not have auto-load set) and is ignored otherwise."
+      - "This parameter is used only when the LPAR is explicitly loaded using
+        the 'Load Logical Partition' operation. It is not used when the LPAR
+        is automatically loaded during the 'Activate Logical Partition'
+        operation."
       - "For z13 and older generations, this parameter is required. Starting
         with z14, this parameter is optional and defaults to the load address
         specified in the 'last-used-load-address' property of the LPAR."
@@ -186,8 +203,10 @@ options:
       - "A parameter string that is passed to the control program when loading
         it, for C(state=loaded)."
       - "This parameter is not allowed for the other C(state) values."
-      - "This parameter is used only when explicitly loading the LPAR (i.e.
-        when the LPAR dos not have auto-load set) and is ignored otherwise."
+      - "This parameter is used only when the LPAR is explicitly loaded using
+        the 'Load Logical Partition' operation. It is not used when the LPAR
+        is automatically loaded during the 'Activate Logical Partition'
+        operation."
     type: str
     required: false
     default: null
@@ -196,8 +215,10 @@ options:
       - "Controls whether memory is cleared before performing the load, for
         C(state=loaded)."
       - "This parameter is not allowed for the other C(state) values."
-      - "This parameter is used only when explicitly loading the LPAR (i.e.
-        when the LPAR dos not have auto-load set) and is ignored otherwise."
+      - "This parameter is used only when the LPAR is explicitly loaded using
+        the 'Load Logical Partition' operation. It is not used when the LPAR
+        is automatically loaded during the 'Activate Logical Partition'
+        operation."
     type: bool
     required: false
     default: true
@@ -208,6 +229,10 @@ options:
         stored to their assigned absolute storage locations, for
         C(state=loaded)."
       - "This parameter is not allowed for the other C(state) values."
+      - "This parameter is used only when the LPAR is explicitly loaded using
+        the 'Load Logical Partition' operation. It is not used when the LPAR
+        is automatically loaded during the 'Activate Logical Partition'
+        operation."
     type: bool
     required: false
     default: false
