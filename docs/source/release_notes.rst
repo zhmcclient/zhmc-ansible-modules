@@ -54,6 +54,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Fixed that the 'zhmc_lpar' module with state=set when invoked in check mode
   rejected the property update in status "exceptions".
 
+* Fixed and improved the description of the 'zhmc_lpar' module for
+  state=active/loaded; cleaned up the code without functional changes.
+
 **Enhancements:**
 
 * Added support for Python 3.12. (issue #796)
