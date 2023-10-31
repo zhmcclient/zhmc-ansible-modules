@@ -36,7 +36,7 @@
             IBM Z HMC collection
           </a>
               <div class="version">
-                1.7.0
+                1.8.0-dev1
 
               </div>
 <div role="search">
@@ -69,6 +69,7 @@
 <p class="caption" role="heading"><span class="caption-text">Appendices</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Releases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-8-0-dev1">Version 1.8.0-dev1</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-7-0">Version 1.7.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-6-0">Version 1.6.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-5-0">Version 1.5.0</a></li>
@@ -118,6 +119,47 @@
              
   <section id="releases">
 <span id="id1"></span><h1>Releases<a class="headerlink" href="#releases" title="Link to this heading"></a></h1>
+<section id="version-1-8-0-dev1">
+<h2>Version 1.8.0-dev1<a class="headerlink" href="#version-1-8-0-dev1" title="Link to this heading"></a></h2>
+<p>This version contains all fixes up to version 1.7.x.</p>
+<p>Released: not yet</p>
+<p>Availability: <a class="reference external" href="https://console.redhat.com/ansible/automation-hub/repo/published/ibm/ibm_zhmc">AutomationHub</a>, <a class="reference external" href="https://galaxy.ansible.com/ibm/ibm_zhmc">Galaxy</a>, <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">GitHub</a></p>
+<p><strong>Incompatible changes:</strong></p>
+<p><strong>Deprecations:</strong></p>
+<p><strong>Bug fixes:</strong></p>
+<ul class="simple">
+<li><p>Fixed link to Ansible Galaxy on README page. (issue #785)</p></li>
+<li><p>Fixed that the ‘name’ property was missing in result of the ‘zhmc_nic_list’
+module.</p></li>
+<li><p>Development: Added package level to .done files. (issue #799)</p></li>
+<li><p>Logging: Fixed the result name in the log message for module success.</p></li>
+<li><p>Fixed that the ‘zhmc_lpar’ module with state=reset_normal/clear waited for
+LPAR status “operational” which never happened, by picking up the fix
+in zhmcclient 1.11.3. (issue #801)</p></li>
+<li><p>In the description of the ‘zhmc_lpar’ module, changed incorrect references
+to the “acceptable” status to be “exceptions”.</p></li>
+<li><p>Fixed that the ‘zhmc_lpar’ module with state=set when invoked in check mode
+rejected the property update in status “exceptions”.</p></li>
+<li><p>Fixed and improved the description of the ‘zhmc_lpar’ module for
+state=active/loaded; cleaned up the code without functional changes.</p></li>
+</ul>
+<p><strong>Enhancements:</strong></p>
+<ul class="simple">
+<li><p>Added support for Python 3.12. (issue #796)</p></li>
+<li><p>Increased minimum version of zhmcclient to 1.11.3 to pick up fixes.</p></li>
+</ul>
+<p><strong>Cleanup:</strong></p>
+<ul class="simple">
+<li><p>Removed documentation and test files (except sanity test ignore files) from
+the collection package that is built, for consistency with the other IBM Z
+collections and in order to get rid of the dependency to have the doc extractor
+installed as a dependency to build and install the collection locally.</p></li>
+</ul>
+<p><strong>Known issues:</strong></p>
+<ul class="simple">
+<li><p>See <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/issues">list of open issues</a>.</p></li>
+</ul>
+</section>
 <section id="version-1-7-0">
 <h2>Version 1.7.0<a class="headerlink" href="#version-1-7-0" title="Link to this heading"></a></h2>
 <p>This version contains all fixes up to version 1.6.1.</p>
@@ -912,6 +954,7 @@ property update.</p></li>
             <dd><a href="../1.6.0/release_notes.html">1.6.0</a></dd>
             <dd><a href="../1.6.1/release_notes.html">1.6.1</a></dd>
             <dd><a href="../1.7.0/release_notes.html">1.7.0</a></dd>
+            <dd><a href="../1.7.1/release_notes.html">1.7.1</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

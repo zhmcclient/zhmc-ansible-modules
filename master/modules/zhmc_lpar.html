@@ -36,7 +36,7 @@
             IBM Z HMC collection
           </a>
               <div class="version">
-                1.7.0
+                1.8.0-dev1
 
               </div>
 <div role="search">
@@ -227,23 +227,24 @@
 </dd>
 <dt>state</dt><dd><p>The desired state for the LPAR:</p>
 <p>* <code class="docutils literal notranslate"><span class="pre">inactive</span></code>: Ensures that the LPAR is inactive (i.e. status ‘not-activated’), unless the LPAR is currently operating and the <code class="docutils literal notranslate"><span class="pre">force</span></code> parameter was not set to True. Properties cannot be updated. The LPAR is deactivated if needed.</p>
-<p>* <code class="docutils literal notranslate"><span class="pre">reset_clear</span></code>: Initialize the LPAR for loading by performing a ‘Reset Clear’ operation (clearing its pending interruptions, resetting its channel subsystem, resetting its processors, clearing its memory), unless the LPAR is currently loaded (i.e. status is ‘operating’ or ‘acceptable’) and the <code class="docutils literal notranslate"><span class="pre">force</span></code> parameter was not set to True. Properties cannot be updated. After successful execution of the ‘Reset Normal’ operation, the LPAR will be inactive (i.e. status ‘not-activated’).</p>
-<p>* <code class="docutils literal notranslate"><span class="pre">reset_normal</span></code>: Initialize the LPAR for loading by performing a ‘Reset Normal’ operation (clearing its pending interruptions, resetting its channel subsystem, resetting its processors), unless the LPAR is currently loaded (i.e. status is ‘operating’ or ‘acceptable’) and the <code class="docutils literal notranslate"><span class="pre">force</span></code> parameter was not set to True. Properties cannot be updated. After successful execution of the ‘Reset Normal’ operation, the LPAR  will be inactive (i.e. status ‘not-activated’).</p>
-<p>* <code class="docutils literal notranslate"><span class="pre">active</span></code>: Ensures that the LPAR is at least active (i.e. status is ‘not-operating’, ‘operating’ or ‘acceptable’), and then ensures that the LPAR properties have the specified values. The LPAR is activated if needed. If auto-load is set in the activation profile, the LPAR will also be loaded.</p>
-<p>* <code class="docutils literal notranslate"><span class="pre">loaded</span></code>: Ensures that the LPAR is loaded (i.e. status is ‘operating’ or ‘acceptable’), and then ensures that the LPAR properties have the specified values. The LPAR is first activated if needed, and then loaded if needed.</p>
-<p>* <code class="docutils literal notranslate"><span class="pre">set</span></code>: Ensures that the LPAR properties have the specified values. Requires that the LPAR is at least active (i.e. status is ‘not-operating’, ‘operating’ or ‘acceptable’) but does not activate the LPAR if that is not the case.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">active</span></code>: Ensures that the LPAR is at least active (i.e. status is ‘not-operating’, ‘operating’ or ‘exceptions’), and then ensures that the LPAR properties have the specified values. The LPAR is activated if needed using the ‘Activate Logical Partition’ operation. In certain cases, that operation will automatically load the LPAR. For details, see the <code class="docutils literal notranslate"><span class="pre">activation_profile_name</span></code> parameter.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">loaded</span></code>: Ensures that the LPAR is loaded (i.e. status is ‘operating’ or ‘exceptions’), and then ensures that the LPAR properties have the specified values. The LPAR is first activated if needed using the ‘Activate Logical Partition’ operation, and then loaded if needed using the ‘Load Logical Partition’ operation. For details, see the <code class="docutils literal notranslate"><span class="pre">activation_profile_name</span></code> parameter.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">reset_clear</span></code>: Performs the ‘Reset Clear’ HMC operation on the LPAR. This initializes the LPAR for loading by clearing its pending interruptions, resetting its channel subsystem, resetting its processors, and clearing its memory). The LPAR must be in status ‘not-operating’, ‘operating’, or ‘exceptions’. If the LPAR status is ‘operating’ or ‘exceptions’, the operation will fail unless the <code class="docutils literal notranslate"><span class="pre">force</span></code> parameter is set to True. Properties cannot be updated.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">reset_normal</span></code>: Performs the ‘Reset Normal’ HMC operation on the LPAR. This initializes the LPAR for loading by clearing its pending interruptions, resetting its channel subsystem, and resetting its processors). It does not clear the memory. The LPAR must be in status ‘not-operating’, ‘operating’, or ‘exceptions’. If the LPAR status is ‘operating’ or ‘exceptions’, the operation will fail unless the <code class="docutils literal notranslate"><span class="pre">force</span></code> parameter is set to True. Properties cannot be updated.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">set</span></code>: Ensures that the LPAR properties have the specified values. Requires that the LPAR is at least active (i.e. status is ‘not-operating’, ‘operating’ or ‘exceptions’) but does not activate the LPAR if that is not the case.</p>
 <p>* <code class="docutils literal notranslate"><span class="pre">facts</span></code>: Returns the current LPAR properties.</p>
 <p>In all cases, the LPAR must exist.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: True</div>
 <div class="line"><strong>type</strong>: str</div>
-<div class="line"><strong>choices</strong>: inactive, reset_clear, reset_normal, active, loaded, set, facts</div>
+<div class="line"><strong>choices</strong>: inactive, active, loaded, reset_clear, reset_normal, set, facts</div>
 </div>
 </dd>
 <dt>activation_profile_name</dt><dd><p>The name of the image or load activation profile to be used when the LPAR needs to be activated, for <code class="docutils literal notranslate"><span class="pre">state=active</span></code> and <code class="docutils literal notranslate"><span class="pre">state=loaded</span></code>.</p>
-<p>Default: The image or load activation profile specified in the ‘next-activation-profile-name’ property of the LPAR is used when the LPAR needs to be activated.</p>
-<p>If the LPAR was already active, the <code class="docutils literal notranslate"><span class="pre">force</span></code> parameter determines what happens.</p>
 <p>This parameter is not allowed for the other <code class="docutils literal notranslate"><span class="pre">state</span></code> values.</p>
+<p>Default: The image or load activation profile specified in the ‘next-activation-profile-name’ property of the LPAR is used when the LPAR needs to be activated.</p>
+<p>For LPARs with activation modes other than SSC or zAware, the following applies: If an image activation profile is specified, the ‘load-at-activation’ property of the image activation profile determines whether an automatic load is performed, using the load parameters from the image activation profile. If a load activation profile is specified, an automatic load is always performed, using the parameters from the load activation profile.</p>
+<p>For LPARs with activation modes SSC or zAware, the following applies: A load activation profile cannot be specified. The LPAR is always auto-loaded using internal load parameters (ignoring the ‘load-at-activation’ property and the load-related properties of their image activation profile).</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: str</div>
@@ -251,7 +252,7 @@
 </dd>
 <dt>load_address</dt><dd><p>The hexadecimal address of an I/O device that provides access to the control program to be loaded, for <code class="docutils literal notranslate"><span class="pre">state=loaded</span></code>.</p>
 <p>This parameter is not allowed for the other <code class="docutils literal notranslate"><span class="pre">state</span></code> values.</p>
-<p>This parameter is used only when explicitly loading the LPAR (i.e. when the LPAR dos not have auto-load set) and is ignored otherwise.</p>
+<p>This parameter is used only when the LPAR is explicitly loaded using the ‘Load Logical Partition’ operation. It is not used when the LPAR is automatically loaded during the ‘Activate Logical Partition’ operation.</p>
 <p>For z13 and older generations, this parameter is required. Starting with z14, this parameter is optional and defaults to the load address specified in the ‘last-used-load-address’ property of the LPAR.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
@@ -260,7 +261,7 @@
 </dd>
 <dt>load_parameter</dt><dd><p>A parameter string that is passed to the control program when loading it, for <code class="docutils literal notranslate"><span class="pre">state=loaded</span></code>.</p>
 <p>This parameter is not allowed for the other <code class="docutils literal notranslate"><span class="pre">state</span></code> values.</p>
-<p>This parameter is used only when explicitly loading the LPAR (i.e. when the LPAR dos not have auto-load set) and is ignored otherwise.</p>
+<p>This parameter is used only when the LPAR is explicitly loaded using the ‘Load Logical Partition’ operation. It is not used when the LPAR is automatically loaded during the ‘Activate Logical Partition’ operation.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: str</div>
@@ -268,7 +269,7 @@
 </dd>
 <dt>clear_indicator</dt><dd><p>Controls whether memory is cleared before performing the load, for <code class="docutils literal notranslate"><span class="pre">state=loaded</span></code>.</p>
 <p>This parameter is not allowed for the other <code class="docutils literal notranslate"><span class="pre">state</span></code> values.</p>
-<p>This parameter is used only when explicitly loading the LPAR (i.e. when the LPAR dos not have auto-load set) and is ignored otherwise.</p>
+<p>This parameter is used only when the LPAR is explicitly loaded using the ‘Load Logical Partition’ operation. It is not used when the LPAR is automatically loaded during the ‘Activate Logical Partition’ operation.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: bool</div>
@@ -277,6 +278,7 @@
 </dd>
 <dt>store_status_indicator</dt><dd><p>Controls whether the current values of CPU timer, clock comparator, program status word, and the contents of the processor registers are stored to their assigned absolute storage locations, for <code class="docutils literal notranslate"><span class="pre">state=loaded</span></code>.</p>
 <p>This parameter is not allowed for the other <code class="docutils literal notranslate"><span class="pre">state</span></code> values.</p>
+<p>This parameter is used only when the LPAR is explicitly loaded using the ‘Load Logical Partition’ operation. It is not used when the LPAR is automatically loaded during the ‘Activate Logical Partition’ operation.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: bool</div>
@@ -289,7 +291,7 @@
 <div class="line"><strong>default</strong>: 60</div>
 </div>
 </dd>
-<dt>force</dt><dd><p>Controls whether operations that change the LPAR status are performed when the LPAR is currently loaded (i.e. status ‘operating’ or ‘acceptable’):</p>
+<dt>force</dt><dd><p>Controls whether operations that change the LPAR status are performed when the LPAR is currently loaded (i.e. status ‘operating’ or ‘exceptions’):</p>
 <p>If True, such operations are performed regardless of the current LPAR status.</p>
 <p>If False (default), such operations are performed only if the LPAR is not currently loaded, and are rejected otherwise.</p>
 <div class="line-block">
@@ -652,6 +654,7 @@
             <dd><a href="../../1.6.0/modules/zhmc_lpar.html">1.6.0</a></dd>
             <dd><a href="../../1.6.1/modules/zhmc_lpar.html">1.6.1</a></dd>
             <dd><a href="../../1.7.0/modules/zhmc_lpar.html">1.7.0</a></dd>
+            <dd><a href="../../1.7.1/modules/zhmc_lpar.html">1.7.1</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
