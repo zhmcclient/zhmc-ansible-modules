@@ -38,6 +38,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Fixed that the 'name' property was missing in result of the 'zhmc_nic_list'
   module.
 
+* Logging: Fixed the result name in the log message for module success.
+
 **Enhancements:**
 
 **Cleanup:**
