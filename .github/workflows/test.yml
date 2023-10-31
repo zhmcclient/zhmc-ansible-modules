@@ -123,8 +123,8 @@ jobs:
         else \
           echo "matrix={ \
             \"os\": [ \"ubuntu-latest\" ], \
-            \"python-version\": [ \"3.10\", \"3.12\" ], \
-            \"package_level\": [ \"minimum\", \"latest\", \"ansible\" ], \
+            \"python-version\": [ \"3.11\" ], \
+            \"package_level\": [ \"minimum\", \"latest\" ], \
             \"include\": [ \
               { \
                 \"os\": \"ubuntu-20.04\", \
@@ -160,32 +160,17 @@ jobs:
               }, \
               { \
                 \"os\": \"ubuntu-latest\", \
-                \"python-version\": \"3.8\", \
-                \"package_level\": \"minimum\" \
-              }, \
-              { \
-                \"os\": \"ubuntu-latest\", \
                 \"python-version\": \"3.9\", \
                 \"package_level\": \"minimum\" \
               }, \
               { \
                 \"os\": \"ubuntu-latest\", \
-                \"python-version\": \"3.9\", \
+                \"python-version\": \"3.12\", \
                 \"package_level\": \"latest\" \
               }, \
               { \
-                \"os\": \"ubuntu-latest\", \
-                \"python-version\": \"3.9\", \
-                \"package_level\": \"ansible\" \
-              }, \
-              { \
                 \"os\": \"macos-latest\", \
-                \"python-version\": \"3.12\", \
-                \"package_level\": \"minimum\" \
-              }, \
-              { \
-                \"os\": \"macos-latest\", \
-                \"python-version\": \"3.12\", \
+                \"python-version\": \"3.11\", \
                 \"package_level\": \"latest\" \
               } \
             ] \
