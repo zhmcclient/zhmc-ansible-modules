@@ -615,7 +615,8 @@ def main():
     # by showing the traceback.
 
     LOGGER.debug(
-        "Module exit (success): changed: %r, cpc: %s", changed, result)
+        "Module exit (success): changed: %r, virtual_function: %s",
+        changed, result)
     module.exit_json(changed=changed, virtual_function=result)
 
 
