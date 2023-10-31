@@ -42,6 +42,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Development: Added package level to .done files. (issue #799)
 
+* Logging: Fixed the result name in the log message for module success.
+
 **Enhancements:**
 
 * Added support for Python 3.12. (issue #796)

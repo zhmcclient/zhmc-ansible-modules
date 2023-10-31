@@ -280,7 +280,7 @@ def main():
     # Other exceptions are considered module errors and are handled by Ansible
     # by showing the traceback.
 
-    LOGGER.debug("Module exit (success): changed: %s, result: %r",
+    LOGGER.debug("Module exit (success): changed: %s, users: %r",
                  changed, result_list)
     module.exit_json(changed=changed, users=result_list)
 
