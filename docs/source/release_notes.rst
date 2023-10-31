@@ -20,16 +20,12 @@ Releases
 ========
 
 
-Version 1.7.1-dev1
-------------------
+Version 1.7.1
+-------------
 
-Released: not yet
+Released: 2023-10-31
 
 Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
-
-**Incompatible changes:**
-
-**Deprecations:**
 
 **Bug fixes:**
 
@@ -56,14 +52,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 **Enhancements:**
 
 * Increased minimum version of zhmcclient to 1.11.3 to pick up fixes.
-
-**Cleanup:**
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 1.7.0
