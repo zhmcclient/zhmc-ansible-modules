@@ -465,7 +465,8 @@ def main():
     # by showing the traceback.
 
     LOGGER.debug(
-        "Module exit (success): changed: %r, cpc: %r", changed, result)
+        "Module exit (success): changed: %r, storage_group_attachment: %r",
+        changed, result)
     module.exit_json(changed=changed, storage_group_attachment=result)
 
 

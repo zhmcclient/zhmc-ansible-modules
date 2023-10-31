@@ -763,7 +763,7 @@ def main():
     # by showing the traceback.
 
     LOGGER.debug(
-        "Module exit (success): changed: %r, cpc: %r", changed, result)
+        "Module exit (success): changed: %r, nic: %r", changed, result)
     module.exit_json(changed=changed, nic=result)
 
 

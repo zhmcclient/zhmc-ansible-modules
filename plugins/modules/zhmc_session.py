@@ -356,7 +356,7 @@ def main():
     # Other exceptions are considered module errors and are handled by Ansible
     # by showing the traceback.
 
-    LOGGER.debug("Module exit (success): changed: %s, result: (not shown)",
+    LOGGER.debug("Module exit (success): changed: %s, hmc_auth: (not shown)",
                  changed)
     module.exit_json(changed=changed, hmc_auth=hmc_auth)
 
