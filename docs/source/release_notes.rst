@@ -35,6 +35,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Bug fixes:**
 
+* Addressed safety issues up to 2023-11-05.
+
 * Fixed link to Ansible Galaxy on README page. (issue #785)
 
 * Fixed that the 'name' property was missing in result of the 'zhmc_nic_list'
