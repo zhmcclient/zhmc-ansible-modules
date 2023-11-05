@@ -234,6 +234,7 @@ FAKED_IMAGRPROFILE_1_PROPS = {
     'ipl-parameter': '',
     'ipl-type': 'ipltype-standard',
     'load-at-activation': False,
+    'operating-mode': 'general',
 }
 
 
