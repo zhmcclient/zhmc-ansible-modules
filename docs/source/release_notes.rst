@@ -74,6 +74,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Increased minimum version of zhmcclient to 1.12.0 to pick up fixes and
   functionality.
 
+* Added new Ansible modules 'zhmc_lpar_messages' and 'zhmc_partition_messages'
+  that retrieve and return console messages from the operating system running
+  in an LPAR or DPM partition. (issue #565)
+
 **Cleanup:**
 
 * Removed documentation and test files (except sanity test ignore files) from

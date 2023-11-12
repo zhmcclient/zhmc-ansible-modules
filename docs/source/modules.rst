@@ -72,6 +72,7 @@ Modules supported only with CPCs in DPM operational mode:
    modules/zhmc_nic_list
    modules/zhmc_partition
    modules/zhmc_partition_list
+   modules/zhmc_partition_messages
    modules/zhmc_storage_group
    modules/zhmc_storage_group_attachment
    modules/zhmc_storage_volume
@@ -85,6 +86,7 @@ Modules supported only with CPCs in classic operational mode:
 
    modules/zhmc_lpar
    modules/zhmc_lpar_list
+   modules/zhmc_lpar_messages
 
 You can also access the documentation of each module from the command line by
 using the `ansible-doc`_ command, for example:
