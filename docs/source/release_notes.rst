@@ -75,6 +75,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Fixed and improved the description of the 'zhmc_lpar' module for
   state=active/loaded; cleaned up the code without functional changes.
 
+* Dev: Pinned voluptuous package to <0.14 on Python < 3.6.
+
 **Enhancements:**
 
 * Increased minimum version of zhmcclient to 1.11.3 to pick up fixes.
