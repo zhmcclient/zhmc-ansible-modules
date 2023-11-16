@@ -16,8 +16,10 @@
 # Ansible validate-modules (no imports, invoked via validate-modules script)
 mock>=2.0.0
 # voluptous 0.13.0 uses 'enum' module which is not available on py27 (it also does not use enum34 for backport). This has been fixed in 0.13.1.
-voluptuous>=0.11.7,!=0.13.0; python_version == '2.7'
-voluptuous>=0.11.7; python_version >= '3.5'
+# voluptuous 0.14.0 requires Python >=3.6 without properly declaring that in the package metadata.
+voluptuous>=0.11.7,!=0.13.0,<0.14; python_version == '2.7'
+voluptuous>=0.11.7,<0.14; python_version == '3.5'
+voluptuous>=0.11.7; python_version >= '3.6'
 
 # Unit test (imports into testcases):
 # packaging is specified in requirements.txt
