@@ -65,7 +65,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Added support for Python 3.12. (issue #796)
 
-* Increased minimum version of zhmcclient to 1.11.3 to pick up fixes.
+* Increased minimum version of zhmcclient to 1.12.0 to pick up fixes and
+  functionality.
 
 **Cleanup:**
 
