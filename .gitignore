@@ -3,7 +3,8 @@
 *.pyo
 *.egg
 *.egg-info
-*.done
+/*.done
+/done/*.done
 *.log
 *.retry
 *.tmp

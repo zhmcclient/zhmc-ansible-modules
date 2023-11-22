@@ -92,6 +92,9 @@ test_py_files := \
     $(wildcard $(test_dir)/*/*.py) \
     $(wildcard $(test_dir)/*/*/*.py) \
 
+# Directory for .done files
+done_dir := done
+
 # Defaults for end2end tests - must match the defaults in zhmcclient/testutils.
 default_testinventory := $HOME/.zhmc_inventory.yaml
 default_testvault := $HOME/.zhmc_vault.yaml
@@ -250,35 +253,35 @@ all: install develop dist safety check sanity check_reqs docs docslocal linkchec
 	@echo '$@ done.'
 
 .PHONY: install
-install: _check_version install_$(pymn)_$(PACKAGE_LEVEL).done
+install: _check_version $(done_dir)/install_$(pymn)_$(PACKAGE_LEVEL).done
 	@echo '$@ done.'
 
 .PHONY: develop
-develop: _check_version develop_$(pymn)_$(PACKAGE_LEVEL).done
+develop: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 	@echo '$@ done.'
 
 .PHONY: docs
-docs: _check_version develop_$(pymn)_$(PACKAGE_LEVEL).done $(doc_build_dir)/index.html
+docs: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(doc_build_dir)/index.html
 	@echo '$@ done.'
 
 .PHONY: linkcheck
-linkcheck: _check_version develop_$(pymn)_$(PACKAGE_LEVEL).done $(doc_rst_files)
+linkcheck: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(doc_rst_files)
 	-sphinx-build -b linkcheck $(sphinx_opts) $(doc_source_dir) $(doc_linkcheck_dir)
 	@echo '$@ done.'
 
 .PHONY: test
-test: _check_version develop_$(pymn)_$(PACKAGE_LEVEL).done
+test: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 	bash -c 'PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. pytest $(pytest_cov_opts) $(pytest_opts) $(test_dir)/unit $(test_dir)/function'
 	coverage html --rcfile $(coverage_rc_file)
 	@echo '$@ done.'
 
 .PHONY: check
-check: _check_version develop_$(pymn)_$(PACKAGE_LEVEL).done
+check: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 	flake8 $(flake8_opts) $(src_py_dir) $(test_dir)
 	@echo '$@ done.'
 
 .PHONY: safety
-safety: safety_$(pymn)_$(PACKAGE_LEVEL).done
+safety: $(done_dir)/safety_$(pymn)_$(PACKAGE_LEVEL).done
 	@echo "Makefile: $@ done."
 
 # Excluding Python>=3.10 with minimum package levels because of PyYAML 5.4.1 install issue with Cython 3
@@ -291,7 +294,7 @@ run_sanity_virtual := $(shell PL=$(PACKAGE_LEVEL) $(PYTHON_CMD) -c "import sys,o
 
 # The sanity check requires the .git directory to be present.
 .PHONY:	sanity
-sanity: _check_version develop_$(pymn)_$(PACKAGE_LEVEL).done
+sanity: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 	rm -f $(sanity_tar_file)
 	tar -rf $(sanity_tar_file) .git .gitignore bindep.txt galaxy.yml requirements.txt collections docs meta plugins tests
 	rm -rf $(sanity_dir)
@@ -312,7 +315,7 @@ endif
 	@echo '$@ done.'
 
 .PHONY: check_reqs
-check_reqs: _check_version develop_$(pymn)_$(PACKAGE_LEVEL).done minimum-constraints.txt requirements.txt
+check_reqs: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done minimum-constraints.txt requirements.txt
 ifeq ($(python_major_version),2)
 	@echo "Makefile: Warning: Skipping the checking of missing dependencies on Python 2.x" >&2
 else
@@ -331,13 +334,13 @@ endif
 	@echo "Makefile: $@ done."
 
 .PHONY:	end2end
-end2end: _check_version develop_$(pymn)_$(PACKAGE_LEVEL).done
+end2end: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 	bash -c 'PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. TESTEND2END_LOAD=true pytest -v $(pytest_cov_opts) $(pytest_opts) $(test_dir)/end2end'
 	@echo '$@ done.'
 
 # TODO: Enable rc checking again once the remaining issues are resolved
 .PHONY:	end2end_mocked
-end2end_mocked: _check_version develop_$(pymn)_$(PACKAGE_LEVEL).done
+end2end_mocked: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 	-bash -c 'PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. TESTEND2END_LOAD=true TESTINVENTORY=$(test_dir)/end2end/mocked_inventory.yaml TESTVAULT=$(test_dir)/end2end/mocked_vault.yaml pytest -v $(pytest_cov_opts) $(pytest_opts) $(test_dir)/end2end'
 	coverage html --rcfile $(coverage_rc_file)
 	@echo '$@ done.'
@@ -379,10 +382,8 @@ endif
 # The second rm command of each type is for files that were used before 1.0.0, to make it easier to switch.
 .PHONY: clobber
 clobber:
-	rm -Rf .cache .pytest_cache $(sanity_dir1) $(sanity_tar_file) htmlcov $(doc_linkcheck_dir) $(doc_build_dir) $(doc_build_local_dir)
-	rm -Rf tests/output build .tox *.egg-info
-	rm -f .coverage *.done
-	rm -f MANIFEST MANIFEST.in AUTHORS ChangeLog
+	rm -Rf .cache .pytest_cache $(sanity_dir1) $(sanity_tar_file) htmlcov $(doc_linkcheck_dir) $(doc_build_dir) $(doc_build_local_dir) tests/output build .tox *.egg-info *.done
+	rm -f .coverage MANIFEST MANIFEST.in AUTHORS ChangeLog
 	find . -name "*.pyc" -delete -o -name "__pycache__" -delete -o -name "*.tmp" -delete -o -name "tmp_*" -delete
 	@echo '$@ done.'
 
@@ -398,25 +399,25 @@ else
 	@true >/dev/null
 endif
 
-install_deps_$(pymn)_$(PACKAGE_LEVEL).done: Makefile requirements.txt
+$(done_dir)/install_deps_$(pymn)_$(PACKAGE_LEVEL).done: Makefile requirements.txt
 	$(PYTHON_CMD) -m pip install $(pip_level_opts) $(pip_level_opts_new) -r requirements.txt
 	echo "done" >$@
 
-install_$(pymn)_$(PACKAGE_LEVEL).done: Makefile install_deps_$(pymn)_$(PACKAGE_LEVEL).done $(dist_file) requirements.txt
+$(done_dir)/install_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/install_deps_$(pymn)_$(PACKAGE_LEVEL).done $(dist_file) requirements.txt
 	ansible-galaxy collection install --force $(dist_file)
 	echo "done" >$@
 
-develop_$(pymn)_$(PACKAGE_LEVEL).done: Makefile install_pip_$(pymn)_$(PACKAGE_LEVEL).done tools/os_setup.sh dev-requirements.txt
+$(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/install_pip_$(pymn)_$(PACKAGE_LEVEL).done tools/os_setup.sh dev-requirements.txt
 	bash -c 'tools/os_setup.sh'
 	$(PYTHON_CMD) -m pip install $(pip_level_opts) $(pip_level_opts_new) -r dev-requirements.txt
 	echo "done" >$@
 
-install_pip_$(pymn)_$(PACKAGE_LEVEL).done: Makefile
+$(done_dir)/install_pip_$(pymn)_$(PACKAGE_LEVEL).done: Makefile
 	bash -c 'pv=$$($(PYTHON_CMD) -m pip --version); if [[ $$pv =~ (^pip [1-8]\..*) ]]; then $(PYTHON_CMD) -m pip install pip==9.0.1; fi'
 	$(PYTHON_CMD) -m pip install $(pip_level_opts) pip setuptools wheel
 	echo "done" >$@
 
-safety_$(pymn)_$(PACKAGE_LEVEL).done: develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_policy_file) minimum-constraints.txt
+$(done_dir)/safety_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_policy_file) minimum-constraints.txt
 ifeq ($(python_major_version),2)
 	@echo "Makefile: Warning: Skipping Safety on Python $(python_version)" >&2
 else
@@ -431,7 +432,7 @@ else
 endif
 endif
 
-$(dist_file): install_deps_$(pymn)_$(PACKAGE_LEVEL).done $(dist_dependent_files) galaxy.yml
+$(dist_file): $(done_dir)/install_deps_$(pymn)_$(PACKAGE_LEVEL).done $(dist_dependent_files) galaxy.yml
 	mkdir -p $(dist_dir)
 	ansible-galaxy collection build --output-path=$(dist_dir) --force .
 
@@ -455,7 +456,7 @@ else
 endif
 
 .PHONY: docslocal
-docslocal: _check_version develop_$(pymn)_$(PACKAGE_LEVEL).done $(doc_rst_files) $(doc_source_dir)/conf.py
+docslocal: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(doc_rst_files) $(doc_source_dir)/conf.py
 	rm -rf $(doc_build_local_dir)
 	sphinx-build -b html $(sphinx_opts) $(doc_source_dir) $(doc_build_local_dir)
 #	open $(doc_build_local_dir)/index.html
