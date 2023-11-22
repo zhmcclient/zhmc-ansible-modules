@@ -284,13 +284,17 @@ check: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 safety: $(done_dir)/safety_$(pymn)_$(PACKAGE_LEVEL).done
 	@echo "Makefile: $@ done."
 
-# Excluding Python>=3.10 with minimum package levels because of PyYAML 5.4.1 install issue with Cython 3
-run_sanity_current := $(shell PL=$(PACKAGE_LEVEL) $(PYTHON_CMD) -c "import sys,os; py=sys.version_info[0:2]; pl=os.getenv('PL'); sys.stdout.write('true' if py<=(3,9) or py>=(3,10) and pl=='latest' else 'false')")
+# Boolean variable indicating that the Ansible sanity test should be run in the current Python environment
+# Excluding Python 3.10 with minimum package levels because sanity setup fails with PyYAML 5.4.1 install issue with Cython 3
+run_sanity_current := $(shell PL=$(PACKAGE_LEVEL) $(PYTHON_CMD) -c "import sys,os; py=sys.version_info[0:2]; pl=os.getenv('PL'); sys.stdout.write('false' if py==(3,10) and pl=='minimum' else 'true')")
 
-# Excluding Python <=3.6 because ?
-# Excluding Python 3.7+3.8 with minimum package levels because ?
-# Excluding Python 3.10 with minimum package levels because of PyYAML 5.4.1 install issue with Cython 3
-run_sanity_virtual := $(shell PL=$(PACKAGE_LEVEL) $(PYTHON_CMD) -c "import sys,os; py=sys.version_info[0:2]; pl=os.getenv('PL'); sys.stdout.write('true' if (3,7)<=py<=(3,8) and pl=='latest' or py==(3,9) or py==(3,10) and pl=='latest' or py>=(3,11) else 'false')")
+# Boolean variable indicating that the Ansible sanity test should be run in its own virtual Python environment
+# Excluding Python 3.5+3.6 with minimum+ansible package levels because sanity rstcheck fails with:
+#   "FutureWarning: Python versions prior 3.7 are deprecated. Please update your python version."
+# Excluding Python 3.7+3.8 with minimum package levels because sanity rstcheck fails with:
+#   "No module named rstcheck.__main__; 'rstcheck' is a package and cannot be directly executed"
+# Excluding Python 3.10 with minimum package levels because sanity setup fails with PyYAML 5.4.1 install issue with Cython 3
+run_sanity_virtual := $(shell PL=$(PACKAGE_LEVEL) $(PYTHON_CMD) -c "import sys,os; py=sys.version_info[0:2]; pl=os.getenv('PL'); sys.stdout.write('false' if (3,5)<=py<=(3,6) and pl in ('ansible','minimum') or (3,7)<=py<=(3,8) and pl=='minimum' or py==(3,10) and pl=='minimum' else 'true')")
 
 # The sanity check requires the .git directory to be present.
 .PHONY:	sanity

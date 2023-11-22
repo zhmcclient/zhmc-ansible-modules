@@ -204,53 +204,11 @@ Python  Packages  Ansible  Ansible core
 3.12    ansible   9.x      2.16
 ======  ========  =======  ============
 
-For reference, the following two tables show which combinations of Python
-version and Ansible version are supported by the ibm_zhmc Ansible collection.
-The general strategy is that all Python versions supported by the ansible sanity
-test are also supported by the ibm_zhmc Ansible collection. Note that a
-particular version of the ansible package normally supports higher Python
-versions than its corresponding sanity test, so the ibm_zhmc Ansible collection
-is more restrictive in its supported Python versions than the ansible package
-itself.
-
-At the time of writing,
-the latest Python version is 3.12 and
-the latest Ansible version is 9.0.
-
-=======  =================  =========================
-Ansible  Ansible core       Supported Python versions
--------  -----------------  -------------------------
-2.9      ansible 2.9        2.7, 3.5 - 3.8
-2.10     ansible 2.10       2.7, 3.5 - 3.8
-3        ansible-base 2.10  2.7, 3.5 - 3.8
-4        ansible-core 2.11  2.7, 3.5 - 3.9 (1)
-5        ansible-core 2.12  3.8 - 3.10 (2)
-6        ansible-core 2.13  3.8 - 3.10 (2)
-7        ansible-core 2.14  3.9 - 3.11 (3)
-8        ansible-core 2.15  3.9 - 3.11 (3)
-9        ansible-core 2.16  3.10 - 3.12
-=======  =================  =========================
-
-======  ==========================
-Python  Supported Ansible versions
-------  --------------------------
-2.7     2.9, 2.10, 3, 4
-3.5     2.9, 2.10, 3, 4
-3.6     2.9, 2.10, 3, 4
-3.7     2.9, 2.10, 3, 4
-3.8     2.9, 2.10, 3 - 6
-3.9     4 - 8
-3.10    5 - 9
-3.11    7 - 9
-3.12    9
-======  ==========================
-
-Notes:
-
-* (1) The sanity test of Ansible 4 supports Python only up to 3.9.
-* (2) The sanity test of Ansible 5 and 6 supports Python only up to 3.10.
-* (3) The sanity test of Ansible 7 and 8 supports Python only up to 3.11.
-
+The versions for the 'latest' and 'minimum' package levels are in sync with the
+latest and minimum Ansible versions supported for a particular Python version,
+as documented in :ref:`Supported environments`.
+The versions for the 'ansible' package level are designed to cover all
+Ansible versions.
 
 .. _`Releasing a version`:
 
