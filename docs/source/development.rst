@@ -181,8 +181,9 @@ Python  Packages  Ansible  Ansible core
 3.7     latest    4.x      2.11
 3.8     latest    6.x      2.13
 3.9     latest    8.x      2.15
-3.10    latest    8.x      2.15
-3.11    latest    8.x      2.15
+3.10    latest    9.x      2.16
+3.11    latest    9.x      2.16
+3.12    latest    9.x      2.16
 2.7     minimum   2.9      2.9
 3.5     minimum   2.9      2.9
 3.6     minimum   2.9      2.9
@@ -191,6 +192,7 @@ Python  Packages  Ansible  Ansible core
 3.9     minimum   4.0      2.11
 3.10    minimum   5.0      2.12
 3.11    minimum   7.0      2.14
+3.12    minimum   9.0      2.16
 2.7     ansible   2.9      2.9
 3.5     ansible   2.10     2.10
 3.6     ansible   3.x      2.10
@@ -198,13 +200,22 @@ Python  Packages  Ansible  Ansible core
 3.8     ansible   5.x      2.12
 3.9     ansible   6.x      2.13
 3.10    ansible   7.x      2.14
-3.11    ansible   8.x+     2.15+
+3.11    ansible   8.x      2.15
+3.12    ansible   9.x      2.16
 ======  ========  =======  ============
 
-For reference, the following two tables show supported Python versions for
-Ansible versions and vice versa, for the Python and Ansible versions that are
-relevant for this collection. At the time of writing, the latest Python version
-is 3.11 and the latest Ansible version is 8.0.
+For reference, the following two tables show which combinations of Python
+version and Ansible version are supported by the ibm_zhmc Ansible collection.
+The general strategy is that all Python versions supported by the ansible sanity
+test are also supported by the ibm_zhmc Ansible collection. Note that a
+particular version of the ansible package normally supports higher Python
+versions than its corresponding sanity test, so the ibm_zhmc Ansible collection
+is more restrictive in its supported Python versions than the ansible package
+itself.
+
+At the time of writing,
+the latest Python version is 3.12 and
+the latest Ansible version is 9.0.
 
 =======  =================  =========================
 Ansible  Ansible core       Supported Python versions
@@ -215,8 +226,9 @@ Ansible  Ansible core       Supported Python versions
 4        ansible-core 2.11  2.7, 3.5 - 3.9 (1)
 5        ansible-core 2.12  3.8 - 3.10 (2)
 6        ansible-core 2.13  3.8 - 3.10 (2)
-7        ansible-core 2.14  3.9 - 3.11+
-8        ansible-core 2.15  3.9 - 3.11+
+7        ansible-core 2.14  3.9 - 3.11 (3)
+8        ansible-core 2.15  3.9 - 3.11 (3)
+9        ansible-core 2.16  3.10 - 3.12
 =======  =================  =========================
 
 ======  ==========================
@@ -227,17 +239,17 @@ Python  Supported Ansible versions
 3.6     2.9, 2.10, 3, 4
 3.7     2.9, 2.10, 3, 4
 3.8     2.9, 2.10, 3 - 6
-3.9     4 - 8+
-3.10    5 - 8+ (1)
-3.11    7 - 8+ (2)
+3.9     4 - 8
+3.10    5 - 9
+3.11    7 - 9
+3.12    9
 ======  ==========================
 
 Notes:
 
-* (1) The sanity test of Ansible 4 supports Python only up to 3.9, so Python
-  3.10 requires at least Ansible 5.
-* (2) The sanity test of Ansible 5 and 6 supports Python only up to 3.10, so
-  Python 3.11 requires at least Ansible 7.
+* (1) The sanity test of Ansible 4 supports Python only up to 3.9.
+* (2) The sanity test of Ansible 5 and 6 supports Python only up to 3.10.
+* (3) The sanity test of Ansible 7 and 8 supports Python only up to 3.11.
 
 
 .. _`Releasing a version`:

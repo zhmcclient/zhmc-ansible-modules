@@ -37,6 +37,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Enhancements:**
 
+* Added support for Python 3.12. (issue #796)
+
+* Added support for Ansible 9.
+
 **Cleanup:**
 
 **Known issues:**
