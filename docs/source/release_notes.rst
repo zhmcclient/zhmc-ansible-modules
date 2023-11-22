@@ -31,6 +31,19 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Incompatible changes:**
 
+* Added pinning of Ansible versions to a supported maximum version, consistent
+  with the maximum version supported by the Ansible sanity check. Note, the
+  supported minimum versions of Ansible have not changed.
+
+  The Ansible versions supported by the this collection are now as follows:
+
+  - On Python 2.7 and 3.5 to 3.7: Ansible 2.9 to 4
+  - On Python 3.8: Ansible 2.9 to 6
+  - On Python 3.9: Ansible 4 to 6
+  - On Python 3.10: Ansible 5 to 9
+  - On Python 3.11: Ansible 7 to 9
+  - On Python 3.12: Ansible 9 (not pinned to a maximum)
+
 **Deprecations:**
 
 **Bug fixes:**
