@@ -65,6 +65,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Added support for Python 3.12. (issue #796)
 
+* Added support for Ansible 9.
+
 * Increased minimum version of zhmcclient to 1.12.0 to pick up fixes and
   functionality.
 

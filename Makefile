@@ -282,14 +282,12 @@ safety: safety_$(pymn)_$(PACKAGE_LEVEL).done
 	@echo "Makefile: $@ done."
 
 # Excluding Python>=3.10 with minimum package levels because of PyYAML 5.4.1 install issue with Cython 3
-# Excluding Python>=3.12 because not yet supportd by Ansible
-run_sanity_current := $(shell PL=$(PACKAGE_LEVEL) $(PYTHON_CMD) -c "import sys,os; py=sys.version_info[0:2]; pl=os.getenv('PL'); sys.stdout.write('true' if py<=(3,9) or (3,10)<=py<=(3,11) and pl=='latest' else 'false')")
+run_sanity_current := $(shell PL=$(PACKAGE_LEVEL) $(PYTHON_CMD) -c "import sys,os; py=sys.version_info[0:2]; pl=os.getenv('PL'); sys.stdout.write('true' if py<=(3,9) or py>=(3,10) and pl=='latest' else 'false')")
 
 # Excluding Python <=3.6 because ?
 # Excluding Python 3.7+3.8 with minimum package levels because ?
 # Excluding Python 3.10 with minimum package levels because of PyYAML 5.4.1 install issue with Cython 3
-# Excluding Python>=3.12 because not yet supportd by Ansible
-run_sanity_virtual := $(shell PL=$(PACKAGE_LEVEL) $(PYTHON_CMD) -c "import sys,os; py=sys.version_info[0:2]; pl=os.getenv('PL'); sys.stdout.write('true' if (3,7)<=py<=(3,8) and pl=='latest' or py==(3,9) or py==(3,10) and pl=='latest' or py==(3,11) else 'false')")
+run_sanity_virtual := $(shell PL=$(PACKAGE_LEVEL) $(PYTHON_CMD) -c "import sys,os; py=sys.version_info[0:2]; pl=os.getenv('PL'); sys.stdout.write('true' if (3,7)<=py<=(3,8) and pl=='latest' or py==(3,9) or py==(3,10) and pl=='latest' or py>=(3,11) else 'false')")
 
 # The sanity check requires the .git directory to be present.
 .PHONY:	sanity
