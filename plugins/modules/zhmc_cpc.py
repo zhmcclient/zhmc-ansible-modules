@@ -731,7 +731,7 @@ def upgrade(module):
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
 
-    module.fail_on_missing_params('bundle_level')
+    module.fail_on_missing_params(['bundle_level'])
     bundle_level = module.params['bundle_level']
     accept_firmware = module.params['accept_firmware']
     cpc_name = module.params['name']
