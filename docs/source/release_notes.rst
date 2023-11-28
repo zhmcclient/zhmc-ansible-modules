@@ -61,6 +61,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Dev: Pinned voluptuous package to <0.14 on Python < 3.6.
 
+* Fixed "missing required arguments: b, u, n, d, l, e, _, l, e, v, e, l"
+  error when using the 'zhmc_console' or 'zhmc_cpc' modules with 'state=upgrade'.
+  (issue #834)
+
 **Enhancements:**
 
 * Added support for Python 3.12. (issue #796)
