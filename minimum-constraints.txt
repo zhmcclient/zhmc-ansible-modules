@@ -84,7 +84,7 @@ MarkupSafe==2.0.0; python_version >= '3.9'   # ansible >= 6
 cryptography==3.3.2; python_version == '2.7'
 cryptography==3.0; python_version == '3.5'
 cryptography==3.4.7; python_version == '3.6'
-cryptography==41.0.4; python_version >= '3.7'
+cryptography==41.0.6; python_version >= '3.7'
 
 importlib-metadata==0.12; python_version <= '3.7'
 importlib-metadata==1.1.0; python_version >= '3.8' and python_version <= '3.11'
