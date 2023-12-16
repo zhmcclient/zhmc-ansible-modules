@@ -20,34 +20,28 @@ Releases
 ========
 
 
-Version 1.7.2-dev1
-------------------
+Version 1.7.2
+-------------
 
-Released: not yet
+Released: 2023-12-16
 
 Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
-
-**Incompatible changes:**
-
-**Deprecations:**
 
 **Bug fixes:**
 
 * Addressed safety issues up to 2023-11-26.
+
+* Dev: Pinned voluptuous package to <0.14 on Python < 3.6.
+
+* Fixed "missing required arguments: b, u, n, d, l, e, _, l, e, v, e, l"
+  error when using the 'zhmc_console' or 'zhmc_cpc' modules with 'state=upgrade'.
+  (issue #834)
 
 **Enhancements:**
 
 * Added support for Python 3.12. (issue #796)
 
 * Added support for Ansible 9.
-
-**Cleanup:**
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 1.7.1
@@ -78,12 +72,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Fixed and improved the description of the 'zhmc_lpar' module for
   state=active/loaded; cleaned up the code without functional changes.
-
-* Dev: Pinned voluptuous package to <0.14 on Python < 3.6.
-
-* Fixed "missing required arguments: b, u, n, d, l, e, _, l, e, v, e, l"
-  error when using the 'zhmc_console' or 'zhmc_cpc' modules with 'state=upgrade'.
-  (issue #834)
 
 **Enhancements:**
 
