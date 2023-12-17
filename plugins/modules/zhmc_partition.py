@@ -304,7 +304,6 @@ EXAMPLES = """
     expand_storage_groups: true
     expand_crypto_adapters: true
   register: part1
-
 """
 
 RETURN = """

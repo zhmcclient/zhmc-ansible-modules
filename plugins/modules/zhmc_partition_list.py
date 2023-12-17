@@ -165,7 +165,6 @@ EXAMPLES = """
     hmc_auth: "{{ my_hmc_auth }}"
     cpc_name: CPCA
   register: partition_list
-
 """
 
 RETURN = """

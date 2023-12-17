@@ -37,6 +37,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Enhancements:**
 
+* Added a new make target 'make ansible_lint' which invokes ansible-lint.
+  Fixed some of the warnings reported by ansible-lint.
+  (related to issue #784)
+
 **Cleanup:**
 
 **Known issues:**

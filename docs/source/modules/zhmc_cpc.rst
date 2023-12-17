@@ -210,7 +210,7 @@ Examples
        state: set
        properties:
          acceptable_status:
-          - active
+           - active
          description: "This is CPC {{ my_cpc_name }}"
      register: cpc1
 
@@ -223,7 +223,6 @@ Examples
        bundle_level: "S71"
        upgrade_timeout: 10800
      register: cpc1
-
 
 
 

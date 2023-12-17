@@ -185,7 +185,6 @@ EXAMPLES = """
     storage_group_name: "{{ my_storage_group_name }}"
     partition_name: "{{ my_partition_name }}"
     state: detached
-
 """
 
 RETURN = """

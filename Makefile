@@ -193,6 +193,7 @@ help:
 	@echo '  dist       - Build the collection distribution archive in: $(dist_dir)'
 	@echo '  check      - Run flake8'
 	@echo '  sanity     - Run Ansible sanity tests (includes pep8, pylint, validate-modules)'
+	@echo '  ansible_lint - Run ansible-lint on distribution archive (and built it)'
 	@echo '  safety     - Run safety on sources'
 	@echo '  check_reqs - Perform missing dependency checks'
 	@echo '  docs       - Build the documentation for all enabled (docs/source/conf.py) versions in: $(doc_build_dir) using remote repo'
@@ -226,7 +227,7 @@ help:
 	@echo '  ansible-playbook playbooks/....'
 
 .PHONY: all
-all: install develop dist safety check sanity check_reqs docs docslocal linkcheck test end2end_mocked
+all: install develop dist safety check sanity ansible_lint check_reqs docs docslocal linkcheck test end2end_mocked
 	@echo '$@ done.'
 
 .PHONY: install
@@ -288,6 +289,15 @@ ifeq ($(run_sanity_virtual),true)
 else
 	echo "Skipping ansible sanity test with its own virtual Python env"
 endif
+	@echo '$@ done.'
+
+.PHONY:	ansible_lint
+ansible_lint: _check_version develop_$(pymn).done $(dist_file)
+	echo 'Running ansible-lint on distribution archive'
+	rm -rf $(dist_dir)/tmp
+	mkdir -p $(dist_dir)/tmp
+	tar -xf $(dist_file) --directory $(dist_dir)/tmp
+	-sh -c "cd $(dist_dir)/tmp; ansible-lint --profile production -f pep8"
 	@echo '$@ done.'
 
 .PHONY: check_reqs

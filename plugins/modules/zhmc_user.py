@@ -215,7 +215,6 @@ EXAMPLES = """
         - hmc-access-administrator-tasks
         - hmc-all-system-managed-objects
   register: user1
-
 """
 
 RETURN = """
