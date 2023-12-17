@@ -209,7 +209,6 @@ EXAMPLES = """
     cpc_name: CPCA
     adapter_family: "ficon"
   register: adapter_list
-
 """
 
 RETURN = """
