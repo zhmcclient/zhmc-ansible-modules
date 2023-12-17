@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Installation &mdash; IBM Z HMC collection  documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/banner.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/banner.css?v=fd51b7f5" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -289,28 +291,6 @@ need to be opened:</p>
 </section>
 <section id="supported-environments">
 <span id="id5"></span><h2>Supported environments<a class="headerlink" href="#supported-environments" title="Link to this heading"></a></h2>
-<p>The following versions of Python are supported:</p>
-<ul class="simple">
-<li><p>Python 2.7</p></li>
-<li><p>Python 3.5 and higher</p></li>
-</ul>
-<p>The following operating systems are supported:</p>
-<ul class="simple">
-<li><p>Linux</p></li>
-<li><p>macOS (OS-X)</p></li>
-<li><p>Windows</p></li>
-</ul>
-<p>The following versions of Ansible are supported:</p>
-<ul class="simple">
-<li><p>Ansible 2.9 (only up to Python 3.8)</p></li>
-<li><p>Ansible 2.10 (only up to Python 3.8)</p></li>
-<li><p>Ansible 3 (ansible-base 2.10) (only up to Python 3.8)</p></li>
-<li><p>Ansible 4 (ansible-core 2.11) (only up to Python 3.9)</p></li>
-<li><p>Ansible 5 (ansible-core 2.12)</p></li>
-<li><p>Ansible 6 (ansible-core 2.13)</p></li>
-<li><p>Ansible 7 (ansible-core 2.14)</p></li>
-<li><p>Ansible 8 (ansible-core 2.15)</p></li>
-</ul>
 <p>The following Z and LinuxONE machine generations are supported:</p>
 <ul class="simple">
 <li><p>z196 / z114</p></li>
@@ -320,6 +300,105 @@ need to be opened:</p>
 <li><p>z15 / LinuxONE III</p></li>
 <li><p>z16 / LinuxONE 4</p></li>
 </ul>
+<p>The following environments are supported for running the Ansible modules of the
+ibm_zhmc collection.</p>
+<p>Operating systems:</p>
+<ul class="simple">
+<li><p>Linux</p></li>
+<li><p>macOS (OS-X)</p></li>
+<li><p>Windows</p></li>
+</ul>
+<p>Python versions:</p>
+<ul class="simple">
+<li><p>Python 2.7</p></li>
+<li><p>Python 3.5 and higher</p></li>
+</ul>
+<p>Ansible versions:</p>
+<ul class="simple">
+<li><p>Ansible 2.9 and higher</p></li>
+</ul>
+<p>Not all combinations of these Python and Ansible versions are supported, though.
+The general strategy is that all Python versions supported by the sanity test
+tool of a particular Ansible version are supported by the ibm_zhmc Ansible
+collection, as shown in the following tables:</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>Ansible</p></td>
+<td><p>Ansible core</p></td>
+<td><p>Supported Python versions</p></td>
+</tr>
+<tr class="row-even"><td><p>2.9</p></td>
+<td><p>ansible 2.9</p></td>
+<td><p>2.7, 3.5 - 3.8</p></td>
+</tr>
+<tr class="row-odd"><td><p>2.10</p></td>
+<td><p>ansible 2.10</p></td>
+<td><p>2.7, 3.5 - 3.8</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>ansible-base 2.10</p></td>
+<td><p>2.7, 3.5 - 3.8</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>ansible-core 2.11</p></td>
+<td><p>2.7, 3.5 - 3.9</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>ansible-core 2.12</p></td>
+<td><p>3.8 - 3.10</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p>ansible-core 2.13</p></td>
+<td><p>3.8 - 3.10</p></td>
+</tr>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>ansible-core 2.14</p></td>
+<td><p>3.9 - 3.11</p></td>
+</tr>
+<tr class="row-odd"><td><p>8</p></td>
+<td><p>ansible-core 2.15</p></td>
+<td><p>3.9 - 3.11</p></td>
+</tr>
+<tr class="row-even"><td><p>9</p></td>
+<td><p>ansible-core 2.16</p></td>
+<td><p>3.10 - 3.12</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>Python</p></td>
+<td><p>Supported Ansible versions</p></td>
+</tr>
+<tr class="row-even"><td><p>2.7</p></td>
+<td><p>2.9 - 2.10, 3 - 4</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.5</p></td>
+<td><p>2.9 - 2.10, 3 - 4</p></td>
+</tr>
+<tr class="row-even"><td><p>3.6</p></td>
+<td><p>2.9 - 2.10, 3 - 4</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.7</p></td>
+<td><p>2.9 - 2.10, 3 - 4</p></td>
+</tr>
+<tr class="row-even"><td><p>3.8</p></td>
+<td><p>2.9 - 2.10, 3 - 6</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.9</p></td>
+<td><p>4 - 8</p></td>
+</tr>
+<tr class="row-even"><td><p>3.10</p></td>
+<td><p>5 - 9</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.11</p></td>
+<td><p>7 - 9</p></td>
+</tr>
+<tr class="row-even"><td><p>3.12</p></td>
+<td><p>9 and higher</p></td>
+</tr>
+</tbody>
+</table>
 </section>
 </section>
 
@@ -379,6 +458,7 @@ need to be opened:</p>
             <dd><a href="../1.6.1/installation.html">1.6.1</a></dd>
             <dd><a href="../1.7.0/installation.html">1.7.0</a></dd>
             <dd><a href="../1.7.1/installation.html">1.7.1</a></dd>
+            <dd><a href="../1.7.2/installation.html">1.7.2</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

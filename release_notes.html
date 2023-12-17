@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Releases &mdash; IBM Z HMC collection  documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/banner.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/banner.css?v=fd51b7f5" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -36,7 +38,7 @@
             IBM Z HMC collection
           </a>
               <div class="version">
-                1.7.1
+                1.7.2
 
               </div>
 <div role="search">
@@ -69,6 +71,7 @@
 <p class="caption" role="heading"><span class="caption-text">Appendices</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Releases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-7-2">Version 1.7.2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-7-1">Version 1.7.1</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-7-0">Version 1.7.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-6-0">Version 1.6.0</a></li>
@@ -119,6 +122,24 @@
              
   <section id="releases">
 <span id="id1"></span><h1>Releases<a class="headerlink" href="#releases" title="Link to this heading"></a></h1>
+<section id="version-1-7-2">
+<h2>Version 1.7.2<a class="headerlink" href="#version-1-7-2" title="Link to this heading"></a></h2>
+<p>Released: 2023-12-16</p>
+<p>Availability: <a class="reference external" href="https://console.redhat.com/ansible/automation-hub/repo/published/ibm/ibm_zhmc">AutomationHub</a>, <a class="reference external" href="https://galaxy.ansible.com/ibm/ibm_zhmc">Galaxy</a>, <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">GitHub</a></p>
+<p><strong>Bug fixes:</strong></p>
+<ul class="simple">
+<li><p>Addressed safety issues up to 2023-11-26.</p></li>
+<li><p>Dev: Pinned voluptuous package to &lt;0.14 on Python &lt; 3.6.</p></li>
+<li><p>Fixed “missing required arguments: b, u, n, d, l, e, _, l, e, v, e, l”
+error when using the ‘zhmc_console’ or ‘zhmc_cpc’ modules with ‘state=upgrade’.
+(issue #834)</p></li>
+</ul>
+<p><strong>Enhancements:</strong></p>
+<ul class="simple">
+<li><p>Added support for Python 3.12. (issue #796)</p></li>
+<li><p>Added support for Ansible 9.</p></li>
+</ul>
+</section>
 <section id="version-1-7-1">
 <h2>Version 1.7.1<a class="headerlink" href="#version-1-7-1" title="Link to this heading"></a></h2>
 <p>Released: 2023-10-31</p>
@@ -911,7 +932,7 @@ property update.</p></li>
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.7.1
+        v: 1.7.2
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -939,6 +960,7 @@ property update.</p></li>
             <dd><a href="1.6.1/release_notes.html">1.6.1</a></dd>
             <dd><a href="1.7.0/release_notes.html">1.7.0</a></dd>
             <dd><a href="1.7.1/release_notes.html">1.7.1</a></dd>
+            <dd><a href="1.7.2/release_notes.html">1.7.2</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

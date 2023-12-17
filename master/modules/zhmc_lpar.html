@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>zhmc_lpar – Manage LPARs &mdash; IBM Z HMC collection  documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/banner.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/banner.css?v=fd51b7f5" />
+
+  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -74,6 +76,7 @@
 <li class="toctree-l2"><a class="reference internal" href="zhmc_nic_list.html">zhmc_nic_list – List NICs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_partition.html">zhmc_partition – Create partitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_partition_list.html">zhmc_partition_list – List partitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_partition_messages.html">zhmc_partition_messages – Get console messages for OS in a partition</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group.html">zhmc_storage_group – Create storage groups</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Attach storage groups to partitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_volume.html">zhmc_storage_volume – Create storage volumes</a></li>
@@ -87,6 +90,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_list.html">zhmc_lpar_list – List LPARs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_messages.html">zhmc_lpar_messages – Get console messages for OS in an LPAR</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../playbooks.html">Playbooks</a></li>
@@ -421,7 +425,7 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>lpar</dt><dd><p>The resource properties of the LPAR, after any specified updates have been applied.</p>
+<dt>lpar</dt><dd><p>The resource properties of the LPAR, after any specified updates have been applied, for <code class="docutils literal notranslate"><span class="pre">state=active</span></code>, <code class="docutils literal notranslate"><span class="pre">state=loaded</span></code> and <code class="docutils literal notranslate"><span class="pre">state=set</span></code>. For any other values of <code class="docutils literal notranslate"><span class="pre">state</span></code>, the dictionary will be empty.</p>
 <p>Note that the returned properties may show different values than the ones that were specified as input for the update. For example, memory properties may be rounded up, hexadecimal strings may be shown with a different representation format, and other properties may change as a result of updating some properties. For details, see the data model of the ‘Logical Partition’ object in the :term:`HMC API` book.</p>
 <div class="line-block">
 <div class="line"><strong>returned</strong>: success</div>
@@ -655,6 +659,7 @@
             <dd><a href="../../1.6.1/modules/zhmc_lpar.html">1.6.1</a></dd>
             <dd><a href="../../1.7.0/modules/zhmc_lpar.html">1.7.0</a></dd>
             <dd><a href="../../1.7.1/modules/zhmc_lpar.html">1.7.1</a></dd>
+            <dd><a href="../../1.7.2/modules/zhmc_lpar.html">1.7.2</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Development &mdash; IBM Z HMC collection  documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/banner.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/banner.css?v=fd51b7f5" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -36,7 +38,7 @@
             IBM Z HMC collection
           </a>
               <div class="version">
-                1.7.1
+                1.7.2
 
               </div>
 <div role="search">
@@ -257,53 +259,63 @@ specific Ansible versions as defined in the <code class="docutils literal notran
 </tr>
 <tr class="row-even"><td><p>3.10</p></td>
 <td><p>latest</p></td>
-<td><p>8.x</p></td>
-<td><p>2.15</p></td>
+<td><p>9.x</p></td>
+<td><p>2.16</p></td>
 </tr>
 <tr class="row-odd"><td><p>3.11</p></td>
 <td><p>latest</p></td>
-<td><p>8.x</p></td>
-<td><p>2.15</p></td>
+<td><p>9.x</p></td>
+<td><p>2.16</p></td>
 </tr>
-<tr class="row-even"><td><p>2.7</p></td>
+<tr class="row-even"><td><p>3.12</p></td>
+<td><p>latest</p></td>
+<td><p>9.x</p></td>
+<td><p>2.16</p></td>
+</tr>
+<tr class="row-odd"><td><p>2.7</p></td>
 <td><p>minimum</p></td>
 <td><p>2.9</p></td>
 <td><p>2.9</p></td>
 </tr>
-<tr class="row-odd"><td><p>3.5</p></td>
+<tr class="row-even"><td><p>3.5</p></td>
 <td><p>minimum</p></td>
 <td><p>2.9</p></td>
 <td><p>2.9</p></td>
 </tr>
-<tr class="row-even"><td><p>3.6</p></td>
+<tr class="row-odd"><td><p>3.6</p></td>
 <td><p>minimum</p></td>
 <td><p>2.9</p></td>
 <td><p>2.9</p></td>
 </tr>
-<tr class="row-odd"><td><p>3.7</p></td>
+<tr class="row-even"><td><p>3.7</p></td>
 <td><p>minimum</p></td>
 <td><p>2.9</p></td>
 <td><p>2.9</p></td>
 </tr>
-<tr class="row-even"><td><p>3.8</p></td>
+<tr class="row-odd"><td><p>3.8</p></td>
 <td><p>minimum</p></td>
 <td><p>2.9</p></td>
 <td><p>2.9</p></td>
 </tr>
-<tr class="row-odd"><td><p>3.9</p></td>
+<tr class="row-even"><td><p>3.9</p></td>
 <td><p>minimum</p></td>
 <td><p>4.0</p></td>
 <td><p>2.11</p></td>
 </tr>
-<tr class="row-even"><td><p>3.10</p></td>
+<tr class="row-odd"><td><p>3.10</p></td>
 <td><p>minimum</p></td>
 <td><p>5.0</p></td>
 <td><p>2.12</p></td>
 </tr>
-<tr class="row-odd"><td><p>3.11</p></td>
+<tr class="row-even"><td><p>3.11</p></td>
 <td><p>minimum</p></td>
 <td><p>7.0</p></td>
 <td><p>2.14</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.12</p></td>
+<td><p>minimum</p></td>
+<td><p>9.0</p></td>
+<td><p>2.16</p></td>
 </tr>
 <tr class="row-even"><td><p>2.7</p></td>
 <td><p>ansible</p></td>
@@ -342,15 +354,27 @@ specific Ansible versions as defined in the <code class="docutils literal notran
 </tr>
 <tr class="row-odd"><td><p>3.11</p></td>
 <td><p>ansible</p></td>
-<td><p>8.x+</p></td>
-<td><p>2.15+</p></td>
+<td><p>8.x</p></td>
+<td><p>2.15</p></td>
+</tr>
+<tr class="row-even"><td><p>3.12</p></td>
+<td><p>ansible</p></td>
+<td><p>9.x</p></td>
+<td><p>2.16</p></td>
 </tr>
 </tbody>
 </table>
-<p>For reference, the following two tables show supported Python versions for
-Ansible versions and vice versa, for the Python and Ansible versions that are
-relevant for this collection. At the time of writing, the latest Python version
-is 3.11 and the latest Ansible version is 8.0.</p>
+<p>For reference, the following two tables show which combinations of Python
+version and Ansible version are supported by the ibm_zhmc Ansible collection.
+The general strategy is that all Python versions supported by the ansible sanity
+test are also supported by the ibm_zhmc Ansible collection. Note that a
+particular version of the ansible package normally supports higher Python
+versions than its corresponding sanity test, so the ibm_zhmc Ansible collection
+is more restrictive in its supported Python versions than the ansible package
+itself.</p>
+<p>At the time of writing,
+the latest Python version is 3.12 and
+the latest Ansible version is 9.0.</p>
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p>Ansible</p></td>
@@ -383,11 +407,15 @@ is 3.11 and the latest Ansible version is 8.0.</p>
 </tr>
 <tr class="row-even"><td><p>7</p></td>
 <td><p>ansible-core 2.14</p></td>
-<td><p>3.9 - 3.11+</p></td>
+<td><p>3.9 - 3.11 (3)</p></td>
 </tr>
 <tr class="row-odd"><td><p>8</p></td>
 <td><p>ansible-core 2.15</p></td>
-<td><p>3.9 - 3.11+</p></td>
+<td><p>3.9 - 3.11 (3)</p></td>
+</tr>
+<tr class="row-even"><td><p>9</p></td>
+<td><p>ansible-core 2.16</p></td>
+<td><p>3.10 - 3.12</p></td>
 </tr>
 </tbody>
 </table>
@@ -412,22 +440,33 @@ is 3.11 and the latest Ansible version is 8.0.</p>
 <td><p>2.9, 2.10, 3 - 6</p></td>
 </tr>
 <tr class="row-odd"><td><p>3.9</p></td>
-<td><p>4 - 8+</p></td>
+<td><p>4 - 8</p></td>
 </tr>
 <tr class="row-even"><td><p>3.10</p></td>
-<td><p>5 - 8+ (1)</p></td>
+<td><p>5 - 9</p></td>
 </tr>
 <tr class="row-odd"><td><p>3.11</p></td>
-<td><p>7 - 8+ (2)</p></td>
+<td><p>7 - 9</p></td>
+</tr>
+<tr class="row-even"><td><p>3.12</p></td>
+<td><p>9</p></td>
 </tr>
 </tbody>
 </table>
 <p>Notes:</p>
 <ul class="simple">
-<li><p>(1) The sanity test of Ansible 4 supports Python only up to 3.9, so Python
-3.10 requires at least Ansible 5.</p></li>
-<li><p>(2) The sanity test of Ansible 5 and 6 supports Python only up to 3.10, so
-Python 3.11 requires at least Ansible 7.</p></li>
+<li><ol class="arabic simple">
+<li><p>The sanity test of Ansible 4 supports Python only up to 3.9.</p></li>
+</ol>
+</li>
+<li><ol class="arabic simple" start="2">
+<li><p>The sanity test of Ansible 5 and 6 supports Python only up to 3.10.</p></li>
+</ol>
+</li>
+<li><ol class="arabic simple" start="3">
+<li><p>The sanity test of Ansible 7 and 8 supports Python only up to 3.11.</p></li>
+</ol>
+</li>
 </ul>
 </section>
 <section id="releasing-a-version">
@@ -759,7 +798,7 @@ git<span class="w"> </span>branch<span class="w"> </span>-D<span class="w"> </sp
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.7.1
+        v: 1.7.2
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -787,6 +826,7 @@ git<span class="w"> </span>branch<span class="w"> </span>-D<span class="w"> </sp
             <dd><a href="1.6.1/development.html">1.6.1</a></dd>
             <dd><a href="1.7.0/development.html">1.7.0</a></dd>
             <dd><a href="1.7.1/development.html">1.7.1</a></dd>
+            <dd><a href="1.7.2/development.html">1.7.2</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
