@@ -20,8 +20,8 @@ Releases
 ========
 
 
-Version 1.8.0-dev1
-------------------
+Version 1.8.0-dev1 test
+-----------------------
 
 This version contains all fixes up to version 1.7.x.
 
