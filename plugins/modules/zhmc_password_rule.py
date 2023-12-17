@@ -175,7 +175,6 @@ EXAMPLES = """
     properties:
       description: "Example password rule 1"
   register: rule1
-
 """
 
 RETURN = """

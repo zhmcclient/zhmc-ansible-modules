@@ -219,7 +219,7 @@ EXAMPLES = """
     state: set
     properties:
       acceptable_status:
-       - active
+        - active
       description: "This is CPC {{ my_cpc_name }}"
   register: cpc1
 
@@ -231,7 +231,6 @@ EXAMPLES = """
     state: upgrade
     bundle_level: "S71"
   register: cpc1
-
 """
 
 RETURN = """
