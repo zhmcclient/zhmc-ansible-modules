@@ -273,13 +273,18 @@ EXAMPLES = """
     properties:
       description: "Example user role 1"
       permissions:
-        - task: "configure-storage-storageadmin"  # Task permission to "configure-storage-storageadmin"
-        - task: "hardware-messages"  # Task permission to the view-only version of "hardware-messages"
+        # Task permission to "configure-storage-storageadmin":
+        - task: "configure-storage-storageadmin"
+        # Task permission to the view-only version of "hardware-messages":
+        - task: "hardware-messages"
           view_only: true
-        - class: cpc        # Object permission to all CPCs
-        - partition: part1  # Object permission to part1 in cpc1
+        # Object permission to all CPCs:
+        - class: cpc
+        # Object permission to part1 in cpc1:
+        - partition: part1
           cpc: cpc1
-        - partition: part2  # Object permission to part2 in cpc2
+        # Object permission to part2 in cpc2:
+        - partition: part2
           cpc: cpc2
   register: rule1
 """

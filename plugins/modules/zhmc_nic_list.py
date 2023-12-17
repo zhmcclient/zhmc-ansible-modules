@@ -142,7 +142,6 @@ EXAMPLES = """
     cpc_name: CPCA
     partition_name: PART1
   register: nic_list
-
 """
 
 RETURN = """

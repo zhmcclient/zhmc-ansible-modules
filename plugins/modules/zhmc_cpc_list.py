@@ -144,7 +144,6 @@ EXAMPLES = """
     hmc_auth: "{{ my_hmc_auth }}"
     include_unmanaged_cpcs: true
   register: cpc_list
-
 """
 
 RETURN = """

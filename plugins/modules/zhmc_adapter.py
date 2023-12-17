@@ -254,7 +254,6 @@ EXAMPLES = """
     cpc_name: "{{ my_cpc_name }}"
     name: "{{ my_adapter_name }}"
     state: absent
-
 """
 
 RETURN = """

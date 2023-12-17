@@ -151,7 +151,6 @@ EXAMPLES = """
     cpc_name: "{{ my_cpc_name }}"
     name: "{{ my_part_name }}"
   register: part_messages
-
 """
 
 RETURN = """

@@ -207,7 +207,6 @@ EXAMPLES = """
       description: "Example storage volume 1"
       size: 1
   register: sv1
-
 """
 
 RETURN = """

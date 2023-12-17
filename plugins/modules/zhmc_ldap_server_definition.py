@@ -178,7 +178,6 @@ EXAMPLES = """
       primary_hostname_ipaddr: "10.11.12.13"
       search_distinguished_name: "test_user{0}"
   register: lsd1
-
 """
 
 RETURN = """
