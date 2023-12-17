@@ -244,7 +244,6 @@ EXAMPLES = """
     name: "{{ my_storage_group_name }}"
     state: discover
   register: sg1
-
 """
 
 RETURN = """

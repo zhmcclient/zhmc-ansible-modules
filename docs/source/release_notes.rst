@@ -80,6 +80,17 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Added upgrade_timeout parameter to zhmc_console and zhmc_cpc modules.
 
+* Added a new make target 'make ansible_lint' which invokes ansible-lint.
+  Fixed some of the warnings reported by ansible-lint.
+  (related to issue #784)
+
+* Increased the minimum versions of the following packages used for installing
+  the collection:
+
+  - packaging to 21.3 (on Python >= 3.6)
+  - PyYAML to 6.0.1 (on Python >= 3.6)
+  - jsonschema to 4.10.0 (on Python >= 3.7)
+
 **Cleanup:**
 
 * Removed documentation and test files (except sanity test ignore files) from

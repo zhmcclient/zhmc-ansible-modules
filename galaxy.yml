@@ -79,6 +79,8 @@ build_ignore:
   - .coveragerc
   - .flake8  # only in older branches
   - .travis.yml
+  - .whitesource
+  - .safety-policy.yml
   - CODE_OF_CONDUCT.md
   - CONTRIBUTING.rst  # only in older branches
   - DCO1.1.txt  # only in older branches
@@ -86,6 +88,7 @@ build_ignore:
   - Makefile
   # requirements.txt is intentionally included for dependent install
   - dev-requirements.txt
+  - ansible-constraints.txt
   - minimum-constraints.txt
   - tools
   - docs_local

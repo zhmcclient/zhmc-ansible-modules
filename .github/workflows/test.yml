@@ -261,6 +261,11 @@ jobs:
         PACKAGE_LEVEL: ${{ matrix.package_level }}
       run: |
         make sanity
+    - name: Run ansible_lint
+      env:
+        PACKAGE_LEVEL: ${{ matrix.package_level }}
+      run: |
+        make ansible_lint
     - name: Run unit/function test
       env:
         PACKAGE_LEVEL: ${{ matrix.package_level }}

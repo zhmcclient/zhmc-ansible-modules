@@ -176,7 +176,6 @@ EXAMPLES = """
     cpc_name: "{{ my_cpc_name }}"
     name: "{{ my_lpar_name }}"
   register: lpar_messages
-
 """
 
 RETURN = """

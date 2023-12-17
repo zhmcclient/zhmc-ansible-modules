@@ -253,7 +253,6 @@ EXAMPLES = """
     adapter_names: [CRYP00, CRYP01]
     domain_range: 0,-1
     access_mode: usage
-
 """
 
 RETURN = """
