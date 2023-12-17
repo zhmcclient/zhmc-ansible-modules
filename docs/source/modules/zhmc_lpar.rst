@@ -255,7 +255,8 @@ Examples
        state: inactive
      register: lpar1
 
-   - name: Ensure the LPAR is active (using the default image profile when it needs to be activated), and then set the CP sharing weight to 20
+   - name: "Ensure the LPAR is active (using the default image profile when it needs to be activated),
+            and then set the CP sharing weight to 20"
      zhmc_lpar:
        hmc_host: "{{ my_hmc_host }}"
        hmc_auth: "{{ my_hmc_auth }}"

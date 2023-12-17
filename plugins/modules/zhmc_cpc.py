@@ -219,7 +219,7 @@ EXAMPLES = """
     state: set
     properties:
       acceptable_status:
-       - active
+        - active
       description: "This is CPC {{ my_cpc_name }}"
   register: cpc1
 
