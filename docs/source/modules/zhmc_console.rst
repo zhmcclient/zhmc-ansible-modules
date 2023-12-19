@@ -99,10 +99,18 @@ state
 bundle_level
   Name of the bundle to be installed on the HMC (e.g. 'H71')
 
-  Required for \ :literal:`state=upgrade`\ 
+  Required for \ :literal:`state=upgrade`\
 
   | **required**: False
   | **type**: str
+
+
+upgrade_timeout
+  Timeout in seconds for waiting for completion of upgrade (e.g. 3600)
+
+  | **required**: False
+  | **type**: int
+  | **default**: 3600
 
 
 backup_location_type
@@ -144,7 +152,7 @@ Examples
 
 .. code-block:: yaml+jinja
 
-   
+
    ---
    # Note: The following examples assume that some variables named 'my_*' are set.
 
@@ -161,6 +169,7 @@ Examples
        hmc_auth: "{{ my_hmc_auth }}"
        state: upgrade
        bundle_level: "H71"
+       upgrade_timeout: 3600
      register: hmc1
 
 

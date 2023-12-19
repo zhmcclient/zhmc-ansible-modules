@@ -114,6 +114,12 @@ options:
     type: str
     required: false
     default: null
+  upgrade_timeout:
+    description:
+      - "Timeout in seconds for waiting for completion of upgrade (e.g. 3600)"
+    type: int
+    required: false
+    default: 3600
   backup_location_type:
     description:
       - "Type of backup location for the HMC backup that is performed:"
@@ -166,6 +172,7 @@ EXAMPLES = """
     hmc_auth: "{{ my_hmc_auth }}"
     state: upgrade
     bundle_level: "H71"
+    upgrade_timeout: 3600
   register: hmc1
 """
 
@@ -292,6 +299,7 @@ def upgrade(module):
 
     module.fail_on_missing_params(['bundle_level'])
     bundle_level = module.params['bundle_level']
+    upgrade_timeout = module.params['upgrade_timeout']
     accept_firmware = module.params['accept_firmware']
     backup_location_type = module.params['backup_location_type']
 
@@ -320,7 +328,7 @@ def upgrade(module):
                     accept_firmware=accept_firmware,
                     backup_location_type=backup_location_type,
                     wait_for_completion=True,
-                    operation_timeout=None)
+                    operation_timeout=upgrade_timeout)
                 changed = True
             except zhmcclient.HTTPError as exc:
                 if exc.http_status == 400 and exc.reason == 356:
@@ -367,6 +375,7 @@ def main():
         hmc_auth=hmc_auth_parameter(),
         state=dict(required=True, type='str', choices=['facts', 'upgrade']),
         bundle_level=dict(required=False, type='str', default=None),
+        upgrade_timeout=dict(required=False, type='int', default=3600),
         backup_location_type=dict(
             required=False, type='str', choices=['ftp', 'usb'], default='usb'),
         accept_firmware=dict(required=False, type='bool', default=True),
