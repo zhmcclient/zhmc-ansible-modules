@@ -99,7 +99,7 @@ state
 bundle_level
   Name of the bundle to be installed on the HMC (e.g. 'H71')
 
-  Required for \ :literal:`state=upgrade`\
+  Required for \ :literal:`state=upgrade`\ 
 
   | **required**: False
   | **type**: str
@@ -152,7 +152,7 @@ Examples
 
 .. code-block:: yaml+jinja
 
-
+   
    ---
    # Note: The following examples assume that some variables named 'my_*' are set.
 
