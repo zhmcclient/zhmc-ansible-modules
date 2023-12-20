@@ -20,30 +20,16 @@ Releases
 ========
 
 
-Version 1.7.3-dev1
-------------------
+Version 1.7.3
+-------------
 
-Released: not yet
+Released: 2023-12-20
 
 Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
-
-**Incompatible changes:**
-
-**Deprecations:**
-
-**Bug fixes:**
 
 **Enhancements:**
 
 * Added upgrade_timeout parameter to zhmc_console and zhmc_cpc modules.
-
-**Cleanup:**
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 1.7.2
