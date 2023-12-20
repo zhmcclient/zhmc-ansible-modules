@@ -35,6 +35,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Enhancements:**
 
+* Added upgrade_timeout parameter to zhmc_console and zhmc_cpc modules.
+
 **Cleanup:**
 
 **Known issues:**

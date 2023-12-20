@@ -105,6 +105,14 @@ bundle_level
   | **type**: str
 
 
+upgrade_timeout
+  Timeout in seconds for waiting for completion of upgrade (e.g. 3600)
+
+  | **required**: False
+  | **type**: int
+  | **default**: 3600
+
+
 backup_location_type
   Type of backup location for the HMC backup that is performed:
 
@@ -161,6 +169,7 @@ Examples
        hmc_auth: "{{ my_hmc_auth }}"
        state: upgrade
        bundle_level: "H71"
+       upgrade_timeout: 3600
      register: hmc1
 
 
