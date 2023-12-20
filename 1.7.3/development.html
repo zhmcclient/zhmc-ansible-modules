@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Development &mdash; IBM Z HMC collection  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/banner.css?v=fd51b7f5" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=7f41d439"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Requirements" href="requirements.html" />
+    <link rel="prev" title="Contributing" href="community_guides.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            IBM Z HMC collection
+          </a>
+              <div class="version">
+                1.7.3
+
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">References</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="playbooks.html">Playbooks</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Community Guides</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="community_guides.html">Contributing</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#repository">Repository</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#secret-variables">Secret variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#setting-up-the-development-environment">Setting up the development environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#building-the-documentation">Building the documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#testing">Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#releasing-a-version">Releasing a version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#starting-a-new-version">Starting a new version</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Requirements</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html#control-node">Control node</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Appendices</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="release_notes.html">Releases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="versioning.html">Versioning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bibliography.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">IBM Z HMC collection</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Development</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="development">
+<span id="id1"></span><h1>Development<a class="headerlink" href="#development" title="Link to this heading"></a></h1>
+<p>This section only needs to be read by developers of this project. People that
+want to make a fix or develop some extension, and people that want to test the
+project are also considered developers for the purpose of this section.</p>
+<section id="repository">
+<span id="id2"></span><h2>Repository<a class="headerlink" href="#repository" title="Link to this heading"></a></h2>
+<p>The repository for the <strong>IBM Z HMC collection</strong> is on GitHub:</p>
+<p><a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules">https://github.com/zhmcclient/zhmc-ansible-modules</a></p>
+</section>
+<section id="secret-variables">
+<span id="id3"></span><h2>Secret variables<a class="headerlink" href="#secret-variables" title="Link to this heading"></a></h2>
+<p>This Github repo needs the following secret variables to be set in order
+to run its Github Actions workflows successfully:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">GALAXY_API_KEY</span></code> - API key for the <a class="reference external" href="https://galaxy.ansible.com/">Ansible Galaxy</a>
+service. This variable is set at the repo level.</p>
+<p>To get such an API key, you need to have a user on Ansible Galaxy and then go
+to the user preferences page to view the API key the site has generated for
+your user.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SLACK_HOOK</span></code> - Slack hook URL to send test result messages to the
+<a class="reference external" href="https://ibm-systems-z.slack.com/archives/C01S7JW1FHS">#python-zhmcclient-test-status</a>
+Slack channel. Note that this channel is IBM-internal and looking at it requires
+an IBM ID. This variable is set at the organisation level.</p>
+<p>To get such a URL, follow the instructions in
+<a class="reference external" href="https://api.slack.com/messaging/webhooks">Sending messages using Incoming Webhooks</a></p>
+</li>
+</ul>
+</section>
+<section id="setting-up-the-development-environment">
+<span id="id4"></span><h2>Setting up the development environment<a class="headerlink" href="#setting-up-the-development-environment" title="Link to this heading"></a></h2>
+<p>The development environment is pretty easy to set up.</p>
+<p>Besides having a supported operating system with a supported Python version
+(see <a class="reference internal" href="installation.html#supported-environments"><span class="std std-ref">Supported environments</span></a>), it is recommended that you set up a
+<a class="reference external" href="https://docs.python-guide.org/dev/virtualenvs/">virtual Python environment</a>.</p>
+<p>Then, with a virtual Python environment active, clone the Git repo of this
+project and prepare the development environment with <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">develop</span></code>:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>git@github.com:zhmcclient/zhmc-ansible-modules.git
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>zhmc-ansible-modules
+$<span class="w"> </span>make<span class="w"> </span>develop
+</pre></div>
+</div>
+<p>This will install all prerequisites the project needs for its development.</p>
+<p>Generally, this project uses Make to do things in the currently active
+Python environment. The command <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">help</span></code> (or just <code class="docutils literal notranslate"><span class="pre">make</span></code>) displays a
+list of valid Make targets and a short description of what each target does.</p>
+</section>
+<section id="building-the-documentation">
+<span id="id5"></span><h2>Building the documentation<a class="headerlink" href="#building-the-documentation" title="Link to this heading"></a></h2>
+<p>The documentation for the <strong>IBM Z HMC collection</strong> is published
+on GitHub Pages at <a class="reference external" href="https://zhmcclient.github.io/zhmc-ansible-modules/">https://zhmcclient.github.io/zhmc-ansible-modules/</a>.</p>
+<p>That web site represents a defined set of versions of this collection and
+automatically gets updated whenever a pull request gets merged into the
+repository branch that corresponds to the version. The automatic update
+mechanism is implemented in the GitHub Actions workflow “publish” (in file
+<code class="docutils literal notranslate"><span class="pre">.github/workflows/publish.yml</span></code>).</p>
+<p>The versions to be represented on that site are defined in <code class="docutils literal notranslate"><span class="pre">docs/source/conf.py</span></code>
+in the section for “sphinx-versioning”.</p>
+<p>In order to build this “versioned” documentation locally, issue:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>make<span class="w"> </span>docs
+</pre></div>
+</div>
+<p>The top-level document to open with a web browser will be
+<code class="docutils literal notranslate"><span class="pre">docs_build/index.html</span></code>. Note that the versioned documentation is built from
+the defined branches, so it does not include the content of your Git work
+directory.</p>
+<p>In order to see the effects of some change in your Git work directory, there
+is a second documentation build that builds an “unversioned” documentation
+from the content of your Git work directory:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>make<span class="w"> </span>docslocal
+</pre></div>
+</div>
+<p>The top-level document to open with a web browser will be
+<code class="docutils literal notranslate"><span class="pre">docs_local/index.html</span></code>; it is opened automatically when the documentation
+has been built successfully.</p>
+</section>
+<section id="testing">
+<span id="id6"></span><h2>Testing<a class="headerlink" href="#testing" title="Link to this heading"></a></h2>
+<p>Again, an invocation of Make runs against the currently active Python environment.</p>
+<p>There are four kinds of tests currently, available as make targets:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">check</span></code> - Run flake8</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">linkcheck</span></code> - Check links in documentation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">sanity</span></code> - Run Ansible sanity tests (includes flake8, pylint, validate-modules)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">check_reqs</span></code> - Run pip-missing-reqs to perform missing dependency checks</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">test</span></code> - Run unit and function tests with test coverage</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">end2end_mocked</span></code> - Run end2end tests against a mocked environment</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">end2end</span></code> - Run end2end tests against an environment defined by TESTHMC</p></li>
+</ul>
+<p>For the unit and function tests, the testcases and options for pytest
+can be specified via the environment variable <code class="docutils literal notranslate"><span class="pre">TESTOPTS</span></code>, as shown in these
+examples:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>make<span class="w"> </span><span class="nb">test</span><span class="w">                                      </span><span class="c1"># Run all unit and function tests</span>
+$<span class="w"> </span><span class="nv">TESTOPTS</span><span class="o">=</span><span class="s1">&#39;-vv&#39;</span><span class="w"> </span>make<span class="w"> </span><span class="nb">test</span><span class="w">                       </span><span class="c1"># Specify -vv verbosity for pytest</span>
+$<span class="w"> </span><span class="nv">TESTOPTS</span><span class="o">=</span><span class="s1">&#39;-k test_partition.py&#39;</span><span class="w"> </span>make<span class="w"> </span><span class="nb">test</span><span class="w">      </span><span class="c1"># Run only this test source file</span>
+</pre></div>
+</div>
+<p>The automated tests performed by Github Actions run on a standard set of test
+environments when a PR is created, and on the full set of test environments when
+a release is prepared and in addition on a weekly basis. See the
+<code class="docutils literal notranslate"><span class="pre">.github/workflows/test.yml</span></code> file for details.</p>
+<p>These automated tests use all Ansible versions that are supported, but not in
+all combinations with all Python versions. Also, not all Python and Ansible
+version combinations are tested on all operating systems. For details, see the
+test matrix in the <code class="docutils literal notranslate"><span class="pre">.github/workflows/test.yml</span></code> file.</p>
+<p>The following table shows for the full set of test environments which Ansible
+versions are tested on which Python versions. The ‘Packages’ column indicates
+whether the latest versions of Python packages are used (i.e. what pip installs
+by default, given the <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> and <code class="docutils literal notranslate"><span class="pre">dev-requirements.txt</span></code> files),
+the minimum versions as defined in the <code class="docutils literal notranslate"><span class="pre">minimum-constraint.txt</span></code> file, or
+specific Ansible versions as defined in the <code class="docutils literal notranslate"><span class="pre">ansible-constraint.txt</span></code> file:</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>Python</p></td>
+<td><p>Packages</p></td>
+<td><p>Ansible</p></td>
+<td><p>Ansible core</p></td>
+</tr>
+<tr class="row-even"><td><p>2.7</p></td>
+<td><p>latest</p></td>
+<td><p>4.x</p></td>
+<td><p>2.11</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.5</p></td>
+<td><p>latest</p></td>
+<td><p>4.x</p></td>
+<td><p>2.11</p></td>
+</tr>
+<tr class="row-even"><td><p>3.6</p></td>
+<td><p>latest</p></td>
+<td><p>4.x</p></td>
+<td><p>2.11</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.7</p></td>
+<td><p>latest</p></td>
+<td><p>4.x</p></td>
+<td><p>2.11</p></td>
+</tr>
+<tr class="row-even"><td><p>3.8</p></td>
+<td><p>latest</p></td>
+<td><p>6.x</p></td>
+<td><p>2.13</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.9</p></td>
+<td><p>latest</p></td>
+<td><p>8.x</p></td>
+<td><p>2.15</p></td>
+</tr>
+<tr class="row-even"><td><p>3.10</p></td>
+<td><p>latest</p></td>
+<td><p>9.x</p></td>
+<td><p>2.16</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.11</p></td>
+<td><p>latest</p></td>
+<td><p>9.x</p></td>
+<td><p>2.16</p></td>
+</tr>
+<tr class="row-even"><td><p>3.12</p></td>
+<td><p>latest</p></td>
+<td><p>9.x</p></td>
+<td><p>2.16</p></td>
+</tr>
+<tr class="row-odd"><td><p>2.7</p></td>
+<td><p>minimum</p></td>
+<td><p>2.9</p></td>
+<td><p>2.9</p></td>
+</tr>
+<tr class="row-even"><td><p>3.5</p></td>
+<td><p>minimum</p></td>
+<td><p>2.9</p></td>
+<td><p>2.9</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.6</p></td>
+<td><p>minimum</p></td>
+<td><p>2.9</p></td>
+<td><p>2.9</p></td>
+</tr>
+<tr class="row-even"><td><p>3.7</p></td>
+<td><p>minimum</p></td>
+<td><p>2.9</p></td>
+<td><p>2.9</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.8</p></td>
+<td><p>minimum</p></td>
+<td><p>2.9</p></td>
+<td><p>2.9</p></td>
+</tr>
+<tr class="row-even"><td><p>3.9</p></td>
+<td><p>minimum</p></td>
+<td><p>4.0</p></td>
+<td><p>2.11</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.10</p></td>
+<td><p>minimum</p></td>
+<td><p>5.0</p></td>
+<td><p>2.12</p></td>
+</tr>
+<tr class="row-even"><td><p>3.11</p></td>
+<td><p>minimum</p></td>
+<td><p>7.0</p></td>
+<td><p>2.14</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.12</p></td>
+<td><p>minimum</p></td>
+<td><p>9.0</p></td>
+<td><p>2.16</p></td>
+</tr>
+<tr class="row-even"><td><p>2.7</p></td>
+<td><p>ansible</p></td>
+<td><p>2.9</p></td>
+<td><p>2.9</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.5</p></td>
+<td><p>ansible</p></td>
+<td><p>2.10</p></td>
+<td><p>2.10</p></td>
+</tr>
+<tr class="row-even"><td><p>3.6</p></td>
+<td><p>ansible</p></td>
+<td><p>3.x</p></td>
+<td><p>2.10</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.7</p></td>
+<td><p>ansible</p></td>
+<td><p>4.x</p></td>
+<td><p>2.11</p></td>
+</tr>
+<tr class="row-even"><td><p>3.8</p></td>
+<td><p>ansible</p></td>
+<td><p>5.x</p></td>
+<td><p>2.12</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.9</p></td>
+<td><p>ansible</p></td>
+<td><p>6.x</p></td>
+<td><p>2.13</p></td>
+</tr>
+<tr class="row-even"><td><p>3.10</p></td>
+<td><p>ansible</p></td>
+<td><p>7.x</p></td>
+<td><p>2.14</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.11</p></td>
+<td><p>ansible</p></td>
+<td><p>8.x</p></td>
+<td><p>2.15</p></td>
+</tr>
+<tr class="row-even"><td><p>3.12</p></td>
+<td><p>ansible</p></td>
+<td><p>9.x</p></td>
+<td><p>2.16</p></td>
+</tr>
+</tbody>
+</table>
+<p>For reference, the following two tables show which combinations of Python
+version and Ansible version are supported by the ibm_zhmc Ansible collection.
+The general strategy is that all Python versions supported by the ansible sanity
+test are also supported by the ibm_zhmc Ansible collection. Note that a
+particular version of the ansible package normally supports higher Python
+versions than its corresponding sanity test, so the ibm_zhmc Ansible collection
+is more restrictive in its supported Python versions than the ansible package
+itself.</p>
+<p>At the time of writing,
+the latest Python version is 3.12 and
+the latest Ansible version is 9.0.</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>Ansible</p></td>
+<td><p>Ansible core</p></td>
+<td><p>Supported Python versions</p></td>
+</tr>
+<tr class="row-even"><td><p>2.9</p></td>
+<td><p>ansible 2.9</p></td>
+<td><p>2.7, 3.5 - 3.8</p></td>
+</tr>
+<tr class="row-odd"><td><p>2.10</p></td>
+<td><p>ansible 2.10</p></td>
+<td><p>2.7, 3.5 - 3.8</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>ansible-base 2.10</p></td>
+<td><p>2.7, 3.5 - 3.8</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>ansible-core 2.11</p></td>
+<td><p>2.7, 3.5 - 3.9 (1)</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>ansible-core 2.12</p></td>
+<td><p>3.8 - 3.10 (2)</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p>ansible-core 2.13</p></td>
+<td><p>3.8 - 3.10 (2)</p></td>
+</tr>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>ansible-core 2.14</p></td>
+<td><p>3.9 - 3.11 (3)</p></td>
+</tr>
+<tr class="row-odd"><td><p>8</p></td>
+<td><p>ansible-core 2.15</p></td>
+<td><p>3.9 - 3.11 (3)</p></td>
+</tr>
+<tr class="row-even"><td><p>9</p></td>
+<td><p>ansible-core 2.16</p></td>
+<td><p>3.10 - 3.12</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>Python</p></td>
+<td><p>Supported Ansible versions</p></td>
+</tr>
+<tr class="row-even"><td><p>2.7</p></td>
+<td><p>2.9, 2.10, 3, 4</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.5</p></td>
+<td><p>2.9, 2.10, 3, 4</p></td>
+</tr>
+<tr class="row-even"><td><p>3.6</p></td>
+<td><p>2.9, 2.10, 3, 4</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.7</p></td>
+<td><p>2.9, 2.10, 3, 4</p></td>
+</tr>
+<tr class="row-even"><td><p>3.8</p></td>
+<td><p>2.9, 2.10, 3 - 6</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.9</p></td>
+<td><p>4 - 8</p></td>
+</tr>
+<tr class="row-even"><td><p>3.10</p></td>
+<td><p>5 - 9</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.11</p></td>
+<td><p>7 - 9</p></td>
+</tr>
+<tr class="row-even"><td><p>3.12</p></td>
+<td><p>9</p></td>
+</tr>
+</tbody>
+</table>
+<p>Notes:</p>
+<ul class="simple">
+<li><ol class="arabic simple">
+<li><p>The sanity test of Ansible 4 supports Python only up to 3.9.</p></li>
+</ol>
+</li>
+<li><ol class="arabic simple" start="2">
+<li><p>The sanity test of Ansible 5 and 6 supports Python only up to 3.10.</p></li>
+</ol>
+</li>
+<li><ol class="arabic simple" start="3">
+<li><p>The sanity test of Ansible 7 and 8 supports Python only up to 3.11.</p></li>
+</ol>
+</li>
+</ul>
+</section>
+<section id="releasing-a-version">
+<span id="id7"></span><h2>Releasing a version<a class="headerlink" href="#releasing-a-version" title="Link to this heading"></a></h2>
+<p>This section shows the steps for releasing a version to <a class="reference external" href="https://galaxy.ansible.com/">Ansible Galaxy</a>.</p>
+<p>It covers all variants of versions that can be released:</p>
+<ul class="simple">
+<li><p>Releasing a new major version (Mnew.0.0) based on the master branch</p></li>
+<li><p>Releasing a new minor version (M.Nnew.0) based on the master branch</p></li>
+<li><p>Releasing a new update version (M.N.Unew) based on the stable branch of its
+minor version</p></li>
+</ul>
+<p>This description assumes that you are authorized to push to the remote repo
+at <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules">https://github.com/zhmcclient/zhmc-ansible-modules</a> and that the remote repo
+has the remote name <code class="docutils literal notranslate"><span class="pre">origin</span></code> in your local clone.</p>
+<p>Any commands in the following steps are executed in the main directory of your
+local clone of the zhmc-ansible-modules Git repo.</p>
+<ol class="arabic">
+<li><p>Set shell variables for the version that is being released and the branch
+it is based on:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">MNU</span></code> - Full version M.N.U that is being released</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MN</span></code> - Major and minor version M.N of that full version</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BRANCH</span></code> - Name of the branch the version that is being released is
+based on</p></li>
+</ul>
+<p>When releasing a new major version (e.g. <code class="docutils literal notranslate"><span class="pre">1.0.0</span></code>) based on the master
+branch:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">MNU</span><span class="o">=</span><span class="m">1</span>.0.0
+<span class="nv">MN</span><span class="o">=</span><span class="m">1</span>.0
+<span class="nv">BRANCH</span><span class="o">=</span>master
+</pre></div>
+</div>
+<p>When releasing a new minor version (e.g. <code class="docutils literal notranslate"><span class="pre">0.9.0</span></code>) based on the master
+branch:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">MNU</span><span class="o">=</span><span class="m">0</span>.9.0
+<span class="nv">MN</span><span class="o">=</span><span class="m">0</span>.9
+<span class="nv">BRANCH</span><span class="o">=</span>master
+</pre></div>
+</div>
+<p>When releasing a new update version (e.g. <code class="docutils literal notranslate"><span class="pre">0.8.1</span></code>) based on the stable
+branch of its minor version:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">MNU</span><span class="o">=</span><span class="m">0</span>.8.1
+<span class="nv">MN</span><span class="o">=</span><span class="m">0</span>.8
+<span class="nv">BRANCH</span><span class="o">=</span>stable_<span class="si">${</span><span class="nv">MN</span><span class="si">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>Create a topic branch for the version that is being released:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>checkout<span class="w"> </span><span class="si">${</span><span class="nv">BRANCH</span><span class="si">}</span>
+git<span class="w"> </span>pull
+git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>release_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>Edit the Galaxy metadata file:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>vi<span class="w"> </span>galaxy.yml
+</pre></div>
+</div>
+<p>and set the ‘version’ parameter to the version that is being released:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">M.N.U</span>
+</pre></div>
+</div>
+</li>
+<li><p>Edit the change log:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>vi<span class="w"> </span>docs/source/release_notes.rst
+</pre></div>
+</div>
+<p>and make the following changes in the section of the version that is being
+released:</p>
+<ul class="simple">
+<li><p>Finalize the version.</p></li>
+<li><p>Change the release date to today’s date.</p></li>
+<li><p>Make sure that all changes are described.</p></li>
+<li><p>Make sure the items shown in the change log are relevant for and
+understandable by users.</p></li>
+<li><p>In the “Known issues” list item, remove the link to the issue tracker and
+add text for any known issues you want users to know about.</p></li>
+<li><p>Remove all empty list items.</p></li>
+</ul>
+</li>
+<li><p>Commit your changes and push the topic branch to the remote repo:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>commit<span class="w"> </span>-asm<span class="w"> </span><span class="s2">&quot;Release </span><span class="si">${</span><span class="nv">MNU</span><span class="si">}</span><span class="s2">&quot;</span>
+git<span class="w"> </span>push<span class="w"> </span>--set-upstream<span class="w"> </span>origin<span class="w"> </span>release_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>On GitHub, create a Pull Request for branch <code class="docutils literal notranslate"><span class="pre">release_M.N.U</span></code>.</p>
+<p>Important: When creating Pull Requests, GitHub by default targets the
+<code class="docutils literal notranslate"><span class="pre">master</span></code> branch. When releasing based on a stable branch, you need to
+change the target branch of the Pull Request to <code class="docutils literal notranslate"><span class="pre">stable_M.N</span></code>.</p>
+<p>The PR creation will cause the “test” workflow to run. That workflow runs
+tests for all defined environments, since it discovers by the branch name
+that this is a PR for a release.</p>
+</li>
+<li><p>On GitHub, once the checks for that Pull Request have succeeded, merge the
+Pull Request (no review is needed). This automatically deletes the branch
+on GitHub.</p>
+<p>If the PR did not succeed, fix the issues.</p>
+</li>
+<li><p>On GitHub, close milestone <code class="docutils literal notranslate"><span class="pre">M.N.U</span></code>.</p>
+<p>Verify that the milestone has no open items anymore. If it does have open
+items, investigate why and fix.</p>
+</li>
+<li><p>Publish the collection to Ansible Galaxy</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>checkout<span class="w"> </span><span class="si">${</span><span class="nv">BRANCH</span><span class="si">}</span>
+git<span class="w"> </span>pull
+git<span class="w"> </span>branch<span class="w"> </span>-D<span class="w"> </span>release_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
+git<span class="w"> </span>branch<span class="w"> </span>-D<span class="w"> </span>-r<span class="w"> </span>origin/release_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
+git<span class="w"> </span>tag<span class="w"> </span>-f<span class="w"> </span><span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
+git<span class="w"> </span>push<span class="w"> </span>-f<span class="w"> </span>--tags
+</pre></div>
+</div>
+<p>Pushing the new tag will cause the “publish” workflow to run. That workflow
+builds the collection, publishes it on Ansible Galaxy, creates a release for
+it on Github, and finally creates a new stable branch on Github if the master
+branch was released.</p>
+</li>
+<li><p>Verify the publishing</p>
+<ul>
+<li><p>Verify that the new version is available on Ansible Galaxy at
+<a class="reference external" href="https://galaxy.ansible.com/ibm/ibm_zhmc/">https://galaxy.ansible.com/ibm/ibm_zhmc/</a></p>
+<p>If the new version is not shown there, verify that the import on Ansible
+Galaxy succeeded, by checking the status at
+<a class="reference external" href="https://galaxy.ansible.com/my-imports">https://galaxy.ansible.com/my-imports</a> (you need to log in).</p>
+</li>
+<li><p>Verify that the new version has a release on Github at
+<a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">https://github.com/zhmcclient/zhmc-ansible-modules/releases</a></p></li>
+<li><p>Verify that the new version has documentation on Github pages at
+<a class="reference external" href="https://zhmcclient.github.io/zhmc-ansible-modules/release_notes.html">https://zhmcclient.github.io/zhmc-ansible-modules/release_notes.html</a></p></li>
+</ul>
+</li>
+<li><p>Publish the collection to Ansible AutomationHub</p>
+<p>This needs to be done in addition to the prior publish step, and it
+has not successfully been automated as of today.</p>
+<p>You need to have an account on <a class="reference external" href="https://console.redhat.com">https://console.redhat.com</a>, and your
+userid there needs to be authorized to modify the ‘ibm’ namespace.</p>
+<ul class="simple">
+<li><p>Build the distribution archive locally:</p></li>
+</ul>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>dist
+</pre></div>
+</div>
+<ul>
+<li><p>Open <a class="reference external" href="https://console.redhat.com/ansible/automation-hub/repo/published/ibm">https://console.redhat.com/ansible/automation-hub/repo/published/ibm</a>
+and log in to your account.</p></li>
+<li><p>Click on the “Upload Collection” button at the top right of the page,
+and in the file selection dialog that pops up, select the distribution
+archive for the version you want to upload:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>dist/ibm-ibm_zhmc-{M}.{N}.{U}.tar.gz
+</pre></div>
+</div>
+</li>
+</ul>
+<p><strong>Attention!!</strong> This only works once for each version. You cannot
+re-release the same version more than once.</p>
+<p>Verify that the import on Ansible AutomationHub succeeded, by checking the
+status at
+<a class="reference external" href="https://console.redhat.com/ansible/automation-hub/my-imports?namespace=ibm">https://console.redhat.com/ansible/automation-hub/my-imports?namespace=ibm</a>
+(you need to log in).</p>
+<p>After the import succeeded, the release must still be approved by RedHat
+before it is published, so the approval status should now show
+“waiting for approval”.</p>
+<p>The RedHat team should approve the release within a day or so. Once it has
+been approved, the new version will be visible on Ansible AutomationHub at
+<a class="reference external" href="https://console.redhat.com/ansible/automation-hub/repo/published/ibm/ibm_zhmc">https://console.redhat.com/ansible/automation-hub/repo/published/ibm/ibm_zhmc</a> .</p>
+</li>
+</ol>
+</section>
+<section id="starting-a-new-version">
+<span id="id9"></span><h2>Starting a new version<a class="headerlink" href="#starting-a-new-version" title="Link to this heading"></a></h2>
+<p>This section shows the steps for starting development of a new version.</p>
+<p>These steps may be performed right after the steps for
+<a class="reference internal" href="#releasing-a-version"><span class="std std-ref">Releasing a version</span></a>, or independently.</p>
+<p>This section covers all variants of new versions:</p>
+<ul class="simple">
+<li><p>Starting a new major version (Mnew.0.0) based on the master branch</p></li>
+<li><p>Starting a new minor version (M.Nnew.0) based on the master branch</p></li>
+<li><p>Starting a new update version (M.N.Unew) based on the stable branch of its
+minor version</p></li>
+</ul>
+<p>This description assumes that you are authorized to push to the remote repo
+at <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules">https://github.com/zhmcclient/zhmc-ansible-modules</a> and that the remote repo
+has the remote name <code class="docutils literal notranslate"><span class="pre">origin</span></code> in your local clone.</p>
+<p>Any commands in the following steps are executed in the main directory of your
+local clone of the zhmc-ansible-modules Git repo.</p>
+<ol class="arabic">
+<li><p>Set shell variables for the version that is being started and the branch it
+is based on:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">MNU</span></code> - Full version M.N.U that is being started</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MN</span></code> - Major and minor version M.N of that full version</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BRANCH</span></code> -  Name of the branch the version that is being started is
+based on</p></li>
+</ul>
+<p>When starting a new major version (e.g. <code class="docutils literal notranslate"><span class="pre">1.0.0</span></code>) based on the master
+branch:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">MNU</span><span class="o">=</span><span class="m">1</span>.0.0
+<span class="nv">MN</span><span class="o">=</span><span class="m">1</span>.0
+<span class="nv">BRANCH</span><span class="o">=</span>master
+</pre></div>
+</div>
+<p>When starting a new minor version (e.g. <code class="docutils literal notranslate"><span class="pre">0.9.0</span></code>) based on the master
+branch:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">MNU</span><span class="o">=</span><span class="m">0</span>.9.0
+<span class="nv">MN</span><span class="o">=</span><span class="m">0</span>.9
+<span class="nv">BRANCH</span><span class="o">=</span>master
+</pre></div>
+</div>
+<p>When starting a new minor version (e.g. <code class="docutils literal notranslate"><span class="pre">0.8.1</span></code>) based on the stable
+branch of its minor version:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">MNU</span><span class="o">=</span><span class="m">0</span>.8.1
+<span class="nv">MN</span><span class="o">=</span><span class="m">0</span>.8
+<span class="nv">BRANCH</span><span class="o">=</span>stable_<span class="si">${</span><span class="nv">MN</span><span class="si">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>Create a topic branch for the version that is being started:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>checkout<span class="w"> </span><span class="si">${</span><span class="nv">BRANCH</span><span class="si">}</span>
+git<span class="w"> </span>pull
+git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>start_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>Edit the change log:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>vi<span class="w"> </span>docs/source/release_notes.rst
+</pre></div>
+</div>
+<p>and insert the following section before the top-most section, and update
+the version to a draft version of the version that is being started:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Version M.N.U-dev1
+------------------
+
+This version contains all fixes up to version M.N-1.x.
+
+Released: not yet
+
+Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
+
+**Incompatible changes:**
+
+**Deprecations:**
+
+**Bug fixes:**
+
+**Enhancements:**
+
+**Cleanup:**
+
+**Known issues:**
+
+* See `list of open issues`_.
+
+.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
+</pre></div>
+</div>
+</li>
+<li><p>Edit the Galaxy metadata file:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>vi<span class="w"> </span>galaxy.yml
+</pre></div>
+</div>
+<p>and update the version to a draft version of the version that is being
+started:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">M.N.U-dev1</span>
+</pre></div>
+</div>
+<p>Note: The version must follow the rules for semantic versioning 2.0
+including the description of development/alpha/etc suffixes, as described
+in <a class="reference external" href="https://semver.org/">https://semver.org/</a></p>
+</li>
+<li><p>Commit your changes and push them to the remote repo:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>commit<span class="w"> </span>-asm<span class="w"> </span><span class="s2">&quot;Start </span><span class="si">${</span><span class="nv">MNU</span><span class="si">}</span><span class="s2">&quot;</span>
+git<span class="w"> </span>push<span class="w"> </span>--set-upstream<span class="w"> </span>origin<span class="w"> </span>start_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>On GitHub, create a Pull Request for branch <code class="docutils literal notranslate"><span class="pre">start_M.N.U</span></code>.</p>
+<p>Important: When creating Pull Requests, GitHub by default targets the
+<code class="docutils literal notranslate"><span class="pre">master</span></code> branch. When starting a version based on a stable branch, you
+need to change the target branch of the Pull Request to <code class="docutils literal notranslate"><span class="pre">stable_M.N</span></code>.</p>
+</li>
+<li><p>On GitHub, create a milestone for the new version <code class="docutils literal notranslate"><span class="pre">M.N.U</span></code>.</p>
+<p>You can create a milestone in GitHub via Issues -&gt; Milestones -&gt; New
+Milestone.</p>
+</li>
+<li><p>On GitHub, go through all open issues and pull requests that still have
+milestones for previous releases set, and either set them to the new
+milestone, or to have no milestone.</p></li>
+<li><p>On GitHub, once the checks for the Pull Request for branch <code class="docutils literal notranslate"><span class="pre">start_M.N.U</span></code>
+have succeeded, merge the Pull Request (no review is needed). This
+automatically deletes the branch on GitHub.</p></li>
+<li><p>Update and clean up the local repo:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>checkout<span class="w"> </span><span class="si">${</span><span class="nv">BRANCH</span><span class="si">}</span>
+git<span class="w"> </span>pull
+git<span class="w"> </span>branch<span class="w"> </span>-D<span class="w"> </span>start_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
+git<span class="w"> </span>branch<span class="w"> </span>-D<span class="w"> </span>-r<span class="w"> </span>origin/start_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="community_guides.html" class="btn btn-neutral float-left" title="Contributing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="requirements.html" class="btn btn-neutral float-right" title="Requirements" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016-2020, IBM.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+        <span class="fa fa-book"> Other Versions</span>
+        v: 1.7.3
+        <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        <dl>
+            <dt>Tags</dt>
+            <dd><a href="../0.9.0/development.html">0.9.0</a></dd>
+            <dd><a href="../0.9.1/development.html">0.9.1</a></dd>
+            <dd><a href="../0.9.2/development.html">0.9.2</a></dd>
+            <dd><a href="../0.9.3/development.html">0.9.3</a></dd>
+            <dd><a href="../0.10.0/development.html">0.10.0</a></dd>
+            <dd><a href="../0.10.1/development.html">0.10.1</a></dd>
+            <dd><a href="../1.0.0/development.html">1.0.0</a></dd>
+            <dd><a href="../1.0.2/development.html">1.0.2</a></dd>
+            <dd><a href="../1.0.3/development.html">1.0.3</a></dd>
+            <dd><a href="../1.1.0/development.html">1.1.0</a></dd>
+            <dd><a href="../1.1.1/development.html">1.1.1</a></dd>
+            <dd><a href="../1.2.0/development.html">1.2.0</a></dd>
+            <dd><a href="../1.2.1/development.html">1.2.1</a></dd>
+            <dd><a href="../1.3.0/development.html">1.3.0</a></dd>
+            <dd><a href="../1.3.1/development.html">1.3.1</a></dd>
+            <dd><a href="../1.4.0/development.html">1.4.0</a></dd>
+            <dd><a href="../1.4.1/development.html">1.4.1</a></dd>
+            <dd><a href="../1.5.0/development.html">1.5.0</a></dd>
+            <dd><a href="../1.6.0/development.html">1.6.0</a></dd>
+            <dd><a href="../1.6.1/development.html">1.6.1</a></dd>
+            <dd><a href="../1.7.0/development.html">1.7.0</a></dd>
+            <dd><a href="../1.7.1/development.html">1.7.1</a></dd>
+            <dd><a href="../1.7.2/development.html">1.7.2</a></dd>
+            <dd><a href="development.html">1.7.3</a></dd>
+        </dl>
+        <dl>
+            <dt>Branches</dt>
+            <dd><a href="../master/development.html">master</a></dd>
+        </dl>
+    </div>
+</div>
+<script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
