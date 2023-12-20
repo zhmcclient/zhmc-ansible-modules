@@ -161,6 +161,12 @@ options:
     type: str
     required: false
     default: null
+  upgrade_timeout:
+    description:
+      - "Timeout in seconds for waiting for completion of upgrade (e.g. 10800)"
+    type: int
+    required: false
+    default: 10800
   accept_firmware:
     description:
       - "Accept the previous bundle level before installing the new level."
@@ -230,6 +236,7 @@ EXAMPLES = """
     name: "{{ my_cpc_name }}"
     state: upgrade
     bundle_level: "S71"
+    upgrade_timeout: 10800
   register: cpc1
 
 """
@@ -733,6 +740,7 @@ def upgrade(module):
 
     module.fail_on_missing_params(['bundle_level'])
     bundle_level = module.params['bundle_level']
+    upgrade_timeout = module.params['upgrade_timeout']
     accept_firmware = module.params['accept_firmware']
     cpc_name = module.params['name']
 
@@ -759,7 +767,7 @@ def upgrade(module):
                     bundle_level=bundle_level,
                     accept_firmware=accept_firmware,
                     wait_for_completion=True,
-                    operation_timeout=None)
+                    operation_timeout=upgrade_timeout)
                 changed = True
             except zhmcclient.HTTPError as exc:
                 if exc.http_status == 400 and exc.reason == 356:
@@ -813,6 +821,7 @@ def main():
         activation_profile_name=dict(required=False, type='str', default=None),
         properties=dict(required=False, type='dict', default=None),
         bundle_level=dict(required=False, type='str', default=None),
+        upgrade_timeout=dict(required=False, type='int', default=10800),
         accept_firmware=dict(required=False, type='bool', default=True),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),

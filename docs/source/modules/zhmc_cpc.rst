@@ -143,6 +143,14 @@ bundle_level
   | **type**: str
 
 
+upgrade_timeout
+  Timeout in seconds for waiting for completion of upgrade (e.g. 10800)
+
+  | **required**: False
+  | **type**: int
+  | **default**: 10800
+
+
 accept_firmware
   Accept the previous bundle level before installing the new level.
 
@@ -213,6 +221,7 @@ Examples
        name: "{{ my_cpc_name }}"
        state: upgrade
        bundle_level: "S71"
+       upgrade_timeout: 10800
      register: cpc1
 
 

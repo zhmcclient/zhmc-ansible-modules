@@ -78,6 +78,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   that retrieve and return console messages from the operating system running
   in an LPAR or DPM partition. (issue #565)
 
+* Added upgrade_timeout parameter to zhmc_console and zhmc_cpc modules.
+
 **Cleanup:**
 
 * Removed documentation and test files (except sanity test ignore files) from
