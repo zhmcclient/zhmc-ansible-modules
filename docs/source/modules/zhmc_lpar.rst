@@ -39,10 +39,12 @@ Parameters
 
 
 hmc_host
-  The hostname or IP address of the HMC.
+  The hostnames or IP addresses of a single HMC or of a list of redundant HMCs. A single HMC can be specified as a string type or as an HMC list with one item. An HMC list can be specified as a list type or as a string type containing a Python list representation.
+
+  The first available HMC of a list of redundant HMCs is used for the entire execution of the module.
 
   | **required**: True
-  | **type**: str
+  | **type**: raw
 
 
 hmc_auth

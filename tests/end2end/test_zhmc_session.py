@@ -22,12 +22,14 @@ __metaclass__ = type
 import re
 import pytest
 import mock
+from ansible.module_utils import six
 import requests.packages.urllib3
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
 
 from plugins.modules import zhmc_session, zhmc_cpc_list
+from plugins.module_utils.common import parse_hmc_host
 from .utils import mock_ansible_module, get_failure_msg
 
 requests.packages.urllib3.disable_warnings()
@@ -51,8 +53,8 @@ def get_session_module_output(mod_obj):
     If the module failed, return None.
     """
 
-    def func(changed, hmc_auth):
-        return changed, hmc_auth
+    def func(changed, hmc_auth, hmc_host):
+        return changed, hmc_auth, hmc_host
 
     if not mod_obj.exit_json.called:
         return None
@@ -90,7 +92,7 @@ TESTCASES_ZHMC_SESSION_SINGLE = [
     # * exp_exit_code (int): Expected exit code from module
     # * exp_msg_pattern (str): Exp. regexp pattern for error message, if failure
     # * exp_changed (bool): Expected changed flag returned from module
-    # * exp_result (dict): Expected module result, if success
+    # * exp_hmc_auth (dict): Expected hmc_auth module result, if success
 
     (
         "Successful create",
@@ -210,13 +212,13 @@ TESTCASES_ZHMC_SESSION_SINGLE = [
 
 @pytest.mark.parametrize(
     "desc, check_mode, in_params, exp_exit_code, exp_msg_pattern, "
-    "exp_changed, exp_result",
+    "exp_changed, exp_hmc_auth",
     TESTCASES_ZHMC_SESSION_SINGLE
 )
 @mock.patch("plugins.modules.zhmc_session.AnsibleModule", autospec=True)
 def test_zhmc_session_single(
         ansible_mod_cls, desc, check_mode, in_params, exp_exit_code,
-        exp_msg_pattern, exp_changed, exp_result,
+        exp_msg_pattern, exp_changed, exp_hmc_auth,
         hmc_definition):  # noqa: F811, E501
     """
     Test specific input parameters on single invocations of the zhmc_session
@@ -227,6 +229,13 @@ def test_zhmc_session_single(
         pytest.skip("zhmc_session module needs real HMC for end2end test")
 
     hmc_host = hmc_definition.host
+
+    action = in_params['action']
+
+    if action == 'delete':
+        parsed_hmc_host = parse_hmc_host(hmc_host)
+        if isinstance(parsed_hmc_host, list):
+            hmc_host = parsed_hmc_host[0]
 
     # Set hm_auth module input parameter from testcase definition
     hmc_auth = {}
@@ -249,8 +258,6 @@ def test_zhmc_session_single(
             else in_hmc_auth['verify']
     if 'session_id' in in_hmc_auth:
         hmc_auth['session_id'] = in_hmc_auth['session_id']
-
-    action = in_params['action']
 
     # Prepare module input parameters (must be all required + optional)
     params = {
@@ -282,38 +289,49 @@ def test_zhmc_session_single(
 
     # Assert module result, if success
     if exp_exit_code == 0:
-        changed, result = get_session_module_output(mod_obj)
+        changed, res_hmc_auth, res_hmc_host = get_session_module_output(mod_obj)
         assert changed == exp_changed
 
-        assert set(result.keys()) == set(exp_result.keys())
+        assert set(res_hmc_auth.keys()) == set(exp_hmc_auth.keys())
 
-        if 'userid' in exp_result:
-            assert 'userid' in result
-            if exp_result['userid'] == FROM_HMC_DEFINITION:
-                assert result['userid'] == hmc_definition.userid
+        if 'userid' in exp_hmc_auth:
+            assert 'userid' in res_hmc_auth
+            if exp_hmc_auth['userid'] == FROM_HMC_DEFINITION:
+                assert res_hmc_auth['userid'] == hmc_definition.userid
             else:
-                assert result['userid'] == exp_result['userid']
+                assert res_hmc_auth['userid'] == exp_hmc_auth['userid']
 
-        if 'ca_certs' in exp_result:
-            assert 'ca_certs' in result
-            if exp_result['ca_certs'] == FROM_HMC_DEFINITION:
-                assert result['ca_certs'] == hmc_definition.ca_certs
+        if 'ca_certs' in exp_hmc_auth:
+            assert 'ca_certs' in res_hmc_auth
+            if exp_hmc_auth['ca_certs'] == FROM_HMC_DEFINITION:
+                assert res_hmc_auth['ca_certs'] == hmc_definition.ca_certs
             else:
-                assert result['ca_certs'] == exp_result['ca_certs']
+                assert res_hmc_auth['ca_certs'] == exp_hmc_auth['ca_certs']
 
-        if 'verify' in exp_result:
-            assert 'verify' in result
-            if exp_result['verify'] == FROM_HMC_DEFINITION:
-                assert result['verify'] == hmc_definition.verify
+        if 'verify' in exp_hmc_auth:
+            assert 'verify' in res_hmc_auth
+            if exp_hmc_auth['verify'] == FROM_HMC_DEFINITION:
+                assert res_hmc_auth['verify'] == hmc_definition.verify
             else:
-                assert result['verify'] == exp_result['verify']
+                assert res_hmc_auth['verify'] == exp_hmc_auth['verify']
 
-        if 'session_id' in exp_result:
-            assert 'session_id' in result
-            if isinstance(exp_result['session_id'], re.Pattern):
-                assert exp_result['session_id'].match(result['session_id'])
+        if 'session_id' in exp_hmc_auth:
+            assert 'session_id' in res_hmc_auth
+            if isinstance(exp_hmc_auth['session_id'], re.Pattern):
+                assert exp_hmc_auth['session_id'].match(
+                    res_hmc_auth['session_id'])
             else:
-                assert exp_result['session_id'] == result['session_id']
+                assert exp_hmc_auth['session_id'] == res_hmc_auth['session_id']
+
+        if action == 'create':
+            assert isinstance(res_hmc_host, six.text_type)
+            if isinstance(hmc_host, list):
+                assert res_hmc_host in hmc_host
+            else:
+                assert isinstance(hmc_host, six.text_type)
+                assert res_hmc_host == hmc_host
+        else:  # action 'delete'
+            assert res_hmc_host is None
 
 
 @mock.patch("plugins.modules.zhmc_session.AnsibleModule", autospec=True)
@@ -356,22 +374,31 @@ def test_zhmc_session_sequence(
     assert exit_code == 0, \
         "message: " + get_failure_msg(mod_obj)
 
-    changed, hmc_auth = get_session_module_output(mod_obj)
+    changed, res_hmc_auth, res_hmc_host = get_session_module_output(mod_obj)
     assert changed is False
 
-    assert set(hmc_auth.keys()) == {'session_id', 'ca_certs', 'verify'}
+    assert set(res_hmc_auth.keys()) == {'session_id', 'ca_certs', 'verify'}
 
-    session_id = hmc_auth['session_id']
+    session_id = res_hmc_auth['session_id']
     assert SESSION_ID_PATTERN.match(session_id)
-    assert hmc_auth['ca_certs'] is None or \
-        isinstance(hmc_auth['ca_certs'], str)
-    assert hmc_auth['verify'] in (True, False)
+    assert res_hmc_auth['ca_certs'] is None or \
+        isinstance(res_hmc_auth['ca_certs'], str)
+    assert res_hmc_auth['verify'] in (True, False)
+
+    assert isinstance(res_hmc_host, six.text_type)
+    if isinstance(hmc_definition.host, list):
+        assert res_hmc_host in hmc_definition.host
+    else:
+        assert isinstance(hmc_definition.host, six.text_type)
+        assert res_hmc_host == hmc_definition.host
+
+    actual_hmc_host = res_hmc_host
 
     # Task 2: List CPCs using the session from task 1
 
     # Prepare module input parameters (must be all required + optional)
     params = {
-        'hmc_host': hmc_definition.host,
+        'hmc_host': actual_hmc_host,
         'hmc_auth': {
             'userid': None,
             'password': None,
@@ -402,7 +429,7 @@ def test_zhmc_session_sequence(
 
     # Prepare module input parameters (must be all required + optional)
     params = {
-        'hmc_host': hmc_definition.host,
+        'hmc_host': actual_hmc_host,
         'hmc_auth': {
             'userid': None,
             'password': None,
@@ -424,11 +451,13 @@ def test_zhmc_session_sequence(
     assert exit_code == 0, \
         "message: " + get_failure_msg(mod_obj)
 
-    changed, hmc_auth = get_session_module_output(mod_obj)
+    changed, res_hmc_auth, res_hmc_host = get_session_module_output(mod_obj)
     assert changed is False
 
-    assert set(hmc_auth.keys()) == {'session_id', 'ca_certs', 'verify'}
+    assert set(res_hmc_auth.keys()) == {'session_id', 'ca_certs', 'verify'}
 
-    assert hmc_auth['session_id'] is None
-    assert hmc_auth['ca_certs'] is None
-    assert hmc_auth['verify'] is None
+    assert res_hmc_auth['session_id'] is None
+    assert res_hmc_auth['ca_certs'] is None
+    assert res_hmc_auth['verify'] is None
+
+    assert res_hmc_host is None

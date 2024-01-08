@@ -151,6 +151,20 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   the description of how to release a version in the development
   documentation. (issue #631)
 
+* Added support for redundant HMC hosts. The 'hmc_host' module input parameter
+  can now be specified as a single HMC as before, or as a list of redundant
+  HMCs. The HMC list can be specified as a list type or as a Python string
+  representation of a list in order to accomodate Ansible expressions.
+  (issue #849)
+
+* The 'zhmc_session' module now has an additional module return parameter
+  'hmc_host' which for 'action=create' contains the actually used HMC.
+  If you use that module and now start specifying redundant HMCs for
+  'action=create', you need to also change the 'hmc_host' parameter of all
+  ibm_zhmc modules that use that session including the 'zhmc_session' module
+  with 'action=delete', to specify the so returned HMC. If you use that
+  module with a single HMC, no change is needed. (related to issue #849)
+
 **Cleanup:**
 
 * Removed documentation and test files (except sanity test ignore files) from

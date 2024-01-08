@@ -23,6 +23,7 @@ import logging
 import traceback
 import platform
 import sys
+import re
 
 from ansible.module_utils import six
 
@@ -146,7 +147,11 @@ def open_session(params):
 
     Parameters:
       params (dict): Module parameters, with these items:
-        - hmc_host (str): HMC host name or IP address.
+        - hmc_host (str or list of str): The hostnames or IP addresses of a
+          single HMC or of a list of redundant HMCs, suitable for
+          zhmcclient.Session: A single HMC must be specified as a string type
+          or as a list type with one item. An HMC list must be specified as a
+          list type.
         - hmc_auth (dict): Credentials, either with password or session_id.
           In case of a password, a new HMC session is created.
           In case of a session_id, that existing HMC session is used.
@@ -1181,3 +1186,27 @@ def pull_properties(resource, select_prop_names, update_prop_names=None):
             prop_names += [pn.replace('_', '-') for pn in update_prop_names]
         if prop_names:
             resource.pull_properties(prop_names)
+
+
+def parse_hmc_host(hmc_host):
+    """
+    Check the actual type of the raw-typed 'hmc_host' parameter and
+    convert a possible string representation of a list back to a list type
+    to make the 'hmc_host' parameter suitable for zhmcclient.Session.
+
+    Returns:
+      The parsed hmc_host input parameter.
+
+    Raises:
+      ParameterError: Invalid type of 'hmc_host'.
+    """
+    if isinstance(hmc_host, six.string_types):
+        m = re.match(r'\[(.*)\]', hmc_host)
+        if m:
+            hmc_host = [h.strip(' "\'') for h in m.group(1).split(',')]
+    elif not isinstance(hmc_host, list):
+        raise ParameterError(
+            "Module parameter 'hmc_host' must be a string or list type, but "
+            "is of type {0}".
+            format(type(hmc_host)))
+    return hmc_host

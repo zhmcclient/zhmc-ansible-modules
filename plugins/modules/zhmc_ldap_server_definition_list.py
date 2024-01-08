@@ -42,8 +42,13 @@ requirements:
 options:
   hmc_host:
     description:
-      - The hostname or IP address of the HMC.
-    type: str
+      - The hostnames or IP addresses of a single HMC or of a list of redundant
+        HMCs. A single HMC can be specified as a string type or as an HMC list
+        with one item. An HMC list can be specified as a list type or as a
+        string type containing a Python list representation.
+      - The first available HMC of a list of redundant HMCs is used for the
+        entire execution of the module.
+    type: raw
     required: true
   hmc_auth:
     description:
@@ -156,7 +161,7 @@ from ansible.module_utils.basic import AnsibleModule  # noqa: E402
 
 from ..module_utils.common import log_init, open_session, close_session, \
     hmc_auth_parameter, Error, missing_required_lib, \
-    common_fail_on_import_errors  # noqa: E402
+    common_fail_on_import_errors, parse_hmc_host  # noqa: E402
 
 try:
     import requests.packages.urllib3
@@ -212,7 +217,7 @@ def main():
     # The following definition of module input parameters must match the
     # description of the options in the DOCUMENTATION string.
     argument_spec = dict(
-        hmc_host=dict(required=True, type='str'),
+        hmc_host=dict(required=True, type='raw'),
         hmc_auth=hmc_auth_parameter(),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),
@@ -236,6 +241,8 @@ def main():
 
     log_file = module.params['log_file']
     log_init(LOGGER_NAME, log_file)
+
+    module.params['hmc_host'] = parse_hmc_host(module.params['hmc_host'])
 
     _params = dict(module.params)
     del _params['hmc_auth']
