@@ -88,7 +88,7 @@ class TestZhmcPartitionMain(unittest.TestCase):
 
         # Assert call to AnsibleModule()
         expected_argument_spec = dict(
-            hmc_host=dict(required=True, type='str'),
+            hmc_host=dict(required=True, type='raw'),
             hmc_auth=dict(
                 required=True,
                 type='dict',

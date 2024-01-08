@@ -30,10 +30,12 @@ Parameters
 
 
 hmc_host
-  The hostname or IP address of the HMC.
+  The hostnames or IP addresses of a single HMC or of a list of redundant HMCs. A single HMC can be specified as a string type or as an HMC list with one item. An HMC list can be specified as a list type or as a string type containing a Python list representation.
+
+  The first available HMC of a list of redundant HMCs is used for the entire execution of the module.
 
   | **required**: True
-  | **type**: str
+  | **type**: raw
 
 
 hmc_auth
@@ -124,7 +126,7 @@ Examples
 
    - name: Create an HMC session
      zhmc_session:
-       hmc_host: "{{ my_hmc_host }}"
+       hmc_host: "{{ my_hmc_host }}"  # Single HMC or list of redundant HMCs
        hmc_auth:
          userid: "{{ my_hmc_userid }}"
          password: "{{ my_hmc_password }}"
@@ -136,13 +138,13 @@ Examples
 
    - name: Example task using the previously created HMC session
      zhmc_cpc_list:
-       hmc_host: "{{ my_hmc_host }}"
+       hmc_host: "{{ session.hmc_host }}"  # The actually used HMC
        hmc_auth: "{{ session.hmc_auth }}"
      register: cpc_list
 
    - name: Delete the HMC session
      zhmc_session:
-       hmc_host: "{{ my_hmc_host }}"
+       hmc_host: "{{ session.hmc_host }}"  # The actually used HMC
        hmc_auth: "{{ session.hmc_auth }}"
        action: delete
      register: session    # Just for safety in case it is used after that
@@ -170,6 +172,14 @@ msg
   An error message that describes the failure.
 
   | **returned**: failure
+  | **type**: str
+
+hmc_host
+  The hostname or IP address of the HMC that was actually used for the session creation, for \ :literal:`action=create`\ . This value must be specified as 'hmc\_host' for \ :literal:`action=delete`\ .
+
+  For \ :literal:`action=delete`\ , returns the null value.
+
+  | **returned**: success
   | **type**: str
 
 hmc_auth

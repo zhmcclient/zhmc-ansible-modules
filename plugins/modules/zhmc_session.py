@@ -48,8 +48,13 @@ requirements: []
 options:
   hmc_host:
     description:
-      - The hostname or IP address of the HMC.
-    type: str
+      - The hostnames or IP addresses of a single HMC or of a list of redundant
+        HMCs. A single HMC can be specified as a string type or as an HMC list
+        with one item. An HMC list can be specified as a list type or as a
+        string type containing a Python list representation.
+      - The first available HMC of a list of redundant HMCs is used for the
+        entire execution of the module.
+    type: raw
     required: true
   hmc_auth:
     description:
@@ -138,7 +143,7 @@ EXAMPLES = """
 
 - name: Create an HMC session
   zhmc_session:
-    hmc_host: "{{ my_hmc_host }}"
+    hmc_host: "{{ my_hmc_host }}"  # Single HMC or list of redundant HMCs
     hmc_auth:
       userid: "{{ my_hmc_userid }}"
       password: "{{ my_hmc_password }}"
@@ -150,13 +155,13 @@ EXAMPLES = """
 
 - name: Example task using the previously created HMC session
   zhmc_cpc_list:
-    hmc_host: "{{ my_hmc_host }}"
+    hmc_host: "{{ session.hmc_host }}"  # The actually used HMC
     hmc_auth: "{{ session.hmc_auth }}"
   register: cpc_list
 
 - name: Delete the HMC session
   zhmc_session:
-    hmc_host: "{{ my_hmc_host }}"
+    hmc_host: "{{ session.hmc_host }}"  # The actually used HMC
     hmc_auth: "{{ session.hmc_auth }}"
     action: delete
   register: session    # Just for safety in case it is used after that
@@ -172,6 +177,14 @@ changed:
 msg:
   description: An error message that describes the failure.
   returned: failure
+  type: str
+hmc_host:
+  description:
+    - The hostname or IP address of the HMC that was actually used for the
+      session creation, for C(action=create). This value must be specified as
+      'hmc_host' for C(action=delete).
+    - For C(action=delete), returns the null value.
+  returned: success
   type: str
 hmc_auth:
   description: Credentials for the HMC session, for use by other tasks. This
@@ -208,7 +221,7 @@ from ansible.module_utils.basic import AnsibleModule  # noqa: E402
 
 from ..module_utils.common import log_init, open_session, close_session, \
     hmc_auth_parameter, Error, ParameterError, \
-    missing_required_lib  # noqa: E402
+    missing_required_lib, parse_hmc_host  # noqa: E402
 
 try:
     import requests.packages.urllib3
@@ -281,7 +294,8 @@ def perform_action(params):
             'verify': verify,
             'ca_certs': ca_certs,
         }
-        return hmc_auth
+        hmc_host = session.actual_host
+        return hmc_auth, hmc_host
 
     # action: delete (already verified)
 
@@ -303,7 +317,7 @@ def perform_action(params):
         'verify': None,
         'ca_certs': None,
     }
-    return hmc_auth
+    return hmc_auth, None
 
 
 def main():
@@ -311,7 +325,7 @@ def main():
     # The following definition of module input parameters must match the
     # description of the options in the DOCUMENTATION string.
     argument_spec = dict(
-        hmc_host=dict(required=True, type='str'),
+        hmc_host=dict(required=True, type='raw'),
         hmc_auth=hmc_auth_parameter(),  # same definition as for other modules
         action=dict(required=True, type='str', choices=['create', 'delete']),
         log_file=dict(required=False, type='str', default=None),
@@ -335,6 +349,8 @@ def main():
     log_file = module.params['log_file']
     log_init(LOGGER_NAME, log_file)
 
+    module.params['hmc_host'] = parse_hmc_host(module.params['hmc_host'])
+
     _params = dict(module.params)
     del _params['hmc_auth']
     LOGGER.debug("Module entry: params: %r", _params)
@@ -344,7 +360,7 @@ def main():
 
     try:
 
-        hmc_auth = perform_action(module.params)
+        hmc_auth, hmc_host = perform_action(module.params)
 
     except (Error, zhmcclient.Error) as exc:
         # These exceptions are considered errors in the environment or in user
@@ -356,9 +372,9 @@ def main():
     # Other exceptions are considered module errors and are handled by Ansible
     # by showing the traceback.
 
-    LOGGER.debug("Module exit (success): changed: %s, hmc_auth: (not shown)",
-                 changed)
-    module.exit_json(changed=changed, hmc_auth=hmc_auth)
+    LOGGER.debug("Module exit (success): changed: %s, hmc_auth: (not shown), "
+                 "hmc_host: %r", changed, hmc_host)
+    module.exit_json(changed=changed, hmc_auth=hmc_auth, hmc_host=hmc_host)
 
 
 if __name__ == '__main__':
