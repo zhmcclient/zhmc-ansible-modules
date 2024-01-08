@@ -19,7 +19,7 @@ Synopsis
 - List partitions on a specific CPC (Z system) or on all managed CPCs.
 - CPCs in classic mode are ignored (i.e. do not lead to a failure).
 - Partitions for which the user has no object access permission are ignored (i.e. do not lead to a failure).
-- The module works for any HMC version. On HMCs with version 2.14.0 or higher, the "List Permitted Partitions" opration is used. On older HMCs, the managed CPCs are listed and the partitions on each CPC.
+- On HMCs with version 2.14.0 or higher and when the \ :literal:`additional\_properties`\  module parameter is not used, the "List Permitted Partitions" operation is used by this module. Otherwise, the managed CPCs are listed and then the partitions on each desired CPC or CPCs are listed. This improves the execution time of the module on newer HMCs but does not affect the module result data.
 
 
 Requirements
@@ -101,7 +101,7 @@ additional_properties
 
   The property names are specified with underscores instead of hyphens.
 
-  Note: The additional properties are passed to the 'List Partitions of a CPC' HMC operation, and do not cause a loop of 'Get Partition Properties' operations to be executed.
+  On HMCs with an HMC version below 2.14.0, all properties of each partition will be returned if this parameter is specified, but you should not rely on that.
 
   | **required**: False
   | **type**: list

@@ -19,12 +19,13 @@ Synopsis
 - List adapters on a specific CPC (Z system) or on all managed CPCs.
 - CPCs in classic mode are ignored (i.e. do not lead to a failure).
 - Adapters for which the user has no object access permission are ignored (i.e. do not lead to a failure).
+- On HMCs with version 2.16.0 or higher, the "List Permitted Adapters" operation is used by this module. Otherwise, the managed CPCs are listed and then the adapters on each desired CPC or CPCs are listed. This improves the execution time of the module on newer HMCs but does not affect the module result data.
 
 
 Requirements
 ------------
 
-- The HMC userid must have object-access permissions to these objects: Target adapters, CPCs of target adapters (only for z13 and older).
+- The HMC userid must have object-access permissions to these objects: Target adapters, CPCs of target adapters (CPC access is only needed for HMC version 2.15 and older).
 
 
 
@@ -135,7 +136,7 @@ additional_properties
 
   The property names are specified with underscores instead of hyphens.
 
-  Note: The additional properties are passed to the 'List Adapters of a CPC' HMC operation, and do not cause a loop of 'Get Adapter Properties' operations to be executed.
+  On HMCs with an API version below 4.10 (= HMC version 2.16.0 with some post-GA updates), all properties of each adapter will be returned if this parameter is specified, but you should not rely on that.
 
   | **required**: False
   | **type**: list

@@ -28,10 +28,6 @@ ANSIBLE_METADATA = {
     'other_repo_url': 'https://github.com/zhmcclient/zhmc-ansible-modules'
 }
 
-# TODO: Add once list_permitted_adapters() is supported in zhmcclient:
-# - The module works for any HMC version. On HMCs with version 2.14.0 or higher,
-#   the "List Permitted Adapters" opration is used. On older HMCs, the
-#   managed CPCs are listed and the adapters on each CPC.
 DOCUMENTATION = """
 ---
 module: zhmc_adapter_list
@@ -42,13 +38,19 @@ description:
   - CPCs in classic mode are ignored (i.e. do not lead to a failure).
   - Adapters for which the user has no object access permission are ignored
     (i.e. do not lead to a failure).
+  - On HMCs with version 2.16.0 or higher, the "List Permitted Adapters"
+    operation is used by this module. Otherwise, the managed CPCs are listed
+    and then the adapters on each desired CPC or CPCs are listed. This improves
+    the execution time of the module on newer HMCs but does not affect the
+    module result data.
 seealso:
   - module: zhmc_adapter
 author:
   - Andreas Maier (@andy-maier)
 requirements:
   - "The HMC userid must have object-access permissions to these objects:
-    Target adapters, CPCs of target adapters (only for z13 and older)."
+    Target adapters, CPCs of target adapters (CPC access is only needed for
+    HMC version 2.15 and older)."
 options:
   hmc_host:
     description:
@@ -151,9 +153,9 @@ options:
         addition to the default properties (see result description).
       - Mutually exclusive with C(full_properties).
       - The property names are specified with underscores instead of hyphens.
-      - "Note: The additional properties are passed to the 'List Adapters of a
-        CPC' HMC operation, and do not cause a loop of 'Get Adapter Properties'
-        operations to be executed."
+      - On HMCs with an API version below 4.10 (= HMC version 2.16.0 with some
+        post-GA updates), all properties of each adapter will be returned if
+        this parameter is specified, but you should not rely on that.
     type: list
     elements: str
     required: false
@@ -331,40 +333,75 @@ def perform_list(params):
         if status is not None:
             filter_args['status'] = status
 
-        # The "List Permitted Adapters" operation was added in HMC
-        # version 2.14.0. The operation depends only on the HMC version and not
-        # on the SE/CPC version, so it is supported e.g. for a 2.14 HMC managing
-        # a z13 CPC.
-        hmc_version = client.query_api_version()['hmc-version']
-        hmc_version_info = [int(x) for x in hmc_version.split('.')]
-        # TODO: Remove check on list_permitted_adapters() once supported
-        if hmc_version_info < [2, 14, 0] or \
-                not hasattr(console, 'list_permitted_adapters'):
-            # List the adapters in the traditional way
+        # The "List Permitted Adapters" operation was added in HMC API version
+        # 4.1 (HMC version 2.16.0 initial GA). The operation depends only on
+        # the HMC version and not on the SE/CPC version, so it is supported
+        # e.g. for a 2.16 HMC managing a z15 CPC.
+        #
+        # The "List Permitted Adapters" operation supports the
+        # 'additional-properties' query parameter starting with feature
+        # 'adapter-network-information' (HMC API version 4.10, HMC version
+        # 2.16.0 after initial GA).
+        #
+        # The "List Adapters of a CPC" operation supports the
+        # 'additional-properties' query parameter starting with HMC API version
+        # 4.1 (HMC version 2.16 at initial GA).
+        av = client.query_api_version()
+        hmc_version_info = [int(x) for x in av['hmc-version'].split('.')]
+        api_version_info = [av['api-major-version'], av['api-minor-version']]
+        if hmc_version_info < [2, 16, 0]:
+            # Use the "List Adapters of a CPC" operation.
+            if additional_properties:
+                # Get full properties instead of specific additional properties
+                # since "List Adapters of a CPC" does not support
+                # additional-properties on these HMC versions.
+                full_properties = True
+            if full_properties:
+                prop_str = "full properties"
+            else:
+                prop_str = "default properties"
             if cpc_name:
-                LOGGER.debug("Listing adapters of CPC %s", cpc_name)
+                LOGGER.debug("Listing adapters of CPC %s (Find CPC, "
+                             "then list adapters with %s)",
+                             cpc_name, prop_str)
                 cpc = client.cpcs.find(name=cpc_name)
                 adapters = cpc.adapters.list(
                     filter_args=filter_args,
-                    additional_properties=additional_properties,
                     full_properties=full_properties)
             else:
-                LOGGER.debug("Listing adapters of all managed CPCs")
+                LOGGER.debug("Listing adapters of all managed CPCs (List CPCs, "
+                             "then on each CPC list adapters with %s)",
+                             prop_str)
                 cpcs = client.cpcs.list()
                 adapters = []
                 for cpc in cpcs:
                     _adapters = cpc.adapters.list(
                         filter_args=filter_args,
-                        additional_properties=additional_properties,
                         full_properties=full_properties)
                     adapters.extend(_adapters)
         else:
-            # List the adapters using the new operation
+            # Use the "List Permitted Adapters" operation.
+            if additional_properties and api_version_info < [4, 10]:
+                # Get full properties instead of specific additional properties
+                # since "List Adapters of a CPC" does not support
+                # additional-properties on these early 2.16 API versions.
+                additional_properties = None
+                full_properties = True
+            if full_properties:
+                prop_str = "full properties"
+            elif additional_properties:
+                prop_str = "additional properties"
+            else:
+                prop_str = "default properties"
             if cpc_name:
-                LOGGER.debug("Listing permitted adapters of CPC %s", cpc_name)
+                LOGGER.debug("Listing adapters of CPC %s "
+                             "(List permitted adapters with %s)",
+                             cpc_name, prop_str)
                 filter_args['cpc-name'] = cpc_name
             else:
-                LOGGER.debug("Listing permitted adapters of all managed CPCs")
+                LOGGER.debug("Listing adapters of all managed CPCs "
+                             "(List permitted adapters with %s)",
+                             prop_str)
             adapters = console.list_permitted_adapters(
                 filter_args=filter_args,
                 additional_properties=additional_properties,

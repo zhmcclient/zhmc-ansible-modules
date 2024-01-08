@@ -19,7 +19,7 @@ Synopsis
 - List LPARs on a specific CPC (Z system) or on all managed CPCs.
 - CPCs in DPM mode are ignored (i.e. do not lead to a failure).
 - LPARs for which the user has no object access permission are ignored (i.e. do not lead to a failure).
-- The module works for any HMC version. On HMCs with version 2.14.0 or higher, the "List Permitted Logical Partitions" opration is used. On older HMCs, the managed CPCs are listed and the LPARs on each CPC.
+- On HMCs with version 2.14.0 or higher, the "List Permitted Logical Partitions" operation is used by this module. Otherwise, the managed CPCs are listed and then the LPARs on each desired CPC or CPCs are listed. This improves the execution time of the module on newer HMCs but does not affect the module result data.
 
 
 Requirements
