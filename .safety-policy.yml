@@ -118,6 +118,8 @@ security:
             reason: Fixed cryptography version 41.0.5 requires Python>=3.7 and is used there
         62556:
             reason: Fixed cryptography version 41.0.6 requires Python>=3.7 and is used there
+        62625:
+            reason: Fixed ansible version 4.1.0 requires Python>=3.5 and is used on Python>=3.9
 
     # Continue with exit code 0 when vulnerabilities are found.
     continue-on-vulnerability-error: False

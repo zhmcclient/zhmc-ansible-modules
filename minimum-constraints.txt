@@ -48,7 +48,7 @@ wheel==0.38.1; python_version >= '3.7'
 ansible==2.9.27; python_version == '2.7'  # sanity test is not run here
 ansible==2.9.27; python_version >= '3.5' and python_version <= '3.7'
 ansible==2.9.27; python_version == '3.8'
-ansible==4.0.0; python_version == '3.9'
+ansible==4.1.0; python_version == '3.9'
 ansible==5.0.1; python_version == '3.10'
 ansible==7.0.0; python_version == '3.11'
 ansible==9.0.1; python_version >= '3.12'
