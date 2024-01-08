@@ -170,17 +170,26 @@ def test_zhmc_partition_list(
         hmc_version_info = [int(x) for x in hmc_version.split('.')]
         if hmc_version_info < [2, 14, 0] or additional_properties:
             # List the LPARs in the traditional way
+            if hmc_version_info < [2, 16, 0] and additional_properties:
+                # Get full properties instead of specific additional properties
+                # since "List Partitions of a CPC" does not support
+                # additional-properties on these HMC versions.
+                _additional_properties = None
+                _full_properties = True
+            else:
+                _additional_properties = additional_properties
+                _full_properties = full_properties
             if with_cpc:
                 exp_partitions = cpc.partitions.list(
-                    additional_properties=additional_properties,
-                    full_properties=full_properties)
+                    additional_properties=_additional_properties,
+                    full_properties=_full_properties)
             else:
                 cpcs_ = client.cpcs.list()
                 exp_partitions = []
                 for cpc_ in cpcs_:
                     _partitions = cpc_.partitions.list(
-                        additional_properties=additional_properties,
-                        full_properties=full_properties)
+                        additional_properties=_additional_properties,
+                        full_properties=_full_properties)
                     exp_partitions.extend(_partitions)
         else:
             # List the LPARs using the new operation
