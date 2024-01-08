@@ -38,9 +38,11 @@ description:
   - CPCs in DPM mode are ignored (i.e. do not lead to a failure).
   - LPARs for which the user has no object access permission are ignored (i.e.
     do not lead to a failure).
-  - The module works for any HMC version. On HMCs with version 2.14.0 or higher,
-    the "List Permitted Logical Partitions" opration is used. On older HMCs, the
-    managed CPCs are listed and the LPARs on each CPC.
+  - On HMCs with version 2.14.0 or higher, the "List Permitted Logical
+    Partitions" operation is used by this module. Otherwise, the managed CPCs
+    are listed and then the LPARs on each desired CPC or CPCs are listed. This
+    improves the execution time of the module on newer HMCs but does not affect
+    the module result data.
 author:
   - Andreas Maier (@andy-maier)
 requirements:
@@ -251,28 +253,50 @@ def perform_list(params):
         # version 2.14.0. The operation depends only on the HMC version and not
         # on the SE/CPC version, so it is supported e.g. for a 2.14 HMC managing
         # a z13 CPC.
+        #
+        # The "List Permitted Logical Partitions" operation supports the
+        # 'additional-properties' query parameter starting with feature
+        # 'secure-boot-with-certificates' (API version 4.10, HMC version 2.16
+        # after initial GA). This module does not support an
+        # 'additional_properties' module parameter at the moment.
         hmc_version = client.query_api_version()['hmc-version']
         hmc_version_info = [int(x) for x in hmc_version.split('.')]
         if hmc_version_info < [2, 14, 0]:
-            # List the LPARs in the traditional way
+            # Use the "List Logical Partitions of a CPC" operation.
+            if full_properties:
+                prop_str = "full properties"
+            else:
+                prop_str = "default properties"
             if cpc_name:
-                LOGGER.debug("Listing LPARs of CPC %s", cpc_name)
+                LOGGER.debug("Listing LPARs of CPC %s (Find CPC, "
+                             "then list LPARs with %s)",
+                             cpc_name, prop_str)
                 cpc = client.cpcs.find(name=cpc_name)
                 lpars = cpc.lpars.list(full_properties=full_properties)
             else:
-                LOGGER.debug("Listing LPARs of all managed CPCs")
+                LOGGER.debug("Listing LPARs of all managed CPCs (List "
+                             "CPCs, then on each CPC list LPARs with %s)",
+                             prop_str)
                 cpcs = client.cpcs.list()
                 lpars = []
                 for cpc in cpcs:
                     _lpars = cpc.lpars.list(full_properties=full_properties)
                     lpars.extend(_lpars)
         else:
-            # List the LPARs using the new operation
+            # Use the "List Permitted Logical Partitions" operation.
+            if full_properties:
+                prop_str = "full properties"
+            else:
+                prop_str = "default properties"
             if cpc_name:
-                LOGGER.debug("Listing permitted LPARs of CPC %s", cpc_name)
+                LOGGER.debug("Listing LPARs of CPC %s "
+                             "(List permitted LPARs with %s)",
+                             cpc_name, prop_str)
                 filter_args = {'cpc-name': cpc_name}
             else:
-                LOGGER.debug("Listing permitted LPARs of all managed CPCs")
+                LOGGER.debug("Listing LPARs of all managed CPCs "
+                             "(List permitted LPARs with %s)",
+                             prop_str)
                 filter_args = None
             lpars = client.consoles.console.list_permitted_lpars(
                 filter_args=filter_args,
