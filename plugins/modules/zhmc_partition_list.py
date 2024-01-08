@@ -38,9 +38,12 @@ description:
   - CPCs in classic mode are ignored (i.e. do not lead to a failure).
   - Partitions for which the user has no object access permission are ignored
     (i.e. do not lead to a failure).
-  - The module works for any HMC version. On HMCs with version 2.14.0 or higher,
-    the "List Permitted Partitions" opration is used. On older HMCs, the
-    managed CPCs are listed and the partitions on each CPC.
+  - On HMCs with version 2.14.0 or higher and when the C(additional_properties)
+    module parameter is not used, the "List Permitted Partitions" operation is
+    used by this module. Otherwise, the managed CPCs are listed and then the
+    partitions on each desired CPC or CPCs are listed. This improves the
+    execution time of the module on newer HMCs but does not affect the module
+    result data.
 seealso:
   - module: zhmc_partition
 author:
@@ -115,9 +118,9 @@ options:
         addition to the default properties (see result description).
       - Mutually exclusive with C(full_properties).
       - The property names are specified with underscores instead of hyphens.
-      - "Note: The additional properties are passed to the 'List Partitions of a
-        CPC' HMC operation, and do not cause a loop of 'Get Partition
-        Properties' operations to be executed."
+      - On HMCs with an HMC version below 2.14.0, all properties of each
+        partition will be returned if this parameter is specified, but you
+        should not rely on that.
     type: list
     elements: str
     required: false
@@ -267,22 +270,46 @@ def perform_list(params):
     try:
         client = zhmcclient.Client(session)
 
-        # The "List Permitted Partitions" operation was added in HMC
-        # version 2.14.0. The operation depends only on the HMC version and not
-        # on the SE/CPC version, so it is supported e.g. for a 2.14 HMC managing
-        # a z13 CPC.
+        # The "List Permitted Partitions" operation was added in HMC version
+        # 2.14.0. The operation depends only on the HMC version and not on the
+        # SE/CPC version, so it is supported e.g. for a 2.14 HMC managing a z13
+        # CPC.
+        #
+        # The "List Permitted Partitions" operation as of HMC API version 4.10
+        # (= HMC version 2.16.0 plus some post-GA updates) does not support an
+        # 'additional-properties' query parameter.
+        #
+        # The "List Partitions of a CPC" operation has support for an
+        # 'additional-properties' query parameter starting with HMC API version
+        # 4.1 (= HMC version 2.16.0 initial GA).
         hmc_version = client.query_api_version()['hmc-version']
         hmc_version_info = [int(x) for x in hmc_version.split('.')]
         if hmc_version_info < [2, 14, 0] or additional_properties:
-            # List the partitions in the traditional way
+            # Use the "List Partitions of a CPC" operation.
+            if hmc_version_info < [2, 16, 0] and additional_properties:
+                # Get full properties instead of specific additional properties
+                # since "List Partitions of a CPC" does not support
+                # additional-properties on these HMC versions.
+                additional_properties = None
+                full_properties = True
+            if full_properties:
+                prop_str = "full properties"
+            elif additional_properties:
+                prop_str = "additional properties"
+            else:
+                prop_str = "default properties"
             if cpc_name:
-                LOGGER.debug("Listing partitions of CPC %s", cpc_name)
+                LOGGER.debug("Listing partitions of CPC %s (Find CPC, "
+                             "then list partitions with %s)",
+                             cpc_name, prop_str)
                 cpc = client.cpcs.find(name=cpc_name)
                 partitions = cpc.partitions.list(
                     additional_properties=additional_properties,
                     full_properties=full_properties)
             else:
-                LOGGER.debug("Listing partitions of all managed CPCs")
+                LOGGER.debug("Listing partitions of all managed CPCs (List "
+                             "CPCs, then on each CPC list partitions with %s)",
+                             prop_str)
                 cpcs = client.cpcs.list()
                 partitions = []
                 for cpc in cpcs:
@@ -291,13 +318,20 @@ def perform_list(params):
                         full_properties=full_properties)
                     partitions.extend(_partitions)
         else:
-            # List the partitions using the new operation.
-            # Note: That operation does not support additional-properties.
+            # Use the "List Permitted Partitions" operation.
+            if full_properties:
+                prop_str = "full properties"
+            else:
+                prop_str = "default properties"
             if cpc_name:
-                LOGGER.debug("Listing permitted partitions of CPC %s", cpc_name)
+                LOGGER.debug("Listing partitions of CPC %s "
+                             "(List permitted partitions with %s)",
+                             cpc_name, prop_str)
                 filter_args = {'cpc-name': cpc_name}
             else:
-                LOGGER.debug("Listing permitted partitions of all managed CPCs")
+                LOGGER.debug("Listing partitions of all managed CPCs "
+                             "(List permitted partitions with %s)",
+                             prop_str)
                 filter_args = None
             partitions = client.consoles.console.list_permitted_partitions(
                 filter_args=filter_args,

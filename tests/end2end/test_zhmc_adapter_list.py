@@ -170,8 +170,9 @@ def test_zhmc_adapter_list(
         # Determine the expected adapters on the HMC
         if DEBUG:
             print("Debug: Listing expected adapters")
-        hmc_version = client.query_api_version()['hmc-version']
-        hmc_version_info = [int(x) for x in hmc_version.split('.')]
+        av = client.query_api_version()
+        hmc_version_info = [int(x) for x in av['hmc-version'].split('.')]
+        api_version_info = [av['api-major-version'], av['api-minor-version']]
         if filters:
             filter_args_module = dict(filters)
             filter_args_list = {}
@@ -179,32 +180,46 @@ def test_zhmc_adapter_list(
                 filter_args_list[fkey.replace('_', '-')] = fval
         else:
             filter_args_module = {}
-            filter_args_list = None
-        # TODO: Remove check on list_permitted_adapters() once supported
-        if hmc_version_info < [2, 14, 0] or \
-                not hasattr(console, 'list_permitted_adapters'):
-            # List the LPARs in the traditional way
+            filter_args_list = {}
 
+        if hmc_version_info < [2, 16, 0]:
+            # Use the "List Adapters of a CPC" operation.
+            if additional_properties:
+                # Get full properties instead of specific additional properties
+                # since "List Adapters of a CPC" does not support
+                # additional-properties on these HMC versions.
+                _full_properties = True
+            else:
+                _full_properties = full_properties
             if with_cpc:
                 exp_adapters = cpc.adapters.list(
                     filter_args=filter_args_list,
-                    additional_properties=additional_properties,
-                    full_properties=full_properties)
+                    full_properties=_full_properties)
             else:
                 cpcs_ = client.cpcs.list()
                 exp_adapters = []
                 for cpc_ in cpcs_:
                     _adapters = cpc_.adapters.list(
                         filter_args=filter_args_list,
-                        additional_properties=additional_properties,
-                        full_properties=full_properties)
+                        full_properties=_full_properties)
                     exp_adapters.extend(_adapters)
         else:
-            # List the LPARs using the new operation
+            # Use the "List Permitted Adapters" operation.
+            if additional_properties and api_version_info < [4, 10]:
+                # Get full properties instead of specific additional properties
+                # since "List Adapters of a CPC" does not support
+                # additional-properties on these early 2.16 API versions.
+                _full_properties = True
+                _additional_properties = None
+            else:
+                _full_properties = full_properties
+                _additional_properties = additional_properties
             if with_cpc:
                 filter_args_list['cpc-name'] = cpc.name
             exp_adapters = console.list_permitted_adapters(
-                filter_args=filter_args_list)
+                filter_args=filter_args_list,
+                additional_properties=_additional_properties,
+                full_properties=_full_properties)
 
         # Expected adapter properties dict.
         # Key: tuple(cpc name, adapter ID). Adapter ID instead of adapter name

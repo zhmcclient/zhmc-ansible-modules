@@ -43,11 +43,34 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   and 'virtual-storage-resources' returned by the module will be empty arrays
   for non-FCP storage groups. (e.g. NVMe). (issue #864)
 
+* Fixed that on HMC versions 2.14 and 2.15, the zhmc_adapter_list module
+  failed because it tried to use the "List Permitted Adapters" operation
+  that was added in HMC version 2.16 (actually API version 4.10).
+  (issue #850)
+
+* Fixed that on HMC versions 2.14 and 2.15, the zhmc_partition_list module
+  failed because it tried to use the 'additional-properties' query parameter
+  that was added in HMC version 2.16 (actually API version 4.10).
+  (issue #850)
+
 **Enhancements:**
 
 * Added a new make target 'make ansible_lint' which invokes ansible-lint.
   Fixed some of the warnings reported by ansible-lint.
   (related to issue #784)
+
+* In the 'zhmc_adapter_list' module, improved the use of the "Permitted
+  Adapters" operation so that it is now also used when the 'additional_properties'
+  module parameter is used and the HMC API version is 4.10 or higher.
+  (related to issue #850)
+
+* Docs: In the 'zhmc_lpar_list' module, clarified that the use of the "List
+  Permitted Logical Partitions" operation does not affect the module result
+  data. (related to issue #850)
+
+* Docs: In the 'zhmc_partition_list' module, clarified that the use of the "List
+  Permitted Partitions" operation does not affect the module result data.
+  (related to issue #850)
 
 **Cleanup:**
 
