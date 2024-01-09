@@ -1,2 +1,13 @@
-# Keep in sync with lowest ansible version in requirements.txt and minimum-constraints.txt
-requires_ansible: ">=2.9.27"
+# This is the officially supported ansible-core version including patch version.
+# Keep in sync with:
+#  * the support statements in installation.rst
+#  * the min_ansible_core_version variable in Makefile
+#
+# See the ansible-core support matrix table at
+# https://docs.ansible.com/ansible/latest/reference_appendices/release_and_maintenance.html
+# for the officially supported versions (the EOL date is what counts).
+#
+# Note: There are some lower ansible versions that are tested against, see the
+# Python requirements and constraint files.
+#
+requires_ansible: ">=2.14.0"
