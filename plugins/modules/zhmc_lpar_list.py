@@ -114,12 +114,28 @@ options:
     type: str
     required: false
     default: null
+  additional_properties:
+    description:
+      - List of additional properties to be returned for each LPAR, in
+        addition to the default properties (see result description).
+      - Mutually exclusive with C(full_properties).
+      - The property names are specified with underscores instead of hyphens.
+      - On HMCs with an API version below 4.10 (= HMC version 2.16.0 plus some
+        post-GA updates), all properties of each LPAR will be returned if this
+        parameter is specified, but you should not rely on that.
+    type: list
+    elements: str
+    required: false
+    default: []
   full_properties:
     description:
       - "If True, all properties of each LPAR will be returned.
         Default: False."
+      - Mutually exclusive with C(additional_properties).
       - "Note: Setting this to True causes a loop of 'Get Logical Partition
-        Properties' operations to be executed."
+        Properties' operations to be executed. It is preferrable from a
+        performance perspective to use the C(additional_properties) parameter
+        instead."
     type: bool
     required: false
     default: false
@@ -197,7 +213,8 @@ lpars:
         'Logical Partition' resource (see :term:`HMC API`).
       type: str
     "{additional_property}":
-      description: Additional properties requested via C(full_properties).
+      description: Additional properties requested via C(full_properties) or
+        C(additional_properties).
         The property names will have underscores instead of hyphens.
   sample:
     [
@@ -217,7 +234,7 @@ import traceback  # noqa: E402
 from ansible.module_utils.basic import AnsibleModule  # noqa: E402
 
 from ..module_utils.common import log_init, open_session, close_session, \
-    hmc_auth_parameter, Error, missing_required_lib, \
+    hmc_auth_parameter, Error, ParameterError, missing_required_lib, \
     common_fail_on_import_errors, parse_hmc_host  # noqa: E402
 
 try:
@@ -248,7 +265,14 @@ def perform_list(params):
     """
 
     cpc_name = params['cpc_name']
+    additional_properties = \
+        [p.replace('_', '-') for p in params['additional_properties']]
     full_properties = params['full_properties']
+
+    if additional_properties and full_properties:
+        raise ParameterError(
+            "The 'additional_properties' and 'full_properties' module "
+            "parameters are mutually exclusive but both are specified.")
 
     session, logoff = open_session(params)
     try:
@@ -262,12 +286,22 @@ def perform_list(params):
         # The "List Permitted Logical Partitions" operation supports the
         # 'additional-properties' query parameter starting with feature
         # 'secure-boot-with-certificates' (API version 4.10, HMC version 2.16
-        # after initial GA). This module does not support an
-        # 'additional_properties' module parameter at the moment.
-        hmc_version = client.query_api_version()['hmc-version']
-        hmc_version_info = [int(x) for x in hmc_version.split('.')]
+        # after initial GA).
+        #
+        # The "List Logical Partitions of a CPC" operation does not support an
+        # 'additional-properties' query parameter as of HMC API version 4.10,
+        # HMC version 2.16 after initial GA).
+        av = client.query_api_version()
+        hmc_version_info = [int(x) for x in av['hmc-version'].split('.')]
+        api_version_info = [av['api-major-version'], av['api-minor-version']]
         if hmc_version_info < [2, 14, 0]:
             # Use the "List Logical Partitions of a CPC" operation.
+            if additional_properties:
+                # Get full properties instead of specific additional properties
+                # since "List Logical Partitions of a CPC" does not support
+                # additional-properties.
+                additional_properties = None
+                full_properties = True
             if full_properties:
                 prop_str = "full properties"
             else:
@@ -289,8 +323,16 @@ def perform_list(params):
                     lpars.extend(_lpars)
         else:
             # Use the "List Permitted Logical Partitions" operation.
+            if additional_properties and api_version_info < [4, 10]:
+                # Get full properties instead of specific additional properties
+                # since "List Permitted Logical Partitions" does not support
+                # additional-properties on these early 2.16 HMC versions.
+                additional_properties = None
+                full_properties = True
             if full_properties:
                 prop_str = "full properties"
+            elif additional_properties:
+                prop_str = "additional properties"
             else:
                 prop_str = "default properties"
             if cpc_name:
@@ -305,6 +347,7 @@ def perform_list(params):
                 filter_args = None
             lpars = client.consoles.console.list_permitted_lpars(
                 filter_args=filter_args,
+                additional_properties=additional_properties,
                 full_properties=full_properties)
         # The default exception handling is sufficient for the above.
 
@@ -340,6 +383,8 @@ def main():
         hmc_host=dict(required=True, type='raw'),
         hmc_auth=hmc_auth_parameter(),
         cpc_name=dict(required=False, type='str', default=None),
+        additional_properties=dict(
+            required=False, type='list', elements='str', default=[]),
         full_properties=dict(required=False, type='bool', default=False),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),

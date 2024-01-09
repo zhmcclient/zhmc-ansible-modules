@@ -96,10 +96,26 @@ cpc_name
   | **type**: str
 
 
+additional_properties
+  List of additional properties to be returned for each LPAR, in addition to the default properties (see result description).
+
+  Mutually exclusive with \ :literal:`full\_properties`\ .
+
+  The property names are specified with underscores instead of hyphens.
+
+  On HMCs with an API version below 4.10 (= HMC version 2.16.0 plus some post-GA updates), all properties of each LPAR will be returned if this parameter is specified, but you should not rely on that.
+
+  | **required**: False
+  | **type**: list
+  | **elements**: str
+
+
 full_properties
   If True, all properties of each LPAR will be returned. Default: False.
 
-  Note: Setting this to True causes a loop of 'Get Logical Partition Properties' operations to be executed.
+  Mutually exclusive with \ :literal:`additional\_properties`\ .
+
+  Note: Setting this to True causes a loop of 'Get Logical Partition Properties' operations to be executed. It is preferrable from a performance perspective to use the \ :literal:`additional\_properties`\  parameter instead.
 
   | **required**: False
   | **type**: bool
@@ -213,7 +229,7 @@ lpars
     | **type**: str
 
   {additional_property}
-    Additional properties requested via \ :literal:`full\_properties`\ . The property names will have underscores instead of hyphens.
+    Additional properties requested via \ :literal:`full\_properties`\  or \ :literal:`additional\_properties`\ . The property names will have underscores instead of hyphens.
 
 
 
