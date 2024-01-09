@@ -64,6 +64,13 @@ collection_full_name := $(collection_namespace).$(collection_name)
 # Note: The collection version is defined in galaxy.yml
 collection_version := $(shell $(PYTHON_CMD) tools/version.py)
 
+# Minimum ansible-core veersion that is officially supported
+# If this version is changed, update the check_reqs_packages variable as well
+min_ansible_core_version := 2.14.0
+
+# Installed ansible-core version
+ansible_core_version := $(shell $(PYTHON_CMD) -c "import sys,ansible; sys.stdout.write(ansible.__version__)")
+
 # Python versions
 python_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('{v[0]}.{v[1]}.{v[2]}'.format(v=sys.version_info))")
 python_major_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('%s'%sys.version_info[0])")
@@ -120,7 +127,7 @@ safety_policy_file := .safety-policy.yml
 
 # Packages whose dependencies are checked using pip-missing-reqs
 # Sphinx and ansible-doc-extractor are run only on Python>=3.6
-# Pylint is run in ansible sanity test which is run only on Python>=3.7
+# ansible_test and pylint are checked only on officially supported Python versions
 ifeq ($(python_m_n_version),2.7)
   check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8
 else
@@ -131,10 +138,10 @@ ifeq ($(python_m_n_version),3.6)
   check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor
 else
 ifeq ($(python_m_n_version),3.7)
-  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor ansible_test pylint
+  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor
 else
 ifeq ($(python_m_n_version),3.8)
-  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor ansible_test pylint
+  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor
 else
 ifeq ($(python_m_n_version),3.9)
   check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor ansible_test pylint
@@ -286,16 +293,22 @@ safety: $(done_dir)/safety_$(pymn)_$(PACKAGE_LEVEL).done
 	@echo "Makefile: $@ done."
 
 # Boolean variable indicating that the Ansible sanity test should be run in the current Python environment
-# Excluding Python 3.10 with minimum package levels because sanity setup fails with PyYAML 5.4.1 install issue with Cython 3
-run_sanity_current := $(shell PL=$(PACKAGE_LEVEL) $(PYTHON_CMD) -c "import sys,os; py=sys.version_info[0:2]; pl=os.getenv('PL'); sys.stdout.write('false' if py==(3,10) and pl=='minimum' else 'true')")
+# We run the sanity test only on officially supported Ansible versions, except for:
+#  * Python 3.5+3.6 with minimum+ansible package levels because sanity rstcheck fails with:
+#    "FutureWarning: Python versions prior 3.7 are deprecated. Please update your python version."
+#  * Python 3.7+3.8 with minimum package levels because sanity rstcheck fails with:
+#    "No module named rstcheck.__main__; 'rstcheck' is a package and cannot be directly executed"
+#  * Python 3.10 with minimum package levels because sanity setup fails with PyYAML 5.4.1 install issue with Cython 3
+run_sanity_current := $(shell PL=$(PACKAGE_LEVEL) MIN_AC=$(min_ansible_core_version) $(PYTHON_CMD) -c "import sys,os,ansible; py=sys.version_info[0:2]; ac=ansible.__version__.split('.'); min_ac=os.getenv('MIN_AC').split('.'); pl=os.getenv('PL'); sys.stdout.write('true' if ac>=min_ac and not ((3,5)<=py<=(3,6) and pl in ('ansible','minimum')) and not ((3,7)<=py<=(3,8) and pl=='minimum') and not (py==(3,10) and pl=='minimum') else 'false')")
 
 # Boolean variable indicating that the Ansible sanity test should be run in its own virtual Python environment
-# Excluding Python 3.5+3.6 with minimum+ansible package levels because sanity rstcheck fails with:
-#   "FutureWarning: Python versions prior 3.7 are deprecated. Please update your python version."
-# Excluding Python 3.7+3.8 with minimum package levels because sanity rstcheck fails with:
-#   "No module named rstcheck.__main__; 'rstcheck' is a package and cannot be directly executed"
-# Excluding Python 3.10 with minimum package levels because sanity setup fails with PyYAML 5.4.1 install issue with Cython 3
-run_sanity_virtual := $(shell PL=$(PACKAGE_LEVEL) $(PYTHON_CMD) -c "import sys,os; py=sys.version_info[0:2]; pl=os.getenv('PL'); sys.stdout.write('false' if (3,5)<=py<=(3,6) and pl in ('ansible','minimum') or (3,7)<=py<=(3,8) and pl=='minimum' or py==(3,10) and pl=='minimum' else 'true')")
+# We run the sanity test only on officially supported Ansible versions, except for:
+#  * Python 3.5+3.6 with minimum+ansible package levels because sanity rstcheck fails with:
+#    "FutureWarning: Python versions prior 3.7 are deprecated. Please update your python version."
+#  * Python 3.7+3.8 with minimum package levels because sanity rstcheck fails with:
+#    "No module named rstcheck.__main__; 'rstcheck' is a package and cannot be directly executed"
+#  * Python 3.10 with minimum package levels because sanity setup fails with PyYAML 5.4.1 install issue with Cython 3
+run_sanity_virtual := $(shell PL=$(PACKAGE_LEVEL) MIN_AC=$(min_ansible_core_version) $(PYTHON_CMD) -c "import sys,os,ansible; py=sys.version_info[0:2]; ac=ansible.__version__.split('.'); min_ac=os.getenv('MIN_AC').split('.'); pl=os.getenv('PL'); sys.stdout.write('true' if ac>=min_ac and not ((3,5)<=py<=(3,6) and pl in ('ansible','minimum')) and not ((3,7)<=py<=(3,8) and pl=='minimum') and not (py==(3,10) and pl=='minimum') else 'false')")
 
 # The sanity check requires the .git directory to be present.
 .PHONY:	sanity
@@ -306,16 +319,16 @@ sanity: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 	mkdir -p $(sanity_dir)
 	tar -xf $(sanity_tar_file) --directory $(sanity_dir)
 ifeq ($(run_sanity_current),true)
-	echo "Running ansible sanity test with the current Python env"
+	echo "Running ansible sanity test in the current Python env (using ansible-core $(min_ansible_core_version) and Python $(python_version))"
 	sh -c "cd $(sanity_dir); ansible-test sanity --verbose --truncate 0 --local --python $(python_m_n_version)"
 else
-	echo "Skipping ansible sanity test with the current Python env"
+	echo "Skipping ansible sanity test in the current Python env (using ansible-core $(min_ansible_core_version) and Python $(python_version))"
 endif
 ifeq ($(run_sanity_virtual),true)
-	echo 'Running ansible sanity test with its own virtual Python env'
+	echo "Running ansible sanity test in its own virtual Python env (using ansible-core $(min_ansible_core_version) and Python $(python_version))"
 	sh -c "cd $(sanity_dir); ansible-test sanity --verbose --truncate 0 --venv --requirements --python $(python_m_n_version)"
 else
-	echo "Skipping ansible sanity test with its own virtual Python env"
+	echo "Skipping ansible sanity test in its own virtual Python env (using ansible-core $(min_ansible_core_version) and Python $(python_version))"
 endif
 	@echo '$@ done.'
 

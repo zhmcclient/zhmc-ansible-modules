@@ -83,6 +83,11 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   that was added in HMC version 2.16 (actually API version 4.10).
   (issue #850)
 
+* Clarified that Ansible versions below 7 (ansible-core 2.14) are not officially
+  supported, but only supported on a best-can-do basis. As part of that change,
+  the Ansible sanity checks are reduced to run only on officially supported
+  Ansible versions. (issue #784)
+
 **Enhancements:**
 
 * Added support for Python 3.12. (issue #796)
