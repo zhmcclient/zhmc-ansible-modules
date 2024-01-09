@@ -140,7 +140,7 @@ control system. The instructions are written for a bash shell.
 
         $ python_script=$HOME/local/bin/env_python
 
-        $ cat >$python_script <<'EOT'
+        $ cat >$python_script \<\<'EOT'
         #!/bin/bash
         py=$(which python)
         $py "$@"
@@ -153,7 +153,7 @@ control system. The instructions are written for a bash shell.
 
     .. code-block:: sh
 
-        $ sudo tee -a /etc/ansible/hosts >/dev/null <<EOT
+        $ sudo tee -a /etc/ansible/hosts >/dev/null \<\<EOT
         [local:vars]
         ansible_python_interpreter=$python_script
         EOT
@@ -254,29 +254,6 @@ For details, see sections "Connecting to the API HTTP server" and
 Supported environments
 ----------------------
 
-The following versions of Python are supported:
-
-- Python 2.7
-- Python 3.5 and higher
-
-The following operating systems are supported:
-
-- Linux
-- macOS (OS-X)
-- Windows
-
-The following versions of Ansible are supported:
-
-- Ansible 2.9 (only up to Python 3.8)
-- Ansible 2.10 (only up to Python 3.8)
-- Ansible 3 (ansible-base 2.10) (only up to Python 3.8)
-- Ansible 4 (ansible-core 2.11) (only up to Python 3.9)
-- Ansible 5 (ansible-core 2.12) (only up to Python 3.10)
-- Ansible 6 (ansible-core 2.13) (only up to Python 3.10)
-- Ansible 7 (ansible-core 2.14) (only up to Python 3.11)
-- Ansible 8 (ansible-core 2.15) (only up to Python 3.11)
-- Ansible 9 (ansible-core 2.16)
-
 The following Z and LinuxONE machine generations are supported:
 
 - z196 / z114
@@ -285,3 +262,61 @@ The following Z and LinuxONE machine generations are supported:
 - z14 / Emperor II / Rockhopper II
 - z15 / LinuxONE III
 - z16 / LinuxONE 4
+
+The following environments are supported for running the Ansible modules of the
+ibm.ibm_zhmc collection.
+
+Operating systems:
+
+- Linux
+- macOS (OS-X)
+- Windows
+
+Python versions:
+
+- Python 2.7 to Python 3.8 are supported on a best-can-do basis
+- Python 3.9 and higher are officially supported (depends on the Ansible version used)
+
+Ansible versions:
+
+- Ansible 2.9 to 6 (ansible-core 2.13) are supported on a best-can-do basis
+- Ansible 7 (ansible-core 2.14) and higher are officially supported
+
+See `Ansible-core Support Matrix <https://docs.ansible.com/ansible/latest/reference_appendices/release_and_maintenance.html#ansible-core-support-matrix>`_
+for the officially supported Ansible / ansible-core versions and their Python versions.
+
+See `Red Hat Ansible Automation Platform Life Cycle <https://access.redhat.com/support/policy/updates/ansible-automation-platform>`_
+for the officially supported Ansible Automation Platform versions and their ansible-core
+versions.
+
+The general strategy for the ibm.ibm_zhmc collection is that all Python versions
+supported by the sanity test tool of a particular Ansible version are supported,
+as shown in the following tables:
+
+=======  =================  =========================  ===========
+Ansible  Ansible core       Supported Python versions  Support
+-------  -----------------  -------------------------  -----------
+2.9      ansible 2.9        2.7, 3.5 - 3.8             best-can-do
+2.10     ansible 2.10       2.7, 3.5 - 3.8             best-can-do
+3        ansible-base 2.10  2.7, 3.5 - 3.8             best-can-do
+4        ansible-core 2.11  2.7, 3.5 - 3.9             best-can-do
+5        ansible-core 2.12  3.8 - 3.10                 best-can-do
+6        ansible-core 2.13  3.8 - 3.10                 best-can-do
+7        ansible-core 2.14  3.9 - 3.11                 official
+8        ansible-core 2.15  3.9 - 3.11                 official
+9        ansible-core 2.16  3.10 - 3.12                official
+=======  =================  =========================  ===========
+
+======  ==========================
+Python  Supported Ansible versions
+------  --------------------------
+2.7     2.9 - 2.10, 3 - 4
+3.5     2.9 - 2.10, 3 - 4
+3.6     2.9 - 2.10, 3 - 4
+3.7     2.9 - 2.10, 3 - 4
+3.8     2.9 - 2.10, 3 - 6
+3.9     4 - 8
+3.10    5 - 9
+3.11    7 - 9
+3.12    9 and higher
+======  ==========================
