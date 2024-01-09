@@ -38,6 +38,20 @@ DEBUG = False
 
 LOG_FILE = 'zhmc_lpar_list.log' if DEBUG else None
 
+# Names of LPAR properties (with underscores) that are volatile, i.e. that may
+# change their values on subsequent retrievals even when no other change is
+# performed.
+VOLATILE_LPAR_PROPERTIES = [
+    'program_status_word_information',
+    'has_operating_system_messages',
+    'has_important_unviewed_operating_system_messages',
+    'current_processing_weight',
+    'current_aap_processing_weight',
+    'current_ifl_processing_weight',
+    'current_ziip_processing_weight',
+    'current_cf_processing_weight',
+]
+
 
 def get_module_output(mod_obj):
     """
@@ -107,11 +121,12 @@ def assert_lpar_list(lpar_list, exp_lpar_dict):
             assert pname in exp_lpar_properties, \
                 "Unexpected property {pn!r} in result LPAR {rn!r}". \
                 format(pn=pname, rn=lpar_name)
-            exp_value = exp_lpar_properties[pname]
-            assert pvalue == exp_value, \
-                "Incorrect value for property {pn!r} of result LPAR " \
-                "{rn!r}". \
-                format(pn=pname, rn=lpar_name)
+            if pname not in VOLATILE_LPAR_PROPERTIES:
+                exp_value = exp_lpar_properties[pname]
+                assert pvalue == exp_value, \
+                    "Incorrect value for property {pn!r} of result LPAR " \
+                    "{rn!r}". \
+                    format(pn=pname, rn=lpar_name)
 
 
 @pytest.mark.parametrize(
@@ -123,6 +138,8 @@ def assert_lpar_list(lpar_list, exp_lpar_dict):
 @pytest.mark.parametrize(
     "property_flags", [
         pytest.param({}, id="property_flags()"),
+        pytest.param({'additional_properties': ['description']},
+                     id="property_flags(additional_properties=[description])"),
         pytest.param({'full_properties': True},
                      id="property_flags(full_properties=True)"),
     ]
@@ -158,31 +175,51 @@ def test_zhmc_lpar_list(
         faked_session = session if hd.mock_file else None
 
         full_properties = property_flags.get('full_properties', False)
+        additional_properties = property_flags.get(
+            'additional_properties', [])
 
         # Determine the expected LPARs on the HMC
         if DEBUG:
             print("Debug: Listing expected LPARs")
-        hmc_version = client.query_api_version()['hmc-version']
-        hmc_version_info = [int(x) for x in hmc_version.split('.')]
+        av = client.query_api_version()
+        hmc_version_info = [int(x) for x in av['hmc-version'].split('.')]
+        api_version_info = [av['api-major-version'], av['api-minor-version']]
         if hmc_version_info < [2, 14, 0]:
             # List the LPARs in the traditional way
-            if with_cpc:
-                exp_lpars = cpc.lpars.list(full_properties=full_properties)
+            if additional_properties:
+                # Get full properties instead of specific additional properties
+                # since "List Logical Partitions of a CPC" does not support
+                # additional-properties.
+                _full_properties = True
             else:
-                cpcs_ = client.cpcs.list(full_properties=full_properties)
+                _full_properties = full_properties
+            if with_cpc:
+                exp_lpars = cpc.lpars.list(full_properties=_full_properties)
+            else:
+                cpcs_ = client.cpcs.list(full_properties=_full_properties)
                 exp_lpars = []
                 for cpc_ in cpcs_:
                     exp_lpars.extend(cpc_.lpars.list(
                         full_properties=full_properties))
         else:
             # List the LPARs using the new operation
+            if additional_properties and api_version_info < [4, 10]:
+                # Get full properties instead of specific additional properties
+                # since "List Permitted Logical Partitions" does not support
+                # additional-properties on these early 2.16 HMC versions.
+                _additional_properties = None
+                _full_properties = True
+            else:
+                _additional_properties = additional_properties
+                _full_properties = full_properties
             if with_cpc:
                 filter_args = {'cpc-name': cpc.name}
             else:
                 filter_args = None
             exp_lpars = console.list_permitted_lpars(
                 filter_args=filter_args,
-                full_properties=full_properties)
+                additional_properties=_additional_properties,
+                full_properties=_full_properties)
         exp_lpar_dict = {}
         se_versions = {}
         for lpar in exp_lpars:
@@ -213,6 +250,7 @@ def test_zhmc_lpar_list(
             'hmc_host': hmc_host,
             'hmc_auth': hmc_auth,
             'cpc_name': cpc.name if with_cpc else None,
+            'additional_properties': additional_properties,
             'full_properties': full_properties,
             'log_file': LOG_FILE,
             '_faked_session': faked_session,

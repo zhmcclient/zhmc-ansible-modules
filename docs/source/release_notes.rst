@@ -177,6 +177,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Test: Added Python 3.8 with latest package levels to normal tests because
   that is now the minimum version to run Sphinx. (related to issue #890)
 
+* In the 'zhmc_lpar_list' module, added support for the 'additional_properties'
+  input parameter. (issue #853)
+
 **Cleanup:**
 
 * Removed documentation and test files (except sanity test ignore files) from
