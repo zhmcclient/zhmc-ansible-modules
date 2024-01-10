@@ -481,7 +481,7 @@ storage_group
     | **elements**: str
 
   candidate-adapter-ports
-    Only present if \ :literal:`expand=true`\ : List of candidate storage adapter ports of the storage group.
+    Only present if \ :literal:`expand=true`\ : List of candidate storage adapter ports of the storage group. Will be empty for storage group types other than FCP.
 
     | **returned**: success+expand
     | **type**: list
@@ -535,7 +535,7 @@ storage_group
 
 
   virtual-storage-resources
-    Only present if \ :literal:`expand=true`\ : Virtual storage resources of the storage group.
+    Only present if \ :literal:`expand=true`\ : Virtual storage resources of the storage group. Will be empty for storage group types other than FCP.
 
     | **returned**: success+expand
     | **type**: list
