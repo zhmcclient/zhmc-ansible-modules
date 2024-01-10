@@ -122,6 +122,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   Permitted Partitions" operation does not affect the module result data.
   (related to issue #850)
 
+* Added support for mounting and unmounting ISO images to partitions (DPM mode)
+  via new state values 'iso_mount' and 'iso_unmount' for the 'zhmc_partition'
+  module (issue #551)
+
 **Cleanup:**
 
 * Removed documentation and test files (except sanity test ignore files) from

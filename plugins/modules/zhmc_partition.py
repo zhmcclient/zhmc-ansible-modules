@@ -134,11 +134,17 @@ options:
       - "* C(active): Ensures that the partition exists in the specified CPC,
          has the specified properties, and is in one of the active statuses
          ('active', 'degraded')."
+      - "* C(mount_iso): Ensures that an ISO image with the specified name
+         is mounted to the partition, and that the specified INS file is set.
+         The content of a currnetly mounted ISO image is not verified."
+      - "* C(unmount_iso): Ensures that no ISO image is mounted to the
+         partition."
       - "* C(facts): Returns the partition properties and the properties of its
          child resources (HBAs, NICs, and virtual functions)."
     type: str
     required: true
-    choices: ['absent', 'stopped', 'active', 'facts']
+    choices: ['absent', 'stopped', 'active', 'iso_mount', 'iso_unmount',
+              'facts']
   properties:
     description:
       - "Dictionary with input properties for the partition, for
@@ -184,6 +190,42 @@ options:
          the data model for partitions in the :term:`HMC API` when the partition
          is being created."
     type: dict
+    required: false
+    default: null
+  image_name:
+    description:
+      - "Name of the ISO image for C(state=iso_mount)
+         (required). Not permitted for any other C(state) values."
+      - "This value is shown in the 'boot-iso-image-name' property of the
+         partition."
+      - "If an ISO image with this name is already mounted to the partition,
+         the new image will not be mounted. The image conntent is not
+         verified."
+    type: str
+    required: false
+    default: null
+  image_file:
+    description:
+      - "Path name of the local ISO image file for C(state=iso_mount)
+         (required). Not permitted for any other C(state) values."
+      - "When mounting an ISO image, this file is opened for reading and
+         its content is sent to the HMC using the 'Mount ISO Image' operation.
+         This file is not used when an image with the name specified in
+         C(image_name) was already mounted."
+    type: str
+    required: false
+    default: null
+  ins_file:
+    description:
+      - "Path name of the INS file within the ISO image that will be used when
+         booting from the ISO image for C(state=iso_mount)
+         (required). Not permitted for any other C(state) values."
+      - "This value is shown in the 'boot-iso-ins-file' property of the
+         partition."
+      - "The 'boot-iso-ins-file' property of the partition is always updated,
+         even when the ISO image was already mounted and thus is not
+         re-mounted."
+    type: str
     required: false
     default: null
   expand_storage_groups:
@@ -294,6 +336,25 @@ EXAMPLES = """
             access_mode: control
   register: part1
 
+- name: Ensure that an ISO image is mounted to the partition
+  zhmc_partition:
+    hmc_host: "{{ my_hmc_host }}"
+    hmc_auth: "{{ my_hmc_auth }}"
+    cpc_name: "{{ my_cpc_name }}"
+    name: "{{ my_partition_name }}"
+    image_name: "{{ my_image_name }}"
+    image_file: "{{ my_image_file }}"
+    ins_file: "{{ my_ins_file }}"
+    state: iso_mount
+
+- name: Ensure that no ISO image is mounted to the partition
+  zhmc_partition:
+    hmc_host: "{{ my_hmc_host }}"
+    hmc_auth: "{{ my_hmc_auth }}"
+    cpc_name: "{{ my_cpc_name }}"
+    name: "{{ my_partition_name }}"
+    state: iso_unmount
+
 - name: Gather facts about a partition
   zhmc_partition:
     hmc_host: "{{ my_hmc_host }}"
@@ -318,7 +379,7 @@ msg:
   type: str
 partition:
   description:
-    - "For C(state=absent), an empty dictionary."
+    - "For C(state=absent|iso_mount|iso_unmount), an empty dictionary."
     - "For C(state=stopped|active|facts), the resource properties of the
        partition after any changes, including its child resources as described
        below."
@@ -524,7 +585,7 @@ from operator import itemgetter  # noqa: E402
 from ..module_utils.common import log_init, open_session, close_session, \
     hmc_auth_parameter, Error, ParameterError, StatusError, stop_partition, \
     start_partition, wait_for_transition_completion, eq_hex, to_unicode, \
-    process_normal_property, missing_required_lib, \
+    process_normal_property, missing_required_lib, ImageError, \
     common_fail_on_import_errors  # noqa: E402
 
 try:
@@ -1923,6 +1984,110 @@ def ensure_absent(params, check_mode):
         close_session(session, logoff)
 
 
+def ensure_iso_mount(params, check_mode):
+    """
+    Ensure that the partition has an ISO image with the specified name mounted,
+    and that it has the specified INS file set.
+
+    Raises:
+      ParameterError: An issue with the module parameters.
+      ImageError: An issue with using the image file.
+      zhmcclient.Error: Any zhmcclient exception can happen.
+    """
+
+    cpc_name = params['cpc_name']
+    partition_name = params['name']
+    image_name = params['image_name']
+    image_file = params['image_file']
+    ins_file = params['ins_file']
+
+    changed = False
+    result = {}
+
+    session, logoff = open_session(params)
+    try:
+        client = zhmcclient.Client(session)
+        cpc = client.cpcs.find(name=cpc_name)
+        partition = cpc.partitions.find(name=partition_name)
+        # The default exception handling is sufficient for the above.
+
+        if not image_name:
+            raise ParameterError(
+                "Missing required module input parameter: image_name")
+
+        if not image_file:
+            raise ParameterError(
+                "Missing required module input parameter: image_file")
+
+        if not ins_file:
+            raise ParameterError(
+                "Missing required module input parameter: ins_file")
+
+        current_image_name = partition.get_property('boot-iso-image-name')
+        current_ins_file = partition.get_property('boot-iso-ins-file')
+
+        if image_name != current_image_name:
+            # We need to mount the image
+            image = None
+            try:
+                with open(image_file, 'rb') as fp:
+                    if not check_mode:
+                        image = fp.readall()
+            except IOError as exc:
+                raise ImageError(
+                    "Cannot open ISO image file {fn!r} for reading: {exc}".
+                    format(fn=image_file, exc=exc))
+            if not check_mode:
+                partition.mount_iso_image(image, image_name, ins_file)
+            changed = True
+        elif ins_file != current_ins_file:
+            # We only need to update the INS file
+            if not check_mode:
+                props = {'boot-iso-ins-file': ins_file}
+                partition.update_properties(props)
+            changed = True
+
+        return changed, result
+
+    finally:
+        close_session(session, logoff)
+
+
+def ensure_iso_unmount(params, check_mode):
+    """
+    Ensure that the partition has no ISO image mounted.
+
+    Raises:
+      zhmcclient.Error: Any zhmcclient exception can happen.
+    """
+
+    cpc_name = params['cpc_name']
+    partition_name = params['name']
+
+    changed = False
+    result = {}
+
+    session, logoff = open_session(params)
+    try:
+        client = zhmcclient.Client(session)
+        cpc = client.cpcs.find(name=cpc_name)
+        partition = cpc.partitions.find(name=partition_name)
+        # The default exception handling is sufficient for the above.
+
+        current_image_name = partition.get_property('boot-iso-image-name')
+
+        if current_image_name:
+            # We need to unmount the image
+            if not check_mode:
+                partition.unmount_iso_image()
+            changed = True
+
+        return changed, result
+
+    finally:
+        close_session(session, logoff)
+
+
 def facts(params, check_mode):
     """
     Return partition facts.
@@ -1976,6 +2141,8 @@ def perform_task(params, check_mode):
         "absent": ensure_absent,
         "active": ensure_active,
         "stopped": ensure_stopped,
+        "iso_mount": ensure_iso_mount,
+        "iso_unmount": ensure_iso_unmount,
         "facts": facts,
     }
     return actions[params['state']](params, check_mode)
@@ -1991,8 +2158,12 @@ def main():
         cpc_name=dict(required=True, type='str'),
         name=dict(required=True, type='str'),
         state=dict(required=True, type='str',
-                   choices=['absent', 'stopped', 'active', 'facts']),
+                   choices=['absent', 'stopped', 'active', 'iso_mount',
+                            'iso_unmount', 'facts']),
         properties=dict(required=False, type='dict', default=None),
+        image_name=dict(required=False, type='str', default=None),
+        image_file=dict(required=False, type='str', default=None),
+        ins_file=dict(required=False, type='str', default=None),
         expand_storage_groups=dict(required=False, type='bool', default=False),
         expand_crypto_adapters=dict(required=False, type='bool',
                                     default=False),
