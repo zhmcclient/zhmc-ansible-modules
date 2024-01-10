@@ -158,6 +158,22 @@ options:
     required: true
     choices: ['inactive', 'active', 'loaded', 'reset_clear', 'reset_normal',
               'set', 'facts']
+  select_properties:
+    description:
+      - "Limits the returned properties of the LPAR to those specified in this
+         parameter plus those specified in the C(properties) parameter."
+      - "The properties can be specified with underscores or hyphens in their
+         names."
+      - "Null indicates not to limit the returned properties in this way."
+      - "This parameter is ignored for C(state) values that cause no properties
+         to be returned."
+      - "The specified properties are passed to the 'Get Logical Partition
+         Properties' HMC operation using the 'properties' query parameter and
+         save time for the HMC to pull together all properties."
+    type: list
+    elements: str
+    required: false
+    default: null
   activation_profile_name:
     description:
       - "The name of the image or load activation profile to be used when the
@@ -392,9 +408,9 @@ msg:
   type: str
 lpar:
   description:
-    - "The resource properties of the LPAR, after any specified updates have
-       been applied, for C(state=active), C(state=loaded) and C(state=set).
-       For any other values of C(state), the dictionary will be empty."
+    - "For C(state=inactive|reset_clear|reset_normal), an empty dictionary."
+    - "For C(state=active|loaded|set|facts), the resource properties
+       of the LPAR after after any specified updates have been applied."
     - "Note that the returned properties may show different values than the ones
        that were specified as input for the update. For example, memory
        properties may be rounded up, hexadecimal strings may be shown with a
@@ -576,7 +592,7 @@ from ..module_utils.common import log_init, open_session, close_session, \
     hmc_auth_parameter, Error, ParameterError, StatusError, \
     ensure_lpar_inactive, ensure_lpar_active, ensure_lpar_loaded, to_unicode, \
     process_normal_property, missing_required_lib, \
-    common_fail_on_import_errors  # noqa: E402
+    common_fail_on_import_errors, pull_properties  # noqa: E402
 
 try:
     import requests.packages.urllib3
@@ -829,6 +845,47 @@ def add_artificial_properties(lpar_properties, lpar):
     pass
 
 
+def update_lpar_properties(cpc, lpar, params, check_mode, check_status=False):
+    """
+    Update the properties of the LPAR on the HMC.
+
+    Returns the properties to be returned from the module.
+    """
+
+    input_props = params['properties']  # with underscores
+    if input_props is None:
+        input_props = {}
+    input_prop_names = list(input_props.keys())
+    select_prop_names = params['select_properties']  # with underscores
+
+    changed = False
+
+    pull_properties(lpar, select_prop_names, input_prop_names)
+    lpar_properties = dict(lpar.properties)
+    update_props = process_properties(cpc, lpar, params)
+
+    if update_props:
+        if not check_mode:
+            lpar.update_properties(update_props)
+            # We refresh the properties after the update, in case an
+            # input property value gets changed.
+            pull_properties(lpar, select_prop_names, input_prop_names)
+            lpar_properties = dict(lpar.properties)
+        else:
+            # Simulate the update behavior in check mode
+            if check_status:
+                lpar.pull_properties(['status'])
+                status = lpar.get_property('status')
+                if status not in ('not-operating', 'operating', 'exceptions'):
+                    raise StatusError(
+                        "LPAR {0!r} has status {1} and cannot be updated.".
+                        format(lpar.name, status))
+            lpar_properties.update(update_props)
+        changed = True
+
+    return changed, lpar_properties
+
+
 def ensure_inactive(params, check_mode):
     """
     Ensure that the LPAR is inactive. No properties are updated.
@@ -849,7 +906,6 @@ def ensure_inactive(params, check_mode):
             "LPAR {0!r}.".format(lpar_name))
 
     changed = False
-    result = {}
 
     session, logoff = open_session(params)
     try:
@@ -863,7 +919,7 @@ def ensure_inactive(params, check_mode):
         # Deactivate the LPAR.
         changed |= ensure_lpar_inactive(LOGGER, lpar, check_mode)
 
-        return changed, result
+        return changed, {}
 
     finally:
         close_session(session, logoff)
@@ -892,7 +948,6 @@ def perform_reset_clear(params, check_mode):
             "LPAR {0!r}.".format(lpar_name))
 
     changed = False
-    result = {}
 
     session, logoff = open_session(params)
     try:
@@ -907,9 +962,8 @@ def perform_reset_clear(params, check_mode):
         if not check_mode:
             lpar.reset_clear(force=force, os_ipl_token=os_ipl_token)
         changed = True
-        result = {}
 
-        return changed, result
+        return changed, {}
 
     finally:
         close_session(session, logoff)
@@ -938,7 +992,6 @@ def perform_reset_normal(params, check_mode):
             "LPAR {0!r}.".format(lpar_name))
 
     changed = False
-    result = {}
 
     session, logoff = open_session(params)
     try:
@@ -953,9 +1006,8 @@ def perform_reset_normal(params, check_mode):
         if not check_mode:
             lpar.reset_normal(force=force, os_ipl_token=os_ipl_token)
         changed = True
-        result = {}
 
-        return changed, result
+        return changed, {}
 
     finally:
         close_session(session, logoff)
@@ -981,7 +1033,6 @@ def ensure_active(params, check_mode):
     force = params['force']
 
     changed = False
-    result = {}
 
     session, logoff = open_session(params)
     try:
@@ -1000,24 +1051,13 @@ def ensure_active(params, check_mode):
             force=force)
 
         # Update the properties of the LPAR.
-        lpar.pull_full_properties()
-        lpar_properties = dict(lpar.properties)
-        update_props = process_properties(cpc, lpar, params)
-        if update_props:
-            if not check_mode:
-                lpar.update_properties(update_props)
-                # We refresh the properties after the update, in case an
-                # input property value gets changed.
-                lpar.pull_full_properties()
-                lpar_properties = dict(lpar.properties)
-            else:
-                lpar_properties.update(update_props)
-            changed = True
+        _changed, lpar_properties = update_lpar_properties(
+            cpc, lpar, params, check_mode)
+        changed |= _changed
 
-        result = lpar_properties
-        add_artificial_properties(result, lpar)
+        add_artificial_properties(lpar_properties, lpar)
 
-        return changed, result
+        return changed, lpar_properties
 
     finally:
         close_session(session, logoff)
@@ -1044,7 +1084,6 @@ def ensure_loaded(params, check_mode):
     force = params['force']
 
     changed = False
-    result = {}
 
     session, logoff = open_session(params)
     try:
@@ -1067,24 +1106,13 @@ def ensure_loaded(params, check_mode):
             force=force)
 
         # Update the properties of the LPAR.
-        lpar.pull_full_properties()
-        lpar_properties = dict(lpar.properties)
-        update_props = process_properties(cpc, lpar, params)
-        if update_props:
-            if not check_mode:
-                lpar.update_properties(update_props)
-                # We refresh the properties after the update, in case an
-                # input property value gets changed.
-                lpar.pull_full_properties()
-                lpar_properties = dict(lpar.properties)
-            else:
-                lpar_properties.update(update_props)
-            changed = True
+        _changed, lpar_properties = update_lpar_properties(
+            cpc, lpar, params, check_mode)
+        changed |= _changed
 
-        result = lpar_properties
-        add_artificial_properties(result, lpar)
+        add_artificial_properties(lpar_properties, lpar)
 
-        return changed, result
+        return changed, lpar_properties
 
     finally:
         close_session(session, logoff)
@@ -1107,7 +1135,6 @@ def ensure_set(params, check_mode):
     lpar_name = params['name']
 
     changed = False
-    result = {}
 
     session, logoff = open_session(params)
     try:
@@ -1119,30 +1146,13 @@ def ensure_set(params, check_mode):
         # If we got here, the LPAR exists.
 
         # Update the properties of the LPAR.
-        lpar.pull_full_properties()
-        lpar_properties = dict(lpar.properties)
-        update_props = process_properties(cpc, lpar, params)
-        if update_props:
-            if not check_mode:
-                lpar.update_properties(update_props)
-                # We refresh the properties after the update, in case an
-                # input property value gets changed.
-                lpar.pull_full_properties()
-                lpar_properties = dict(lpar.properties)
-            else:
-                # Simulate the update behavior in check mode
-                status = lpar.properties.get('status', None)
-                if status not in ('not-operating', 'operating', 'exceptions'):
-                    raise StatusError(
-                        "LPAR {0!r} has status {1} and cannot be updated.".
-                        format(lpar_name, status))
-                lpar_properties.update(update_props)
-            changed = True
+        _changed, lpar_properties = update_lpar_properties(
+            cpc, lpar, params, check_mode, check_status=True)
+        changed |= _changed
 
-        result = lpar_properties
-        add_artificial_properties(result, lpar)
+        add_artificial_properties(lpar_properties, lpar)
 
-        return changed, result
+        return changed, lpar_properties
 
     finally:
         close_session(session, logoff)
@@ -1159,15 +1169,15 @@ def facts(params, check_mode):
 
     cpc_name = params['cpc_name']
     lpar_name = params['name']
+    select_prop_names = params['select_properties']  # with underscores
 
-    properties = params['properties']
+    properties = params['properties']  # with underscores
     if properties:
         raise ParameterError(
             "Properties must not be specified for state=facts with "
             "LPAR {0!r}.".format(lpar_name))
 
     changed = False
-    result = {}
 
     session, logoff = open_session(params)
     try:
@@ -1176,12 +1186,13 @@ def facts(params, check_mode):
         cpc = client.cpcs.find(name=cpc_name)
 
         lpar = cpc.lpars.find(name=lpar_name)
-        lpar.pull_full_properties()
 
-        result = dict(lpar.properties)
-        add_artificial_properties(result, lpar)
+        pull_properties(lpar, select_prop_names)
+        lpar_properties = dict(lpar.properties)
 
-        return changed, result
+        add_artificial_properties(lpar_properties, lpar)
+
+        return changed, lpar_properties
 
     finally:
         close_session(session, logoff)
@@ -1225,6 +1236,8 @@ def main():
             required=True, type='str',
             choices=['inactive', 'reset_clear', 'reset_normal', 'active',
                      'loaded', 'set', 'facts']),
+        select_properties=dict(required=False, type='list', elements='str',
+                               default=None),
         activation_profile_name=dict(
             required=False, type='str', default=None),
         load_address=dict(required=False, type='str', default=None),

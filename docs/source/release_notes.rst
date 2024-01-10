@@ -88,6 +88,17 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   the Ansible sanity checks are reduced to run only on officially supported
   Ansible versions. (issue #784)
 
+* Corrected the status reported in the log when zhmc_lpar was called with
+  state=active or loaded, and check mode was enabled. (related to issue #851)
+
+* Clarified in the description of the return parameters of the 'zhmc_cpc'
+  module that for state 'inactive', an empty dict is returned.
+  (related to issue #851)
+
+* Clarified in the description of the return parameters of the 'zhmc_lpar'
+  module that for state 'facts', properties are returned.
+  (related to issue #851)
+
 **Enhancements:**
 
 * Added support for Python 3.12. (issue #796)
@@ -130,6 +141,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Added support for mounting and unmounting ISO images to partitions (DPM mode)
   via new state values 'iso_mount' and 'iso_unmount' for the 'zhmc_partition'
   module (issue #551)
+
+* Support for limiting the properties returned by the 'zhmc_cpc', 'zhmc_lpar'
+  and 'zhmc_partition' modules by specifying a new 'select_properties' input
+  parameter. (issue #851)
 
 * Added support for a new make target 'authors' that generates an AUTHORS.md
   file from the git commit history. Added the invocation of 'make authors' to

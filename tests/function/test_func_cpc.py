@@ -395,6 +395,7 @@ class TestCpc(object):
                              password='fake-password'),
             'name': self.cpc.name,
             'state': input_state,
+            'select_properties': None,
             'activation_profile_name': None,
             'properties': input_properties,
             'bundle_level': None,

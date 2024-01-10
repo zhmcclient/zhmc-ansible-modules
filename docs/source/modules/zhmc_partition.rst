@@ -120,6 +120,22 @@ state
   | **choices**: absent, stopped, active, iso_mount, iso_unmount, facts
 
 
+select_properties
+  Limits the returned properties of the partition to those specified in this parameter plus those specified in the \ :literal:`properties`\  parameter.
+
+  The properties can be specified with underscores or hyphens in their names.
+
+  Null indicates not to limit the returned properties in this way.
+
+  This parameter is ignored for \ :literal:`state`\  values that cause no properties to be returned.
+
+  The specified properties are passed to the 'Get Partition Properties' HMC operation using the 'properties' query parameter and save time for the HMC to pull together all properties.
+
+  | **required**: False
+  | **type**: list
+  | **elements**: str
+
+
 properties
   Dictionary with input properties for the partition, for \ :literal:`state=stopped`\  and \ :literal:`state=active`\ . Key is the property name with underscores instead of hyphens, and value is the property value in YAML syntax. Integer properties may also be provided as decimal strings. Will be ignored for \ :literal:`state=absent`\ .
 

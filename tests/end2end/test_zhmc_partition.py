@@ -36,14 +36,16 @@ from zhmcclient.testutils import dpm_mode_cpcs  # noqa: F401, E501
 
 from plugins.modules import zhmc_partition
 from plugins.module_utils.common import pull_partition_status
-from .utils import mock_ansible_module, get_failure_msg
+from .utils import mock_ansible_module, get_failure_msg, setup_logging, \
+    skip_warn
 
 requests.packages.urllib3.disable_warnings()
 
 DEBUG = False  # Print debug messages
-DEBUG_LOG = False  # Write log file
 
-LOG_FILE = 'zhmc_partition.log' if DEBUG_LOG else None
+# Logging for zhmcclient HMC interactions and test functions
+LOGGING = False
+LOG_FILE = 'test_zhmc_partition.log' if LOGGING else None
 
 # Partition properties that are not always present, but only under certain
 # conditions.
@@ -501,6 +503,119 @@ def assert_partition_props(act_props, exp_props, where):
         assert act_props['boot-storage-volume-name'] == exp_boot_sv_name
 
 
+PARTITION_FACTS_TESTCASES = [
+    # The list items are tuples with the following items:
+    # - desc (string): description of the testcase.
+    # - select_properties (list): Input for select_properties module parm
+    # - exp_prop_names (list): Names of expected properties in module
+    #   result (HMC-formatted) in case of module success. The module may
+    #   return more then those listed.
+    # - not_prop_names (list): Names of unexpected properties in module
+    #   result (HMC-formatted) in case of module success. The module must
+    #   not return those listed.
+    # - exp_msg (string): Expected message pattern in case of module failure,
+    #   or None for module success.
+    # - exp_changed (bool): Boolean for expected 'changed' flag.
+    # - run: Indicates whether the test should be run, or 'pdb' for debugger.
+
+    (
+        "Default input parms = full properties",
+        None,
+        [
+            'name',
+            'object-uri',
+            'description',
+            'status',
+            'partition-id',
+        ],
+        [],
+        None,
+        False,
+        True,
+    ),
+    (
+        "select empty list of properties",
+        [],
+        [
+            'name',             # always returned
+            'object-uri',       # always returned
+        ],
+        [
+            'description',
+            'status',
+            'partition-id',
+        ],
+        None,
+        False,
+        True,
+    ),
+    (
+        "select one property",
+        ['description'],
+        [
+            'name',
+            'object-uri',
+            'description',
+        ],
+        [
+            'status',
+            'partition-id',
+        ],
+        None,
+        False,
+        True,
+    ),
+    (
+        "select two properties",
+        ['description', 'status'],
+        [
+            'name',
+            'object-uri',
+            'description',
+            'status',
+        ],
+        [
+            'partition-id',
+        ],
+        None,
+        False,
+        True,
+    ),
+    (
+        "select property with underscore",
+        ['partition_id'],
+        [
+            'name',
+            'object-uri',
+            'partition-id',
+        ],
+        [
+            'description',
+            'status',
+        ],
+        None,
+        False,
+        True,
+    ),
+    (
+        "select property with hyphen",
+        ['partition-id'],
+        [
+            'name',
+            'object-uri',
+            'partition-id',
+        ],
+        [
+            'description',
+            'status',
+        ],
+        None,
+        False,
+        True,
+    ),
+]
+
+
 @pytest.mark.parametrize(
     "check_mode", [
         pytest.param(False, id="check_mode=False"),
@@ -508,19 +623,25 @@ def assert_partition_props(act_props, exp_props, where):
     ]
 )
 @pytest.mark.parametrize(
-    "partition_type", [
-        pytest.param('ssc', id="partition_type=ssc"),
-        pytest.param('linux', id="partition_type=linux"),
-    ]
-)
+    "desc, select_properties, exp_prop_names, not_prop_names, "
+    "exp_msg, exp_changed, run",
+    PARTITION_FACTS_TESTCASES)
 @mock.patch("plugins.modules.zhmc_partition.AnsibleModule", autospec=True)
 def test_zhmc_partition_facts(
-        ansible_mod_cls, partition_type, check_mode, dpm_mode_cpcs):  # noqa: F811, E501
+        ansible_mod_cls,
+        desc, select_properties, exp_prop_names, not_prop_names,
+        exp_msg, exp_changed, run,
+        check_mode, dpm_mode_cpcs):  # noqa: F811, E501
     """
     Test the zhmc_partition module with state=facts on DPM mode CPCs.
     """
     if not dpm_mode_cpcs:
         pytest.skip("HMC definition does not include any CPCs in DPM mode")
+
+    if not run:
+        skip_warn("Testcase is disabled in testcase definition")
+
+    setup_logging(LOGGING, 'test_zhmc_partition_facts', LOG_FILE)
 
     for cpc in dpm_mode_cpcs:
         assert cpc.dpm_enabled
@@ -533,14 +654,9 @@ def test_zhmc_partition_facts(
 
         faked_session = session if hd.mock_file else None
 
-        # Determine a random existing partition of the desired type to test.
+        # Determine a random existing partition
         partitions = cpc.partitions.list()
-        typed_partitions = [p for p in partitions
-                            if p.get_property('type') == partition_type]
-        if len(typed_partitions) == 0:
-            pytest.skip("CPC '{c}' has no partitions of type '{t}'".
-                        format(c=cpc.name, t=partition_type))
-        partition = random.choice(typed_partitions)
+        partition = random.choice(partitions)
 
         where = "partition '{p}'".format(p=partition.name)
 
@@ -551,13 +667,14 @@ def test_zhmc_partition_facts(
             'cpc_name': cpc.name,
             'name': partition.name,
             'state': 'facts',
+            'select_properties': select_properties,
             'image_name': None,
             'image_file': None,
             'ins_file': None,
             'properties': {},
             'expand_storage_groups': False,
             'expand_crypto_adapters': False,
-            'log_file': None,
+            'log_file': LOG_FILE,
             '_faked_session': faked_session,
         }
 
@@ -575,11 +692,17 @@ def test_zhmc_partition_facts(
             format(w=where, e=exit_code, m=get_failure_msg(mod_obj))
 
         # Assert module output
-        changed, output_props = get_module_output(mod_obj)
+        changed, part_properties = get_module_output(mod_obj)
         assert changed is False, \
             "{w}: Module returned changed={c}". \
             format(w=where, c=changed)
-        assert_partition_props(output_props, partition.properties, where)
+
+        # Check the presence and absence of properties in the result
+        part_prop_names = list(part_properties.keys())
+        for pname in exp_prop_names:
+            assert pname in part_prop_names
+        for pname in not_prop_names:
+            assert pname not in part_prop_names
 
 
 PARTITION_STATE_TESTCASES = [
@@ -790,6 +913,8 @@ def test_zhmc_partition_state(
     if not run:
         pytest.skip("Testcase disabled: {0}".format(desc))
 
+    setup_logging(LOGGING, 'test_zhmc_partition_state', LOG_FILE)
+
     for cpc in dpm_mode_cpcs:
         assert cpc.dpm_enabled
 
@@ -829,6 +954,7 @@ def test_zhmc_partition_state(
                 'cpc_name': cpc.name,
                 'name': partition_name,
                 'state': input_state,
+                'select_properties': None,
                 'image_name': None,
                 'image_file': None,
                 'ins_file': None,
@@ -1087,6 +1213,8 @@ def test_zhmc_partition_properties(
     if not dpm_mode_cpcs:
         pytest.skip("HMC definition does not include any CPCs in DPM mode")
 
+    setup_logging(LOGGING, 'test_zhmc_partition_properties', LOG_FILE)
+
     partition_type, state = type_state
 
     for cpc in dpm_mode_cpcs:
@@ -1249,6 +1377,7 @@ def test_zhmc_partition_properties(
                     'cpc_name': cpc.name,
                     'name': partition_name,
                     'state': state,  # no state change
+                    'select_properties': None,
                     'image_name': None,
                     'image_file': None,
                     'ins_file': None,
@@ -1337,6 +1466,8 @@ def test_zhmc_partition_boot_stovol(
     if not dpm_mode_cpcs:
         pytest.skip("HMC definition does not include any CPCs in DPM mode")
 
+    setup_logging(LOGGING, 'test_zhmc_partition_boot_stovol', LOG_FILE)
+
     partition_type, state = type_state
 
     for cpc in dpm_mode_cpcs:
@@ -1413,6 +1544,7 @@ def test_zhmc_partition_boot_stovol(
                 'cpc_name': cpc.name,
                 'name': partition_name,
                 'state': state,  # no state change
+                'select_properties': None,
                 'image_name': None,
                 'image_file': None,
                 'ins_file': None,

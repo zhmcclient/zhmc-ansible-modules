@@ -771,6 +771,10 @@ def ensure_lpar_active(
                     operation_timeout=timeout,
                     force=True)
                 status = pull_lpar_status(lpar)
+            else:
+                # In check mode, we assume the LPAR is not auto-started and
+                # would have successfully activated.
+                status = 'not-operating'
             changed = True
         else:
             logger.debug("LPAR %r is in status %r and force is not specified, "
@@ -785,13 +789,16 @@ def ensure_lpar_active(
                 activation_profile_name=activation_profile_name,
                 operation_timeout=timeout)
             status = pull_lpar_status(lpar)
+        else:
+            # In check mode, we assume the LPAR is not auto-started and
+            # would have successfully activated.
+            status = 'not-operating'
         changed = True
 
     logger.debug("LPAR %r is now in status %r%s",
                  lpar.name, status, check_mode_txt)
 
-    if not check_mode and status not in \
-            ('not-operating', 'operating', 'exceptions'):
+    if status not in ('not-operating', 'operating', 'exceptions'):
         raise StatusError(
             "Could not get LPAR {0!r} from {1!r} status into "
             "an active or loaded state; current status is: {2!r}".
@@ -912,6 +919,10 @@ def ensure_lpar_loaded(
                     operation_timeout=timeout,
                     force=True)
                 status = pull_lpar_status(lpar)
+            else:
+                # In check mode, we assume the LPAR would have successfully
+                # re-loaded.
+                status = 'operating'
             changed = True
         else:
             logger.debug("LPAR %r is in status %r and force is not specified, "
@@ -926,6 +937,10 @@ def ensure_lpar_loaded(
                 activation_profile_name=activation_profile_name,
                 operation_timeout=timeout)
             status = pull_lpar_status(lpar)
+        else:
+            # In check mode, we assume the LPAR is not auto-started and
+            # would have successfully activated.
+            status = 'not-operating'
         changed = True
 
     if status == 'not-operating':
@@ -940,12 +955,16 @@ def ensure_lpar_loaded(
                 store_status_indicator=store_status_indicator,
                 operation_timeout=timeout)
             status = pull_lpar_status(lpar)
+        else:
+            # In check mode, we assume the LPAR would have successfully
+            # loaded.
+            status = 'operating'
         changed = True
 
     logger.debug("LPAR %r is now in status %r%s",
                  lpar.name, status, check_mode_txt)
 
-    if not check_mode and status not in ('operating', 'exceptions'):
+    if status not in ('operating', 'exceptions'):
         raise StatusError(
             "Could not get LPAR {0!r} from {1!r} status into "
             "a loaded state; current status is: {2!r}".
@@ -1140,3 +1159,25 @@ def ensure_one_handler(logger, handler):
             break
     else:
         logger.addHandler(handler)
+
+
+def pull_properties(resource, select_prop_names, update_prop_names=None):
+    """
+    Pull the properties to be returned for the resource.
+
+    select_prop_names(list of string): Property names to limit the result to,
+      from the 'select_properties' module input parameter, using underscores
+      instead of hyphens. If None, full properties are pulled.
+
+    update_prop_names(list of string): Property names to be updated from
+      the 'properties' module input parameter, using underscores instead of
+      hyphens.
+    """
+    if select_prop_names is None:
+        resource.pull_full_properties()
+    else:
+        prop_names = [pn.replace('_', '-') for pn in select_prop_names]
+        if update_prop_names is not None:
+            prop_names += [pn.replace('_', '-') for pn in update_prop_names]
+        if prop_names:
+            resource.pull_properties(prop_names)

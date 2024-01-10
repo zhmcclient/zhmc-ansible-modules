@@ -45,7 +45,7 @@ requests.packages.urllib3.disable_warnings()
 DEBUG = False
 
 # Logging for zhmcclient HMC interactions and test functions
-LOGGING = True
+LOGGING = False
 LOG_FILE = 'test_zhmc_lpar.log'
 
 # LPAR properties that are not always present, but only under certain
@@ -761,6 +761,7 @@ def test_zhmc_lpar_state(
                 'cpc_name': cpc.name,
                 'name': lpar_name,
                 'state': input_state,
+                'select_properties': None,
                 'activation_profile_name': ap_name,
                 'load_address': input_kwargs.get('load_address', None),
                 'load_parameter': input_kwargs.get('load_parameter', None),
@@ -830,3 +831,235 @@ def test_zhmc_lpar_state(
             logger.info("Cleanup: Setting 'load-at-activation' = %r in image "
                         "profile %r", saved_auto_load, iap.name)
             set_resource_property(iap, 'load-at-activation', saved_auto_load)
+
+
+LPAR_FACTS_TESTCASES = [
+    # The list items are tuples with the following items:
+    # - desc (string): description of the testcase.
+    # - select_properties (list): Input for select_properties module parm
+    # - exp_prop_names (list): Names of expected properties in module
+    #   result (HMC-formatted) in case of module success. The module may
+    #   return more then those listed.
+    # - not_prop_names (list): Names of unexpected properties in module
+    #   result (HMC-formatted) in case of module success. The module must
+    #   not return those listed.
+    # - exp_msg (string): Expected message pattern in case of module failure,
+    #   or None for module success.
+    # - exp_changed (bool): Boolean for expected 'changed' flag.
+    # - run: Indicates whether the test should be run, or 'pdb' for debugger.
+
+    (
+        "Default input parms = full properties",
+        None,
+        [
+            'name',
+            'object-uri',
+            'description',
+            'status',
+            'activation-mode',
+        ],
+        [],
+        None,
+        False,
+        True,
+    ),
+    (
+        "select empty list of properties",
+        [],
+        [
+            'name',             # always returned
+            'object-uri',       # always returned
+        ],
+        [
+            'description',
+            'status',
+            'activation-mode',
+        ],
+        None,
+        False,
+        True,
+    ),
+    (
+        "select one property",
+        ['description'],
+        [
+            'name',
+            'object-uri',
+            'description',
+        ],
+        [
+            'status',
+            'activation-mode',
+        ],
+        None,
+        False,
+        True,
+    ),
+    (
+        "select two properties",
+        ['description', 'status'],
+        [
+            'name',
+            'object-uri',
+            'description',
+            'status',
+        ],
+        [
+            'activation-mode',
+        ],
+        None,
+        False,
+        True,
+    ),
+    (
+        "select property with underscore",
+        ['activation_mode'],
+        [
+            'name',
+            'object-uri',
+            'activation-mode',
+        ],
+        [
+            'description',
+            'status',
+        ],
+        None,
+        False,
+        True,
+    ),
+    (
+        "select property with hyphen",
+        ['activation-mode'],
+        [
+            'name',
+            'object-uri',
+            'activation-mode',
+        ],
+        [
+            'description',
+            'status',
+        ],
+        None,
+        False,
+        True,
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "check_mode", [
+        pytest.param(False, id="check_mode=False"),
+        pytest.param(True, id="check_mode=True"),
+    ]
+)
+@pytest.mark.parametrize(
+    "desc, select_properties, exp_prop_names, not_prop_names, "
+    "exp_msg, exp_changed, run",
+    LPAR_FACTS_TESTCASES)
+@mock.patch("plugins.modules.zhmc_lpar.AnsibleModule", autospec=True)
+def test_zhmc_lpar_facts(
+        ansible_mod_cls,
+        desc, select_properties, exp_prop_names, not_prop_names,
+        exp_msg, exp_changed, run,
+        check_mode, classic_mode_cpcs):  # noqa: F811, E501
+    # pylint: disable=redefined-outer-name, unused-argument
+    """
+    Test the zhmc_lpar module with state=facts.
+
+    The test LPARs can be in any status.
+    """
+    if not classic_mode_cpcs:
+        pytest.skip("HMC definition does not include any CPCs in classic mode")
+
+    if not run:
+        skip_warn("Testcase is disabled in testcase definition")
+
+    logger = setup_logging(LOGGING, 'test_zhmc_lpar_facts', LOG_FILE)
+
+    for cpc in classic_mode_cpcs:
+        assert not cpc.dpm_enabled
+
+        session = cpc.manager.session
+        hd = session.hmc_definition
+        hmc_host = hd.host
+        hmc_auth = dict(userid=hd.userid, password=hd.password,
+                        ca_certs=hd.ca_certs, verify=hd.verify)
+
+        faked_session = session if hd.mock_file else None
+
+        # Pick any LPAR on the CPC
+        lpars = cpc.lpars.list()
+        if not lpars:
+            pytest.skip("No LPARs exist on CPC {c}.".format(c=cpc.name))
+        lpar = random.choice(lpars)
+
+        msg = ("Testing on CPC {c} with LPAR {p!r}".
+               format(c=cpc.name, p=lpar.name))
+        print(msg)
+        logger.info(msg)
+
+        if run == 'pdb':
+            pdb.set_trace()
+
+        # Prepare module input parameters (must be all required + optional)
+        params = {
+            'hmc_host': hmc_host,
+            'hmc_auth': hmc_auth,
+            'cpc_name': cpc.name,
+            'name': lpar.name,
+            'state': 'facts',
+            'select_properties': select_properties,
+            'activation_profile_name': None,
+            'load_address': None,
+            'load_parameter': None,
+            'clear_indicator': True,
+            'store_status_indicator': False,
+            'timeout': 60,
+            'force': False,
+            'os_ipl_token': None,
+            'properties': None,
+            'log_file': LOG_FILE,
+            '_faked_session': faked_session,
+        }
+
+        mod_obj = mock_ansible_module(ansible_mod_cls, params, check_mode)
+
+        with pytest.raises(SystemExit) as exc_info:
+
+            # Exercise the code to be tested
+            zhmc_lpar.main()
+
+        exit_code = exc_info.value.args[0]
+
+        if exit_code != 0:
+            msg = get_failure_msg(mod_obj)
+            if msg.startswith('HTTPError: 403,1'):
+                pytest.skip("HMC user {u!r} is not permitted to access "
+                            "test LPAR {ln!r}".
+                            format(u=hd.userid, ln=lpar.name))
+            assert exp_msg is not None, (
+                "Module should have succeeded on LPAR {ln!r} but failed "
+                "with exit code {e} and message:\n{m}".
+                format(ln=lpar.name, e=exit_code, m=msg))
+            assert re.search(exp_msg, msg), (
+                "Module failed as expected on LPAR {ln!r}, but the error "
+                "message is unexpected:\n{m}".format(ln=lpar.name, m=msg))
+        else:
+            assert exp_msg is None, (
+                "Module should have failed on LPAR {ln!r} but succeeded. "
+                "Expected failure message pattern:\n{em!r} ".
+                format(ln=lpar.name, em=exp_msg))
+
+            changed, lpar_properties = get_module_output(mod_obj)
+            if changed != exp_changed:
+                raise AssertionError(
+                    "Unexpected change flag returned: actual: {0}, "
+                    "expected: {1}\n".
+                    format(changed, exp_changed))
+
+            # Check the presence and absence of properties in the result
+            lpar_prop_names = list(lpar_properties.keys())
+            for pname in exp_prop_names:
+                assert pname in lpar_prop_names
+            for pname in not_prop_names:
+                assert pname not in lpar_prop_names

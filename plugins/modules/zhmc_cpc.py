@@ -126,6 +126,24 @@ options:
     type: str
     choices: ['inactive', 'active', 'set', 'facts', 'upgrade']
     required: true
+  select_properties:
+    description:
+      - "Limits the returned properties of the CPC to those specified in this
+         parameter plus those specified in the C(properties) parameter."
+      - "The properties can be specified with underscores or hyphens in their
+         names."
+      - "Null indicates not to limit the returned properties in this way."
+      - "This parameter is ignored for C(state) values that cause no properties
+         to be returned."
+      - "The returned child resources (adapters, partitions, storage groups)
+         cannot be excluded using this parameter."
+      - "The specified properties are passed to the 'Get CPC Properties' HMC
+         operation using the 'properties' query parameter and save time for
+         the HMC to pull together all properties."
+    type: list
+    elements: str
+    required: false
+    default: null
   activation_profile_name:
     description:
       - "The name of the reset activation profile to be used when activating the
@@ -251,7 +269,11 @@ msg:
   returned: failure
   type: str
 cpc:
-  description: "The CPC and its adapters, partitions, and storage groups."
+  description:
+    - "For C(state=inactive), an empty dictionary."
+    - "For C(state=active|set|facts|upgrade), the resource properties of the
+       CPC after after any specified updates have been applied, and its
+       adapters, partitions, and storage groups."
   returned: success
   type: dict
   contains:
@@ -387,7 +409,7 @@ from ansible.module_utils.basic import AnsibleModule  # noqa: E402
 from ..module_utils.common import log_init, open_session, close_session, \
     hmc_auth_parameter, Error, StatusError, ParameterError, to_unicode, \
     process_normal_property, missing_required_lib, \
-    common_fail_on_import_errors  # noqa: E402
+    common_fail_on_import_errors, pull_properties  # noqa: E402
 
 try:
     import requests.packages.urllib3
@@ -535,6 +557,40 @@ def add_artificial_properties(cpc_properties, cpc):
                                         for sg in storage_groups]
 
 
+def update_cpc_properties(cpc, params, check_mode):
+    """
+    Update the properties of the CPC on the HMC.
+
+    Returns the properties to be returned from the module.
+    """
+
+    input_props = params['properties']  # with underscores
+    if input_props is None:
+        input_props = {}
+    input_prop_names = list(input_props.keys())
+    select_prop_names = params['select_properties']  # with underscores
+
+    changed = False
+
+    pull_properties(cpc, select_prop_names, input_prop_names)
+    cpc_properties = dict(cpc.properties)
+    update_props = process_properties(cpc, params)
+
+    if update_props:
+        if not check_mode:
+            cpc.update_properties(update_props)
+        # Some updates of CPC properties are not reflected in a new
+        # retrieval of properties until after a few seconds (usually the
+        # second retrieval).
+        # Therefore, we construct the modified result based upon the input
+        # changes, and not based upon newly retrieved properties.
+        cpc_properties.update(update_props)
+
+        changed = True
+
+    return changed, cpc_properties
+
+
 def ensure_active(module):
     """
     Ensure the CPC is active, and then set the properties.
@@ -586,23 +642,14 @@ def ensure_active(module):
                 "CPC {0!r} cannot be activated because it is in status {1!r}".
                 format(cpc_name, cpc_status))
 
-        # Set the properties
-        cpc.pull_full_properties()
-        result = dict(cpc.properties)
-        update_props = process_properties(cpc, module.params)
-        if update_props:
-            if not module.check_mode:
-                cpc.update_properties(update_props)
-            # Some updates of CPC properties are not reflected in a new
-            # retrieval of properties until after a few seconds (usually the
-            # second retrieval).
-            # Therefore, we construct the modified result based upon the input
-            # changes, and not based upon newly retrieved properties.
-            result.update(update_props)
-            changed = True
-        add_artificial_properties(result, cpc)
+        # Update the properties of the CPC.
+        _changed, cpc_properties = update_cpc_properties(
+            cpc, module.params, module.check_mode)
+        changed |= _changed
 
-        return changed, result
+        add_artificial_properties(cpc_properties, cpc)
+
+        return changed, cpc_properties
 
     finally:
         close_session(session, logoff)
@@ -677,24 +724,14 @@ def ensure_set(module):
         cpc = client.cpcs.find(name=cpc_name)
         # The default exception handling is sufficient for the above.
 
-        # Set the properties
-        cpc.pull_full_properties()
-        result = dict(cpc.properties)
-        update_props = process_properties(cpc, module.params)
-        if update_props:
-            if not module.check_mode:
-                cpc.update_properties(update_props)
-            # Some updates of CPC properties are not reflected in a new
-            # retrieval of properties until after a few seconds (usually the
-            # second retrieval).
-            # Therefore, we construct the modified result based upon the input
-            # changes, and not based upon newly retrieved properties.
-            result.update(update_props)
-            changed = True
+        # Update the properties of the CPC.
+        _changed, cpc_properties = update_cpc_properties(
+            cpc, module.params, module.check_mode)
+        changed |= _changed
 
-        add_artificial_properties(result, cpc)
+        add_artificial_properties(cpc_properties, cpc)
 
-        return changed, result
+        return changed, cpc_properties
 
     finally:
         close_session(session, logoff)
@@ -711,6 +748,7 @@ def facts(module):
     """
 
     cpc_name = module.params['name']
+    select_prop_names = module.params['select_properties']  # with underscores
 
     session, logoff = open_session(module.params)
     try:
@@ -718,11 +756,12 @@ def facts(module):
         cpc = client.cpcs.find(name=cpc_name)
         # The default exception handling is sufficient for the above.
 
-        cpc.pull_full_properties()
-        result = dict(cpc.properties)
-        add_artificial_properties(result, cpc)
+        pull_properties(cpc, select_prop_names)
+        cpc_properties = dict(cpc.properties)
 
-        return False, result
+        add_artificial_properties(cpc_properties, cpc)
+
+        return False, cpc_properties
 
     finally:
         close_session(session, logoff)
@@ -742,6 +781,7 @@ def upgrade(module):
     upgrade_timeout = module.params['upgrade_timeout']
     accept_firmware = module.params['accept_firmware']
     cpc_name = module.params['name']
+    select_prop_names = module.params['select_properties']  # with underscores
 
     session, logoff = open_session(module.params)
     try:
@@ -775,11 +815,12 @@ def upgrade(module):
                 else:
                     raise
 
-        cpc.pull_full_properties()
-        result = dict(cpc.properties)
-        add_artificial_properties(result, cpc)
+        pull_properties(cpc, select_prop_names)
+        cpc_properties = dict(cpc.properties)
 
-        return changed, result
+        add_artificial_properties(cpc_properties, cpc)
+
+        return changed, cpc_properties
 
     finally:
         close_session(session, logoff)
@@ -817,6 +858,8 @@ def main():
         name=dict(required=True, type='str'),
         state=dict(required=True, type='str',
                    choices=['inactive', 'active', 'set', 'facts', 'upgrade']),
+        select_properties=dict(required=False, type='list', elements='str',
+                               default=None),
         activation_profile_name=dict(required=False, type='str', default=None),
         properties=dict(required=False, type='dict', default=None),
         bundle_level=dict(required=False, type='str', default=None),

@@ -145,6 +145,22 @@ options:
     required: true
     choices: ['absent', 'stopped', 'active', 'iso_mount', 'iso_unmount',
               'facts']
+  select_properties:
+    description:
+      - "Limits the returned properties of the partition to those specified in
+         this parameter plus those specified in the C(properties) parameter."
+      - "The properties can be specified with underscores or hyphens in their
+         names."
+      - "Null indicates not to limit the returned properties in this way."
+      - "This parameter is ignored for C(state) values that cause no properties
+         to be returned."
+      - "The specified properties are passed to the 'Get Partition Properties'
+         HMC operation using the 'properties' query parameter and save time for
+         the HMC to pull together all properties."
+    type: list
+    elements: str
+    required: false
+    default: null
   properties:
     description:
       - "Dictionary with input properties for the partition, for
@@ -586,7 +602,7 @@ from ..module_utils.common import log_init, open_session, close_session, \
     hmc_auth_parameter, Error, ParameterError, StatusError, stop_partition, \
     start_partition, wait_for_transition_completion, eq_hex, to_unicode, \
     process_normal_property, missing_required_lib, ImageError, \
-    common_fail_on_import_errors  # noqa: E402
+    common_fail_on_import_errors, pull_properties  # noqa: E402
 
 try:
     import requests.packages.urllib3
@@ -1761,6 +1777,7 @@ def ensure_active(params, check_mode):
     partition_name = params['name']
     expand_storage_groups = params['expand_storage_groups']
     expand_crypto_adapters = params['expand_crypto_adapters']
+    select_prop_names = params['select_properties']  # with underscores
 
     changed = False
     result = {}
@@ -1773,7 +1790,7 @@ def ensure_active(params, check_mode):
 
         try:
             partition = cpc.partitions.find(name=partition_name)
-            partition.pull_full_properties()
+            pull_properties(partition, select_prop_names)
         except zhmcclient.NotFound:
             partition = None
 
@@ -1832,7 +1849,7 @@ def ensure_active(params, check_mode):
             # Properties are refreshed only when not in check mode, because
             # in check mode we have local (client-side) changes that are not
             # in the HMC.
-            partition.pull_full_properties()
+            pull_properties(partition, select_prop_names)
 
             status = partition.get_property('status')
             if status not in ('active', 'degraded'):
@@ -1865,6 +1882,7 @@ def ensure_stopped(params, check_mode):
     partition_name = params['name']
     expand_storage_groups = params['expand_storage_groups']
     expand_crypto_adapters = params['expand_crypto_adapters']
+    select_prop_names = params['select_properties']  # with underscores
 
     changed = False
     result = {}
@@ -1877,7 +1895,7 @@ def ensure_stopped(params, check_mode):
 
         try:
             partition = cpc.partitions.find(name=partition_name)
-            partition.pull_full_properties()
+            pull_properties(partition, select_prop_names)
         except zhmcclient.NotFound:
             partition = None
 
@@ -1928,7 +1946,7 @@ def ensure_stopped(params, check_mode):
             # Properties are refreshed only when not in check mode, because
             # in check mode we have local (client-side) changes that are not
             # in the HMC.
-            partition.pull_full_properties()
+            pull_properties(partition, select_prop_names)
 
             status = partition.get_property('status')
             if status not in ('stopped'):
@@ -2101,6 +2119,7 @@ def facts(params, check_mode):
     partition_name = params['name']
     expand_storage_groups = params['expand_storage_groups']
     expand_crypto_adapters = params['expand_crypto_adapters']
+    select_prop_names = params['select_properties']  # with underscores
 
     changed = False
     result = {}
@@ -2112,7 +2131,7 @@ def facts(params, check_mode):
         cpc = client.cpcs.find(name=cpc_name)
 
         partition = cpc.partitions.find(name=partition_name)
-        partition.pull_full_properties()
+        pull_properties(partition, select_prop_names)
 
         result = dict(partition.properties)
         add_artificial_properties(
@@ -2160,6 +2179,8 @@ def main():
         state=dict(required=True, type='str',
                    choices=['absent', 'stopped', 'active', 'iso_mount',
                             'iso_unmount', 'facts']),
+        select_properties=dict(required=False, type='list', elements='str',
+                               default=None),
         properties=dict(required=False, type='dict', default=None),
         image_name=dict(required=False, type='str', default=None),
         image_file=dict(required=False, type='str', default=None),

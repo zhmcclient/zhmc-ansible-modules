@@ -127,6 +127,22 @@ state
   | **choices**: inactive, active, loaded, reset_clear, reset_normal, set, facts
 
 
+select_properties
+  Limits the returned properties of the LPAR to those specified in this parameter plus those specified in the \ :literal:`properties`\  parameter.
+
+  The properties can be specified with underscores or hyphens in their names.
+
+  Null indicates not to limit the returned properties in this way.
+
+  This parameter is ignored for \ :literal:`state`\  values that cause no properties to be returned.
+
+  The specified properties are passed to the 'Get Logical Partition Properties' HMC operation using the 'properties' query parameter and save time for the HMC to pull together all properties.
+
+  | **required**: False
+  | **type**: list
+  | **elements**: str
+
+
 activation_profile_name
   The name of the image or load activation profile to be used when the LPAR needs to be activated, for \ :literal:`state=active`\  and \ :literal:`state=loaded`\ .
 
@@ -350,7 +366,9 @@ msg
   | **type**: str
 
 lpar
-  The resource properties of the LPAR, after any specified updates have been applied, for \ :literal:`state=active`\ , \ :literal:`state=loaded`\  and \ :literal:`state=set`\ . For any other values of \ :literal:`state`\ , the dictionary will be empty.
+  For \ :literal:`state=inactive|reset\_clear|reset\_normal`\ , an empty dictionary.
+
+  For \ :literal:`state=active|loaded|set|facts`\ , the resource properties of the LPAR after after any specified updates have been applied.
 
   Note that the returned properties may show different values than the ones that were specified as input for the update. For example, memory properties may be rounded up, hexadecimal strings may be shown with a different representation format, and other properties may change as a result of updating some properties. For details, see the data model of the 'Logical Partition' object in the :term:\`HMC API\` book.
 
