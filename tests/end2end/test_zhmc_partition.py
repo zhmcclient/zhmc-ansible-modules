@@ -551,6 +551,9 @@ def test_zhmc_partition_facts(
             'cpc_name': cpc.name,
             'name': partition.name,
             'state': 'facts',
+            'image_name': None,
+            'image_file': None,
+            'ins_file': None,
             'properties': {},
             'expand_storage_groups': False,
             'expand_crypto_adapters': False,
@@ -826,9 +829,12 @@ def test_zhmc_partition_state(
                 'cpc_name': cpc.name,
                 'name': partition_name,
                 'state': input_state,
+                'image_name': None,
+                'image_file': None,
+                'ins_file': None,
+                'properties': input_props2,
                 'expand_storage_groups': False,
                 'expand_crypto_adapters': False,
-                'properties': input_props2,
                 'log_file': LOG_FILE,
                 '_faked_session': faked_session,
             }
@@ -1243,6 +1249,9 @@ def test_zhmc_partition_properties(
                     'cpc_name': cpc.name,
                     'name': partition_name,
                     'state': state,  # no state change
+                    'image_name': None,
+                    'image_file': None,
+                    'ins_file': None,
                     'properties': update_props,
                     'expand_storage_groups': False,
                     'expand_crypto_adapters': False,
@@ -1404,6 +1413,9 @@ def test_zhmc_partition_boot_stovol(
                 'cpc_name': cpc.name,
                 'name': partition_name,
                 'state': state,  # no state change
+                'image_name': None,
+                'image_file': None,
+                'ins_file': None,
                 'properties': update_props,
                 'expand_storage_groups': False,
                 'expand_crypto_adapters': False,
@@ -1455,3 +1467,149 @@ def test_zhmc_partition_boot_stovol(
                 partition.detach_storage_group(stogrp)
                 stogrp.delete()
             teardown_partition(hd, cpc, partition_name)
+
+
+PARTITION_ISO_MOUNT_TESTCASES = [
+    # The list items are tuples with the following items:
+    # - desc (string): description of the testcase.
+    # - image_name (string): image_name module input parameter.
+    # - image_file (string): image_file module input parameter.
+    # - ins_file (string): ins_file module input parameter.
+    # - exp_msg (string): Expected message pattern in case of module failure,
+    #   or None for module success.
+    # - exp_changed (bool): Boolean for expected 'changed' flag.
+
+    (
+        "Missing required input parameter image_name",
+        None,
+        'foo',
+        'bar',
+        "Missing required module input parameter",
+        False,
+    ),
+    (
+        "Missing required input parameter image_file",
+        'foo',
+        None,
+        'bar',
+        "Missing required module input parameter",
+        False,
+    ),
+    (
+        "Missing required input parameter ins_file",
+        'foo',
+        'bar',
+        None,
+        "Missing required module input parameter",
+        False,
+    ),
+    (
+        "ISO image file does not exist",
+        'my_image',
+        './non-existing.iso',
+        '/dummy.ins',
+        "Cannot open ISO image file",
+        False,
+    ),
+    # TODO: Testcases with valid ISO file
+]
+
+
+@pytest.mark.parametrize(
+    "check_mode", [
+        pytest.param(False, id="check_mode=False"),
+        pytest.param(True, id="check_mode=True"),
+    ]
+)
+@pytest.mark.parametrize(
+    "desc, image_name, image_file, ins_file, exp_msg, exp_changed",
+    PARTITION_ISO_MOUNT_TESTCASES)
+@mock.patch("plugins.modules.zhmc_partition.AnsibleModule", autospec=True)
+def test_zhmc_partition_iso_mount(
+        ansible_mod_cls,
+        desc, image_name, image_file, ins_file, exp_msg, exp_changed,
+        check_mode, dpm_mode_cpcs):  # noqa: F811, E501
+    """
+    Test the zhmc_partition module with state='iso_mount'.
+    """
+
+    if not dpm_mode_cpcs:
+        pytest.skip("HMC definition does not include any CPCs in DPM mode")
+
+    for cpc in dpm_mode_cpcs:
+        assert cpc.dpm_enabled
+
+        session = cpc.manager.session
+        hd = session.hmc_definition
+        hmc_host = hd.host
+        hmc_auth = dict(userid=hd.userid, password=hd.password,
+                        ca_certs=hd.ca_certs, verify=hd.verify)
+
+        faked_session = session if hd.mock_file else None
+
+        if hd.mock_file:
+            pytest.skip("zhmcclient mock support does not implement "
+                        "ISO mount")
+
+        # Create a partition name that does not exist
+        partition_name = unique_partition_name()
+
+        # Create initial partition
+        create_props = STD_LINUX_PARTITION_HMC_INPUT_PROPS
+        create_props['type'] = 'linux'
+        partition = setup_partition(hd, cpc, partition_name, create_props,
+                                    'stopped')
+
+        try:
+
+            # Prepare module input parms (must be all required + optional)
+            params = {
+                'hmc_host': hmc_host,
+                'hmc_auth': hmc_auth,
+                'cpc_name': cpc.name,
+                'name': partition_name,
+                'state': 'iso_mount',
+                'image_name': image_name,
+                'image_file': image_file,
+                'ins_file': ins_file,
+                'properties': None,
+                'expand_storage_groups': False,
+                'expand_crypto_adapters': False,
+                'log_file': LOG_FILE,
+                '_faked_session': faked_session,
+            }
+
+            mod_obj = mock_ansible_module(
+                ansible_mod_cls, params, check_mode)
+
+            # Exercise the code to be tested
+            with pytest.raises(SystemExit) as exc_info:
+                zhmc_partition.main()
+            exit_code = exc_info.value.args[0]
+
+            if exit_code != 0:
+                msg = get_failure_msg(mod_obj)
+                if not exp_msg:
+                    raise AssertionError(
+                        "Module unexpectedly failed with exit code {e}, "
+                        "message: {m}".format(e=exit_code, m=msg))
+                if not re.search(exp_msg, msg):
+                    raise AssertionError(
+                        "Module failed as expected with exit code {e}, but "
+                        "message does not match expected pattern {mp}: {m}".
+                        format(e=exit_code, mp=exp_msg, m=msg))
+            else:
+                changed, result = get_module_output(mod_obj)
+                if exp_msg:
+                    raise AssertionError(
+                        "Module unexpectedly succeeded with changed: {c}, "
+                        "result: {r}".format(c=changed, r=result))
+
+        finally:
+            image_name = partition.get_property('boot-iso-image-name')
+            if image_name:
+                partition.unmount_iso_image()
+            teardown_partition(hd, cpc, partition_name)
+
+
+# TODO: Testcases for ISO unmount

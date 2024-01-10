@@ -109,11 +109,15 @@ state
 
   \* \ :literal:`active`\ : Ensures that the partition exists in the specified CPC, has the specified properties, and is in one of the active statuses ('active', 'degraded').
 
+  \* \ :literal:`mount\_iso`\ : Ensures that an ISO image with the specified name is mounted to the partition, and that the specified INS file is set. The content of a currnetly mounted ISO image is not verified.
+
+  \* \ :literal:`unmount\_iso`\ : Ensures that no ISO image is mounted to the partition.
+
   \* \ :literal:`facts`\ : Returns the partition properties and the properties of its child resources (HBAs, NICs, and virtual functions).
 
   | **required**: True
   | **type**: str
-  | **choices**: absent, stopped, active, facts
+  | **choices**: absent, stopped, active, iso_mount, iso_unmount, facts
 
 
 properties
@@ -143,6 +147,37 @@ properties
 
   | **required**: False
   | **type**: dict
+
+
+image_name
+  Name of the ISO image for \ :literal:`state=iso\_mount`\  (required). Not permitted for any other \ :literal:`state`\  values.
+
+  This value is shown in the 'boot-iso-image-name' property of the partition.
+
+  If an ISO image with this name is already mounted to the partition, the new image will not be mounted. The image conntent is not verified.
+
+  | **required**: False
+  | **type**: str
+
+
+image_file
+  Path name of the local ISO image file for \ :literal:`state=iso\_mount`\  (required). Not permitted for any other \ :literal:`state`\  values.
+
+  When mounting an ISO image, this file is opened for reading and its content is sent to the HMC using the 'Mount ISO Image' operation. This file is not used when an image with the name specified in \ :literal:`image\_name`\  was already mounted.
+
+  | **required**: False
+  | **type**: str
+
+
+ins_file
+  Path name of the INS file within the ISO image that will be used when booting from the ISO image for \ :literal:`state=iso\_mount`\  (required). Not permitted for any other \ :literal:`state`\  values.
+
+  This value is shown in the 'boot-iso-ins-file' property of the partition.
+
+  The 'boot-iso-ins-file' property of the partition is always updated, even when the ISO image was already mounted and thus is not re-mounted.
+
+  | **required**: False
+  | **type**: str
 
 
 expand_storage_groups
@@ -246,6 +281,25 @@ Examples
                access_mode: control
      register: part1
 
+   - name: Ensure that an ISO image is mounted to the partition
+     zhmc_partition:
+       hmc_host: "{{ my_hmc_host }}"
+       hmc_auth: "{{ my_hmc_auth }}"
+       cpc_name: "{{ my_cpc_name }}"
+       name: "{{ my_partition_name }}"
+       image_name: "{{ my_image_name }}"
+       image_file: "{{ my_image_file }}"
+       ins_file: "{{ my_ins_file }}"
+       state: iso_mount
+
+   - name: Ensure that no ISO image is mounted to the partition
+     zhmc_partition:
+       hmc_host: "{{ my_hmc_host }}"
+       hmc_auth: "{{ my_hmc_auth }}"
+       cpc_name: "{{ my_cpc_name }}"
+       name: "{{ my_partition_name }}"
+       state: iso_unmount
+
    - name: Gather facts about a partition
      zhmc_partition:
        hmc_host: "{{ my_hmc_host }}"
@@ -292,7 +346,7 @@ msg
   | **type**: str
 
 partition
-  For \ :literal:`state=absent`\ , an empty dictionary.
+  For \ :literal:`state=absent|iso\_mount|iso\_unmount`\ , an empty dictionary.
 
   For \ :literal:`state=stopped|active|facts`\ , the resource properties of the partition after any changes, including its child resources as described below.
 

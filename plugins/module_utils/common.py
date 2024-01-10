@@ -47,6 +47,13 @@ class Error(Exception):
     pass
 
 
+class ImageError(Error):
+    """
+    Indicates an error with ISO image files.
+    """
+    pass
+
+
 class ParameterError(Error):
     """
     Indicates an error with the module input parameters.
