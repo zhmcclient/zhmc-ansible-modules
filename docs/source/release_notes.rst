@@ -65,6 +65,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   error when using the 'zhmc_console' or 'zhmc_cpc' modules with 'state=upgrade'.
   (issue #834)
 
+* Fixed end2end test for zhmc_cpc_list module that failed when the HMC had
+  unmanaged CPCs or had HMC version 2.14.
+
 **Enhancements:**
 
 * Added support for Python 3.12. (issue #796)
