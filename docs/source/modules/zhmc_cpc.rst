@@ -112,6 +112,24 @@ state
   | **choices**: inactive, active, set, facts, upgrade
 
 
+select_properties
+  Limits the returned properties of the CPC to those specified in this parameter plus those specified in the \ :literal:`properties`\  parameter.
+
+  The properties can be specified with underscores or hyphens in their names.
+
+  Null indicates not to limit the returned properties in this way.
+
+  This parameter is ignored for \ :literal:`state`\  values that cause no properties to be returned.
+
+  The returned child resources (adapters, partitions, storage groups) cannot be excluded using this parameter.
+
+  The specified properties are passed to the 'Get CPC Properties' HMC operation using the 'properties' query parameter and save time for the HMC to pull together all properties.
+
+  | **required**: False
+  | **type**: list
+  | **elements**: str
+
+
 activation_profile_name
   The name of the reset activation profile to be used when activating the CPC in the classic operational mode, for \ :literal:`state=active`\ . This parameter is ignored when the CPC is in classic mode and was already active, and when the CPC is in DPM mode.
 
@@ -250,7 +268,9 @@ msg
   | **type**: str
 
 cpc
-  The CPC and its adapters, partitions, and storage groups.
+  For \ :literal:`state=inactive`\ , an empty dictionary.
+
+  For \ :literal:`state=active|set|facts|upgrade`\ , the resource properties of the CPC after after any specified updates have been applied, and its adapters, partitions, and storage groups.
 
   | **returned**: success
   | **type**: dict

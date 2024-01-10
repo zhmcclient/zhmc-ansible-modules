@@ -420,6 +420,7 @@ class TestLpar(object):
             'cpc_name': self.cpc.name,
             'name': self.lpar_name,
             'state': desired_state,
+            'select_properties': None,
             'activation_profile_name': None,  # TODO: Add to tests
             'load_address': None,
             'load_parameter': None,
@@ -505,6 +506,7 @@ class TestLpar(object):
             'cpc_name': self.cpc.name,
             'name': self.lpar_name,
             'state': desired_state,
+            'select_properties': None,
             'activation_profile_name': None,  # TODO: Add to tests
             'load_address': None,
             'load_parameter': None,
