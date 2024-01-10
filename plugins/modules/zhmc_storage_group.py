@@ -280,7 +280,8 @@ storage_group:
       elements: str
     candidate-adapter-ports:
       description: "Only present if C(expand=true): List of candidate storage
-        adapter ports of the storage group."
+        adapter ports of the storage group. Will be empty for storage group
+        types other than FCP."
       returned: "success+expand"
       type: list
       elements: dict
@@ -325,7 +326,8 @@ storage_group:
             The property names have hyphens (-) as described in that book."
     virtual-storage-resources:
       description: "Only present if C(expand=true): Virtual storage resources
-        of the storage group."
+        of the storage group. Will be empty for storage group types other than
+        FCP."
       returned: "success+expand"
       type: list
       elements: dict
@@ -754,7 +756,7 @@ def add_artificial_properties(sg_properties, storage_group, expand):
     If expand is True:
 
     * 'candidate-adapter-ports': List of Port objects, each of which is
-      represented as its dictionary of properties.
+      represented as its dictionary of properties. Only for FCP SGs.
 
       The Port properties are extended by these properties:
 
@@ -766,6 +768,7 @@ def add_artificial_properties(sg_properties, storage_group, expand):
 
     * 'virtual-storage-resources': List of VirtualStorageResource objects,
       each of which is represented as its dictionary of properties.
+      Only for FCP SGs.
 
     * 'attached-partitions': List of Partition objects to which the storage
       group is attached. Each Partition object is represented as a dictionary
@@ -779,18 +782,22 @@ def add_artificial_properties(sg_properties, storage_group, expand):
     for part in parts:
         part_names_prop.append(part.get_property('name'))
     sg_properties['attached-partition-names'] = part_names_prop
+    sg_type = storage_group.get_property('type')
 
     if expand:
 
         # Candidate adapter ports and their parent adapters (full set of props)
+        # Note: Only FCP storage groups have candidate adapter ports.
+        # This property will be an empty array for other storage group types.
         caps_prop = []
-        for cap in storage_group.list_candidate_adapter_ports(
-                full_properties=True):
-            adapter = cap.manager.adapter
-            adapter.pull_full_properties()
-            cap_properties = dict(cap.properties)
-            cap_properties['parent-adapter'] = dict(adapter.properties)
-            caps_prop.append(cap_properties)
+        if sg_type == 'fcp':
+            for cap in storage_group.list_candidate_adapter_ports(
+                    full_properties=True):
+                adapter = cap.manager.adapter
+                adapter.pull_full_properties()
+                cap_properties = dict(cap.properties)
+                cap_properties['parent-adapter'] = dict(adapter.properties)
+                caps_prop.append(cap_properties)
         sg_properties['candidate-adapter-ports'] = caps_prop
 
         # Storage volumes (full set of properties).
@@ -806,13 +813,16 @@ def add_artificial_properties(sg_properties, storage_group, expand):
         sg_properties['storage-volumes'] = svs_prop
 
         # Virtual storage resources (full set of properties).
+        # Note: Only FCP storage groups have virtual storage resources.
+        # This property will be an empty array for other storage group types.
         vsrs_prop = []
-        vsr_uris = storage_group.get_property('virtual-storage-resource-uris')
-        for vsr_uri in vsr_uris:
-            vsr = storage_group.virtual_storage_resources.resource_object(
-                vsr_uri)
-            vsr.pull_full_properties()
-            vsrs_prop.append(dict(vsr.properties))
+        if sg_type == 'fcp':
+            vsr_uris = storage_group.get_property('virtual-storage-resource-uris')
+            for vsr_uri in vsr_uris:
+                vsr = storage_group.virtual_storage_resources.resource_object(
+                    vsr_uri)
+                vsr.pull_full_properties()
+                vsrs_prop.append(dict(vsr.properties))
         sg_properties['virtual-storage-resources'] = vsrs_prop
 
         # List of attached partitions (full set of properties).
