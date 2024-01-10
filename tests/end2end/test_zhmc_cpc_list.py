@@ -42,6 +42,9 @@ LOG_FILE = 'zhmc_cpc_list.log' if DEBUG else None
 # performed.
 # Note 1: This property should not be volatile according to its description,
 #         but it has been observed to be volatile.
+# Note 2: This property should not be volatile according to its description,
+#         but its 'last-update' MCL structure field has been observed to be
+#         volatile on 2.14 HMCs.
 VOLATILE_CPC_PROPERTIES = [
     'cpc_power_consumption',
     'zcpc_power_consumption',
@@ -54,6 +57,7 @@ VOLATILE_CPC_PROPERTIES = [
     'zcpc_heat_load_water',
     'last_energy_advice_time',
     'zcpc_minimum_inlet_air_temperature',  # Note 1
+    'ec_mcl_description',  # Note 2
 ]
 
 
@@ -76,7 +80,8 @@ def get_module_output(mod_obj):
     return func(*call_args[0], **call_args[1])
 
 
-def assert_cpc_list(cpc_list, exp_cpc_dict, exp_um_cpc_dict):
+def assert_cpc_list(
+        cpc_list, include_unmanaged_cpcs, exp_cpc_dict, exp_um_cpc_dict):
     """
     Assert the output of the zhmc_cpc_list module.
 
@@ -84,6 +89,8 @@ def assert_cpc_list(cpc_list, exp_cpc_dict, exp_um_cpc_dict):
 
       cpc_list(list): Result of zhmc_cpc_list module, as a list of dicts of CPC
         properties as documented (with underscores in their names).
+
+      include_unmanaged_cpcs(bool): Include unmanaged CPCs.
 
       exp_cpc_dict(dict): Expected managed CPCs with their properties.
         Key: CPC name.
@@ -99,7 +106,8 @@ def assert_cpc_list(cpc_list, exp_cpc_dict, exp_um_cpc_dict):
     assert isinstance(cpc_list, list)
 
     exp_len = len(exp_cpc_dict)
-    exp_len += len(exp_um_cpc_dict)
+    if include_unmanaged_cpcs:
+        exp_len += len(exp_um_cpc_dict)
     assert len(cpc_list) == exp_len
 
     for cpc_item in cpc_list:
@@ -234,4 +242,5 @@ def test_zhmc_cpc_list(
     changed, cpc_list = get_module_output(mod_obj)
     assert changed is False
 
-    assert_cpc_list(cpc_list, exp_cpc_dict, exp_um_cpc_dict)
+    assert_cpc_list(
+        cpc_list, include_unmanaged_cpcs, exp_cpc_dict, exp_um_cpc_dict)
