@@ -20,16 +20,12 @@ Releases
 ========
 
 
-Version 1.7.4-dev1
-------------------
+Version 1.7.4
+-------------
 
-Released: not yet
+Released: 2024-01-11
 
 Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
-
-**Incompatible changes:**
-
-**Deprecations:**
 
 **Bug fixes:**
 
@@ -76,14 +72,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Docs: In the 'zhmc_partition_list' module, clarified that the use of the "List
   Permitted Partitions" operation does not affect the module result data.
   (related to issue #850)
-
-**Cleanup:**
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 1.7.3
