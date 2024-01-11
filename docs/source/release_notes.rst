@@ -89,7 +89,7 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Added support for Ansible 9.
 
-* Increased minimum version of zhmcclient to 1.12.0 to pick up fixes and
+* Increased minimum version of zhmcclient to 1.13.0 to pick up fixes and
   functionality.
 
 * Added new Ansible modules 'zhmc_lpar_messages' and 'zhmc_partition_messages'
