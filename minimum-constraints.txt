@@ -231,60 +231,34 @@ pip-check-reqs==2.5.3; python_version >= '3.12'
 # Indirect dependencies (not in requirements.txt or dev-requirements.txt)
 
 alabaster==0.7.9
-# appnope==0.1.0
-# args==0.1.0
 attrs==18.2.0; python_version <= '3.9'
 attrs==19.2.0; python_version >= '3.10'
-# backports-abc==0.5
 backports.functools-lru-cache==1.5; python_version == '2.7'  # technically: python_version <= '3.2'
-# backports.shutil-get-terminal-size==1.0.0
-# backports.ssl-match-hostname==3.5.0.1
-# backports-entry-points-selectable==1.1.1
 bleach==3.3.0; python_version == '2.7'
 bleach==3.3.0; python_version >= '3.5'
 certifi==2019.9.11; python_version <= '3.5'
 certifi==2023.07.22; python_version >= '3.6'
 chardet==3.0.3
-# clint==0.5.1
 configparser==4.0.2
 contextlib2==0.6.0
-# custom-inherit==2.2.2
 docopt==0.6.2
 enum34==1.1.6; python_version == '2.7'  # technically: python_version <= '3.3'
 filelock==3.2.0; python_version == '2.7'
 filelock==3.2.0; python_version == '3.5'
 filelock==3.3.0; python_version >= '3.6' and python_version <= '3.11'
 filelock==3.11.0; python_version >= '3.12'
-# future==0.18.3
-# futures==3.3.0; python_version == '2.7'  # technically: python_version <= '3.1'
-# gitdb2==2.0.0; python_version == '3.6'
 gitdb==4.0.8; python_version >= '3.6'
-# html5lib==0.999999999
-# httpretty==0.9.5
 idna==2.5
 imagesize==0.7.1
 importlib-resources==1.4.0
 isort==4.3.5
 keyring==21.4.0
 lazy-object-proxy==1.4.2
-# linecache2==1.0.0
-# mistune==0.8.1
 more-itertools==5.0.0
-# ordereddict==1.1
-# pandocfilters==1.4.1
 pathlib2==2.2.1
-# pbr==1.8.0
-# pexpect==4.2.1
-# pickleshare==0.7.4
 ply==3.10
-# prompt-toolkit==2.0.1
-# ptyprocess==0.5.1
 py==1.11.0
-# qtconsole==4.2.1
 scandir==1.9.0; python_version == '2.7'
-# sh==1.12.14
-# simplegeneric==0.8.1
-# singledispatch==3.4.0.3; python_version == '2.7'  # technically: python_version <= '3.3'
 smmap==3.0.1
 snowballstemmer==1.2.1
 sphinxcontrib-applehelp==1.0.0
@@ -293,19 +267,11 @@ sphinxcontrib-htmlhelp==2.0.0
 sphinxcontrib-jsmath==1.0.0
 sphinxcontrib-qthelp==1.0.0
 sphinxcontrib-serializinghtml==1.1.5
-# terminado==0.6
-# testpath==0.3
 toml==0.10.0
-# traceback2==1.4.0
-# traitlets==4.3.1
 typing==3.6.1; python_version == '2.7'  # technically: python_version <= '3.4'
 typing-extensions==3.10.0.0  # Used in some combinations of Python version and package level
 wcwidth==0.1.7
 webencodings==0.5.1
-# widgetsnbextension==1.2.6
-# wrapt is used by astroid
-# pylint 2.9 / astroid 2.6.1 requires wrapt>=1.11,<1.13
-# pylint 2.15 / astroid ? requires wrapt>=1.11,<2
 wrapt==1.11; python_version <= '3.9'
 wrapt==1.14; python_version >= '3.10'
 zipp==0.5.2
