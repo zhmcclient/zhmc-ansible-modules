@@ -156,7 +156,7 @@
 <li><p>List LPARs on a specific CPC (Z system) or on all managed CPCs.</p></li>
 <li><p>CPCs in DPM mode are ignored (i.e. do not lead to a failure).</p></li>
 <li><p>LPARs for which the user has no object access permission are ignored (i.e. do not lead to a failure).</p></li>
-<li><p>The module works for any HMC version. On HMCs with version 2.14.0 or higher, the “List Permitted Logical Partitions” opration is used. On older HMCs, the managed CPCs are listed and the LPARs on each CPC.</p></li>
+<li><p>On HMCs with version 2.14.0 or higher, the “List Permitted Logical Partitions” operation is used by this module. Otherwise, the managed CPCs are listed and then the LPARs on each desired CPC or CPCs are listed. This improves the execution time of the module on newer HMCs but does not affect the module result data.</p></li>
 </ul>
 </section>
 <section id="requirements">
@@ -388,6 +388,7 @@
             <dd><a href="../../1.7.1/modules/zhmc_lpar_list.html">1.7.1</a></dd>
             <dd><a href="../../1.7.2/modules/zhmc_lpar_list.html">1.7.2</a></dd>
             <dd><a href="../../1.7.3/modules/zhmc_lpar_list.html">1.7.3</a></dd>
+            <dd><a href="../../1.7.4/modules/zhmc_lpar_list.html">1.7.4</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

@@ -38,7 +38,7 @@
             IBM Z HMC collection
           </a>
               <div class="version">
-                1.7.3
+                1.7.4
 
               </div>
 <div role="search">
@@ -371,13 +371,18 @@
 <span class="w">    </span><span class="nt">properties</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Example</span><span class="nv"> </span><span class="s">user</span><span class="nv"> </span><span class="s">role</span><span class="nv"> </span><span class="s">1&quot;</span>
 <span class="w">      </span><span class="nt">permissions</span><span class="p">:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">task</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;configure-storage-storageadmin&quot;</span><span class="w">  </span><span class="c1"># Task permission to &quot;configure-storage-storageadmin&quot;</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">task</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;hardware-messages&quot;</span><span class="w">  </span><span class="c1"># Task permission to the view-only version of &quot;hardware-messages&quot;</span>
+<span class="w">        </span><span class="c1"># Task permission to &quot;configure-storage-storageadmin&quot;:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">task</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;configure-storage-storageadmin&quot;</span>
+<span class="w">        </span><span class="c1"># Task permission to the view-only version of &quot;hardware-messages&quot;:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">task</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;hardware-messages&quot;</span>
 <span class="w">          </span><span class="nt">view_only</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cpc</span><span class="w">        </span><span class="c1"># Object permission to all CPCs</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">partition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">part1</span><span class="w">  </span><span class="c1"># Object permission to part1 in cpc1</span>
+<span class="w">        </span><span class="c1"># Object permission to all CPCs:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cpc</span>
+<span class="w">        </span><span class="c1"># Object permission to part1 in cpc1:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">partition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">part1</span>
 <span class="w">          </span><span class="nt">cpc</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cpc1</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">partition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">part2</span><span class="w">  </span><span class="c1"># Object permission to part2 in cpc2</span>
+<span class="w">        </span><span class="c1"># Object permission to part2 in cpc2:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">partition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">part2</span>
 <span class="w">          </span><span class="nt">cpc</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cpc2</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rule1</span>
 </pre></div>
@@ -564,7 +569,7 @@
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.7.3
+        v: 1.7.4
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -594,6 +599,7 @@
             <dd><a href="../1.7.1/modules/zhmc_user_role.html">1.7.1</a></dd>
             <dd><a href="../1.7.2/modules/zhmc_user_role.html">1.7.2</a></dd>
             <dd><a href="../1.7.3/modules/zhmc_user_role.html">1.7.3</a></dd>
+            <dd><a href="../1.7.4/modules/zhmc_user_role.html">1.7.4</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

@@ -197,11 +197,11 @@ variable as needed, the only requirement is that the shell script must be
 found in the PATH:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nv">python_script</span><span class="o">=</span><span class="nv">$HOME</span>/local/bin/env_python
 
-$<span class="w"> </span>cat<span class="w"> </span>&gt;<span class="nv">$python_script</span><span class="w"> </span><span class="s">&lt;&lt;&#39;EOT&#39;</span>
-<span class="s">#!/bin/bash</span>
-<span class="s">py=$(which python)</span>
-<span class="s">$py &quot;$@&quot;</span>
-<span class="s">EOT</span>
+$<span class="w"> </span>cat<span class="w"> </span>&gt;<span class="nv">$python_script</span><span class="w"> </span><span class="se">\&lt;\&lt;</span><span class="s1">&#39;EOT&#39;</span>
+<span class="c1">#!/bin/bash</span>
+<span class="nv">py</span><span class="o">=</span><span class="k">$(</span>which<span class="w"> </span>python<span class="k">)</span>
+<span class="nv">$py</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$@</span><span class="s2">&quot;</span>
+EOT
 
 $<span class="w"> </span>chmod<span class="w"> </span><span class="m">755</span><span class="w"> </span><span class="nv">$python_script</span>
 </pre></div>
@@ -209,10 +209,10 @@ $<span class="w"> </span>chmod<span class="w"> </span><span class="m">755</span>
 </li>
 <li><p>Configure Ansible to invoke Python via the new shell script (using the
 <code class="docutils literal notranslate"><span class="pre">python_script</span></code> variable from the previous step):</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>-a<span class="w"> </span>/etc/ansible/hosts<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="s">&lt;&lt;EOT</span>
-<span class="s">[local:vars]</span>
-<span class="s">ansible_python_interpreter=$python_script</span>
-<span class="s">EOT</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>-a<span class="w"> </span>/etc/ansible/hosts<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="se">\&lt;\&lt;</span>EOT
+<span class="o">[</span>local:vars<span class="o">]</span>
+<span class="nv">ansible_python_interpreter</span><span class="o">=</span><span class="nv">$python_script</span>
+EOT
 </pre></div>
 </div>
 </li>
@@ -301,7 +301,7 @@ need to be opened:</p>
 <li><p>z16 / LinuxONE 4</p></li>
 </ul>
 <p>The following environments are supported for running the Ansible modules of the
-ibm_zhmc collection.</p>
+ibm.ibm_zhmc collection.</p>
 <p>Operating systems:</p>
 <ul class="simple">
 <li><p>Linux</p></li>
@@ -310,58 +310,73 @@ ibm_zhmc collection.</p>
 </ul>
 <p>Python versions:</p>
 <ul class="simple">
-<li><p>Python 2.7</p></li>
-<li><p>Python 3.5 and higher</p></li>
+<li><p>Python 2.7 to Python 3.8 are supported on a best-can-do basis</p></li>
+<li><p>Python 3.9 and higher are officially supported (depends on the Ansible version used)</p></li>
 </ul>
 <p>Ansible versions:</p>
 <ul class="simple">
-<li><p>Ansible 2.9 and higher</p></li>
+<li><p>Ansible 2.9 to 6 (ansible-core 2.13) are supported on a best-can-do basis</p></li>
+<li><p>Ansible 7 (ansible-core 2.14) and higher are officially supported</p></li>
 </ul>
-<p>Not all combinations of these Python and Ansible versions are supported, though.
-The general strategy is that all Python versions supported by the sanity test
-tool of a particular Ansible version are supported by the ibm_zhmc Ansible
-collection, as shown in the following tables:</p>
+<p>See <a class="reference external" href="https://docs.ansible.com/ansible/latest/reference_appendices/release_and_maintenance.html#ansible-core-support-matrix">Ansible-core Support Matrix</a>
+for the officially supported Ansible / ansible-core versions and their Python versions.</p>
+<p>See <a class="reference external" href="https://access.redhat.com/support/policy/updates/ansible-automation-platform">Red Hat Ansible Automation Platform Life Cycle</a>
+for the officially supported Ansible Automation Platform versions and their ansible-core
+versions.</p>
+<p>The general strategy for the ibm.ibm_zhmc collection is that all Python versions
+supported by the sanity test tool of a particular Ansible version are supported,
+as shown in the following tables:</p>
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p>Ansible</p></td>
 <td><p>Ansible core</p></td>
 <td><p>Supported Python versions</p></td>
+<td><p>Support</p></td>
 </tr>
 <tr class="row-even"><td><p>2.9</p></td>
 <td><p>ansible 2.9</p></td>
 <td><p>2.7, 3.5 - 3.8</p></td>
+<td><p>best-can-do</p></td>
 </tr>
 <tr class="row-odd"><td><p>2.10</p></td>
 <td><p>ansible 2.10</p></td>
 <td><p>2.7, 3.5 - 3.8</p></td>
+<td><p>best-can-do</p></td>
 </tr>
 <tr class="row-even"><td><p>3</p></td>
 <td><p>ansible-base 2.10</p></td>
 <td><p>2.7, 3.5 - 3.8</p></td>
+<td><p>best-can-do</p></td>
 </tr>
 <tr class="row-odd"><td><p>4</p></td>
 <td><p>ansible-core 2.11</p></td>
 <td><p>2.7, 3.5 - 3.9</p></td>
+<td><p>best-can-do</p></td>
 </tr>
 <tr class="row-even"><td><p>5</p></td>
 <td><p>ansible-core 2.12</p></td>
 <td><p>3.8 - 3.10</p></td>
+<td><p>best-can-do</p></td>
 </tr>
 <tr class="row-odd"><td><p>6</p></td>
 <td><p>ansible-core 2.13</p></td>
 <td><p>3.8 - 3.10</p></td>
+<td><p>best-can-do</p></td>
 </tr>
 <tr class="row-even"><td><p>7</p></td>
 <td><p>ansible-core 2.14</p></td>
 <td><p>3.9 - 3.11</p></td>
+<td><p>official</p></td>
 </tr>
 <tr class="row-odd"><td><p>8</p></td>
 <td><p>ansible-core 2.15</p></td>
 <td><p>3.9 - 3.11</p></td>
+<td><p>official</p></td>
 </tr>
 <tr class="row-even"><td><p>9</p></td>
 <td><p>ansible-core 2.16</p></td>
 <td><p>3.10 - 3.12</p></td>
+<td><p>official</p></td>
 </tr>
 </tbody>
 </table>
@@ -460,6 +475,7 @@ collection, as shown in the following tables:</p>
             <dd><a href="../1.7.1/installation.html">1.7.1</a></dd>
             <dd><a href="../1.7.2/installation.html">1.7.2</a></dd>
             <dd><a href="../1.7.3/installation.html">1.7.3</a></dd>
+            <dd><a href="../1.7.4/installation.html">1.7.4</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

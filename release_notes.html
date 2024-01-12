@@ -38,7 +38,7 @@
             IBM Z HMC collection
           </a>
               <div class="version">
-                1.7.3
+                1.7.4
 
               </div>
 <div role="search">
@@ -71,6 +71,7 @@
 <p class="caption" role="heading"><span class="caption-text">Appendices</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Releases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-7-4">Version 1.7.4</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-7-3">Version 1.7.3</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-7-2">Version 1.7.2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-7-1">Version 1.7.1</a></li>
@@ -123,6 +124,49 @@
              
   <section id="releases">
 <span id="id1"></span><h1>Releases<a class="headerlink" href="#releases" title="Link to this heading"></a></h1>
+<section id="version-1-7-4">
+<h2>Version 1.7.4<a class="headerlink" href="#version-1-7-4" title="Link to this heading"></a></h2>
+<p>Released: 2024-01-11</p>
+<p>Availability: <a class="reference external" href="https://console.redhat.com/ansible/automation-hub/repo/published/ibm/ibm_zhmc">AutomationHub</a>, <a class="reference external" href="https://galaxy.ansible.com/ibm/ibm_zhmc">Galaxy</a>, <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">GitHub</a></p>
+<p><strong>Bug fixes:</strong></p>
+<ul class="simple">
+<li><p>Addressed safety issues up to 2024-01-08.</p></li>
+<li><p>Fixed end2end test for zhmc_cpc_list module that failed when the HMC had
+unmanaged CPCs or had HMC version 2.14.</p></li>
+<li><p>Fixed KeyError in ‘zhmc_storage_group’ module when used with non-FCP storage
+groups, and clarified that the artificial properties ‘candidate-adapter-ports’
+and ‘virtual-storage-resources’ returned by the module will be empty arrays
+for non-FCP storage groups. (e.g. NVMe). (issue #864)</p></li>
+<li><p>Fixed that on HMC versions 2.14 and 2.15, the zhmc_adapter_list module
+failed because it tried to use the “List Permitted Adapters” operation
+that was added in HMC version 2.16 (actually API version 4.10).
+(issue #850)</p></li>
+<li><p>Fixed that on HMC versions 2.14 and 2.15, the zhmc_partition_list module
+failed because it tried to use the ‘additional-properties’ query parameter
+that was added in HMC version 2.16 (actually API version 4.10).
+(issue #850)</p></li>
+<li><p>Clarified that Ansible versions below 7 (ansible-core 2.14) are not officially
+supported, but only supported on a best-can-do basis. As part of that change,
+the Ansible sanity checks are reduced to run only on officially supported
+Ansible versions. (issue #784)</p></li>
+</ul>
+<p><strong>Enhancements:</strong></p>
+<ul class="simple">
+<li><p>Added a new make target ‘make ansible_lint’ which invokes ansible-lint.
+Fixed some of the warnings reported by ansible-lint.
+(related to issue #784)</p></li>
+<li><p>In the ‘zhmc_adapter_list’ module, improved the use of the “Permitted
+Adapters” operation so that it is now also used when the ‘additional_properties’
+module parameter is used and the HMC API version is 4.10 or higher.
+(related to issue #850)</p></li>
+<li><p>Docs: In the ‘zhmc_lpar_list’ module, clarified that the use of the “List
+Permitted Logical Partitions” operation does not affect the module result
+data. (related to issue #850)</p></li>
+<li><p>Docs: In the ‘zhmc_partition_list’ module, clarified that the use of the “List
+Permitted Partitions” operation does not affect the module result data.
+(related to issue #850)</p></li>
+</ul>
+</section>
 <section id="version-1-7-3">
 <h2>Version 1.7.3<a class="headerlink" href="#version-1-7-3" title="Link to this heading"></a></h2>
 <p>Released: 2023-12-20</p>
@@ -942,7 +986,7 @@ property update.</p></li>
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.7.3
+        v: 1.7.4
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -972,6 +1016,7 @@ property update.</p></li>
             <dd><a href="1.7.1/release_notes.html">1.7.1</a></dd>
             <dd><a href="1.7.2/release_notes.html">1.7.2</a></dd>
             <dd><a href="1.7.3/release_notes.html">1.7.3</a></dd>
+            <dd><a href="1.7.4/release_notes.html">1.7.4</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

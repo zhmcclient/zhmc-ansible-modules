@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IBM Z HMC collection &mdash; IBM Z HMC collection  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/banner.css?v=fd51b7f5" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=7f41d439"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            IBM Z HMC collection
+          </a>
+              <div class="version">
+                1.7.4
+
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">References</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="playbooks.html">Playbooks</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Community Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="community_guides.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Development</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Requirements</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html#control-node">Control node</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Appendices</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="release_notes.html">Releases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="versioning.html">Versioning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bibliography.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">IBM Z HMC collection</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">IBM Z HMC collection</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ibm-z-hmc-collection">
+<h1>IBM Z HMC collection<a class="headerlink" href="#ibm-z-hmc-collection" title="Link to this heading"></a></h1>
+<p>The <strong>IBM Z HMC collection</strong> provides <a class="reference external" href="https://www.ansible.com/">Ansible</a> modules that can manage platform
+resources on <a class="reference external" href="https://www.ibm.com/it-infrastructure/z">IBM Z</a> and <a class="reference external" href="https://www.ibm.com/it-infrastructure/linuxone/">LinuxONE</a> machines.</p>
+<p>The goal of this collection is to be able to utilize the power and ease of use
+of Ansible for the management of IBM Z platform resources.</p>
+<p>The IBM Z platform resources that can be managed include for example partitions,
+I/O adapters, the Z system itself, or various resources on its Hardware
+Management Console (HMC).</p>
+<p>The Ansible modules in this collection are fully
+<a class="reference external" href="https://docs.ansible.com/ansible/latest/reference_appendices/glossary.html#term-Idempotency">idempotent</a>,
+following an important principle for Ansible modules.
+The idempotency of a module allows Ansible playbooks to specify the desired end
+state for a resource, regardless of what the current state is. For example, an
+IBM Z partition can be specified to have <code class="docutils literal notranslate"><span class="pre">state=active</span></code> which means that
+it must exist and be in the active operational status. Depending on the current
+state of the partition, actions will be taken by the module to reach this
+desired end state: If the partition does not exist, it will be created and
+started. If it exists but is not active, it will be started. If it is already
+active, nothing will be done. Other initial states including transitional
+states such as starting or stopping also will be taken care of.
+The idempotency of modules makes Ansible playbooks restartable: If an error
+happens and some things have been changed already, the playbook can simply be
+re-run and will automatically do the right thing, because the initial state
+does not matter for reaching the desired end state.</p>
+<p>The Ansible modules in this collection are written in Python and interact with
+the Web Services API of the Hardware Management Console (HMC) of the Z machines
+to be managed.</p>
+<p>Note: Before version 0.9.0, the Ansible modules in this collection have been
+distributed as the <a class="reference external" href="https://pypi.org/project/zhmc-ansible-modules/">zhmc-ansible-modules package on Pypi</a>.
+Starting with version 0.9.0, the Ansible modules are no longer distributed on
+Pypi, but as the <a class="reference external" href="https://galaxy.ansible.com/ibm/ibm_zhmc/">ibm.ibm_zhmc collection on Ansible Galaxy</a>.
+Starting with version 1.0.0, the Ansible modules are additionally distributed
+as the <a class="reference external" href="https://console.redhat.com/ansible/automation-hub/repo/published/ibm/ibm_zhmc/">ibm.ibm_zhmc collection on Ansible AutomationHub</a>.</p>
+<section id="features">
+<h2>Features<a class="headerlink" href="#features" title="Link to this heading"></a></h2>
+<p>The <strong>IBM Z HMC collection</strong> includes <a class="reference internal" href="modules.html#modules"><span class="std std-ref">Modules</span></a> to automate the management
+of IBM Z platform resources. There are <a class="reference internal" href="playbooks.html#sample-playbooks"><span class="std std-ref">Sample Playbooks</span></a> that show how to
+invoke these modules in playbook tasks.</p>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#standard-installation-with-system-python">Standard installation with system Python</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#alternative-installation-with-virtual-python-environment">Alternative installation with virtual Python environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#setting-up-the-hmc">Setting up the HMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#hmc-userid-requirements">HMC userid requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#setting-up-firewalls-or-proxies">Setting up firewalls or proxies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#supported-environments">Supported environments</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">References</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_session.html">zhmc_session – Manage HMC sessions across tasks</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_session.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_session.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_session.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_session.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_console.html">zhmc_console – Manage the HMC</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_console.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_console.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_console.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_console.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_console.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_user.html">zhmc_user – Create HMC users</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_user_list.html">zhmc_user_list – List HMC users</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_list.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_list.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_list.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_list.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_list.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_password_rule.html">zhmc_password_rule – Create HMC password rules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_password_rule.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_password_rule.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_password_rule.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_password_rule.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_password_rule.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_password_rule_list.html">zhmc_password_rule_list – List Password Rules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_password_rule_list.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_password_rule_list.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_password_rule_list.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_password_rule_list.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_password_rule_list.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_user_role.html">zhmc_user_role – Create HMC user roles</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_role.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_role.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_role.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_role.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_role.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_user_role_list.html">zhmc_user_role_list – List HMC user roles</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_role_list.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_role_list.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_role_list.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_role_list.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_role_list.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_ldap_server_definition.html">zhmc_ldap_server_definition – Manage LDAP Server Definitions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_ldap_server_definition.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_ldap_server_definition.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_ldap_server_definition.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_ldap_server_definition.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_ldap_server_definition.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_ldap_server_definition_list.html">zhmc_ldap_server_definition_list – List LDAP Server Definitions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_ldap_server_definition_list.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_ldap_server_definition_list.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_ldap_server_definition_list.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_ldap_server_definition_list.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_ldap_server_definition_list.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_cpc.html">zhmc_cpc – Manage CPCs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_cpc.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_cpc.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_cpc.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_cpc.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_cpc.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_cpc_list.html">zhmc_cpc_list – List CPCs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_cpc_list.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_cpc_list.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_cpc_list.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_cpc_list.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_cpc_list.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_adapter.html">zhmc_adapter – Update adapters and create Hipersocket adapters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter.html#see-also">See Also</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_adapter_list.html">zhmc_adapter_list – List adapters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter_list.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter_list.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter_list.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter_list.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter_list.html#see-also">See Also</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter_list.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_crypto_attachment.html">zhmc_crypto_attachment – Attach crypto resources to partitions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_crypto_attachment.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_crypto_attachment.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_crypto_attachment.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_crypto_attachment.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_crypto_attachment.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_hba.html">zhmc_hba – Create HBAs in partitions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_hba.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_hba.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_hba.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_hba.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_hba.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_nic.html">zhmc_nic – Create NICs in partitions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_nic.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_nic.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_nic.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_nic.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_nic.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_nic_list.html">zhmc_nic_list – List NICs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_nic_list.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_nic_list.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_nic_list.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_nic_list.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_nic_list.html#see-also">See Also</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_nic_list.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_partition.html">zhmc_partition – Create partitions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition.html#see-also">See Also</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_partition_list.html">zhmc_partition_list – List partitions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition_list.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition_list.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition_list.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition_list.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition_list.html#see-also">See Also</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition_list.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_storage_group.html">zhmc_storage_group – Create storage groups</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_group.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_group.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_group.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_group.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_group.html#notes">Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_group.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Attach storage groups to partitions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_group_attachment.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_group_attachment.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_group_attachment.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_group_attachment.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_group_attachment.html#notes">Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_group_attachment.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_storage_volume.html">zhmc_storage_volume – Create storage volumes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_volume.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_volume.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_volume.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_volume.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_volume.html#notes">Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_volume.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_virtual_function.html">zhmc_virtual_function – Create virtual functions in partitions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_virtual_function.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_virtual_function.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_virtual_function.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_virtual_function.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_virtual_function.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_lpar.html">zhmc_lpar – Manage LPARs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_lpar.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_lpar.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_lpar.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_lpar.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_lpar.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_lpar_list.html">zhmc_lpar_list – List LPARs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_lpar_list.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_lpar_list.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_lpar_list.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_lpar_list.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_lpar_list.html#return-values">Return Values</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="playbooks.html">Playbooks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="playbooks.html#sample-playbooks">Sample Playbooks</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Community Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="community_guides.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Development</a></li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Requirements</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html#control-node">Control node</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="requirements_managed.html">Managed node</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Appendices</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="release_notes.html">Releases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="versioning.html">Versioning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bibliography.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+</ul>
+</div>
+</section>
+<section id="copyright">
+<h2>Copyright<a class="headerlink" href="#copyright" title="Link to this heading"></a></h2>
+<p>Copyright IBM Corporation 2016-2020</p>
+</section>
+<section id="license">
+<h2>License<a class="headerlink" href="#license" title="Link to this heading"></a></h2>
+<p>This collection is licensed under the <a class="reference external" href="https://opensource.org/licenses/Apache-2.0">Apache 2.0 License</a>.</p>
+</section>
+<section id="author-information">
+<h2>Author Information<a class="headerlink" href="#author-information" title="Link to this heading"></a></h2>
+<p>The <strong>IBM Z HMC collection</strong> is maintained by the IBM Z development team.</p>
+</section>
+<section id="reporting-issues">
+<span id="id1"></span><h2>Reporting issues<a class="headerlink" href="#reporting-issues" title="Link to this heading"></a></h2>
+<p>If you encounter any problem with this collection, or if you have questions of
+any kind related to this collection (even when they are not about a problem),
+please open an issue in the <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/issues">issue tracker</a>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016-2020, IBM.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+        <span class="fa fa-book"> Other Versions</span>
+        v: 1.7.4
+        <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        <dl>
+            <dt>Tags</dt>
+            <dd><a href="../0.9.0/index.html">0.9.0</a></dd>
+            <dd><a href="../0.9.1/index.html">0.9.1</a></dd>
+            <dd><a href="../0.9.2/index.html">0.9.2</a></dd>
+            <dd><a href="../0.9.3/index.html">0.9.3</a></dd>
+            <dd><a href="../0.10.0/index.html">0.10.0</a></dd>
+            <dd><a href="../0.10.1/index.html">0.10.1</a></dd>
+            <dd><a href="../1.0.0/index.html">1.0.0</a></dd>
+            <dd><a href="../1.0.2/index.html">1.0.2</a></dd>
+            <dd><a href="../1.0.3/index.html">1.0.3</a></dd>
+            <dd><a href="../1.1.0/index.html">1.1.0</a></dd>
+            <dd><a href="../1.1.1/index.html">1.1.1</a></dd>
+            <dd><a href="../1.2.0/index.html">1.2.0</a></dd>
+            <dd><a href="../1.2.1/index.html">1.2.1</a></dd>
+            <dd><a href="../1.3.0/index.html">1.3.0</a></dd>
+            <dd><a href="../1.3.1/index.html">1.3.1</a></dd>
+            <dd><a href="../1.4.0/index.html">1.4.0</a></dd>
+            <dd><a href="../1.4.1/index.html">1.4.1</a></dd>
+            <dd><a href="../1.5.0/index.html">1.5.0</a></dd>
+            <dd><a href="../1.6.0/index.html">1.6.0</a></dd>
+            <dd><a href="../1.6.1/index.html">1.6.1</a></dd>
+            <dd><a href="../1.7.0/index.html">1.7.0</a></dd>
+            <dd><a href="../1.7.1/index.html">1.7.1</a></dd>
+            <dd><a href="../1.7.2/index.html">1.7.2</a></dd>
+            <dd><a href="../1.7.3/index.html">1.7.3</a></dd>
+            <dd><a href="index.html">1.7.4</a></dd>
+        </dl>
+        <dl>
+            <dt>Branches</dt>
+            <dd><a href="../master/index.html">master</a></dd>
+        </dl>
+    </div>
+</div>
+<script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

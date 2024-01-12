@@ -158,7 +158,7 @@
 <li><p>List partitions on a specific CPC (Z system) or on all managed CPCs.</p></li>
 <li><p>CPCs in classic mode are ignored (i.e. do not lead to a failure).</p></li>
 <li><p>Partitions for which the user has no object access permission are ignored (i.e. do not lead to a failure).</p></li>
-<li><p>The module works for any HMC version. On HMCs with version 2.14.0 or higher, the “List Permitted Partitions” opration is used. On older HMCs, the managed CPCs are listed and the partitions on each CPC.</p></li>
+<li><p>On HMCs with version 2.14.0 or higher and when the <code class="docutils literal notranslate"><span class="pre">additional_properties</span></code> module parameter is not used, the “List Permitted Partitions” operation is used by this module. Otherwise, the managed CPCs are listed and then the partitions on each desired CPC or CPCs are listed. This improves the execution time of the module on newer HMCs but does not affect the module result data.</p></li>
 </ul>
 </section>
 <section id="requirements">
@@ -225,7 +225,7 @@
 <dt>additional_properties</dt><dd><p>List of additional properties to be returned for each partition, in addition to the default properties (see result description).</p>
 <p>Mutually exclusive with <code class="docutils literal notranslate"><span class="pre">full_properties</span></code>.</p>
 <p>The property names are specified with underscores instead of hyphens.</p>
-<p>Note: The additional properties are passed to the ‘List Partitions of a CPC’ HMC operation, and do not cause a loop of ‘Get Partition Properties’ operations to be executed.</p>
+<p>On HMCs with an HMC version below 2.14.0, all properties of each partition will be returned if this parameter is specified, but you should not rely on that.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: list</div>
@@ -404,6 +404,7 @@
             <dd><a href="../../1.7.1/modules/zhmc_partition_list.html">1.7.1</a></dd>
             <dd><a href="../../1.7.2/modules/zhmc_partition_list.html">1.7.2</a></dd>
             <dd><a href="../../1.7.3/modules/zhmc_partition_list.html">1.7.3</a></dd>
+            <dd><a href="../../1.7.4/modules/zhmc_partition_list.html">1.7.4</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

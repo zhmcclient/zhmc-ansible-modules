@@ -130,7 +130,7 @@
 <p><strong>Deprecations:</strong></p>
 <p><strong>Bug fixes:</strong></p>
 <ul class="simple">
-<li><p>Addressed safety issues up to 2023-11-26.</p></li>
+<li><p>Addressed safety issues up to 2024-01-08.</p></li>
 <li><p>Fixed link to Ansible Galaxy on README page. (issue #785)</p></li>
 <li><p>Fixed that the ‘name’ property was missing in result of the ‘zhmc_nic_list’
 module.</p></li>
@@ -149,17 +149,59 @@ state=active/loaded; cleaned up the code without functional changes.</p></li>
 <li><p>Fixed “missing required arguments: b, u, n, d, l, e, _, l, e, v, e, l”
 error when using the ‘zhmc_console’ or ‘zhmc_cpc’ modules with ‘state=upgrade’.
 (issue #834)</p></li>
+<li><p>Fixed end2end test for zhmc_cpc_list module that failed when the HMC had
+unmanaged CPCs or had HMC version 2.14.</p></li>
+<li><p>Fixed KeyError in ‘zhmc_storage_group’ module when used with non-FCP storage
+groups, and clarified that the artificial properties ‘candidate-adapter-ports’
+and ‘virtual-storage-resources’ returned by the module will be empty arrays
+for non-FCP storage groups. (e.g. NVMe). (issue #864)</p></li>
+<li><p>Fixed that on HMC versions 2.14 and 2.15, the zhmc_adapter_list module
+failed because it tried to use the “List Permitted Adapters” operation
+that was added in HMC version 2.16 (actually API version 4.10).
+(issue #850)</p></li>
+<li><p>Fixed that on HMC versions 2.14 and 2.15, the zhmc_partition_list module
+failed because it tried to use the ‘additional-properties’ query parameter
+that was added in HMC version 2.16 (actually API version 4.10).
+(issue #850)</p></li>
+<li><p>Clarified that Ansible versions below 7 (ansible-core 2.14) are not officially
+supported, but only supported on a best-can-do basis. As part of that change,
+the Ansible sanity checks are reduced to run only on officially supported
+Ansible versions. (issue #784)</p></li>
 </ul>
 <p><strong>Enhancements:</strong></p>
 <ul class="simple">
 <li><p>Added support for Python 3.12. (issue #796)</p></li>
 <li><p>Added support for Ansible 9.</p></li>
-<li><p>Increased minimum version of zhmcclient to 1.12.0 to pick up fixes and
+<li><p>Increased minimum version of zhmcclient to 1.13.0 to pick up fixes and
 functionality.</p></li>
 <li><p>Added new Ansible modules ‘zhmc_lpar_messages’ and ‘zhmc_partition_messages’
 that retrieve and return console messages from the operating system running
 in an LPAR or DPM partition. (issue #565)</p></li>
 <li><p>Added upgrade_timeout parameter to zhmc_console and zhmc_cpc modules.</p></li>
+<li><p>Added a new make target ‘make ansible_lint’ which invokes ansible-lint.
+Fixed some of the warnings reported by ansible-lint.
+(related to issue #784)</p></li>
+<li><p>Increased the minimum versions of the following packages used for installing
+the collection:</p>
+<ul>
+<li><p>packaging to 21.3 (on Python &gt;= 3.6)</p></li>
+<li><p>PyYAML to 6.0.1 (on Python &gt;= 3.6)</p></li>
+<li><p>jsonschema to 4.10.0 (on Python &gt;= 3.7)</p></li>
+</ul>
+</li>
+<li><p>In the ‘zhmc_adapter_list’ module, improved the use of the “Permitted
+Adapters” operation so that it is now also used when the ‘additional_properties’
+module parameter is used and the HMC API version is 4.10 or higher.
+(related to issue #850)</p></li>
+<li><p>Docs: In the ‘zhmc_lpar_list’ module, clarified that the use of the “List
+Permitted Logical Partitions” operation does not affect the module result
+data. (related to issue #850)</p></li>
+<li><p>Docs: In the ‘zhmc_partition_list’ module, clarified that the use of the “List
+Permitted Partitions” operation does not affect the module result data.
+(related to issue #850)</p></li>
+<li><p>Added support for mounting and unmounting ISO images to partitions (DPM mode)
+via new state values ‘iso_mount’ and ‘iso_unmount’ for the ‘zhmc_partition’
+module (issue #551)</p></li>
 </ul>
 <p><strong>Cleanup:</strong></p>
 <ul class="simple">
@@ -970,6 +1012,7 @@ property update.</p></li>
             <dd><a href="../1.7.1/release_notes.html">1.7.1</a></dd>
             <dd><a href="../1.7.2/release_notes.html">1.7.2</a></dd>
             <dd><a href="../1.7.3/release_notes.html">1.7.3</a></dd>
+            <dd><a href="../1.7.4/release_notes.html">1.7.4</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
