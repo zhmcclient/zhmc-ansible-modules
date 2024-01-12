@@ -233,6 +233,7 @@ help:
 	@echo '  end2end_mocked - Run end2end tests using mocked environment (adds to coverage results)'
 	@echo '  all        - Do all of the above'
 	@echo '  end2end    - Run end2end tests using environment defined by TESTINVENTORY/TESTHMC (adds to coverage results)'
+	@echo '  authors    - Generate AUTHORS.md file from git log'
 	@echo '  upload     - Publish the collection to Ansible Galaxy'
 	@echo '  uploadhub  - Publish the collection to Ansible AutomationHub'
 	@echo '  clobber    - Remove any produced files'
@@ -370,6 +371,16 @@ end2end: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 end2end_mocked: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 	-bash -c 'PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. TESTEND2END_LOAD=true TESTINVENTORY=$(test_dir)/end2end/mocked_inventory.yaml TESTVAULT=$(test_dir)/end2end/mocked_vault.yaml pytest -v $(pytest_cov_opts) $(pytest_opts) $(test_dir)/end2end'
 	coverage html --rcfile $(coverage_rc_file)
+	@echo '$@ done.'
+
+.PHONY: authors
+authors: _check_version
+	echo "# Authors of this project" >AUTHORS.md
+	echo "" >>AUTHORS.md
+	echo "Sorted list of authors derived from git commit history:" >>AUTHORS.md
+	echo '```' >>AUTHORS.md
+	git shortlog --summary --email | cut -f 2 | sort >>AUTHORS.md
+	echo '```' >>AUTHORS.md
 	@echo '$@ done.'
 
 .PHONY: upload

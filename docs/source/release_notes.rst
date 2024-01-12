@@ -131,6 +131,11 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   via new state values 'iso_mount' and 'iso_unmount' for the 'zhmc_partition'
   module (issue #551)
 
+* Added support for a new make target 'authors' that generates an AUTHORS.md
+  file from the git commit history. Added the invocation of 'make authors' to
+  the description of how to release a version in the development
+  documentation. (issue #631)
+
 **Cleanup:**
 
 * Removed documentation and test files (except sanity test ignore files) from
