@@ -99,6 +99,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   module that for state 'facts', properties are returned.
   (related to issue #851)
 
+* Dev: Fixed the call to pipdeptree in the test workflow to use 'python -m'
+  because otherwise it does not show the correct packages of the virtual env.
+
 **Enhancements:**
 
 * Added support for Python 3.12. (issue #796)
