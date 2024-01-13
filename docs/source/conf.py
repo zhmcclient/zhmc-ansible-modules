@@ -118,7 +118,7 @@ version = subprocess.check_output(
     '{0} {1}'.format(sys.executable, _version_file), shell=True).decode("utf-8")
 
 project = 'IBM Z HMC collection'
-copyright = '2016-2020, IBM'
+copyright = '2016,2020, IBM'
 author = 'IBM'
 
 # -- General configuration ---------------------------------------------------
