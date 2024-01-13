@@ -54,6 +54,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   the Ansible sanity checks are reduced to run only on officially supported
   Ansible versions. (issue #784)
 
+* Dev: Fixed the call to pipdeptree in the test workflow to use 'python -m'
+  because otherwise it does not show the correct packages of the virtual env.
+
 **Enhancements:**
 
 * Added a new make target 'make ansible_lint' which invokes ansible-lint.
