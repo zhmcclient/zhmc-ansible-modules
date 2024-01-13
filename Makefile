@@ -147,13 +147,13 @@ ifeq ($(python_m_n_version),3.9)
   check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor ansible_test pylint
 else
 ifeq ($(python_m_n_version),3.10)
-  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor ansible_test pylint
+  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor ansible_test ansiblelint pylint
 else
 ifeq ($(python_m_n_version),3.11)
-  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor ansible_test pylint
+  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor ansible_test ansiblelint pylint
 else
 # sphinx is excluded because pip-missing-reqs 2.5 reports missing sphinx-versions package (rightfully)
-  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 ansible_doc_extractor ansible_test pylint
+  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 ansible_doc_extractor ansible_test ansiblelint pylint
 endif
 endif
 endif
@@ -320,26 +320,35 @@ sanity: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 	mkdir -p $(sanity_dir)
 	tar -xf $(sanity_tar_file) --directory $(sanity_dir)
 ifeq ($(run_sanity_current),true)
-	echo "Running ansible sanity test in the current Python env (using ansible-core $(min_ansible_core_version) and Python $(python_version))"
+	echo "Running ansible sanity test in the current Python env (using ansible-core $(ansible_core_version) and Python $(python_version))"
 	sh -c "cd $(sanity_dir); ansible-test sanity --verbose --truncate 0 --local --python $(python_m_n_version)"
 else
-	echo "Skipping ansible sanity test in the current Python env (using ansible-core $(min_ansible_core_version) and Python $(python_version))"
+	echo "Skipping ansible sanity test in the current Python env (using ansible-core $(ansible_core_version) and Python $(python_version))"
 endif
 ifeq ($(run_sanity_virtual),true)
-	echo "Running ansible sanity test in its own virtual Python env (using ansible-core $(min_ansible_core_version) and Python $(python_version))"
+	echo "Running ansible sanity test in its own virtual Python env (using ansible-core $(ansible_core_version) and Python $(python_version))"
 	sh -c "cd $(sanity_dir); ansible-test sanity --verbose --truncate 0 --venv --requirements --python $(python_m_n_version)"
 else
-	echo "Skipping ansible sanity test in its own virtual Python env (using ansible-core $(min_ansible_core_version) and Python $(python_version))"
+	echo "Skipping ansible sanity test in its own virtual Python env (using ansible-core $(ansible_core_version) and Python $(python_version))"
 endif
 	@echo '$@ done.'
 
+# Boolean variable indicating that ansible-lint should be run
+# We run ansible-lint only on officially supported Ansible versions, except for:
+#  * Python 3.9 with minimum package levels because ansible-lint 6.14.0 requires ansible-core>=2.12 which is incompatible with ansible's requirement
+run_ansible_lint := $(shell PL=$(PACKAGE_LEVEL) MIN_AC=$(min_ansible_core_version) $(PYTHON_CMD) -c "import sys,os,ansible; py=sys.version_info[0:2]; ac=ansible.__version__.split('.'); min_ac=os.getenv('MIN_AC').split('.'); pl=os.getenv('PL'); sys.stdout.write('true' if ac>=min_ac and py>=(3,10) else 'false')")
+
 .PHONY:	ansible_lint
 ansible_lint: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(dist_file)
-	echo 'Running ansible-lint on distribution archive'
+ifeq ($(run_ansible_lint),true)
+	echo "Running ansible-lint on distribution archive (using ansible-core $(ansible_core_version) and Python $(python_version))"
 	rm -rf $(dist_dir)/tmp
 	mkdir -p $(dist_dir)/tmp
 	tar -xf $(dist_file) --directory $(dist_dir)/tmp
 	-sh -c "cd $(dist_dir)/tmp; ansible-lint --profile production -f pep8"
+else
+	echo "Skipping ansible-lint (using ansible-core $(ansible_core_version) and Python $(python_version))"
+endif
 	@echo '$@ done.'
 
 .PHONY: check_reqs
