@@ -109,7 +109,7 @@ creating, updating or deleting partitions and other resources.
 Copyright
 =========
 
-© Copyright IBM Corporation 2016-2021.
+© Copyright IBM Corporation 2016,2020.
 
 License
 =======

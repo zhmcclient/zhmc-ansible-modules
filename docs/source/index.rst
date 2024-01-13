@@ -100,7 +100,7 @@ invoke these modules in playbook tasks.
 Copyright
 =========
 
-Copyright IBM Corporation 2016-2020
+Copyright IBM Corporation 2016,2020
 
 License
 =======
