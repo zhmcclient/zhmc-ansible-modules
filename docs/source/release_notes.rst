@@ -33,7 +33,16 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Bug fixes:**
 
+* Docs: Increased minimum Sphinx versions to 7.1.0 on Python 3.8 and to 7.2.0 on
+  Python >=3.9 and adjusted dependent package versions in order to fix a version
+  incompatibility between sphinxcontrib-applehelp and Sphinx.
+  Disabled Sphinx runs on Python <=3.7 in order to no longer having to deal
+  with older Sphinx versions. (issue #890)
+
 **Enhancements:**
+
+* Test: Added Python 3.8 with latest package levels to normal tests because
+  that is now the minimum version to run Sphinx. (related to issue #890)
 
 **Cleanup:**
 

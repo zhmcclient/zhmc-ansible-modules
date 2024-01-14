@@ -133,12 +133,12 @@ zhmcclient==1.11.3
 # Indirect dependencies for installation (must be consistent with requirements.txt)
 
 # Jinja2 is used by ansible/ansible-core and by ansible-doc-extractor.
-Jinja2==2.10.1; python_version <= '3.8'   # ansible <= 5
-Jinja2==3.0.0; python_version >= '3.9'   # ansible >= 6
+Jinja2==2.10.1; python_version <= '3.7'
+Jinja2==3.0.0; python_version >= '3.8'
 
 # MarkupSafe is used by Jinja2
-MarkupSafe==1.1.0; python_version <= '3.8'   # ansible <= 5
-MarkupSafe==2.0.0; python_version >= '3.9'   # ansible >= 6
+MarkupSafe==1.1.0; python_version <= '3.7'
+MarkupSafe==2.0.0; python_version >= '3.8'
 
 cryptography==3.3.2; python_version == '2.7'
 cryptography==3.0; python_version == '3.5'
@@ -146,7 +146,8 @@ cryptography==3.4.7; python_version == '3.6'
 cryptography==41.0.4; python_version >= '3.7'
 
 importlib-metadata==0.12; python_version <= '3.7'
-importlib-metadata==1.1.0; python_version >= '3.8'
+importlib-metadata==4.8.3; python_version >= '3.8'
+
 packaging==20.5; python_version <= '3.5'
 packaging==21.3; python_version >= '3.6'
 PyYAML==5.3.1; python_version <= '3.5'
@@ -222,29 +223,31 @@ dparse==0.6.2; python_version >= '3.6'
 ruamel.yaml==0.17.21; python_version >= '3.6'
 
 # Sphinx (no imports, invoked via sphinx-build script):
-# Sphinx and ansible-doc-extractor are run only on Python>=3.6
-# Note: Ansible 2.10 requires sphinx==2.12 which does no longer support
-#       Python 2.7, so we can no longer build the docs on Python 2.7.
-# Note: The docs build tools from Ansible 2.10 (in ../ansible) require
-#       antsibull, which supports only py>=3.6.
-Sphinx==4.1.0; python_version >= '3.6' and python_version <= '3.9'
-Sphinx==4.3.0; python_version == '3.10'
-Sphinx==5.1.0; python_version >= '3.11'
-docutils==0.14; python_version >= '3.6' and  python_version <= '3.10'
-docutils==0.17; python_version >= '3.11'
-GitPython==2.1.15; python_version == '3.6'
-GitPython==3.1.35; python_version >= '3.7'
-sphinxcontrib-fulltoc==1.2.0; python_version >= '3.6'
-sphinxcontrib-websupport==1.1.2; python_version >= '3.6'
-Pygments==2.7.4; python_version == '3.6'
-Pygments==2.15.0; python_version >= '3.7'
-Babel==2.9.1; python_version >= '3.6'
+Sphinx==7.1.0; python_version == '3.8'
+Sphinx==7.2.0; python_version >= '3.9'
+docutils==0.18.1; python_version >= '3.8'
+sphinx-git==10.1.1; python_version >= '3.8'
+GitPython==3.1.37; python_version >= '3.8'
+Pygments==2.15.0; python_version >= '3.8'
+sphinx-rtd-theme==2.0.0; python_version >= '3.8'
+sphinxcontrib-applehelp==1.0.4; python_version >= '3.8'
+sphinxcontrib-devhelp==1.0.2; python_version >= '3.8'
+sphinxcontrib-htmlhelp==2.0.1; python_version >= '3.8'
+sphinxcontrib-jquery==4.1; python_version >= '3.8'
+sphinxcontrib-jsmath==1.0.1; python_version >= '3.8'
+sphinxcontrib-qthelp==1.0.3; python_version >= '3.8'
+sphinxcontrib-serializinghtml==1.1.5; python_version == '3.8'
+sphinxcontrib-serializinghtml==1.1.9; python_version >= '3.9'
+sphinxcontrib-websupport==1.2.4; python_version >= '3.8'
+autodocsumm==0.2.12; python_version >= '3.8'
+Babel==2.9.1; python_version >= '3.8'
+
 # sphinx-versions: Retrieved from git repo in dev-requirements.txt for python_version >= '3.6'
 # ansible-doc-extractor and it's dependent theme for docs generation (no imports, invoked via script):
 # The Makefile defines in doc_build on which Python versions docs are built. Keep in sync with Makefile and dev-requirements.txt.
-ansible-doc-extractor==0.1.8; python_version >= '3.6'
-antsibull-docs-parser==1.0.0; python_version >= '3.6'
-sphinx-rtd-theme==1.0.0; python_version >= '3.6'
+
+ansible-doc-extractor==0.1.8; python_version >= '3.8'
+antsibull-docs-parser==1.0.0; python_version >= '3.8'
 
 # PyLint (no imports, invoked via pylint script):
 # Pylint is run in ansible sanity test which is run only on Python>=3.5
@@ -299,7 +302,7 @@ filelock==3.3.0; python_version >= '3.6' and python_version <= '3.11'
 filelock==3.11.0; python_version >= '3.12'
 gitdb==4.0.8; python_version >= '3.6'
 idna==2.5
-imagesize==0.7.1
+imagesize==1.3.0
 importlib-resources==1.4.0
 isort==4.3.5
 keyring==21.4.0
@@ -310,13 +313,7 @@ ply==3.10
 py==1.11.0
 scandir==1.9.0; python_version == '2.7'
 smmap==3.0.1
-snowballstemmer==1.2.1
-sphinxcontrib-applehelp==1.0.0
-sphinxcontrib-devhelp==1.0.0
-sphinxcontrib-htmlhelp==2.0.0
-sphinxcontrib-jsmath==1.0.0
-sphinxcontrib-qthelp==1.0.0
-sphinxcontrib-serializinghtml==1.1.5
+snowballstemmer==2.0.0
 toml==0.10.0
 typing==3.6.1; python_version == '2.7'  # technically: python_version <= '3.4'
 typing-extensions==3.10.0.0  # Used in some combinations of Python version and package level
