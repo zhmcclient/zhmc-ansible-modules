@@ -160,6 +160,11 @@ jobs:
               }, \
               { \
                 \"os\": \"ubuntu-latest\", \
+                \"python-version\": \"3.8\", \
+                \"package_level\": \"latest\" \
+              }, \
+              { \
+                \"os\": \"ubuntu-latest\", \
                 \"python-version\": \"3.9\", \
                 \"package_level\": \"minimum\" \
               }, \
