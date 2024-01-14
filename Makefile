@@ -79,7 +79,7 @@ pymn := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('py%s%s'%(sys.ver
 
 # Flag indicating whether docs can be built
 # Keep in sync with Sphinx & ansible-doc-extractor install in minimum-constraints.txt and dev-requirements.txt
-doc_build := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('true' if sys.version_info[0:2]>=(3,6) else 'false')")
+doc_build := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('true' if sys.version_info[0:2]>=(3,8) else 'false')")
 
 # The Python source files that are Ansible modules
 module_py_dir := plugins/modules
@@ -132,10 +132,10 @@ ifeq ($(python_m_n_version),3.5)
   check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8
 else
 ifeq ($(python_m_n_version),3.6)
-  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor
+  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8
 else
 ifeq ($(python_m_n_version),3.7)
-  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor
+  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8
 else
 ifeq ($(python_m_n_version),3.8)
   check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor
@@ -483,6 +483,10 @@ endif
 
 .PHONY: docslocal
 docslocal: _check_version develop_$(pymn).done $(doc_rst_files) $(doc_source_dir)/conf.py
+ifneq ($(doc_build),true)
+	@echo "makefile: Warning: Skipping local docs build on Python $(python_m_n_version)"
+else
 	rm -rf $(doc_build_local_dir)
 	sphinx-build -b html $(sphinx_opts) $(doc_source_dir) $(doc_build_local_dir)
 #	open $(doc_build_local_dir)/index.html
+endif
