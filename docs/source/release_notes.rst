@@ -20,6 +20,18 @@ Releases
 ========
 
 
+Version 1.8.1
+-------------
+
+Released: 2024-01-15
+
+Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
+
+**Bug fixes:**
+
+* Addressed collection import issues on AutomationHub.
+
+
 Version 1.8.0
 -------------
 
@@ -27,7 +39,7 @@ This version contains all fixes up to version 1.7.4.
 
 Released: 2024-01-15
 
-Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
+Availability: `Galaxy`_, `GitHub`_
 
 **Bug fixes:**
 
