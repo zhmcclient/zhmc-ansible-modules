@@ -38,7 +38,7 @@
             IBM Z HMC collection
           </a>
               <div class="version">
-                1.8.0-dev1
+                1.8.0
 
               </div>
 <div role="search">
@@ -170,10 +170,11 @@
 <section id="parameters">
 <h2><a class="toc-backref" href="#id3" role="doc-backlink">Parameters</a><a class="headerlink" href="#parameters" title="Link to this heading"></a></h2>
 <dl>
-<dt>hmc_host</dt><dd><p>The hostname or IP address of the HMC.</p>
+<dt>hmc_host</dt><dd><p>The hostnames or IP addresses of a single HMC or of a list of redundant HMCs. A single HMC can be specified as a string type or as an HMC list with one item. An HMC list can be specified as a list type or as a string type containing a Python list representation.</p>
+<p>The first available HMC of a list of redundant HMCs is used for the entire execution of the module.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: True</div>
-<div class="line"><strong>type</strong>: str</div>
+<div class="line"><strong>type</strong>: raw</div>
 </div>
 </dd>
 <dt>hmc_auth</dt><dd><p>The authentication credentials for the HMC.</p>
@@ -231,6 +232,18 @@
 <div class="line"><strong>required</strong>: True</div>
 <div class="line"><strong>type</strong>: str</div>
 <div class="line"><strong>choices</strong>: inactive, active, set, facts, upgrade</div>
+</div>
+</dd>
+<dt>select_properties</dt><dd><p>Limits the returned properties of the CPC to those specified in this parameter plus those specified in the <code class="docutils literal notranslate"><span class="pre">properties</span></code> parameter.</p>
+<p>The properties can be specified with underscores or hyphens in their names.</p>
+<p>Null indicates not to limit the returned properties in this way.</p>
+<p>This parameter is ignored for <code class="docutils literal notranslate"><span class="pre">state</span></code> values that cause no properties to be returned.</p>
+<p>The returned child resources (adapters, partitions, storage groups) cannot be excluded using this parameter.</p>
+<p>The specified properties are passed to the ‘Get CPC Properties’ HMC operation using the ‘properties’ query parameter and save time for the HMC to pull together all properties.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: list</div>
+<div class="line"><strong>elements</strong>: str</div>
 </div>
 </dd>
 <dt>activation_profile_name</dt><dd><p>The name of the reset activation profile to be used when activating the CPC in the classic operational mode, for <code class="docutils literal notranslate"><span class="pre">state=active</span></code>. This parameter is ignored when the CPC is in classic mode and was already active, and when the CPC is in DPM mode.</p>
@@ -346,7 +359,8 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>cpc</dt><dd><p>The CPC and its adapters, partitions, and storage groups.</p>
+<dt>cpc</dt><dd><p>For <code class="docutils literal notranslate"><span class="pre">state=inactive</span></code>, an empty dictionary.</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">state=active|set|facts|upgrade</span></code>, the resource properties of the CPC after after any specified updates have been applied, and its adapters, partitions, and storage groups.</p>
 <div class="line-block">
 <div class="line"><strong>returned</strong>: success</div>
 <div class="line"><strong>type</strong>: dict</div>
@@ -532,7 +546,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2016-2020, IBM.</p>
+    <p>&#169; Copyright 2016,2020, IBM.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -580,6 +594,7 @@
             <dd><a href="../../1.7.2/modules/zhmc_cpc.html">1.7.2</a></dd>
             <dd><a href="../../1.7.3/modules/zhmc_cpc.html">1.7.3</a></dd>
             <dd><a href="../../1.7.4/modules/zhmc_cpc.html">1.7.4</a></dd>
+            <dd><a href="../../1.8.0/modules/zhmc_cpc.html">1.8.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

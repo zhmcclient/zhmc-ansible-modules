@@ -38,7 +38,7 @@
             IBM Z HMC collection
           </a>
               <div class="version">
-                1.8.0-dev1
+                1.8.0
 
               </div>
 <div role="search">
@@ -71,7 +71,7 @@
 <p class="caption" role="heading"><span class="caption-text">Appendices</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Releases</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-8-0-dev1">Version 1.8.0-dev1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-8-0">Version 1.8.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-7-0">Version 1.7.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-6-0">Version 1.6.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-5-0">Version 1.5.0</a></li>
@@ -121,13 +121,11 @@
              
   <section id="releases">
 <span id="id1"></span><h1>Releases<a class="headerlink" href="#releases" title="Link to this heading"></a></h1>
-<section id="version-1-8-0-dev1">
-<h2>Version 1.8.0-dev1<a class="headerlink" href="#version-1-8-0-dev1" title="Link to this heading"></a></h2>
-<p>This version contains all fixes up to version 1.7.x.</p>
-<p>Released: not yet</p>
+<section id="version-1-8-0">
+<h2>Version 1.8.0<a class="headerlink" href="#version-1-8-0" title="Link to this heading"></a></h2>
+<p>This version contains all fixes up to version 1.7.4.</p>
+<p>Released: 2024-01-15</p>
 <p>Availability: <a class="reference external" href="https://console.redhat.com/ansible/automation-hub/repo/published/ibm/ibm_zhmc">AutomationHub</a>, <a class="reference external" href="https://galaxy.ansible.com/ibm/ibm_zhmc">Galaxy</a>, <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">GitHub</a></p>
-<p><strong>Incompatible changes:</strong></p>
-<p><strong>Deprecations:</strong></p>
 <p><strong>Bug fixes:</strong></p>
 <ul class="simple">
 <li><p>Addressed safety issues up to 2024-01-08.</p></li>
@@ -167,6 +165,21 @@ that was added in HMC version 2.16 (actually API version 4.10).
 supported, but only supported on a best-can-do basis. As part of that change,
 the Ansible sanity checks are reduced to run only on officially supported
 Ansible versions. (issue #784)</p></li>
+<li><p>Corrected the status reported in the log when zhmc_lpar was called with
+state=active or loaded, and check mode was enabled. (related to issue #851)</p></li>
+<li><p>Clarified in the description of the return parameters of the ‘zhmc_cpc’
+module that for state ‘inactive’, an empty dict is returned.
+(related to issue #851)</p></li>
+<li><p>Clarified in the description of the return parameters of the ‘zhmc_lpar’
+module that for state ‘facts’, properties are returned.
+(related to issue #851)</p></li>
+<li><p>Dev: Fixed the call to pipdeptree in the test workflow to use ‘python -m’
+because otherwise it does not show the correct packages of the virtual env.</p></li>
+<li><p>Docs: Increased minimum Sphinx versions to 7.1.0 on Python 3.8 and to 7.2.0 on
+Python &gt;=3.9 and adjusted dependent package versions in order to fix a version
+incompatibility between sphinxcontrib-applehelp and Sphinx.
+Disabled Sphinx runs on Python &lt;=3.7 in order to no longer having to deal
+with older Sphinx versions. (issue #890)</p></li>
 </ul>
 <p><strong>Enhancements:</strong></p>
 <ul class="simple">
@@ -202,6 +215,29 @@ Permitted Partitions” operation does not affect the module result data.
 <li><p>Added support for mounting and unmounting ISO images to partitions (DPM mode)
 via new state values ‘iso_mount’ and ‘iso_unmount’ for the ‘zhmc_partition’
 module (issue #551)</p></li>
+<li><p>Support for limiting the properties returned by the ‘zhmc_cpc’, ‘zhmc_lpar’
+and ‘zhmc_partition’ modules by specifying a new ‘select_properties’ input
+parameter. (issue #851)</p></li>
+<li><p>Added support for a new make target ‘authors’ that generates an AUTHORS.md
+file from the git commit history. Added the invocation of ‘make authors’ to
+the description of how to release a version in the development
+documentation. (issue #631)</p></li>
+<li><p>Added support for redundant HMC hosts. The ‘hmc_host’ module input parameter
+can now be specified as a single HMC as before, or as a list of redundant
+HMCs. The HMC list can be specified as a list type or as a Python string
+representation of a list in order to accomodate Ansible expressions.
+(issue #849)</p></li>
+<li><p>The ‘zhmc_session’ module now has an additional module return parameter
+‘hmc_host’ which for ‘action=create’ contains the actually used HMC.
+If you use that module and now start specifying redundant HMCs for
+‘action=create’, you need to also change the ‘hmc_host’ parameter of all
+ibm_zhmc modules that use that session including the ‘zhmc_session’ module
+with ‘action=delete’, to specify the so returned HMC. If you use that
+module with a single HMC, no change is needed. (related to issue #849)</p></li>
+<li><p>Test: Added Python 3.8 with latest package levels to normal tests because
+that is now the minimum version to run Sphinx. (related to issue #890)</p></li>
+<li><p>In the ‘zhmc_lpar_list’ module, added support for the ‘additional_properties’
+input parameter. (issue #853)</p></li>
 </ul>
 <p><strong>Cleanup:</strong></p>
 <ul class="simple">
@@ -209,10 +245,6 @@ module (issue #551)</p></li>
 the collection package that is built, for consistency with the other IBM Z
 collections and in order to get rid of the dependency to have the doc extractor
 installed as a dependency to build and install the collection locally.</p></li>
-</ul>
-<p><strong>Known issues:</strong></p>
-<ul class="simple">
-<li><p>See <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/issues">list of open issues</a>.</p></li>
 </ul>
 </section>
 <section id="version-1-7-0">
@@ -965,7 +997,7 @@ property update.</p></li>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2016-2020, IBM.</p>
+    <p>&#169; Copyright 2016,2020, IBM.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -1013,6 +1045,7 @@ property update.</p></li>
             <dd><a href="../1.7.2/release_notes.html">1.7.2</a></dd>
             <dd><a href="../1.7.3/release_notes.html">1.7.3</a></dd>
             <dd><a href="../1.7.4/release_notes.html">1.7.4</a></dd>
+            <dd><a href="../1.8.0/release_notes.html">1.8.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

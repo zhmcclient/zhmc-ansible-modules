@@ -38,7 +38,7 @@
             IBM Z HMC collection
           </a>
               <div class="version">
-                1.7.4
+                1.8.0
 
               </div>
 <div role="search">
@@ -84,12 +84,14 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_partition_list.html">zhmc_partition_list – List partitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_partition_messages.html">zhmc_partition_messages – Get console messages for OS in a partition</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group.html">zhmc_storage_group – Create storage groups</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Attach storage groups to partitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_volume.html">zhmc_storage_volume – Create storage volumes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_virtual_function.html">zhmc_virtual_function – Create virtual functions in partitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_lpar.html">zhmc_lpar – Manage LPARs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_list.html">zhmc_lpar_list – List LPARs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_messages.html">zhmc_lpar_messages – Get console messages for OS in an LPAR</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../playbooks.html">Playbooks</a></li>
@@ -169,10 +171,11 @@
 <section id="parameters">
 <h2><a class="toc-backref" href="#id3" role="doc-backlink">Parameters</a><a class="headerlink" href="#parameters" title="Link to this heading"></a></h2>
 <dl>
-<dt>hmc_host</dt><dd><p>The hostname or IP address of the HMC.</p>
+<dt>hmc_host</dt><dd><p>The hostnames or IP addresses of a single HMC or of a list of redundant HMCs. A single HMC can be specified as a string type or as an HMC list with one item. An HMC list can be specified as a list type or as a string type containing a Python list representation.</p>
+<p>The first available HMC of a list of redundant HMCs is used for the entire execution of the module.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: True</div>
-<div class="line"><strong>type</strong>: str</div>
+<div class="line"><strong>type</strong>: raw</div>
 </div>
 </dd>
 <dt>hmc_auth</dt><dd><p>The authentication credentials for the HMC.</p>
@@ -230,11 +233,24 @@
 <p>* <code class="docutils literal notranslate"><span class="pre">absent</span></code>: Ensures that the partition does not exist in the specified CPC.</p>
 <p>* <code class="docutils literal notranslate"><span class="pre">stopped</span></code>: Ensures that the partition exists in the specified CPC, has the specified properties, and is in one of the inactive statuses (‘stopped’, ‘terminated’, ‘paused’, ‘reservation-error’).</p>
 <p>* <code class="docutils literal notranslate"><span class="pre">active</span></code>: Ensures that the partition exists in the specified CPC, has the specified properties, and is in one of the active statuses (‘active’, ‘degraded’).</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">mount_iso</span></code>: Ensures that an ISO image with the specified name is mounted to the partition, and that the specified INS file is set. The content of a currnetly mounted ISO image is not verified.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">unmount_iso</span></code>: Ensures that no ISO image is mounted to the partition.</p>
 <p>* <code class="docutils literal notranslate"><span class="pre">facts</span></code>: Returns the partition properties and the properties of its child resources (HBAs, NICs, and virtual functions).</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: True</div>
 <div class="line"><strong>type</strong>: str</div>
-<div class="line"><strong>choices</strong>: absent, stopped, active, facts</div>
+<div class="line"><strong>choices</strong>: absent, stopped, active, iso_mount, iso_unmount, facts</div>
+</div>
+</dd>
+<dt>select_properties</dt><dd><p>Limits the returned properties of the partition to those specified in this parameter plus those specified in the <code class="docutils literal notranslate"><span class="pre">properties</span></code> parameter.</p>
+<p>The properties can be specified with underscores or hyphens in their names.</p>
+<p>Null indicates not to limit the returned properties in this way.</p>
+<p>This parameter is ignored for <code class="docutils literal notranslate"><span class="pre">state</span></code> values that cause no properties to be returned.</p>
+<p>The specified properties are passed to the ‘Get Partition Properties’ HMC operation using the ‘properties’ query parameter and save time for the HMC to pull together all properties.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: list</div>
+<div class="line"><strong>elements</strong>: str</div>
 </div>
 </dd>
 <dt>properties</dt><dd><p>Dictionary with input properties for the partition, for <code class="docutils literal notranslate"><span class="pre">state=stopped</span></code> and <code class="docutils literal notranslate"><span class="pre">state=active</span></code>. Key is the property name with underscores instead of hyphens, and value is the property value in YAML syntax. Integer properties may also be provided as decimal strings. Will be ignored for <code class="docutils literal notranslate"><span class="pre">state=absent</span></code>.</p>
@@ -252,6 +268,29 @@
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: dict</div>
+</div>
+</dd>
+<dt>image_name</dt><dd><p>Name of the ISO image for <code class="docutils literal notranslate"><span class="pre">state=iso_mount</span></code> (required). Not permitted for any other <code class="docutils literal notranslate"><span class="pre">state</span></code> values.</p>
+<p>This value is shown in the ‘boot-iso-image-name’ property of the partition.</p>
+<p>If an ISO image with this name is already mounted to the partition, the new image will not be mounted. The image conntent is not verified.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>image_file</dt><dd><p>Path name of the local ISO image file for <code class="docutils literal notranslate"><span class="pre">state=iso_mount</span></code> (required). Not permitted for any other <code class="docutils literal notranslate"><span class="pre">state</span></code> values.</p>
+<p>When mounting an ISO image, this file is opened for reading and its content is sent to the HMC using the ‘Mount ISO Image’ operation. This file is not used when an image with the name specified in <code class="docutils literal notranslate"><span class="pre">image_name</span></code> was already mounted.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>ins_file</dt><dd><p>Path name of the INS file within the ISO image that will be used when booting from the ISO image for <code class="docutils literal notranslate"><span class="pre">state=iso_mount</span></code> (required). Not permitted for any other <code class="docutils literal notranslate"><span class="pre">state</span></code> values.</p>
+<p>This value is shown in the ‘boot-iso-ins-file’ property of the partition.</p>
+<p>The ‘boot-iso-ins-file’ property of the partition is always updated, even when the ISO image was already mounted and thus is not re-mounted.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
 <dt>expand_storage_groups</dt><dd><p>Boolean that controls whether the returned partition contains an additional artificial property ‘storage-groups’ that is the list of storage groups attached to the partition, with properties as described for the zhmc_storage_group module with expand=true.</p>
@@ -348,6 +387,25 @@
 <span class="w">            </span><span class="nt">access_mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">control</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">part1</span>
 
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ensure that an ISO image is mounted to the partition</span>
+<span class="w">  </span><span class="nt">zhmc_partition</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">cpc_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_partition_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">image_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_image_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">image_file</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_image_file</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">ins_file</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_ins_file</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">iso_mount</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ensure that no ISO image is mounted to the partition</span>
+<span class="w">  </span><span class="nt">zhmc_partition</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">cpc_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_partition_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">iso_unmount</span>
+
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Gather facts about a partition</span>
 <span class="w">  </span><span class="nt">zhmc_partition</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
@@ -388,7 +446,7 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>partition</dt><dd><p>For <code class="docutils literal notranslate"><span class="pre">state=absent</span></code>, an empty dictionary.</p>
+<dt>partition</dt><dd><p>For <code class="docutils literal notranslate"><span class="pre">state=absent|iso_mount|iso_unmount</span></code>, an empty dictionary.</p>
 <p>For <code class="docutils literal notranslate"><span class="pre">state=stopped|active|facts</span></code>, the resource properties of the partition after any changes, including its child resources as described below.</p>
 <div class="line-block">
 <div class="line"><strong>returned</strong>: success</div>
@@ -603,7 +661,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2016-2020, IBM.</p>
+    <p>&#169; Copyright 2016,2020, IBM.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -620,7 +678,7 @@
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.7.4
+        v: 1.8.0
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -651,6 +709,7 @@
             <dd><a href="../1.7.2/modules/zhmc_partition.html">1.7.2</a></dd>
             <dd><a href="../1.7.3/modules/zhmc_partition.html">1.7.3</a></dd>
             <dd><a href="../1.7.4/modules/zhmc_partition.html">1.7.4</a></dd>
+            <dd><a href="../1.8.0/modules/zhmc_partition.html">1.8.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
