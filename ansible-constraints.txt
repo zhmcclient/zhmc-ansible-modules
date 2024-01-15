@@ -29,8 +29,8 @@ Jinja2==3.0.0; python_version >= '3.8'
 
 # MarkupSafe is used by Jinja2
 # Jinja2 3.0 requires MarkupSafe>=2.0
-MarkupSafe>=1.1.0; python_version <= '3.7'
-MarkupSafe>=2.0.0; python_version >= '3.8'
+MarkupSafe==1.1.0; python_version <= '3.7'
+MarkupSafe==2.0.0; python_version >= '3.8'
 
 
 # Direct dependencies for development (must be consistent with dev-requirements.txt)

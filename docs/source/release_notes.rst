@@ -20,18 +20,14 @@ Releases
 ========
 
 
-Version 1.8.0-dev1
-------------------
+Version 1.8.0
+-------------
 
-This version contains all fixes up to version 1.7.x.
+This version contains all fixes up to version 1.7.4.
 
-Released: not yet
+Released: 2024-01-15
 
 Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
-
-**Incompatible changes:**
-
-**Deprecations:**
 
 **Bug fixes:**
 
@@ -186,12 +182,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   the collection package that is built, for consistency with the other IBM Z
   collections and in order to get rid of the dependency to have the doc extractor
   installed as a dependency to build and install the collection locally.
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 1.7.0
