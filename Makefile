@@ -116,11 +116,11 @@ flake8_opts := --max-line-length 160 --config /dev/null --ignore E402,E741,W503,
 #       The .git subtree must also be present.
 #       There is issue https://github.com/ansible/ansible/issues/60215 that
 #       discusses improving that.
-#       We copy most of the repo directory into sanity_dir to establish the
-#       required directory structure.
+#       We perform the sanity test in a directory that contains the content
+#       of the sanity_tar_file and the distribution archive.
 sanity_dir := tmp_sanity/collections/ansible_collections/ibm/ibm_zhmc
 sanity_dir1 := tmp_sanity
-sanity_tar_file := tmp_workspace.tar
+sanity_tar_file := tmp_sanity.tar
 
 # Safety policy file
 safety_policy_file := .safety-policy.yml
@@ -313,12 +313,13 @@ run_sanity_virtual := $(shell PL=$(PACKAGE_LEVEL) MIN_AC=$(min_ansible_core_vers
 
 # The sanity check requires the .git directory to be present.
 .PHONY:	sanity
-sanity: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
+sanity: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(dist_file)
 	rm -f $(sanity_tar_file)
-	tar -rf $(sanity_tar_file) .git .gitignore bindep.txt galaxy.yml requirements.txt collections docs meta plugins tests
+	tar -rf $(sanity_tar_file) .git .gitignore galaxy.yml collections
 	rm -rf $(sanity_dir)
 	mkdir -p $(sanity_dir)
 	tar -xf $(sanity_tar_file) --directory $(sanity_dir)
+	tar -xf $(dist_file) --directory $(sanity_dir)
 ifeq ($(run_sanity_current),true)
 	echo "Running ansible sanity test in the current Python env (using ansible-core $(ansible_core_version) and Python $(python_version))"
 	sh -c "cd $(sanity_dir); ansible-test sanity --verbose --truncate 0 --local --python $(python_m_n_version)"
@@ -429,7 +430,7 @@ endif
 # The second rm command of each type is for files that were used before 1.0.0, to make it easier to switch.
 .PHONY: clobber
 clobber:
-	rm -Rf .cache .pytest_cache $(sanity_dir1) $(sanity_tar_file) htmlcov $(doc_linkcheck_dir) $(doc_build_dir) $(doc_build_local_dir) tests/output build .tox *.egg-info *.done
+	rm -Rf .cache .pytest_cache $(sanity_dir1) htmlcov $(doc_linkcheck_dir) $(doc_build_dir) $(doc_build_local_dir) tests/output build .tox *.egg-info *.done
 	rm -f .coverage MANIFEST MANIFEST.in AUTHORS ChangeLog
 	find . -name "*.pyc" -delete -o -name "__pycache__" -delete -o -name "*.tmp" -delete -o -name "tmp_*" -delete
 	@echo '$@ done.'

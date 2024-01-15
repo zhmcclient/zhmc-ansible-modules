@@ -68,6 +68,7 @@ build_ignore:
   - docs_build
   - tests/output
   - AUTHORS  # only in older branches
+  - AUTHORS.md
   - ChangeLog  # only in older branches
   - build  # only in older branches
   - gh-pages  # in case it exists locally
@@ -96,3 +97,4 @@ build_ignore:
   - tests/end2end
   - tests/function
   - tests/unit
+  - done
