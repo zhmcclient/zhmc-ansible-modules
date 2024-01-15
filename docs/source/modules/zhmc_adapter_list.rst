@@ -150,7 +150,7 @@ full_properties
 
   Mutually exclusive with \ :literal:`additional\_properties`\ .
 
-  Note: Setting this to True causes a loop of 'Get Adapter Properties' operations to be executed. It is preferrable from a performance perspective to use the \ :literal:`additional\_properties`\  parameter instead.
+  Note: Setting this to True causes a loop of 'Get Adapter Properties' operations to be executed. It is preferable from a performance perspective to use the \ :literal:`additional\_properties`\  parameter instead.
 
   | **required**: False
   | **type**: bool
