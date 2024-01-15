@@ -133,7 +133,7 @@ options:
         Default: False."
       - Mutually exclusive with C(additional_properties).
       - "Note: Setting this to True causes a loop of 'Get Logical Partition
-        Properties' operations to be executed. It is preferrable from a
+        Properties' operations to be executed. It is preferable from a
         performance perspective to use the C(additional_properties) parameter
         instead."
     type: bool

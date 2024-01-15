@@ -171,7 +171,7 @@ options:
         Default: False."
       - Mutually exclusive with C(additional_properties).
       - "Note: Setting this to True causes a loop of 'Get Adapter Properties'
-        operations to be executed. It is preferrable from a performance
+        operations to be executed. It is preferable from a performance
         perspective to use the C(additional_properties) parameter instead."
     type: bool
     required: false
