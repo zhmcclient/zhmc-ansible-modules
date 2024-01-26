@@ -351,13 +351,21 @@ def perform_list(params):
                 full_properties=full_properties)
         # The default exception handling is sufficient for the above.
 
+        se_versions = {}
         lpar_list = []
         for lpar in lpars:
             # se-version has been added to the result of List Permitted
             # LPARs in HMC/SE 2.14.1. Before that, it triggers the
             # retrieval of CPC properties.
             parent_cpc = lpar.manager.cpc
-            se_version = parent_cpc.get_property('se-version')
+            try:
+                se_version = se_versions[parent_cpc.name]
+            except KeyError:
+                try:
+                    se_version = lpar.properties['se-version']
+                except KeyError:
+                    se_version = parent_cpc.get_property('se-version')
+                se_versions[parent_cpc.name] = se_version
 
             lpar_properties = {
                 "cpc_name": parent_cpc.name,

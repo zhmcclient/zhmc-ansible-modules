@@ -35,6 +35,13 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Fixed safety issues up to 2024-01-26.
 
+* Fixed a performance issue in the 'zhmc_lpar_list' and 'zhmc_partition_list'
+  modules where the 'se-version' property was fetched from CPCs even if it
+  was already available in the LPAR/partition properties. (issue #904)
+
+* Increased the minimum version of zhmcclient to 1.13.3 to pick up fixes and
+  performance improvements. (related to issue #904)
+
 **Enhancements:**
 
 **Cleanup:**
