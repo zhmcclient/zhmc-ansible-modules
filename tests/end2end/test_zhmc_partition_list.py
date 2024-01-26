@@ -29,14 +29,14 @@ from zhmcclient.testutils import dpm_mode_cpcs  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
 
 from plugins.modules import zhmc_partition_list
-from .utils import mock_ansible_module, get_failure_msg
+from .utils import mock_ansible_module, get_failure_msg, setup_logging
 
 requests.packages.urllib3.disable_warnings()
 
-# Print debug messages
-DEBUG = False
+# Create log file
+LOGGING = False
 
-LOG_FILE = 'zhmc_partition_list.log' if DEBUG else None
+LOG_FILE = 'test_zhmc_partition_list.log' if LOGGING else None
 
 
 def get_module_output(mod_obj):
@@ -147,8 +147,15 @@ def test_zhmc_partition_list(
     if not dpm_mode_cpcs:
         pytest.skip("HMC definition does not include any CPCs in DPM mode")
 
+    logger = setup_logging(LOGGING, 'test_zhmc_partition_list', LOG_FILE)
+    logger.debug("Entered test function with: "
+                 "check_mode=%r, property_flags=%r, with_cpc=%r",
+                 check_mode, property_flags, with_cpc)
+
     for cpc in dpm_mode_cpcs:
         assert cpc.dpm_enabled
+
+        logger.debug("Testing with CPC %s", cpc.name)
 
         session = cpc.manager.session
         hd = session.hmc_definition
@@ -166,6 +173,7 @@ def test_zhmc_partition_list(
             'additional_properties', [])
 
         # Determine the expected partitions on the HMC
+        logger.debug("Listing expected partitions")
         hmc_version = client.query_api_version()['hmc-version']
         hmc_version_info = [int(x) for x in hmc_version.split('.')]
         if hmc_version_info < [2, 14, 0] or additional_properties:
@@ -203,15 +211,21 @@ def test_zhmc_partition_list(
 
         exp_partition_dict = {}
         se_versions = {}
+        logger.debug("Processing expected partitions")
         for partition in exp_partitions:
+            logger.debug("Expected properties of partition %r on CPC %r are: "
+                         "%r",
+                         partition.name, cpc.name, dict(partition.properties))
             cpc = partition.manager.parent
             try:
                 se_version = se_versions[cpc.name]
             except KeyError:
-                if DEBUG:
-                    print("Debug: Getting expected se-version of CPC {c!r}".
-                          format(c=cpc.name))
-                se_version = cpc.get_property('se-version')
+                try:
+                    se_version = partition.properties['se-version']
+                except KeyError:
+                    logger.debug("Getting expected se-version of CPC %r",
+                                 cpc.name)
+                    se_version = cpc.get_property('se-version')
                 se_versions[cpc.name] = se_version
             exp_properties = {
                 'cpc_name': cpc.name,
@@ -220,11 +234,6 @@ def test_zhmc_partition_list(
             for pname_hmc, pvalue in partition.properties.items():
                 pname = pname_hmc.replace('-', '_')
                 exp_properties[pname] = pvalue
-            if DEBUG:
-                print("Debug: Expected properties of partition {p!r} "
-                      "on CPC {c!r}: {n!r}".
-                      format(p=partition.name, c=cpc.name,
-                             n=list(exp_properties.keys())))
             exp_part_key = (cpc.name, partition.name)
             exp_partition_dict[exp_part_key] = exp_properties
 
@@ -257,3 +266,5 @@ def test_zhmc_partition_list(
         assert changed is False
 
         assert_partition_list(partition_list, exp_partition_dict)
+
+    logger.debug("Leaving test function")
