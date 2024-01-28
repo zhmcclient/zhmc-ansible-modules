@@ -38,7 +38,7 @@
             IBM Z HMC collection
           </a>
               <div class="version">
-                1.8.1
+                1.8.2-dev1
 
               </div>
 <div role="search">
@@ -71,6 +71,7 @@
 <p class="caption" role="heading"><span class="caption-text">Appendices</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Releases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-9-0-dev1">Version 1.9.0-dev1</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-8-1">Version 1.8.1</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-8-0">Version 1.8.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-7-0">Version 1.7.0</a></li>
@@ -122,6 +123,33 @@
              
   <section id="releases">
 <span id="id1"></span><h1>Releases<a class="headerlink" href="#releases" title="Link to this heading"></a></h1>
+<section id="version-1-9-0-dev1">
+<h2>Version 1.9.0-dev1<a class="headerlink" href="#version-1-9-0-dev1" title="Link to this heading"></a></h2>
+<p>This version contains all fixes up to version 1.8.x.</p>
+<p>Released: not yet</p>
+<p>Availability: <a class="reference external" href="https://console.redhat.com/ansible/automation-hub/repo/published/ibm/ibm_zhmc">AutomationHub</a>, <a class="reference external" href="https://galaxy.ansible.com/ibm/ibm_zhmc">Galaxy</a>, <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">GitHub</a></p>
+<p><strong>Incompatible changes:</strong></p>
+<p><strong>Deprecations:</strong></p>
+<p><strong>Bug fixes:</strong></p>
+<ul class="simple">
+<li><p>Fixed safety issues up to 2024-01-26.</p></li>
+<li><p>Fixed a performance issue in the ‘zhmc_lpar_list’ and ‘zhmc_partition_list’
+modules where the ‘se-version’ property was fetched from CPCs even if it
+was already available in the LPAR/partition properties. (issue #904)</p></li>
+<li><p>Increased the minimum version of zhmcclient to 1.13.3 to pick up fixes and
+performance improvements. (related to issue #904)</p></li>
+</ul>
+<p><strong>Enhancements:</strong></p>
+<p><strong>Cleanup:</strong></p>
+<ul class="simple">
+<li><p>Increased versions of GitHub Actions plugins to increase node.js runtime
+to version 20.</p></li>
+</ul>
+<p><strong>Known issues:</strong></p>
+<ul class="simple">
+<li><p>See <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/issues">list of open issues</a>.</p></li>
+</ul>
+</section>
 <section id="version-1-8-1">
 <h2>Version 1.8.1<a class="headerlink" href="#version-1-8-1" title="Link to this heading"></a></h2>
 <p>Released: 2024-01-15</p>
@@ -1057,6 +1085,7 @@ property update.</p></li>
             <dd><a href="../1.7.4/release_notes.html">1.7.4</a></dd>
             <dd><a href="../1.8.0/release_notes.html">1.8.0</a></dd>
             <dd><a href="../1.8.1/release_notes.html">1.8.1</a></dd>
+            <dd><a href="../1.8.2/release_notes.html">1.8.2</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
