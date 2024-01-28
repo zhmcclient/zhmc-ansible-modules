@@ -45,9 +45,8 @@ requests>=2.31.0; python_version >= '3.7'
 
 pytz>=2016.10
 
-# TODO-ZHMC: Enable 1.13.3 once released
-zhmcclient @ git+https://github.com/zhmcclient/python-zhmcclient.git@stable_1.13
-# zhmcclient>=1.13.3
+# zhmcclient @ git+https://github.com/zhmcclient/python-zhmcclient.git@master
+zhmcclient>=1.13.3
 
 # Indirect dependencies are not specified in this file, unless needed to solve versioning issues:
 

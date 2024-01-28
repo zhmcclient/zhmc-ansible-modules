@@ -71,8 +71,7 @@ requests==2.31.0; python_version >= '3.7'
 pytz==2016.10; python_version <= '3.9'
 pytz==2019.1; python_version >= '3.10'
 
-# TODO-ZHMC: Enable 1.13.3 once released
-# zhmcclient==1.13.3
+zhmcclient==1.13.3
 
 
 # Indirect dependencies for installation (must be consistent with requirements.txt)
