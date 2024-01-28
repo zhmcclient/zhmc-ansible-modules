@@ -20,16 +20,12 @@ Releases
 ========
 
 
-Version 1.8.2-dev1
-------------------
+Version 1.8.2
+-------------
 
-Released: not yet
+Released: 2024-01-28
 
 Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
-
-**Incompatible changes:**
-
-**Deprecations:**
 
 **Bug fixes:**
 
@@ -41,16 +37,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Increased the minimum version of zhmcclient to 1.13.3 to pick up fixes and
   performance improvements. (related to issue #904)
-
-**Enhancements:**
-
-**Cleanup:**
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 1.8.1
