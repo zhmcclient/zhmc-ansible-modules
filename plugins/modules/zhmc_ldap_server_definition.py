@@ -211,6 +211,7 @@ ldap_server_definition:
         described in the data model of the 'LDAP Server Definition' object in
         the :term:`HMC API` book.
         The property names have hyphens (-) as described in that book."
+      type: raw
   sample:
     {
         "backup-hostname-ipaddr": null,

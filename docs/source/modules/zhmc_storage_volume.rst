@@ -263,5 +263,6 @@ storage_volume
   {property}
     Additional properties of the storage volume, as described in the data model of the 'Storage Volume' element object of the 'Storage Group' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
+    | **type**: raw
 
 

@@ -219,5 +219,6 @@ virtual_function
   {property}
     Additional properties of the virtual function, as described in the data model of the 'Virtual Function' element object of the 'Partition' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
+    | **type**: raw
 
 

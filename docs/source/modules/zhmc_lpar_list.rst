@@ -231,5 +231,6 @@ lpars
   {additional_property}
     Additional properties requested via \ :literal:`full\_properties`\  or \ :literal:`additional\_properties`\ . The property names will have underscores instead of hyphens.
 
+    | **type**: raw
 
 

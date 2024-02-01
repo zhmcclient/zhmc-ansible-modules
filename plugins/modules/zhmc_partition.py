@@ -414,6 +414,7 @@ partition:
       description: "Additional properties of the partition, as described in
         the data model of the 'Partition' object in the :term:`HMC API` book.
         The property names have hyphens (-) as described in that book."
+      type: raw
     hbas:
       description: "HBAs of the partition. If the CPC does not have the
         storage-management feature enabled (ie. on z13), the list is
@@ -429,6 +430,7 @@ partition:
             data model of the 'HBA' element object of the 'Partition' object
             in the :term:`HMC API` book.
             The property names have hyphens (-) as described in that book."
+          type: raw
     nics:
       description: "NICs of the partition."
       type: list
@@ -442,6 +444,7 @@ partition:
             data model of the 'NIC' element object of the 'Partition' object
             in the :term:`HMC API` book.
             The property names have hyphens (-) as described in that book."
+          type: raw
     virtual-functions:
       description: "Virtual functions of the partition."
       type: list
@@ -455,6 +458,7 @@ partition:
             described in the data model of the 'Virtual Function' element
             object of the 'Partition' object in the :term:`HMC API` book.
             The property names have hyphens (-) as described in that book."
+          type: raw
   sample:
     {
         "acceptable-status": [

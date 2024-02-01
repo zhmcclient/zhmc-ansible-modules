@@ -148,6 +148,7 @@ options:
           - Any other property defined as writeable in the data model for
             user role resources (where the property names contain underscores
             instead of hyphens), except those excluded in the description above.
+        type: raw
         required: false
       associated_system_defined_user_role_name:
         description:
@@ -400,6 +401,7 @@ user_role:
       description: "Additional properties of the user role, as described
         in the data model of the 'User Role' object in the :term:`HMC API`
          book. The property names have hyphens (-) as described in that book."
+      type: raw
   sample:
     {
         "associated-system-defined-user-role-name": "hmc-operator-tasks",
