@@ -249,6 +249,7 @@ user:
       description: "Additional properties of the user, as described in the
         data model of the 'User' object in the :term:`HMC API` book.
         The property names have hyphens (-) as described in that book."
+      type: raw
     user-role-names:
       description: "Name of the user roles referenced by property
         C(user-roles)."
@@ -266,6 +267,7 @@ user:
             data model of the 'User Pattern' object in the :term:`HMC API`
             book.
             The property names have hyphens (-) as described in that book."
+          type: raw
     user-pattern-name:
       description: "Only for users with C(type=pattern): Name of the user
         pattern referenced by property C(user-pattern-uri)."
@@ -283,6 +285,7 @@ user:
             data model of the 'User Pattern' object in the :term:`HMC API`
             book.
             The property names have hyphens (-) as described in that book."
+          type: raw
     password-rule-name:
       description: "Only for users with C(authentication-type=local): Name of
         the password rule referenced by property C(password-rule-uri)."
@@ -301,6 +304,7 @@ user:
             data model of the 'Password Rule' object in the :term:`HMC API`
             book.
             The property names have hyphens (-) as described in that book."
+          type: raw
     ldap-server-definition-name:
       description: "Only for users with C(authentication-type=ldap): Name of
         the LDAP server definition referenced by property
@@ -320,6 +324,7 @@ user:
             in the data model of the 'LDAP Server Definition' object in the
             :term:`HMC API` book.
             The property names have hyphens (-) as described in that book."
+          type: raw
   sample:
     {
         "allow-management-interfaces": true,

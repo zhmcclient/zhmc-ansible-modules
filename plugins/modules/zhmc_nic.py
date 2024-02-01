@@ -246,6 +246,7 @@ nic:
         model of the 'NIC' element object of the 'Partition' object in the
         :term:`HMC API` book.
         The property names have hyphens (-) as described in that book."
+      type: raw
   sample:
     {
         "adapter-id": "128",

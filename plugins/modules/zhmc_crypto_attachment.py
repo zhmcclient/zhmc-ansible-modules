@@ -310,6 +310,7 @@ crypto_configuration:
                     described in the data model of the 'Adapter' object in the
                     :term:`HMC API` book. The property names have hyphens
                     (-) as described in that book."
+                  type: raw
         domain_config:
           description: "Attached crypto domains"
           type: dict

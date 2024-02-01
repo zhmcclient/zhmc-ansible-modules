@@ -176,5 +176,6 @@ users
   {additional_property}
     Additional properties requested via \ :literal:`full\_properties`\ . The property names will have underscores instead of hyphens.
 
+    | **type**: raw
 
 
