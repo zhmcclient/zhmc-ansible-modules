@@ -244,6 +244,7 @@ storage_volume:
         in the data model of the 'Storage Volume' element object of the
         'Storage Group' object in the :term:`HMC API` book.
         The property names have hyphens (-) as described in that book."
+      type: raw
   sample:
     {
         "active-size": 128.0,

@@ -433,6 +433,7 @@ lpar:
         the data model of the 'Logical Partition' object in the
         :term:`HMC API` book.
         The property names have hyphens (-) as described in that book."
+      type: raw
   sample:
     {
         "absolute-aap-capping": {
@@ -1253,8 +1254,10 @@ def main():
             required=False, type='bool', default=False),
         timeout=dict(required=False, type='int', default=60),
         force=dict(required=False, type='bool', default=False),
-        os_ipl_token=dict(required=False, type='str', default=None),
-        # Note: os_ipl_token is not a secret
+        os_ipl_token=dict(required=False, type='str', default=None,
+                          no_log=False),
+        # Note: os_ipl_token is not a secret and no_log=False is the way
+        # to declare that and prevent any ansible-lint issues.
         properties=dict(required=False, type='dict', default=None),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),

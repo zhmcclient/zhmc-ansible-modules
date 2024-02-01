@@ -206,6 +206,7 @@ hmc:
         Note that the set of properties has been extended over the past
         HMC versions, so you will get less properties on older HMC versions.
         The property names have hyphens (-) as described in that book."
+      type: raw
     "api_version":
       description: "Additional facts from the 'Query API Version' operation."
       type: dict
@@ -218,6 +219,7 @@ hmc:
             HMC versions, so you will get less properties on older HMC
             versions.
             The property names have hyphens (-) as described in that book."
+          type: raw
   sample:
     {
         "name": "HMC1",

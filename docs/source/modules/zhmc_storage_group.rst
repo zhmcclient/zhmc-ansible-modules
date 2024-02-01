@@ -475,6 +475,7 @@ storage_group
   {property}
     Additional properties of the storage group, as described in the data model of the 'Storage Group' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
+    | **type**: raw
 
   attached-partition-names
     Names of the partitions to which the storage group is attached.
@@ -502,6 +503,7 @@ storage_group
     {property}
       Additional properties of the storage port, as described in the data model of the 'Storage Port' element object of the 'Adapter' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
+      | **type**: raw
 
     parent-adapter
       Storage adapter of the candidate port.
@@ -516,6 +518,7 @@ storage_group
       {property}
         Additional properties of the storage adapter, as described in the data model of the 'Adapter' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
+        | **type**: raw
 
 
 
@@ -534,6 +537,7 @@ storage_group
     {property}
       Additional properties of the storage volume, as described in the data model of the 'Storage Volume' element object of the 'Storage Group' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
+      | **type**: raw
 
 
   virtual-storage-resources
@@ -546,6 +550,7 @@ storage_group
     {property}
       Properties of the virtual storage resource, as described in the data model of the 'Virtual Storage Resource' element object of the 'Storage Group' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
+      | **type**: raw
 
 
   attached-partitions
@@ -558,6 +563,7 @@ storage_group
     {property}
       Properties of the partition, as described in the data model of the 'Partition' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
+      | **type**: raw
 
 
 

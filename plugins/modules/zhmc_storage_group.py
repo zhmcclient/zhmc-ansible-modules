@@ -278,6 +278,7 @@ storage_group:
         in the data model of the 'Storage Group' object in the
         :term:`HMC API` book.
         The property names have hyphens (-) as described in that book."
+      type: raw
     attached-partition-names:
       description: "Names of the partitions to which the storage group is
         attached."
@@ -302,6 +303,7 @@ storage_group:
             in the data model of the 'Storage Port' element object of the
             'Adapter' object in the :term:`HMC API` book.
             The property names have hyphens (-) as described in that book."
+          type: raw
         parent-adapter:
           description: "Storage adapter of the candidate port."
           type: dict
@@ -314,6 +316,7 @@ storage_group:
                 described in the data model of the 'Adapter' object in the
                 :term:`HMC API` book.
                 The property names have hyphens (-) as described in that book."
+              type: raw
     storage-volumes:
       description: "Only present if C(expand=true): Storage volumes of the
         storage group."
@@ -329,6 +332,7 @@ storage_group:
             described in the data model of the 'Storage Volume' element object
             of the 'Storage Group' object in the :term:`HMC API` book.
             The property names have hyphens (-) as described in that book."
+          type: raw
     virtual-storage-resources:
       description: "Only present if C(expand=true): Virtual storage resources
         of the storage group. Will be empty for storage group types other than
@@ -343,6 +347,7 @@ storage_group:
             element object of the 'Storage Group' object in the
             :term:`HMC API` book.
             The property names have hyphens (-) as described in that book."
+          type: raw
     attached-partitions:
       description: "Only present if C(expand=true): Partitions to which the
         storage group is attached."
@@ -354,6 +359,7 @@ storage_group:
           description: "Properties of the partition, as described in the data
             model of the 'Partition' object in the :term:`HMC API` book.
             The property names have hyphens (-) as described in that book."
+          type: raw
   sample:
     {
         "active-connectivity": 6,

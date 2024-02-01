@@ -230,5 +230,6 @@ ldap_server_definition
   {property}
     Additional properties of the LDAP Server Definition, as described in the data model of the 'LDAP Server Definition' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
+    | **type**: raw
 
 

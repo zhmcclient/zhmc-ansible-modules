@@ -224,6 +224,7 @@ hmc
   {property}
     Additional properties of the Console object representing the targeted HMC, as described in the data model of the 'Console' object in the :term:\`HMC API\` book. Note that the set of properties has been extended over the past HMC versions, so you will get less properties on older HMC versions. The property names have hyphens (-) as described in that book.
 
+    | **type**: raw
 
   api_version
     Additional facts from the 'Query API Version' operation.
@@ -233,6 +234,7 @@ hmc
     {property}
       The properties returned from the 'Query API Version' operation, as described in the :term:\`HMC API\` book. Note that the set of properties has been extended over the past HMC versions, so you will get less properties on older HMC versions. The property names have hyphens (-) as described in that book.
 
+      | **type**: raw
 
 
 

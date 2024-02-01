@@ -197,6 +197,7 @@ cpcs:
     "{additional_property}":
       description: Additional properties requested via C(full_properties).
         The property names will have underscores instead of hyphens.
+      type: raw
   sample:
     [
         {
