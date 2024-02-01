@@ -207,6 +207,7 @@ password_rule:
       description: "Additional properties of the password rule, as described
         in the data model of the 'Password Rule' object in the :term:`HMC API`
          book. The property names have hyphens (-) as described in that book."
+      type: raw
   sample:
     {
         "case-sensitive": false,

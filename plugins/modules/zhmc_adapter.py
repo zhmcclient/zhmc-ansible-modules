@@ -285,6 +285,7 @@ adapter:
       description: "Additional properties of the adapter, as described in the
         data model of the 'Adapter' object in the :term:`HMC API` book.
         The property names have hyphens (-) as described in that book."
+      type: raw
     ports:
       description: "Artificial property for the ports of the adapter."
       type: list
@@ -300,6 +301,7 @@ adapter:
             The property names have hyphens (-) as described in that book.
             In case of unconfigured FICON adapters, the property list is
             short."
+          type: raw
   sample:
     {
         "adapter-family": "ficon",

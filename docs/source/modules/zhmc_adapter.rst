@@ -311,6 +311,7 @@ adapter
   {property}
     Additional properties of the adapter, as described in the data model of the 'Adapter' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
+    | **type**: raw
 
   ports
     Artificial property for the ports of the adapter.
@@ -326,6 +327,7 @@ adapter
     {property}
       Additional properties of the port, as described in the data model of the 'Network Port' or 'Storage Port' element object of the 'Adapter' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book. In case of unconfigured FICON adapters, the property list is short.
 
+      | **type**: raw
 
 
 

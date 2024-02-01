@@ -51,6 +51,16 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Increased versions of GitHub Actions plugins to increase node.js runtime
   to version 20.
 
+* Resolved the 'no-log-needed' issue raised by the sanity test and ansible-lint
+  on the 'os_ipl_token' input parameter of the 'zhmc_lpar' module. That
+  allowed to get rid of the corresponding entries in the ignore files.
+  (issue #915)
+
+* Resolved the 'return-syntax-error' issue raised by the sanity test and
+  ansible-lint on all modules that specify generic return properties. That
+  allowed to get rid of the corresponding entries in the ignore files.
+  (issue #915)
+
 **Known issues:**
 
 * See `list of open issues`_.

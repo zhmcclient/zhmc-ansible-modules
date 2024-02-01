@@ -279,6 +279,7 @@ user
   {property}
     Additional properties of the user, as described in the data model of the 'User' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
+    | **type**: raw
 
   user-role-names
     Name of the user roles referenced by property \ :literal:`user-roles`\ .
@@ -295,6 +296,7 @@ user
     {property}
       Properties of the user role, as described in the data model of the 'User Pattern' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
+      | **type**: raw
 
 
   user-pattern-name
@@ -312,6 +314,7 @@ user
     {property}
       Properties of the user pattern, as described in the data model of the 'User Pattern' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
+      | **type**: raw
 
 
   password-rule-name
@@ -329,6 +332,7 @@ user
     {property}
       Properties of the password rule, as described in the data model of the 'Password Rule' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
+      | **type**: raw
 
 
   ldap-server-definition-name
@@ -346,6 +350,7 @@ user
     {property}
       Properties of the LDAP server definition, as described in the data model of the 'LDAP Server Definition' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
+      | **type**: raw
 
 
 

@@ -341,6 +341,7 @@ cpc
   {property}
     Additional properties of the CPC, as described in the data model of the 'CPC' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
+    | **type**: raw
 
   adapters
     The adapters of the CPC, with a subset of their properties. For details, see the :term:\`HMC API\` book.

@@ -222,5 +222,6 @@ hba
   {property}
     Additional properties of the HBA, as described in the data model of the 'HBA' element object of the 'Partition' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
+    | **type**: raw
 
 

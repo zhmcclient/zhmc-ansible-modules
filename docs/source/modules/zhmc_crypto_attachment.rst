@@ -344,6 +344,7 @@ crypto_configuration
         {property}
           Additional properties of the adapter, as described in the data model of the 'Adapter' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
 
+          | **type**: raw
 
 
 
