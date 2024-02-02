@@ -142,7 +142,7 @@ options:
       - "* C(mount_iso): Ensures that an ISO image with the specified name
          is mounted to the partition, and that the specified INS file is set.
          The content of a currnetly mounted ISO image is not verified."
-      - "* C(unmount_iso): Ensures that no ISO image is mounted to the
+      - "* C(unmount_iso): Ensures that no ISO image is unmounted to the
          partition."
       - "* C(facts): Returns the partition properties and the properties of its
          child resources (HBAs, NICs, and virtual functions)."
