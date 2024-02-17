@@ -37,7 +37,7 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Fixed safety issues up to 2024-02-18.
 
-* Fixed dependabot issues up to 2024-02-12.
+* Fixed dependabot issues up to 2024-02-18.
 
 * Fixed a performance issue in the 'zhmc_lpar_list' and 'zhmc_partition_list'
   modules where the 'se-version' property was fetched from CPCs even if it
