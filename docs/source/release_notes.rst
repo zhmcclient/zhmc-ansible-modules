@@ -48,6 +48,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Enhancements:**
 
+* Added a new Ansible module 'zhmc_cpc_capacity' for managing the temporary
+  processor capacity of a CPC. (issue #243)
+
 **Cleanup:**
 
 * Increased versions of GitHub Actions plugins to increase node.js runtime
