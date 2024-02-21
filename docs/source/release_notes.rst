@@ -48,6 +48,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Enhancements:**
 
+* Added a new make target 'end2end_show' to show the HMCs defined for end2end
+  tests. (issue #888)
+
 **Cleanup:**
 
 * Increased versions of GitHub Actions plugins to increase node.js runtime
