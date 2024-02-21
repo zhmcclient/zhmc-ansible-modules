@@ -233,6 +233,7 @@ help:
 	@echo '  end2end_mocked - Run end2end tests using mocked environment (adds to coverage results)'
 	@echo '  all        - Do all of the above'
 	@echo '  end2end    - Run end2end tests using environment defined by TESTINVENTORY/TESTHMC (adds to coverage results)'
+	@echo "  end2end_show - Show HMCs defined for end2end tests"
 	@echo '  authors    - Generate AUTHORS.md file from git log'
 	@echo '  upload     - Publish the collection to Ansible Galaxy'
 	@echo '  uploadhub  - Publish the collection to Ansible AutomationHub'
@@ -375,6 +376,10 @@ endif
 end2end: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 	bash -c 'PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. TESTEND2END_LOAD=true pytest -v $(pytest_cov_opts) $(pytest_opts) $(test_dir)/end2end'
 	@echo '$@ done.'
+
+.PHONY:	end2end_show
+end2end_show:
+	bash -c "TESTEND2END_LOAD=true $(PYTHON_CMD) -c 'from zhmcclient.testutils import print_hmc_definitions; print_hmc_definitions()'"
 
 # TODO: Enable rc checking again once the remaining issues are resolved
 .PHONY:	end2end_mocked
