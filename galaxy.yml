@@ -81,7 +81,8 @@ build_ignore:
   - .flake8  # only in older branches
   - .travis.yml
   - .whitesource
-  - .safety-policy.yml
+  - .safety-policy-all.yml
+  - .safety-policy-install.yml
   - CODE_OF_CONDUCT.md
   - CONTRIBUTING.rst  # only in older branches
   - DCO1.1.txt  # only in older branches

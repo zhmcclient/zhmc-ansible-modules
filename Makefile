@@ -122,8 +122,9 @@ sanity_dir := tmp_sanity/collections/ansible_collections/ibm/ibm_zhmc
 sanity_dir1 := tmp_sanity
 sanity_tar_file := tmp_sanity.tar
 
-# Safety policy file
-safety_policy_file := .safety-policy.yml
+#Safety policy file (for packages needed for installation)
+safety_install_policy_file := .safety-policy-install.yml
+safety_all_policy_file := .safety-policy-all.yml
 
 # Packages whose dependencies are checked using pip-missing-reqs
 # Sphinx and ansible-doc-extractor are run only on Python>=3.6
@@ -290,7 +291,7 @@ check: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 	@echo '$@ done.'
 
 .PHONY: safety
-safety: $(done_dir)/safety_$(pymn)_$(PACKAGE_LEVEL).done
+safety: $(done_dir)/safety_all_$(pymn)_$(PACKAGE_LEVEL).done $(done_dir)/safety_install_$(pymn)_$(PACKAGE_LEVEL).done
 	@echo "Makefile: $@ done."
 
 # Boolean variable indicating that the Ansible sanity test should be run in the current Python environment
@@ -465,18 +466,33 @@ $(done_dir)/install_pip_$(pymn)_$(PACKAGE_LEVEL).done: Makefile
 	$(PYTHON_CMD) -m pip install $(pip_level_opts) pip setuptools wheel
 	echo "done" >$@
 
-$(done_dir)/safety_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_policy_file) minimum-constraints.txt
+$(done_dir)/safety_all_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_all_policy_file) minimum-constraints.txt
 ifeq ($(python_major_version),2)
-	@echo "Makefile: Warning: Skipping Safety on Python $(python_version)" >&2
+	@echo "Makefile: Warning: Skipping Safety for all packages on Python $(python_version)" >&2
 else
 ifeq ($(python_m_n_version),3.5)
-	@echo "Makefile: Warning: Skipping Safety on Python $(python_version)" >&2
+	@echo "Makefile: Warning: Skipping Safety for all packages on Python $(python_version)" >&2
 else
-	@echo "Makefile: Running Safety"
+	@echo "Makefile: Running Safety for all packages"
 	-$(call RM_FUNC,$@)
-	safety check --policy-file $(safety_policy_file) -r minimum-constraints.txt --full-report
+	-safety check --policy-file $(safety_all_policy_file) -r minimum-constraints.txt --full-report
 	echo "done" >$@
 	@echo "Makefile: Done running Safety"
+endif
+endif
+
+$(done_dir)/safety_install_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_install_policy_file) requirements.txt
+ifeq ($(python_major_version),2)
+	@echo "Makefile: Warning: Skipping Safety for install packages on Python $(python_version)" >&2
+else
+ifeq ($(python_m_n_version),3.5)
+	@echo "Makefile: Warning: Skipping Safety for install packages on Python $(python_version)" >&2
+else
+	@echo "Makefile: Running Safety for install packages"
+	-$(call RM_FUNC,$@)
+	safety check --policy-file $(safety_install_policy_file) -r requirements.txt --full-report
+	echo "done" >$@
+	@echo "Makefile: Done running Safety for install packages"
 endif
 endif
 
