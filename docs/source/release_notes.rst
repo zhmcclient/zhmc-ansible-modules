@@ -46,6 +46,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Increased the minimum version of zhmcclient to 1.13.3 to pick up fixes and
   performance improvements. (related to issue #904)
 
+* Fixed readable attribute error when ensuring ISO mounted onto the partition. (related to issue #932)
+
 **Enhancements:**
 
 * Added a new make target 'end2end_show' to show the HMCs defined for end2end
