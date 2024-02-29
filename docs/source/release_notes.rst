@@ -20,16 +20,12 @@ Releases
 ========
 
 
-Version 1.8.3-dev1
-------------------
+Version 1.8.3
+-------------
 
-Released: not yet
+Released: 2024-02-29
 
 Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
-
-**Incompatible changes:**
-
-**Deprecations:**
 
 **Bug fixes:**
 
@@ -39,8 +35,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Fixed readable attribute error when ensuring ISO mounted onto the partition.
   (related to issue #932)
-
-**Enhancements:**
 
 **Cleanup:**
 
@@ -53,12 +47,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   ansible-lint on all modules that specify generic return properties. That
   allowed to get rid of the corresponding entries in the ignore files.
   (issue #915)
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 1.8.2
