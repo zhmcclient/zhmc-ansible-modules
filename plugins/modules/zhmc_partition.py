@@ -2059,7 +2059,7 @@ def ensure_iso_mount(params, check_mode):
             try:
                 with open(image_file, 'rb') as fp:
                     if not check_mode:
-                        image = fp.readall()
+                        image = fp.read()
             except IOError as exc:
                 raise ImageError(
                     "Cannot open ISO image file {fn!r} for reading: {exc}".
