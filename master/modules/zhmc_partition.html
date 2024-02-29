@@ -234,7 +234,7 @@
 <p>* <code class="docutils literal notranslate"><span class="pre">stopped</span></code>: Ensures that the partition exists in the specified CPC, has the specified properties, and is in one of the inactive statuses (‘stopped’, ‘terminated’, ‘paused’, ‘reservation-error’).</p>
 <p>* <code class="docutils literal notranslate"><span class="pre">active</span></code>: Ensures that the partition exists in the specified CPC, has the specified properties, and is in one of the active statuses (‘active’, ‘degraded’).</p>
 <p>* <code class="docutils literal notranslate"><span class="pre">mount_iso</span></code>: Ensures that an ISO image with the specified name is mounted to the partition, and that the specified INS file is set. The content of a currnetly mounted ISO image is not verified.</p>
-<p>* <code class="docutils literal notranslate"><span class="pre">unmount_iso</span></code>: Ensures that no ISO image is mounted to the partition.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">unmount_iso</span></code>: Ensures that no ISO image is unmounted to the partition.</p>
 <p>* <code class="docutils literal notranslate"><span class="pre">facts</span></code>: Returns the partition properties and the properties of its child resources (HBAs, NICs, and virtual functions).</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: True</div>
@@ -598,6 +598,9 @@
 </div>
 </dd>
 <dt>{property}</dt><dd><p>Additional properties of the partition, as described in the data model of the ‘Partition’ object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: raw</div>
+</div>
 </dd>
 <dt>hbas</dt><dd><p>HBAs of the partition. If the CPC does not have the storage-management feature enabled (ie. on z13), the list is empty.</p>
 <div class="line-block">
@@ -611,6 +614,9 @@
 </div>
 </dd>
 <dt>{property}</dt><dd><p>Additional properties of the HBA, as described in the data model of the ‘HBA’ element object of the ‘Partition’ object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: raw</div>
+</div>
 </dd>
 </dl>
 </dd>
@@ -626,6 +632,9 @@
 </div>
 </dd>
 <dt>{property}</dt><dd><p>Additional properties of the NIC, as described in the data model of the ‘NIC’ element object of the ‘Partition’ object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: raw</div>
+</div>
 </dd>
 </dl>
 </dd>
@@ -641,6 +650,9 @@
 </div>
 </dd>
 <dt>{property}</dt><dd><p>Additional properties of the virtual function, as described in the data model of the ‘Virtual Function’ element object of the ‘Partition’ object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: raw</div>
+</div>
 </dd>
 </dl>
 </dd>
@@ -712,6 +724,7 @@
             <dd><a href="../../1.8.0/modules/zhmc_partition.html">1.8.0</a></dd>
             <dd><a href="../../1.8.1/modules/zhmc_partition.html">1.8.1</a></dd>
             <dd><a href="../../1.8.2/modules/zhmc_partition.html">1.8.2</a></dd>
+            <dd><a href="../../1.8.3/modules/zhmc_partition.html">1.8.3</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

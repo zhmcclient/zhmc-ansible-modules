@@ -38,7 +38,7 @@
             IBM Z HMC collection
           </a>
               <div class="version">
-                1.8.2
+                1.8.3
 
               </div>
 <div role="search">
@@ -243,7 +243,7 @@
 <dt>{property}</dt><dd><p>Any other property defined as writeable in the data model for user role resources (where the property names contain underscores instead of hyphens), except those excluded in the description above.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
-<div class="line"><strong>type</strong>: str</div>
+<div class="line"><strong>type</strong>: raw</div>
 </div>
 </dd>
 <dt>associated_system_defined_user_role_name</dt><dd><p>The name of the associated system-defined user role. Specifying it requires that the referenced user role exists.</p>
@@ -537,6 +537,9 @@
 </dl>
 </dd>
 <dt>{property}</dt><dd><p>Additional properties of the user role, as described in the data model of the ‘User Role’ object in the :term:`HMC API` book. The property names have hyphens (-) as described in that book.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: raw</div>
+</div>
 </dd>
 </dl>
 </dd>
@@ -572,7 +575,7 @@
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.8.2
+        v: 1.8.3
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -606,6 +609,7 @@
             <dd><a href="../1.8.0/modules/zhmc_user_role.html">1.8.0</a></dd>
             <dd><a href="../1.8.1/modules/zhmc_user_role.html">1.8.1</a></dd>
             <dd><a href="../1.8.2/modules/zhmc_user_role.html">1.8.2</a></dd>
+            <dd><a href="../1.8.3/modules/zhmc_user_role.html">1.8.3</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

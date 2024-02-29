@@ -132,18 +132,32 @@
 <p><strong>Deprecations:</strong></p>
 <p><strong>Bug fixes:</strong></p>
 <ul class="simple">
-<li><p>Fixed safety issues up to 2024-01-26.</p></li>
+<li><p>Fixed safety issues up to 2024-02-18.</p></li>
+<li><p>Fixed dependabot issues up to 2024-02-18.</p></li>
 <li><p>Fixed a performance issue in the ‘zhmc_lpar_list’ and ‘zhmc_partition_list’
 modules where the ‘se-version’ property was fetched from CPCs even if it
 was already available in the LPAR/partition properties. (issue #904)</p></li>
 <li><p>Increased the minimum version of zhmcclient to 1.13.3 to pick up fixes and
 performance improvements. (related to issue #904)</p></li>
+<li><p>Fixed readable attribute error when ensuring ISO mounted onto the partition. (related to issue #932)</p></li>
 </ul>
 <p><strong>Enhancements:</strong></p>
+<ul class="simple">
+<li><p>Added a new make target ‘end2end_show’ to show the HMCs defined for end2end
+tests. (issue #888)</p></li>
+</ul>
 <p><strong>Cleanup:</strong></p>
 <ul class="simple">
 <li><p>Increased versions of GitHub Actions plugins to increase node.js runtime
 to version 20.</p></li>
+<li><p>Resolved the ‘no-log-needed’ issue raised by the sanity test and ansible-lint
+on the ‘os_ipl_token’ input parameter of the ‘zhmc_lpar’ module. That
+allowed to get rid of the corresponding entries in the ignore files.
+(issue #915)</p></li>
+<li><p>Resolved the ‘return-syntax-error’ issue raised by the sanity test and
+ansible-lint on all modules that specify generic return properties. That
+allowed to get rid of the corresponding entries in the ignore files.
+(issue #915)</p></li>
 </ul>
 <p><strong>Known issues:</strong></p>
 <ul class="simple">
@@ -1086,6 +1100,7 @@ property update.</p></li>
             <dd><a href="../1.8.0/release_notes.html">1.8.0</a></dd>
             <dd><a href="../1.8.1/release_notes.html">1.8.1</a></dd>
             <dd><a href="../1.8.2/release_notes.html">1.8.2</a></dd>
+            <dd><a href="../1.8.3/release_notes.html">1.8.3</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
