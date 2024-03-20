@@ -1,0 +1,106 @@
+# Pip constraints file for install dependencies.
+#
+# This file specifies constraints that define the minimum versions of any
+# direct and indirect dependent packages for installation and development of
+# the project.
+# They are used when setting up test environments with the minimum versions of
+# any dependent packages.
+
+
+# Dependencies for installation with Pip (must be installed in a separate pip call)
+
+# For the base packages, we use the versions from Ubuntu 18.04 as a general
+# minimum, and then increase it to the first version that introduced support
+# for a particular Python version:
+# pip 10.0.0 introduced the --exclude-editable option.
+# pip 18.0 is needed on pypy3 (py36) to support constraints like cffi!=1.11.3,>=1.8.
+# Pip 20.2 introduced a new resolver whose backtracking had issues that were resolved only in 21.2.2.
+# Pip 21.0 removed support for Python<=3.5
+# pip>=21.0 is needed for the cryptography package on Windows on GitHub Actions.
+pip==19.3.1; python_version <= '3.5'
+pip==21.3.1; python_version == '3.6'
+pip==23.3; python_version >= '3.7'
+
+# setuptools 51.0.0 removed support for py35
+# setuptools 59.7.0 removed support for py36
+# setuptools 68.1.0 removed support for py37
+# setuptools 65.5.1 fixes safety issue 52495. However, using that version causes
+#   the ansible sanity test for Ansible 2.9 to fail in the pylint step due to
+#   this Python warning being displayed on stderr:
+#   _distutils_hack/__init__.py:33: UserWarning: Setuptools is replacing distutils
+#   See Ansible issue 71602 which describes that setuptools 50.0.0 introduced
+#   that issue and that it was supposedly fixed in setuptools 50.1.0.
+#   Therefore, we stay on an older version of setuptools for Ansible 2.9
+#   (i.e. Python 2.7)
+#   The warning reoccurred since then under some (unknown) circumstances.
+# setuptools>=66.1.0 is required on Python 3.12.
+setuptools==39.0.1; python_version == '2.7'
+setuptools==50.3.2; python_version == '3.5'
+setuptools==59.6.0; python_version >= '3.6' and python_version <= '3.11'
+setuptools==66.1.0; python_version >= '3.12'
+
+wheel==0.30.0; python_version <= '3.6'
+wheel==0.38.1; python_version >= '3.7'
+
+
+# Direct dependencies for install (must be consistent with requirements.txt)
+
+# Keep consistent with table for 'minimum' packages in development.rst and with requirements.txt
+ansible==2.9.27; python_version == '2.7'  # sanity test is not run here
+ansible==2.9.27; python_version >= '3.5' and python_version <= '3.7'
+ansible==2.9.27; python_version == '3.8'
+ansible==4.1.0; python_version == '3.9'
+ansible==5.0.1; python_version == '3.10'
+ansible==7.0.0; python_version == '3.11'
+ansible==9.0.1; python_version >= '3.12'
+
+# ansible-core is pulled in by ansible>=4.0, and is needed for pip-check-reqs checks.
+ansible-core==2.11.12; python_version == '3.9'
+ansible-core==2.12.10; python_version == '3.10'
+ansible-core==2.14.2; python_version == '3.11'
+ansible-core==2.16.0; python_version >= '3.12'
+
+# other ansible or ansible-core dependencies
+resolvelib==0.5.3; python_version == '3.9'
+resolvelib==0.5.3; python_version == '3.10'
+resolvelib==0.5.3; python_version >= '3.11'
+distlib==0.3.6
+
+requests==2.25.0; python_version <= '3.6'
+requests==2.31.0; python_version >= '3.7'
+
+pytz==2016.10; python_version <= '3.9'
+pytz==2019.1; python_version >= '3.10'
+
+zhmcclient==1.13.3
+
+
+# Indirect dependencies for install (must be consistent with requirements.txt)
+
+# Jinja2 is used by ansible/ansible-core and by ansible-doc-extractor.
+Jinja2==2.10.1; python_version <= '3.7'
+Jinja2==3.1.3; python_version >= '3.8'
+
+# MarkupSafe is used by Jinja2
+MarkupSafe==1.1.0; python_version <= '3.7'
+MarkupSafe==2.0.0; python_version >= '3.8'
+
+cryptography==3.3.2; python_version == '2.7'
+cryptography==3.0; python_version == '3.5'
+cryptography==3.4.7; python_version == '3.6'
+cryptography==42.0.2; python_version >= '3.7'
+
+importlib-metadata==0.12; python_version <= '3.7'
+importlib-metadata==4.8.3; python_version >= '3.8'
+
+packaging==20.5; python_version <= '3.5'
+packaging==21.3; python_version >= '3.6'
+PyYAML==5.3.1; python_version <= '3.5'
+PyYAML==6.0.1; python_version >= '3.6'
+
+python-dateutil==2.8.2
+jsonschema==3.0.1; python_version <= '3.6'
+jsonschema==4.10.0; python_version >= '3.7'
+urllib3==1.26.18; python_version == '2.7'
+urllib3==1.26.9; python_version == '3.5'
+urllib3==1.26.18; python_version >= '3.6'
