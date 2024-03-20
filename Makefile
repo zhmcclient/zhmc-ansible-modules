@@ -225,7 +225,7 @@ help:
 	@echo '  check      - Run flake8'
 	@echo '  sanity     - Run Ansible sanity tests (includes pep8, pylint, validate-modules)'
 	@echo '  ansible_lint - Run ansible-lint on distribution archive (and built it)'
-	@echo '  safety     - Run safety on sources'
+	@echo '  safety     - Run safety for install and all'
 	@echo '  check_reqs - Perform missing dependency checks'
 	@echo '  docs       - Build the documentation for all enabled (docs/source/conf.py) versions in: $(doc_build_dir) using remote repo'
 	@echo '  docslocal  - Build the documentation from local repo contents in: $(doc_build_local_dir)'
@@ -355,7 +355,7 @@ endif
 	@echo '$@ done.'
 
 .PHONY: check_reqs
-check_reqs: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done minimum-constraints.txt requirements.txt
+check_reqs: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done minimum-constraints.txt minimum-constraints-install.txt requirements.txt
 ifeq ($(python_major_version),2)
 	@echo "Makefile: Warning: Skipping the checking of missing dependencies on Python 2.x" >&2
 else
@@ -364,7 +364,7 @@ ifeq ($(PACKAGE_LEVEL),ansible)
 else
 	@echo "Makefile: Checking missing dependencies of this package"
 	pip-missing-reqs $(src_py_dir) --requirements-file=requirements.txt
-	pip-missing-reqs $(src_py_dir) --requirements-file=minimum-constraints.txt
+	pip-missing-reqs $(src_py_dir) --requirements-file=minimum-constraints-install.txt
 	@echo "Makefile: Done checking missing dependencies of this package"
 	@echo "Makefile: Checking missing dependencies of some development packages"
 	@rc=0; for pkg in $(check_reqs_packages); do dir=$$($(PYTHON_CMD) -c "import $${pkg} as m,os; dm=os.path.dirname(m.__file__); d=dm if not dm.endswith('site-packages') else m.__file__; print(d)"); cmd="pip-missing-reqs $${dir} --requirements-file=minimum-constraints.txt"; echo $${cmd}; $${cmd}; rc=$$(expr $${rc} + $${?}); done; exit $${rc}
@@ -471,7 +471,7 @@ $(done_dir)/install_pip_$(pymn)_$(PACKAGE_LEVEL).done: Makefile
 	$(PYTHON_CMD) -m pip install $(pip_level_opts) pip setuptools wheel
 	echo "done" >$@
 
-$(done_dir)/safety_all_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_all_policy_file) minimum-constraints.txt
+$(done_dir)/safety_all_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_all_policy_file) minimum-constraints.txt minimum-constraints-install.txt
 ifeq ($(python_major_version),2)
 	@echo "Makefile: Warning: Skipping Safety for all packages on Python $(python_version)" >&2
 else
@@ -486,7 +486,7 @@ else
 endif
 endif
 
-$(done_dir)/safety_install_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_install_policy_file) requirements.txt
+$(done_dir)/safety_install_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_install_policy_file) minimum-constraints-install.txt
 ifeq ($(python_major_version),2)
 	@echo "Makefile: Warning: Skipping Safety for install packages on Python $(python_version)" >&2
 else
@@ -495,7 +495,7 @@ ifeq ($(python_m_n_version),3.5)
 else
 	@echo "Makefile: Running Safety for install packages"
 	-$(call RM_FUNC,$@)
-	safety check --policy-file $(safety_install_policy_file) -r requirements.txt --full-report
+	safety check --policy-file $(safety_install_policy_file) -r minimum-constraints-install.txt --full-report
 	echo "done" >$@
 	@echo "Makefile: Done running Safety for install packages"
 endif

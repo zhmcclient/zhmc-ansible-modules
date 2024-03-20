@@ -53,6 +53,11 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Added a new make target 'end2end_show' to show the HMCs defined for end2end
   tests. (issue #888)
 
+* Changed safety run for install dependencies to use the exact minimum versions
+  of the dependent packages, by moving them into a separate
+  minimum-constraints-install.txt file that is included by the existing
+  minimum-constraints.txt file. (issue #939)
+
 **Cleanup:**
 
 * Increased versions of GitHub Actions plugins to increase node.js runtime
