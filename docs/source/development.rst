@@ -311,14 +311,27 @@ local clone of the zhmc-ansible-modules Git repo.
 
         make authors
 
-6.  Commit your changes and push the topic branch to the remote repo:
+6.  Run the Safety tool:
+
+    .. code-block:: sh
+
+        RUN_TYPE=release make safety
+
+    When releasing a version, the safety run for all dependencies will fail
+    if there are any safety issues reported. In normal and scheduled runs,
+    safety issues reported for all dependencies will be ignored.
+
+    If the safety run fails, you need to fix the safety issues that are
+    reported.
+
+7.  Commit your changes and push the topic branch to the remote repo:
 
     .. code-block:: sh
 
         git commit -asm "Release ${MNU}"
         git push --set-upstream origin release_${MNU}
 
-7.  On GitHub, create a Pull Request for branch ``release_M.N.U``.
+8.  On GitHub, create a Pull Request for branch ``release_M.N.U``.
 
     Important: When creating Pull Requests, GitHub by default targets the
     ``master`` branch. When releasing based on a stable branch, you need to
@@ -328,18 +341,18 @@ local clone of the zhmc-ansible-modules Git repo.
     tests for all defined environments, since it discovers by the branch name
     that this is a PR for a release.
 
-8.  On GitHub, once the checks for that Pull Request have succeeded, merge the
+9.  On GitHub, once the checks for that Pull Request have succeeded, merge the
     Pull Request (no review is needed). This automatically deletes the branch
     on GitHub.
 
     If the PR did not succeed, fix the issues.
 
-9.  On GitHub, close milestone ``M.N.U``.
+10. On GitHub, close milestone ``M.N.U``.
 
     Verify that the milestone has no open items anymore. If it does have open
     items, investigate why and fix.
 
-10. Publish the collection to Ansible Galaxy
+11. Publish the collection to Ansible Galaxy
 
     .. code-block:: sh
 
@@ -355,7 +368,7 @@ local clone of the zhmc-ansible-modules Git repo.
     it on Github, and finally creates a new stable branch on Github if the master
     branch was released.
 
-11. Verify the publishing
+12. Verify the publishing
 
     * Verify that the new version is available on Ansible Galaxy at
       https://galaxy.ansible.com/ibm/ibm_zhmc/
@@ -370,7 +383,7 @@ local clone of the zhmc-ansible-modules Git repo.
     * Verify that the new version has documentation on Github pages at
       https://zhmcclient.github.io/zhmc-ansible-modules/release_notes.html
 
-12. Publish the collection to Ansible AutomationHub
+13. Publish the collection to Ansible AutomationHub
 
     This needs to be done in addition to the prior publish step, and it
     has not successfully been automated as of today.
