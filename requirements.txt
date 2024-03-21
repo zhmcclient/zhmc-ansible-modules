@@ -1,13 +1,10 @@
-# Pip requirements file for installation of the project.
-#
-# The order of packages is significant, because pip processes them in the order
-# of appearance.
-#
-# Make sure that the minimum versions required in this file are consistent with
-# the minimum versions specified in minimum-constraints.txt.
+# Pip requirements file for install dependencies.
+
+# Note: The dependencies in this file will become the dependencies stated
+# in the Ansible collection package metadata.
 
 
-# Direct dependencies (except pip, setuptools, wheel):
+# Direct dependencies for install (must be consistent with minimum-constraints-install.txt)
 
 # Keep minimum versions consistent with table for 'minimum' packages in development.rst and with minimum-constraints.txt
 # Starting with Python 3.9, ansible >=4 is needed.
@@ -48,7 +45,8 @@ pytz>=2016.10
 # zhmcclient @ git+https://github.com/zhmcclient/python-zhmcclient.git@master
 zhmcclient>=1.13.3
 
-# Indirect dependencies are not specified in this file, unless needed to solve versioning issues:
+
+# Indirect dependencies for install that are needed for some reason (must be consistent with minimum-constraints-install.txt)
 
 # Jinja2 is used by ansible/ansible-core and by ansible-doc-extractor.
 # The module.rst.j2 template used by ansible-doc-extractor uses the 'tojson' filter added in Jinja2 2.9

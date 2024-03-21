@@ -1,13 +1,11 @@
 # Pip constraints file for install dependencies.
 #
-# This file specifies constraints that define the minimum versions of any
-# direct and indirect dependent packages for installation and development of
-# the project.
-# They are used when setting up test environments with the minimum versions of
-# any dependent packages.
+# This file specifies constraints that match the minimum versions specified in
+# the requirement files for install. They are used for example when setting up
+# test environments with the minimum versions of any dependent packages.
 
 
-# Dependencies for installation with Pip (must be installed in a separate pip call)
+# Base dependencies
 
 # For the base packages, we use the versions from Ubuntu 18.04 as a general
 # minimum, and then increase it to the first version that introduced support
@@ -75,7 +73,7 @@ pytz==2019.1; python_version >= '3.10'
 zhmcclient==1.13.3
 
 
-# Indirect dependencies for install (must be consistent with requirements.txt)
+# Indirect dependencies for install that are needed for some reason (must be consistent with requirements.txt)
 
 # Jinja2 is used by ansible/ansible-core and by ansible-doc-extractor.
 Jinja2==2.10.1; python_version <= '3.7'
@@ -104,3 +102,8 @@ jsonschema==4.10.0; python_version >= '3.7'
 urllib3==1.26.18; python_version == '2.7'
 urllib3==1.26.9; python_version == '3.5'
 urllib3==1.26.18; python_version >= '3.6'
+
+
+# All other indirect dependencies for install that are not in requirements.txt
+
+# None
