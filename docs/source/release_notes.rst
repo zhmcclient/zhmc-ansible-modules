@@ -58,6 +58,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   minimum-constraints-install.txt file that is included by the existing
   minimum-constraints.txt file. (issue #939)
 
+* The safety run for all dependencies now must succeed when the test workflow
+  is run for a release (i.e. branch name 'release_...').
+
 **Cleanup:**
 
 * Increased versions of GitHub Actions plugins to increase node.js runtime
