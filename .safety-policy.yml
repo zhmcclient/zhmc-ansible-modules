@@ -124,6 +124,12 @@ security:
             reason: Fixed ansible-core version 2.15.8 requires Python>=3.9 and is used on Python>=3.12
         64227:
             reason: Fixed Jinja2 version 3.1.3 requires Python>=3.7 and is used on Python>=3.8
+        65278:
+            reason: Fixed cryptography version 42.0.0 requires Python>=3.7 and is used there
+        65510:
+            reason: Fixed cryptography version 42.0.0 requires Python>=3.7 and is used there
+        65511:
+            reason: Fixed ansible-core version 2.13.13 requires Python>=3.7 and is used on Python>=3.11
 
     # Continue with exit code 0 when vulnerabilities are found.
     continue-on-vulnerability-error: False
