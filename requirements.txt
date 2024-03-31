@@ -71,7 +71,7 @@ MarkupSafe>=2.0.0; python_version >= '3.8'
 cryptography>=3.3.2; python_version == '2.7'
 cryptography>=3.0,<3.1; python_version == '3.5'
 cryptography>=3.4.7,<37.0.0; python_version == '3.6'
-cryptography>=42.0.2; python_version >= '3.7'
+cryptography>=42.0.5; python_version >= '3.7'
 
 # importlib-metadata is used for install by jsonschema which is used by zhmcclient.
 # importlib-metadata is used for development by flake8 (and others).
