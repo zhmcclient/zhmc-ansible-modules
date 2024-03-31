@@ -71,6 +71,10 @@ subprocess-tee==0.4.1; python_version >= '3.10'
 safety==2.2.0; python_version >= '3.6'
 dparse==0.6.2; python_version >= '3.6'
 ruamel.yaml==0.17.21; python_version >= '3.6'
+typer==0.9.0; python_version == '3.6'
+typer==0.12.0; python_version >= '3.7'
+typer-cli==0.12.0; python_version >= '3.7'
+typer-slim==0.12.0; python_version >= '3.7'
 
 # Sphinx (no imports, invoked via sphinx-build script):
 Sphinx==7.1.0; python_version == '3.8'
