@@ -255,6 +255,11 @@ jobs:
       run: |
         echo "Installed Python packages:"
         pip list
+    - name: Fail if version of xz tool is affected by CVE-2024-3094
+      if: ${{ ! startsWith(matrix.os, 'windows') }}
+      run: |
+        xz --version;
+        bash -c "! (xz --version | grep -E '5\.6\.(0|1)')"
     - name: Show package dependency tree
       run: |
         echo "Package dependency tree of installed Python packages:"
