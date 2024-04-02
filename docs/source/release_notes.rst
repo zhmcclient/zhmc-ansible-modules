@@ -61,6 +61,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * The safety run for all dependencies now must succeed when the test workflow
   is run for a release (i.e. branch name 'release_...').
 
+* Aded check to the test workflow when running on macos or Ubuntu for whether
+  the 'xz' tool is at a version that is affected by CVE-2024-3094.
+
 **Cleanup:**
 
 * Increased versions of GitHub Actions plugins to increase node.js runtime
