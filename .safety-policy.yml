@@ -129,9 +129,17 @@ security:
         65510:
             reason: Fixed cryptography version 42.0.0 requires Python>=3.7 and is used there
         65511:
-            reason: Fixed ansible-core version 2.13.13 requires Python>=3.7 and is used on Python>=3.11
+            reason: Fixed ansible-core version 2.13.13 requires Python>=3.8 and 2.13.x is not used
         65647:
             reason: Fixed cryptography version 42.0.5 requires Python>=3.7 and is used there
+        66067:
+            reason: Fixed pylint version 2.6.1 requires Python>=3.5 and is used there
+        66667:
+            reason: Fixed ansible-core version 2.12.0 requires Python>=3.8 and is used on Python>=3.10
+        66700:
+            reason: Fixed ansible-core version 2.14.14 requires Python>=3.9 and is used on Python>=3.11
+        66742:
+            reason: Fixed black version 24.3.0 requires Python>=3.8 and is used on Python>=3.10 (black is not used below)
 
     # Continue with exit code 0 when vulnerabilities are found.
     continue-on-vulnerability-error: False
