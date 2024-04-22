@@ -69,7 +69,7 @@ rstcheck>=3.3.1,<4.0; python_version >= '3.7' and python_version <= '3.9'  # ans
 # ansible-lint 6.0.0 requires ansible-core>=2.12, so it does not run on py39 with minimum package levels, so it is run only on py>=310
 # ansible-lint 6.14.0 depends on yamllint>=1.26.3, ansible-core>=2.12.0, and the packages listed below
 ansible-lint>=6.14.0; python_version >= '3.10'
-black>=22.8.0; python_version >= '3.10'
+black>=24.3.0; python_version >= '3.10'
 rich>=12.0.0; python_version >= '3.10'
 wcmatch>=8.1.2; python_version >= '3.10'
 ansible-compat>=4.1.10; python_version >= '3.10'
@@ -77,9 +77,11 @@ ansible-compat>=4.1.10; python_version >= '3.10'
 # Safety CI by pyup.io
 # Safety is run only on Python >=3.6
 # Safety 2.3.5 (running only on Python >=3.6) requires packaging<22.0,>=21.0, but safety 2.3.4 does not
-#   and safety 2.4.0 will also no longer pin it (see https://github.com/pyupio/safety/issues/455).
-safety>=2.2.0,!=2.3.5; python_version >= '3.6'
-dparse>=0.6.2; python_version >= '3.6'
+#   and safety 3.0.0 also no longer pins it (see https://github.com/pyupio/safety/issues/455).
+safety>=2.2.0,!=2.3.5; python_version >= '3.6' and python_version <= '3.7'
+safety>=3.0.1; python_version >= '3.8'
+dparse>=0.6.2; python_version >= '3.6' and python_version <= '3.7'
+dparse>=0.6.4b0; python_version >= '3.8'
 ruamel.yaml>=0.17.21,<0.17.22; python_version == '3.6'
 ruamel.yaml>=0.17.21; python_version >= '3.7'
 
@@ -131,9 +133,9 @@ antsibull-docs-parser>=1.0.0; python_version >= '3.8'
 # Pylint 2.11 introduced the consider-using-f-string check, which is raised.
 # The Pylint versions defined here are used when the sanity test runs in the current virtual env.
 #   Keep them in sync with the versions run in the sanity virtual env.
-pylint>=2.6.0,<2.7; python_version >= '3.5' and python_version <= '3.7'  # pylint 2.6
-pylint>=2.6.0,<2.10; python_version >= '3.8' and python_version <= '3.9'  # pylint 2.9
-pylint>=2.6.0,<2.16; python_version >= '3.10' and python_version <= '3.11'  # pylint 2.15
+pylint>=2.6.1,<2.7; python_version >= '3.5' and python_version <= '3.7'  # pylint 2.6
+pylint>=2.6.1,<2.10; python_version >= '3.8' and python_version <= '3.9'  # pylint 2.9
+pylint>=2.6.1,<2.16; python_version >= '3.10' and python_version <= '3.11'  # pylint 2.15
 pylint>=3.0.1; python_version >= '3.12'  # pylint 3.x
 astroid>=2.4.0,<2.5; python_version >= '3.5' and python_version <= '3.7'  # astroid 2.4
 astroid>=2.4.0,<2.7; python_version >= '3.8' and python_version <= '3.9'  # astroid 2.6

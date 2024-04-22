@@ -33,9 +33,11 @@ pip==23.3; python_version >= '3.7'
 #   (i.e. Python 2.7)
 #   The warning reoccurred since then under some (unknown) circumstances.
 # setuptools>=66.1.0 is required on Python 3.12.
+# safety 3.0.1 depends on setuptools>=65.5.1
 setuptools==39.0.1; python_version == '2.7'
 setuptools==50.3.2; python_version == '3.5'
-setuptools==59.6.0; python_version >= '3.6' and python_version <= '3.11'
+setuptools==59.6.0; python_version >= '3.6' and python_version <= '3.7'
+setuptools==65.5.1; python_version >= '3.8' and python_version <= '3.11'
 setuptools==66.1.0; python_version >= '3.12'
 
 wheel==0.30.0; python_version <= '3.6'
@@ -56,7 +58,7 @@ ansible==9.0.1; python_version >= '3.12'
 # ansible-core is pulled in by ansible>=4.0, and is needed for pip-check-reqs checks.
 ansible-core==2.11.12; python_version == '3.9'
 ansible-core==2.12.10; python_version == '3.10'
-ansible-core==2.14.2; python_version == '3.11'
+ansible-core==2.14.14; python_version == '3.11'
 ansible-core==2.16.0; python_version >= '3.12'
 
 # other ansible or ansible-core dependencies
@@ -93,7 +95,9 @@ importlib-metadata==0.12; python_version <= '3.7'
 importlib-metadata==4.8.3; python_version >= '3.8'
 
 packaging==20.5; python_version <= '3.5'
-packaging==21.3; python_version >= '3.6'
+packaging==21.3; python_version >= '3.6' and python_version <= '3.9'
+packaging==22.0; python_version >= '3.10'
+
 PyYAML==5.3.1; python_version <= '3.5'
 PyYAML==6.0.1; python_version >= '3.6'
 
@@ -152,7 +156,7 @@ rstcheck==3.3.1; python_version <= '3.9'  # ansible <= 2.10 (on minimum package 
 
 # ansible-lint
 ansible-lint==6.14.0; python_version >= '3.10'
-black==22.8.0; python_version >= '3.10'
+black==24.3.0; python_version >= '3.10'
 rich==12.0.0; python_version >= '3.10'
 wcmatch==8.1.2; python_version >= '3.10'
 ansible-compat==4.1.10; python_version >= '3.10'
@@ -160,11 +164,13 @@ subprocess-tee==0.4.1; python_version >= '3.10'
 
 # Safety CI by pyup.io
 # Safety is run only on Python >=3.6
-safety==2.2.0; python_version >= '3.6'
-dparse==0.6.2; python_version >= '3.6'
+safety==2.2.0; python_version >= '3.6' and python_version <= '3.7'
+safety==3.0.1; python_version >= '3.8'
+dparse==0.6.2; python_version >= '3.6' and python_version <= '3.7'
+dparse==0.6.4b0; python_version >= '3.8'
 ruamel.yaml==0.17.21; python_version >= '3.6'
 typer==0.9.0; python_version == '3.6'
-typer==0.12.0; python_version >= '3.7'
+typer==0.12.1; python_version >= '3.7'
 typer-cli==0.12.0; python_version >= '3.7'
 typer-slim==0.12.0; python_version >= '3.7'
 
@@ -197,15 +203,9 @@ antsibull-docs-parser==1.0.0; python_version >= '3.8'
 
 # PyLint (no imports, invoked via pylint script):
 # Pylint is run in ansible sanity test which is run only on Python>=3.5
-pylint==2.6.0; python_version >= '3.5' and python_version <= '3.11'
-# pylint==2.6.0; python_version >= '3.5' and python_version <= '3.7'
-# pylint==2.9.0; python_version >= '3.8' and python_version <= '3.9'
-# pylint==2.15.0; python_version >= '3.10' and python_version <= '3.11'
+pylint==2.6.1; python_version >= '3.5' and python_version <= '3.11'
 pylint==3.0.1; python_version >= '3.12'
 astroid==2.4.0; python_version >= '3.5' and python_version <= '3.11'
-# astroid==2.4.0; python_version >= '3.5' and python_version <= '3.7'
-# astroid==2.6.1; python_version >= '3.8' and python_version <= '3.9'
-# astroid==2.12.4; python_version >= '3.10' and python_version <= '3.11'
 astroid==3.0.1; python_version >= '3.12'
 typed-ast==1.4.2; python_version >= '3.5' and python_version <= '3.7' and implementation_name=='cpython'
 # used by pylint 2.14 which requires python_version >= '3.7' and is used by us only on py>=3.10
@@ -269,7 +269,11 @@ smmap==3.0.1
 snowballstemmer==2.0.0
 toml==0.10.0
 typing==3.6.1; python_version == '2.7'  # technically: python_version <= '3.4'
-typing-extensions==3.10.0.0  # Used in some combinations of Python version and package level
+# safety 2.2.0 depends on typing-extensions>=4.0.1
+# safety 3.0.1 depends on typing-extensions>=4.7.1
+typing-extensions==3.10.0.0; python_version <= '3.5'
+typing-extensions==4.0.1; python_version == '3.6'
+typing-extensions==4.7.1; python_version >= '3.7'
 wcwidth==0.1.7
 webencodings==0.5.1
 wrapt==1.11; python_version <= '3.9'
