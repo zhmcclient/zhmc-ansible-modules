@@ -48,6 +48,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Fixed readable attribute error when ensuring ISO mounted onto the partition. (related to issue #932)
 
+* In the Github Actions test workflow for Python 3.5, 3.6 and 3.7, changed
+  macos-latest back to macos-12 because macos-latest got upgraded from macOS 12
+  to macOS 14 which no longer supports these Python versions.
+
 **Enhancements:**
 
 * Added a new make target 'end2end_show' to show the HMCs defined for end2end
