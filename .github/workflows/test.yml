@@ -67,6 +67,36 @@ jobs:
                 \"os\": \"ubuntu-latest\", \
                 \"python-version\": \"3.6\", \
                 \"package_level\": \"ansible\" \
+              }, \
+              { \
+                \"os\": \"macos-latest\", \
+                \"python-version\": \"3.5\", \
+                \"package_level\": \"minimum\" \
+              }, \
+              { \
+                \"os\": \"macos-latest\", \
+                \"python-version\": \"3.5\", \
+                \"package_level\": \"latest\" \
+              }, \
+              { \
+                \"os\": \"macos-latest\", \
+                \"python-version\": \"3.6\", \
+                \"package_level\": \"minimum\" \
+              }, \
+              { \
+                \"os\": \"macos-latest\", \
+                \"python-version\": \"3.6\", \
+                \"package_level\": \"latest\" \
+              }, \
+              { \
+                \"os\": \"macos-latest\", \
+                \"python-version\": \"3.7\", \
+                \"package_level\": \"minimum\" \
+              }, \
+              { \
+                \"os\": \"macos-latest\", \
+                \"python-version\": \"3.7\", \
+                \"package_level\": \"latest\" \
               } \
             ], \
             \"include\": [ \
@@ -117,6 +147,36 @@ jobs:
                 \"os\": \"ubuntu-20.04\", \
                 \"python-version\": \"3.6\", \
                 \"package_level\": \"ansible\" \
+              }, \
+              { \
+                \"os\": \"macos-12\", \
+                \"python-version\": \"3.5\", \
+                \"package_level\": \"minimum\" \
+              }, \
+              { \
+                \"os\": \"macos-12\", \
+                \"python-version\": \"3.5\", \
+                \"package_level\": \"latest\" \
+              }, \
+              { \
+                \"os\": \"macos-12\", \
+                \"python-version\": \"3.6\", \
+                \"package_level\": \"minimum\" \
+              }, \
+              { \
+                \"os\": \"macos-12\", \
+                \"python-version\": \"3.6\", \
+                \"package_level\": \"latest\" \
+              }, \
+              { \
+                \"os\": \"macos-12\", \
+                \"python-version\": \"3.7\", \
+                \"package_level\": \"minimum\" \
+              }, \
+              { \
+                \"os\": \"macos-12\", \
+                \"python-version\": \"3.7\", \
+                \"package_level\": \"latest\" \
               } \
             ] \
           }" >> $GITHUB_OUTPUT; \
@@ -181,6 +241,11 @@ jobs:
               { \
                 \"os\": \"ubuntu-latest\", \
                 \"python-version\": \"3.12\", \
+                \"package_level\": \"latest\" \
+              }, \
+              { \
+                \"os\": \"macos-12\", \
+                \"python-version\": \"3.5\", \
                 \"package_level\": \"latest\" \
               }, \
               { \
