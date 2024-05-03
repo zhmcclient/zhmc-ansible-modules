@@ -231,6 +231,7 @@ help:
 	@echo '  sanity     - Run Ansible sanity tests (includes pep8, pylint, validate-modules)'
 	@echo '  ansible_lint - Run ansible-lint on distribution archive (and built it)'
 	@echo '  safety     - Run safety for install and all'
+	@echo '  bandit     - Run bandit checker'
 	@echo '  check_reqs - Perform missing dependency checks'
 	@echo '  docs       - Build the documentation for all enabled (docs/source/conf.py) versions in: $(doc_build_dir) using remote repo'
 	@echo '  docslocal  - Build the documentation from local repo contents in: $(doc_build_local_dir)'
@@ -265,7 +266,7 @@ help:
 	@echo '  ansible-playbook playbooks/....'
 
 .PHONY: all
-all: install develop dist safety check sanity ansible_lint check_reqs docs docslocal linkcheck test end2end_mocked
+all: install develop dist safety bandit check sanity ansible_lint check_reqs docs docslocal linkcheck test end2end_mocked
 	@echo '$@ done.'
 
 .PHONY: install
@@ -298,6 +299,10 @@ check: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 
 .PHONY: safety
 safety: $(done_dir)/safety_all_$(pymn)_$(PACKAGE_LEVEL).done $(done_dir)/safety_install_$(pymn)_$(PACKAGE_LEVEL).done
+	@echo "Makefile: $@ done."
+
+.PHONY: bandit
+bandit: $(done_dir)/bandit_$(pymn)_$(PACKAGE_LEVEL).done
 	@echo "Makefile: $@ done."
 
 # Boolean variable indicating that the Ansible sanity test should be run in the current Python environment
@@ -503,6 +508,29 @@ else
 	safety check --policy-file $(safety_install_policy_file) -r minimum-constraints-install.txt --full-report
 	echo "done" >$@
 	@echo "Makefile: Done running Safety for install packages"
+endif
+endif
+
+$(done_dir)/bandit_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile
+ifeq ($(python_major_version),2)
+	@echo "Makefile: Warning: Skipping Safety for all packages on Python $(python_version)" >&2
+else
+ifeq ($(python_m_n_version),3.5)
+	@echo "Makefile: Warning: Skipping Safety for all packages on Python $(python_version)" >&2
+else
+ifeq ($(python_m_n_version),3.6)
+	@echo "Makefile: Warning: Skipping Safety for all packages on Python $(python_version)" >&2
+else
+ifeq ($(python_m_n_version),3.7)
+	@echo "Makefile: Warning: Skipping Safety for all packages on Python $(python_version)" >&2
+else
+	@echo "Makefile: Running Bandit"
+	-$(call RM_FUNC,$@)
+	bandit $(src_py_dir) -r -l
+	echo "done" >$@
+	@echo "Makefile: Done running Bandit"
+endif
+endif
 endif
 endif
 

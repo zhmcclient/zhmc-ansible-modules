@@ -78,6 +78,10 @@ dparse>=0.6.2; python_version >= '3.6'
 ruamel.yaml>=0.17.21,<0.17.22; python_version == '3.6'
 ruamel.yaml>=0.17.21; python_version >= '3.7'
 
+# Bandit checker
+# Bandit is run only on Python>=3.8
+bandit>=1.7.8; python_version >= '3.8'
+
 # Sphinx (no imports, invoked via sphinx-build script):
 # Sphinx 6.0.0 started requiring Python>=3.8
 # Sphinx 7.2.0 started requiring Python>=3.9

@@ -68,6 +68,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Aded check to the test workflow when running on macos or Ubuntu for whether
   the 'xz' tool is at a version that is affected by CVE-2024-3094.
 
+* Added support for running the 'bandit' checker with a new make target
+  'bandit', and added that to the GitHub Actions test workflow.
+
 **Cleanup:**
 
 * Increased versions of GitHub Actions plugins to increase node.js runtime
