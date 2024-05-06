@@ -80,6 +80,11 @@ jobs:
               }, \
               { \
                 \"os\": \"macos-latest\", \
+                \"python-version\": \"3.5\", \
+                \"package_level\": \"ansible\" \
+              }, \
+              { \
+                \"os\": \"macos-latest\", \
                 \"python-version\": \"3.6\", \
                 \"package_level\": \"minimum\" \
               }, \
@@ -90,6 +95,11 @@ jobs:
               }, \
               { \
                 \"os\": \"macos-latest\", \
+                \"python-version\": \"3.6\", \
+                \"package_level\": \"ansible\" \
+              }, \
+              { \
+                \"os\": \"macos-latest\", \
                 \"python-version\": \"3.7\", \
                 \"package_level\": \"minimum\" \
               }, \
@@ -97,6 +107,11 @@ jobs:
                 \"os\": \"macos-latest\", \
                 \"python-version\": \"3.7\", \
                 \"package_level\": \"latest\" \
+              }, \
+              { \
+                \"os\": \"macos-latest\", \
+                \"python-version\": \"3.7\", \
+                \"package_level\": \"ansible\" \
               } \
             ], \
             \"include\": [ \
@@ -160,6 +175,11 @@ jobs:
               }, \
               { \
                 \"os\": \"macos-12\", \
+                \"python-version\": \"3.5\", \
+                \"package_level\": \"ansible\" \
+              }, \
+              { \
+                \"os\": \"macos-12\", \
                 \"python-version\": \"3.6\", \
                 \"package_level\": \"minimum\" \
               }, \
@@ -170,6 +190,11 @@ jobs:
               }, \
               { \
                 \"os\": \"macos-12\", \
+                \"python-version\": \"3.6\", \
+                \"package_level\": \"ansible\" \
+              }, \
+              { \
+                \"os\": \"macos-12\", \
                 \"python-version\": \"3.7\", \
                 \"package_level\": \"minimum\" \
               }, \
@@ -177,6 +202,11 @@ jobs:
                 \"os\": \"macos-12\", \
                 \"python-version\": \"3.7\", \
                 \"package_level\": \"latest\" \
+              }, \
+              { \
+                \"os\": \"macos-12\", \
+                \"python-version\": \"3.7\", \
+                \"package_level\": \"ansible\" \
               } \
             ] \
           }" >> $GITHUB_OUTPUT; \
