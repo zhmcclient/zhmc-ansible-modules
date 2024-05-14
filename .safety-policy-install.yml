@@ -110,6 +110,8 @@ security:
             reason: Fixed ansible-core version 2.12.0 requires Python>=3.8 and is used on Python>=3.10
         66700:
             reason: Fixed ansible-core version 2.14.14 requires Python>=3.9 and is used on Python>=3.11
+        67599:
+            reason: Disputed issue in pip version 23.3 - No known fix
 
     # Continue with exit code 0 when vulnerabilities are found.
     continue-on-vulnerability-error: False
