@@ -274,7 +274,8 @@ Operating systems:
 
 Python versions:
 
-- Python 2.7 to Python 3.8 are supported on a best-can-do basis
+- Python 2.7 to Python 3.8 are supported on a best-can-do basis. The collection
+  is no longer tested on Python 3.5.
 - Python 3.9 and higher are officially supported (depends on the Ansible version used)
 
 Ansible versions:
