@@ -125,6 +125,18 @@ jobs:
       run: |
         make develop
 
+    #-------- Final vulnerability checks upon release
+    - name: Run safety
+      env:
+        RUN_TYPE: release
+      run: |
+        make safety
+    - name: Run bandit
+      env:
+        RUN_TYPE: release
+      run: |
+        make bandit
+
     #-------- Publishing of documentation
     - name: Build documentation
       run: |

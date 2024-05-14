@@ -75,6 +75,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Added support for running the 'bandit' checker with a new make target
   'bandit', and added that to the GitHub Actions test workflow.
 
+* Dev: Added a final run of the "safety" and "bandit" tools to the "publish"
+  workflow, to ensure that a release cannot happen with any findings.
+
 **Cleanup:**
 
 * Increased versions of GitHub Actions plugins to increase node.js runtime
