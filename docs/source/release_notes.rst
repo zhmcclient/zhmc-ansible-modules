@@ -52,6 +52,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   macos-latest back to macos-12 because macos-latest got upgraded from macOS 12
   to macOS 14 which no longer supports these Python versions.
 
+* In the Github Actions test workflow for Python 3.5, added a circumvention
+  for the Pip certificate issue.
+
 **Enhancements:**
 
 * Added a new make target 'end2end_show' to show the HMCs defined for end2end
