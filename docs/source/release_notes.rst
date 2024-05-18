@@ -33,10 +33,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Deprecations:**
 
-* This collection is no longer tested on Python 3.5, and its use on Python 3.5
-  is at your own risk. The reason is that the setup of Python 3.5 on Github
-  Actions currently fails.
-
 **Bug fixes:**
 
 * Fixed safety issues up to 2024-05-14.
