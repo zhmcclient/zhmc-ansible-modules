@@ -64,7 +64,8 @@ resolvelib==0.5.3; python_version == '3.10'
 resolvelib==0.5.3; python_version >= '3.11'
 distlib==0.3.6
 
-requests==2.25.0; python_version <= '3.6'
+requests==2.25.0; python_version <= '3.5'
+requests==2.26.0; python_version == '3.6'
 requests==2.31.0; python_version >= '3.7'
 
 pytz==2016.10; python_version <= '3.9'

@@ -39,7 +39,7 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Bug fixes:**
 
-* Fixed safety issues up to 2024-05-14.
+* Fixed safety issues up to 2024-05-18.
 
 * Fixed dependabot issues up to 2024-02-18.
 

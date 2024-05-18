@@ -37,7 +37,8 @@ ansible-core>=2.16.0; python_version >= '3.12'
 # requests 2.22.0 removes the pinning of urllib3 to <1.25.0
 # requests 2.25.0 tolerates urllib3 1.26.5 which is needed on Python 3.10 to
 #   remove ImportWarning in six
-requests>=2.25.0; python_version <= '3.6'
+requests>=2.25.0; python_version <= '3.5'
+requests>=2.26.0; python_version == '3.6'
 requests>=2.31.0; python_version >= '3.7'
 
 pytz>=2016.10
