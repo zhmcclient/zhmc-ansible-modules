@@ -33,7 +33,7 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Bug fixes:**
 
-* Fixed safety issues up to 2024-05-14.
+* Fixed safety issues up to 2024-05-18.
 
 * In the Github Actions test workflow for Python 3.5, 3.6 and 3.7, changed
   macos-latest back to macos-12 because macos-latest got upgraded from macOS 12
