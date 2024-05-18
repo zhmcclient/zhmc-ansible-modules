@@ -66,6 +66,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Fixed readable attribute error when ensuring ISO mounted onto the partition.
   (related to issue #932)
 
+* In the Github Actions test workflow for Python 3.5, added a circumvention
+  for the Pip certificate issue.
+
 **Cleanup:**
 
 * Resolved the 'no-log-needed' issue raised by the sanity test and ansible-lint
