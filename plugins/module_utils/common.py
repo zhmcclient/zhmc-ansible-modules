@@ -39,6 +39,8 @@ try:
 except ImportError:
     IMP_ZHMCCLIENT_MOCK_ERR = traceback.format_exc()
 
+BLANKED_OUT = '********'  # Replacement for blanked out sensitive values
+
 
 class Error(Exception):
     """

@@ -31,6 +31,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Incompatible changes:**
 
+* Value of 'password' property will be replaced with '********' in log messages and
+  'result' dictionary returned by zhmc_user.ensure_present().
+
 **Deprecations:**
 
 **Bug fixes:**
