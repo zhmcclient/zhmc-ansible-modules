@@ -374,12 +374,13 @@ user:
 import uuid  # noqa: E402
 import logging  # noqa: E402
 import traceback  # noqa: E402
+from copy import deepcopy
 from ansible.module_utils.basic import AnsibleModule  # noqa: E402
 
 from ..module_utils.common import log_init, open_session, close_session, \
     hmc_auth_parameter, Error, ParameterError, to_unicode, \
     process_normal_property, missing_required_lib, \
-    common_fail_on_import_errors, parse_hmc_host  # noqa: E402
+    common_fail_on_import_errors, parse_hmc_host, BLANKED_OUT  # noqa: E402
 
 try:
     import requests.packages.urllib3
@@ -988,9 +989,14 @@ def ensure_present(params, check_mode):
                 raise AssertionError("Unexpected "
                                      "create_props: %r" % create_props)
             if update_props:
+                logged_props = dict(update_props)
+                if 'password' in logged_props:
+                    # This is not a hard-coded password. Added # nosec to avoid
+                    # generating false positive in bandit
+                    logged_props['password'] = BLANKED_OUT    # nosec
                 LOGGER.debug(
                     "Existing user %r needs to get properties updated: %r",
-                    user_name, update_props)
+                    user_name, logged_props)
                 if not check_mode:
                     user.update_properties(update_props)
                     # We refresh the properties after the update, in case an
@@ -1026,6 +1032,11 @@ def ensure_present(params, check_mode):
             raise AssertionError()
 
         add_artificial_properties(result, console, user, expand, check_mode)
+
+        if 'password' in result:
+            # This is not a hard-coded password. Added # nosec to avoid
+            # generating false positive in bandit
+            result['password'] = BLANKED_OUT    # nosec
 
         return changed, result
 
@@ -1158,8 +1169,12 @@ def main():
 
     module.params['hmc_host'] = parse_hmc_host(module.params['hmc_host'])
 
-    _params = dict(module.params)
+    _params = deepcopy(module.params)
     del _params['hmc_auth']
+    if 'properties' in _params and 'password' in _params['properties']:
+        # This is not a hard-coded password. Added # nosec to avoid
+        # generating false positive in bandit
+        _params['properties']['password'] = BLANKED_OUT    # nosec
     LOGGER.debug("Module entry: params: %r", _params)
 
     try:
