@@ -92,6 +92,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   allowed to get rid of the corresponding entries in the ignore files.
   (issue #915)
 
+* Test: Upgraded Githubb Actionb plugins that used the deprecated node version
+  16. (issue #974)
+
 **Known issues:**
 
 * See `list of open issues`_.
