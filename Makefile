@@ -312,7 +312,8 @@ bandit: $(done_dir)/bandit_$(pymn)_$(PACKAGE_LEVEL).done
 #  * Python 3.7+3.8 with minimum package levels because sanity rstcheck fails with:
 #    "No module named rstcheck.__main__; 'rstcheck' is a package and cannot be directly executed"
 #  * Python 3.10 with minimum package levels because sanity setup fails with PyYAML 5.4.1 install issue with Cython 3
-run_sanity_current := $(shell PL=$(PACKAGE_LEVEL) MIN_AC=$(min_ansible_core_version) $(PYTHON_CMD) -c "import sys,os,ansible; py=sys.version_info[0:2]; ac=ansible.__version__.split('.'); min_ac=os.getenv('MIN_AC').split('.'); pl=os.getenv('PL'); sys.stdout.write('true' if ac>=min_ac and not ((3,5)<=py<=(3,6) and pl in ('ansible','minimum')) and not ((3,7)<=py<=(3,8) and pl=='minimum') and not (py==(3,10) and pl=='minimum') else 'false')")
+#  * Python 3.13 is not yet supported by Ansible up to version 10
+run_sanity_current := $(shell PL=$(PACKAGE_LEVEL) MIN_AC=$(min_ansible_core_version) $(PYTHON_CMD) -c "import sys,os,ansible; py=sys.version_info[0:2]; ac=ansible.__version__.split('.'); min_ac=os.getenv('MIN_AC').split('.'); pl=os.getenv('PL'); sys.stdout.write('true' if ac>=min_ac and not ((3,5)<=py<=(3,6) and pl in ('ansible','minimum')) and not ((3,7)<=py<=(3,8) and pl=='minimum') and not (py==(3,10) and pl=='minimum') and not py>=(3,13) else 'false')")
 
 # Boolean variable indicating that the Ansible sanity test should be run in its own virtual Python environment
 # We run the sanity test only on officially supported Ansible versions, except for:
@@ -321,7 +322,8 @@ run_sanity_current := $(shell PL=$(PACKAGE_LEVEL) MIN_AC=$(min_ansible_core_vers
 #  * Python 3.7+3.8 with minimum package levels because sanity rstcheck fails with:
 #    "No module named rstcheck.__main__; 'rstcheck' is a package and cannot be directly executed"
 #  * Python 3.10 with minimum package levels because sanity setup fails with PyYAML 5.4.1 install issue with Cython 3
-run_sanity_virtual := $(shell PL=$(PACKAGE_LEVEL) MIN_AC=$(min_ansible_core_version) $(PYTHON_CMD) -c "import sys,os,ansible; py=sys.version_info[0:2]; ac=ansible.__version__.split('.'); min_ac=os.getenv('MIN_AC').split('.'); pl=os.getenv('PL'); sys.stdout.write('true' if ac>=min_ac and not ((3,5)<=py<=(3,6) and pl in ('ansible','minimum')) and not ((3,7)<=py<=(3,8) and pl=='minimum') and not (py==(3,10) and pl=='minimum') else 'false')")
+#  * Python 3.13 is not yet supported by Ansible up to version 10
+run_sanity_virtual := $(shell PL=$(PACKAGE_LEVEL) MIN_AC=$(min_ansible_core_version) $(PYTHON_CMD) -c "import sys,os,ansible; py=sys.version_info[0:2]; ac=ansible.__version__.split('.'); min_ac=os.getenv('MIN_AC').split('.'); pl=os.getenv('PL'); sys.stdout.write('true' if ac>=min_ac and not ((3,5)<=py<=(3,6) and pl in ('ansible','minimum')) and not ((3,7)<=py<=(3,8) and pl=='minimum') and not (py==(3,10) and pl=='minimum') and not py>=(3,13) else 'false')")
 
 # The sanity check requires the .git directory to be present.
 .PHONY:	sanity
