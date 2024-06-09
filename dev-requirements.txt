@@ -73,7 +73,10 @@ ansible-compat>=4.1.10; python_version >= '3.10'
 # Safety is run only on Python >=3.6
 # Safety 2.3.5 (running only on Python >=3.6) requires packaging<22.0,>=21.0, but safety 2.3.4 does not
 #   and safety 2.4.0 will also no longer pin it (see https://github.com/pyupio/safety/issues/455).
-safety>=2.2.0,!=2.3.5; python_version >= '3.6'
+safety>=2.2.0,!=2.3.5; python_version >= '3.6' and python_version <= '3.12'
+# TODO: Remove temporary circumvention to pin safety to <3.0.0 when pyo3-ffi
+#       supports Python 3.13 (see https://github.com/PyO3/pyo3/issues/4038#issuecomment-2156363013)
+safety>=2.2.0,!=2.3.5,<3.0.0; python_version >= '3.13'
 dparse>=0.6.2; python_version >= '3.6'
 ruamel.yaml>=0.17.21,<0.17.22; python_version == '3.6'
 ruamel.yaml>=0.17.21; python_version >= '3.7'

@@ -96,7 +96,10 @@ PyYAML>=6.0.1; python_version >= '3.6'
 
 python-dateutil>=2.8.2
 jsonschema>=3.0.1,!=4.0.0,!=4.18.1; python_version <= '3.6'
-jsonschema>=4.10.0,!=4.18.1; python_version >= '3.7'
+jsonschema>=4.10.0,!=4.18.1; python_version >= '3.7' and python_version <= '3.12'
+# TODO: Remove temporary circumvention to pin jsonschema to <4.18.0 when pyo3-ffi
+#       supports Python 3.13 (see https://github.com/PyO3/pyo3/issues/4038#issuecomment-2156363013)
+jsonschema>=4.10.0,<4.18.0; python_version >= '3.13'
 # urllib3 1.26.10 removed support for py35
 urllib3>=1.26.18; python_version == '2.7'
 urllib3>=1.26.9; python_version == '3.5'

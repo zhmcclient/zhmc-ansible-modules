@@ -64,6 +64,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   because we can test only one Ansible version on each Python version and
   we ran out of Python versions.
 
+* Test: Added tests for Python 3.13 (beta.1). Ansible sanity tests are skipped
+  because Ansible up to version 10 does not support sanity tests on Python 3.13.
+
 * Added a new make target 'end2end_show' to show the HMCs defined for end2end
   tests. (issue #888)
 
