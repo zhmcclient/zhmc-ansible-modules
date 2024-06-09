@@ -9,13 +9,14 @@
 # Keep minimum and latest versions consistent with table for 'ansible' packages in development.rst
 ansible>=2.9.27,<2.10; python_version == '2.7'       # Ansible 2.9 (= core 2.9) - sanity test is not run here
 ansible>=2.10.7,<2.11; python_version == '3.5'       # Ansible 2.10 (= core 2.10)
-ansible>=3.4.0,<4; python_version == '3.6'           # Ansible 3.x / ansible-base 2.10
-ansible>=4.1.0,<5; python_version == '3.7'           # Ansible 4.x / ansible-core 2.11
-ansible>=5.0.1,<6; python_version == '3.8'           # Ansible 5.x / ansible-core 2.12
-ansible>=6.0.0,<7; python_version == '3.9'           # Ansible 6.x / ansible-core 2.13
-ansible>=7.0.0,<8; python_version == '3.10'          # Ansible 7.x / ansible-core 2.14
-ansible>=8.0.0,<9; python_version == '3.11'          # Ansible 8.x / ansible-core 2.15
-ansible>=9.0.1; python_version >= '3.12'             # Ansible 9.x / ansible-core 2.16
+# ansible>=3.4.0,<4; python_version == '3.6'         # Ansible 3.x / ansible-base 2.10 is no longer tested
+ansible>=4.1.0,<5; python_version == '3.6'           # Ansible 4.x / ansible-core 2.11
+ansible>=5.0.1,<6; python_version == '3.7'           # Ansible 5.x / ansible-core 2.12
+ansible>=6.0.0,<7; python_version == '3.8'           # Ansible 6.x / ansible-core 2.13
+ansible>=7.0.0,<8; python_version == '3.9'           # Ansible 7.x / ansible-core 2.14
+ansible>=8.0.0,<9; python_version == '3.10'          # Ansible 8.x / ansible-core 2.15
+ansible>=9.0.1,<10; python_version == '3.11'         # Ansible 9.x / ansible-core 2.16
+ansible>=10.0.1; python_version >= '3.12'            # Ansible 10.x and higher / ansible-core 2.17
 
 
 # Indirect dependencies are not specified in this file, unless needed to solve versioning issues:
