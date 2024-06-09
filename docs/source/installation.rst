@@ -305,6 +305,7 @@ Ansible  Ansible core       Supported Python versions  Support
 7        ansible-core 2.14  3.9 - 3.11                 official
 8        ansible-core 2.15  3.9 - 3.11                 official
 9        ansible-core 2.16  3.10 - 3.12                official
+10       ansible-core 2.17  3.10 - 3.12                official
 =======  =================  =========================  ===========
 
 ======  ==========================

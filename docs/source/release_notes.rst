@@ -41,6 +41,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Enhancements:**
 
+* Test: Added tests for Ansible 10. The testing of Ansible 3 was dropped
+  because we can test only one Ansible version on each Python version and
+  we ran out of Python versions.
+
 **Cleanup:**
 
 **Known issues:**
