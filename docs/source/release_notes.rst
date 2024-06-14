@@ -31,8 +31,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Incompatible changes:**
 
-* Value of 'password' property will be replaced with '********' in log messages and
+* Value of 'password' property will be replaced with '\*\*\*\*\*\*\*\*' in log messages and
   'result' dictionary returned by zhmc_user.ensure_present().
+
+* Dropped support for Python 2.7, 3.5, 3.6, and 3.7.
 
 **Deprecations:**
 
@@ -88,6 +90,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   workflow, to ensure that a release cannot happen with any findings.
 
 **Cleanup:**
+
+* Modernized the code to match the minimum Python version 3.8 (use of f-strings,
+  no Python 2 compatibility, 'mock' is used from 'unittest').
 
 * Increased versions of GitHub Actions plugins to increase node.js runtime
   to version 20.

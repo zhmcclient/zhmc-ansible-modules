@@ -20,28 +20,28 @@ jobs:
 
     - os: linux
       language: python
-      python: "3.5"
+      python: "3.8"
       env:
         - PACKAGE_LEVEL=minimum
       cache: pip
 
     - os: linux
       language: python
-      python: "3.5"
+      python: "3.8"
       env:
         - PACKAGE_LEVEL=latest
       cache: pip
 
     - os: linux
       language: python
-      python: "3.11"
+      python: "3.12"
       env:
         - PACKAGE_LEVEL=minimum
       cache: pip
 
     - os: linux
       language: python
-      python: "3.11"
+      python: "3.12"
       env:
         - PACKAGE_LEVEL=latest
       cache: pip
@@ -125,7 +125,7 @@ script:
   - make safety
   - make check_reqs
   - make check
-  - make sanity  # exclude on Python 2.7 if that gets enabled
+  - make sanity
   - make docs
   - make test
   - make end2end_mocked

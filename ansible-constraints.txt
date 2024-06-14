@@ -7,11 +7,6 @@
 # Ansible versions to test on
 
 # Keep minimum and latest versions consistent with table for 'ansible' packages in development.rst
-ansible>=2.9.27,<2.10; python_version == '2.7'       # Ansible 2.9 (= core 2.9) - sanity test is not run here
-ansible>=2.10.7,<2.11; python_version == '3.5'       # Ansible 2.10 (= core 2.10)
-# ansible>=3.4.0,<4; python_version == '3.6'         # Ansible 3.x / ansible-base 2.10 is no longer tested
-ansible>=4.1.0,<5; python_version == '3.6'           # Ansible 4.x / ansible-core 2.11
-ansible>=5.0.1,<6; python_version == '3.7'           # Ansible 5.x / ansible-core 2.12
 ansible>=6.0.0,<7; python_version == '3.8'           # Ansible 6.x / ansible-core 2.13
 ansible>=7.0.0,<8; python_version == '3.9'           # Ansible 7.x / ansible-core 2.14
 ansible>=8.0.0,<9; python_version == '3.10'          # Ansible 8.x / ansible-core 2.15
@@ -25,13 +20,11 @@ ansible>=10.0.1; python_version >= '3.12'            # Ansible 10.x and higher /
 # The module.rst.j2 template used by ansible-doc-extractor uses the 'tojson' filter added in Jinja2 2.9
 # Ansible 6 requires Jinja2>=3.0
 # Python 3.10 requires Jinja>=2.11
-Jinja2==2.10.1; python_version <= '3.7'
-Jinja2==3.1.3; python_version >= '3.8'
+Jinja2==3.1.3
 
 # MarkupSafe is used by Jinja2
 # Jinja2 3.0 requires MarkupSafe>=2.0
-MarkupSafe==1.1.0; python_version <= '3.7'
-MarkupSafe==2.0.0; python_version >= '3.8'
+MarkupSafe==2.0.0
 
 
 # Direct dependencies for development (must be consistent with dev-requirements.txt)

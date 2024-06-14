@@ -296,10 +296,10 @@ as shown in the following tables:
 =======  =================  =========================  ===========
 Ansible  Ansible core       Supported Python versions  Support
 -------  -----------------  -------------------------  -----------
-2.9      ansible 2.9        2.7, 3.5 - 3.8             best-can-do
-2.10     ansible 2.10       2.7, 3.5 - 3.8             best-can-do
-3        ansible-base 2.10  2.7, 3.5 - 3.8             best-can-do
-4        ansible-core 2.11  2.7, 3.5 - 3.9             best-can-do
+2.9      ansible 2.9        3.8                        best-can-do
+2.10     ansible 2.10       3.8                        best-can-do
+3        ansible-base 2.10  3.8                        best-can-do
+4        ansible-core 2.11  3.8 - 3.9                  best-can-do
 5        ansible-core 2.12  3.8 - 3.10                 best-can-do
 6        ansible-core 2.13  3.8 - 3.10                 best-can-do
 7        ansible-core 2.14  3.9 - 3.11                 official
@@ -311,10 +311,6 @@ Ansible  Ansible core       Supported Python versions  Support
 ======  ==========================
 Python  Supported Ansible versions
 ------  --------------------------
-2.7     2.9 - 2.10, 3 - 4
-3.5     2.9 - 2.10, 3 - 4
-3.6     2.9 - 2.10, 3 - 4
-3.7     2.9 - 2.10, 3 - 4
 3.8     2.9 - 2.10, 3 - 6
 3.9     4 - 8
 3.10    5 - 9

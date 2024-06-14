@@ -10,33 +10,21 @@
 
 # Ansible validate-modules (no imports, invoked via validate-modules script)
 mock>=2.0.0
-# voluptous 0.13.0 uses 'enum' module which is not available on py27 (it also does not use enum34 for backport). This has been fixed in 0.13.1.
-# voluptuous 0.14.0 requires Python >=3.6 without properly declaring that in the package metadata.
-voluptuous>=0.11.7,!=0.13.0,<0.14; python_version == '2.7'
-voluptuous>=0.11.7,<0.14; python_version == '3.5'
-voluptuous>=0.11.7; python_version >= '3.6'
+voluptuous>=0.11.7
 
 # Unit test (imports into testcases):
 # packaging is specified in requirements.txt
-funcsigs>=1.0.2; python_version == '2.7'  # technically: python_version <= '3.2'
-# pytest 5.0.0 has removed support for Python < 3.5
-# pytest 4.3.1 solves an issue on Python 3 with minimum package levels
-pytest>=4.3.1,<5.0.0; python_version == '2.7'  # technically: python_version <= '3.4'
-pytest>=4.3.1; python_version >= '3.5' and python_version <= '3.6'
-pytest>=4.4.0; python_version >= '3.7' and python_version <= '3.9'
+pytest>=4.4.0; python_version <= '3.9'
 pytest>=6.2.5; python_version == '3.10'
 pytest>=7.0.0; python_version >= '3.11'
 testfixtures>=6.9.0
-colorama>=0.3.9,<0.4.0; python_version == '2.7'
-colorama>=0.4.0; python_version >= '3.5'
+colorama>=0.4.0
 # mock>=2.0.0
 # requests>=2.20.1
 requests-mock>=1.6.0
 
 # Unit test (indirect dependencies):
-# Pluggy 0.12.0 has a bug causing pytest plugins to fail loading on py38
-pluggy>=0.7.1; python_version <= '3.6'
-pluggy>=0.13.0; python_version >= '3.7'
+pluggy>=0.13.0
 decorator>=4.0.11
 
 # Coverage reporting (no imports, invoked via coveralls script):
@@ -45,9 +33,7 @@ decorator>=4.0.11
 # occasionally check for new versions of coveralls without pinning.
 coverage>=5.0,<7.0
 pytest-cov>=2.7.0
-# coveralls 2.0 has removed support for Python 2.7
-git+https://github.com/andy-maier/coveralls-python.git@andy/add-py27#egg=coveralls; python_version == '2.7'
-coveralls>=3.3.0; python_version >= '3.5'
+coveralls>=3.3.0
 # PyYAML is specified in requirements.txt
 
 # ansible-test
@@ -56,8 +42,7 @@ yamllint>=1.26.3; python_version >= '3.10'
 pathspec>=0.9.0
 # rstcheck 3.5.0 introduced a FutureWarning about Python 3.7 causing ansible sanity check "rstcheck" to fail.
 # ansible sanity check "rstcheck" is used only in ansible <= 2.10.
-rstcheck>=3.3.1,<3.5; python_version >= '3.5' and python_version <= '3.6'  # ansible <= 2.10 (on minimum package levels)
-rstcheck>=3.3.1,<4.0; python_version >= '3.7' and python_version <= '3.9'  # ansible >= 4
+rstcheck>=3.3.1,<4.0; python_version <= '3.9'  # ansible >= 4
 
 # ansible-lint
 # ansible-lint is run only on officially supported ansible-core versions
@@ -66,48 +51,52 @@ rstcheck>=3.3.1,<4.0; python_version >= '3.7' and python_version <= '3.9'  # ans
 ansible-lint>=6.14.0; python_version >= '3.10'
 black>=22.8.0; python_version >= '3.10'
 rich>=12.0.0; python_version >= '3.10'
-wcmatch>=8.1.2; python_version >= '3.10'
+# wcmatch 8.5 fixes an AttributeError on Python 3.12
+wcmatch>=8.5; python_version >= '3.10'
 ansible-compat>=4.1.10; python_version >= '3.10'
 
 # Safety CI by pyup.io
-# Safety is run only on Python >=3.6
-# Safety 2.3.5 (running only on Python >=3.6) requires packaging<22.0,>=21.0, but safety 2.3.4 does not
-#   and safety 2.4.0 will also no longer pin it (see https://github.com/pyupio/safety/issues/455).
-safety>=2.2.0,!=2.3.5; python_version >= '3.6' and python_version <= '3.12'
 # TODO: Remove temporary circumvention to pin safety to <3.0.0 when pyo3-ffi
 #       supports Python 3.13 (see https://github.com/PyO3/pyo3/issues/4038#issuecomment-2156363013)
+safety>=3.0.1; python_version <= '3.12'
 safety>=2.2.0,!=2.3.5,<3.0.0; python_version >= '3.13'
-dparse>=0.6.2; python_version >= '3.6'
-ruamel.yaml>=0.17.21,<0.17.22; python_version == '3.6'
-ruamel.yaml>=0.17.21; python_version >= '3.7'
+safety-schemas>=0.0.2
+# TODO: Change to dparse 0.6.4 once released
+dparse>=0.6.4b0
+ruamel.yaml>=0.17.21
+click>=8.0.2
+Authlib>=1.2.0
+marshmallow>=3.15.0
+pydantic>=1.10.13
+typer>=0.12.0
+typer-cli>=0.12.0
+typer-slim>=0.12.0
 
 # Bandit checker
-# Bandit is run only on Python>=3.8
-bandit>=1.7.8; python_version >= '3.8'
+bandit>=1.7.8
 
 # Sphinx (no imports, invoked via sphinx-build script):
-# Sphinx 6.0.0 started requiring Python>=3.8
 # Sphinx 7.2.0 started requiring Python>=3.9
-# Sphinx is used only on Python>=3.8
 Sphinx>=7.1.0; python_version == '3.8'
 Sphinx>=7.2.0; python_version >= '3.9'
 # Sphinx 7.1.0 pins docutils to <0.21
 docutils>=0.18.1,<0.21; python_version == '3.8'
-sphinx-git>=10.1.1; python_version >= '3.8'
-GitPython>=3.1.41; python_version >= '3.8'
-Pygments>=2.15.0; python_version >= '3.8'
-sphinx-rtd-theme>=2.0.0; python_version >= '3.8'
-sphinxcontrib-applehelp>=1.0.4; python_version >= '3.8'
-sphinxcontrib-devhelp>=1.0.2; python_version >= '3.8'
-sphinxcontrib-htmlhelp>=2.0.1; python_version >= '3.8'
-sphinxcontrib-jquery>=4.1; python_version >= '3.8'
-sphinxcontrib-jsmath>=1.0.1; python_version >= '3.8'
-sphinxcontrib-qthelp>=1.0.3; python_version >= '3.8'
+docutils>=0.18.1; python_version >= '3.9'
+sphinx-git>=10.1.1
+GitPython>=3.1.41
+Pygments>=2.15.0
+sphinx-rtd-theme>=2.0.0
+sphinxcontrib-applehelp>=1.0.4
+sphinxcontrib-devhelp>=1.0.2
+sphinxcontrib-htmlhelp>=2.0.1
+sphinxcontrib-jquery>=4.1
+sphinxcontrib-jsmath>=1.0.1
+sphinxcontrib-qthelp>=1.0.3
 sphinxcontrib-serializinghtml>=1.1.5; python_version == '3.8'
 sphinxcontrib-serializinghtml>=1.1.9; python_version >= '3.9'
-sphinxcontrib-websupport>=1.2.4; python_version >= '3.8'
-autodocsumm>=0.2.12; python_version >= '3.8'
-Babel>=2.9.1; python_version >= '3.8'
+sphinxcontrib-websupport>=1.2.4
+autodocsumm>=0.2.12
+Babel>=2.9.1
 
 # Note: sphinx-versions in the latest released version 1.1.3 still uses the
 #       deprecated Sphinx.add_stylesheet() method. That method is deprecated
@@ -115,15 +104,15 @@ Babel>=2.9.1; python_version >= '3.8'
 #       deprecated in Sphinx 4.3.0.
 # Getting sphinx-versions from this git repo addresses some issues.
 # TODO: Remove getting sphinx-versions from this git repo.
-git+https://github.com/andy-maier/sphinx-versions.git@1.1.3.post2#egg=sphinx-versions; python_version >= '3.8'
+git+https://github.com/andy-maier/sphinx-versions.git@1.1.3.post2#egg=sphinx-versions
 
 # ansible-doc-extractor and it's dependent theme for docs generation (no imports, invoked via script):
 # The Makefile defines in doc_build on which Python versions docs are built. Keep in sync with Makefile and minimum-constraints.txt.
-ansible-doc-extractor>=0.1.8; python_version >= '3.8'
-antsibull-docs-parser>=1.0.0; python_version >= '3.8'
+ansible-doc-extractor>=0.1.8
+antsibull-docs-parser>=1.0.0
 
 # PyLint (no imports, invoked via pylint script)
-# Pylint is run in ansible sanity test which is run only on Python>=3.5
+# Pylint is run in ansible sanity test
 # The sanity test running in Ansible's sanity virtual environment uses the following Pylint versions:
 # Pylint 2.6 is used by Ansible 4 (lower Ansible versions don't have a sanity env)
 # Pylint 2.9 is used by Ansible 5+6
@@ -133,15 +122,12 @@ antsibull-docs-parser>=1.0.0; python_version >= '3.8'
 # Pylint 2.11 introduced the consider-using-f-string check, which is raised.
 # The Pylint versions defined here are used when the sanity test runs in the current virtual env.
 #   Keep them in sync with the versions run in the sanity virtual env.
-pylint>=2.6.0,<2.7; python_version >= '3.5' and python_version <= '3.7'  # pylint 2.6
-pylint>=2.6.0,<2.10; python_version >= '3.8' and python_version <= '3.9'  # pylint 2.9
-pylint>=2.6.0,<2.16; python_version >= '3.10' and python_version <= '3.11'  # pylint 2.15
+pylint>=2.6.1,<2.10; python_version <= '3.9'  # pylint 2.9
+pylint>=2.6.1,<2.16; python_version >= '3.10' and python_version <= '3.11'  # pylint 2.15
 pylint>=3.0.1; python_version >= '3.12'  # pylint 3.x
-astroid>=2.4.0,<2.5; python_version >= '3.5' and python_version <= '3.7'  # astroid 2.4
-astroid>=2.4.0,<2.7; python_version >= '3.8' and python_version <= '3.9'  # astroid 2.6
+astroid>=2.4.0,<2.7; python_version <= '3.9'  # astroid 2.6
 astroid>=2.4.0,<2.13; python_version >= '3.10' and python_version <= '3.11'  # astroid 2.12
 astroid>=3.0.1; python_version >= '3.12'  # astroid 3.x
-typed-ast>=1.4.2,<1.5.0; python_version >= '3.5' and python_version <= '3.7' and implementation_name=='cpython'
 # used by pylint 2.14 which requires python_version >= '3.7' and is used by us only on py>=3.10
 dill>=0.2; python_version == '3.11'
 dill>=0.3.7; python_version >= '3.12'
@@ -151,37 +137,28 @@ tomlkit>=0.10.1; python_version >= '3.10'
 tomli>=1.1.0; python_version == '3.10'  # not needed on py>3.10
 
 # Flake8 and dependents (no imports, invoked via flake8 script):
-# flake8 3.9.0 has removed support for py34 and pip 19.1.1 on py34 does not deal
-# well with its pinned dependencies, so we need to repeat these for py34.
 # flake8 4.0.0 fixes an AttributeError on Python 3.10.
 # pycodestyle 2.6 (required by flake8 3.8) is used by Ansible 4 in its sanity env, so we use that as the minimum version on all Python versions
-flake8>=3.8.0,<3.9; python_version == '2.7'
-flake8>=3.8.0,<3.9; python_version >= '3.5' and python_version <= '3.8'  # flake8 3.8
+flake8>=3.8.0,<3.9; python_version == '3.8'  # flake8 3.8
 flake8>=3.8.0,<5.0; python_version == '3.9'  # flake8 4.0
 flake8>=3.8.0,<6.0; python_version >= '3.10' and python_version <= '3.11'  # flake8 5.0
 flake8>=5.0.0,<6.0; python_version >= '3.12'  # flake8 5.0
-pycodestyle>=2.6.0,<2.7; python_version == '2.7'
-pycodestyle>=2.6.0,<2.7; python_version >= '3.5' and python_version <= '3.8'  # pycodestyle 2.6
+pycodestyle>=2.6.0,<2.7; python_version == '3.8'  # pycodestyle 2.6
 pycodestyle>=2.6.0,<2.9; python_version == '3.9'  # pycodestyle 2.8
 pycodestyle>=2.6.0,<2.10; python_version >= '3.10' and python_version <= '3.11'  # pycodestyle 2.9
 pycodestyle>=2.9.0,<2.10; python_version >= '3.12'  # pycodestyle 2.9
-pyflakes>=2.2.0,<2.3; python_version == '2.7'
-pyflakes>=2.2.0,<2.3; python_version >= '3.5' and python_version <= '3.8'  # pyflakes 2.2
+pyflakes>=2.2.0,<2.3; python_version == '3.8'  # pyflakes 2.2
 pyflakes>=2.2.0,<2.5; python_version == '3.9'  # pyflakes 2.4
 pyflakes>=2.2.0,<2.6; python_version >= '3.10' and python_version <= '3.11'  # pyflakes 2.5
 pyflakes>=2.5.0,<2.6; python_version >= '3.12'  # pyflakes 2.5
 mccabe>=0.6.0; python_version <= '3.11'
 mccabe>=0.7.0; python_version >= '3.12'
 entrypoints>=0.3.0
-functools32>=3.2.3.post2; python_version == '2.7'  # technically: python_version <= '3.1'
 
 # Package dependency management tools (not used by any make rules)
 pipdeptree>=2.2.0
-# pip-check-reqs is not used on Python 2.7
-# pip-check-reqs 2.3.2 is needed to have proper support for pip<21.3.
 # pip-check-reqs 2.4.0 requires Python>=3.8.
 # pip-check-reqs 2.4.3 fixes a speed issue on Python 3.11 and requires pip>=21.2.4
-pip-check-reqs>=2.3.2; python_version >= '3.5' and python_version <= '3.7'
 # pip-check-reqs 2.5.0 has issue https://github.com/r1chardj0n3s/pip-check-reqs/issues/143
-pip-check-reqs>=2.4.3,!=2.5.0; python_version >= '3.8' and python_version <= '3.11'
+pip-check-reqs>=2.4.3,!=2.5.0; python_version <= '3.11'
 pip-check-reqs>=2.5.3; python_version >= '3.12'
