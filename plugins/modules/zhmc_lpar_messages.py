@@ -342,8 +342,8 @@ def find_lpar(client, cpc_name, lpar_name):
             lpar = lpars[0]
         except IndexError:
             raise zhmcclient.NotFound(
-                message="Could not find LPAR {ln!r} in permitted LPARs of "
-                "CPC {c!r}".format(ln=lpar_name, c=cpc_name))
+                message=f"Could not find LPAR {lpar_name!r} in permitted "
+                f"LPARs of CPC {cpc_name!r}")
     return lpar
 
 

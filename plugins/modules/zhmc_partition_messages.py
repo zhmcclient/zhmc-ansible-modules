@@ -317,8 +317,8 @@ def find_partition(client, cpc_name, part_name):
             part = parts[0]
         except IndexError:
             raise zhmcclient.NotFound(
-                message="Could not find partition {pn!r} in permitted "
-                "partitions of CPC {c!r}".format(pn=part_name, c=cpc_name))
+                message=f"Could not find partition {part_name!r} in permitted "
+                f"partitions of CPC {cpc_name!r}")
     return part
 
 

@@ -414,16 +414,16 @@ def process_properties(cpc, storage_group, storage_volume, params):
 
         if prop_name not in ZHMC_STORAGE_VOLUME_PROPERTIES:
             raise ParameterError(
-                "Property {!r} is not defined in the data model for "
-                "storage volumes.".format(prop_name))
+                f"Property {prop_name!r} is not defined in the data model for "
+                "storage volumes.")
 
         allowed, create, update, update_while_active, eq_func, type_cast = \
             ZHMC_STORAGE_VOLUME_PROPERTIES[prop_name]
 
         if not allowed:
             raise ParameterError(
-                "Property {!r} is not allowed in the 'properties' module "
-                "parameter.".format(prop_name))
+                f"Property {prop_name!r} is not allowed in the 'properties' "
+                "module parameter.")
 
         # Process a normal (= non-artificial) property
         _create_props, _update_props, _stop = process_normal_property(
@@ -480,9 +480,9 @@ def ensure_present(params, check_mode):
         sg_cpc = storage_group.cpc
         if sg_cpc.uri != cpc.uri:
             raise ParameterError(
-                "Storage group {0!r} is not associated with the specified "
-                "CPC {1!r}, but with CPC {2!r}.".
-                format(storage_group_name, cpc.name, sg_cpc.name))
+                f"Storage group {storage_group_name!r} is not associated with "
+                f"the specified CPC {cpc.name!r}, but with CPC "
+                f"{sg_cpc.name!r}.")
 
         try:
             storage_volume = storage_group.storage_volumes.find(
@@ -576,9 +576,9 @@ def ensure_absent(params, check_mode):
         sg_cpc = storage_group.cpc
         if sg_cpc.uri != cpc.uri:
             raise ParameterError(
-                "Storage group {0!r} is not associated with the specified "
-                "CPC {1!r}, but with CPC {2!r}.".
-                format(storage_group_name, cpc.name, sg_cpc.name))
+                f"Storage group {storage_group_name!r} is not associated with "
+                f"the specified CPC {cpc.name!r}, but with CPC "
+                f"{sg_cpc.name!r}.")
 
         try:
             storage_volume = storage_group.storage_volumes.find(
@@ -627,9 +627,9 @@ def facts(params, check_mode):
         sg_cpc = storage_group.cpc
         if sg_cpc.uri != cpc.uri:
             raise ParameterError(
-                "Storage group {0!r} is not associated with the specified "
-                "CPC {1!r}, but with CPC {2!r}.".
-                format(storage_group_name, cpc.name, sg_cpc.name))
+                f"Storage group {storage_group_name!r} is not associated with "
+                f"the specified CPC {cpc.name!r}, but with CPC "
+                f"{sg_cpc.name!r}.")
 
         try:
             storage_volume = storage_group.storage_volumes.find(

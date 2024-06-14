@@ -511,22 +511,21 @@ def ensure_attached(params, check_mode):
 
     try:
         if len(domain_range) != 2:
-            raise AssertionError("len(domain_range)={0}".
-                                 format(len(domain_range)))
+            raise AssertionError(f"len(domain_range)={len(domain_range)}")
 
         domain_range_lo = int(domain_range[0])
         domain_range_hi = int(domain_range[1])
     except (ValueError, AssertionError):
         raise ParameterError(
             "The 'domain_range' parameter must be a list containing two "
-            "integer numbers, but is: {!r}".format(domain_range))
+            f"integer numbers, but is: {domain_range!r}")
 
     if adapter_count and adapter_names:
         raise ParameterError(
             "The 'adapter_count' and 'adapter_names' parameters are "
             "mutually exclusive, but both have been specified: "
-            "adapter_count={0!r}, adapter_names={1!r}".
-            format(adapter_count, adapter_names))
+            f"adapter_count={adapter_count!r}, "
+            f"adapter_names={adapter_names!r}")
 
     # Ignore crypto_type if adapter_names is specified
     if adapter_names:
@@ -553,8 +552,7 @@ def ensure_attached(params, check_mode):
         all_adapters = cpc.adapters.list(filter_args=filter_args,
                                          full_properties=True)
         if not all_adapters:
-            raise Error("No crypto adapters found on CPC {0!r} ".
-                        format(cpc_name))
+            raise Error(f"No crypto adapters found on CPC {cpc_name!r}")
 
         all_adapters_dict = {a.name: a for a in all_adapters}
 
@@ -570,9 +568,9 @@ def ensure_attached(params, check_mode):
             domain_range_hi = max_domains - 1
         if domain_range_lo > domain_range_hi:
             raise ParameterError(
-                "In the 'domain_range' parameter, the lower boundary (={0}) "
-                "of the range must be less than the higher boundary (={1})".
-                format(domain_range_lo, domain_range_hi))
+                "In the 'domain_range' parameter, the lower boundary "
+                f"(={domain_range_lo}) of the range must be less than the "
+                f"higher boundary (={domain_range_hi})")
 
         # Parameter checking on adapter count.
         # (can be done only now because it requires the adapters listed)
@@ -580,15 +578,13 @@ def ensure_attached(params, check_mode):
             if adapter_count < 1:
                 raise ParameterError(
                     "The 'adapter_count' parameter must be at least 1, but "
-                    "is: {0}".
-                    format(adapter_count))
+                    f"is: {adapter_count}")
             elif adapter_count > len(all_adapters):
                 raise ParameterError(
                     "The 'adapter_count' parameter must not exceed the "
-                    "number of {0} crypto adapters of type {1!r} in CPC "
-                    "{2!r}, but is {3}".
-                    format(len(all_adapters), crypto_type, cpc_name,
-                           adapter_count))
+                    f"number of {len(all_adapters)} crypto adapters of type "
+                    f"{crypto_type!r} in CPC {cpc_name!r}, but is "
+                    f"{adapter_count}")
 
         # Verify the specified adapter names exist.
         # (can be done only now because it requires the adapters listed)
@@ -597,8 +593,8 @@ def ensure_attached(params, check_mode):
                 if aname not in all_adapters_dict:
                     raise ParameterError(
                         "The 'adapter_names' parameter specifies a crypto"
-                        "adapter named {0!r} that does not exist on CPC {1!r}".
-                        format(aname, cpc_name))
+                        f"adapter named {aname!r} that does not exist on CPC "
+                        f"{cpc_name!r}")
 
         #
         # Get current crypto config of the target partition.
@@ -701,12 +697,11 @@ def ensure_attached(params, check_mode):
                 # the desired access mode. The access mode could be extended
                 # from control to control+usage, but that is not implemented
                 # by this code here.
+                am_str = ACCESS_MODES_HMC2MOD[attached_domains[di]]
                 raise Error(
-                    "Domain {0} is currently attached in {1!r} mode to target "
-                    "partition {2!r}, but requested was for mode {3!r}".
-                    format(di,
-                           ACCESS_MODES_HMC2MOD[attached_domains[di]],
-                           partition.name, access_mode))
+                    f"Domain {di} is currently attached in {am_str!r} mode to "
+                    f"target partition {partition.name!r}, but requested was "
+                    f"for mode {access_mode!r}")
             else:
                 # This domain is attached to the target partition in the
                 # desired access mode
@@ -730,12 +725,13 @@ def ensure_attached(params, check_mode):
                             # Multiple attachments conflict only when both are
                             # in usage mode
                             p = all_partitions[p_uri]
+                            am_str = ACCESS_MODES_HMC2MOD[am]
                             raise Error(
-                                "Domain {} cannot be attached in {!r} mode "
-                                "to target partition {!r} because it is "
-                                "already attached in {!r} mode to partition "
-                                "{!r}".format(di, access_mode, partition.name,
-                                              ACCESS_MODES_HMC2MOD[am], p.name))
+                                f"Domain {di} cannot be attached in "
+                                f"{access_mode!r} mode to target partition "
+                                f"{partition.name!r} because it is already "
+                                f"attached in {am_str!r} mode to partition "
+                                f"{p.name!r}")
 
         # Make sure the desired adapters are attached to the partition
         # and the desired domains are attached.
@@ -768,10 +764,9 @@ def ensure_attached(params, check_mode):
                         partition.increase_crypto_config([], add_domain_config)
                     except zhmcclient.Error as exc:
                         raise Error(
-                            "Attaching domains {0!r} in {1!r} mode to target "
-                            "partition {2!r} failed: {3}".
-                            format(add_domains, access_mode, partition.name,
-                                   exc))
+                            f"Attaching domains {add_domains!r} in "
+                            f"{access_mode!r} mode to target partition "
+                            f"{partition.name!r} failed: {exc}")
 
                 changed = True
                 result_changes['added-domains'].extend(add_domains)
@@ -807,11 +802,10 @@ def ensure_attached(params, check_mode):
                                 [adapter], add_domain_config)
                         except zhmcclient.Error as exc:
                             raise Error(
-                                "Attaching adapter {0!r} and domains {1!r} in "
-                                "{2!r} mode to target partition {3!r} "
-                                "failed: {4}".
-                                format(adapter.name, add_domains, access_mode,
-                                       partition.name, exc))
+                                f"Attaching adapter {adapter.name!r} and "
+                                f"domains {add_domains!r} in {access_mode!r} "
+                                f"mode to target partition {partition.name!r} "
+                                f"failed: {exc}")
 
                     changed = True
                     result_changes['added-adapters'].append(adapter.name)
@@ -828,9 +822,9 @@ def ensure_attached(params, check_mode):
                     # there are not enough adapters
                     raise Error(
                         "Did not find enough crypto adapters with attachable "
-                        "domains - missing adapters: {0}; Requested domains: "
-                        "{1}, Access mode: {2}".
-                        format(missing_count, desired_domains, access_mode))
+                        f"domains - missing adapters: {missing_count}; "
+                        f"Requested domains: {desired_domains}, Access mode: "
+                        f"{access_mode}")
 
         else:
             # Specific adapters need to be attached. We check already attached
@@ -848,12 +842,11 @@ def ensure_attached(params, check_mode):
                         all_crypto_config, all_partitions)
                     if conflicting_domains:
                         raise Error(
-                            "Crypto adapter {0!r} cannot be attached to "
-                            "partition {1!r} because the following of "
-                            "its domains are already attached to other "
-                            "partitions in conflicting modes: {2!r}".
-                            format(adapter.name, partition.name,
-                                   conflicting_domains))
+                            f"Crypto adapter {adapter.name!r} cannot be "
+                            f"attached to partition {partition.name!r} because "
+                            "the following of its domains are already attached "
+                            "to other partitions in conflicting modes: "
+                            f"{conflicting_domains!r}")
 
                     if not check_mode:
                         try:
@@ -861,11 +854,10 @@ def ensure_attached(params, check_mode):
                                 [adapter], add_domain_config)
                         except zhmcclient.Error as exc:
                             raise Error(
-                                "Attaching adapter {0!r} and domains {1!r} in "
-                                "{2!r} mode to target partition {3!r} "
-                                "failed: {4}".
-                                format(adapter.name, add_domains, access_mode,
-                                       partition.name, exc))
+                                f"Attaching adapter {adapter.name!r} and "
+                                f"domains {add_domains!r} in {access_mode!r} "
+                                f"mode to target partition {partition.name!r} "
+                                f"failed: {exc}")
 
                     changed = True
                     result_changes['added-adapters'].append(adapter.name)
@@ -890,10 +882,9 @@ def ensure_attached(params, check_mode):
                             [], add_domain_config)
                     except zhmcclient.Error as exc:
                         raise Error(
-                            "Attaching domains {0!r} in {1!r} mode to "
-                            "target partition {2!r} failed: {3}".
-                            format(add_domains, access_mode, partition.name,
-                                   exc))
+                            f"Attaching domains {add_domains!r} in "
+                            f"{access_mode!r} mode to target partition "
+                            f"{partition.name!r} failed: {exc}")
 
                 changed = True
                 result_changes['added-domains'].extend(add_domains)
@@ -976,10 +967,9 @@ def ensure_detached(params, check_mode):
                         remove_adapters, remove_domains)
                 except zhmcclient.Error as exc:
                     raise Error(
-                        "Detaching adapters {0!r} and domains {1!r} from "
-                        "target partition {2!r} failed: {3}".
-                        format(remove_adapter_names, remove_domains,
-                               partition.name, exc))
+                        f"Detaching adapters {remove_adapter_names!r} and "
+                        f"domains {remove_domains!r} from target partition "
+                        f"{partition.name!r} failed: {exc}")
 
             changed = True
             result_changes['removed-adapters'] = remove_adapter_names

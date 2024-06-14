@@ -513,8 +513,8 @@ def process_properties(adapter, params):
 
         if not allowed:
             raise ParameterError(
-                "Invalid adapter property {!r} specified in the 'properties' "
-                "module parameter.".format(prop_name))
+                f"Invalid adapter property {prop_name!r} specified in the "
+                "'properties' module parameter.")
 
         if adapter and prop_name == 'type':
             # Determine need to change the adapter type
@@ -726,14 +726,13 @@ def ensure_present(params, check_mode):
             if adapter_type is None:
                 raise ParameterError(
                     "Input property 'type' missing when creating "
-                    "Hipersockets adapter {0!r} (must specify 'hipersockets')".
-                    format(adapter_name))
+                    f"Hipersockets adapter {adapter_name!r} (must specify "
+                    "'hipersockets')")
             if adapter_type != 'hipersockets':
                 raise ParameterError(
-                    "Input property 'type' specifies {0!r} when creating "
-                    "Hipersockets adapter {1!r} "
-                    "(must specify 'hipersockets').".
-                    format(adapter_type, adapter_name))
+                    f"Input property 'type' specifies {adapter_type!r} when "
+                    f"creating Hipersockets adapter {adapter_name!r} "
+                    "(must specify 'hipersockets').")
 
             create_props, update_props, _chg_adapter_type, _chg_crypto_type = \
                 process_properties(adapter, params)
@@ -747,8 +746,8 @@ def ensure_present(params, check_mode):
             if invalid_update_props:
                 raise ParameterError(
                     "Invalid input properties specified when creating "
-                    "Hipersockets adapter {0!r}: {1!r}".
-                    format(adapter_name, invalid_update_props))
+                    f"Hipersockets adapter {adapter_name!r}: "
+                    f"{invalid_update_props!r}")
 
             # While the 'type' input property is required for verifying
             # the intention, it is not allowed as input for the
