@@ -82,10 +82,6 @@ python_major_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('
 python_m_n_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('%s.%s'%(sys.version_info[0],sys.version_info[1]))")
 pymn := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('py%s%s'%(sys.version_info[0],sys.version_info[1]))")
 
-# Flag indicating whether docs can be built
-# Keep in sync with Sphinx & ansible-doc-extractor install in minimum-constraints.txt and dev-requirements.txt
-doc_build := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('true' if sys.version_info[0:2]>=(3,8) else 'false')")
-
 # The Python source files that are Ansible modules
 module_py_dir := plugins/modules
 module_py_files := $(wildcard $(module_py_dir)/zhmc_*.py)
@@ -132,41 +128,18 @@ safety_install_policy_file := .safety-policy-install.yml
 safety_all_policy_file := .safety-policy-all.yml
 
 # Packages whose dependencies are checked using pip-missing-reqs
-# Sphinx and ansible-doc-extractor are run only on Python>=3.6
 # ansible_test and pylint are checked only on officially supported Python versions
-ifeq ($(python_m_n_version),2.7)
-  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8
-else
-ifeq ($(python_m_n_version),3.5)
-  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8
-else
-ifeq ($(python_m_n_version),3.6)
-  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8
-else
-ifeq ($(python_m_n_version),3.7)
-  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8
-else
 ifeq ($(python_m_n_version),3.8)
   check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor
-else
-ifeq ($(python_m_n_version),3.9)
+else ifeq ($(python_m_n_version),3.9)
   check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor ansible_test pylint
-else
-ifeq ($(python_m_n_version),3.10)
+else ifeq ($(python_m_n_version),3.10)
   check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor ansible_test ansiblelint pylint
-else
-ifeq ($(python_m_n_version),3.11)
+else ifeq ($(python_m_n_version),3.11)
   check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor ansible_test ansiblelint pylint
 else
 # sphinx is excluded because pip-missing-reqs 2.5 reports missing sphinx-versions package (rightfully)
   check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 ansible_doc_extractor ansible_test ansiblelint pylint
-endif
-endif
-endif
-endif
-endif
-endif
-endif
 endif
 
 # Directories for documentation
@@ -208,11 +181,7 @@ endif
 # Note: The --cov-report=html option creates an HTML coverage report in the htmlcov
 #       directory, but it is incorrect in case the coverage data file is appended
 #       to. The 'coverage html' command fixes that.
-ifeq ($(python_m_n_version),3.4)
-  pytest_cov_opts :=
-else
-  pytest_cov_opts := --cov $(module_py_dir) --cov-append --cov-config $(coverage_rc_file) --cov-report=html
-endif
+pytest_cov_opts := --cov $(module_py_dir) --cov-append --cov-config $(coverage_rc_file) --cov-report=html
 
 # No built-in rules needed:
 .SUFFIXES:
@@ -307,23 +276,17 @@ bandit: $(done_dir)/bandit_$(pymn)_$(PACKAGE_LEVEL).done
 
 # Boolean variable indicating that the Ansible sanity test should be run in the current Python environment
 # We run the sanity test only on officially supported Ansible versions, except for:
-#  * Python 3.5+3.6 with minimum+ansible package levels because sanity rstcheck fails with:
-#    "FutureWarning: Python versions prior 3.7 are deprecated. Please update your python version."
-#  * Python 3.7+3.8 with minimum package levels because sanity rstcheck fails with:
+#  * Python 3.8 with minimum package levels because sanity rstcheck fails with:
 #    "No module named rstcheck.__main__; 'rstcheck' is a package and cannot be directly executed"
 #  * Python 3.10 with minimum package levels because sanity setup fails with PyYAML 5.4.1 install issue with Cython 3
-#  * Python 3.13 is not yet supported by Ansible up to version 10
-run_sanity_current := $(shell PL=$(PACKAGE_LEVEL) MIN_AC=$(min_ansible_core_version) $(PYTHON_CMD) -c "import sys,os,ansible; py=sys.version_info[0:2]; ac=ansible.__version__.split('.'); min_ac=os.getenv('MIN_AC').split('.'); pl=os.getenv('PL'); sys.stdout.write('true' if ac>=min_ac and not ((3,5)<=py<=(3,6) and pl in ('ansible','minimum')) and not ((3,7)<=py<=(3,8) and pl=='minimum') and not (py==(3,10) and pl=='minimum') and not py>=(3,13) else 'false')")
+run_sanity_current := $(shell PL=$(PACKAGE_LEVEL) MIN_AC=$(min_ansible_core_version) $(PYTHON_CMD) -c "import sys,os,ansible; py=sys.version_info[0:2]; ac=ansible.__version__.split('.'); min_ac=os.getenv('MIN_AC').split('.'); pl=os.getenv('PL'); sys.stdout.write('true' if ac>=min_ac and not (py==(3,8) and pl=='minimum') and not (py==(3,10) and pl=='minimum') and not py>=(3,13) else 'false')")
 
 # Boolean variable indicating that the Ansible sanity test should be run in its own virtual Python environment
 # We run the sanity test only on officially supported Ansible versions, except for:
-#  * Python 3.5+3.6 with minimum+ansible package levels because sanity rstcheck fails with:
-#    "FutureWarning: Python versions prior 3.7 are deprecated. Please update your python version."
-#  * Python 3.7+3.8 with minimum package levels because sanity rstcheck fails with:
+#  * Python 3.8 with minimum package levels because sanity rstcheck fails with:
 #    "No module named rstcheck.__main__; 'rstcheck' is a package and cannot be directly executed"
 #  * Python 3.10 with minimum package levels because sanity setup fails with PyYAML 5.4.1 install issue with Cython 3
-#  * Python 3.13 is not yet supported by Ansible up to version 10
-run_sanity_virtual := $(shell PL=$(PACKAGE_LEVEL) MIN_AC=$(min_ansible_core_version) $(PYTHON_CMD) -c "import sys,os,ansible; py=sys.version_info[0:2]; ac=ansible.__version__.split('.'); min_ac=os.getenv('MIN_AC').split('.'); pl=os.getenv('PL'); sys.stdout.write('true' if ac>=min_ac and not ((3,5)<=py<=(3,6) and pl in ('ansible','minimum')) and not ((3,7)<=py<=(3,8) and pl=='minimum') and not (py==(3,10) and pl=='minimum') and not py>=(3,13) else 'false')")
+run_sanity_virtual := $(shell PL=$(PACKAGE_LEVEL) MIN_AC=$(min_ansible_core_version) $(PYTHON_CMD) -c "import sys,os,ansible; py=sys.version_info[0:2]; ac=ansible.__version__.split('.'); min_ac=os.getenv('MIN_AC').split('.'); pl=os.getenv('PL'); sys.stdout.write('true' if ac>=min_ac and not (py==(3,8) and pl=='minimum') and not (py==(3,10) and pl=='minimum') and not py>=(3,13) else 'false')")
 
 # The sanity check requires the .git directory to be present.
 .PHONY:	sanity
@@ -484,57 +447,25 @@ $(done_dir)/install_pip_$(pymn)_$(PACKAGE_LEVEL).done: Makefile
 	echo "done" >$@
 
 $(done_dir)/safety_all_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_all_policy_file) minimum-constraints.txt minimum-constraints-install.txt
-ifeq ($(python_major_version),2)
-	@echo "Makefile: Warning: Skipping Safety for all packages on Python $(python_version)" >&2
-else
-ifeq ($(python_m_n_version),3.5)
-	@echo "Makefile: Warning: Skipping Safety for all packages on Python $(python_version)" >&2
-else
 	@echo "Makefile: Running Safety for all packages"
 	-$(call RM_FUNC,$@)
 	bash -c "safety check --policy-file $(safety_all_policy_file) -r minimum-constraints.txt --full-report || test '$(RUN_TYPE)' != 'release' || exit 1"
 	echo "done" >$@
 	@echo "Makefile: Done running Safety"
-endif
-endif
 
 $(done_dir)/safety_install_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_install_policy_file) minimum-constraints-install.txt
-ifeq ($(python_major_version),2)
-	@echo "Makefile: Warning: Skipping Safety for install packages on Python $(python_version)" >&2
-else
-ifeq ($(python_m_n_version),3.5)
-	@echo "Makefile: Warning: Skipping Safety for install packages on Python $(python_version)" >&2
-else
 	@echo "Makefile: Running Safety for install packages"
 	-$(call RM_FUNC,$@)
 	safety check --policy-file $(safety_install_policy_file) -r minimum-constraints-install.txt --full-report
 	echo "done" >$@
 	@echo "Makefile: Done running Safety for install packages"
-endif
-endif
 
 $(done_dir)/bandit_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile
-ifeq ($(python_major_version),2)
-	@echo "Makefile: Warning: Skipping Safety for all packages on Python $(python_version)" >&2
-else
-ifeq ($(python_m_n_version),3.5)
-	@echo "Makefile: Warning: Skipping Safety for all packages on Python $(python_version)" >&2
-else
-ifeq ($(python_m_n_version),3.6)
-	@echo "Makefile: Warning: Skipping Safety for all packages on Python $(python_version)" >&2
-else
-ifeq ($(python_m_n_version),3.7)
-	@echo "Makefile: Warning: Skipping Safety for all packages on Python $(python_version)" >&2
-else
 	@echo "Makefile: Running Bandit"
 	-$(call RM_FUNC,$@)
 	bandit $(src_py_dir) -r -l
 	echo "done" >$@
 	@echo "Makefile: Done running Bandit"
-endif
-endif
-endif
-endif
 
 $(dist_file): $(done_dir)/install_deps_$(pymn)_$(PACKAGE_LEVEL).done $(dist_dependent_files) galaxy.yml
 	mkdir -p $(dist_dir)
@@ -544,27 +475,15 @@ $(module_rst_dir):
 	mkdir -p $(module_rst_dir)
 
 $(module_rst_dir)/%.rst: $(module_py_dir)/%.py $(module_rst_dir) $(doc_templates_dir)/module.rst.j2
-ifneq ($(doc_build),true)
-	@echo "makefile: Warning: Skipping module docs extraction on Python $(python_m_n_version)"
-else
 	ansible-doc-extractor --template $(doc_templates_dir)/module.rst.j2 $(module_rst_dir) $<
-endif
 
 # .nojekyll file disables GitHub pages jekyll pre-processing
 $(doc_build_dir)/index.html: $(doc_rst_files) $(doc_source_dir)/conf.py
-ifneq ($(doc_build),true)
-	@echo "makefile: Warning: Skipping docs build on Python $(python_m_n_version)"
-else
 	sphinx-versioning -l $(doc_source_dir)/conf.py build $(doc_source_dir) $(doc_build_dir)
 	touch $(doc_build_dir)/.nojekyll
-endif
 
 .PHONY: docslocal
 docslocal: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(doc_rst_files) $(doc_source_dir)/conf.py
-ifneq ($(doc_build),true)
-	@echo "makefile: Warning: Skipping local docs build on Python $(python_m_n_version)"
-else
 	rm -rf $(doc_build_local_dir)
 	sphinx-build -b html $(sphinx_opts) $(doc_source_dir) $(doc_build_local_dir)
 #	open $(doc_build_local_dir)/index.html
-endif

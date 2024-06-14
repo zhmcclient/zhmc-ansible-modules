@@ -35,180 +35,8 @@ jobs:
         if [[ "${{ github.event_name }}" == "schedule" || "${{ github.head_ref }}" =~ ^release_ ]]; then \
           echo "matrix={ \
             \"os\": [ \"ubuntu-latest\", \"macos-latest\" ], \
-            \"python-version\": [ \"3.5\", \"3.6\", \"3.7\", \"3.8\", \"3.9\", \"3.10\", \"3.11\", \"3.12\", \"3.13.0-beta.1\" ], \
-            \"package_level\": [ \"minimum\", \"latest\", \"ansible\" ], \
-            \"exclude\": [ \
-              { \
-                \"os\": \"ubuntu-latest\", \
-                \"python-version\": \"3.5\", \
-                \"package_level\": \"minimum\" \
-              }, \
-              { \
-                \"os\": \"ubuntu-latest\", \
-                \"python-version\": \"3.5\", \
-                \"package_level\": \"latest\" \
-              }, \
-              { \
-                \"os\": \"ubuntu-latest\", \
-                \"python-version\": \"3.5\", \
-                \"package_level\": \"ansible\" \
-              }, \
-              { \
-                \"os\": \"ubuntu-latest\", \
-                \"python-version\": \"3.6\", \
-                \"package_level\": \"minimum\" \
-              }, \
-              { \
-                \"os\": \"ubuntu-latest\", \
-                \"python-version\": \"3.6\", \
-                \"package_level\": \"latest\" \
-              }, \
-              { \
-                \"os\": \"ubuntu-latest\", \
-                \"python-version\": \"3.6\", \
-                \"package_level\": \"ansible\" \
-              }, \
-              { \
-                \"os\": \"macos-latest\", \
-                \"python-version\": \"3.5\", \
-                \"package_level\": \"minimum\" \
-              }, \
-              { \
-                \"os\": \"macos-latest\", \
-                \"python-version\": \"3.5\", \
-                \"package_level\": \"latest\" \
-              }, \
-              { \
-                \"os\": \"macos-latest\", \
-                \"python-version\": \"3.5\", \
-                \"package_level\": \"ansible\" \
-              }, \
-              { \
-                \"os\": \"macos-latest\", \
-                \"python-version\": \"3.6\", \
-                \"package_level\": \"minimum\" \
-              }, \
-              { \
-                \"os\": \"macos-latest\", \
-                \"python-version\": \"3.6\", \
-                \"package_level\": \"latest\" \
-              }, \
-              { \
-                \"os\": \"macos-latest\", \
-                \"python-version\": \"3.6\", \
-                \"package_level\": \"ansible\" \
-              }, \
-              { \
-                \"os\": \"macos-latest\", \
-                \"python-version\": \"3.7\", \
-                \"package_level\": \"minimum\" \
-              }, \
-              { \
-                \"os\": \"macos-latest\", \
-                \"python-version\": \"3.7\", \
-                \"package_level\": \"latest\" \
-              }, \
-              { \
-                \"os\": \"macos-latest\", \
-                \"python-version\": \"3.7\", \
-                \"package_level\": \"ansible\" \
-              } \
-            ], \
-            \"include\": [ \
-              { \
-                \"os\": \"ubuntu-20.04\", \
-                \"python-version\": \"2.7\", \
-                \"package_level\": \"minimum\", \
-                \"container\": {\"image\": \"python:2.7.18-buster\"} \
-              }, \
-              { \
-                \"os\": \"ubuntu-20.04\", \
-                \"python-version\": \"2.7\", \
-                \"package_level\": \"latest\", \
-                \"container\": {\"image\": \"python:2.7.18-buster\"} \
-              }, \
-              { \
-                \"os\": \"ubuntu-20.04\", \
-                \"python-version\": \"2.7\", \
-                \"package_level\": \"ansible\", \
-                \"container\": {\"image\": \"python:2.7.18-buster\"} \
-              }, \
-              { \
-                \"os\": \"ubuntu-20.04\", \
-                \"python-version\": \"3.5\", \
-                \"package_level\": \"minimum\" \
-              }, \
-              { \
-                \"os\": \"ubuntu-20.04\", \
-                \"python-version\": \"3.5\", \
-                \"package_level\": \"latest\" \
-              }, \
-              { \
-                \"os\": \"ubuntu-20.04\", \
-                \"python-version\": \"3.5\", \
-                \"package_level\": \"ansible\" \
-              }, \
-              { \
-                \"os\": \"ubuntu-20.04\", \
-                \"python-version\": \"3.6\", \
-                \"package_level\": \"minimum\" \
-              }, \
-              { \
-                \"os\": \"ubuntu-20.04\", \
-                \"python-version\": \"3.6\", \
-                \"package_level\": \"latest\" \
-              }, \
-              { \
-                \"os\": \"ubuntu-20.04\", \
-                \"python-version\": \"3.6\", \
-                \"package_level\": \"ansible\" \
-              }, \
-              { \
-                \"os\": \"macos-12\", \
-                \"python-version\": \"3.5\", \
-                \"package_level\": \"minimum\" \
-              }, \
-              { \
-                \"os\": \"macos-12\", \
-                \"python-version\": \"3.5\", \
-                \"package_level\": \"latest\" \
-              }, \
-              { \
-                \"os\": \"macos-12\", \
-                \"python-version\": \"3.5\", \
-                \"package_level\": \"ansible\" \
-              }, \
-              { \
-                \"os\": \"macos-12\", \
-                \"python-version\": \"3.6\", \
-                \"package_level\": \"minimum\" \
-              }, \
-              { \
-                \"os\": \"macos-12\", \
-                \"python-version\": \"3.6\", \
-                \"package_level\": \"latest\" \
-              }, \
-              { \
-                \"os\": \"macos-12\", \
-                \"python-version\": \"3.6\", \
-                \"package_level\": \"ansible\" \
-              }, \
-              { \
-                \"os\": \"macos-12\", \
-                \"python-version\": \"3.7\", \
-                \"package_level\": \"minimum\" \
-              }, \
-              { \
-                \"os\": \"macos-12\", \
-                \"python-version\": \"3.7\", \
-                \"package_level\": \"latest\" \
-              }, \
-              { \
-                \"os\": \"macos-12\", \
-                \"python-version\": \"3.7\", \
-                \"package_level\": \"ansible\" \
-              } \
-            ] \
+            \"python-version\": [ \"3.8\", \"3.9\", \"3.10\", \"3.11\", \"3.12\", \"3.13.0-beta.1\" ], \
+            \"package_level\": [ \"minimum\", \"latest\", \"ansible\" ] \
           }" >> $GITHUB_OUTPUT; \
         else \
           echo "matrix={ \
@@ -217,35 +45,8 @@ jobs:
             \"package_level\": [ \"minimum\", \"latest\" ], \
             \"include\": [ \
               { \
-                \"os\": \"ubuntu-20.04\", \
-                \"python-version\": \"2.7\", \
-                \"package_level\": \"minimum\", \
-                \"container\": {\"image\": \"python:2.7.18-buster\"} \
-              }, \
-              { \
-                \"os\": \"ubuntu-20.04\", \
-                \"python-version\": \"2.7\", \
-                \"package_level\": \"latest\", \
-                \"container\": {\"image\": \"python:2.7.18-buster\"} \
-              }, \
-              { \
-                \"os\": \"ubuntu-20.04\", \
-                \"python-version\": \"3.5\", \
-                \"package_level\": \"minimum\" \
-              }, \
-              { \
-                \"os\": \"ubuntu-20.04\", \
-                \"python-version\": \"3.5\", \
-                \"package_level\": \"latest\" \
-              }, \
-              { \
-                \"os\": \"ubuntu-20.04\", \
-                \"python-version\": \"3.6\", \
-                \"package_level\": \"minimum\" \
-              }, \
-              { \
                 \"os\": \"ubuntu-latest\", \
-                \"python-version\": \"3.7\", \
+                \"python-version\": \"3.8\", \
                 \"package_level\": \"minimum\" \
               }, \
               { \
@@ -274,8 +75,13 @@ jobs:
                 \"package_level\": \"latest\" \
               }, \
               { \
-                \"os\": \"macos-12\", \
-                \"python-version\": \"3.5\", \
+                \"os\": \"macos-latest\", \
+                \"python-version\": \"3.8\", \
+                \"package_level\": \"minimum\" \
+              }, \
+              { \
+                \"os\": \"macos-latest\", \
+                \"python-version\": \"3.9\", \
                 \"package_level\": \"latest\" \
               }, \
               { \
@@ -321,16 +127,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
-    - name: Set up Python ${{ matrix.python-version }} (if py==3.5)
-      if: ${{ matrix.python-version == '3.5' }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
-      env:
-        # Workaround for cert issue on Python 3.5, see https://github.com/actions/setup-python/issues/866
-        PIP_TRUSTED_HOST: "pypi.python.org pypi.org files.pythonhosted.org"
-    - name: Set up Python ${{ matrix.python-version }} (if py>=3.6)
-      if: ${{ matrix.python-version != '2.7' && matrix.python-version != '3.5' }}
+    - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
@@ -376,7 +173,7 @@ jobs:
     - name: Check that module .rst files are up to date
       # Because the Ansible rst generator changed its output over time, we only
       # check this on the latest Python release with latest package levels.
-      if: ${{ matrix.python-version == '3.11' && matrix.package_level == 'latest' }}
+      if: ${{ matrix.python-version == '3.12' && matrix.package_level == 'latest' }}
       run: |
         bash -c "if ! git diff --exit-code HEAD docs/source/modules; then
           echo 'Error: Module .rst files are not up to date in this PR. Run make docslocal to update.';
@@ -389,9 +186,6 @@ jobs:
       run: |
         make check
     - name: Run sanity
-      # Notes on running 'make sanity':
-      # * Excluded on Python 2.7 because that would require pylint 1.x
-      if: ${{ ! ( matrix.python-version == '2.7' ) }}
       env:
         PACKAGE_LEVEL: ${{ matrix.package_level }}
         RUN_TYPE: ${{ steps.set-run-type.outputs.result }}

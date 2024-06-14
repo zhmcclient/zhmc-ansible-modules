@@ -26,12 +26,6 @@ security:
             reason: Fixed Pylint version is not used by Ansible sanity test
         51457:
             reason: Py package is no longer being fixed (latest version 1.11.0)
-        52365:
-            reason: Fixed Certifi version requires Python>=3.6 and is used there
-        59956:
-            reason: Fixed certifi version 2023.07.22 requires Python>=3.6 and is used there
-        66067:
-            reason: Fixed pylint version 2.6.1 requires Python>=3.5 and is used there
         66742:
             reason: Fixed black version 24.3.0 requires Python>=3.8 and is used on Python>=3.10 (black is not used below)
 
