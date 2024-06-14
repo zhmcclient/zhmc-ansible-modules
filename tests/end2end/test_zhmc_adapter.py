@@ -16,13 +16,11 @@
 End2end tests for zhmc_adapter module.
 """
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
 
 import uuid
 import copy
 import pytest
-import mock
+from unittest import mock
 import re
 import random
 from pprint import pformat
@@ -323,7 +321,7 @@ def test_zhmc_adapter_facts(
         # we pull full properties to make sure all are tested.
         adapter.pull_full_properties()
 
-        where = "adapter '{a}'".format(a=adapter.name)
+        where = f"adapter '{adapter.name}'"
 
         # Prepare module input parameters (must be all required + optional)
         params = {
@@ -648,7 +646,7 @@ def test_zhmc_adapter_states(
                             pvalue = pvalue.replace('{' + pn + '}', pv)
                         input_match2[pname] = pvalue
 
-            where = "adapter '{a}'".format(a=unique_name)
+            where = f"adapter '{unique_name}'"
 
             if DEBUG:
                 print("Debug: Input parms: match={m}, name={n}".

@@ -16,15 +16,13 @@
 End2end tests for zhmc_lpar module.
 """
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
 
 import random
 import pdb
 import re
 
 import pytest
-import mock
+from unittest import mock
 import requests.packages.urllib3
 import zhmcclient
 # pylint: disable=line-too-long,unused-import
@@ -745,7 +743,7 @@ def test_zhmc_lpar_state(
         saved_auto_load = set_resource_property(
             iap, 'load-at-activation', auto_load)
 
-        where = "LPAR {ln!r}".format(ln=lpar_name)
+        where = f"LPAR {lpar_name!r}"
 
         try:
             logger.info("Test: LPAR %r with initial status %r, module parms: "
@@ -990,7 +988,7 @@ def test_zhmc_lpar_facts(
         # Pick any LPAR on the CPC
         lpars = cpc.lpars.list()
         if not lpars:
-            pytest.skip("No LPARs exist on CPC {c}.".format(c=cpc.name))
+            pytest.skip(f"No LPARs exist on CPC {cpc.name}.")
         lpar = random.choice(lpars)
 
         msg = ("Testing on CPC {c} with LPAR {p!r}".

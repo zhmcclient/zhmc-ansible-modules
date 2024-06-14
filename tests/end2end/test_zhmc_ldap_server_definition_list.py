@@ -16,11 +16,9 @@
 End2end tests for zhmc_ldap_server_definition_list module.
 """
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
 
 import pytest
-import mock
+from unittest import mock
 import requests.packages.urllib3
 import zhmcclient
 # pylint: disable=line-too-long,unused-import

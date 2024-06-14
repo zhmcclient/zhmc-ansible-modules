@@ -13,8 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
 
 # For information on the format of the ANSIBLE_METADATA, DOCUMENTATION,
 # EXAMPLES, and RETURN strings, see
@@ -424,7 +422,7 @@ def main():
         # These exceptions are considered errors in the environment or in user
         # input. They have a proper message that stands on its own, so we
         # simply pass that message on and will not need a traceback.
-        msg = "{0}: {1}".format(exc.__class__.__name__, exc)
+        msg = f"{exc.__class__.__name__}: {exc}"
         LOGGER.debug(
             "Module exit (failure): msg: %s", msg)
         module.fail_json(msg=msg)

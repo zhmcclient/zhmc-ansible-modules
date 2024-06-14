@@ -16,12 +16,10 @@
 End2end tests for zhmc_session module.
 """
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
 
 import re
 import pytest
-import mock
+from unittest import mock
 from ansible.module_utils import six
 import requests.packages.urllib3
 # pylint: disable=line-too-long,unused-import
@@ -324,11 +322,11 @@ def test_zhmc_session_single(
                 assert exp_hmc_auth['session_id'] == res_hmc_auth['session_id']
 
         if action == 'create':
-            assert isinstance(res_hmc_host, six.text_type)
+            assert isinstance(res_hmc_host, str)
             if isinstance(hmc_host, list):
                 assert res_hmc_host in hmc_host
             else:
-                assert isinstance(hmc_host, six.text_type)
+                assert isinstance(hmc_host, str)
                 assert res_hmc_host == hmc_host
         else:  # action 'delete'
             assert res_hmc_host is None
@@ -385,11 +383,11 @@ def test_zhmc_session_sequence(
         isinstance(res_hmc_auth['ca_certs'], str)
     assert res_hmc_auth['verify'] in (True, False)
 
-    assert isinstance(res_hmc_host, six.text_type)
+    assert isinstance(res_hmc_host, str)
     if isinstance(hmc_definition.host, list):
         assert res_hmc_host in hmc_definition.host
     else:
-        assert isinstance(hmc_definition.host, six.text_type)
+        assert isinstance(hmc_definition.host, str)
         assert res_hmc_host == hmc_definition.host
 
     actual_hmc_host = res_hmc_host

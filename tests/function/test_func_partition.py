@@ -19,11 +19,9 @@ Function tests for the 'zhmc_partition' Ansible module.
 
 # pylint: disable=bad-option-value,redundant-u-string-prefix
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
 
 import pytest
-import mock
+from unittest import mock
 import re
 
 from zhmcclient import Client
@@ -813,7 +811,7 @@ CRYPTO_CONFIG_SUCCESS_TESTCASES = [
 ]
 
 
-class TestPartition(object):
+class TestPartition:
     """
     All tests for partitions.
     """
@@ -1242,7 +1240,7 @@ class TestPartition(object):
             for prop_name, exp_value in exp_properties.items():
                 hmc_prop_name = prop_name.replace('_', '-')
                 assert part_props[hmc_prop_name] == exp_value, \
-                    "Property: {0}".format(prop_name)
+                    f"Property: {prop_name}"
 
         # Assert the partition resource
         if not check_mode:
@@ -1255,7 +1253,7 @@ class TestPartition(object):
             for prop_name, exp_value in exp_properties.items():
                 hmc_prop_name = prop_name.replace('_', '-')
                 assert part.properties[hmc_prop_name] == exp_value, \
-                    "Property: {0}".format(prop_name)
+                    f"Property: {prop_name}"
 
     @pytest.mark.parametrize(
         "check_mode", [False, True])
@@ -1404,7 +1402,7 @@ class TestPartition(object):
             for prop_name, exp_value in exp_properties.items():
                 hmc_prop_name = prop_name.replace('_', '-')
                 assert part_props[hmc_prop_name] == exp_value, \
-                    "Property: {0}".format(prop_name)
+                    f"Property: {prop_name}"
 
         # Assert the partition resource
         if not check_mode:
@@ -1419,7 +1417,7 @@ class TestPartition(object):
                 if hmc_prop_name in part.properties:
                     # only if not an artificial property
                     assert part.properties[hmc_prop_name] == exp_value, \
-                        "Property: {0}".format(prop_name)
+                        f"Property: {prop_name}"
 
     @pytest.mark.parametrize(
         "check_mode", [False, True])
@@ -1500,7 +1498,7 @@ class TestPartition(object):
             for prop_name, exp_value in exp_properties.items():
                 hmc_prop_name = prop_name.replace('_', '-')
                 assert part_props[hmc_prop_name] == exp_value, \
-                    "Property: {0}".format(prop_name)
+                    f"Property: {prop_name}"
 
         # Assert the partition resource
         if not check_mode:
@@ -1513,7 +1511,7 @@ class TestPartition(object):
             for prop_name, exp_value in exp_properties.items():
                 hmc_prop_name = prop_name.replace('_', '-')
                 assert part.properties[hmc_prop_name] == exp_value, \
-                    "Property: {0}".format(prop_name)
+                    f"Property: {prop_name}"
 
     @pytest.mark.parametrize(
         "check_mode", [False, True])
@@ -1677,7 +1675,7 @@ class TestPartition(object):
             result_property = part_props[hmc_prop_name]
             exp_property = exp_properties[prop_name]
             assert result_property == exp_property, \
-                "Property: {0}".format(prop_name)
+                f"Property: {prop_name}"
 
         # Assert the partition resource
         if not check_mode:
@@ -1701,7 +1699,7 @@ class TestPartition(object):
                 part_property = part.properties[hmc_prop_name]
                 exp_property = exp_properties[prop_name]
                 assert part_property == exp_property, \
-                    "Property: {0}".format(prop_name)
+                    f"Property: {prop_name}"
 
     @pytest.mark.parametrize(
         "check_mode", [False, True])
@@ -1851,5 +1849,5 @@ class TestPartition(object):
 
         # Assert the failure message
         msg = get_failure_msg(mod_obj)
-        pattern = r'^{0}$'.format(error_msg_pattern)
+        pattern = fr'^{error_msg_pattern}$'
         assert re.match(pattern, msg)

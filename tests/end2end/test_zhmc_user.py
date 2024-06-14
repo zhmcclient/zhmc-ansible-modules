@@ -16,12 +16,10 @@
 End2end tests for zhmc_user module.
 """
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
 
 import uuid
 import pytest
-import mock
+from unittest import mock
 import random
 import requests.packages.urllib3
 from collections import OrderedDict
@@ -164,7 +162,7 @@ def updated_copy(dict1, dict2):
 
 
 def new_user_name():
-    user_name = 'test_{0}'.format(uuid.uuid4())
+    user_name = f'test_{uuid.uuid4()}'
     return user_name
 
 
@@ -278,7 +276,7 @@ def test_zhmc_user_facts(
                     "'{at}'".format(ut=user_type, at=auth_type))
     user = random.choice(typed_users)
 
-    where = "user '{u}'".format(u=user.name)
+    where = f"user '{user.name}'"
 
     # Prepare module input parameters (must be all required + optional)
     params = {
@@ -414,7 +412,7 @@ def test_zhmc_user_absent_present(
     # Create a user name that does not exist
     user_name = new_user_name()
 
-    where = "user '{u}'".format(u=user_name)
+    where = f"user '{user_name}'"
 
     # Create initial user, if specified so
     if initial_user_props is not None:

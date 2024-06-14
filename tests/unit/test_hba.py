@@ -17,17 +17,15 @@
 Unit tests for the 'zhmc_hba' Ansible module.
 """
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
 
 import pytest
-import mock
+from unittest import mock
 
 from plugins.modules import zhmc_hba
 from plugins.module_utils import common as module_utils
 
 
-class TestZhmcHbaMain(object):
+class TestZhmcHbaMain:
     """
     Unit tests for the main() function.
     """
@@ -170,7 +168,7 @@ class TestZhmcHbaMain(object):
         assert mod_obj.exit_json.called is False
 
 
-class TestZhmcHbaPerformTask(object):
+class TestZhmcHbaPerformTask:
     """
     Unit tests for the perform_task() function.
     """

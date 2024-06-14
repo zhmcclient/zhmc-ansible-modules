@@ -13,8 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
 
 # For information on the format of the ANSIBLE_METADATA, DOCUMENTATION,
 # EXAMPLES, and RETURN strings, see
@@ -553,7 +551,7 @@ def process_properties(console, user, params):
 
         if prop_name not in ZHMC_USER_PROPERTIES:
             raise ParameterError(
-                "Property {0!r} is not defined in the data model for "
+                "Property {!r} is not defined in the data model for "
                 "users.".format(prop_name))
 
         allowed, create, update, update_while_active, eq_func, type_cast = \
@@ -561,7 +559,7 @@ def process_properties(console, user, params):
 
         if not allowed:
             raise ParameterError(
-                "Property {0!r} is not allowed in the 'properties' module "
+                "Property {!r} is not allowed in the 'properties' module "
                 "parameter.".format(prop_name))
 
         # Process artificial properties allowed in input parameters
@@ -662,7 +660,7 @@ def process_properties(console, user, params):
             default_group_name = input_props[prop_name]
             # TODO: Add support for Group objects to zhmcclient
             # default_group = console.groups.find_by_name(default_group_name)
-            default_group_uri = 'fake-uri-{0}'.format(default_group_name)
+            default_group_uri = f'fake-uri-{default_group_name}'
             if user is None:
                 create_props['default-group-uri'] = default_group_uri
             elif user.prop('default-group-uri') != default_group_uri:
@@ -913,7 +911,7 @@ def create_check_mode_user(console, create_props, update_props):
     # Apply specified input properties on top of the defaults
     props.update(input_props)
 
-    user_oid = 'fake-{0}'.format(uuid.uuid4())
+    user_oid = f'fake-{uuid.uuid4()}'
     user = console.users.resource_object(user_oid, props=props)
 
     return user
@@ -977,8 +975,8 @@ def ensure_present(params, check_mode):
                 result['user-roles'].append(role.uri)
             if rem_roles:
                 raise AssertionError(
-                    "Unexpected attempt to remove user roles {0!r} from newly "
-                    "created user {1!r}".format(rem_roles, user.name))
+                    "Unexpected attempt to remove user roles {!r} from newly "
+                    "created user {!r}".format(rem_roles, user.name))
         else:
             # It exists. Update its properties.
             user.pull_full_properties()
@@ -1023,7 +1021,7 @@ def ensure_present(params, check_mode):
                     user.remove_user_role(role)
                 if 'user-roles' not in result:
                     raise AssertionError(
-                        "User {0!r} unexpectedly does not have a "
+                        "User {!r} unexpectedly does not have a "
                         "'user-roles' property".format(user.name))
                 result['user-roles'].remove(role.uri)
                 changed = True
@@ -1185,7 +1183,7 @@ def main():
         # These exceptions are considered errors in the environment or in user
         # input. They have a proper message that stands on its own, so we
         # simply pass that message on and will not need a traceback.
-        msg = "{0}: {1}".format(exc.__class__.__name__, exc)
+        msg = f"{exc.__class__.__name__}: {exc}"
         LOGGER.debug(
             "Module exit (failure): msg: %s", msg)
         module.fail_json(msg=msg)

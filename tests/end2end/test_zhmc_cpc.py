@@ -16,11 +16,9 @@
 End2end tests for zhmc_cpc module.
 """
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
 
 import pytest
-import mock
+from unittest import mock
 import requests.packages.urllib3
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
@@ -207,7 +205,7 @@ def test_zhmc_cpc_facts(
 
         faked_session = session if hd.mock_file else None
 
-        where = "CPC '{c}'".format(c=cpc.name)
+        where = f"CPC '{cpc.name}'"
 
         # Prepare module input parameters (must be all required + optional)
         params = {

@@ -18,8 +18,6 @@
 # list see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
 
 # -- Path setup --------------------------------------------------------------
 
@@ -115,7 +113,7 @@ _version_file = '../../tools/version.py'  # relative to the dir of this file
 _version_file = os.path.relpath(os.path.join(
     os.path.dirname(__file__), _version_file))
 version = subprocess.check_output(
-    '{0} {1}'.format(sys.executable, _version_file), shell=True).decode("utf-8")
+    f'{sys.executable} {_version_file}', shell=True).decode("utf-8")
 
 project = 'IBM Z HMC collection'
 copyright = '2016,2020, IBM'

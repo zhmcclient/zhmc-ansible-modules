@@ -13,8 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
 
 # For information on the format of the ANSIBLE_METADATA, DOCUMENTATION,
 # EXAMPLES, and RETURN strings, see
@@ -583,7 +581,7 @@ def process_properties(client, urole, params):
 
         if prop_name not in ZHMC_USER_ROLE_PROPERTIES:
             raise ParameterError(
-                "Property {0!r} is not defined in the data model for "
+                "Property {!r} is not defined in the data model for "
                 "user roles.".format(prop_name))
 
         allowed, create, update, update_while_active, eq_func, type_cast = \
@@ -591,7 +589,7 @@ def process_properties(client, urole, params):
 
         if not allowed:
             raise ParameterError(
-                "Property {0!r} is not allowed in the 'properties' module "
+                "Property {!r} is not allowed in the 'properties' module "
                 "parameter.".format(prop_name))
 
         # Process artificial/special properties allowed in input parameters
@@ -602,7 +600,7 @@ def process_properties(client, urole, params):
                 sys_urole = console.user_roles.find(name=sys_urole_name)
             except zhmcclient.NotFound:
                 raise ParameterError(
-                    "Cannot find system-defined user role {0!r} specified in "
+                    "Cannot find system-defined user role {!r} specified in "
                     "the 'associated_system_defined_user_role_name' input "
                     "property.".format(sys_urole_name))
             create_props['associated-system-defined-user-role-uri'] = \
@@ -681,7 +679,7 @@ def create_check_mode_urole(client, create_props, update_props):
     # Apply specified input properties on top of the defaults
     props.update(input_props)
 
-    urole_oid = 'fake-{0}'.format(uuid.uuid4())
+    urole_oid = f'fake-{uuid.uuid4()}'
     urole = console.user_roles.resource_object(urole_oid, props=props)
 
     return urole
@@ -696,7 +694,7 @@ def find_in_obj_list(obj_lists, obj_class, prop_name, prop_value):
             return obj
 
     raise zhmcclient.NotFound(
-        "{c} with {p}={v!r}".format(c=obj_class, p=prop_name, v=prop_value))
+        f"{obj_class} with {prop_name}={prop_value!r}")
 
 
 def uri_to_object(obj_lists, client, obj_uri):
@@ -742,7 +740,7 @@ def uri_to_object(obj_lists, client, obj_uri):
                 continue
         else:
             raise zhmcclient.NotFound(
-                "Adapter with object-uri: {u!r}".format(u=obj_uri))
+                f"Adapter with object-uri: {obj_uri!r}")
     elif obj_uri.startswith('/api/storage-groups/'):
         if 'storage-group' not in obj_lists:
             obj_lists['storage-group'] = console.storage_groups.list()
@@ -1018,7 +1016,7 @@ def result_permissions(perm_dict):
             item.update(opt_kwargs)
         else:
             raise NotImplementedError(
-                "Invalid permitted object: {o!r}".format(o=obj))
+                f"Invalid permitted object: {obj!r}")
         ansi_perms.append(item)
     return ansi_perms
 
@@ -1333,7 +1331,7 @@ def main():
         # These exceptions are considered errors in the environment or in user
         # input. They have a proper message that stands on its own, so we
         # simply pass that message on and will not need a traceback.
-        msg = "{0}: {1}".format(exc.__class__.__name__, exc)
+        msg = f"{exc.__class__.__name__}: {exc}"
         LOGGER.debug(
             "Module exit (failure): msg: %s", msg)
         module.fail_json(msg=msg)

@@ -16,12 +16,10 @@
 End2end tests for zhmc_partition_messages module.
 """
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
 
 import random
 import pytest
-import mock
+from unittest import mock
 import requests.packages.urllib3
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
