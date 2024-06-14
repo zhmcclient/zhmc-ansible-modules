@@ -13,8 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
 
 # For information on the format of the ANSIBLE_METADATA, DOCUMENTATION,
 # EXAMPLES, and RETURN strings, see
@@ -520,7 +518,7 @@ def process_properties(cpc, params):
 
         if not allowed:
             raise ParameterError(
-                "CPC property {0!r} specified in the 'properties' module "
+                "CPC property {!r} specified in the 'properties' module "
                 "parameter cannot be updated.".format(prop_name))
 
         # Process a normal (= non-artificial) property
@@ -629,7 +627,7 @@ def ensure_active(module):
                 else:
                     if not activation_profile_name:
                         raise ParameterError(
-                            "CPC {0!r} is in classic mode and activation "
+                            "CPC {!r} is in classic mode and activation "
                             "requires the 'activation_profile_name' parameter "
                             "to be specified".format(cpc_name))
                     cpc.activate(
@@ -908,7 +906,7 @@ def main():
         # These exceptions are considered errors in the environment or in user
         # input. They have a proper message that stands on its own, so we
         # simply pass that message on and will not need a traceback.
-        msg = "{0}: {1}".format(exc.__class__.__name__, exc)
+        msg = f"{exc.__class__.__name__}: {exc}"
         LOGGER.debug("Module exit (failure): msg: %r", msg)
         module.fail_json(msg=msg)
     # Other exceptions are considered module errors and are handled by Ansible

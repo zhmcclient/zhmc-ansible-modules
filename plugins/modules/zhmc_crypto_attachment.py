@@ -13,8 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
 
 # For information on the format of the ANSIBLE_METADATA, DOCUMENTATION,
 # EXAMPLES, and RETURN strings, see
@@ -445,7 +443,7 @@ def get_partition_config(partition, all_adapters):
                 control_domains.append(di)
             else:
                 if am != 'usage':
-                    raise AssertionError("am={0}".format(am))
+                    raise AssertionError(f"am={am}")
                 usage_domains.append(di)
 
     result = {}
@@ -519,7 +517,7 @@ def ensure_attached(params, check_mode):
     except (ValueError, AssertionError):
         raise ParameterError(
             "The 'domain_range' parameter must be a list containing two "
-            "integer numbers, but is: {0!r}".format(domain_range))
+            "integer numbers, but is: {!r}".format(domain_range))
 
     if adapter_count and adapter_names:
         raise ParameterError(
@@ -731,10 +729,10 @@ def ensure_attached(params, check_mode):
                             # in usage mode
                             p = all_partitions[p_uri]
                             raise Error(
-                                "Domain {0} cannot be attached in {1!r} mode "
-                                "to target partition {2!r} because it is "
-                                "already attached in {3!r} mode to partition "
-                                "{4!r}".format(di, access_mode, partition.name,
+                                "Domain {} cannot be attached in {!r} mode "
+                                "to target partition {!r} because it is "
+                                "already attached in {!r} mode to partition "
+                                "{!r}".format(di, access_mode, partition.name,
                                                ACCESS_MODES_HMC2MOD[am],
                                                p.name))
 
@@ -1111,7 +1109,7 @@ def main():
         # These exceptions are considered errors in the environment or in user
         # input. They have a proper message that stands on its own, so we
         # simply pass that message on and will not need a traceback.
-        msg = "{0}: {1}".format(exc.__class__.__name__, exc)
+        msg = f"{exc.__class__.__name__}: {exc}"
         LOGGER.debug("Module exit (failure): msg: %s", msg)
         module.fail_json(msg=msg)
     # Other exceptions are considered module errors and are handled by Ansible

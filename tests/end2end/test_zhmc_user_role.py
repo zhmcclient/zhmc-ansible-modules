@@ -16,12 +16,10 @@
 End2end tests for zhmc_user_role module.
 """
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
 
 import uuid
 import pytest
-import mock
+from unittest import mock
 import random
 from pprint import pformat
 import requests.packages.urllib3
@@ -76,7 +74,7 @@ def updated_copy(dict1, dict2):
 
 
 def new_urole_name():
-    urole_name = 'test_{0}'.format(uuid.uuid4())
+    urole_name = f'test_{uuid.uuid4()}'
     return urole_name
 
 
@@ -111,7 +109,7 @@ def assert_urole_props(urole_props, exp_urole_props, where):
         prop_name_hmc = prop_name.replace('_', '-')
         if prop_name_hmc in UROLE_CONDITIONAL_PROPS:
             continue
-        where_prop = where + ", property {p!r}".format(p=prop_name)
+        where_prop = where + f", property {prop_name!r}"
         assert prop_name_hmc in urole_props, where_prop
 
     # Assert the expected property values for non-artificial properties
@@ -124,7 +122,7 @@ def assert_urole_props(urole_props, exp_urole_props, where):
             continue
         exp_value = exp_urole_props[prop_name]
         act_value = urole_props[prop_name]
-        where_prop = where + ", property {p!r}".format(p=prop_name)
+        where_prop = where + f", property {prop_name!r}"
         assert act_value == exp_value, where_prop
 
 
@@ -155,7 +153,7 @@ def test_zhmc_user_role_facts(
     uroles = console.user_roles.list()
     urole = random.choice(uroles)
 
-    where = "user role '{u}'".format(u=urole.name)
+    where = f"user role '{urole.name}'"
 
     # Prepare module input parameters (must be all required + optional)
     params = {
@@ -277,7 +275,7 @@ def test_zhmc_user_role_absent_present(
     # Create a user role name that does not exist
     urole_name = new_urole_name()
 
-    where = "user role '{u}'".format(u=urole_name)
+    where = f"user role '{urole_name}'"
 
     sys_urole = console.user_roles.find(name='hmc-access-administrator-tasks')
 

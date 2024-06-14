@@ -13,8 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
 
 # For information on the format of the ANSIBLE_METADATA, DOCUMENTATION,
 # EXAMPLES, and RETURN strings, see
@@ -1108,7 +1106,7 @@ def process_properties(cpc, partition, params):
 
         if prop_name not in ZHMC_PARTITION_PROPERTIES:
             raise ParameterError(
-                "Property {0!r} is not defined in the data model for "
+                "Property {!r} is not defined in the data model for "
                 "partitions.".format(prop_name))
 
         allowed, create, update, update_while_active, eq_func, type_cast, \
@@ -1116,7 +1114,7 @@ def process_properties(cpc, partition, params):
 
         if not allowed:
             raise ParameterError(
-                "Property {0!r} is not allowed in the 'properties' module "
+                "Property {!r} is not allowed in the 'properties' module "
                 "parameter.".format(prop_name))
 
         if prop_name == 'boot_storage_hba_name':
@@ -1124,7 +1122,7 @@ def process_properties(cpc, partition, params):
 
             if not partition:
                 raise ParameterError(
-                    "Artificial property {0!r} can only be specified when the "
+                    "Artificial property {!r} can only be specified when the "
                     "partition previously exists.".format(prop_name))
 
             if storage_mgmt_enabled(cpc):
@@ -1141,8 +1139,8 @@ def process_properties(cpc, partition, params):
                 hba = partition.hbas.find(name=hba_name)
             except zhmcclient.NotFound:
                 raise ParameterError(
-                    "Artificial property {0!r} does not name an existing HBA: "
-                    "{1!r}".format(prop_name, hba_name))
+                    "Artificial property {!r} does not name an existing HBA: "
+                    "{!r}".format(prop_name, hba_name))
 
             hmc_prop_name = 'boot-storage-device'
             if partition.properties.get(hmc_prop_name) != hba.uri:
@@ -1187,7 +1185,7 @@ def process_properties(cpc, partition, params):
 
             if not partition:
                 raise ParameterError(
-                    "Artificial property {0!r} can only be specified when the "
+                    "Artificial property {!r} can only be specified when the "
                     "partition previously exists.".format(prop_name))
 
             if not storage_mgmt_enabled(cpc):
@@ -1208,15 +1206,15 @@ def process_properties(cpc, partition, params):
             except zhmcclient.NotFound:
                 raise ParameterError(
                     "Artificial property 'boot_storage_group_name' does not "
-                    "name an existing storage group: {0!r}".format(sg_name))
+                    "name an existing storage group: {!r}".format(sg_name))
 
             try:
                 sv = sg.storage_volumes.find(name=sv_name)
             except zhmcclient.NotFound:
                 raise ParameterError(
                     "Artificial property 'boot_storage_volume_name' does not "
-                    "name an existing storage volume {0!r} in storage group "
-                    "{1!r}".format(sv_name, sg_name))
+                    "name an existing storage volume {!r} in storage group "
+                    "{!r}".format(sv_name, sg_name))
 
             hmc_prop_name = 'boot-storage-volume'
             if partition.properties.get(hmc_prop_name) != sv.uri:
@@ -1229,7 +1227,7 @@ def process_properties(cpc, partition, params):
 
             if not partition:
                 raise ParameterError(
-                    "Artificial property {0!r} can only be specified when the "
+                    "Artificial property {!r} can only be specified when the "
                     "partition previously exists.".format(prop_name))
 
             nic_name = input_props[prop_name]
@@ -1240,8 +1238,8 @@ def process_properties(cpc, partition, params):
                 nic = partition.nics.find(name=nic_name)
             except zhmcclient.NotFound:
                 raise ParameterError(
-                    "Artificial property {0!r} does not name an existing NIC: "
-                    "{1!r}".format(prop_name, nic_name))
+                    "Artificial property {!r} does not name an existing NIC: "
+                    "{!r}".format(prop_name, nic_name))
 
             hmc_prop_name = 'boot-network-device'
             if partition.properties.get(hmc_prop_name) != nic.uri:
@@ -1271,8 +1269,8 @@ def process_properties(cpc, partition, params):
                 adapter_names = crypto_config[adapter_field_name]
             except KeyError:
                 raise ParameterError(
-                    "Artificial property {0!r} does not have required field "
-                    "{1!r}.".format(prop_name, adapter_field_name))
+                    "Artificial property {!r} does not have required field "
+                    "{!r}.".format(prop_name, adapter_field_name))
             adapter_uris = set()
             adapter_dict = {}  # adapters by uri
             if adapter_names is None:
@@ -1324,8 +1322,8 @@ def process_properties(cpc, partition, params):
                 domain_configs = crypto_config[config_field_name]
             except KeyError:
                 raise ParameterError(
-                    "Artificial property {0!r} does not have required field "
-                    "{1!r}.".format(prop_name, config_field_name))
+                    "Artificial property {!r} does not have required field "
+                    "{!r}.".format(prop_name, config_field_name))
             di_field_name = 'domain_index'
             am_field_name = 'access_mode'
             domain_indexes = set()
@@ -1706,8 +1704,8 @@ def create_check_mode_partition(cpc, create_props, update_props):
             format(p=', '.join(missing_props)))
 
     # Handle SPECIAL_DEFAULT properties
-    oid = '{0}'.format(uuid.uuid4())
-    uri = '/api/partitions/{0}'.format(oid)
+    oid = f'{uuid.uuid4()}'
+    uri = f'/api/partitions/{oid}'
     input_props['object-id'] = oid
     input_props['object-uri'] = uri
     input_props['parent'] = cpc.uri
@@ -1726,7 +1724,7 @@ def create_check_mode_partition(cpc, create_props, update_props):
     # TODO: Use a default for 'short-name' that is guaranteed unique in CPC
     name = input_props['name']
     input_props['short-name'] = \
-        '{0}{1:04X}'.format(name, random.randint(0, 16 ^ 4))  # nosec B311
+        f'{name}{random.randint(0, 16 ^ 4):04X}'  # nosec B311
 
     # Handle function-based requiredness specified in prop defs
     for prop_name in ZHMC_PARTITION_PROPERTIES:
@@ -1863,8 +1861,8 @@ def ensure_active(params, check_mode):
             status = partition.get_property('status')
             if status not in ('active', 'degraded'):
                 raise StatusError(
-                    "Could not get partition {0!r} into an active state, "
-                    "status is: {1!r}".format(partition.name, status))
+                    "Could not get partition {!r} into an active state, "
+                    "status is: {!r}".format(partition.name, status))
 
         result = dict(partition.properties)
         add_artificial_properties(
@@ -1960,8 +1958,8 @@ def ensure_stopped(params, check_mode):
             status = partition.get_property('status')
             if status not in ('stopped'):
                 raise StatusError(
-                    "Could not get partition {0!r} into a stopped state, "
-                    "status is: {1!r}".format(partition.name, status))
+                    "Could not get partition {!r} into a stopped state, "
+                    "status is: {!r}".format(partition.name, status))
 
         result = dict(partition.properties)
         add_artificial_properties(
@@ -2060,7 +2058,7 @@ def ensure_iso_mount(params, check_mode):
                 with open(image_file, 'rb') as fp:
                     if not check_mode:
                         image = fp.read()
-            except IOError as exc:
+            except OSError as exc:
                 raise ImageError(
                     "Cannot open ISO image file {fn!r} for reading: {exc}".
                     format(fn=image_file, exc=exc))
@@ -2234,7 +2232,7 @@ def main():
         # These exceptions are considered errors in the environment or in user
         # input. They have a proper message that stands on its own, so we
         # simply pass that message on and will not need a traceback.
-        msg = "{0}: {1}".format(exc.__class__.__name__, exc)
+        msg = f"{exc.__class__.__name__}: {exc}"
         LOGGER.debug(
             "Module exit (failure): msg: %s", msg)
         module.fail_json(msg=msg)

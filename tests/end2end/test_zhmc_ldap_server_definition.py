@@ -16,12 +16,10 @@
 End2end tests for zhmc_ldap_server_definition module.
 """
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
 
 import uuid
 import pytest
-import mock
+from unittest import mock
 import random
 from pprint import pformat
 import requests.packages.urllib3
@@ -76,7 +74,7 @@ def updated_copy(dict1, dict2):
 
 
 def new_lsd_name():
-    lsd_name = 'test_{0}'.format(uuid.uuid4())
+    lsd_name = f'test_{uuid.uuid4()}'
     return lsd_name
 
 
@@ -124,7 +122,7 @@ def assert_lsd_props(lsd_props, exp_lsd_props, where):
         prop_name_hmc = prop_name.replace('_', '-')
         if prop_name_hmc in LSD_CONDITIONAL_PROPS:
             continue
-        where_prop = where + ", property {p!r}".format(p=prop_name)
+        where_prop = where + f", property {prop_name!r}"
         assert prop_name_hmc in lsd_props, where_prop
 
     # Assert the expected property values for non-artificial properties
@@ -137,7 +135,7 @@ def assert_lsd_props(lsd_props, exp_lsd_props, where):
             continue
         exp_value = exp_lsd_props[prop_name]
         act_value = lsd_props[prop_name]
-        where_prop = where + ", property {p!r}".format(p=prop_name)
+        where_prop = where + f", property {prop_name!r}"
         assert act_value == exp_value, where_prop
 
 
@@ -177,7 +175,7 @@ def test_zhmc_ldap_server_definition_facts(
     lsds = console.ldap_server_definitions.list()
     lsd = random.choice(lsds)
 
-    where = "LDAP server definition '{u}'".format(u=lsd.name)
+    where = f"LDAP server definition '{lsd.name}'"
 
     # Prepare module input parameters (must be all required + optional)
     name = diffcase(lsd.name) if diff_case else lsd.name
@@ -309,7 +307,7 @@ def test_zhmc_ldap_server_definition_absent_present(
     # Create a LDAP server definition name that does not exist
     lsd_name = new_lsd_name()
 
-    where = "LDAP server definition '{u}'".format(u=lsd_name)
+    where = f"LDAP server definition '{lsd_name}'"
 
     # Create initial LDAP server definition, if specified so
     if initial_lsd_props is not None:

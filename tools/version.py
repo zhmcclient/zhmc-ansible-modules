@@ -16,8 +16,6 @@
 Script that prints the version defined in the galaxy.yml file.
 """
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
 
 import os
 import io
@@ -31,7 +29,7 @@ def get_version(galaxy_file):
     In order to avoid the dependency to a yaml package, this is done by
     parsing the file with a regular expression.
     """
-    with io.open(galaxy_file, 'r', encoding='utf-8') as fp:
+    with open(galaxy_file, encoding='utf-8') as fp:
         ftext = fp.read()
     m = re.search(r"^version: *(.+) *$", ftext, re.MULTILINE)
     if not m:

@@ -16,8 +16,6 @@
 Utility functions for use by more than one Ansible module.
 """
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
 
 import logging
 import traceback
@@ -260,8 +258,8 @@ def eq_hex(hex_actual, hex_new, prop_name):
             int_actual = int(hex_actual, 16)
         except ValueError:
             raise ParameterError(
-                "Unexpected: Actual value of property {0!r} is not a valid  "
-                "hex number: {1!r}".format(prop_name, hex_actual))
+                "Unexpected: Actual value of property {!r} is not a valid  "
+                "hex number: {!r}".format(prop_name, hex_actual))
     else:
         int_actual = None
     if hex_new:
@@ -269,8 +267,8 @@ def eq_hex(hex_actual, hex_new, prop_name):
             int_new = int(hex_new, 16)
         except ValueError:
             raise ParameterError(
-                "New value for property {0!r} is not a valid "
-                "hex number: {1!r}".format(prop_name, hex_new))
+                "New value for property {!r} is not a valid "
+                "hex number: {!r}".format(prop_name, hex_new))
     else:
         int_new = None
     return int_actual == int_new
@@ -292,8 +290,8 @@ def eq_mac(mac_actual, mac_new, prop_name):
             mac_actual = _normalized_mac(mac_actual)
         except ValueError:
             raise ParameterError(
-                "Unexpected: Actual value of property {0!r} is not a valid "
-                "MAC address: {1!r}".format(prop_name, mac_actual))
+                "Unexpected: Actual value of property {!r} is not a valid "
+                "MAC address: {!r}".format(prop_name, mac_actual))
     else:
         mac_actual = None
     if mac_new:
@@ -301,8 +299,8 @@ def eq_mac(mac_actual, mac_new, prop_name):
             mac_new = _normalized_mac(mac_new)
         except ValueError:
             raise ParameterError(
-                "New value for property {0!r} is not a valid "
-                "MAC address: {1!r}".format(prop_name, mac_new))
+                "New value for property {!r} is not a valid "
+                "MAC address: {!r}".format(prop_name, mac_new))
     else:
         mac_new = None
     return mac_actual == mac_new
@@ -996,9 +994,9 @@ def to_unicode(value):
             uval = to_unicode(val)
             list_uval.append(uval)
         return list_uval
-    elif isinstance(value, six.binary_type):
+    elif isinstance(value, bytes):
         return value.decode('utf-8')
-    elif isinstance(value, six.text_type):
+    elif isinstance(value, str):
         return value
     elif value is None:
         return None
@@ -1202,7 +1200,7 @@ def parse_hmc_host(hmc_host):
     Raises:
       ParameterError: Invalid type of 'hmc_host'.
     """
-    if isinstance(hmc_host, six.string_types):
+    if isinstance(hmc_host, str):
         m = re.match(r'\[(.*)\]', hmc_host)
         if m:
             hmc_host = [h.strip(' "\'') for h in m.group(1).split(',')]

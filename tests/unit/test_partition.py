@@ -17,11 +17,9 @@
 Unit tests for the 'zhmc_partition' Ansible module.
 """
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
 
 import unittest
-import mock
+from unittest import mock
 import re
 import pdb
 import pytest
@@ -662,7 +660,7 @@ def test_partition_create_check_mode_partition(
     cpc = mocked_cpc()
 
     if not run:
-        pytest.skip("Testcase disabled: {0}".format(desc))
+        pytest.skip(f"Testcase disabled: {desc}")
 
     if exp_exc_type:
 
@@ -697,8 +695,8 @@ def test_partition_create_check_mode_partition(
             for prop_hmc_name in exp_props:
 
                 assert prop_hmc_name in act_props, \
-                    "Property {0} missing in result:\n" \
-                    "{1}".format(prop_hmc_name, act_props)
+                    "Property {} missing in result:\n" \
+                    "{}".format(prop_hmc_name, act_props)
 
                 prop_value = act_props[prop_hmc_name]
                 exp_prop_value = exp_props[prop_hmc_name]

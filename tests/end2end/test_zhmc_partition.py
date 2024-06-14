@@ -16,13 +16,11 @@
 End2end tests for zhmc_partition module.
 """
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
 
 import uuid
 import copy
 import pytest
-import mock
+from unittest import mock
 import re
 import random
 import pdb
@@ -179,7 +177,7 @@ def setup_partition(hd, cpc, name, properties, status='stopped'):
         # For SSC partitions, create it as an SSC mgmt NIC.
         osa_adapters = cpc.adapters.findall(**{'type': 'osd'})
         if len(osa_adapters) == 0:
-            pytest.skip("No OSA adapters found on CPC {c!r}".format(c=cpc.name))
+            pytest.skip(f"No OSA adapters found on CPC {cpc.name!r}")
         osa_adapter = osa_adapters[0]
         vswitches = cpc.virtual_switches.findall(
             **{'backing-adapter-uri': osa_adapter.uri})
@@ -658,7 +656,7 @@ def test_zhmc_partition_facts(
         partitions = cpc.partitions.list()
         partition = random.choice(partitions)
 
-        where = "partition '{p}'".format(p=partition.name)
+        where = f"partition '{partition.name}'"
 
         # Prepare module input parameters (must be all required + optional)
         params = {
@@ -911,7 +909,7 @@ def test_zhmc_partition_state(
         pytest.skip("HMC definition does not include any CPCs in DPM mode")
 
     if not run:
-        pytest.skip("Testcase disabled: {0}".format(desc))
+        pytest.skip(f"Testcase disabled: {desc}")
 
     setup_logging(LOGGING, 'test_zhmc_partition_state', LOG_FILE)
 
@@ -933,7 +931,7 @@ def test_zhmc_partition_state(
         # Create a partition name that does not exist
         partition_name = unique_partition_name()
 
-        where = "partition '{u}'".format(u=partition_name)
+        where = f"partition '{partition_name}'"
 
         if input_props is not None:
             input_props2 = input_props.copy()
@@ -989,7 +987,7 @@ def test_zhmc_partition_state(
                     # to start with "HTTPError: 409,131: The operating system in
                     # the partition failed to load. The partition is stopped.".
                     # Reported as STG Defect 1071321, and ignored in this test.
-                    print("Warning: Ignoring module failure: {m}".format(m=msg))
+                    print(f"Warning: Ignoring module failure: {msg}")
                     return
                 assert exp_msg is not None, \
                     "{w}: Module should have succeeded but failed with exit " \
@@ -1048,8 +1046,8 @@ def test_zhmc_partition_state(
 # Properties to be used as base
 PARTITION_UPDATE_ITEMS_BASE = [
     {'description': 'fake'},
-    {'description': u'fak\u00E9'},
-    {'short_name': 'ZHMC{r:04X}'.format(r=random.randrange(16 ^ 4))},
+    {'description': 'fak\u00E9'},
+    {'short_name': f'ZHMC{random.randrange(16 ^ 4):04X}'},
     {'acceptable_status': ['active', 'stopped', 'degraded']},
     {'ifl_absolute_processor_capping': True},
     {'ifl_absolute_processor_capping_value': 0.9},
@@ -1284,7 +1282,7 @@ def test_zhmc_partition_properties(
                     update_items = PARTITION_UPDATE_ITEMS_Z16_LINUX
             else:
                 raise AssertionError(
-                    "Unknown machine type: {m!r}".format(m=machine_type))
+                    f"Unknown machine type: {machine_type!r}")
 
             for update_item in update_items:
 
@@ -1292,7 +1290,7 @@ def test_zhmc_partition_properties(
                     print("Debug: Testcase: update_item={i!r}".
                           format(i=update_item))
 
-                where = "update_item {i!r}".format(i=update_item)
+                where = f"update_item {update_item!r}"
 
                 partition.pull_full_properties()
 
@@ -1346,7 +1344,7 @@ def test_zhmc_partition_properties(
                     cpc_cp_count = cpc.get_property(
                         'processor-count-general-purpose')
                     if DEBUG:
-                        print("Debug: CPC has {n} CPs".format(n=cpc_cp_count))
+                        print(f"Debug: CPC has {cpc_cp_count} CPs")
                     if cpc_cp_count < 2:
                         if DEBUG:
                             print("Debug: CPC has not enough CPs; "
@@ -1356,7 +1354,7 @@ def test_zhmc_partition_properties(
                 if 'ifl_processors' in update_props:
                     cpc_ifl_count = cpc.get_property('processor-count-ifl')
                     if DEBUG:
-                        print("Debug: CPC has {n} IFLs".format(n=cpc_ifl_count))
+                        print(f"Debug: CPC has {cpc_ifl_count} IFLs")
                     if cpc_ifl_count < 2:
                         if DEBUG:
                             print("Debug: CPC has not enough IFLs; "
@@ -1402,7 +1400,7 @@ def test_zhmc_partition_properties(
                         pytest.skip("HMC user '{u}' is not permitted to create "
                                     "test partition".
                                     format(u=hd.userid))
-                    msg_str = " and failed with message:\n{m}".format(m=msg)
+                    msg_str = f" and failed with message:\n{msg}"
                 else:
                     msg_str = ''
                 if exit_code != exp_exit_code:

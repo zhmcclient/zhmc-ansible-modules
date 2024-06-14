@@ -13,8 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
 
 # For information on the format of the ANSIBLE_METADATA, DOCUMENTATION,
 # EXAMPLES, and RETURN strings, see
@@ -808,7 +806,7 @@ def process_properties(cpc, lpar, params):
 
         if prop_name not in ZHMC_LPAR_PROPERTIES:
             raise ParameterError(
-                "Property {0!r} is not defined in the data model for "
+                "Property {!r} is not defined in the data model for "
                 "LPARs.".format(prop_name))
 
         allowed, create, update, update_while_active, eq_func, type_cast = \
@@ -816,7 +814,7 @@ def process_properties(cpc, lpar, params):
 
         if not allowed:
             raise ParameterError(
-                "Property {0!r} is not allowed in the 'properties' module "
+                "Property {!r} is not allowed in the 'properties' module "
                 "parameter.".format(prop_name))
 
         else:
@@ -830,11 +828,11 @@ def process_properties(cpc, lpar, params):
 
     if create_props:
         raise AssertionError(
-            "create_props not empty for LPAR {0!r}".format(lpar_name))
+            f"create_props not empty for LPAR {lpar_name!r}")
 
     if stop:
         raise AssertionError(
-            "stop set for LPAR {0!r}".format(lpar_name))
+            f"stop set for LPAR {lpar_name!r}")
 
     return update_props
 
@@ -909,7 +907,7 @@ def ensure_inactive(params, check_mode):
     if properties:
         raise ParameterError(
             "Properties must not be specified for state=inactive with "
-            "LPAR {0!r}.".format(lpar_name))
+            "LPAR {!r}.".format(lpar_name))
 
     changed = False
 
@@ -951,7 +949,7 @@ def perform_reset_clear(params, check_mode):
     if properties:
         raise ParameterError(
             "Properties must not be specified for state=reset_clear with "
-            "LPAR {0!r}.".format(lpar_name))
+            "LPAR {!r}.".format(lpar_name))
 
     changed = False
 
@@ -995,7 +993,7 @@ def perform_reset_normal(params, check_mode):
     if properties:
         raise ParameterError(
             "Properties must not be specified for state=reset_normal with "
-            "LPAR {0!r}.".format(lpar_name))
+            "LPAR {!r}.".format(lpar_name))
 
     changed = False
 
@@ -1181,7 +1179,7 @@ def facts(params, check_mode):
     if properties:
         raise ParameterError(
             "Properties must not be specified for state=facts with "
-            "LPAR {0!r}.".format(lpar_name))
+            "LPAR {!r}.".format(lpar_name))
 
     changed = False
 
@@ -1296,7 +1294,7 @@ def main():
         # These exceptions are considered errors in the environment or in user
         # input. They have a proper message that stands on its own, so we
         # simply pass that message on and will not need a traceback.
-        msg = "{0}: {1}".format(exc.__class__.__name__, exc)
+        msg = f"{exc.__class__.__name__}: {exc}"
         LOGGER.debug(
             "Module exit (failure): msg: %s", msg)
         module.fail_json(msg=msg)

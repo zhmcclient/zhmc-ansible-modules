@@ -17,17 +17,15 @@
 Unit tests for the 'zhmc_nic' Ansible module.
 """
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
 
 import pytest
-import mock
+from unittest import mock
 
 from plugins.modules import zhmc_nic
 from plugins.module_utils import common as module_utils
 
 
-class TestZhmcNicMain(object):
+class TestZhmcNicMain:
     """
     Unit tests for the main() function.
     """
@@ -170,7 +168,7 @@ class TestZhmcNicMain(object):
         assert mod_obj.exit_json.called is False
 
 
-class TestZhmcNicPerformTask(object):
+class TestZhmcNicPerformTask:
     """
     Unit tests for the perform_task() function.
     """

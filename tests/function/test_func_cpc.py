@@ -19,11 +19,9 @@ Function tests for the 'zhmc_cpc' Ansible module.
 
 # pylint: disable=bad-option-value,redundant-u-string-prefix
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
 
 import pytest
-import mock
+from unittest import mock
 import re
 
 from zhmcclient import Client
@@ -344,7 +342,7 @@ TEST_CPC_STATE_TESTCASES = [
 ]
 
 
-class TestCpc(object):
+class TestCpc:
     """
     All tests for CPCs.
     """

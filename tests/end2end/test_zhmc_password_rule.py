@@ -16,12 +16,10 @@
 End2end tests for zhmc_password_rule module.
 """
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
 
 import uuid
 import pytest
-import mock
+from unittest import mock
 import random
 import requests.packages.urllib3
 from collections import OrderedDict
@@ -88,7 +86,7 @@ def updated_copy(dict1, dict2):
 
 
 def new_pwrule_name():
-    pwrule_name = 'test_{0}'.format(uuid.uuid4())
+    pwrule_name = f'test_{uuid.uuid4()}'
     return pwrule_name
 
 
@@ -152,7 +150,7 @@ def test_zhmc_password_rule_facts(
     pwrules = console.password_rules.list()
     pwrule = random.choice(pwrules)
 
-    where = "password rule '{u}'".format(u=pwrule.name)
+    where = f"password rule '{pwrule.name}'"
 
     # Prepare module input parameters (must be all required + optional)
     params = {
@@ -275,7 +273,7 @@ def test_zhmc_password_rule_absent_present(
     # Create a password rule name that does not exist
     pwrule_name = new_pwrule_name()
 
-    where = "password rule '{u}'".format(u=pwrule_name)
+    where = f"password rule '{pwrule_name}'"
 
     # Create initial password rule, if specified so
     if initial_pwrule_props is not None:

@@ -13,8 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
 
 # For information on the format of the ANSIBLE_METADATA, DOCUMENTATION,
 # EXAMPLES, and RETURN strings, see
@@ -425,7 +423,7 @@ def process_properties(partition, nic, params):
 
         if prop_name not in ZHMC_NIC_PROPERTIES:
             raise ParameterError(
-                "Property {0!r} is not defined in the data model for "
+                "Property {!r} is not defined in the data model for "
                 "NICs.".format(prop_name))
 
         allowed, create, update, update_while_active, eq_func, type_cast = \
@@ -433,7 +431,7 @@ def process_properties(partition, nic, params):
 
         if not allowed:
             raise ParameterError(
-                "Property {0!r} is not allowed in the 'properties' module "
+                "Property {!r} is not allowed in the 'properties' module "
                 "parameter.".format(prop_name))
 
         if prop_name in (adapter_name_art_name, adapter_port_art_name):
@@ -763,7 +761,7 @@ def main():
         # These exceptions are considered errors in the environment or in user
         # input. They have a proper message that stands on its own, so we
         # simply pass that message on and will not need a traceback.
-        msg = "{0}: {1}".format(exc.__class__.__name__, exc)
+        msg = f"{exc.__class__.__name__}: {exc}"
         LOGGER.debug(
             "Module exit (failure): msg: %s", msg)
         module.fail_json(msg=msg)

@@ -19,11 +19,9 @@ Function tests for the 'zhmc_lpar' Ansible module.
 
 # pylint: disable=bad-option-value,redundant-u-string-prefix
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
 
 import pytest
-import mock
+from unittest import mock
 
 from zhmcclient import Client
 from zhmcclient_mock import FakedSession
@@ -276,7 +274,7 @@ def get_module_output(mod_obj):
     return func(*call_args[0], **call_args[1])
 
 
-class TestLpar(object):
+class TestLpar:
     """
     All tests for LPARs.
     """
@@ -310,7 +308,7 @@ class TestLpar(object):
             lpar_props.update(FAKED_LPAR_1_DELTA_LOADED)
         else:
             raise AssertionError(
-                "Invalid initial_state={0!r}".format(initial_state))
+                f"Invalid initial_state={initial_state!r}")
         if additional_props:
             lpar_props.update(additional_props)
         self.faked_lpar = self.faked_cpc.lpars.add(lpar_props)
@@ -460,7 +458,7 @@ class TestLpar(object):
                     if exp_props:
                         for hmc_prop_name, exp_value in exp_props.items():
                             assert lpar_props[hmc_prop_name] == exp_value, \
-                                "Property: {0}".format(hmc_prop_name)
+                                f"Property: {hmc_prop_name}"
             else:
                 assert lpar_props == {}
 
@@ -475,7 +473,7 @@ class TestLpar(object):
                 if properties:
                     for hmc_prop_name, exp_value in exp_props.items():
                         assert lpar.properties[hmc_prop_name] == exp_value, \
-                            "Property: {0}".format(hmc_prop_name)
+                            f"Property: {hmc_prop_name}"
 
     @pytest.mark.parametrize(
         "check_mode", [False, True])
