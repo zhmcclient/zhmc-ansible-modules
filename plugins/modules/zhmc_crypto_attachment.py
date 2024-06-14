@@ -733,8 +733,7 @@ def ensure_attached(params, check_mode):
                                 "to target partition {!r} because it is "
                                 "already attached in {!r} mode to partition "
                                 "{!r}".format(di, access_mode, partition.name,
-                                               ACCESS_MODES_HMC2MOD[am],
-                                               p.name))
+                                              ACCESS_MODES_HMC2MOD[am], p.name))
 
         # Make sure the desired adapters are attached to the partition
         # and the desired domains are attached.
