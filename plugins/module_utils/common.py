@@ -23,8 +23,6 @@ import platform
 import sys
 import re
 
-from ansible.module_utils import six
-
 try:
     from zhmcclient import Session, ClientAuthError
     IMP_ZHMCCLIENT_ERR = None

@@ -18,7 +18,6 @@ Utility functions for function testing.
 """
 
 
-
 def mock_ansible_module(ansible_mod_cls, params, check_mode):
     """
     Prepare mocks for AnsibleModule object.

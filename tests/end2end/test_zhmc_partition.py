@@ -1047,7 +1047,7 @@ def test_zhmc_partition_state(
 PARTITION_UPDATE_ITEMS_BASE = [
     {'description': 'fake'},
     {'description': 'fak\u00E9'},
-    {'short_name': f'ZHMC{random.randrange(16 ^ 4):04X}'},
+    {'short_name': f'ZHMC{random.randrange(16 ^ 4):04X}'},  # noqa: E231
     {'acceptable_status': ['active', 'stopped', 'degraded']},
     {'ifl_absolute_processor_capping': True},
     {'ifl_absolute_processor_capping_value': 0.9},
@@ -1400,7 +1400,7 @@ def test_zhmc_partition_properties(
                         pytest.skip("HMC user '{u}' is not permitted to create "
                                     "test partition".
                                     format(u=hd.userid))
-                    msg_str = f" and failed with message:\n{msg}"
+                    msg_str = f" and failed with message:\n{msg}"  # noqa: E231
                 else:
                     msg_str = ''
                 if exit_code != exp_exit_code:

@@ -1723,8 +1723,8 @@ def create_check_mode_partition(cpc, create_props, update_props):
 
     # TODO: Use a default for 'short-name' that is guaranteed unique in CPC
     name = input_props['name']
-    input_props['short-name'] = \
-        f'{name}{random.randint(0, 16 ^ 4):04X}'  # nosec B311
+    rand_num = random.randint(0, 16 ^ 4)  # nosec B311
+    input_props['short-name'] = f'{name}{rand_num:04X}'  # noqa: E231
 
     # Handle function-based requiredness specified in prop defs
     for prop_name in ZHMC_PARTITION_PROPERTIES:

@@ -20,7 +20,6 @@ End2end tests for zhmc_session module.
 import re
 import pytest
 from unittest import mock
-from ansible.module_utils import six
 import requests.packages.urllib3
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition  # noqa: F401, E501
