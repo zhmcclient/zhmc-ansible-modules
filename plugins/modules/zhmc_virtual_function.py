@@ -364,16 +364,16 @@ def process_properties(partition, vfunction, params):
 
         if prop_name not in ZHMC_VFUNCTION_PROPERTIES:
             raise ParameterError(
-                "Property {!r} is not defined in the data model for "
-                "virtual functions.".format(prop_name))
+                f"Property {prop_name!r} is not defined in the data model for "
+                "virtual functions.")
 
         allowed, create, update, update_while_active, eq_func, type_cast = \
             ZHMC_VFUNCTION_PROPERTIES[prop_name]
 
         if not allowed:
             raise ParameterError(
-                "Property {!r} is not allowed in the 'properties' module "
-                "parameter.".format(prop_name))
+                f"Property {prop_name!r} is not allowed in the 'properties' "
+                "module parameter.")
 
         if prop_name == adapter_name_art_name:
             # Artificial properties will be processed together after this loop
@@ -395,9 +395,8 @@ def process_properties(partition, vfunction, params):
                 name=adapter_name)
         except zhmcclient.NotFound:
             raise ParameterError(
-                "Artificial property {0!r} does not specify the name of an "
-                "existing adapter: {1!r}".
-                format(adapter_name_art_name, adapter_name))
+                f"Artificial property {adapter_name_art_name!r} does not "
+                f"specify the name of an existing adapter: {adapter_name!r}")
 
         # Here we perform the same logic as in the property loop, just now
         # simplified by the knowledge about the property flags (create, update,

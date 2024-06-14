@@ -71,6 +71,16 @@ jobs:
               }, \
               { \
                 \"os\": \"ubuntu-latest\", \
+                \"python-version\": \"3.10\", \
+                \"package_level\": \"latest\" \
+              }, \
+              { \
+                \"os\": \"ubuntu-latest\", \
+                \"python-version\": \"3.10\", \
+                \"package_level\": \"ansible\" \
+              }, \
+              { \
+                \"os\": \"ubuntu-latest\", \
                 \"python-version\": \"3.13.0-beta.1\", \
                 \"package_level\": \"latest\" \
               }, \

@@ -112,47 +112,22 @@ ansible-doc-extractor>=0.1.8
 antsibull-docs-parser>=1.0.0
 
 # PyLint (no imports, invoked via pylint script)
-# Pylint is run in ansible sanity test
-# The sanity test running in Ansible's sanity virtual environment uses the following Pylint versions:
-# Pylint 2.6 is used by Ansible 4 (lower Ansible versions don't have a sanity env)
-# Pylint 2.9 is used by Ansible 5+6
-# Pylint 2.15 is used by Ansible 7
-# Pylint requires astroid
-# Pylint 2.7 introduced the consider-using-generator check, which is raised.
-# Pylint 2.11 introduced the consider-using-f-string check, which is raised.
-# The Pylint versions defined here are used when the sanity test runs in the current virtual env.
-#   Keep them in sync with the versions run in the sanity virtual env.
-pylint>=2.6.1,<2.10; python_version <= '3.9'  # pylint 2.9
-pylint>=2.6.1,<2.16; python_version >= '3.10' and python_version <= '3.11'  # pylint 2.15
-pylint>=3.0.1; python_version >= '3.12'  # pylint 3.x
-astroid>=2.4.0,<2.7; python_version <= '3.9'  # astroid 2.6
-astroid>=2.4.0,<2.13; python_version >= '3.10' and python_version <= '3.11'  # astroid 2.12
-astroid>=3.0.1; python_version >= '3.12'  # astroid 3.x
-# used by pylint 2.14 which requires python_version >= '3.7' and is used by us only on py>=3.10
-dill>=0.2; python_version == '3.11'
-dill>=0.3.7; python_version >= '3.12'
-platformdirs>=2.2.0; python_version >= '3.10' and python_version <= '3.11'
-platformdirs>=3.2.0; python_version >= '3.12'
-tomlkit>=0.10.1; python_version >= '3.10'
-tomli>=1.1.0; python_version == '3.10'  # not needed on py>3.10
+# Pylint is run in ansible sanity test, but it installs its own version
+pylint>=2.15.0
+astroid>=2.12.4
+lazy-object-proxy>=1.4.3
+wrapt>=1.14
+platformdirs>=4.1.0
+isort>=4.3.8
+tomlkit>=0.10.1
+dill>=0.3.6
 
 # Flake8 and dependents (no imports, invoked via flake8 script):
-# flake8 4.0.0 fixes an AttributeError on Python 3.10.
-# pycodestyle 2.6 (required by flake8 3.8) is used by Ansible 4 in its sanity env, so we use that as the minimum version on all Python versions
-flake8>=3.8.0,<3.9; python_version == '3.8'  # flake8 3.8
-flake8>=3.8.0,<5.0; python_version == '3.9'  # flake8 4.0
-flake8>=3.8.0,<6.0; python_version >= '3.10' and python_version <= '3.11'  # flake8 5.0
-flake8>=5.0.0,<6.0; python_version >= '3.12'  # flake8 5.0
-pycodestyle>=2.6.0,<2.7; python_version == '3.8'  # pycodestyle 2.6
-pycodestyle>=2.6.0,<2.9; python_version == '3.9'  # pycodestyle 2.8
-pycodestyle>=2.6.0,<2.10; python_version >= '3.10' and python_version <= '3.11'  # pycodestyle 2.9
-pycodestyle>=2.9.0,<2.10; python_version >= '3.12'  # pycodestyle 2.9
-pyflakes>=2.2.0,<2.3; python_version == '3.8'  # pyflakes 2.2
-pyflakes>=2.2.0,<2.5; python_version == '3.9'  # pyflakes 2.4
-pyflakes>=2.2.0,<2.6; python_version >= '3.10' and python_version <= '3.11'  # pyflakes 2.5
-pyflakes>=2.5.0,<2.6; python_version >= '3.12'  # pyflakes 2.5
-mccabe>=0.6.0; python_version <= '3.11'
-mccabe>=0.7.0; python_version >= '3.12'
+# Pycodestyle is run in ansible sanity test, but it installs its own version
+flake8>=6.1.0
+mccabe>=0.7.0
+pycodestyle>=2.11.0
+pyflakes>=3.1.0
 entrypoints>=0.3.0
 
 # Package dependency management tools (not used by any make rules)

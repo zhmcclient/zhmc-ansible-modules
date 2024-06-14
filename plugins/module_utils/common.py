@@ -170,8 +170,7 @@ def open_session(params):
         if not isinstance(faked_session, FakedSession):
             raise ParameterError(
                 "Module parameter '_faked_session' must be a FakedSession "
-                "object if specified, but is of type {0}".
-                format(type(faked_session)))
+                f"object if specified, but is of type {type(faked_session)}")
         logoff = False
         return faked_session, logoff
 
@@ -187,8 +186,8 @@ def open_session(params):
         if missing_required_items:
             raise ParameterError(
                 "Module parameter 'hmc_auth' has no 'session_id' item and "
-                "therefore must have items {0!r}, but {1!r} are missing.".
-                format(required_items, missing_required_items))
+                f"therefore must have items {required_items!r}, but "
+                f"{missing_required_items!r} are missing.")
         userid = hmc_auth['userid']
         password = hmc_auth['password']
         logoff = True
@@ -201,8 +200,8 @@ def open_session(params):
         if present_forbidden_items:
             raise ParameterError(
                 "Module parameter 'hmc_auth' has the 'session_id' item and "
-                "therefore must not have items {0!r}, but {1!r} are present.".
-                format(forbidden_items, present_forbidden_items))
+                f"therefore must not have items {forbidden_items!r}, but "
+                f"{present_forbidden_items!r} are present.")
         userid = None
         password = None
         logoff = False
@@ -258,8 +257,8 @@ def eq_hex(hex_actual, hex_new, prop_name):
             int_actual = int(hex_actual, 16)
         except ValueError:
             raise ParameterError(
-                "Unexpected: Actual value of property {!r} is not a valid  "
-                "hex number: {!r}".format(prop_name, hex_actual))
+                f"Unexpected: Actual value of property {prop_name!r} is not "
+                f"a valid  hex number: {hex_actual!r}")
     else:
         int_actual = None
     if hex_new:
@@ -267,8 +266,8 @@ def eq_hex(hex_actual, hex_new, prop_name):
             int_new = int(hex_new, 16)
         except ValueError:
             raise ParameterError(
-                "New value for property {!r} is not a valid "
-                "hex number: {!r}".format(prop_name, hex_new))
+                f"New value for property {prop_name!r} is not a valid "
+                f"hex number: {hex_new!r}")
     else:
         int_new = None
     return int_actual == int_new
@@ -290,8 +289,8 @@ def eq_mac(mac_actual, mac_new, prop_name):
             mac_actual = _normalized_mac(mac_actual)
         except ValueError:
             raise ParameterError(
-                "Unexpected: Actual value of property {!r} is not a valid "
-                "MAC address: {!r}".format(prop_name, mac_actual))
+                f"Unexpected: Actual value of property {prop_name!r} is not "
+                f"a valid MAC address: {mac_actual!r}")
     else:
         mac_actual = None
     if mac_new:
@@ -299,8 +298,8 @@ def eq_mac(mac_actual, mac_new, prop_name):
             mac_new = _normalized_mac(mac_new)
         except ValueError:
             raise ParameterError(
-                "New value for property {!r} is not a valid "
-                "MAC address: {!r}".format(prop_name, mac_new))
+                f"New value for property {prop_name!r} is not a valid "
+                f"MAC address: {mac_new!r}")
     else:
         mac_new = None
     return mac_actual == mac_new
@@ -386,9 +385,8 @@ def stop_partition(logger, partition, check_mode):
         turns += 1
         if status in PART_BAD_STATUSES:
             raise StatusError(
-                "CPC {cn!r} has issues; partition {pn!r} has bad status: {s!r}".
-                format(cn=partition.manager.cpc.name, pn=partition.name,
-                       s=status))
+                f"CPC {partition.manager.cpc.name!r} has issues; partition "
+                f"{partition.name!r} has bad status: {status!r}")
         elif status in ('stopped', 'reservation-error'):
             logger.debug("Partition %r on CPC %r is now in status %r",
                          partition.name, partition.manager.cpc.name, status)
@@ -425,16 +423,14 @@ def stop_partition(logger, partition, check_mode):
             changed = True
         else:
             raise AssertionError(
-                "Partition {pn!r} on CPC {cn!r} has unknown status: {s!r}".
-                format(cn=partition.manager.cpc.name, pn=partition.name,
-                       s=status))
+                f"Partition {partition.name!r} on CPC "
+                f"{partition.manager.cpc.name!r} has unknown status: "
+                f"{status!r}")
     else:
         raise AssertionError(
             "Abandoning waiting for the completion of the stop of partition "
-            "{pn!r} on CPC {cn!r} after exhausting state machine loop. "
-            "Current status: {s!r}.".
-            format(cn=partition.manager.cpc.name, pn=partition.name,
-                   s=status))
+            f"{partition.name!r} on CPC {partition.manager.cpc.name!r} after "
+            f"exhausting state machine loop. Current status: {status!r}.")
     return changed
 
 
@@ -496,9 +492,8 @@ def start_partition(logger, partition, check_mode):
         turns += 1
         if status in PART_BAD_STATUSES:
             raise StatusError(
-                "CPC {cn!r} has issues; partition {pn!r} has bad status: {s!r}".
-                format(cn=partition.manager.cpc.name, pn=partition.name,
-                       s=status))
+                f"CPC {partition.manager.cpc.name!r} has issues; partition "
+                f"{partition.name!r} has bad status: {status!r}")
         elif status in ('active', 'degraded'):
             logger.debug("Partition %r on CPC %r is now in status %r",
                          partition.name, partition.manager.cpc.name, status)
@@ -525,11 +520,10 @@ def start_partition(logger, partition, check_mode):
         elif status in ('terminated', 'paused'):
             if tried_start:
                 raise StatusError(
-                    "Abandoning the start of partition {pn!r} on CPC {cn!r} "
-                    "after reaching status {s!r} after an earlier "
-                    "'Start Partition' operation.".
-                    format(cn=partition.manager.cpc.name, pn=partition.name,
-                           s=status))
+                    f"Abandoning the start of partition {partition.name!r} on "
+                    f"CPC {partition.manager.cpc.name!r} after reaching "
+                    f"status {status!r} after an earlier 'Start Partition' "
+                    "operation.")
 
             logger.debug("Stop partition %r on CPC %r (current status: %r)",
                          partition.name, partition.manager.cpc.name, status)
@@ -561,16 +555,14 @@ def start_partition(logger, partition, check_mode):
             tried_start = True
         else:
             raise AssertionError(
-                "Partition {pn!r} on CPC {cn!r} has unknown status: {s!r}".
-                format(cn=partition.manager.cpc.name, pn=partition.name,
-                       s=status))
+                f"Partition {partition.name!r} on CPC "
+                f"{partition.manager.cpc.name!r} has unknown "
+                f"status: {status!r}")
     else:
         raise AssertionError(
             "Abandoning waiting for the completion of the start of partition "
-            "{pn!r} on CPC {cn!r} after exhausting state machine loop. "
-            "Current status: {s!r}.".
-            format(cn=partition.manager.cpc.name, pn=partition.name,
-                   s=status))
+            f"{partition.name!r} on CPC {partition.manager.cpc.name!r} after "
+            f"exhausting state machine loop. Current status: {status!r}.")
     return changed
 
 
@@ -618,9 +610,8 @@ def wait_for_transition_completion(logger, partition):
         turns += 1
         if status in PART_BAD_STATUSES:
             raise StatusError(
-                "CPC {cn!r} has issues; partition {pn!r} has bad status: {s!r}".
-                format(cn=partition.manager.cpc.name, pn=partition.name,
-                       s=status))
+                f"CPC {partition.manager.cpc.name!r} has issues; partition "
+                f"{partition.name!r} has bad status: {status!r}")
         elif status == 'stopping':
             logger.debug("Waiting for completion of stopping of partition %r "
                          "on CPC %r",
@@ -638,10 +629,9 @@ def wait_for_transition_completion(logger, partition):
     else:
         raise AssertionError(
             "Abandoning waiting for the completion of a status transition of "
-            "partition {pn!r} on CPC {cn!r} after exhausting state machine "
-            "loop. Current status: {s!r}.".
-            format(cn=partition.manager.cpc.name, pn=partition.name,
-                   s=status))
+            f"partition {partition.name!r} on CPC "
+            f"{partition.manager.cpc.name!r} after exhausting state machine "
+            f"loop. Current status: {status!r}.")
 
 
 def pull_lpar_status(lpar):
@@ -709,9 +699,8 @@ def ensure_lpar_inactive(logger, lpar, check_mode):
 
     if not check_mode and status != 'not-activated':
         raise StatusError(
-            "Could not get LPAR {0!r} from {1!r} status into "
-            "an inactive state; current status is: {2!r}".
-            format(lpar.name, org_status, status))
+            f"Could not get LPAR {lpar.name!r} from {org_status!r} status into "
+            f"an inactive state; current status is: {status!r}")
 
     return changed
 
@@ -805,9 +794,8 @@ def ensure_lpar_active(
 
     if status not in ('not-operating', 'operating', 'exceptions'):
         raise StatusError(
-            "Could not get LPAR {0!r} from {1!r} status into "
-            "an active or loaded state; current status is: {2!r}".
-            format(lpar.name, org_status, status))
+            f"Could not get LPAR {lpar.name!r} from {org_status!r} status into "
+            f"an active or loaded state; current status is: {status!r}")
 
     return changed
 
@@ -971,9 +959,8 @@ def ensure_lpar_loaded(
 
     if status not in ('operating', 'exceptions'):
         raise StatusError(
-            "Could not get LPAR {0!r} from {1!r} status into "
-            "a loaded state; current status is: {2!r}".
-            format(lpar.name, org_status, status))
+            f"Could not get LPAR {lpar.name!r} from {org_status!r} status into "
+            f"a loaded state; current status is: {status!r}")
 
     return changed
 
@@ -1001,8 +988,9 @@ def to_unicode(value):
     elif value is None:
         return None
     else:
-        raise TypeError("Value of {0} cannot be converted to unicode: {1!r}".
-                        format(type(value), value))
+        raise TypeError(
+            f"Value of {type(value)} cannot be converted to unicode: "
+            f"{value!r}")
 
 
 def process_normal_property(
@@ -1084,11 +1072,10 @@ def process_normal_property(
                     deactivate = True
             else:
                 raise ParameterError(
-                    "Property {0!r} can be set during {1} "
-                    "creation but cannot be updated afterwards "
-                    "(from {2!r} to {3!r}).".
-                    format(prop_name, resource.__class__.__name__,
-                           current_prop_value, input_prop_value))
+                    f"Property {prop_name!r} can be set during "
+                    f"{resource.__class__.__name__} creation but cannot be "
+                    f"updated afterwards (from {current_prop_value!r} "
+                    f"to {input_prop_value!r}).")
     else:
         # Resource does not exist.
         # Prefer setting the property during resource creation.
@@ -1207,6 +1194,5 @@ def parse_hmc_host(hmc_host):
     elif not isinstance(hmc_host, list):
         raise ParameterError(
             "Module parameter 'hmc_host' must be a string or list type, but "
-            "is of type {0}".
-            format(type(hmc_host)))
+            f"is of type {type(hmc_host)}")
     return hmc_host

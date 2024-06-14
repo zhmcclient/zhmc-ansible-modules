@@ -393,16 +393,16 @@ def process_properties(console, pwrule, params):
 
         if prop_name not in ZHMC_PASSWORD_RULE_PROPERTIES:
             raise ParameterError(
-                "Property {!r} is not defined in the data model for "
-                "password rules.".format(prop_name))
+                f"Property {prop_name!r} is not defined in the data model for "
+                "password rules.")
 
         allowed, create, update, update_while_active, eq_func, type_cast = \
             ZHMC_PASSWORD_RULE_PROPERTIES[prop_name]
 
         if not allowed:
             raise ParameterError(
-                "Property {!r} is not allowed in the 'properties' module "
-                "parameter.".format(prop_name))
+                f"Property {prop_name!r} is not allowed in the 'properties' "
+                "module parameter.")
 
         # Process a normal (= non-artificial) property
         _create_props, _update_props, _stop = process_normal_property(
@@ -438,8 +438,8 @@ def create_check_mode_pwrule(console, create_props, update_props):
         raise zhmcclient.HTTPError({
             'http-status': 400,
             'reason': 4,
-            'message': "Required input properties missing for Create Password Rule: {p}".
-            format(p=missing_props),
+            'message': "Required input properties missing for Create "
+            f"Password Rule: {missing_props}",
         })
 
     # Defaults for properties

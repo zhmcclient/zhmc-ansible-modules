@@ -1108,30 +1108,29 @@ def process_properties(cpc, partition, params):
 
         if prop_name not in ZHMC_PARTITION_PROPERTIES:
             raise ParameterError(
-                "Property {!r} is not defined in the data model for "
-                "partitions.".format(prop_name))
+                f"Property {prop_name!r} is not defined in the data model for "
+                "partitions.")
 
         allowed, create, update, update_while_active, eq_func, type_cast, \
             required, default = ZHMC_PARTITION_PROPERTIES[prop_name]
 
         if not allowed:
             raise ParameterError(
-                "Property {!r} is not allowed in the 'properties' module "
-                "parameter.".format(prop_name))
+                f"Property {prop_name!r} is not allowed in the 'properties' "
+                "module parameter.")
 
         if prop_name == 'boot_storage_hba_name':
             # Process this artificial property
 
             if not partition:
                 raise ParameterError(
-                    "Artificial property {!r} can only be specified when the "
-                    "partition previously exists.".format(prop_name))
+                    f"Artificial property {prop_name!r} can only be specified "
+                    "when the partition previously exists.")
 
             if storage_mgmt_enabled(cpc):
                 raise ParameterError(
-                    "Artificial property {0!r} can only be specified when the "
-                    "'dpm-storage-management' feature is disabled.".
-                    format(prop_name))
+                    f"Artificial property {prop_name!r} can only be specified "
+                    "when the 'dpm-storage-management' feature is disabled.")
 
             hba_name = input_props[prop_name]
             if type_cast:
@@ -1141,8 +1140,8 @@ def process_properties(cpc, partition, params):
                 hba = partition.hbas.find(name=hba_name)
             except zhmcclient.NotFound:
                 raise ParameterError(
-                    "Artificial property {!r} does not name an existing HBA: "
-                    "{!r}".format(prop_name, hba_name))
+                    f"Artificial property {prop_name!r} does not name an "
+                    f"existing HBA: {hba_name!r}")
 
             hmc_prop_name = 'boot-storage-device'
             if partition.properties.get(hmc_prop_name) != hba.uri:
@@ -1155,15 +1154,13 @@ def process_properties(cpc, partition, params):
 
             if 'boot_storage_volume_name' not in input_props:
                 raise ParameterError(
-                    "Artificial property {0!r} can only be specified when "
-                    "'boot_storage_volume_name' is also specified.".
-                    format(prop_name))
+                    f"Artificial property {prop_name!r} can only be specified "
+                    "when 'boot_storage_volume_name' is also specified.")
 
             if 'boot_storage_volume' in input_props:
                 raise ParameterError(
-                    "Artificial property {0!r} cannot be specified when "
-                    "'boot_storage_volume' is also specified.".
-                    format(prop_name))
+                    f"Artificial property {prop_name!r} cannot be specified "
+                    "when 'boot_storage_volume' is also specified.")
 
             # nothing else to be done; the properties are handled together
             # when 'boot_storage_volume_name' is processed.
@@ -1175,26 +1172,23 @@ def process_properties(cpc, partition, params):
                 sg_name = input_props['boot_storage_group_name']
             except KeyError:
                 raise ParameterError(
-                    "Artificial property {0!r} can only be specified when "
-                    "'boot_storage_group_name' is also specified.".
-                    format(prop_name))
+                    f"Artificial property {prop_name!r} can only be specified "
+                    "when 'boot_storage_group_name' is also specified.")
 
             if 'boot_storage_volume' in input_props:
                 raise ParameterError(
-                    "Artificial property {0!r} cannot be specified when "
-                    "'boot_storage_volume' is also specified.".
-                    format(prop_name))
+                    f"Artificial property {prop_name!r} cannot be specified "
+                    "when 'boot_storage_volume' is also specified.")
 
             if not partition:
                 raise ParameterError(
-                    "Artificial property {!r} can only be specified when the "
-                    "partition previously exists.".format(prop_name))
+                    f"Artificial property {prop_name!r} can only be specified "
+                    "when the partition previously exists.")
 
             if not storage_mgmt_enabled(cpc):
                 raise ParameterError(
-                    "Artificial property {0!r} can only be specified when the "
-                    "'dpm-storage-management' feature is enabled.".
-                    format(prop_name))
+                    f"Artificial property {prop_name!r} can only be specified "
+                    "when the 'dpm-storage-management' feature is enabled.")
 
             if type_cast:
                 sg_name = type_cast(sg_name)
@@ -1208,15 +1202,15 @@ def process_properties(cpc, partition, params):
             except zhmcclient.NotFound:
                 raise ParameterError(
                     "Artificial property 'boot_storage_group_name' does not "
-                    "name an existing storage group: {!r}".format(sg_name))
+                    f"name an existing storage group: {sg_name!r}")
 
             try:
                 sv = sg.storage_volumes.find(name=sv_name)
             except zhmcclient.NotFound:
                 raise ParameterError(
                     "Artificial property 'boot_storage_volume_name' does not "
-                    "name an existing storage volume {!r} in storage group "
-                    "{!r}".format(sv_name, sg_name))
+                    f"name an existing storage volume {sv_name!r} in storage "
+                    f"group {sg_name!r}")
 
             hmc_prop_name = 'boot-storage-volume'
             if partition.properties.get(hmc_prop_name) != sv.uri:
@@ -1229,8 +1223,8 @@ def process_properties(cpc, partition, params):
 
             if not partition:
                 raise ParameterError(
-                    "Artificial property {!r} can only be specified when the "
-                    "partition previously exists.".format(prop_name))
+                    f"Artificial property {prop_name!r} can only be specified "
+                    "when the partition previously exists.")
 
             nic_name = input_props[prop_name]
             if type_cast:
@@ -1240,8 +1234,8 @@ def process_properties(cpc, partition, params):
                 nic = partition.nics.find(name=nic_name)
             except zhmcclient.NotFound:
                 raise ParameterError(
-                    "Artificial property {!r} does not name an existing NIC: "
-                    "{!r}".format(prop_name, nic_name))
+                    f"Artificial property {prop_name!r} does not name an "
+                    f"existing NIC: {nic_name!r}")
 
             hmc_prop_name = 'boot-network-device'
             if partition.properties.get(hmc_prop_name) != nic.uri:
@@ -1256,8 +1250,8 @@ def process_properties(cpc, partition, params):
 
             if not isinstance(crypto_config, dict):
                 raise ParameterError(
-                    "Artificial property {0!r} is not a dictionary: {1!r}.".
-                    format(prop_name, crypto_config))
+                    f"Artificial property {prop_name!r} is not a dictionary: "
+                    f"{crypto_config!r}.")
 
             if partition:
                 hmc_prop_name = 'crypto-configuration'
@@ -1271,8 +1265,8 @@ def process_properties(cpc, partition, params):
                 adapter_names = crypto_config[adapter_field_name]
             except KeyError:
                 raise ParameterError(
-                    "Artificial property {!r} does not have required field "
-                    "{!r}.".format(prop_name, adapter_field_name))
+                    f"Artificial property {prop_name!r} does not have "
+                    f"required field {adapter_field_name!r}.")
             adapter_uris = set()
             adapter_dict = {}  # adapters by uri
             if adapter_names is None:
@@ -1288,11 +1282,10 @@ def process_properties(cpc, partition, params):
                                                     type='crypto')
                     except zhmcclient.NotFound:
                         raise ParameterError(
-                            "Artificial property {0!r} does not specify the "
-                            "name of an existing crypto adapter in its {1!r} "
-                            "field: {2!r}".
-                            format(prop_name, adapter_field_name,
-                                   adapter_name))
+                            f"Artificial property {prop_name!r} does not "
+                            "specify the name of an existing crypto adapter in "
+                            f"its {adapter_field_name!r} field: "
+                            f"{adapter_name!r}")
                     adapter_dict[adapter.uri] = adapter
                     adapter_uris.add(adapter.uri)
             if current_crypto_config:
@@ -1324,8 +1317,8 @@ def process_properties(cpc, partition, params):
                 domain_configs = crypto_config[config_field_name]
             except KeyError:
                 raise ParameterError(
-                    "Artificial property {!r} does not have required field "
-                    "{!r}.".format(prop_name, config_field_name))
+                    f"Artificial property {prop_name!r} does not have "
+                    f"required field {config_field_name!r}.")
             di_field_name = 'domain_index'
             am_field_name = 'access_mode'
             domain_indexes = set()
@@ -1336,9 +1329,9 @@ def process_properties(cpc, partition, params):
                     domain_index = int(dc[di_field_name])
                 except KeyError:
                     raise ParameterError(
-                        "Artificial property {0!r} does not have required "
-                        "sub-field {1!r} in one of its {2!r} fields.".
-                        format(prop_name, di_field_name, config_field_name))
+                        f"Artificial property {prop_name!r} does not have "
+                        f"required sub-field {di_field_name!r} in one of "
+                        f"its {config_field_name!r} fields.")
                 domain_indexes.add(domain_index)
             current_access_mode_dict = {}  # dict: acc.mode by dom.index
             if current_crypto_config:
@@ -1368,9 +1361,9 @@ def process_properties(cpc, partition, params):
                     access_mode = dc[am_field_name]
                 except KeyError:
                     raise ParameterError(
-                        "Artificial property {0!r} does not have required "
-                        "sub-field {1!r} in one of its {2!r} fields.".
-                        format(prop_name, am_field_name, config_field_name))
+                        f"Artificial property {prop_name!r} does not have "
+                        f"required sub-field {am_field_name!r} in one of its "
+                        f"{config_field_name!r} fields.")
                 hmc_domain_config = {
                     'domain-index': domain_index,
                     'access-mode': access_mode,
@@ -1702,8 +1695,8 @@ def create_check_mode_partition(cpc, create_props, update_props):
 
     if missing_props:
         raise ParameterError(
-            "Required partition properties missing in module input: {p}".
-            format(p=', '.join(missing_props)))
+            "Required partition properties missing in module input: "
+            f"{', '.join(missing_props)}")
 
     # Handle SPECIAL_DEFAULT properties
     oid = f'{uuid.uuid4()}'
@@ -1763,8 +1756,8 @@ def create_check_mode_partition(cpc, create_props, update_props):
 
     if missing_props:
         raise ParameterError(
-            "Required partition properties missing in module input: {p}".
-            format(p=', '.join(missing_props)))
+            "Required partition properties missing in module input: "
+            f"{', '.join(missing_props)}")
 
     partition = cpc.partitions.resource_object(oid, props=input_props)
 
@@ -1863,8 +1856,8 @@ def ensure_active(params, check_mode):
             status = partition.get_property('status')
             if status not in ('active', 'degraded'):
                 raise StatusError(
-                    "Could not get partition {!r} into an active state, "
-                    "status is: {!r}".format(partition.name, status))
+                    f"Could not get partition {partition.name!r} into an "
+                    f"active state, status is: {status!r}")
 
         result = dict(partition.properties)
         add_artificial_properties(
@@ -1960,8 +1953,8 @@ def ensure_stopped(params, check_mode):
             status = partition.get_property('status')
             if status not in ('stopped'):
                 raise StatusError(
-                    "Could not get partition {!r} into a stopped state, "
-                    "status is: {!r}".format(partition.name, status))
+                    f"Could not get partition {partition.name!r} into a "
+                    f"stopped state, status is: {status!r}")
 
         result = dict(partition.properties)
         add_artificial_properties(
@@ -2062,8 +2055,8 @@ def ensure_iso_mount(params, check_mode):
                         image = fp.read()
             except OSError as exc:
                 raise ImageError(
-                    "Cannot open ISO image file {fn!r} for reading: {exc}".
-                    format(fn=image_file, exc=exc))
+                    f"Cannot open ISO image file {image_file!r} for reading: "
+                    f"{exc}")
             if not check_mode:
                 partition.mount_iso_image(image, image_name, ins_file)
             changed = True

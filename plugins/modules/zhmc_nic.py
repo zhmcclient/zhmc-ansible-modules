@@ -425,16 +425,16 @@ def process_properties(partition, nic, params):
 
         if prop_name not in ZHMC_NIC_PROPERTIES:
             raise ParameterError(
-                "Property {!r} is not defined in the data model for "
-                "NICs.".format(prop_name))
+                f"Property {prop_name!r} is not defined in the data model for "
+                "NICs.")
 
         allowed, create, update, update_while_active, eq_func, type_cast = \
             ZHMC_NIC_PROPERTIES[prop_name]
 
         if not allowed:
             raise ParameterError(
-                "Property {!r} is not allowed in the 'properties' module "
-                "parameter.".format(prop_name))
+                f"Property {prop_name!r} is not allowed in the 'properties' "
+                "module parameter.")
 
         if prop_name in (adapter_name_art_name, adapter_port_art_name):
             # Artificial properties will be processed together after this loop
@@ -452,9 +452,9 @@ def process_properties(partition, nic, params):
     if (adapter_name_art_name in input_props) != \
             (adapter_port_art_name in input_props):
         raise ParameterError(
-            "Artificial properties {0!r} and {1!r} must either both be "
-            "specified or both be omitted.".
-            format(adapter_name_art_name, adapter_port_art_name))
+            f"Artificial properties {adapter_name_art_name!r} and "
+            f"{adapter_port_art_name!r} must either both be specified or both "
+            "be omitted.")
     if adapter_name_art_name in input_props and \
             adapter_port_art_name in input_props:
         adapter_name = to_unicode(input_props[adapter_name_art_name])
@@ -464,17 +464,15 @@ def process_properties(partition, nic, params):
                 name=adapter_name)
         except zhmcclient.NotFound:
             raise ParameterError(
-                "Artificial property {0!r} does not specify the name of an "
-                "existing adapter: {1!r}".
-                format(adapter_name_art_name, adapter_name))
+                f"Artificial property {adapter_name_art_name!r} does not "
+                f"specify the name of an existing adapter: {adapter_name!r}")
         try:
             port = adapter.ports.find(index=adapter_port_index)
         except zhmcclient.NotFound:
             raise ParameterError(
-                "Artificial property {0!r} does not specify the index of an "
-                "existing port on adapter {1!r}: {2!r}".
-                format(adapter_port_art_name, adapter_name,
-                       adapter_port_index))
+                f"Artificial property {adapter_port_art_name!r} does not "
+                "specify the index of an existing port on adapter "
+                f"{adapter_name!r}: {adapter_port_index!r}")
 
         # The rest of it depends on the network adapter family:
         adapter_family = adapter.get_property('adapter-family')
@@ -520,9 +518,9 @@ def process_properties(partition, nic, params):
             create_props[hmc_prop_name] = input_prop_value
         else:
             raise ParameterError(
-                "Artificial property {0!r} specifies the name of a "
-                "non-network adapter of family {1!r}: {2!r}".
-                format(adapter_name_art_name, adapter_family, adapter_name))
+                f"Artificial property {adapter_name_art_name!r} specifies the "
+                f"name of a non-network adapter of family {adapter_family!r}: "
+                f"{adapter_name!r}")
 
     return create_props, update_props, stop
 

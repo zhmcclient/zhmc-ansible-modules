@@ -808,16 +808,16 @@ def process_properties(cpc, lpar, params):
 
         if prop_name not in ZHMC_LPAR_PROPERTIES:
             raise ParameterError(
-                "Property {!r} is not defined in the data model for "
-                "LPARs.".format(prop_name))
+                f"Property {prop_name!r} is not defined in the data model for "
+                "LPARs.")
 
         allowed, create, update, update_while_active, eq_func, type_cast = \
             ZHMC_LPAR_PROPERTIES[prop_name]
 
         if not allowed:
             raise ParameterError(
-                "Property {!r} is not allowed in the 'properties' module "
-                "parameter.".format(prop_name))
+                f"Property {prop_name!r} is not allowed in the 'properties' "
+                "module parameter.")
 
         else:
             # Process a normal (= non-artificial) property
@@ -884,8 +884,8 @@ def update_lpar_properties(cpc, lpar, params, check_mode, check_status=False):
                 status = lpar.get_property('status')
                 if status not in ('not-operating', 'operating', 'exceptions'):
                     raise StatusError(
-                        "LPAR {0!r} has status {1} and cannot be updated.".
-                        format(lpar.name, status))
+                        f"LPAR {lpar.name!r} has status {status} and cannot be "
+                        "updated.")
             lpar_properties.update(update_props)
         changed = True
 
@@ -909,7 +909,7 @@ def ensure_inactive(params, check_mode):
     if properties:
         raise ParameterError(
             "Properties must not be specified for state=inactive with "
-            "LPAR {!r}.".format(lpar_name))
+            f"LPAR {lpar_name!r}.")
 
     changed = False
 
@@ -951,7 +951,7 @@ def perform_reset_clear(params, check_mode):
     if properties:
         raise ParameterError(
             "Properties must not be specified for state=reset_clear with "
-            "LPAR {!r}.".format(lpar_name))
+            f"LPAR {lpar_name!r}.")
 
     changed = False
 
@@ -995,7 +995,7 @@ def perform_reset_normal(params, check_mode):
     if properties:
         raise ParameterError(
             "Properties must not be specified for state=reset_normal with "
-            "LPAR {!r}.".format(lpar_name))
+            f"LPAR {lpar_name!r}.")
 
     changed = False
 
@@ -1181,7 +1181,7 @@ def facts(params, check_mode):
     if properties:
         raise ParameterError(
             "Properties must not be specified for state=facts with "
-            "LPAR {!r}.".format(lpar_name))
+            f"LPAR {lpar_name!r}.")
 
     changed = False
 

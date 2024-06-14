@@ -718,9 +718,8 @@ def process_properties(cpc, storage_group, params):
         sg_cpc = storage_group.cpc
         if sg_cpc.uri != cpc.uri:
             raise ParameterError(
-                "Storage group {0!r} is not associated with the specified "
-                "CPC {1!r}, but with CPC {2!r}.".
-                format(sg_name, cpc.name, sg_cpc.name))
+                f"Storage group {sg_name!r} is not associated with the "
+                f"specified CPC {cpc.name!r}, but with CPC {sg_cpc.name!r}.")
 
     # handle the other properties
     input_props = params['properties']
@@ -730,16 +729,16 @@ def process_properties(cpc, storage_group, params):
 
         if prop_name not in ZHMC_STORAGE_GROUP_PROPERTIES:
             raise ParameterError(
-                "Property {!r} is not defined in the data model for "
-                "storage groups.".format(prop_name))
+                f"Property {prop_name!r} is not defined in the data model for "
+                "storage groups.")
 
         allowed, create, update, update_while_active, eq_func, type_cast = \
             ZHMC_STORAGE_GROUP_PROPERTIES[prop_name]
 
         if not allowed:
             raise ParameterError(
-                "Property {!r} is not allowed in the 'properties' module "
-                "parameter.".format(prop_name))
+                f"Property {prop_name!r} is not allowed in the 'properties' "
+                "module parameter.")
 
         # Process a normal (= non-artificial) property
         _create_props, _update_props, _stop = process_normal_property(
@@ -960,9 +959,9 @@ def ensure_absent(params, check_mode):
         sg_cpc = storage_group.cpc
         if sg_cpc.uri != cpc.uri:
             raise ParameterError(
-                "Storage group {0!r} is not associated with the specified "
-                "CPC {1!r}, but with CPC {2!r}.".
-                format(storage_group_name, cpc.name, sg_cpc.name))
+                f"Storage group {storage_group_name!r} is not associated with "
+                f"the specified CPC {cpc.name!r}, but with CPC "
+                f"{sg_cpc.name!r}.")
 
         if not check_mode:
             partitions = storage_group.list_attached_partitions()
@@ -1009,15 +1008,15 @@ def discover(params, check_mode):
         sg_cpc = storage_group.cpc
         if sg_cpc.uri != cpc.uri:
             raise ParameterError(
-                "Storage group {0!r} is not associated with the specified "
-                "CPC {1!r}, but with CPC {2!r}.".
-                format(storage_group_name, cpc.name, sg_cpc.name))
+                f"Storage group {storage_group_name!r} is not associated with "
+                f"the specified CPC {cpc.name!r}, but with CPC "
+                f"{sg_cpc.name!r}.")
 
         sg_type = storage_group.prop('type')
         if sg_type != 'fcp':
             raise ParameterError(
-                "Storage group {0!r} is not of type 'fcp', but {1!r}.".
-                format(storage_group_name, sg_type))
+                f"Storage group {storage_group_name!r} is not of type 'fcp', "
+                f"but {sg_type!r}.")
 
         storage_group.discover_fcp(
             force_restart=True, wait_for_completion=discover_wait,
@@ -1064,9 +1063,9 @@ def facts(params, check_mode):
         sg_cpc = storage_group.cpc
         if sg_cpc.uri != cpc.uri:
             raise ParameterError(
-                "Storage group {0!r} is not associated with the specified "
-                "CPC {1!r}, but with CPC {2!r}.".
-                format(storage_group_name, cpc.name, sg_cpc.name))
+                f"Storage group {storage_group_name!r} is not associated with "
+                f"the specified CPC {cpc.name!r}, but with CPC "
+                f"{sg_cpc.name!r}.")
 
         result = dict(storage_group.properties)
         add_artificial_properties(result, storage_group, expand)

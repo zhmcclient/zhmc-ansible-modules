@@ -520,8 +520,8 @@ def process_properties(cpc, params):
 
         if not allowed:
             raise ParameterError(
-                "CPC property {!r} specified in the 'properties' module "
-                "parameter cannot be updated.".format(prop_name))
+                f"CPC property {prop_name!r} specified in the 'properties' "
+                "module parameter cannot be updated.")
 
         # Process a normal (= non-artificial) property
         _create_props, _update_props, _stop = process_normal_property(
@@ -629,9 +629,9 @@ def ensure_active(module):
                 else:
                     if not activation_profile_name:
                         raise ParameterError(
-                            "CPC {!r} is in classic mode and activation "
-                            "requires the 'activation_profile_name' parameter "
-                            "to be specified".format(cpc_name))
+                            f"CPC {cpc_name!r} is in classic mode and "
+                            "activation requires the 'activation_profile_name' "
+                            "parameter to be specified")
                     cpc.activate(
                         activation_profile_name=activation_profile_name,
                         force=True)
@@ -645,8 +645,8 @@ def ensure_active(module):
             # cpc_status in ('not-communicating', 'status-check')
             # or any new future status values.
             raise StatusError(
-                "CPC {0!r} cannot be activated because it is in status {1!r}".
-                format(cpc_name, cpc_status))
+                f"CPC {cpc_name!r} cannot be activated because it is in "
+                f"status {cpc_status!r}")
 
         # Update the properties of the CPC.
         _changed, cpc_properties = update_cpc_properties(
@@ -700,8 +700,8 @@ def ensure_inactive(module):
             # cpc_status in ('not-communicating', 'status-check')
             # or any new future status values.
             raise StatusError(
-                "CPC {0!r} cannot be deactivated because it is in status {1!r}".
-                format(cpc_name, cpc_status))
+                f"CPC {cpc_name!r} cannot be deactivated because it is in "
+                f"status {cpc_status!r}")
 
         return changed, None
 
@@ -801,8 +801,8 @@ def upgrade(module):
         if hmc_bundle_level is None:
             hmc_version = console.prop('version')
             raise ParameterError(
-                "HMC version {v} does not support firmware upgrade through "
-                "the Web Services API".format(v=hmc_version))
+                f"HMC version {hmc_version} does not support firmware upgrade "
+                "through the Web Services API")
 
         changed = False
 

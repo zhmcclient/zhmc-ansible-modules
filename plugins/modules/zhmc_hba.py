@@ -373,16 +373,16 @@ def process_properties(partition, hba, params):
 
         if prop_name not in ZHMC_HBA_PROPERTIES:
             raise ParameterError(
-                "Property {!r} is not defined in the data model for "
-                "HBAs.".format(prop_name))
+                f"Property {prop_name!r} is not defined in the data model for "
+                "HBAs.")
 
         allowed, create, update, update_while_active, eq_func, type_cast = \
             ZHMC_HBA_PROPERTIES[prop_name]
 
         if not allowed:
             raise ParameterError(
-                "Property {!r} is not allowed in the 'properties' module "
-                "parameter.".format(prop_name))
+                f"Property {prop_name!r} is not allowed in the 'properties' "
+                "module parameter.")
 
         if prop_name in (adapter_name_art_name, adapter_port_art_name):
             # Artificial properties will be processed together after this loop
@@ -400,9 +400,9 @@ def process_properties(partition, hba, params):
     if (adapter_name_art_name in input_props) != \
             (adapter_port_art_name in input_props):
         raise ParameterError(
-            "Artificial properties {0!r} and {1!r} must either both be "
-            "specified or both be omitted.".
-            format(adapter_name_art_name, adapter_port_art_name))
+            f"Artificial properties {adapter_name_art_name!r} and "
+            f"{adapter_port_art_name!r} must either both be specified or "
+            "both be omitted.")
     if adapter_name_art_name in input_props and \
             adapter_port_art_name in input_props:
         adapter_name = to_unicode(input_props[adapter_name_art_name])
@@ -412,25 +412,23 @@ def process_properties(partition, hba, params):
                 name=adapter_name)
         except zhmcclient.NotFound:
             raise ParameterError(
-                "Artificial property {0!r} does not specify the name of an "
-                "existing adapter: {1!r}".
-                format(adapter_name_art_name, adapter_name))
+                f"Artificial property {adapter_name_art_name!r} does not "
+                f"specify the name of an existing adapter: {adapter_name!r}")
         try:
             port = adapter.ports.find(index=adapter_port_index)
         except zhmcclient.NotFound:
             raise ParameterError(
-                "Artificial property {0!r} does not specify the index of an "
-                "existing port on adapter {1!r}: {2!r}".
-                format(adapter_port_art_name, adapter_name,
-                       adapter_port_index))
+                f"Artificial property {adapter_port_art_name!r} does not "
+                "specify the index of an existing port on adapter "
+                f"{adapter_name!r}: {adapter_port_index!r}")
         hmc_prop_name = 'adapter-port-uri'
         if hba:
             existing_port_uri = hba.get_property(hmc_prop_name)
             if port.uri != existing_port_uri:
                 raise ParameterError(
-                    "Artificial properties {0!r} and {1!r} cannot be used to "
-                    "change the adapter port of an existing HBA".
-                    format(adapter_name_art_name, adapter_port_art_name))
+                    f"Artificial properties {adapter_name_art_name!r} and "
+                    f"{adapter_port_art_name!r} cannot be used to change the "
+                    "adapter port of an existing HBA")
         create_props[hmc_prop_name] = port.uri
 
     return create_props, update_props, stop

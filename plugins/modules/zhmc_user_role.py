@@ -583,16 +583,16 @@ def process_properties(client, urole, params):
 
         if prop_name not in ZHMC_USER_ROLE_PROPERTIES:
             raise ParameterError(
-                "Property {!r} is not defined in the data model for "
-                "user roles.".format(prop_name))
+                f"Property {prop_name!r} is not defined in the data model for "
+                "user roles.")
 
         allowed, create, update, update_while_active, eq_func, type_cast = \
             ZHMC_USER_ROLE_PROPERTIES[prop_name]
 
         if not allowed:
             raise ParameterError(
-                "Property {!r} is not allowed in the 'properties' module "
-                "parameter.".format(prop_name))
+                f"Property {prop_name!r} is not allowed in the 'properties' "
+                "module parameter.")
 
         # Process artificial/special properties allowed in input parameters
 
@@ -602,9 +602,10 @@ def process_properties(client, urole, params):
                 sys_urole = console.user_roles.find(name=sys_urole_name)
             except zhmcclient.NotFound:
                 raise ParameterError(
-                    "Cannot find system-defined user role {!r} specified in "
-                    "the 'associated_system_defined_user_role_name' input "
-                    "property.".format(sys_urole_name))
+                    f"Cannot find system-defined user role {sys_urole_name!r} "
+                    "specified in the "
+                    "'associated_system_defined_user_role_name' input "
+                    "property.")
             create_props['associated-system-defined-user-role-uri'] = \
                 sys_urole.uri
             continue
@@ -661,7 +662,7 @@ def create_check_mode_urole(client, create_props, update_props):
             'http-status': 400,
             'reason': 4,
             'message': "Required input properties missing for "
-            "Create User Role: {p}".format(p=missing_props),
+            f"Create User Role: {missing_props}",
         })
 
     optasks_urole = console.user_roles.find(name='hmc-operator-tasks')
@@ -756,8 +757,8 @@ def uri_to_object(obj_lists, client, obj_uri):
             obj_lists, 'storage-template', 'object-uri', obj_uri)
     else:
         raise ParameterError(
-            "Resource with URI {u!r} not supported for user "
-            "role permissions".format(u=obj_uri))
+            f"Resource with URI {obj_uri!r} not supported for user "
+            "role permissions")
     return obj
 
 
@@ -854,16 +855,14 @@ def target_perm_dict(client, ansi_permissions):
             if perm_item2:
                 raise ParameterError(
                     "Invalid additional items in permission item for "
-                    "resource class {n!r}: {i!r}".
-                    format(n=resource_class, i=perm_item2))
+                    f"resource class {resource_class!r}: {perm_item2!r}")
             tgt_perms[resource_class] = ({}, None)
         elif keys == {'cpc'}:
             cpc_name = perm_item2.pop('cpc')
             if perm_item2:
                 raise ParameterError(
                     "Invalid additional items in permission item for "
-                    "CPC {n!r}: {i!r}".
-                    format(n=cpc_name, i=perm_item2))
+                    f"CPC {cpc_name!r}: {perm_item2!r}")
             cpc = client.cpcs.find(name=cpc_name)
             tgt_perms[cpc.uri] = ({}, cpc)
         elif 'task' in keys:
@@ -872,8 +871,7 @@ def target_perm_dict(client, ansi_permissions):
             if perm_item2:
                 raise ParameterError(
                     "Invalid additional items in permission item for "
-                    "task {n!r}: {i!r}".
-                    format(n=task_name, i=perm_item2))
+                    f"task {task_name!r}: {perm_item2!r}")
             kwargs = {}
             if view_only is not None:
                 kwargs['view_only'] = view_only
@@ -885,8 +883,7 @@ def target_perm_dict(client, ansi_permissions):
             if perm_item2:
                 raise ParameterError(
                     "Invalid additional items in permission item for "
-                    "group {n!r}: {i!r}".
-                    format(n=group_name, i=perm_item2))
+                    f"group {group_name!r}: {perm_item2!r}")
             kwargs = {}
             if include_members is not None:
                 kwargs['include_members'] = include_members
@@ -898,8 +895,8 @@ def target_perm_dict(client, ansi_permissions):
             if perm_item2:
                 raise ParameterError(
                     "Invalid additional items in permission item for "
-                    "partition {n!r} on CPC {c!r}: {i!r}".
-                    format(n=part_name, c=cpc_name, i=perm_item2))
+                    f"partition {part_name!r} on CPC {cpc_name!r}: "
+                    f"{perm_item2!r}")
             cpc = client.cpcs.find(name=cpc_name)
             part = cpc.partitions.find(name=part_name)
             tgt_perms[part.uri] = ({}, part)
@@ -909,8 +906,7 @@ def target_perm_dict(client, ansi_permissions):
             if perm_item2:
                 raise ParameterError(
                     "Invalid additional items in permission item for "
-                    "LPAR {n!r} on CPC {c!r}: {i!r}".
-                    format(n=lpar_name, c=cpc_name, i=perm_item2))
+                    f"LPAR {lpar_name!r} on CPC {cpc_name!r}: {perm_item2!r}")
             cpc = client.cpcs.find(name=cpc_name)
             lpar = cpc.lpars.find(name=lpar_name)
             tgt_perms[lpar.uri] = (perm_item2, lpar)
@@ -920,8 +916,8 @@ def target_perm_dict(client, ansi_permissions):
             if perm_item2:
                 raise ParameterError(
                     "Invalid additional items in permission item for "
-                    "adapter {n!r} on CPC {c!r}: {i!r}".
-                    format(n=adapter_name, c=cpc_name, i=perm_item2))
+                    f"adapter {adapter_name!r} on CPC {cpc_name!r}: "
+                    f"{perm_item2!r}")
             cpc = client.cpcs.find(name=cpc_name)
             adapter = cpc.adapters.find(name=adapter_name)
             tgt_perms[adapter.uri] = (perm_item2, adapter)
@@ -931,8 +927,8 @@ def target_perm_dict(client, ansi_permissions):
             if perm_item2:
                 raise ParameterError(
                     "Invalid additional items in permission item for "
-                    "storage group {n!r} on CPC {c!r}: {i!r}".
-                    format(n=sg_name, c=cpc_name, i=perm_item2))
+                    f"storage group {sg_name!r} on CPC {cpc_name!r}: "
+                    f"{perm_item2!r}")
             cpc = client.cpcs.find(name=cpc_name)
             sg = cpc.storage_groups.find(name=sg_name)
             tgt_perms[sg.uri] = (perm_item2, sg)
@@ -942,15 +938,15 @@ def target_perm_dict(client, ansi_permissions):
             if perm_item2:
                 raise ParameterError(
                     "Invalid additional items in permission item for "
-                    "storage group template {n!r} on CPC {c!r}: {i!r}".
-                    format(n=st_name, c=cpc_name, i=perm_item2))
+                    f"storage group template {st_name!r} on CPC {cpc_name!r}: "
+                    f"{perm_item2!r}")
             cpc = client.cpcs.find(name=cpc_name)
             st = cpc.storage_group_templates.find(name=st_name)
             tgt_perms[st.uri] = (perm_item2, st)
         else:
             raise ParameterError(
                 "Invalid combination of resources for permitted "
-                "object for user role: {i!r}".format(i=perm_item2))
+                f"object for user role: {perm_item2!r}")
     # LOGGER.debug("Target permissions: %r", tgt_perms)
     return tgt_perms
 

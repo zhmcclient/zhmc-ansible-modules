@@ -321,8 +321,8 @@ def upgrade(module):
         if hmc_bundle_level is None:
             hmc_version = console.prop('version')
             raise ParameterError(
-                "HMC version {v} does not support firmware upgrade through "
-                "the Web Services API".format(v=hmc_version))
+                f"HMC version {hmc_version} does not support firmware upgrade "
+                "through the Web Services API")
 
         changed = False
 

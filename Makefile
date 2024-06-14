@@ -69,7 +69,7 @@ collection_full_name := $(collection_namespace).$(collection_name)
 # Note: The collection version is defined in galaxy.yml
 collection_version := $(shell $(PYTHON_CMD) tools/version.py)
 
-# Minimum ansible-core veersion that is officially supported
+# Minimum ansible-core version that is officially supported
 # If this version is changed, update the check_reqs_packages variable as well
 min_ansible_core_version := 2.14.0
 
@@ -276,17 +276,13 @@ bandit: $(done_dir)/bandit_$(pymn)_$(PACKAGE_LEVEL).done
 
 # Boolean variable indicating that the Ansible sanity test should be run in the current Python environment
 # We run the sanity test only on officially supported Ansible versions, except for:
-#  * Python 3.8 with minimum package levels because sanity rstcheck fails with:
-#    "No module named rstcheck.__main__; 'rstcheck' is a package and cannot be directly executed"
 #  * Python 3.10 with minimum package levels because sanity setup fails with PyYAML 5.4.1 install issue with Cython 3
-run_sanity_current := $(shell PL=$(PACKAGE_LEVEL) MIN_AC=$(min_ansible_core_version) $(PYTHON_CMD) -c "import sys,os,ansible; py=sys.version_info[0:2]; ac=ansible.__version__.split('.'); min_ac=os.getenv('MIN_AC').split('.'); pl=os.getenv('PL'); sys.stdout.write('true' if ac>=min_ac and not (py==(3,8) and pl=='minimum') and not (py==(3,10) and pl=='minimum') and not py>=(3,13) else 'false')")
+run_sanity_current := $(shell PL=$(PACKAGE_LEVEL) MIN_AC=$(min_ansible_core_version) $(PYTHON_CMD) -c "import sys,os,ansible; py=sys.version_info[0:2]; ac=list(map(int,ansible.__version__.split('.'))); min_ac=list(map(int,os.getenv('MIN_AC').split('.'))); pl=os.getenv('PL'); sys.stdout.write('true' if ac>=min_ac and not (py==(3,10) and pl=='minimum') and not py>=(3,13) else 'false')")
 
 # Boolean variable indicating that the Ansible sanity test should be run in its own virtual Python environment
 # We run the sanity test only on officially supported Ansible versions, except for:
-#  * Python 3.8 with minimum package levels because sanity rstcheck fails with:
-#    "No module named rstcheck.__main__; 'rstcheck' is a package and cannot be directly executed"
 #  * Python 3.10 with minimum package levels because sanity setup fails with PyYAML 5.4.1 install issue with Cython 3
-run_sanity_virtual := $(shell PL=$(PACKAGE_LEVEL) MIN_AC=$(min_ansible_core_version) $(PYTHON_CMD) -c "import sys,os,ansible; py=sys.version_info[0:2]; ac=ansible.__version__.split('.'); min_ac=os.getenv('MIN_AC').split('.'); pl=os.getenv('PL'); sys.stdout.write('true' if ac>=min_ac and not (py==(3,8) and pl=='minimum') and not (py==(3,10) and pl=='minimum') and not py>=(3,13) else 'false')")
+run_sanity_virtual := $(shell PL=$(PACKAGE_LEVEL) MIN_AC=$(min_ansible_core_version) $(PYTHON_CMD) -c "import sys,os,ansible; py=sys.version_info[0:2]; ac=list(map(int,ansible.__version__.split('.'))); min_ac=list(map(int,os.getenv('MIN_AC').split('.'))); pl=os.getenv('PL'); sys.stdout.write('true' if ac>=min_ac and not (py==(3,10) and pl=='minimum') and not py>=(3,13) else 'false')")
 
 # The sanity check requires the .git directory to be present.
 .PHONY:	sanity

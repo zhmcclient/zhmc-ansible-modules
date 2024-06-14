@@ -553,16 +553,16 @@ def process_properties(console, user, params):
 
         if prop_name not in ZHMC_USER_PROPERTIES:
             raise ParameterError(
-                "Property {!r} is not defined in the data model for "
-                "users.".format(prop_name))
+                f"Property {prop_name!r} is not defined in the data model for "
+                "users.")
 
         allowed, create, update, update_while_active, eq_func, type_cast = \
             ZHMC_USER_PROPERTIES[prop_name]
 
         if not allowed:
             raise ParameterError(
-                "Property {!r} is not allowed in the 'properties' module "
-                "parameter.".format(prop_name))
+                f"Property {prop_name!r} is not allowed in the 'properties' "
+                "module parameter.")
 
         # Process artificial properties allowed in input parameters
 
@@ -577,9 +577,8 @@ def process_properties(console, user, params):
                         break
                 else:
                     raise ParameterError(
-                        "User role {0!r} specified in parameter "
-                        "{1!r} does not exist.".
-                        format(user_role_name, prop_name))
+                        f"User role {user_role_name!r} specified in parameter "
+                        f"{prop_name!r} does not exist.")
             if user is None:
                 # All roles need to be added to the user
                 add_roles.extend(user_roles)
@@ -606,9 +605,8 @@ def process_properties(console, user, params):
                         user_pattern_name)
                 except zhmcclient.NotFound:
                     raise ParameterError(
-                        "User pattern {0!r} specified in parameter "
-                        "{1!r} does not exist.".
-                        format(user_pattern_name, prop_name))
+                        f"User pattern {user_pattern_name!r} specified in "
+                        f"parameter {prop_name!r} does not exist.")
                 user_pattern_uri = user_pattern.uri
             else:
                 user_pattern_uri = None
@@ -626,9 +624,8 @@ def process_properties(console, user, params):
                         password_rule_name)
                 except zhmcclient.NotFound:
                     raise ParameterError(
-                        "Password rule {0!r} specified in parameter "
-                        "{1!r} does not exist.".
-                        format(password_rule_name, prop_name))
+                        f"Password rule {password_rule_name!r} specified in "
+                        f"parameter {prop_name!r} does not exist.")
                 password_rule_uri = password_rule.uri
             else:
                 password_rule_uri = None
@@ -646,9 +643,8 @@ def process_properties(console, user, params):
                         ldap_srv_def_name)
                 except zhmcclient.NotFound:
                     raise ParameterError(
-                        "LDAP server definition {0!r} specified in parameter "
-                        "{1!r} does not exist.".
-                        format(ldap_srv_def_name, prop_name))
+                        f"LDAP server definition {ldap_srv_def_name!r} "
+                        f"specified in parameter {prop_name!r} does not exist.")
                 ldap_srv_def_uri = ldap_srv_def.uri
             else:
                 ldap_srv_def_uri = None
@@ -853,8 +849,8 @@ def create_check_mode_user(console, create_props, update_props):
         raise zhmcclient.HTTPError({
             'http-status': 400,
             'reason': 4,
-            'message': "Required input properties missing for Create User: {p}".
-            format(p=missing_props),
+            'message': "Required input properties missing for Create User: "
+            f"{missing_props}",
         })
 
     # Defaults for optional properties that are the same in all cases
@@ -977,8 +973,8 @@ def ensure_present(params, check_mode):
                 result['user-roles'].append(role.uri)
             if rem_roles:
                 raise AssertionError(
-                    "Unexpected attempt to remove user roles {!r} from newly "
-                    "created user {!r}".format(rem_roles, user.name))
+                    f"Unexpected attempt to remove user roles {rem_roles!r} "
+                    f"from newly created user {user.name!r}")
         else:
             # It exists. Update its properties.
             user.pull_full_properties()
@@ -1023,8 +1019,8 @@ def ensure_present(params, check_mode):
                     user.remove_user_role(role)
                 if 'user-roles' not in result:
                     raise AssertionError(
-                        "User {!r} unexpectedly does not have a "
-                        "'user-roles' property".format(user.name))
+                        f"User {user.name!r} unexpectedly does not have a "
+                        "'user-roles' property")
                 result['user-roles'].remove(role.uri)
                 changed = True
 
