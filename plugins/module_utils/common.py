@@ -16,6 +16,8 @@
 Utility functions for use by more than one Ansible module.
 """
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 import logging
 import traceback
