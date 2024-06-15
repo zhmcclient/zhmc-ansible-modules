@@ -19,6 +19,8 @@ Function tests for the 'zhmc_cpc' Ansible module.
 
 # pylint: disable=bad-option-value,redundant-u-string-prefix
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 import pytest
 from unittest import mock
@@ -413,17 +415,16 @@ class TestCpc:
 
         # Assert module exit code
         assert exit_code == exp_exit_code, \
-            "Unexpected module exit code {0} (expected {1}), message:\n{2}". \
-            format(exit_code, exp_exit_code, message)
+            f"Unexpected module exit code {exit_code} " \
+            f"(expected {exp_exit_code}), message:\n{message}"
 
         if exp_exit_code != 0 and exp_message_pattern:
             # Assert module failure message
             assert re.match(exp_message_pattern, message), \
                 "Unexpected module failure message:\n" \
-                "  {0}\n" \
+                f"  {message}\n" \
                 "Expected pattern:\n" \
-                "  {1}". \
-                format(message, exp_message_pattern)
+                f"  {exp_message_pattern}"
 
         if exp_exit_code == 0:
 
@@ -438,8 +439,7 @@ class TestCpc:
                         hmc_name = ansi_name.replace('_', '-')
                         assert hmc_name in cpc_props
                         assert exp_value == cpc_props[hmc_name], \
-                            "Unexpected value for property {0!r}". \
-                            format(hmc_name)
+                            f"Unexpected value for property {hmc_name!r}"
 
             # Assert the updated CPC resource
             if input_state in ('active', 'set') and not check_mode:
@@ -449,5 +449,4 @@ class TestCpc:
                         hmc_name = ansi_name.replace('_', '-')
                         assert hmc_name in self.cpc.properties
                         assert exp_value == self.cpc.properties[hmc_name], \
-                            "Unexpected value for property {0!r}". \
-                            format(hmc_name)
+                            f"Unexpected value for property {hmc_name!r}"

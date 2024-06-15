@@ -16,6 +16,8 @@
 End2end tests for zhmc_user_list module.
 """
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 import pytest
 from unittest import mock
@@ -82,22 +84,18 @@ def assert_user_list(user_list, exp_user_dict):
         user_type = user_item.get('type', None)
 
         assert user_name is not None, \
-            "Returned user {ri!r} does not have a 'name' property". \
-            format(ri=user_item)
+            f"Returned user {user_item!r} does not have a 'name' property"
 
         assert user_name in exp_user_dict, \
-            "Unexpected returned user {rn!r}". \
-            format(rn=user_name)
+            f"Unexpected returned user {user_name!r}"
 
         exp_user_properties = exp_user_dict[user_name]
         for pname, pvalue in user_item.items():
             assert '-' not in pname, \
-                "Property {pn!r} in user {rn!r} is returned with " \
-                "hyphens in the property name". \
-                format(pn=pname, rn=user_name)
+                f"Property {pname!r} in user {user_name!r} is returned with " \
+                "hyphens in the property name"
             assert pname in exp_user_properties, \
-                "Unexpected property {pn!r} in user {n!r}". \
-                format(pn=pname, n=user_name)
+                f"Unexpected property {pname!r} in user {user_name!r}"
             exp_value = exp_user_properties[pname]
 
             if user_type == 'pattern-based' and \
@@ -107,8 +105,7 @@ def assert_user_list(user_list, exp_user_dict):
                 continue
 
             assert pvalue == exp_value, \
-                "Incorrect value for property {pn!r} of user {n!r}". \
-                format(pn=pname, n=user_name)
+                f"Incorrect value for property {pname!r} of user {user_name!r}"
 
 
 @pytest.mark.parametrize(
@@ -174,8 +171,8 @@ def test_zhmc_user_list(
 
     # Assert module exit code
     assert exit_code == 0, \
-        "Module failed with exit code {e} and message:\n{m}". \
-        format(e=exit_code, m=get_failure_msg(mod_obj))
+        f"Module failed with exit code {exit_code} and message:\n" \
+        f"{get_failure_msg(mod_obj)}"
 
     # Assert module output
     changed, user_list = get_module_output(mod_obj)

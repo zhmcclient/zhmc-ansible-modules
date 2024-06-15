@@ -16,6 +16,8 @@
 End2end tests for zhmc_ldap_server_definition_list module.
 """
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 import pytest
 from unittest import mock
@@ -63,21 +65,20 @@ def assert_lsd_list(lsd_list, exp_lsd_dict):
     assert len(lsd_list) == len(exp_lsd_dict)
     for lsd_item in lsd_list:
         assert 'name' in lsd_item, \
-            "Returned LDAP server definition {ri!r} does not have a 'name' " \
-            "property".format(ri=lsd_item)
+            f"Returned LDAP server definition {lsd_item!r} does not have a " \
+            "'name' property"
         lsd_name = lsd_item['name']
         assert lsd_name in exp_lsd_dict, \
-            "Unexpected returned LDAP server definition {rn!r}". \
-            format(rn=lsd_name)
+            f"Unexpected returned LDAP server definition {lsd_name!r}"
         exp_lsd = exp_lsd_dict[lsd_name]
         for pname, pvalue in lsd_item.items():
             assert pname in exp_lsd.properties, \
-                "Unexpected property {pn!r} in LDAP server definition {rn!r}". \
-                format(pn=pname, rn=lsd_name)
+                f"Unexpected property {pname!r} in LDAP server definition " \
+                f"{lsd_name!r}"
             exp_value = exp_lsd.properties[pname]
             assert pvalue == exp_value, \
-                "Incorrect value for property {pn!r} of LDAP server " \
-                "definition {rn!r}".format(pn=pname, rn=lsd_name)
+                f"Incorrect value for property {pname!r} of LDAP server " \
+                f"definition {lsd_name!r}"
 
 
 @pytest.mark.parametrize(
@@ -128,8 +129,8 @@ def test_zhmc_ldap_server_definition_list(
 
     # Assert module exit code
     assert exit_code == 0, \
-        "Module failed with exit code {e} and message:\n{m}". \
-        format(e=exit_code, m=get_failure_msg(mod_obj))
+        f"Module failed with exit code {exit_code} and message:\n" \
+        f"{get_failure_msg(mod_obj)}"
 
     # Assert module output
     changed, lsd_list = get_module_output(mod_obj)

@@ -16,6 +16,8 @@
 End2end tests for zhmc_cpc module.
 """
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 import pytest
 from unittest import mock
@@ -233,14 +235,13 @@ def test_zhmc_cpc_facts(
 
         # Assert module exit code
         assert exit_code == 0, \
-            "{w}: Module failed with exit code {e} and message:\n{m}". \
-            format(w=where, e=exit_code, m=get_failure_msg(mod_obj))
+            f"{where}: Module failed with exit code {exit_code} and " \
+            f"message:\n{get_failure_msg(mod_obj)}"
 
         # Assert module output
         changed, cpc_properties = get_module_output(mod_obj)
         assert changed is False, \
-            "{w}: Module returned changed={c}". \
-            format(w=where, c=changed)
+            f"{where}: Module returned changed={changed}"
 
         # Check the presence and absence of properties in the result
         cpc_prop_names = list(cpc_properties.keys())

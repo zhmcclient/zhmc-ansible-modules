@@ -16,6 +16,8 @@
 End2end tests for zhmc_lpar_list module.
 """
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 import pytest
 from unittest import mock
@@ -99,32 +101,26 @@ def assert_lpar_list(lpar_list, exp_lpar_dict):
         lpar_key = (cpc_name, lpar_name)
 
         assert lpar_name is not None, \
-            "Returned LPAR {ri!r} does not have a 'name' property". \
-            format(ri=lpar_item)
+            f"Returned LPAR {lpar_item!r} does not have a 'name' property"
 
         assert cpc_name is not None, \
-            "Returned LPAR {ri!r} does not have a 'cpc_name' property". \
-            format(ri=lpar_item)
+            f"Returned LPAR {lpar_item!r} does not have a 'cpc_name' property"
 
         assert lpar_key in exp_lpar_dict, \
-            "Result contains unexpected LPAR {rn!r} in CPC {cn!r}". \
-            format(rn=lpar_name, cn=cpc_name)
+            f"Result contains unexpected LPAR {lpar_name!r} in CPC {cpc_name!r}"
 
         exp_lpar_properties = exp_lpar_dict[lpar_key]
         for pname, pvalue in lpar_item.items():
             assert '-' not in pname, \
-                "Property {pn!r} in LPAR {rn!r} is returned with " \
-                "hyphens in the property name". \
-                format(pn=pname, rn=lpar_name)
+                f"Property {pname!r} in LPAR {lpar_name!r} is returned with " \
+                "hyphens in the property name"
             assert pname in exp_lpar_properties, \
-                "Unexpected property {pn!r} in result LPAR {rn!r}". \
-                format(pn=pname, rn=lpar_name)
+                f"Unexpected property {pname!r} in result LPAR {lpar_name!r}"
             if pname not in VOLATILE_LPAR_PROPERTIES:
                 exp_value = exp_lpar_properties[pname]
                 assert pvalue == exp_value, \
-                    "Incorrect value for property {pn!r} of result LPAR " \
-                    "{rn!r}". \
-                    format(pn=pname, rn=lpar_name)
+                    f"Incorrect value for property {pname!r} of result LPAR " \
+                    f"{lpar_name!r}"
 
 
 @pytest.mark.parametrize(
@@ -272,8 +268,8 @@ def test_zhmc_lpar_list(
 
         # Assert module exit code
         assert exit_code == 0, \
-            "Module failed with exit code {e} and message:\n{m}". \
-            format(e=exit_code, m=get_failure_msg(mod_obj))
+            f"Module failed with exit code {exit_code} and message:\n" \
+            f"{get_failure_msg(mod_obj)}"
 
         # Assert module output
         changed, lpar_list = get_module_output(mod_obj)

@@ -16,6 +16,8 @@
 End2end tests for zhmc_user_role_list module.
 """
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 import pytest
 from unittest import mock
@@ -63,12 +65,11 @@ def assert_urole_list(urole_list, exp_urole_dict):
     assert len(urole_list) == len(exp_urole_dict)
     for urole_item in urole_list:
         assert 'name' in urole_item, \
-            "Returned user role {ri!r} does not have a 'name' property". \
-            format(ri=urole_item)
+            f"Returned user role {urole_item!r} does not have a 'name' " \
+            "property"
         urole_name = urole_item['name']
         assert urole_name in exp_urole_dict, \
-            "Unexpected returned user role {rn!r}". \
-            format(rn=urole_name)
+            f"Unexpected returned user role {urole_name!r}"
 
         exp_urole = exp_urole_dict[urole_name]
 
@@ -80,16 +81,14 @@ def assert_urole_list(urole_list, exp_urole_dict):
 
         for pname, pvalue in urole_item.items():
             assert '-' not in pname, \
-                "Property {pn!r} in user role {rn!r} is returned with " \
-                "hyphens in the property name". \
-                format(pn=pname, rn=urole_name)
+                f"Property {pname!r} in user role {urole_name!r} is returned " \
+                "with hyphens in the property name"
             assert pname in exp_urole_properties, \
-                "Unexpected property {pn!r} in user role {rn!r}". \
-                format(pn=pname, rn=urole_name)
+                f"Unexpected property {pname!r} in user role {urole_name!r}"
             exp_value = exp_urole_properties[pname]
             assert pvalue == exp_value, \
-                "Incorrect value for property {pn!r} of user role {rn!r}". \
-                format(pn=pname, rn=urole_name)
+                f"Incorrect value for property {pname!r} of user role " \
+                f"{urole_name!r}"
 
 
 @pytest.mark.parametrize(
@@ -151,8 +150,8 @@ def test_zhmc_user_role_list(
 
     # Assert module exit code
     assert exit_code == 0, \
-        "Module failed with exit code {e} and message:\n{m}". \
-        format(e=exit_code, m=get_failure_msg(mod_obj))
+        f"Module failed with exit code {exit_code} and message:\n" \
+        f"{get_failure_msg(mod_obj)}"
 
     # Assert module output
     changed, urole_list = get_module_output(mod_obj)
