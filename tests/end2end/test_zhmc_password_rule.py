@@ -16,6 +16,8 @@
 End2end tests for zhmc_password_rule module.
 """
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 import uuid
 import pytest
@@ -173,8 +175,8 @@ def test_zhmc_password_rule_facts(
 
     # Assert module exit code
     assert exit_code == 0, \
-        "{w}: Module failed with exit code {e} and message:\n{m}". \
-        format(w=where, e=exit_code, m=get_failure_msg(mod_obj))
+        f"{where}: Module failed with exit code {exit_code} and message:\n" \
+        f"{get_failure_msg(mod_obj)}"
 
     # Assert module output
     changed, pwrule_props = get_module_output(mod_obj)
@@ -285,9 +287,8 @@ def test_zhmc_password_rule_absent_present(
         except zhmcclient.HTTPError as exc:
             if exc.http_status == 403 and exc.reason == 1:
                 # User is not permitted to create password rules
-                pytest.skip("HMC user '{u}' is not permitted to create "
-                            "initial test password rule".
-                            format(u=hd.userid))
+                pytest.skip(f"HMC user '{hd.userid}' is not permitted to "
+                            "create initial test password rule")
     else:
         pwrule_props = None
 
@@ -312,8 +313,8 @@ def test_zhmc_password_rule_absent_present(
         exit_code = exc_info.value.args[0]
 
         assert exit_code == 0, \
-            "{w}: Module failed with exit code {e} and message:\n{m}". \
-            format(w=where, e=exit_code, m=get_failure_msg(mod_obj))
+            f"{where}: Module failed with exit code {exit_code} and " \
+            f"message:\n{get_failure_msg(mod_obj)}"
 
         changed, output_props = get_module_output(mod_obj)
         if changed != exp_changed:
@@ -326,15 +327,15 @@ def test_zhmc_password_rule_absent_present(
             output_props_sorted = \
                 OrderedDict(sorted(output_props.items(), key=lambda x: x[0])) \
                 if output_props is not None else None
+            pwrule_props_str = pformat(pwrule_props_sorted, indent=2)
+            input_props_str = pformat(input_props_sorted, indent=2)
+            output_props_str = pformat(output_props_sorted, indent=2)
             raise AssertionError(
-                "Unexpected change flag returned: actual: {0}, expected: {1}\n"
-                "Initial password rule properties:\n{2}\n"
-                "Module input properties:\n{3}\n"
-                "Resulting password rule properties:\n{4}".
-                format(changed, exp_changed,
-                       pformat(pwrule_props_sorted, indent=2),
-                       pformat(input_props_sorted, indent=2),
-                       pformat(output_props_sorted, indent=2)))
+                "Unexpected change flag returned: "
+                f"actual: {changed}, expected: {exp_changed}\n"
+                f"Initial password rule properties:\n{pwrule_props_str}\n"
+                f"Module input properties:\n{input_props_str}\n"
+                f"Resulting password rule properties:\n{output_props_str}")
         if input_state == 'present':
             assert_pwrule_props(output_props, where)
 

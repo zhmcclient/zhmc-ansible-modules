@@ -17,6 +17,8 @@
 Unit tests for the 'zhmc_virtual_function' Ansible module.
 """
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 import pytest
 from unittest import mock

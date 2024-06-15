@@ -16,6 +16,8 @@
 End2end tests for zhmc_partition_list module.
 """
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 import pytest
 from unittest import mock
@@ -85,33 +87,30 @@ def assert_partition_list(partition_list, exp_partition_dict):
         part_key = (cpc_name, partition_name)
 
         assert partition_name is not None, \
-            "Returned partition {pi!r} does not have a 'name' property". \
-            format(pi=partition_item)
+            f"Returned partition {partition_item!r} does not have a 'name' " \
+            "property"
 
         assert cpc_name is not None, \
-            "Returned partition {pi!r} does not have a 'cpc_name' property". \
-            format(pi=partition_item)
+            f"Returned partition {partition_item!r} does not have a " \
+            "'cpc_name' property"
 
         assert part_key in exp_partition_dict, \
-            "Result contains unexpected partition {pn!r} in CPC {cn!r}". \
-            format(pn=partition_name, cn=cpc_name)
+            f"Result contains unexpected partition {partition_name!r} in CPC " \
+            f"{cpc_name!r}"
 
         exp_partition_properties = exp_partition_dict[part_key]
         for pname, pvalue in partition_item.items():
             assert '-' not in pname, \
-                "Property {pn!r} in partition {rn!r} is returned with " \
-                "hyphens in the property name". \
-                format(pn=pname, rn=partition_name)
+                f"Property {pname!r} in partition {partition_name!r} is " \
+                "returned with hyphens in the property name"
             assert pname in exp_partition_properties, \
-                "Unexpected property {pn!r} in result partition {rn!r}. " \
-                "Expected properties: {en!r}". \
-                format(pn=pname, rn=partition_name,
-                       en=list(exp_partition_properties.keys()))
+                f"Unexpected property {pname!r} in result partition " \
+                f"{partition_name!r}. Expected properties: " \
+                f"{list(exp_partition_properties.keys())!r}"
             exp_value = exp_partition_properties[pname]
             assert pvalue == exp_value, \
-                "Incorrect value for property {pn!r} of result partition " \
-                "{rn!r}". \
-                format(pn=pname, rn=partition_name)
+                f"Incorrect value for property {pname!r} of result partition " \
+                f"{partition_name!r}"
 
 
 @pytest.mark.parametrize(
@@ -256,8 +255,8 @@ def test_zhmc_partition_list(
 
         # Assert module exit code
         assert exit_code == 0, \
-            "Module failed with exit code {e} and message:\n{m}". \
-            format(e=exit_code, m=get_failure_msg(mod_obj))
+            f"Module failed with exit code {exit_code} and message:\n" \
+            f"{get_failure_msg(mod_obj)}"
 
         # Assert module output
         changed, partition_list = get_module_output(mod_obj)

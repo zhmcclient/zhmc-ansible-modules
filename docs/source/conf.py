@@ -18,6 +18,8 @@
 # list see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 # -- Path setup --------------------------------------------------------------
 

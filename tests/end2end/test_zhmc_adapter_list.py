@@ -16,6 +16,8 @@
 End2end tests for zhmc_adapter_list module.
 """
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 import pytest
 from unittest import mock
@@ -85,27 +87,25 @@ def assert_adapter_list(adapter_list, exp_adapter_dict):
         cpc_adapter_key = (cpc_name, adapter_id)
 
         assert adapter_id is not None, \
-            "Returned adapter {pi!r} does not have an 'adapter_id' property". \
-            format(pi=adapter_item)
+            f"Returned adapter {adapter_item!r} does not have an " \
+            "'adapter_id' property"
 
         assert cpc_adapter_key in exp_adapter_dict, \
-            "Result contains unexpected adapter ID {p!r} in CPC {c!r}". \
-            format(p=adapter_id, c=cpc_name)
+            f"Result contains unexpected adapter ID {adapter_id!r} in CPC " \
+            f"{cpc_name!r}"
 
         exp_adapter_properties = exp_adapter_dict[cpc_adapter_key]
         for pname, pvalue in adapter_item.items():
             assert '-' not in pname, \
-                "Property {pn!r} in adapter ID {rn!r} is returned with " \
-                "hyphens in the property name". \
-                format(pn=pname, rn=adapter_id)
+                f"Property {pname!r} in adapter ID {adapter_id!r} is " \
+                "returned with hyphens in the property name"
             assert pname in exp_adapter_properties, \
-                "Unexpected property {pn!r} in result adapter ID {rn!r}". \
-                format(pn=pname, rn=adapter_id)
+                f"Unexpected property {pname!r} in result adapter ID " \
+                f"{adapter_id!r}"
             exp_value = exp_adapter_properties[pname]
             assert pvalue == exp_value, \
-                "Incorrect value for property {pn!r} of result adapter ID " \
-                "{rn!r}". \
-                format(pn=pname, rn=adapter_id)
+                f"Incorrect value for property {pname!r} of result adapter " \
+                f"ID {adapter_id!r}"
 
 
 @pytest.mark.parametrize(
@@ -228,10 +228,9 @@ def test_zhmc_adapter_list(
         exp_adapter_dict = {}
         for adapter in exp_adapters:
             if DEBUG:
-                print("Debug: Expected properties of adapter {p!r} "
-                      "on CPC {c!r}: {n!r}".
-                      format(p=adapter.name, c=cpc.name,
-                             n=list(adapter.properties.keys())))
+                prop_names = list(adapter.properties.keys())
+                print(f"Debug: Expected properties of adapter {adapter.name!r} "
+                      f"on CPC {cpc.name!r}: {prop_names!r}")
             cpc = adapter.manager.parent
             exp_properties = {
                 'cpc_name': cpc.name
@@ -280,8 +279,8 @@ def test_zhmc_adapter_list(
 
         # Assert module exit code
         assert exit_code == 0, \
-            "Module failed with exit code {e} and message:\n{m}". \
-            format(e=exit_code, m=get_failure_msg(mod_obj))
+            f"Module failed with exit code {exit_code} and message:\n" \
+            f"{get_failure_msg(mod_obj)}"
 
         # Assert module output
         changed, adapter_list = get_module_output(mod_obj)

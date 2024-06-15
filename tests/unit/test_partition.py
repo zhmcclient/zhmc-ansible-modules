@@ -17,6 +17,8 @@
 Unit tests for the 'zhmc_partition' Ansible module.
 """
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 import unittest
 from unittest import mock
@@ -676,10 +678,9 @@ def test_partition_create_check_mode_partition(
         exc = exc_info.value
         exc_msg = str(exc)
         assert re.match(exp_exc_pattern, exc_msg), \
-            "Unexpected message in exception {0}:\n" \
-            "  Expctd pattern: {1}\n" \
-            "  Actual message: {2}". \
-            format(exc.__class__.__name__, exp_exc_pattern, exc_msg)
+            f"Unexpected message in exception {exc.__class__.__name__}:\n" \
+            f"  Expctd pattern: {exp_exc_pattern}\n" \
+            f"  Actual message: {exc_msg}"
 
     else:
 
@@ -695,14 +696,14 @@ def test_partition_create_check_mode_partition(
             for prop_hmc_name in exp_props:
 
                 assert prop_hmc_name in act_props, \
-                    "Property {} missing in result:\n" \
-                    "{}".format(prop_hmc_name, act_props)
+                    f"Property {prop_hmc_name} missing in result:\n" \
+                    f"{act_props}"
 
                 prop_value = act_props[prop_hmc_name]
                 exp_prop_value = exp_props[prop_hmc_name]
                 assert prop_value == exp_prop_value, \
-                    "Unexpected value for property {0}: {1}". \
-                    format(prop_hmc_name, exp_prop_value)
+                    f"Unexpected value for property {prop_hmc_name}: " \
+                    f"{exp_prop_value}"
 
 
 # The other functions of the module are tested with function tests.

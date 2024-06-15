@@ -19,6 +19,8 @@ Function tests for the 'zhmc_lpar' Ansible module.
 
 # pylint: disable=bad-option-value,redundant-u-string-prefix
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 import pytest
 from unittest import mock
@@ -442,8 +444,8 @@ class TestLpar:
 
         # Assert module exit code
         assert exit_code == exp_exit_code, \
-            "Unexpected module exit code {0} (expected {1}), message:\n{2}". \
-            format(exit_code, exp_exit_code, get_failure_msg(mod_obj))
+            f"Unexpected module exit code {exit_code} " \
+            f"(expected {exp_exit_code}), message:\n{get_failure_msg(mod_obj)}"
 
         if exp_exit_code == 0:
 
@@ -528,8 +530,8 @@ class TestLpar:
 
         # Assert module exit code
         assert exit_code == exp_exit_code, \
-            "Unexpected module exit code {0} (expected {1}), message:\n{2}". \
-            format(exit_code, exp_exit_code, get_failure_msg(mod_obj))
+            f"Unexpected module exit code {exit_code} " \
+            f"(expected {exp_exit_code}), message:\n{get_failure_msg(mod_obj)}"
 
         # Assert module output
         changed, lpar_props = get_module_output(mod_obj)

@@ -16,6 +16,8 @@
 End2end tests for zhmc_user_role module.
 """
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 import uuid
 import pytest
@@ -175,8 +177,8 @@ def test_zhmc_user_role_facts(
 
     # Assert module exit code
     assert exit_code == 0, \
-        "{w}: Module failed with exit code {e} and message:\n{m}". \
-        format(w=where, e=exit_code, m=get_failure_msg(mod_obj))
+        f"{where}: Module failed with exit code {exit_code} and message:\n" \
+        f"{get_failure_msg(mod_obj)}"
 
     # Assert module output
     changed, urole_props = get_module_output(mod_obj)
@@ -303,9 +305,8 @@ def test_zhmc_user_role_absent_present(
         except zhmcclient.HTTPError as exc:
             if exc.http_status == 403 and exc.reason == 1:
                 # User is not permitted to create user roles
-                pytest.skip("HMC user '{u}' is not permitted to create "
-                            "initial test user role".
-                            format(u=hd.userid))
+                pytest.skip(f"HMC user '{hd.userid}' is not permitted to "
+                            "create initial test user role")
             else:
                 raise
     else:
@@ -341,12 +342,11 @@ def test_zhmc_user_role_absent_present(
         if exit_code != 0:
             msg = get_failure_msg(mod_obj)
             if msg.startswith('HTTPError: 403,1'):
-                pytest.skip("HMC user '{u}' is not permitted to create "
-                            "test user role".
-                            format(u=hd.userid))
+                pytest.skip(f"HMC user '{hd.userid}' is not permitted to "
+                            "create test user role")
             raise AssertionError(
-                "{w}: Module failed with exit code {e} and message:\n{m}".
-                format(w=where, e=exit_code, m=msg))
+                f"{where}: Module failed with exit code {exit_code} and "
+                f"message:\n{msg}")
 
         changed, output_props = get_module_output(mod_obj)
         if changed != exp_changed:
@@ -359,15 +359,15 @@ def test_zhmc_user_role_absent_present(
             output_props_sorted = \
                 dict(sorted(output_props.items(), key=lambda x: x[0])) \
                 if output_props is not None else None
+            urole_props_str = pformat(urole_props_sorted, indent=2)
+            input_props_str = pformat(input_props_sorted, indent=2)
+            output_props_str = pformat(output_props_sorted, indent=2)
             raise AssertionError(
-                "Unexpected change flag returned: actual: {0}, expected: {1}\n"
-                "Initial user role properties:\n{2}\n"
-                "Module input properties:\n{3}\n"
-                "Resulting user role properties:\n{4}".
-                format(changed, exp_changed,
-                       pformat(urole_props_sorted, indent=2),
-                       pformat(input_props_sorted, indent=2),
-                       pformat(output_props_sorted, indent=2)))
+                "Unexpected change flag returned: "
+                f"actual: {changed}, expected: {exp_changed}\n"
+                f"Initial user role properties:\n{urole_props_str}\n"
+                f"Module input properties:\n{input_props_str}\n"
+                f"Resulting user role properties:\n{output_props_str}")
         if input_state == 'present':
             assert_urole_props(output_props, exp_urole_props2, where)
 

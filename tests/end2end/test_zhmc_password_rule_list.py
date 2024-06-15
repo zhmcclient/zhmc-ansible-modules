@@ -16,6 +16,8 @@
 End2end tests for zhmc_password_rule_list module.
 """
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 import pytest
 from unittest import mock
@@ -81,26 +83,24 @@ def assert_pwrule_list(pwrule_list, exp_pwrule_dict):
         pwrule_name = pwrule_item.get('name', None)
 
         assert pwrule_name is not None, \
-            "Returned password rule {ri!r} does not have a 'name' property". \
-            format(ri=pwrule_item)
+            f"Returned password rule {pwrule_item!r} does not have a 'name' " \
+            "property"
 
         assert pwrule_name in exp_pwrule_dict, \
-            "Result contains unexpected password rule {rn!r}". \
-            format(rn=pwrule_name)
+            f"Result contains unexpected password rule {pwrule_name!r}"
 
         exp_pwrule_properties = exp_pwrule_dict[pwrule_name]
         for pname, pvalue in pwrule_item.items():
             assert '-' not in pname, \
-                "Property {pn!r} in password rule {rn!r} is returned with " \
-                "hyphens in the property name". \
-                format(pn=pname, rn=pwrule_name)
+                f"Property {pname!r} in password rule {pwrule_name!r} is " \
+                "returned with hyphens in the property name"
             assert pname in exp_pwrule_properties, \
-                "Unexpected property {pn!r} in password rule {rn!r}". \
-                format(pn=pname, rn=pwrule_name)
+                f"Unexpected property {pname!r} in password rule " \
+                f"{pwrule_name!r}"
             exp_value = exp_pwrule_properties[pname]
             assert pvalue == exp_value, \
-                "Incorrect value for property {pn!r} of password rule {rn!r}". \
-                format(pn=pname, rn=pwrule_name)
+                f"Incorrect value for property {pname!r} of password rule " \
+                f"{pwrule_name!r}"
 
 
 @pytest.mark.parametrize(
@@ -166,8 +166,8 @@ def test_zhmc_password_rule_list(
 
     # Assert module exit code
     assert exit_code == 0, \
-        "Module failed with exit code {e} and message:\n{m}". \
-        format(e=exit_code, m=get_failure_msg(mod_obj))
+        f"Module failed with exit code {exit_code} and message:\n" \
+        f"{get_failure_msg(mod_obj)}"
 
     # Assert module output
     changed, pwrule_list = get_module_output(mod_obj)

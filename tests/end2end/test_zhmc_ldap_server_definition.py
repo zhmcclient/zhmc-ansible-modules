@@ -16,6 +16,8 @@
 End2end tests for zhmc_ldap_server_definition module.
 """
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 import uuid
 import pytest
@@ -198,8 +200,8 @@ def test_zhmc_ldap_server_definition_facts(
 
     # Assert module exit code
     assert exit_code == 0, \
-        "{w}: Module failed with exit code {e} and message:\n{m}". \
-        format(w=where, e=exit_code, m=get_failure_msg(mod_obj))
+        f"{where}: Module failed with exit code {exit_code} and message:\n" \
+        f"{get_failure_msg(mod_obj)}"
 
     # Assert module output
     changed, lsd_props = get_module_output(mod_obj)
@@ -320,9 +322,8 @@ def test_zhmc_ldap_server_definition_absent_present(
         except zhmcclient.HTTPError as exc:
             if exc.http_status == 403 and exc.reason == 1:
                 # User is not permitted to create LDAP server definitions
-                pytest.skip("HMC user '{u}' is not permitted to create "
-                            "initial test LDAP server definition".
-                            format(u=hd.userid))
+                pytest.skip(f"HMC user '{hd.userid}' is not permitted to "
+                            "create initial test LDAP server definition")
             else:
                 raise
     else:
@@ -355,12 +356,11 @@ def test_zhmc_ldap_server_definition_absent_present(
         if exit_code != 0:
             msg = get_failure_msg(mod_obj)
             if msg.startswith('HTTPError: 403,1'):
-                pytest.skip("HMC user '{u}' is not permitted to create "
-                            "test LDAP server definition".
-                            format(u=hd.userid))
+                pytest.skip(f"HMC user '{hd.userid}' is not permitted to "
+                            "create test LDAP server definition")
             raise AssertionError(
-                "{w}: Module failed with exit code {e} and message:\n{m}".
-                format(w=where, e=exit_code, m=msg))
+                f"{where}: Module failed with exit code {exit_code} and "
+                f"message:\n{msg}")
 
         changed, output_props = get_module_output(mod_obj)
         if changed != exp_changed:
@@ -373,15 +373,16 @@ def test_zhmc_ldap_server_definition_absent_present(
             output_props_sorted = \
                 dict(sorted(output_props.items(), key=lambda x: x[0])) \
                 if output_props is not None else None
+            lsd_props_str = pformat(lsd_props_sorted, indent=2)
+            input_props_str = pformat(input_props_sorted, indent=2)
+            output_props_str = pformat(output_props_sorted, indent=2)
             raise AssertionError(
-                "Unexpected change flag returned: actual: {0}, expected: {1}\n"
-                "Initial LDAP server definition properties:\n{2}\n"
-                "Module input properties:\n{3}\n"
-                "Resulting LDAP server definition properties:\n{4}".
-                format(changed, exp_changed,
-                       pformat(lsd_props_sorted, indent=2),
-                       pformat(input_props_sorted, indent=2),
-                       pformat(output_props_sorted, indent=2)))
+                f"Unexpected change flag returned: actual: {changed}, "
+                f"expected: {exp_changed}\n"
+                f"Initial LDAP server definition properties:\n{lsd_props_str}\n"
+                f"Module input properties:\n{input_props_str}\n"
+                "Resulting LDAP server definition properties:\n"
+                f"{output_props_str}")
         if input_state == 'present':
             assert_lsd_props(output_props, exp_lsd_props, where)
 

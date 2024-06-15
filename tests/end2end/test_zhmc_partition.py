@@ -16,6 +16,8 @@
 End2end tests for zhmc_partition module.
 """
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 import uuid
 import copy
@@ -160,16 +162,14 @@ def setup_partition(hd, cpc, name, properties, status='stopped'):
     try:
 
         if DEBUG:
-            print("Debug: setup_partition: Creating test partition {p!r}".
-                  format(p=name))
+            print(f"Debug: setup_partition: Creating test partition {name!r}")
         try:
             partition = cpc.partitions.create(props)
         except zhmcclient.HTTPError as exc:
             if exc.http_status == 403 and exc.reason == 1:
                 # User is not permitted to create partitions
-                pytest.skip("HMC user {u!r} is not permitted to create "
-                            "test partition on CPC {c!r}".
-                            format(u=hd.userid, c=cpc.name))
+                pytest.skip(f"HMC user {hd.userid!r} is not permitted to "
+                            f"create test partition on CPC {cpc.name!r}")
             else:
                 raise
 
@@ -185,8 +185,8 @@ def setup_partition(hd, cpc, name, properties, status='stopped'):
         osa_port_index = vswitch.get_property('port')
         nic_properties = {
             'name': 'nic1',
-            'description': 'OSA adapter {a!r}, port index {p}'.
-            format(a=osa_adapter.name, p=osa_port_index),
+            'description': f'OSA adapter {osa_adapter.name!r}, port index '
+            f'{osa_port_index}',
             'virtual-switch-uri': vswitch.uri,
         }
         if partition.get_property('type') == 'ssc':
@@ -202,12 +202,12 @@ def setup_partition(hd, cpc, name, properties, status='stopped'):
         # Establish the desired partition status.
         if status == 'stopped':
             if DEBUG:
-                print("Debug: setup_partition: Test partition {p!r} is "
-                      "already in status 'stopped'.".format(p=name))
+                print(f"Debug: setup_partition: Test partition {name!r} is "
+                      "already in status 'stopped'.")
         elif status == 'starting':
             if DEBUG:
-                print("Debug: setup_partition: Getting test partition {p!r} "
-                      "into status 'starting'".format(p=name))
+                print("Debug: setup_partition: Getting test partition "
+                      f"{name!r} into status 'starting'")
             try:
                 partition.start(wait_for_completion=False)
             except zhmcclient.Error as exc:
@@ -219,58 +219,56 @@ def setup_partition(hd, cpc, name, properties, status='stopped'):
                     # the partition failed to load. The partition is stopped.".
                     # Reported as STG Defect 1071321, and ignored in this test.
                     print("Warning: setup_partition: Ignoring failure when "
-                          "starting partition: {e}".format(e=exc))
+                          f"starting partition: {exc}")
                 else:
                     raise AssertionError(
                         "Starting test partition without waiting for "
-                        "completion failed with: {e}".format(e=exc))
+                        f"completion failed with: {exc}")
             current_status = pull_partition_status(partition)
             if current_status != 'starting':
                 raise AssertionError(
                     "setup_partition: Starting test partition without waiting "
                     "for completion did not result in status 'starting', but "
-                    "in status {s!r}".format(s=current_status))
+                    f"in status {current_status!r}")
             if DEBUG:
                 print("Debug: setup_partition: Successfully got test "
-                      "partition {p!r} into status 'starting'".format(p=name))
+                      f"partition {name!r} into status 'starting'")
         elif status == 'stopping':
             if DEBUG:
-                print("Debug: setup_partition: Getting test partition {p!r} "
-                      "into status 'stopping'".format(p=name))
+                print("Debug: setup_partition: Getting test partition "
+                      f"{name!r} into status 'stopping'")
             try:
                 job = partition.start(wait_for_completion=False)
                 job.wait_for_completion()
             except zhmcclient.Error as exc:
                 raise AssertionError(
                     "setup_partition: Starting test partition and waiting for "
-                    "completion failed with: {e}".format(e=exc))
+                    f"completion failed with: {exc}")
             try:
                 partition.stop(wait_for_completion=False)
             except zhmcclient.Error as exc:
                 raise AssertionError(
                     "setup_partition: Stopping test partition without waiting "
-                    "for completion failed with: {e}".format(e=exc))
+                    f"for completion failed with: {exc}")
             current_status = pull_partition_status(partition)
             if current_status != 'stopping':
                 raise AssertionError(
                       "setup_partition: Stopping test partition without "
                       "waiting for completion did not result in status "
-                      "'stopping', but in status {s!r}".
-                      format(s=current_status))
+                      f"'stopping', but in status {current_status!r}")
             if DEBUG:
                 print("Debug: setup_partition: Successfully got test partition "
-                      "{p!r} into status 'stopping'".format(p=name))
+                      f"{name!r} into status 'stopping'")
         elif status == 'active':
             ptype = partition.prop('type')
             if ptype != 'ssc':
                 raise AssertionError(
                       "setup_partition: Testcase definition error: Status "
                       "'active' can only be requested for SSC-type partitions, "
-                      "but partition {p!r} has type {t!r}".
-                      format(p=name, t=ptype))
+                      f"but partition {name!r} has type {ptype!r}")
             if DEBUG:
                 print("Debug: setup_partition: Getting SSC test partition "
-                      "{p!r} into status 'active'".format(p=name))
+                      f"{name!r} into status 'active'")
             try:
                 job = partition.start(wait_for_completion=False)
                 job.wait_for_completion()
@@ -283,59 +281,57 @@ def setup_partition(hd, cpc, name, properties, status='stopped'):
                     # the partition failed to load. The partition is stopped.".
                     # Reported as STG Defect 1071321, and ignored in this test.
                     print("Warning: setup_partition: Ignoring failure when "
-                          "starting partition: {e}".format(e=exc))
+                          f"starting partition: {exc}")
                 else:
                     raise AssertionError(
-                        "setup_partition: Starting SSC test partition {p!r} "
-                        "and waiting for completion failed with: {e}".
-                        format(p=name, e=exc))
+                        "setup_partition: Starting SSC test partition "
+                        f"{name!r} and waiting for completion failed with: "
+                        f"{exc}")
             current_status = pull_partition_status(partition)
             if current_status != 'active':
                 raise AssertionError(
-                    "setup_partition: Starting SSC test partition {p!r} and "
-                    "waiting for completion did not result in status 'active', "
-                    "but in status {s!r}".format(p=name, s=current_status))
+                    f"setup_partition: Starting SSC test partition {name!r} "
+                    "and waiting for completion did not result in status "
+                    f"'active', but in status {current_status!r}")
             if DEBUG:
                 print("Debug: setup_partition: Successfully got SSC test "
-                      "partition {p!r} into status 'active'".format(p=name))
+                      f"partition {name!r} into status 'active'")
         elif status == 'paused':
             ptype = partition.prop('type')
             if ptype != 'linux':
                 raise AssertionError(
                       "setup_partition: Testcase definition error: Status "
                       "'paused' can only be requested for linux-type "
-                      "partitions, but partition {p!r} has type {t!r}".
-                      format(p=name, t=ptype))
+                      f"partitions, but partition {name!r} has type {ptype!r}")
             if DEBUG:
                 print("Debug: setup_partition: Getting Linux test partition "
-                      "{p!r} into status 'paused'".format(p=name))
+                      f"{name!r} into status 'paused'")
             try:
                 job = partition.start(wait_for_completion=False)
                 job.wait_for_completion()
             except zhmcclient.Error as exc:
                 raise AssertionError(
-                    "setup_partition: Starting Linux test partition {p!r} and "
-                    "waiting for completion failed with: {e}".
-                    format(p=name, e=exc))
+                    f"setup_partition: Starting Linux test partition {name!r} "
+                    f"and waiting for completion failed with: {exc}")
             current_status = pull_partition_status(partition)
             if current_status != 'paused':
                 raise AssertionError(
-                    "setup_partition: Starting Linux test partition {p!r} and "
-                    "waiting for completion did not result in status 'paused', "
-                    "but in status {s!r}".format(p=name, s=current_status))
+                    f"setup_partition: Starting Linux test partition {name!r} "
+                    "and waiting for completion did not result in status "
+                    f"'paused', but in status {current_status!r}")
             if DEBUG:
                 print("Debug: setup_partition: Successfully got linux test "
-                      "partition {p!r} into status 'paused'".format(p=name))
+                      f"partition {name!r} into status 'paused'")
         else:
             raise AssertionError(
-                  "setup_partition: Testcase definition error: Status {s!r} "
-                  "cannot be requested for setting up partition {p!r}.".
-                  format(s=status, p=name))
+                  "setup_partition: Testcase definition error: Status "
+                  f"{status!r} cannot be requested for setting up partition "
+                  f"{name!r}.")
 
     except zhmcclient.Error as exc:
         teardown_partition(hd, cpc, name)
-        pytest.skip("Error in HMC operation during test partition setup: {e}".
-                    format(e=exc))
+        pytest.skip("Error in HMC operation during test partition setup: "
+                    f"{exc}")
 
     return partition
 
@@ -368,36 +364,35 @@ def teardown_partition(hd, cpc, name):
     status = pull_partition_status(partition)
     if status not in ('stopped', 'reservation-error'):
         if DEBUG:
-            print("Debug: teardown_partition: Stopping test partition {p!r} "
-                  "with status {s!r}".format(p=name, s=status))
+            print("Debug: teardown_partition: Stopping test partition "
+                  f"{name!r} with status {status!r}")
         try:
             job = partition.stop(wait_for_completion=False)
             job.wait_for_completion()
         except zhmcclient.Error as exc:
-            print("Warning: teardown_partition: Stopping test partition {p!r} "
-                  "with status {s!r} on CPC {c!r} failed with: {e}".
-                  format(p=name, c=cpc.name, s=status, e=exc))
+            print("Warning: teardown_partition: Stopping test partition "
+                  f"{name!r} with status {status!r} on CPC {cpc.name!r} "
+                  f"failed with: {exc}")
 
     if DEBUG:
-        print("Debug: teardown_partition: Deleting test partition {p!r}".
-              format(p=name))
+        print(f"Debug: teardown_partition: Deleting test partition {name!r}")
     try:
         partition.delete()
     except zhmcclient.Error as exc:
-        print("Warning: teardown_partition: Deleting test partition {p!r} on "
-              "CPC {c!r} failed with: {e} - please clean it up manually!".
-              format(p=name, c=cpc.name, e=exc))
+        print(f"Warning: teardown_partition: Deleting test partition {name!r} "
+              f"on CPC {cpc.name!r} failed with: {exc} - please clean it up "
+              "manually!")
     if DEBUG:
         print("Debug: teardown_partition: Successfully deleted test partition "
-              "{p!r}".format(p=name))
+              f"{name!r}")
 
 
 def unique_partition_name():
     """
     Return a unique partition name.
     """
-    partition_name = 'zhmc_test_{u}'.format(
-        u=str(uuid.uuid4()).replace('-', ''))
+    random_str = str(uuid.uuid4()).replace('-', '')
+    partition_name = f'zhmc_test_{random_str}'
     return partition_name
 
 
@@ -405,8 +400,8 @@ def unique_stogrp_name():
     """
     Return a unique storage group name.
     """
-    stogrp_name = 'zhmc_test_sg_{u}'.format(
-        u=str(uuid.uuid4()).replace('-', ''))
+    random_str = str(uuid.uuid4()).replace('-', '')
+    stogrp_name = f'zhmc_test_sg_{random_str}'
     return stogrp_name
 
 
@@ -448,9 +443,8 @@ def assert_partition_props(act_props, exp_props, where):
             continue
         if prop_name_hmc in PARTITION_WRITEONLY_PROPS:
             continue
-        where_prop = where + \
-            ", property {p!r} missing in partition properties {pp!r}". \
-            format(p=prop_name_hmc, pp=act_props)
+        where_prop = where + (f", property {prop_name_hmc!r} missing in "
+                              f"partition properties {act_props!r}")
         assert prop_name_hmc in act_props, where_prop
 
     # Assert the expected property values for non-artificial properties
@@ -466,10 +460,9 @@ def assert_partition_props(act_props, exp_props, where):
         if prop_name in ('acceptable-status',):
             exp_value = set(exp_value)
             act_value = set(act_value)
-        where_prop = where + \
-            ", Unexpected value of property {p!r}: Expected: {e!r}, " \
-            "Actual: {a!r}". \
-            format(p=prop_name_hmc, e=exp_value, a=act_value)
+        where_prop = where + (", Unexpected value of property "
+                              f"{prop_name_hmc!r}: Expected: {exp_value!r}, "
+                              f"Actual: {act_value!r}")
         assert act_value == exp_value, where_prop
 
     # Assert type of the artificial properties in the output
@@ -686,14 +679,13 @@ def test_zhmc_partition_facts(
 
         # Assert module exit code
         assert exit_code == 0, \
-            "{w}: Module failed with exit code {e} and message:\n{m}". \
-            format(w=where, e=exit_code, m=get_failure_msg(mod_obj))
+            f"{where}: Module failed with exit code {exit_code} and " \
+            f"message:\n{get_failure_msg(mod_obj)}"
 
         # Assert module output
         changed, part_properties = get_module_output(mod_obj)
         assert changed is False, \
-            "{w}: Module returned changed={c}". \
-            format(w=where, c=changed)
+            f"{where}: Module returned changed={changed}"
 
         # Check the presence and absence of properties in the result
         part_prop_names = list(part_properties.keys())
@@ -978,9 +970,8 @@ def test_zhmc_partition_state(
             if exit_code != 0:
                 msg = get_failure_msg(mod_obj)
                 if msg.startswith('HTTPError: 403,1'):
-                    pytest.skip("HMC user '{u}' is not permitted to create "
-                                "test partition".
-                                format(u=hd.userid))
+                    pytest.skip(f"HMC user '{hd.userid}' is not permitted to "
+                                "create test partition")
                 if msg.startswith('HTTPError: 409,131'):
                     # SSC partitions boot the built-in installer. However,
                     # there seems to be an issue where the SSC partition fails
@@ -990,17 +981,15 @@ def test_zhmc_partition_state(
                     print(f"Warning: Ignoring module failure: {msg}")
                     return
                 assert exp_msg is not None, \
-                    "{w}: Module should have succeeded but failed with exit " \
-                    "code {e} and message:\n{m}". \
-                    format(w=where, e=exit_code, m=msg)
+                    f"{where}: Module should have succeeded but failed with " \
+                    f"exit code {exit_code} and message:\n{msg}"
                 assert re.search(exp_msg, msg), \
-                    "{w}: Module failed as expected, but the error message " \
-                    "is unexpected:\n{m}".format(w=where, m=msg)
+                    f"{where}: Module failed as expected, but the error " \
+                    f"message is unexpected:\n{msg}"
             else:
                 assert exp_msg is None, \
-                    "{w}: Module should have failed but succeeded. Expected " \
-                    "failure message pattern:\n{em!r} ". \
-                    format(w=where, em=exp_msg)
+                    f"{where}: Module should have failed but succeeded. " \
+                    f"Expected failure message pattern:\n{exp_msg!r}"
 
                 changed, output_props = get_module_output(mod_obj)
                 if changed != exp_changed:
@@ -1013,16 +1002,15 @@ def test_zhmc_partition_state(
                     output_props_sorted = \
                         dict(sorted(output_props.items(), key=lambda x: x[0])) \
                         if output_props is not None else None
+                    initial_props_str = pformat(initial_props_sorted, indent=2)
+                    input_props_str = pformat(input_props_sorted, indent=2)
+                    output_props_str = pformat(output_props_sorted, indent=2)
                     raise AssertionError(
-                        "Unexpected change flag returned: actual: {0}, "
-                        "expected: {1}\n"
-                        "Initial partition properties:\n{2}\n"
-                        "Module input properties:\n{3}\n"
-                        "Resulting partition properties:\n{4}".
-                        format(changed, exp_changed,
-                               pformat(initial_props_sorted, indent=2),
-                               pformat(input_props_sorted, indent=2),
-                               pformat(output_props_sorted, indent=2)))
+                        f"Unexpected change flag returned: actual: {changed}, "
+                        f"expected: {exp_changed}\n"
+                        f"Initial partition properties:\n{initial_props_str}\n"
+                        f"Module input properties:\n{input_props_str}\n"
+                        f"Resulting partition properties:\n{output_props_str}")
                 if input_state != 'absent':
                     assert_partition_props(output_props, exp_props, where)
 
@@ -1287,8 +1275,7 @@ def test_zhmc_partition_properties(
             for update_item in update_items:
 
                 if DEBUG:
-                    print("Debug: Testcase: update_item={i!r}".
-                          format(i=update_item))
+                    print(f"Debug: Testcase: update_item={update_item!r}")
 
                 where = f"update_item {update_item!r}"
 
@@ -1328,14 +1315,12 @@ def test_zhmc_partition_properties(
                             exp_changed = True
 
                     if DEBUG:
-                        print("Debug: Property {p!r}: update={u}, "
-                              "update_while_active={ua}, "
-                              "current_hmc_value={cv!r}, "
-                              "new_value={nv!r}, new_hmc_value={nhv!r}".
-                              format(p=prop_hmc_name, u=update,
-                                     ua=update_while_active,
-                                     cv=current_hmc_value, nv=new_value,
-                                     nhv=new_hmc_value))
+                        print(f"Debug: Property {prop_hmc_name!r}: "
+                              f"update={update}, "
+                              f"update_while_active={update_while_active}, "
+                              f"current_hmc_value={current_hmc_value!r}, "
+                              f"new_value={new_value!r}, "
+                              f"new_hmc_value={new_hmc_value!r}")
                     update_props[prop_name] = new_value
                     if prop_name not in NON_RETRIEVABLE_PROPS:
                         exp_props[prop_hmc_name] = new_hmc_value
@@ -1348,8 +1333,7 @@ def test_zhmc_partition_properties(
                     if cpc_cp_count < 2:
                         if DEBUG:
                             print("Debug: CPC has not enough CPs; "
-                                  "skipping update item: {i!r}".
-                                  format(i=update_item))
+                                  f"skipping update item: {update_item!r}")
                         continue
                 if 'ifl_processors' in update_props:
                     cpc_ifl_count = cpc.get_property('processor-count-ifl')
@@ -1358,15 +1342,14 @@ def test_zhmc_partition_properties(
                     if cpc_ifl_count < 2:
                         if DEBUG:
                             print("Debug: CPC has not enough IFLs; "
-                                  "skipping update item: {i!r}".
-                                  format(i=update_item))
+                                  f"skipping update item: {update_item!r}")
                         continue
 
                 initial_props = copy.deepcopy(partition.properties)
 
                 if DEBUG:
-                    print("Debug: Calling module with properties={p!r}".
-                          format(p=update_props))
+                    print("Debug: Calling module with "
+                          f"properties={update_props!r}")
 
                 # Prepare module input parms (must be all required + optional)
                 params = {
@@ -1397,16 +1380,15 @@ def test_zhmc_partition_properties(
                 if exit_code != 0:
                     msg = get_failure_msg(mod_obj)
                     if msg.startswith('HTTPError: 403,1'):
-                        pytest.skip("HMC user '{u}' is not permitted to create "
-                                    "test partition".
-                                    format(u=hd.userid))
+                        pytest.skip(f"HMC user '{hd.userid}' is not permitted "
+                                    "to create test partition")
                     msg_str = f" and failed with message:\n{msg}"  # noqa: E231
                 else:
                     msg_str = ''
                 if exit_code != exp_exit_code:
                     raise AssertionError(
-                        "{w}: Module has unexpected exit code {e}{m}".
-                        format(w=where, e=exit_code, m=msg_str))
+                        f"{where}: Module has unexpected exit code "
+                        f"{exit_code}: {msg_str}")
 
                 changed, output_props = get_module_output(mod_obj)
                 if changed != exp_changed:
@@ -1420,16 +1402,15 @@ def test_zhmc_partition_properties(
                     output_props_sorted = \
                         dict(sorted(output_props.items(), key=lambda x: x[0])) \
                         if output_props is not None else None
+                    initial_props_str = pformat(initial_props_sorted, indent=2)
+                    update_props_str = pformat(update_props_sorted, indent=2)
+                    output_props_str = pformat(output_props_sorted, indent=2)
                     raise AssertionError(
-                        "{w}: Unexpected change flag returned: actual: {a}, "
-                        "expected: {e}\n"
-                        "Initial partition properties:\n{ip}\n"
-                        "Module input properties:\n{up}\n"
-                        "Resulting partition properties:\n{op}".
-                        format(w=where, a=changed, e=exp_changed,
-                               ip=pformat(initial_props_sorted, indent=2),
-                               up=pformat(update_props_sorted, indent=2),
-                               op=pformat(output_props_sorted, indent=2)))
+                        f"{where}: Unexpected change flag returned: "
+                        f"actual: {changed}, expected: {exp_changed}\n"
+                        f"Initial partition properties:\n{initial_props_str}\n"
+                        f"Module input properties:\n{update_props_str}\n"
+                        f"Resulting partition properties:\n{output_props_str}")
 
                 assert_partition_props(output_props, exp_props, where)
 
@@ -1472,8 +1453,8 @@ def test_zhmc_partition_boot_stovol(
         assert cpc.dpm_enabled
 
         if not storage_mgmt_enabled(cpc):
-            pytest.skip("CPC {c} does not have the 'dpm-storage-management' "
-                        "feature enabled".format(c=cpc.name))
+            pytest.skip(f"CPC {cpc.name} does not have the "
+                        "'dpm-storage-management' feature enabled")
 
         console = cpc.manager.console
         session = cpc.manager.session
@@ -1532,8 +1513,7 @@ def test_zhmc_partition_boot_stovol(
                 }
 
             if DEBUG:
-                print("Debug: Calling module with properties={p!r}".
-                      format(p=update_props))
+                print(f"Debug: Calling module with properties={update_props!r}")
 
             # Prepare module input parms (must be all required + optional)
             params = {
@@ -1578,19 +1558,19 @@ def test_zhmc_partition_boot_stovol(
                 msg = get_failure_msg(mod_obj)
                 if exit_code != exp_exit_code:
                     raise AssertionError(
-                        "Module unexpectedly failed with exit code {e}, "
-                        "message: {m}".format(e=exit_code, m=msg))
+                        "Module unexpectedly failed with exit code "
+                        f"{exit_code}, message: {msg}")
                 if not re.search(exp_msg_pattern, msg):
                     raise AssertionError(
-                        "Module failed as expected with exit code {e}, but "
-                        "message does not match expected pattern {mp}: {m}".
-                        format(e=exit_code, mp=exp_msg_pattern, m=msg))
+                        "Module failed as expected with exit code "
+                        f"{exit_code}, but message does not match expected "
+                        f"pattern {exp_msg_pattern}: {msg}")
             else:
                 changed, result = get_module_output(mod_obj)
                 if exit_code != exp_exit_code:
                     raise AssertionError(
-                        "Module unexpectedly succeeded with changed: {c}, "
-                        "result: {r}".format(c=changed, r=result))
+                        "Module unexpectedly succeeded with changed: "
+                        f"{changed}, result: {result}")
 
         finally:
             if stogrp:
@@ -1721,19 +1701,19 @@ def test_zhmc_partition_iso_mount(
                 msg = get_failure_msg(mod_obj)
                 if not exp_msg:
                     raise AssertionError(
-                        "Module unexpectedly failed with exit code {e}, "
-                        "message: {m}".format(e=exit_code, m=msg))
+                        "Module unexpectedly failed with exit code "
+                        f"{exit_code}, message: {msg}")
                 if not re.search(exp_msg, msg):
                     raise AssertionError(
-                        "Module failed as expected with exit code {e}, but "
-                        "message does not match expected pattern {mp}: {m}".
-                        format(e=exit_code, mp=exp_msg, m=msg))
+                        "Module failed as expected with exit code "
+                        f"{exit_code}, but message does not match expected "
+                        f"pattern {exp_msg}: {msg}")
             else:
                 changed, result = get_module_output(mod_obj)
                 if exp_msg:
                     raise AssertionError(
-                        "Module unexpectedly succeeded with changed: {c}, "
-                        "result: {r}".format(c=changed, r=result))
+                        "Module unexpectedly succeeded with changed: "
+                        f"{changed}, result: {result}")
 
         finally:
             image_name = partition.get_property('boot-iso-image-name')

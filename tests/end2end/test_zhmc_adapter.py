@@ -16,6 +16,8 @@
 End2end tests for zhmc_adapter module.
 """
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 import uuid
 import copy
@@ -120,22 +122,19 @@ def setup_adapter(hd, cpc, name, properties):
         except zhmcclient.HTTPError as exc:
             if exc.http_status == 403 and exc.reason == 1:
                 # User is not permitted to create adapters
-                pytest.skip("HMC user {u!r} is not permitted to create "
-                            "test adapter on CPC {c!r}".
-                            format(u=hd.userid, c=cpc.name))
+                pytest.skip(f"HMC user {hd.userid!r} is not permitted to "
+                            f"create test adapter on CPC {cpc.name!r}")
             else:
                 raise
 
         if DEBUG:
-            print("Debug: setup_adapter: Created test adapter {n!r} with "
-                  "adapter-id {i!r}".
-                  format(n=adapter.name, i=adapter_id))
+            print("Debug: setup_adapter: Created test adapter "
+                  f"{adapter.name!r} with adapter-id {adapter_id!r}")
 
     except zhmcclient.Error as exc:
         if adapter_id:
             teardown_adapter(cpc, adapter_id)
-        pytest.skip("Error in HMC operation during test adapter setup: {e}".
-                    format(e=exc))
+        pytest.skip(f"Error in HMC operation during test adapter setup: {exc}")
 
     return adapter
 
@@ -164,22 +163,21 @@ def teardown_adapter(cpc, adapter_id):
     try:
         adapter.delete()
     except zhmcclient.Error as exc:
-        print("Warning: Deleting test adapter with adapter-id {a!r} on CPC "
-              "{c!r} failed with: {e} - please clean it up manually!".
-              format(a=adapter_id, c=cpc.name, e=exc))
+        print(f"Warning: Deleting test adapter with adapter-id {adapter_id!r} "
+              f"on CPC {cpc.name!r} failed with: {exc} - please clean it up "
+              "manually!")
     else:
         if DEBUG:
-            print("Debug: teardown_adapter: Deleted test adapter {n!r} with "
-                  "adapter-id {i!r}".
-                  format(n=adapter.name, i=adapter_id))
+            print("Debug: teardown_adapter: Deleted test adapter "
+                  f"{adapter.name!r} with adapter-id {adapter_id!r}")
 
 
 def unique_adapter_name():
     """
     Return a unique adapter name.
     """
-    adapter_name = 'zhmc_test_{u}'.format(
-        u=str(uuid.uuid4()).replace('-', ''))
+    random_str = str(uuid.uuid4()).replace('-', '')
+    adapter_name = f'zhmc_test_{random_str}'
     return adapter_name
 
 
@@ -231,9 +229,8 @@ def assert_adapter_props(act_props, exp_props, hmc_version_info, where):
                 continue
             if adapter_family not in ADAPTER_FAMILY_COND_PROPS[prop_name_hmc]:
                 continue
-        where_prop = where + \
-            ", property {p!r} missing in adapter properties {pp!r}". \
-            format(p=prop_name_hmc, pp=act_props)
+        where_prop = where + (f", property {prop_name_hmc!r} missing in "
+                              f"adapter properties {act_props!r}")
         assert prop_name_hmc in act_props, where_prop
 
     # Assert the expected property values for non-artificial properties
@@ -247,10 +244,9 @@ def assert_adapter_props(act_props, exp_props, hmc_version_info, where):
         if prop_name in ('acceptable-status',):
             exp_value = set(exp_value)
             act_value = set(act_value)
-        where_prop = where + \
-            ", Unexpected value of property {p!r}: Expected: {e!r}, " \
-            "Actual: {a!r}". \
-            format(p=prop_name_hmc, e=exp_value, a=act_value)
+        where_prop = where + (", Unexpected value of property "
+                              f"{prop_name_hmc!r}: Expected: {exp_value!r}, "
+                              f"Actual: {act_value!r}")
         assert act_value == exp_value, where_prop
 
     # Assert type of the artificial properties in the output
@@ -313,8 +309,8 @@ def test_zhmc_adapter_facts(
         adapters = [a for a in all_adapters
                     if a.get_property('adapter-family') == adapter_family]
         if len(adapters) == 0:
-            pytest.skip("CPC '{c}' has no adapters of family '{t}'".
-                        format(c=cpc.name, t=adapter_family))
+            pytest.skip(f"CPC '{cpc.name}' has no adapters of family "
+                        f"'{adapter_family}'")
         adapter = random.choice(adapters)
 
         # The adapter object provides the expected property values, so
@@ -346,14 +342,13 @@ def test_zhmc_adapter_facts(
 
         # Assert module exit code
         assert exit_code == 0, \
-            "{w}: Module failed with exit code {e} and message:\n{m}". \
-            format(w=where, e=exit_code, m=get_failure_msg(mod_obj))
+            f"{where}: Module failed with exit code {exit_code} and " \
+            f"message:\n{get_failure_msg(mod_obj)}"
 
         # Assert module output
         changed, output_props = get_module_output(mod_obj)
         assert changed is False, \
-            "{w}: Module returned changed={c}". \
-            format(w=where, c=changed)
+            f"{where}: Module returned changed={changed}"
         assert_adapter_props(
             output_props, adapter.properties, hmc_version_info, where)
 
@@ -641,16 +636,15 @@ def test_zhmc_adapter_states(
                                 # 'adapter-id' and 'object-id') are None.
                                 # Skip the test in that case.
                                 # TODO: Remove the skip once implemented.
-                                pytest.skip("Property {pn} is None".
-                                            format(pn=pn))
+                                pytest.skip(f"Property {pn} is None")
                             pvalue = pvalue.replace('{' + pn + '}', pv)
                         input_match2[pname] = pvalue
 
             where = f"adapter '{unique_name}'"
 
             if DEBUG:
-                print("Debug: Input parms: match={m}, name={n}".
-                      format(m=input_match2, n=input_name))
+                print(f"Debug: Input parms: match={input_match2}, "
+                      f"name={input_name}")
 
             # Prepare module input parameters (must be all required + optional)
             params = {
@@ -676,21 +670,18 @@ def test_zhmc_adapter_states(
             if exit_code != 0:
                 msg = get_failure_msg(mod_obj)
                 if msg.startswith('HTTPError: 403,1'):
-                    pytest.skip("HMC user '{u}' is not permitted to create "
-                                "test adapter".
-                                format(u=hd.userid))
+                    pytest.skip(f"HMC user '{hd.userid}' is not permitted to "
+                                "create test adapter")
                 assert exp_msg_pattern is not None, \
-                    "{w}: Module should have succeeded but failed with exit " \
-                    "code {e} and message:\n{m}". \
-                    format(w=where, e=exit_code, m=msg)
+                    f"{where}: Module should have succeeded but failed " \
+                    f"with exit code {exit_code} and message:\n{msg}"
                 assert re.search(exp_msg_pattern, msg), \
-                    "{w}: Module failed as expected, but the error message " \
-                    "is unexpected:\n{m}".format(w=where, m=msg)
+                    f"{where}: Module failed as expected, but the error " \
+                    f"message is unexpected:\n{msg}"
             else:
                 assert exp_msg_pattern is None, \
-                    "{w}: Module should have failed but succeeded. Expected " \
-                    "failure message pattern:\n{em!r} ". \
-                    format(w=where, em=exp_msg_pattern)
+                    f"{where}: Module should have failed but succeeded. " \
+                    f"Expected failure message pattern:\n{exp_msg_pattern!r} "
 
                 changed, output_props = get_module_output(mod_obj)
                 if changed != exp_changed:
@@ -704,16 +695,15 @@ def test_zhmc_adapter_states(
                     output_props_sorted = \
                         dict(sorted(output_props.items(), key=lambda x: x[0])) \
                         if output_props is not None else None
+                    initial_props_str = pformat(initial_props_sorted, indent=2)
+                    input_props_str = pformat(input_props_sorted, indent=2)
+                    output_props_str = pformat(output_props_sorted, indent=2)
                     raise AssertionError(
-                        "Unexpected change flag returned: actual: {0}, "
-                        "expected: {1}\n"
-                        "Initial partition properties:\n{2}\n"
-                        "Module input properties:\n{3}\n"
-                        "Resulting partition properties:\n{4}".
-                        format(changed, exp_changed,
-                               pformat(initial_props_sorted, indent=2),
-                               pformat(input_props_sorted, indent=2),
-                               pformat(output_props_sorted, indent=2)))
+                        f"Unexpected change flag returned: actual: {changed}, "
+                        f"expected: {exp_changed}\n"
+                        f"Initial partition properties:\n{initial_props_str}\n"
+                        f"Module input properties:\n{input_props_str}\n"
+                        f"Resulting partition properties:\n{output_props_str}")
 
                 # In case the module itself has created the adapter, we need
                 # to clean it up later, and get its adapter ID for that.

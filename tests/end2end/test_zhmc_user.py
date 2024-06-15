@@ -16,6 +16,8 @@
 End2end tests for zhmc_user module.
 """
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 import uuid
 import pytest
@@ -272,8 +274,8 @@ def test_zhmc_user_facts(
                    if u.get_property('authentication-type') == auth_type
                    and u.get_property('type') == user_type]
     if len(typed_users) == 0:
-        pytest.skip("HMC has no users with type '{ut}' and authentication-type "
-                    "'{at}'".format(ut=user_type, at=auth_type))
+        pytest.skip(f"HMC has no users with type '{user_type}' and "
+                    f"authentication-type '{auth_type}'")
     user = random.choice(typed_users)
 
     where = f"user '{user.name}'"
@@ -300,8 +302,8 @@ def test_zhmc_user_facts(
 
     # Assert module exit code
     assert exit_code == 0, \
-        "{w}: Module failed with exit code {e} and message:\n{m}". \
-        format(w=where, e=exit_code, m=get_failure_msg(mod_obj))
+        f"{where}: Module failed with exit code {exit_code} and message:\n" \
+        f"{get_failure_msg(mod_obj)}"
 
     # Assert module output
     changed, user_props = get_module_output(mod_obj)
@@ -438,9 +440,8 @@ def test_zhmc_user_absent_present(
         except zhmcclient.HTTPError as exc:
             if exc.http_status == 403 and exc.reason == 1:
                 # User is not permitted to create users
-                pytest.skip("HMC user '{u}' is not permitted to create "
-                            "initial test user".
-                            format(u=hd.userid))
+                pytest.skip(f"HMC user '{hd.userid}' is not permitted to "
+                            "create initial test user")
     else:
         user_props = None
 
@@ -466,8 +467,8 @@ def test_zhmc_user_absent_present(
         exit_code = exc_info.value.args[0]
 
         assert exit_code == 0, \
-            "{w}: Module failed with exit code {e} and message:\n{m}". \
-            format(w=where, e=exit_code, m=get_failure_msg(mod_obj))
+            f"{where}: Module failed with exit code {exit_code} and " \
+            f"message:\n{get_failure_msg(mod_obj)}"
 
         changed, output_props = get_module_output(mod_obj)
         if changed != exp_changed:
@@ -480,15 +481,15 @@ def test_zhmc_user_absent_present(
             output_props_sorted = \
                 OrderedDict(sorted(output_props.items(), key=lambda x: x[0])) \
                 if output_props is not None else None
+            user_props_str = pformat(user_props_sorted, indent=2)
+            input_props_str = pformat(input_props_sorted, indent=2)
+            output_props_str = pformat(output_props_sorted, indent=2)
             raise AssertionError(
-                "Unexpected change flag returned: actual: {0}, expected: {1}\n"
-                "Initial user properties:\n{2}\n"
-                "Module input properties:\n{3}\n"
-                "Resulting user properties:\n{4}".
-                format(changed, exp_changed,
-                       pformat(user_props_sorted, indent=2),
-                       pformat(input_props_sorted, indent=2),
-                       pformat(output_props_sorted, indent=2)))
+                "Unexpected change flag returned: "
+                f"actual: {changed}, expected: {exp_changed}\n"
+                f"Initial user properties:\n{user_props_str}\n"
+                f"Module input properties:\n{input_props_str}\n"
+                f"Resulting user properties:\n{output_props_str}")
         if input_state == 'present':
             assert_user_props(output_props, expand, where)
 

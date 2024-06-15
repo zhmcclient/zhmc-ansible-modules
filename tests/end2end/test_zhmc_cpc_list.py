@@ -16,6 +16,8 @@
 End2end tests for zhmc_cpc_list module.
 """
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 import pytest
 from unittest import mock
@@ -111,27 +113,23 @@ def assert_cpc_list(
     for cpc_item in cpc_list:
 
         assert 'name' in cpc_item, \
-            "Returned CPC {ri!r} does not have a 'name' property". \
-            format(ri=cpc_item)
+            f"Returned CPC {cpc_item!r} does not have a 'name' property"
         cpc_name = cpc_item['name']
 
         assert 'is_managed' in cpc_item, \
-            "Returned CPC {ri!r} does not have a 'is_managed' property". \
-            format(ri=cpc_item)
+            f"Returned CPC {cpc_item!r} does not have a 'is_managed' property"
         is_managed = cpc_item['is_managed']
 
         if is_managed:
             assert cpc_name in exp_cpc_dict, \
-                "Result contains unexpected managed CPC: {rn!r}". \
-                format(rn=cpc_name)
+                f"Result contains unexpected managed CPC: {cpc_name!r}"
 
             exp_cpc_properties = exp_cpc_dict[cpc_name]
             for pname, pvalue in cpc_item.items():
 
                 assert '-' not in pname, \
-                    "Property {pn!r} in CPC {rn!r} is returned with " \
-                    "hyphens in the property name". \
-                    format(pn=pname, rn=cpc_name)
+                    f"Property {pname!r} in CPC {cpc_name!r} is returned " \
+                    "with hyphens in the property name"
 
                 # Handle artificial properties
                 if pname == 'is_managed':
@@ -139,19 +137,17 @@ def assert_cpc_list(
 
                 # Verify normal properties
                 assert pname in exp_cpc_properties, \
-                    "Unexpected property {pn!r} in CPC {rn!r}". \
-                    format(pn=pname, rn=cpc_name)
+                    f"Unexpected property {pname!r} in CPC {cpc_name!r}"
 
                 if pname not in VOLATILE_CPC_PROPERTIES:
                     exp_value = exp_cpc_properties[pname]
                     assert pvalue == exp_value, \
-                        "Incorrect value for property {pn!r} of CPC {rn!r}". \
-                        format(pn=pname, rn=cpc_name)
+                        f"Incorrect value for property {pname!r} of CPC " \
+                        f"{cpc_name!r}"
 
         else:
             assert cpc_name in exp_um_cpc_dict, \
-                "Result contains unexpected unmanaged CPC: {rn!r}". \
-                format(rn=cpc_name)
+                f"Result contains unexpected unmanaged CPC: {cpc_name!r}"
 
 
 @pytest.mark.parametrize(
@@ -233,8 +229,8 @@ def test_zhmc_cpc_list(
 
     # Assert module exit code
     assert exit_code == 0, \
-        "Module failed with exit code {e} and message:\n{m}". \
-        format(e=exit_code, m=get_failure_msg(mod_obj))
+        f"Module failed with exit code {exit_code} and message:\n" \
+        f"{get_failure_msg(mod_obj)}"
 
     # Assert module output
     changed, cpc_list = get_module_output(mod_obj)

@@ -16,6 +16,8 @@
 End2end tests for zhmc_lpar module.
 """
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 import random
 import pdb
@@ -166,10 +168,9 @@ def assert_lpar_props(act_props, exp_props, where):
         if prop_name in ('acceptable-status',):
             exp_value = set(exp_value)
             act_value = set(act_value)
-        where_prop = where + \
-            ", Unexpected value of property {p!r}: Expected: {e!r}, " \
-            "Actual: {a!r}". \
-            format(p=prop_name_hmc, e=exp_value, a=act_value)
+        where_prop = where + (", Unexpected value of property "
+                              f"{prop_name_hmc!r}: Expected: {exp_value!r}, "
+                              f"Actual: {act_value!r}")
         assert act_value == exp_value, where_prop
 
 
@@ -185,9 +186,9 @@ def ensure_lpar_status(logger, lpar, iap, status):
     elif status == 'not-operating':
         op_mode = iap.get_property('operating-mode')
         assert op_mode not in ('ssc', 'zaware'), (
-            "Invalid testcase definition: LPAR {ln!r} has operating mode "
-            "{om!r} and thus cannot be put into 'not-operating' status".
-            format(ln=lpar.name, om=op_mode))
+            f"Invalid testcase definition: LPAR {lpar.name!r} has operating "
+            f"mode {op_mode!r} and thus cannot be put into 'not-operating' "
+            "status")
         saved_auto_load = iap.get_property('load-at-activation')
         iap.update_properties({'load-at-activation': False})
         ensure_lpar_active(
@@ -199,8 +200,7 @@ def ensure_lpar_status(logger, lpar, iap, status):
     else:
         assert status == 'operating', (
             "Invalid testcase definition: ensure_lpar_status() does not "
-            "support getting LPAR {ln!r} into status {s!r}".
-            format(ln=lpar.name, s=status))
+            f"support getting LPAR {lpar.name!r} into status {status!r}")
 
         ensure_lpar_loaded(
             logger, lpar, check_mode=False, activation_profile_name=lpar.name,
@@ -637,25 +637,23 @@ def test_zhmc_lpar_state(
         try:
             loadable_lpars = hd_cpc['loadable_lpars']
         except KeyError:
-            pytest.skip("Inventory file entry for HMC nickname {h!r} does not "
-                        "have a 'loadable_lpars' property in its entry for "
-                        "CPC {c!r}".
-                        format(h=hd.nickname, c=cpc.name))
+            pytest.skip("Inventory file entry for HMC nickname "
+                        f"{hd.nickname!r} does not have a 'loadable_lpars' "
+                        f"property in its entry for CPC {cpc.name!r}")
         try:
             load_profiles = hd_cpc['load_profiles']
         except KeyError:
-            pytest.skip("Inventory file entry for HMC nickname {h!r} does not "
-                        "have a 'load_profiles' property in its entry for "
-                        "CPC {c!r}".
-                        format(h=hd.nickname, c=cpc.name))
+            pytest.skip("Inventory file entry for HMC nickname "
+                        f"{hd.nickname!r} does not have a 'load_profiles' "
+                        f"property in its entry for CPC {cpc.name!r}")
 
         try:
             lpar_name = loadable_lpars[lpar_mode]
         except (KeyError, TypeError):
-            pytest.skip("Inventory file entry for HMC nickname {h!r} does not "
-                        "have an entry for operating mode {om!r} in its "
-                        "'loadable_lpars' property for CPC {c!r}".
-                        format(h=hd.nickname, c=cpc.name, om=lpar_mode))
+            pytest.skip("Inventory file entry for HMC nickname "
+                        f"{hd.nickname!r} does not have an entry for "
+                        f"operating mode {lpar_mode!r} in its "
+                        f"'loadable_lpars' property for CPC {cpc.name!r}")
 
         # Find the image profile corresponding to the LPAR, and the other
         # (wrong) image profile names for specific tests with that.
@@ -665,8 +663,8 @@ def test_zhmc_lpar_state(
         if len(lpar_iaps) >= 1:
             iap = lpar_iaps[0]
         else:
-            pytest.skip("Image activation profile {p!r} does not exist on "
-                        "CPC {c}.".format(c=cpc.name, p=iap_name))
+            pytest.skip(f"Image activation profile {iap_name!r} does not "
+                        f"exist on CPC {cpc.name}.")
         wrong_iap_names = [_iap.name for _iap in all_iaps
                            if _iap.name != lpar_name]
 
@@ -678,10 +676,10 @@ def test_zhmc_lpar_state(
             try:
                 ap_name = load_profiles[lpar_mode]
             except (KeyError, TypeError):
-                pytest.skip("Inventory file entry for HMC nickname {h!r} does "
-                            "not have an entry for operating mode {om!r} in "
-                            "its 'load_profiles' property for CPC {c!r}".
-                            format(h=hd.nickname, c=cpc.name, om=lpar_mode))
+                pytest.skip("Inventory file entry for HMC nickname "
+                            f"{hd.nickname!r} does not have an entry for "
+                            f"operating mode {lpar_mode!r} in its "
+                            f"'load_profiles' property for CPC {cpc.name!r}")
         else:
             assert ap_type is None
             ap_name = None
@@ -695,34 +693,31 @@ def test_zhmc_lpar_state(
             try:
                 nap_name = load_profiles[lpar_mode]
             except (KeyError, TypeError):
-                pytest.skip("Inventory file entry for HMC nickname {h!r} does "
-                            "not have an entry for operating mode {om!r} in "
-                            "its 'load_profiles' property for CPC {c!r}".
-                            format(h=hd.nickname, c=cpc.name, om=lpar_mode))
+                pytest.skip("Inventory file entry for HMC nickname "
+                            f"{hd.nickname!r} does not have an entry for "
+                            f"operating mode {lpar_mode!r} in its "
+                            f"'load_profiles' property for CPC {cpc.name!r}")
 
         try:
             lpar = cpc.lpars.find(name=lpar_name)
         except zhmcclient.NotFound:
-            pytest.skip("LPAR {p!r} does not exist on CPC {c}.".
-                        format(c=cpc.name, p=lpar_name))
+            pytest.skip(f"LPAR {lpar_name!r} does not exist on CPC {cpc.name}.")
 
         if ap_type == 'load' or nap_type == 'load':
             lap_name = load_profiles[lpar_mode]
             try:
                 cpc.load_activation_profiles.find(name=lap_name)
             except zhmcclient.NotFound:
-                pytest.skip("Load activation profile {p!r} does not exist on "
-                            "CPC {c}.".format(c=cpc.name, p=lap_name))
+                pytest.skip(f"Load activation profile {lap_name!r} does not "
+                            f"exist on CPC {cpc.name}.")
 
         op_mode = iap.get_property('operating-mode')
         assert op_mode == lpar_mode, (
-            "Incorrect testcase definition: Operating mode {om!r} in image "
-            "activation profile {p!r} on CPC {c} does not match the "
-            "lpar_mode {lm!r} of the testcase".
-            format(c=cpc.name, p=iap_name, om=op_mode, lm=lpar_mode))
+            f"Incorrect testcase definition: Operating mode {op_mode!r} in "
+            f"image activation profile {iap_name!r} on CPC {cpc.name} does "
+            f"not match the lpar_mode {lpar_mode!r} of the testcase")
 
-        msg = ("Testing on CPC {c} with LPAR {p!r}".
-               format(c=cpc.name, p=lpar.name))
+        msg = f"Testing on CPC {cpc.name} with LPAR {lpar.name!r}"
         print(msg)
         logger.info(msg)
 
@@ -785,35 +780,32 @@ def test_zhmc_lpar_state(
 
             status = pull_lpar_status(lpar)
             assert status == exp_status, (
-                "LPAR {ln!r} has unexpected status {s!r} after module "
-                "return (exit code: {e!r}). Expected status: {es!r}".
-                format(ln=lpar_name, e=exit_code, s=status, es=exp_status))
+                f"LPAR {lpar_name!r} has unexpected status {status!r} after "
+                f"module return (exit code: {exit_code!r}). Expected "
+                f"status: {exp_status!r}")
 
             if exit_code != 0:
                 msg = get_failure_msg(mod_obj)
                 if msg.startswith('HTTPError: 403,1'):
-                    pytest.skip("HMC user {u!r} is not permitted to access "
-                                "test LPAR {ln!r}".
-                                format(u=hd.userid, ln=lpar_name))
+                    pytest.skip(f"HMC user {hd.userid!r} is not permitted to "
+                                f"access test LPAR {lpar_name!r}")
                 assert exp_msg is not None, (
-                    "Module should have succeeded on LPAR {ln!r} but failed "
-                    "with exit code {e} and message:\n{m}".
-                    format(ln=lpar_name, e=exit_code, m=msg))
+                    f"Module should have succeeded on LPAR {lpar_name!r} but "
+                    f"failed with exit code {exit_code} and message:\n{msg}")
                 assert re.search(exp_msg, msg), (
-                    "Module failed as expected on LPAR {ln!r}, but the error "
-                    "message is unexpected:\n{m}".format(ln=lpar_name, m=msg))
+                    f"Module failed as expected on LPAR {lpar_name!r}, but the "
+                    f"error message is unexpected:\n{msg}")
             else:
                 assert exp_msg is None, (
-                    "Module should have failed on LPAR {ln!r} but succeeded. "
-                    "Expected failure message pattern:\n{em!r} ".
-                    format(ln=lpar_name, em=exp_msg))
+                    f"Module should have failed on LPAR {lpar_name!r} but "
+                    "succeeded. Expected failure message pattern:\n"
+                    f"{exp_msg!r}")
 
                 changed, result = get_module_output(mod_obj)
                 if changed != exp_changed:
                     raise AssertionError(
-                        "Unexpected change flag returned: actual: {0}, "
-                        "expected: {1}\n".
-                        format(changed, exp_changed))
+                        f"Unexpected change flag returned: actual: {changed}, "
+                        f"expected: {exp_changed}")
                 assert_lpar_props(result, exp_result, where)
 
         finally:
@@ -991,8 +983,7 @@ def test_zhmc_lpar_facts(
             pytest.skip(f"No LPARs exist on CPC {cpc.name}.")
         lpar = random.choice(lpars)
 
-        msg = ("Testing on CPC {c} with LPAR {p!r}".
-               format(c=cpc.name, p=lpar.name))
+        msg = f"Testing on CPC {cpc.name} with LPAR {lpar.name!r}"
         print(msg)
         logger.info(msg)
 
@@ -1032,28 +1023,24 @@ def test_zhmc_lpar_facts(
         if exit_code != 0:
             msg = get_failure_msg(mod_obj)
             if msg.startswith('HTTPError: 403,1'):
-                pytest.skip("HMC user {u!r} is not permitted to access "
-                            "test LPAR {ln!r}".
-                            format(u=hd.userid, ln=lpar.name))
+                pytest.skip(f"HMC user {hd.userid!r} is not permitted to "
+                            f"access test LPAR {lpar.name!r}")
             assert exp_msg is not None, (
-                "Module should have succeeded on LPAR {ln!r} but failed "
-                "with exit code {e} and message:\n{m}".
-                format(ln=lpar.name, e=exit_code, m=msg))
+                f"Module should have succeeded on LPAR {lpar.name!r} but "
+                f"failed with exit code {exit_code} and message:\n{msg}")
             assert re.search(exp_msg, msg), (
-                "Module failed as expected on LPAR {ln!r}, but the error "
-                "message is unexpected:\n{m}".format(ln=lpar.name, m=msg))
+                f"Module failed as expected on LPAR {lpar.name!r}, but the "
+                f"error message is unexpected:\n{msg}")
         else:
             assert exp_msg is None, (
-                "Module should have failed on LPAR {ln!r} but succeeded. "
-                "Expected failure message pattern:\n{em!r} ".
-                format(ln=lpar.name, em=exp_msg))
+                f"Module should have failed on LPAR {lpar.name!r} but "
+                f"succeeded. Expected failure message pattern:\n{exp_msg!r}")
 
             changed, lpar_properties = get_module_output(mod_obj)
             if changed != exp_changed:
                 raise AssertionError(
-                    "Unexpected change flag returned: actual: {0}, "
-                    "expected: {1}\n".
-                    format(changed, exp_changed))
+                    f"Unexpected change flag returned: actual: {changed}, "
+                    f"expected: {exp_changed}")
 
             # Check the presence and absence of properties in the result
             lpar_prop_names = list(lpar_properties.keys())

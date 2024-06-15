@@ -16,6 +16,8 @@
 End2end tests for zhmc_partition_messages module.
 """
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 import random
 import pytest
@@ -112,8 +114,8 @@ def test_zhmc_partition_messages(
                 active_parts.append(part)
 
         if not active_parts:
-            pytest.skip("CPC {c} does not have any partitions in an active "
-                        "state".format(c=cpc.name))
+            pytest.skip(f"CPC {cpc.name} does not have any partitions in an "
+                        "active state")
 
         part = random.choice(active_parts)
 
@@ -138,8 +140,8 @@ def test_zhmc_partition_messages(
 
         # Assert module exit code
         assert exit_code == 0, \
-            "Module failed with exit code {e} and message:\n{m}". \
-            format(e=exit_code, m=get_failure_msg(mod_obj))
+            f"Module failed with exit code {exit_code} and message:\n" \
+            f"{get_failure_msg(mod_obj)}"
 
         # Assert module output
         changed, messages = get_module_output(mod_obj)
@@ -149,16 +151,14 @@ def test_zhmc_partition_messages(
             seqnos = [m['sequence_number'] for m in messages]
             assert len(seqnos) == len(exp_seqnos), (
                 "Unexpected number of messages:\n"
-                "  Actual sequence numbers: {asn}\n"
-                "  Expected sequence numbers: {esn}\n".
-                format(asn=seqnos, esn=exp_seqnos)
+                f"  Actual sequence numbers: {seqnos}\n"
+                f"  Expected sequence numbers: {exp_seqnos}"
             )
             for i, message in enumerate(messages):
                 exp_seqno = exp_seqnos[i]
                 seqno = message['sequence_number']
                 assert seqno == exp_seqno, (
                     "Unexpected sequence number:\n"
-                    "  Actual sequence numbers: {asn}\n"
-                    "  Expected sequence numbers: {esn}\n".
-                    format(asn=seqnos, esn=exp_seqnos)
+                    f"  Actual sequence numbers: {seqnos}\n"
+                    f"  Expected sequence numbers: {exp_seqnos}"
                 )

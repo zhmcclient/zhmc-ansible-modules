@@ -19,6 +19,8 @@ Function tests for the 'zhmc_partition' Ansible module.
 
 # pylint: disable=bad-option-value,redundant-u-string-prefix
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 import pytest
 from unittest import mock
@@ -987,8 +989,8 @@ class TestPartition:
 
         # Assert module exit code
         assert exit_code == 0, \
-            "Module unexpectedly failed with this message:\n{0}". \
-            format(get_failure_msg(mod_obj))
+            "Module unexpectedly failed with this message:\n" \
+            f"{get_failure_msg(mod_obj)}"
 
         # Assert module output
         changed, part_props = get_module_output(mod_obj)
@@ -1227,8 +1229,8 @@ class TestPartition:
 
         # Assert module exit code
         assert exit_code == 0, \
-            "Module unexpectedly failed with this message:\n{0}". \
-            format(get_failure_msg(mod_obj))
+            "Module unexpectedly failed with this message:\n" \
+            f"{get_failure_msg(mod_obj)}"
 
         # Assert module output
         changed, part_props = get_module_output(mod_obj)
@@ -1389,8 +1391,8 @@ class TestPartition:
 
         # Assert module exit code
         assert exit_code == 0, \
-            "Module unexpectedly failed with this message:\n{0}". \
-            format(get_failure_msg(mod_obj))
+            "Module unexpectedly failed with this message:\n" \
+            f"{get_failure_msg(mod_obj)}"
 
         # Assert module output
         changed, part_props = get_module_output(mod_obj)
@@ -1485,8 +1487,8 @@ class TestPartition:
 
         # Assert module exit code
         assert exit_code == 0, \
-            "Module unexpectedly failed with this message:\n{0}". \
-            format(get_failure_msg(mod_obj))
+            "Module unexpectedly failed with this message:\n" \
+            f"{get_failure_msg(mod_obj)}"
 
         # Assert module output
         changed, part_props = get_module_output(mod_obj)
@@ -1652,8 +1654,8 @@ class TestPartition:
 
         # Assert module exit code
         assert exit_code == 0, \
-            "Module unexpectedly failed with this message:\n{0}". \
-            format(get_failure_msg(mod_obj))
+            "Module unexpectedly failed with this message:\n" \
+            f"{get_failure_msg(mod_obj)}"
 
         # Assert module output
         changed, part_props = get_module_output(mod_obj)
