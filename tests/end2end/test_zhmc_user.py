@@ -124,7 +124,7 @@ STD_USER_PROPERTIES = {
     'authentication-type': STD_USER_INPUT_PROPERTIES['authentication_type'],
     # 'password-rule-uri': updated upon use
     # 'password': is added when needed
-    'force-password-change': \
+    'force-password-change':
     STD_USER_INPUT_PROPERTIES['force_password_change'],
     # 'ldap-server-definition-uri': no LDAP
     # 'userid-on-ldap-server': no LDAP
@@ -135,19 +135,19 @@ STD_USER_PROPERTIES = {
     'max-failed-logins': STD_USER_INPUT_PROPERTIES['max_failed_logins'],
     'disable-delay': STD_USER_INPUT_PROPERTIES['disable_delay'],
     'inactivity-timeout': STD_USER_INPUT_PROPERTIES['inactivity_timeout'],
-    'disruptive-pw-required': \
+    'disruptive-pw-required':
     STD_USER_INPUT_PROPERTIES['disruptive_pw_required'],
-    'disruptive-text-required': \
+    'disruptive-text-required':
     STD_USER_INPUT_PROPERTIES['disruptive_text_required'],
-    'allow-remote-access': \
+    'allow-remote-access':
     STD_USER_INPUT_PROPERTIES['allow_remote_access'],
-    'allow-management-interfaces': \
+    'allow-management-interfaces':
     STD_USER_INPUT_PROPERTIES['allow_management_interfaces'],
-    'max-web-services-api-sessions': \
+    'max-web-services-api-sessions':
     STD_USER_INPUT_PROPERTIES['max_web_services_api_sessions'],
-    'web-services-api-session-idle-timeout': \
+    'web-services-api-session-idle-timeout':
     STD_USER_INPUT_PROPERTIES['web_services_api_session_idle_timeout'],
-    'multi-factor-authentication-required': \
+    'multi-factor-authentication-required':
     STD_USER_INPUT_PROPERTIES['multi_factor_authentication_required'],
     # 'force-shared-secret-key-change': no multi factor auth
     'email-address': STD_USER_INPUT_PROPERTIES['email_address'],
