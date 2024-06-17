@@ -57,17 +57,17 @@ ansible-compat>=4.1.10; python_version >= '3.10'
 #       supports Python 3.13 (see https://github.com/PyO3/pyo3/issues/4038#issuecomment-2156363013)
 safety>=3.0.1; python_version <= '3.12'
 safety>=2.2.0,!=2.3.5,<3.0.0; python_version >= '3.13'
-safety-schemas>=0.0.2
+safety-schemas>=0.0.2; python_version <= '3.12'
 # TODO: Change to dparse 0.6.4 once released
 dparse>=0.6.4b0
 ruamel.yaml>=0.17.21
 click>=8.0.2
-Authlib>=1.2.0
-marshmallow>=3.15.0
-pydantic>=1.10.13
-typer>=0.12.0
-typer-cli>=0.12.0
-typer-slim>=0.12.0
+Authlib>=1.2.0; python_version <= '3.12'
+marshmallow>=3.15.0; python_version <= '3.12'
+pydantic>=1.10.13; python_version <= '3.12'
+typer>=0.12.0; python_version <= '3.12'
+typer-cli>=0.12.0; python_version <= '3.12'
+typer-slim>=0.12.0; python_version <= '3.12'
 
 # Bandit checker
 bandit>=1.7.8
