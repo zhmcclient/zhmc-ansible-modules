@@ -29,3 +29,7 @@ hmc_auth:
     userid: ensadmin
     password: password
     verify: false
+  mocked_hmc_z16:
+    userid: ensadmin
+    password: password
+    verify: false

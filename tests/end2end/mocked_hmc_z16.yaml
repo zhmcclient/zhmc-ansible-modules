@@ -3,12 +3,12 @@
 # zhmcclient_mock/_session.py of the python-zhmcclient project.
 #
 # This mocked HMC manages two CPCs:
-# - CPC_CLA: A z14 in classic mode
-# - CPC_DPM: A z14 in DPM mode
+# - CPC_CLA: A z16 in classic mode
+# - CPC_DPM: A z16 in DPM mode
 
 hmc_definition:
-  host: hmc_z14
-  api_version: '2.40'
+  host: hmc_z16
+  api_version: '4.10'
   consoles:
     - properties:
         # class: created automatically
@@ -16,12 +16,12 @@ hmc_definition:
         object-uri: /api/console
         object-id: hmc1
         name: HMC1
-        description: "primary HMC"
+        description: "primary HMC HMC1"
         ip-swapping-available: true
         is-auto-switch-enabled: false
         is-locked: false
         paired-role: ''
-        version: 2.14.1
+        version: 2.16.0
         machine-info:
           machine-type: '2461'
           machine-serial: DK67009
@@ -30,7 +30,7 @@ hmc_definition:
           this-hmc:
             - domain-name: boeblingen.de.ibm.com
               is-private: false
-              hmc-name: HMCM12
+              hmc-name: HMCA224
               ipv4-address:
                 - ip-address: 9.152.151.47
                   subnet-mask: 255.255.254.0
@@ -211,13 +211,13 @@ hmc_definition:
       user_patterns:
         - properties:
             element-id: userpattern1
-            name: User pattern 1
+            name: "User pattern 1"
             description: "User pattern 1"
 
       password_rules:
         - properties:
             element-id: passwordrule1
-            name: Password rule 1
+            name: "Password rule 1"
             type: "user-defined"
             description: "Password rule 1"
             expiration: 186
@@ -296,7 +296,7 @@ hmc_definition:
         # object-uri: created automatically
         object-id: cpc_cla
         name: "CPC_CLA"
-        description: "Mocked CPC_CLA (z14 in classic mode)"
+        description: "Mocked CPC CPC_CLA (z16 in classic mode)"
         acceptable-status: [active]
         additional-status: ''
         auto-start-list: []
@@ -338,9 +338,9 @@ hmc_definition:
         lan-interface2-address: 00106f0d81cc
         lan-interface2-type: ethernet
         last-energy-advice-time: 1654609202407
-        machine-model: 'M01'
+        machine-model: 'AGZ'
         machine-serial-number: "00000000CLA"
-        machine-type: '3906'
+        machine-type: '3932'
         management-enablement-level: manage
         maximum-alternate-storage-sites: 1
         maximum-hipersockets: 32
@@ -486,7 +486,7 @@ hmc_definition:
         - properties:
             object-id: lpar1
             name: "LPAR1"
-            decription: "Lpar LPAR1"
+            description: "Lpar LPAR1 on CPC_CLA"
             partition-number: 0x41
             partition-identifier: 0x41
             status: "operating"
@@ -497,7 +497,7 @@ hmc_definition:
         - properties:
             object-id: lpar2
             name: "LPAR2"
-            decription: "Lpar LPAR1"
+            description: "Lpar LPAR2 on CPC_CLA"
             partition-number: 0x42
             partition-identifier: 0x42
             status: "not-activated"
@@ -508,17 +508,17 @@ hmc_definition:
       reset_activation_profiles:
         - properties:
             name: "CPC_CLA"
-            decription: "Reset activation profile CPC_CLA"
+            description: "Reset activation profile CPC_CLA"
             iocds-name: "ABC"
       load_activation_profiles:
         - properties:
             name: "STANDARDLOAD"
-            decription: "Load activation profile STANDARDLOAD"
+            description: "Load activation profile STANDARDLOAD"
             ipl-type: "ipltype-standard"
             ipl-address: "189AB"
         - properties:
             name: "SCSILOAD"
-            decription: "Load activation profile SCSILOAD"
+            description: "Load activation profile SCSILOAD"
             ipl-type: "ipltype-scsi"
             worldwide-port-name: "1234"
             logical-unit-number: "1234"
@@ -527,11 +527,11 @@ hmc_definition:
       image_activation_profiles:
         - properties:
             name: "LPAR1"
-            decription: "Image activation profile LPAR1"
+            description: "Image activation profile LPAR1"
             # TODO: Add more properties
         - properties:
             name: "LPAR2"
-            decription: "Image activation profile LPAR2"
+            description: "Image activation profile LPAR2"
             # TODO: Add more properties
     - properties:
         # class: created automatically
@@ -539,7 +539,7 @@ hmc_definition:
         # object-uri: created automatically
         object-id: cpc_dpm
         name: "CPC_DPM"
-        description: "Mocked CPC_DPM (z14 in DPM mode)"
+        description: "Mocked CPC CPC_DPM (z16 in DPM mode)"
         acceptable-status: [active]
         additional-status: ''
         auto-start-list: []
@@ -581,9 +581,9 @@ hmc_definition:
         lan-interface2-address: 00106f0d81cc
         lan-interface2-type: ethernet
         last-energy-advice-time: 1654609202407
-        machine-model: 'M01'
+        machine-model: 'AGZ'
         machine-serial-number: "00000000DPM"
-        machine-type: '3906'
+        machine-type: '3932'
         management-enablement-level: manage
         maximum-alternate-storage-sites: 1
         maximum-hipersockets: 32
