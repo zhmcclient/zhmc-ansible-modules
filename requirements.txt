@@ -37,10 +37,11 @@ ansible-core>=2.16.0; python_version >= '3.12'
 
 requests>=2.31.0
 
-pytz>=2016.10
+pytz>=2019.1
 
-# zhmcclient @ git+https://github.com/zhmcclient/python-zhmcclient.git@master
-zhmcclient>=1.13.3
+# TODO-ZHMC: Use zhmcclient 1.17.0 once releaed.
+zhmcclient @ git+https://github.com/zhmcclient/python-zhmcclient.git@master
+# zhmcclient>=1.17.0
 
 
 # Indirect dependencies for install that are needed for some reason (must be consistent with minimum-constraints-install.txt)
