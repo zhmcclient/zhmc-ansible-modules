@@ -71,7 +71,7 @@ collection_version := $(shell $(PYTHON_CMD) tools/version.py)
 
 # Minimum ansible-core version that is officially supported
 # If this version is changed, update the check_reqs_packages variable as well
-min_ansible_core_version := 2.14.0
+min_ansible_core_version := 2.15.0
 
 # Installed ansible-core version
 ansible_core_version := $(shell $(PYTHON_CMD) -c "import sys,ansible; sys.stdout.write(ansible.__version__)")

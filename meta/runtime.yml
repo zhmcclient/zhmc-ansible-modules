@@ -10,4 +10,4 @@
 # Note: There are some lower ansible versions that are tested against, see the
 # Python requirements and constraint files.
 #
-requires_ansible: ">=2.14.0"
+requires_ansible: ">=2.15.0"
