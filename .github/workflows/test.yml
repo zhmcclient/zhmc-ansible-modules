@@ -81,6 +81,11 @@ jobs:
               }, \
               { \
                 \"os\": \"ubuntu-latest\", \
+                \"python-version\": \"3.11\", \
+                \"package_level\": \"minimum\" \
+              }, \
+              { \
+                \"os\": \"ubuntu-latest\", \
                 \"python-version\": \"3.13.0-beta.1\", \
                 \"package_level\": \"latest\" \
               }, \
