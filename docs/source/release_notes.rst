@@ -36,6 +36,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Dropped support for Python 2.7, 3.5, 3.6, and 3.7.
 
+* Increased minimum officially supported Ansible version to Ansible 8 /
+  ansible-core 2.15. (issue #988)
+
 **Deprecations:**
 
 **Bug fixes:**
