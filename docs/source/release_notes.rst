@@ -29,6 +29,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Incompatible changes:**
 
+* Increased minimum officially supported Ansible version to Ansible 8 /
+  ansible-core 2.15. (issue #988)
+
 **Deprecations:**
 
 **Bug fixes:**
