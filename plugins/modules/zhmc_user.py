@@ -374,7 +374,6 @@ user:
 import uuid  # noqa: E402
 import logging  # noqa: E402
 import traceback  # noqa: E402
-from copy import deepcopy
 from ansible.module_utils.basic import AnsibleModule  # noqa: E402
 
 from ..module_utils.common import log_init, open_session, close_session, \
@@ -1165,9 +1164,9 @@ def main():
 
     module.params['hmc_host'] = parse_hmc_host(module.params['hmc_host'])
 
-    _params = deepcopy(module.params)
+    _params = dict(module.params)
     del _params['hmc_auth']
-    if 'properties' in _params and 'password' in _params['properties']:
+    if _params['properties'] and 'password' in _params['properties']:
         # This is not a hard-coded password. Added # nosec to avoid
         # generating false positive in bandit
         _params['properties']['password'] = BLANKED_OUT    # nosec
