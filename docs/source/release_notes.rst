@@ -92,6 +92,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Dev: Added a final run of the "safety" and "bandit" tools to the "publish"
   workflow, to ensure that a release cannot happen with any findings.
 
+* Added a new Ansible module 'zhmc_cpc_capacity' for managing the temporary
+  processor capacity of a CPC. (issue #243)
+
 **Cleanup:**
 
 * Modernized the code to match the minimum Python version 3.8 (use of f-strings,
