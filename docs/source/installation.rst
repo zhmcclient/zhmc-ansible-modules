@@ -254,7 +254,8 @@ For details, see sections "Connecting to the API HTTP server" and
 Supported environments
 ----------------------
 
-The following Z and LinuxONE machine generations are supported:
+The following Z and LinuxONE machine generations are supported by the IBM Z HMC
+collection:
 
 - z196 / z114
 - zEC12 / zBC12
@@ -263,57 +264,46 @@ The following Z and LinuxONE machine generations are supported:
 - z15 / LinuxONE III
 - z16 / LinuxONE 4
 
-The following environments are supported for running the Ansible modules of the
-ibm.ibm_zhmc collection.
 
-Operating systems:
+.. _`Support matrix`:
 
-- Linux
-- macOS (OS-X)
-- Windows
+Support matrix
+--------------
 
-Python versions:
+The following table shows for each released version of the IBM Z HMC collection
+the Ansible and ansible-core versions supported on the control node, the
+supported Z HMC versions and the support timeframe.
 
-- Python 2.7 to Python 3.8 are supported on a best-can-do basis
-- Python 3.9 and higher are officially supported (depends on the Ansible version used)
+The general strategy is to support the latest released minor version until the
+next minor version is released. See :ref:`Compatibility` for the rules this
+collection applies regarding compatibility.
 
-Ansible versions:
++------------+-----------+--------------+------------+-------------+-------------+
+| Collection | Ansible   | ansible-core | Z HMC      | GA          | End of Life |
++============+===========+==============+============+=============+=============+
+| 1.8.x      | >= 8.0.x  | >= 2.15.x    | >= 2.11    | 2024-01-15  |             |
++------------+-----------+--------------+------------+-------------+-------------+
+| 1.7.x      | >= 7.0.x  | >= 2.14.x    | >= 2.11    | 2023-10-09  | 2024-01-15  |
++------------+-----------+--------------+------------+-------------+-------------+
+| 1.6.x      | >= 2.9.x  | >= 2.9.x     | >= 2.11    | 2023-08-04  | 2023-10-09  |
++------------+-----------+--------------+------------+-------------+-------------+
+| 1.5.x      | >= 2.9.x  | >= 2.9.x     | >= 2.11    | 2023-07-18  | 2023-08-04  |
++------------+-----------+--------------+------------+-------------+-------------+
+| 1.4.x      | >= 2.9.x  | >= 2.9.x     | >= 2.11    | 2023-06-22  | 2023-07-18  |
++------------+-----------+--------------+------------+-------------+-------------+
+| 1.3.x      | >= 2.9.x  | >= 2.9.x     | >= 2.11    | 2023-03-03  | 2023-06-22  |
++------------+-----------+--------------+------------+-------------+-------------+
+| 1.2.x      | >= 2.9.x  | >= 2.9.x     | >= 2.11    | 2022-12-06  | 2023-03-03  |
++------------+-----------+--------------+------------+-------------+-------------+
+| 1.1.x      | >= 2.9.x  | >= 2.9.x     | >= 2.11    | 2022-06-01  | 2022-12-06  |
++------------+-----------+--------------+------------+-------------+-------------+
+| 1.0.x      | >= 2.9.x  | >= 2.9.x     | >= 2.11    | 2022-04-08  | 2022-06-01  |
++------------+-----------+--------------+------------+-------------+-------------+
 
-- Ansible 2.9 to 6 (ansible-core 2.13) are supported on a best-can-do basis
-- Ansible 7 (ansible-core 2.14) and higher are officially supported
+The `Ansible-core Support Matrix <https://docs.ansible.com/ansible/latest/reference_appendices/release_and_maintenance.html#ansible-core-support-matrix>`_
+shows for each ansible-core version the supported Python versions and the
+support timeframe.
 
-See `Ansible-core Support Matrix <https://docs.ansible.com/ansible/latest/reference_appendices/release_and_maintenance.html#ansible-core-support-matrix>`_
-for the officially supported Ansible / ansible-core versions and their Python versions.
-
-See `Red Hat Ansible Automation Platform Life Cycle <https://access.redhat.com/support/policy/updates/ansible-automation-platform>`_
-for the officially supported Ansible Automation Platform versions and their ansible-core
-versions.
-
-The general strategy for the ibm.ibm_zhmc collection is that all Python versions
-supported by the sanity test tool of a particular Ansible version are supported,
-as shown in the following tables:
-
-=======  =================  =========================  ===========
-Ansible  Ansible core       Supported Python versions  Support
--------  -----------------  -------------------------  -----------
-2.9      ansible 2.9        3.8                        best-can-do
-2.10     ansible 2.10       3.8                        best-can-do
-3        ansible-base 2.10  3.8                        best-can-do
-4        ansible-core 2.11  3.8 - 3.9                  best-can-do
-5        ansible-core 2.12  3.8 - 3.10                 best-can-do
-6        ansible-core 2.13  3.8 - 3.10                 best-can-do
-7        ansible-core 2.14  3.9 - 3.11                 best-can-do
-8        ansible-core 2.15  3.9 - 3.11                 official
-9        ansible-core 2.16  3.10 - 3.12                official
-10       ansible-core 2.17  3.10 - 3.12                official
-=======  =================  =========================  ===========
-
-======  ==========================
-Python  Supported Ansible versions
-------  --------------------------
-3.8     2.9 - 2.10, 3 - 6
-3.9     4 - 8
-3.10    5 - 9
-3.11    7 - 9
-3.12    9 and higher
-======  ==========================
+The `AAP included packages and versions <https://access.redhat.com/support/policy/updates/ansible-automation-platform#packages-and-versions>`_
+shows for each AAP version the ansible-core version it includes and the
+support timeframe.
