@@ -293,13 +293,38 @@ local clone of the zhmc-ansible-modules Git repo.
       add text for any known issues you want users to know about.
     * Remove all empty list items.
 
-5.  Update the authors:
+5.  When releasing a new major or minor version, edit the support matrix:
+
+    .. code-block:: sh
+
+        vi docs/source/installation.rst
+
+    and make the following changes in section "Support matrix":
+
+    * Set the End of Life date of the previous minor version (M.N-1.x) to
+      today's date.
+    * Add a new row in the table for the current release (M.N.U), that has
+      today's date as the GA date and an empty End of Life cell.
+
+6.  Edit the change log table:
+
+    .. code-block:: sh
+
+        vi README.md
+
+    and make the following changes in section "Release Notes and Roadmap":
+
+    * When releasing a fix version, update the fix version in the table.
+    * When releasing a major or minor version, add a row with the released
+      version to the table, and increase the version in development.
+
+7.  Update the authors:
 
     .. code-block:: sh
 
         make authors
 
-6.  Run the Safety tool:
+8.  Run the Safety tool:
 
     .. code-block:: sh
 
@@ -312,24 +337,24 @@ local clone of the zhmc-ansible-modules Git repo.
     If the safety run fails, you need to fix the safety issues that are
     reported.
 
-7.  Review the result of the latest Mend scan in
+9.  Review the result of the latest Mend scan in
     `this Box folder <https://ibm.ent.box.com/folder/190964336381?s=070khx70ijj3ime3k4yfx7r7cjb2xx0k>`_.
 
     If the Mend scan shows any issues, fix them.
 
-8.  Check for any
+10. Check for any
     `dependabot issues <https://github.com/zhmcclient/zhmc-ansible-modules/security/dependabot>`_.
 
     If there are any dependebot issues, fix them.
 
-9.  Commit your changes and push the topic branch to the remote repo:
+11. Commit your changes and push the topic branch to the remote repo:
 
     .. code-block:: sh
 
         git commit -asm "Release ${MNU}"
         git push --set-upstream origin release_${MNU}
 
-10. On GitHub, create a Pull Request for branch ``release_M.N.U``.
+12. On GitHub, create a Pull Request for branch ``release_M.N.U``.
 
     Important: When creating Pull Requests, GitHub by default targets the
     ``master`` branch. When releasing based on a stable branch, you need to
@@ -339,18 +364,18 @@ local clone of the zhmc-ansible-modules Git repo.
     tests for all defined environments, since it discovers by the branch name
     that this is a PR for a release.
 
-11. On GitHub, once the checks for that Pull Request have succeeded, merge the
+13. On GitHub, once the checks for that Pull Request have succeeded, merge the
     Pull Request (no review is needed). This automatically deletes the branch
     on GitHub.
 
     If the PR did not succeed, fix the issues.
 
-12. On GitHub, close milestone ``M.N.U``.
+14. On GitHub, close milestone ``M.N.U``.
 
     Verify that the milestone has no open items anymore. If it does have open
     items, investigate why and fix.
 
-13. Publish the collection to Ansible Galaxy
+15. Publish the collection to Ansible Galaxy
 
     .. code-block:: sh
 
@@ -366,7 +391,7 @@ local clone of the zhmc-ansible-modules Git repo.
     it on Github, and finally creates a new stable branch on Github if the master
     branch was released.
 
-14. Verify the publishing
+16. Verify the publishing
 
     * Verify that the new version is available on Ansible Galaxy at
       https://galaxy.ansible.com/ibm/ibm_zhmc/
@@ -381,7 +406,7 @@ local clone of the zhmc-ansible-modules Git repo.
     * Verify that the new version has documentation on Github pages at
       https://zhmcclient.github.io/zhmc-ansible-modules/release_notes.html
 
-15. Publish the collection to Ansible AutomationHub
+17. Publish the collection to Ansible AutomationHub
 
     This needs to be done in addition to the prior publish step, and it
     has not successfully been automated as of today.
