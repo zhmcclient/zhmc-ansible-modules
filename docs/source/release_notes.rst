@@ -158,6 +158,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   but the Makefile sets variables that depend on ansible being installed.
   That situation was handled correctly, but the error messages were confusing.
 
+* Docs: Adjusted README file to new Ansible Automation Hub requirements.
+  (issue #993)
+
 **Known issues:**
 
 * See `list of open issues`_.
