@@ -24,6 +24,8 @@ security:
             reason: PyYAML full_load method or FullLoader is not used
         42923:
             reason: Fixed Ansible version is stated to be 0
+        54219:
+            reason: Fixed ansible version is 2.10.0, but need to support ansible 2.9
         54229:
             reason: Not yet fixed in any ansible version, but need to support ansible 2.9
         54230:
