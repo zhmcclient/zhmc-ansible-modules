@@ -32,7 +32,7 @@ DOCUMENTATION = """
 ---
 module: zhmc_cpc
 version_added: "2.9.0"
-short_description: Manage CPCs
+short_description: Manage a CPC
 description:
   - Deactivate/Stop a CPC (Z system).
   - Activate/Start a CPC and update its properties.

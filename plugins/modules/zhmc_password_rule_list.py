@@ -32,7 +32,7 @@ DOCUMENTATION = """
 ---
 module: zhmc_password_rule_list
 version_added: "2.9.0"
-short_description: List Password Rules
+short_description: List HMC password rules
 description:
   - List Password Rules on the HMC.
 author:

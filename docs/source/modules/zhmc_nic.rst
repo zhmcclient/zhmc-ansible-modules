@@ -4,8 +4,8 @@
 .. _zhmc_nic_module:
 
 
-zhmc_nic -- Create NICs in partitions
-=====================================
+zhmc_nic -- Manage a NIC of a partition (DPM mode)
+==================================================
 
 
 

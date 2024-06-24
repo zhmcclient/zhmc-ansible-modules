@@ -4,8 +4,8 @@
 .. _zhmc_password_rule_module:
 
 
-zhmc_password_rule -- Create HMC password rules
-===============================================
+zhmc_password_rule -- Manage an HMC password rule
+=================================================
 
 
 

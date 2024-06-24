@@ -32,7 +32,7 @@ DOCUMENTATION = """
 ---
 module: zhmc_partition
 version_added: "2.9.0"
-short_description: Create partitions
+short_description: Manage a partition (DPM mode)
 description:
   - Gather facts about a partition of a CPC (Z system), including its HBAs,
     NICs, virtual functions, and crypto configuration including crypto

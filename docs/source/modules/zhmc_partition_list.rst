@@ -4,8 +4,8 @@
 .. _zhmc_partition_list_module:
 
 
-zhmc_partition_list -- List partitions
-======================================
+zhmc_partition_list -- List partitions (DPM mode)
+=================================================
 
 
 

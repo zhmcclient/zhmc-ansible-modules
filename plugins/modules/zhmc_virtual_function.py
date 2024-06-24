@@ -32,7 +32,7 @@ DOCUMENTATION = """
 ---
 module: zhmc_virtual_function
 version_added: "2.9.0"
-short_description: Create virtual functions in partitions
+short_description: Manage a virtual function of a partition (DPM mode)
 description:
   - Create, update, or delete a virtual function in a partition of a CPC
     (Z system).

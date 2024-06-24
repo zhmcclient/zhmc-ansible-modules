@@ -4,8 +4,8 @@
 .. _zhmc_user_role_module:
 
 
-zhmc_user_role -- Create HMC user roles
-=======================================
+zhmc_user_role -- Manage an HMC user role
+=========================================
 
 
 

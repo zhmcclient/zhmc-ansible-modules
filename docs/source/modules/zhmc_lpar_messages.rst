@@ -4,8 +4,8 @@
 .. _zhmc_lpar_messages_module:
 
 
-zhmc_lpar_messages -- Get console messages for OS in an LPAR
-============================================================
+zhmc_lpar_messages -- Get console messages for OS in an LPAR (classic mode)
+===========================================================================
 
 
 

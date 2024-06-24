@@ -4,8 +4,8 @@
 .. _zhmc_cpc_module:
 
 
-zhmc_cpc -- Manage CPCs
-=======================
+zhmc_cpc -- Manage a CPC
+========================
 
 
 

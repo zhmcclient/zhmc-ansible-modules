@@ -4,8 +4,8 @@
 .. _zhmc_adapter_list_module:
 
 
-zhmc_adapter_list -- List adapters
-==================================
+zhmc_adapter_list -- List adapters (DPM mode)
+=============================================
 
 
 

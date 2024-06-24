@@ -4,8 +4,8 @@
 .. _zhmc_adapter_module:
 
 
-zhmc_adapter -- Update adapters and create Hipersocket adapters
-===============================================================
+zhmc_adapter -- Manage an adapter (DPM mode)
+============================================
 
 
 

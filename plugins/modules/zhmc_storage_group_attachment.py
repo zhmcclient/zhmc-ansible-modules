@@ -32,7 +32,8 @@ DOCUMENTATION = """
 ---
 module: zhmc_storage_group_attachment
 version_added: "2.9.0"
-short_description: Attach storage groups to partitions
+short_description: "Manage attachment of a storage group to a partition
+  (DPM mode)"
 description:
   - Gather facts about the attachment of a storage group to a partition of a
     CPC (Z system).

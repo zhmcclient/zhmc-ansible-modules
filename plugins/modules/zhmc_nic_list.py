@@ -32,7 +32,7 @@ DOCUMENTATION = """
 ---
 module: zhmc_nic_list
 version_added: "2.9.0"
-short_description: List NICs
+short_description: List NICs of a partition (DPM mode)
 description:
   - List NICs on a specific partition of a CPC (Z system).
 seealso:

@@ -32,7 +32,7 @@ DOCUMENTATION = """
 ---
 module: zhmc_partition_list
 version_added: "2.9.0"
-short_description: List partitions
+short_description: List partitions (DPM mode)
 description:
   - List partitions on a specific CPC (Z system) or on all managed CPCs.
   - CPCs in classic mode are ignored (i.e. do not lead to a failure).

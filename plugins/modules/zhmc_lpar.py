@@ -32,7 +32,7 @@ DOCUMENTATION = """
 ---
 module: zhmc_lpar
 version_added: "2.9.0"
-short_description: Manage LPARs
+short_description: Manage an LPAR (classic mode)
 description:
   - Gather facts about an LPAR of a CPC (Z system) in classic mode.
   - Update modifiable properties of an active LPAR.

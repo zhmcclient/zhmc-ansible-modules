@@ -32,7 +32,7 @@ DOCUMENTATION = """
 ---
 module: zhmc_storage_group
 version_added: "2.9.0"
-short_description: Create storage groups
+short_description: Manage a storage group (DPM mode)
 description:
   - Gather facts about a storage group associated with a CPC (Z system),
     including its storage volumes and virtual storage resources.

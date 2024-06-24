@@ -4,8 +4,8 @@
 .. _zhmc_ldap_server_definition_module:
 
 
-zhmc_ldap_server_definition -- Manage LDAP Server Definitions
-=============================================================
+zhmc_ldap_server_definition -- Manage an LDAP Server Definition on the HMC
+==========================================================================
 
 
 

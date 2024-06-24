@@ -4,8 +4,8 @@
 .. _zhmc_storage_group_attachment_module:
 
 
-zhmc_storage_group_attachment -- Attach storage groups to partitions
-====================================================================
+zhmc_storage_group_attachment -- Manage attachment of a storage group to a partition (DPM mode)
+===============================================================================================
 
 
 
