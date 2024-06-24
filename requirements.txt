@@ -44,7 +44,8 @@ ansible-core>=2.16.0; python_version >= '3.12'
 #   remove ImportWarning in six
 requests>=2.25.0; python_version <= '3.5'
 requests>=2.26.0; python_version == '3.6'
-requests>=2.31.0; python_version >= '3.7'
+requests>=2.31.0; python_version == '3.7'
+requests>=2.32.2; python_version >= '3.8'
 
 pytz>=2016.10
 
