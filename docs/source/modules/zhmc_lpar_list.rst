@@ -4,8 +4,8 @@
 .. _zhmc_lpar_list_module:
 
 
-zhmc_lpar_list -- List LPARs
-============================
+zhmc_lpar_list -- List LPARs (classic mode)
+===========================================
 
 
 

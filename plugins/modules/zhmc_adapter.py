@@ -32,7 +32,7 @@ DOCUMENTATION = """
 ---
 module: zhmc_adapter
 version_added: "2.9.0"
-short_description: Update adapters and create Hipersocket adapters
+short_description: Manage an adapter (DPM mode)
 description:
   - Gather facts about an adapter of a CPC (Z system), including its ports.
   - Update the properties of an adapter and its ports.

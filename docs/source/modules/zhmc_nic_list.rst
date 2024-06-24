@@ -4,8 +4,8 @@
 .. _zhmc_nic_list_module:
 
 
-zhmc_nic_list -- List NICs
-==========================
+zhmc_nic_list -- List NICs of a partition (DPM mode)
+====================================================
 
 
 

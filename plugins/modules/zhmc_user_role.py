@@ -32,7 +32,7 @@ DOCUMENTATION = """
 ---
 module: zhmc_user_role
 version_added: "2.9.0"
-short_description: Create HMC user roles
+short_description: Manage an HMC user role
 description:
   - Gather facts about a user role on an HMC of a Z system.
   - Create, delete, or update a user role on an HMC.

@@ -4,8 +4,8 @@
 .. _zhmc_storage_group_module:
 
 
-zhmc_storage_group -- Create storage groups
-===========================================
+zhmc_storage_group -- Manage a storage group (DPM mode)
+=======================================================
 
 
 

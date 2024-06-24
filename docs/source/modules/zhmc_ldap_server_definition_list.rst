@@ -4,8 +4,8 @@
 .. _zhmc_ldap_server_definition_list_module:
 
 
-zhmc_ldap_server_definition_list -- List LDAP Server Definitions
-================================================================
+zhmc_ldap_server_definition_list -- List LDAP Server Definitions on the HMC
+===========================================================================
 
 
 

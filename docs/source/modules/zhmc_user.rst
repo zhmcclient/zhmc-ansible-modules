@@ -4,8 +4,8 @@
 .. _zhmc_user_module:
 
 
-zhmc_user -- Create HMC users
-=============================
+zhmc_user -- Manage an HMC user
+===============================
 
 
 

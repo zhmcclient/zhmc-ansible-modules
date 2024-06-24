@@ -4,8 +4,8 @@
 .. _zhmc_crypto_attachment_module:
 
 
-zhmc_crypto_attachment -- Attach crypto resources to partitions
-===============================================================
+zhmc_crypto_attachment -- Manage the crypto configuration of a partition (DPM mode)
+===================================================================================
 
 
 

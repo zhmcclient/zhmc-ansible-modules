@@ -4,8 +4,8 @@
 .. _zhmc_partition_messages_module:
 
 
-zhmc_partition_messages -- Get console messages for OS in a partition
-=====================================================================
+zhmc_partition_messages -- Get console messages for OS in a partition (DPM mode)
+================================================================================
 
 
 

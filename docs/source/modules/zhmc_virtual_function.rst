@@ -4,8 +4,8 @@
 .. _zhmc_virtual_function_module:
 
 
-zhmc_virtual_function -- Create virtual functions in partitions
-===============================================================
+zhmc_virtual_function -- Manage a virtual function of a partition (DPM mode)
+============================================================================
 
 
 

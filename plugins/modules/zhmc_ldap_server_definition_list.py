@@ -32,7 +32,7 @@ DOCUMENTATION = """
 ---
 module: zhmc_ldap_server_definition_list
 version_added: "2.9.0"
-short_description: List LDAP Server Definitions
+short_description: List LDAP Server Definitions on the HMC
 description:
   - List LDAP Server Definitions on the HMC.
 author:

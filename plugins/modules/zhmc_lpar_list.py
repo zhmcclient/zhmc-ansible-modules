@@ -32,7 +32,7 @@ DOCUMENTATION = """
 ---
 module: zhmc_lpar_list
 version_added: "2.9.0"
-short_description: List LPARs
+short_description: List LPARs (classic mode)
 description:
   - List LPARs on a specific CPC (Z system) or on all managed CPCs.
   - CPCs in DPM mode are ignored (i.e. do not lead to a failure).

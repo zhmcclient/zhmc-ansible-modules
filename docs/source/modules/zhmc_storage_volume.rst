@@ -4,8 +4,8 @@
 .. _zhmc_storage_volume_module:
 
 
-zhmc_storage_volume -- Create storage volumes
-=============================================
+zhmc_storage_volume -- Manage a storage volume (DPM mode)
+=========================================================
 
 
 

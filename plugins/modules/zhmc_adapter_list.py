@@ -32,7 +32,7 @@ DOCUMENTATION = """
 ---
 module: zhmc_adapter_list
 version_added: "2.9.0"
-short_description: List adapters
+short_description: List adapters (DPM mode)
 description:
   - List adapters on a specific CPC (Z system) or on all managed CPCs.
   - CPCs in classic mode are ignored (i.e. do not lead to a failure).

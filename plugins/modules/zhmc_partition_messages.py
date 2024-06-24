@@ -32,7 +32,7 @@ DOCUMENTATION = """
 ---
 module: zhmc_partition_messages
 version_added: "2.9.0"
-short_description: Get console messages for OS in a partition
+short_description: Get console messages for OS in a partition (DPM mode)
 description:
   - Get the OS console messages for the OS running in an active partition.
 author:

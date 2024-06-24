@@ -32,7 +32,7 @@ DOCUMENTATION = """
 ---
 module: zhmc_nic
 version_added: "2.9.0"
-short_description: Create NICs in partitions
+short_description: Manage a NIC of a partition (DPM mode)
 description:
   - Gather facts about a NIC (virtual Network Interface Card) in a partition of
     a CPC (Z system).

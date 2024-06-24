@@ -4,8 +4,8 @@
 .. _zhmc_lpar_module:
 
 
-zhmc_lpar -- Manage LPARs
-=========================
+zhmc_lpar -- Manage an LPAR (classic mode)
+==========================================
 
 
 

@@ -32,7 +32,7 @@ DOCUMENTATION = """
 ---
 module: zhmc_lpar_messages
 version_added: "2.9.0"
-short_description: Get console messages for OS in an LPAR
+short_description: Get console messages for OS in an LPAR (classic mode)
 description:
   - Get the OS console messages for the OS running in a loaded LPAR.
 author:

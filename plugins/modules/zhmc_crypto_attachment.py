@@ -32,7 +32,7 @@ DOCUMENTATION = """
 ---
 module: zhmc_crypto_attachment
 version_added: "2.9.0"
-short_description: Attach crypto resources to partitions
+short_description: Manage the crypto configuration of a partition (DPM mode)
 description:
   - Gather facts about the attachment of crypto adapters and crypto domains to
     a partition of a CPC (Z system).

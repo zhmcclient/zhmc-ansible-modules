@@ -4,8 +4,8 @@
 .. _zhmc_partition_module:
 
 
-zhmc_partition -- Create partitions
-===================================
+zhmc_partition -- Manage a partition (DPM mode)
+===============================================
 
 
 

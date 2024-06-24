@@ -4,8 +4,8 @@
 .. _zhmc_password_rule_list_module:
 
 
-zhmc_password_rule_list -- List Password Rules
-==============================================
+zhmc_password_rule_list -- List HMC password rules
+==================================================
 
 
 

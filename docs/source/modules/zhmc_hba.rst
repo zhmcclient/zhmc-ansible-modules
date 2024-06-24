@@ -4,8 +4,8 @@
 .. _zhmc_hba_module:
 
 
-zhmc_hba -- Create HBAs in partitions
-=====================================
+zhmc_hba -- Manage an HBA of a partition (z13 only, DPM mode)
+=============================================================
 
 
 

@@ -32,7 +32,7 @@ DOCUMENTATION = """
 ---
 module: zhmc_ldap_server_definition
 version_added: "2.9.0"
-short_description: Manage LDAP Server Definitions
+short_description: Manage an LDAP Server Definition on the HMC
 description:
   - Gather facts about an LDAP Server Definition on an HMC of a Z system.
   - Create, delete, or update an LDAP Server Definition on an HMC.

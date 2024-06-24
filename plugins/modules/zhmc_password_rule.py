@@ -32,7 +32,7 @@ DOCUMENTATION = """
 ---
 module: zhmc_password_rule
 version_added: "2.9.0"
-short_description: Create HMC password rules
+short_description: Manage an HMC password rule
 description:
   - Gather facts about a password rule on an HMC of a Z system.
   - Create, delete, or update a password rule on an HMC.
