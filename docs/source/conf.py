@@ -42,17 +42,10 @@ def get_docs_tags(min_version):
     """
     Get the list of Git tags that should be included in the documentation.
 
-    The algorithm uses those tags that match the format M.N.U, and that are
-    equal to or higher than the specified minimum version.
-
-    As a result, all update version of a particular minor version are built,
-    e.g. 0.9.0, 0.9.1, and 0.9.2. A prior approach built only the latest
-    update version of a particular minor version, i.e. only 0.9.2 in this
-    example, effectively removing the docs for 0.9.1 when 0.9.2 was released.
-    While that approach is more economic in terms of number of versions,
-    it makes it hard for users to reference the documentation, since a
-    version they have referenced today may no longer exist tomorrow, just
-    because a fix was released.
+    The algorithm uses those tags that:
+    * match the format M.N.U, and
+    * have at least the specified minimum version, and
+    * are the latest fix version of each minor version
 
     Parameters:
 
@@ -78,14 +71,26 @@ def get_docs_tags(min_version):
         # an empty tuple.
         return tuple()
 
-    tag_names = []
+    # Determine the tags to use
+    latest_fix_versions = {}  # key: tuple(M,N), value: U (latest fix)
     for tag in repo.tags:
         m = re.match(r'^(\d+)\.(\d+)\.(\d+)$', tag.name)
         if m:
-            tag_version_tuple = tuple(map(int, tag.name.split('.')))
-            if tag_version_tuple >= min_version_tuple:
-                tag_names.append(tag.name)
-    return tuple(tag_names)
+            mnu_version_tuple = tuple(map(int, tag.name.split('.')))
+            mn_version_tuple = mnu_version_tuple[0:2]
+            fix_version = mnu_version_tuple[2]
+            if (mnu_version_tuple >= min_version_tuple and
+                   (mn_version_tuple not in latest_fix_versions or
+                    fix_version > latest_fix_versions[mn_version_tuple])):
+                latest_fix_versions[mn_version_tuple] = fix_version
+
+    # Convert back to M.N.U strings
+    result_tag_names = []
+    for mn_version_tuple, fix_version in latest_fix_versions.items():
+        tag_name = "{}.{}.{}".format(*mn_version_tuple, fix_version)
+        result_tag_names.append(tag_name)
+
+    return tuple(result_tag_names)
 
 
 def get_docs_branches():
@@ -205,7 +210,7 @@ scv_greatest_tag = True
 # List of Github tags that are included as versions in the documentation.
 # This is in addition to the 'scv_whitelist_branches' option.
 # The minimum version must be the first version that was released to Ansible Galaxy.
-scv_whitelist_tags = get_docs_tags(min_version='0.9.0')
+scv_whitelist_tags = get_docs_tags(min_version='1.0.0')
 
 # Sort versions by one or more values. Valid values are semver, alpha, and time.
 # Semantic is referred to as 'semver', this would ensure our latest VRM is

@@ -115,6 +115,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Test: Upgraded Githubb Actionb plugins that used the deprecated node version
   16. (issue #974)
 
+* Docs: Reduced the number of versions in the generated documentaion to only the
+  latest fix version of each minor version starting with version 1.0.x.
+  (issue #1000)
+
 **Known issues:**
 
 * See `list of open issues`_.
