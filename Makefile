@@ -476,7 +476,7 @@ $(module_rst_dir)/%.rst: $(module_py_dir)/%.py $(module_rst_dir) $(doc_templates
 
 # .nojekyll file disables GitHub pages jekyll pre-processing
 $(doc_build_dir)/index.html: $(doc_rst_files) $(doc_source_dir)/conf.py
-	sphinx-versioning -l $(doc_source_dir)/conf.py build $(doc_source_dir) $(doc_build_dir)
+	sphinx-versioning -l $(doc_source_dir)/conf.py build $(doc_source_dir) $(doc_build_dir) -- $(sphinx_opts)
 	touch $(doc_build_dir)/.nojekyll
 
 .PHONY: docslocal
