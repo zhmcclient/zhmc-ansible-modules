@@ -195,6 +195,38 @@ control system. The instructions are written for a bash shell.
         $ pip install -r $anco_dir/ibm/ibm_zhmc/requirements.txt
 
 
+Installing a development version
+--------------------------------
+
+This section describes how to install a development version of the
+ibm.ibm_zhmc collection. Because the procedure installs the Python packages
+needed for the collection using "pip", it is recommended to do that in a virtual
+Python environment.
+
+Follow the steps described for the alternative installation into a virtual
+Python environment until step 4 and then perform these remaining steps:
+
+5.  Clone the repo and checkout the desired branch:
+
+    .. code-block:: sh
+
+        $ git clone https://github.com/zhmcclient/zhmc-ansible-modules
+        $ cd zhmc-ansible-modules
+        $ git checkout master   # or your desired branch
+
+6.  Build and install the collection:
+
+    .. code-block:: sh
+
+        $ make install
+
+    This make command will build the collection from the checked out branch,
+    install the collection to your local Ansible collections tree
+    (which is by default ``$HOME/.ansible/collections/ansible_collections``),
+    and install any dependent Python packages into the active Python
+    environment using ``pip``.
+
+
 .. _`Setting up the HMC`:
 
 Setting up the HMC
