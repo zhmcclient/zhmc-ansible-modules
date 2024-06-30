@@ -97,6 +97,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Added a new module zhmc_versions that retrieves facts for HMC/CPC versions
   and features.
 
+* Docs: Added a chapter 'Installing a development version' that describes
+  how to build and install a development version of the collection from
+  the repo. (issue #1008)
+
 **Cleanup:**
 
 * Modernized the code to match the minimum Python version 3.8 (use of f-strings,
