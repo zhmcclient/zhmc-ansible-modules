@@ -259,10 +259,31 @@ options:
     default: false
   timeout:
     description:
-      - "Timeout in seconds, for activate (if needed) and for load (if needed)."
+      - "Timeout in seconds, for the HMC operation to complete, for
+        C(state=inactive), C(state=active) and C(state=loaded)."
     type: int
     required: false
     default: 60
+  status_timeout:
+    description:
+      - "Timeout in seconds, for reaching the desired status after the HMC
+        operation completed, for C(state=inactive), C(state=active) and
+        C(state=loaded)."
+    type: int
+    required: false
+    default: 60
+  allow_status_exceptions:
+    description:
+      - "Controls whether LPAR status 'exceptions' is considered
+        an additional acceptable end status:"
+      - "If True (default), it is considered acceptable, and the module
+        returns once that status (or one of the other desired end states)
+        is reached."
+      - "If False, it is not considered acceptable, and the module keeps waiting
+        for one of the other desired end states to be reached."
+    type: bool
+    required: false
+    default: true
   force:
     description:
       - "Controls whether operations that change the LPAR status are performed
@@ -904,6 +925,8 @@ def ensure_inactive(params, check_mode):
 
     cpc_name = params['cpc_name']
     lpar_name = params['name']
+    timeout = params['timeout']
+    status_timeout = params['status_timeout']
 
     properties = params['properties']
     if properties:
@@ -923,7 +946,9 @@ def ensure_inactive(params, check_mode):
         # If we got here, the LPAR exists.
 
         # Deactivate the LPAR.
-        changed |= ensure_lpar_inactive(LOGGER, lpar, check_mode)
+        changed |= ensure_lpar_inactive(
+            LOGGER, lpar, check_mode, operation_timeout=timeout,
+            status_timeout=status_timeout)
 
         return changed, {}
 
@@ -1036,6 +1061,8 @@ def ensure_active(params, check_mode):
     lpar_name = params['name']
     activation_profile_name = params['activation_profile_name']
     timeout = params['timeout']
+    status_timeout = params['status_timeout']
+    allow_status_exceptions = params['allow_status_exceptions']
     force = params['force']
 
     changed = False
@@ -1053,7 +1080,9 @@ def ensure_active(params, check_mode):
         changed |= ensure_lpar_active(
             LOGGER, lpar, check_mode,
             activation_profile_name=activation_profile_name,
-            timeout=timeout,
+            operation_timeout=timeout,
+            status_timeout=status_timeout,
+            allow_status_exceptions=allow_status_exceptions,
             force=force)
 
         # Update the properties of the LPAR.
@@ -1087,6 +1116,8 @@ def ensure_loaded(params, check_mode):
     clear_indicator = params['clear_indicator']
     store_status_indicator = params['store_status_indicator']
     timeout = params['timeout']
+    status_timeout = params['status_timeout']
+    allow_status_exceptions = params['allow_status_exceptions']
     force = params['force']
 
     changed = False
@@ -1108,7 +1139,9 @@ def ensure_loaded(params, check_mode):
             load_parameter=load_parameter,
             clear_indicator=clear_indicator,
             store_status_indicator=store_status_indicator,
-            timeout=timeout,
+            operation_timeout=timeout,
+            status_timeout=status_timeout,
+            allow_status_exceptions=allow_status_exceptions,
             force=force)
 
         # Update the properties of the LPAR.
@@ -1253,6 +1286,8 @@ def main():
         store_status_indicator=dict(
             required=False, type='bool', default=False),
         timeout=dict(required=False, type='int', default=60),
+        status_timeout=dict(required=False, type='int', default=60),
+        allow_status_exceptions=dict(required=False, type='bool', default=True),
         force=dict(required=False, type='bool', default=False),
         os_ipl_token=dict(required=False, type='str', default=None,
                           no_log=False),
