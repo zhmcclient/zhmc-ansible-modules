@@ -656,7 +656,8 @@ def pull_lpar_status(lpar):
     return actual_status
 
 
-def ensure_lpar_inactive(logger, lpar, check_mode):
+def ensure_lpar_inactive(
+        logger, lpar, check_mode, operation_timeout, status_timeout):
     """
     Ensure that the LPAR is in an inactive status, regardless of what its
     current operational status is.
@@ -672,8 +673,14 @@ def ensure_lpar_inactive(logger, lpar, check_mode):
         status property is assumed to be current).
 
       check_mode (bool): Indicates whether the playbook was run in check mode,
-        in which case this method does ot actually stop the LPAR, but
+        in which case this method does not actually stop the LPAR, but
         just returns what would have been done.
+
+      operation_timeout (int): Timeout in seconds, for the HMC operation
+        (deactivate), if needed).
+
+      status_timeout (int): Timeout in seconds, for waiting for the desired
+        LPAR status to be reached.
 
     Returns:
       bool: Indicates whether the LPAR was changed.
@@ -693,7 +700,10 @@ def ensure_lpar_inactive(logger, lpar, check_mode):
     logger.debug("Deactivating LPAR %r (current status %r)",
                  lpar.name, status)
     if not check_mode:
-        lpar.deactivate(force=True)
+        lpar.deactivate(
+            operation_timeout=operation_timeout,
+            status_timeout=status_timeout,
+            force=True)
         status = pull_lpar_status(lpar)
     changed = True
 
@@ -706,7 +716,8 @@ def ensure_lpar_inactive(logger, lpar, check_mode):
 
 
 def ensure_lpar_active(
-        logger, lpar, check_mode, activation_profile_name, timeout, force):
+        logger, lpar, check_mode, activation_profile_name, operation_timeout,
+        status_timeout, allow_status_exceptions, force):
     """
     Ensure that the LPAR is at least active, regardless of what its
     current operational status is.
@@ -737,7 +748,14 @@ def ensure_lpar_active(
         If the LPAR was already active, the `force` parameter determines what
         happens.
 
-      timeout (int): Timeout in seconds, for activate (if needed).
+      operation_timeout (int): Timeout in seconds, for the HMC operation
+        (activate), if needed).
+
+      status_timeout (int): Timeout in seconds, for waiting for the desired
+        LPAR status to be reached.
+
+      allow_status_exceptions (bool): Controls whether LPAR status "exceptions"
+        is considered an additional acceptable end status.
 
       force (bool): Controls what happens when the LPAR is already in
         one of the active statuses: If `True`, the LPAR is re-activated.
@@ -762,7 +780,9 @@ def ensure_lpar_active(
             if not check_mode:
                 lpar.activate(
                     activation_profile_name=activation_profile_name,
-                    operation_timeout=timeout,
+                    operation_timeout=operation_timeout,
+                    status_timeout=status_timeout,
+                    allow_status_exceptions=allow_status_exceptions,
                     force=True)
                 status = pull_lpar_status(lpar)
             else:
@@ -781,7 +801,9 @@ def ensure_lpar_active(
         if not check_mode:
             lpar.activate(
                 activation_profile_name=activation_profile_name,
-                operation_timeout=timeout)
+                operation_timeout=operation_timeout,
+                status_timeout=status_timeout,
+                allow_status_exceptions=allow_status_exceptions)
             status = pull_lpar_status(lpar)
         else:
             # In check mode, we assume the LPAR is not auto-started and
@@ -802,8 +824,8 @@ def ensure_lpar_active(
 
 def ensure_lpar_loaded(
         logger, lpar, check_mode, activation_profile_name, load_address,
-        load_parameter, clear_indicator, store_status_indicator, timeout,
-        force):
+        load_parameter, clear_indicator, store_status_indicator,
+        operation_timeout, status_timeout, allow_status_exceptions, force):
     """
     Ensure that the LPAR is loaded, regardless of what its current operational
     status is.
@@ -880,8 +902,14 @@ def ensure_lpar_loaded(
         CPU timer and other internal resources are stored to their assigned
         absolute storage locations, for state=loaded.
 
-      timeout (int): Timeout in seconds, for activate (if needed) and for
-        load (if needed).
+      operation_timeout (int): Timeout in seconds, for the HMC operation
+        (activate/load), if needed).
+
+      status_timeout (int): Timeout in seconds, for waiting for the desired
+        LPAR status to be reached.
+
+      allow_status_exceptions (bool): Controls whether LPAR status "exceptions"
+        is considered an additional acceptable end status.
 
       force (bool): Controls what happens when the LPAR is already in
         one of the operating statuses: If `True`, the LPAR is re-loaded.
@@ -909,7 +937,9 @@ def ensure_lpar_loaded(
                     load_parameter=load_parameter,
                     clear_indicator=clear_indicator,
                     store_status_indicator=store_status_indicator,
-                    operation_timeout=timeout,
+                    operation_timeout=operation_timeout,
+                    status_timeout=status_timeout,
+                    allow_status_exceptions=allow_status_exceptions,
                     force=True)
                 status = pull_lpar_status(lpar)
             else:
@@ -928,7 +958,9 @@ def ensure_lpar_loaded(
         if not check_mode:
             lpar.activate(
                 activation_profile_name=activation_profile_name,
-                operation_timeout=timeout)
+                operation_timeout=operation_timeout,
+                status_timeout=status_timeout,
+                allow_status_exceptions=allow_status_exceptions)
             status = pull_lpar_status(lpar)
         else:
             # In check mode, we assume the LPAR is not auto-started and
@@ -946,7 +978,9 @@ def ensure_lpar_loaded(
                 load_parameter=load_parameter,
                 clear_indicator=clear_indicator,
                 store_status_indicator=store_status_indicator,
-                operation_timeout=timeout)
+                operation_timeout=operation_timeout,
+                status_timeout=status_timeout,
+                allow_status_exceptions=allow_status_exceptions)
             status = pull_lpar_status(lpar)
         else:
             # In check mode, we assume the LPAR would have successfully

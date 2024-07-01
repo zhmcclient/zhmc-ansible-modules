@@ -63,6 +63,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * In the Github Actions test workflow for Python 3.5, added a circumvention
   for the Pip certificate issue.
 
+* Fixed that the 'timeout' parameter of the zhmc_lpar module was not used for
+  'state=inactive'. (related to issue #986)
+
 **Enhancements:**
 
 * Test: Added tests for Ansible 10. The testing of Ansible 3 was dropped
@@ -96,6 +99,13 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Added a new module zhmc_versions that retrieves facts for HMC/CPC versions
   and features.
+
+* Added a new 'status_timeout' parameter to the zhmc_lpar module for
+  'state=inactive,active,loaded'. (issue #986)
+
+* Added a new 'allow_status_exceptions' parameters to the zhmc_lpar module for
+  'state=active,loaded'. For backwards compatibility, its default value is True.
+  (issue #986)
 
 **Cleanup:**
 

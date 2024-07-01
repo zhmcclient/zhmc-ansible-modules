@@ -208,11 +208,31 @@ store_status_indicator
 
 
 timeout
-  Timeout in seconds, for activate (if needed) and for load (if needed).
+  Timeout in seconds, for the HMC operation to complete, for \ :literal:`state=inactive`\ , \ :literal:`state=active`\  and \ :literal:`state=loaded`\ .
 
   | **required**: False
   | **type**: int
   | **default**: 60
+
+
+status_timeout
+  Timeout in seconds, for reaching the desired status after the HMC operation completed, for \ :literal:`state=inactive`\ , \ :literal:`state=active`\  and \ :literal:`state=loaded`\ .
+
+  | **required**: False
+  | **type**: int
+  | **default**: 60
+
+
+allow_status_exceptions
+  Controls whether LPAR status 'exceptions' is considered an additional acceptable end status:
+
+  If True (default), it is considered acceptable, and the module returns once that status (or one of the other desired end states) is reached.
+
+  If False, it is not considered acceptable, and the module keeps waiting for one of the other desired end states to be reached.
+
+  | **required**: False
+  | **type**: bool
+  | **default**: True
 
 
 force

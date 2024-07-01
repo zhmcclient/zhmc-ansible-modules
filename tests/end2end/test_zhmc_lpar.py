@@ -180,7 +180,9 @@ def ensure_lpar_status(logger, lpar, iap, status):
     clean up end2end tests.
     """
     if status == 'not-activated':
-        ensure_lpar_inactive(logger, lpar, check_mode=False)
+        ensure_lpar_inactive(
+            logger, lpar, check_mode=False, operation_timeout=60,
+            status_timeout=60)
         status = pull_lpar_status(lpar)
         assert status == 'not-activated'
     elif status == 'not-operating':
@@ -193,7 +195,8 @@ def ensure_lpar_status(logger, lpar, iap, status):
         iap.update_properties({'load-at-activation': False})
         ensure_lpar_active(
             logger, lpar, check_mode=False,
-            activation_profile_name=lpar.name, timeout=60, force=True)
+            activation_profile_name=lpar.name, operation_timeout=60,
+            status_timeout=60, allow_status_exceptions=True, force=True)
         iap.update_properties({'load-at-activation': saved_auto_load})
         status = pull_lpar_status(lpar)
         assert status == 'not-operating'
@@ -205,7 +208,8 @@ def ensure_lpar_status(logger, lpar, iap, status):
         ensure_lpar_loaded(
             logger, lpar, check_mode=False, activation_profile_name=lpar.name,
             load_address=None, load_parameter=None, clear_indicator=True,
-            store_status_indicator=False, timeout=60, force=True)
+            store_status_indicator=False, operation_timeout=60,
+            status_timeout=60, allow_status_exceptions=True, force=True)
         status = pull_lpar_status(lpar)
         assert status == 'operating'
 
