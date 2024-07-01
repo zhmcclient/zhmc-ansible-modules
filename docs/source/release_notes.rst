@@ -119,6 +119,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   latest fix version of each minor version starting with version 1.0.x.
   (issue #1000)
 
+* Dev: Suppressed the errors in the Makefile when ansible is not yet installed
+  but the Makefile sets variables that depend on ansible being installed.
+  That situation was handled correctly, but the error messages were confusing.
+
 **Known issues:**
 
 * See `list of open issues`_.
