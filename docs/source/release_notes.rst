@@ -120,6 +120,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   how to build and install a development version of the collection from
   the repo. (issue #1008)
 
+* Added new Ansible modules 'zhmc_user_pattern_list' and 'zhmc_user_pattern'
+  for listing and managing user patterns on the HMC. (issue #361)
+
 **Cleanup:**
 
 * Modernized the code to match the minimum Python version 3.8 (use of f-strings,
