@@ -1,19 +1,12 @@
-# Pip constraints file for install and development dependencies.
+# Pip constraints file for packages needed for development.
 #
 # This file specifies constraints that match the minimum versions specified in
-# the requirement files for install and development. They are used for example
-# when setting up test environments with the minimum versions of any dependent
-# packages.
-
-
-# Note: The included file is processed by Pip but ignored by the Safety tool.
-# Thus, safety with the 'all' profile actually only checks development packages,
-# but that's ok since the 'install' profile checks the install packages.
--c minimum-constraints-install.txt
+# requirements-develop.txt. They are used for example when setting up test
+# environments with the minimum versions of any dependent packages.
 
 
 # Direct dependencies for development and indirect dependencies for development
-# that are needed for some reason (must be consistent with dev-requirements.txt)
+# that are needed for some reason (must be consistent with requirements-develop.txt)
 
 # Ansible validate-modules (no imports, invoked via validate-modules script)
 mock==2.0.0
@@ -92,9 +85,9 @@ sphinxcontrib-websupport==1.2.4
 autodocsumm==0.2.12
 Babel==2.9.1
 
-# sphinx-versions: Retrieved from git repo in dev-requirements.txt
+# sphinx-versions: Retrieved from git repo in requirements-develop.txt
 # ansible-doc-extractor and it's dependent theme for docs generation (no imports, invoked via script):
-# The Makefile defines in doc_build on which Python versions docs are built. Keep in sync with Makefile and dev-requirements.txt.
+# The Makefile defines in doc_build on which Python versions docs are built. Keep in sync with Makefile and requirements-develop.txt.
 
 ansible-doc-extractor==0.1.8
 antsibull-docs-parser==1.0.0
@@ -124,7 +117,7 @@ pip-check-reqs==2.4.3; python_version <= '3.11'
 pip-check-reqs==2.5.3; python_version >= '3.12'
 
 
-# Indirect dependencies for development that are not in dev-requirements.txt
+# Indirect dependencies for development that are not in requirements-develop.txt
 
 alabaster==0.7.9
 attrs==19.2.0

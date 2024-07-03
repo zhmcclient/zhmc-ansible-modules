@@ -81,7 +81,8 @@ build_ignore:
   - .flake8  # only in older branches
   - .travis.yml
   - .whitesource
-  - .safety-policy-all.yml
+  - .safety-policy-all.yml  # old name
+  - .safety-policy-develop.yml  # old name
   - .safety-policy-install.yml
   - CODE_OF_CONDUCT.md
   - CONTRIBUTING.rst  # only in older branches
@@ -89,9 +90,13 @@ build_ignore:
   - LICENSE
   - Makefile
   # requirements.txt is intentionally included for dependent install
-  - dev-requirements.txt
+  - dev-requirements.txt  # old name
+  - requirements-base.txt
+  - requirements-develop.txt
   - ansible-constraints.txt
-  - minimum-constraints.txt
+  - minimum-constraints.txt  # old name
+  - minimum-constraints-install.txt  # old name
+  - minimum-constraints-develop.txt  # old name
   - tools
   - docs_local
   - docs

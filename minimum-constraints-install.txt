@@ -1,11 +1,12 @@
-# Pip constraints file for install dependencies.
+# Pip constraints file for packages needed for install.
 #
 # This file specifies constraints that match the minimum versions specified in
-# the requirement files for install. They are used for example when setting up
-# test environments with the minimum versions of any dependent packages.
+# requirements.txt and requirements-base.txt. They are used for example when
+# setting up test environments with the minimum versions of any dependent
+# packages.
 
 
-# Base dependencies
+# Base dependencies (must be consistent with requirements-base.txt)
 
 pip==23.3
 setuptools==66.1.0
