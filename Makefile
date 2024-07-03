@@ -113,6 +113,12 @@ default_testhmc := default
 # Flake8 options
 flake8_opts := --max-line-length 160 --config /dev/null --ignore E402,E741,W503,W504
 
+# PyLint config file
+pylint_rc_file := .pylintrc
+
+# PyLint additional options
+pylint_opts := --disable=fixme
+
 # Sanity test directory
 # Note: 'ansible-test sanity' requires the collection to be tested to be
 #       located in {...}/collections/ansible_collections/{namespace}/{name}.
@@ -130,9 +136,9 @@ safety_install_policy_file := .safety-policy-install.yml
 safety_develop_policy_file := .safety-policy-develop.yml
 
 # Packages whose dependencies are checked using pip-missing-reqs
-# ansible_test and pylint are checked only on officially supported Python versions
+# ansible_test is checked only on officially supported Python versions
 ifeq ($(python_m_n_version),3.8)
-  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor
+  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor pylint
 else ifeq ($(python_m_n_version),3.9)
   check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor ansible_test pylint
 else ifeq ($(python_m_n_version),3.10)
@@ -199,6 +205,7 @@ help:
 	@echo '  develop    - Set up the development environment'
 	@echo '  dist       - Build the collection distribution archive in: $(dist_dir)'
 	@echo '  check      - Run flake8'
+	@echo "  pylint     - Run PyLint on sources"
 	@echo '  sanity     - Run Ansible sanity tests (includes pep8, pylint, validate-modules)'
 	@echo '  ansible_lint - Run ansible-lint on distribution archive (and built it)'
 	@echo '  safety     - Run safety for install and all'
@@ -238,7 +245,7 @@ help:
 	@echo '  ansible-playbook playbooks/....'
 
 .PHONY: all
-all: install develop dist safety bandit check sanity ansible_lint check_reqs docs docslocal linkcheck test end2end_mocked
+all: install develop dist safety bandit check pylint sanity ansible_lint check_reqs docs docslocal linkcheck test end2end_mocked
 	@echo '$@ done.'
 
 .PHONY: install
@@ -267,6 +274,11 @@ test: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 .PHONY: check
 check: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 	flake8 $(flake8_opts) $(src_py_dir) $(test_dir)
+	@echo '$@ done.'
+
+.PHONY: pylint
+pylint: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(pylint_rc_file) $(src_py_files) $(test_py_files)
+	pylint $(pylint_opts) --rcfile=$(pylint_rc_file) --output-format=text $(src_py_files) $(test_py_files)
 	@echo '$@ done.'
 
 .PHONY: safety

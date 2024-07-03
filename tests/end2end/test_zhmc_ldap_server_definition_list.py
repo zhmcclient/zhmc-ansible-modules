@@ -19,9 +19,9 @@ End2end tests for zhmc_ldap_server_definition_list module.
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-import pytest
 from unittest import mock
-import requests.packages.urllib3
+import pytest
+import urllib3
 import zhmcclient
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
@@ -30,7 +30,7 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 from plugins.modules import zhmc_ldap_server_definition_list
 from .utils import mock_ansible_module, get_failure_msg
 
-requests.packages.urllib3.disable_warnings()
+urllib3.disable_warnings()
 
 # Print debug messages
 DEBUG = False
@@ -91,6 +91,7 @@ def assert_lsd_list(lsd_list, exp_lsd_dict):
             autospec=True)
 def test_zhmc_ldap_server_definition_list(
         ansible_mod_cls, check_mode, hmc_session):  # noqa: F811, E501
+    # pylint: disable=redefined-outer-name
     """
     Test the zhmc_ldap_server_definition_list module.
     """

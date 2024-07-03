@@ -22,8 +22,8 @@ Function tests for the 'zhmc_lpar' Ansible module.
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-import pytest
 from unittest import mock
+import pytest
 
 from zhmcclient import Client
 from zhmcclient_mock import FakedSession
@@ -281,6 +281,16 @@ class TestLpar:
     All tests for LPARs.
     """
 
+    def __init__(self):
+        self.session = None
+        self.client = None
+        self.faked_cpc = None
+        self.cpc = None
+        self.lpar_name = None
+        self.faked_lpar = None
+        self.lpar = None
+        self.faked_image_profile = None
+
     def setup_method(self):
         """
         Using the zhmcclient mock support, set up a CPC in classic mode, that
@@ -288,13 +298,10 @@ class TestLpar:
         """
         self.session = FakedSession(**FAKED_SESSION_KWARGS)
         self.client = Client(self.session)
-        self.console = self.session.hmc.consoles.add(FAKED_CONSOLE)
         self.faked_cpc = self.session.hmc.cpcs.add(FAKED_CPC_1)
         cpcs = self.client.cpcs.list()
         assert len(cpcs) == 1
         self.cpc = cpcs[0]
-        self.faked_crypto_adapters = []
-        self.faked_crypto_adapter_names = []
 
     def setup_lpar(self, initial_state, additional_props=None):
         """

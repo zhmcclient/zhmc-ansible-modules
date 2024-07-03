@@ -604,8 +604,8 @@ import traceback  # noqa: E402
 import uuid
 import random
 import types
-from ansible.module_utils.basic import AnsibleModule  # noqa: E402
 from operator import itemgetter  # noqa: E402
+from ansible.module_utils.basic import AnsibleModule  # noqa: E402
 
 from ..module_utils.common import log_init, open_session, close_session, \
     hmc_auth_parameter, Error, ParameterError, StatusError, stop_partition, \
@@ -614,7 +614,7 @@ from ..module_utils.common import log_init, open_session, close_session, \
     common_fail_on_import_errors, pull_properties, parse_hmc_host  # noqa: E402
 
 try:
-    import requests.packages.urllib3
+    import urllib3
     IMP_URLLIB3_ERR = None
 except ImportError:
     IMP_URLLIB3_ERR = traceback.format_exc()
@@ -1111,6 +1111,7 @@ def process_properties(cpc, partition, params):
                 f"Property {prop_name!r} is not defined in the data model for "
                 "partitions.")
 
+        # pylint: disable=unused-variable
         allowed, create, update, update_while_active, eq_func, type_cast, \
             required, default = ZHMC_PARTITION_PROPERTIES[prop_name]
 
@@ -1680,9 +1681,8 @@ def create_check_mode_partition(cpc, create_props, update_props):
     missing_props = []
 
     # Handle direct requiredness, direct defaults specified in prop defs
-    for prop_name in ZHMC_PARTITION_PROPERTIES:
+    for prop_name, prop_defs in ZHMC_PARTITION_PROPERTIES.items():
         prop_hmc_name = prop_name.replace('_', '-')
-        prop_defs = ZHMC_PARTITION_PROPERTIES[prop_name]
         required = prop_defs[6]
         default = prop_defs[7]
 
@@ -1722,9 +1722,8 @@ def create_check_mode_partition(cpc, create_props, update_props):
     input_props['short-name'] = f'{name}{rand_num:04X}'  # noqa: E231
 
     # Handle function-based requiredness specified in prop defs
-    for prop_name in ZHMC_PARTITION_PROPERTIES:
+    for prop_name, prop_defs in ZHMC_PARTITION_PROPERTIES.items():
         prop_hmc_name = prop_name.replace('_', '-')
-        prop_defs = ZHMC_PARTITION_PROPERTIES[prop_name]
         required = prop_defs[6]
 
         if isinstance(required, types.FunctionType):
@@ -1904,6 +1903,7 @@ def ensure_stopped(params, check_mode):
         if not partition:
             # It does not exist. Create it and update it if there are
             # update-only properties.
+            # pylint: disable=unused-variable
             create_props, update_props, stop, crypto_changes = \
                 process_properties(cpc, partition, params)
             update2_props = {}
@@ -2109,6 +2109,7 @@ def ensure_iso_unmount(params, check_mode):
 
 
 def facts(params, check_mode):
+    # pylint: disable=unused-argument
     """
     Return partition facts.
 
@@ -2170,6 +2171,7 @@ def perform_task(params, check_mode):
 
 
 def main():
+    """Main function"""
 
     # The following definition of module input parameters must match the
     # description of the options in the DOCUMENTATION string.
@@ -2202,7 +2204,7 @@ def main():
         module.fail_json(msg=missing_required_lib("requests"),
                          exception=IMP_URLLIB3_ERR)
 
-    requests.packages.urllib3.disable_warnings()
+    urllib3.disable_warnings()
 
     if IMP_ZHMCCLIENT_ERR is not None:
         module.fail_json(msg=missing_required_lib("zhmcclient"),

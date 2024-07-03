@@ -20,11 +20,11 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 import uuid
-import pytest
 from unittest import mock
 import random
 from pprint import pformat
-import requests.packages.urllib3
+import pytest
+import urllib3
 import zhmcclient
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
@@ -33,7 +33,7 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 from plugins.modules import zhmc_user_role
 from .utils import mock_ansible_module, get_failure_msg
 
-requests.packages.urllib3.disable_warnings()
+urllib3.disable_warnings()
 
 # Print debug messages
 DEBUG = False
@@ -69,13 +69,8 @@ STD_UROLE_HMC_INPUT_PROPS = {
 }
 
 
-def updated_copy(dict1, dict2):
-    dict1c = dict1.copy()
-    dict1c.update(dict2)
-    return dict1c
-
-
 def new_urole_name():
+    """Return random unique user role name"""
     urole_name = f'test_{uuid.uuid4()}'
     return urole_name
 
@@ -137,6 +132,7 @@ def assert_urole_props(urole_props, exp_urole_props, where):
 @mock.patch("plugins.modules.zhmc_user_role.AnsibleModule", autospec=True)
 def test_zhmc_user_role_facts(
         ansible_mod_cls, check_mode, hmc_session):  # noqa: F811, E501
+    # pylint: disable=redefined-outer-name
     """
     Test the zhmc_user_role module with state=facts.
     """
@@ -260,6 +256,7 @@ def test_zhmc_user_role_absent_present(
         input_props, exp_urole_props, exp_changed,
         check_mode,
         hmc_session):  # noqa: F811, E501
+    # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_user_role module with state=absent/present.
     """

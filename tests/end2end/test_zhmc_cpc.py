@@ -19,9 +19,9 @@ End2end tests for zhmc_cpc module.
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-import pytest
 from unittest import mock
-import requests.packages.urllib3
+import pytest
+import urllib3
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 from zhmcclient.testutils import all_cpcs  # noqa: F401, E501
@@ -31,7 +31,7 @@ from plugins.modules import zhmc_cpc
 from .utils import mock_ansible_module, get_failure_msg, setup_logging, \
     skip_warn
 
-requests.packages.urllib3.disable_warnings()
+urllib3.disable_warnings()
 
 DEBUG = False  # Print debug messages
 
@@ -186,6 +186,7 @@ def test_zhmc_cpc_facts(
         desc, select_properties, exp_prop_names, not_prop_names,
         exp_msg, exp_changed, run,
         check_mode, all_cpcs):  # noqa: F811, E501
+    # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_cpc module with state=facts on any CPCs.
     """

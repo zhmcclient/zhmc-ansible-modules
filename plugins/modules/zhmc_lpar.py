@@ -622,7 +622,7 @@ from ..module_utils.common import log_init, open_session, close_session, \
     common_fail_on_import_errors, pull_properties, parse_hmc_host  # noqa: E402
 
 try:
-    import requests.packages.urllib3
+    import urllib3
     IMP_URLLIB3_ERR = None
 except ImportError:
     IMP_URLLIB3_ERR = traceback.format_exc()
@@ -781,7 +781,7 @@ ZHMC_LPAR_PROPERTIES = {
 }
 
 
-def process_properties(cpc, lpar, params):
+def process_properties(lpar, params):
     """
     Process the properties specified in the 'properties' module parameter,
     and return a dictionarys (update_props) that contains the properties that
@@ -832,6 +832,7 @@ def process_properties(cpc, lpar, params):
                 f"Property {prop_name!r} is not defined in the data model for "
                 "LPARs.")
 
+        # pylint: disable=unused-variable
         allowed, create, update, update_while_active, eq_func, type_cast = \
             ZHMC_LPAR_PROPERTIES[prop_name]
 
@@ -840,14 +841,13 @@ def process_properties(cpc, lpar, params):
                 f"Property {prop_name!r} is not allowed in the 'properties' "
                 "module parameter.")
 
-        else:
-            # Process a normal (= non-artificial) property
-            _create_props, _update_props, _stop = process_normal_property(
-                prop_name, ZHMC_LPAR_PROPERTIES, input_props, lpar)
-            create_props.update(_create_props)
-            update_props.update(_update_props)
-            if _stop:
-                stop = True
+        # Process a normal (= non-artificial) property
+        _create_props, _update_props, _stop = process_normal_property(
+            prop_name, ZHMC_LPAR_PROPERTIES, input_props, lpar)
+        create_props.update(_create_props)
+        update_props.update(_update_props)
+        if _stop:
+            stop = True
 
     if create_props:
         raise AssertionError(
@@ -861,6 +861,7 @@ def process_properties(cpc, lpar, params):
 
 
 def add_artificial_properties(lpar_properties, lpar):
+    # pylint: disable=unused-argument
     """
     Add artificial properties to the lpar_properties dict.
 
@@ -872,7 +873,7 @@ def add_artificial_properties(lpar_properties, lpar):
     pass
 
 
-def update_lpar_properties(cpc, lpar, params, check_mode, check_status=False):
+def update_lpar_properties(lpar, params, check_mode, check_status=False):
     """
     Update the properties of the LPAR on the HMC.
 
@@ -889,7 +890,7 @@ def update_lpar_properties(cpc, lpar, params, check_mode, check_status=False):
 
     pull_properties(lpar, select_prop_names, input_prop_names)
     lpar_properties = dict(lpar.properties)
-    update_props = process_properties(cpc, lpar, params)
+    update_props = process_properties(lpar, params)
 
     if update_props:
         if not check_mode:
@@ -1087,7 +1088,7 @@ def ensure_active(params, check_mode):
 
         # Update the properties of the LPAR.
         _changed, lpar_properties = update_lpar_properties(
-            cpc, lpar, params, check_mode)
+            lpar, params, check_mode)
         changed |= _changed
 
         add_artificial_properties(lpar_properties, lpar)
@@ -1146,7 +1147,7 @@ def ensure_loaded(params, check_mode):
 
         # Update the properties of the LPAR.
         _changed, lpar_properties = update_lpar_properties(
-            cpc, lpar, params, check_mode)
+            lpar, params, check_mode)
         changed |= _changed
 
         add_artificial_properties(lpar_properties, lpar)
@@ -1186,7 +1187,7 @@ def ensure_set(params, check_mode):
 
         # Update the properties of the LPAR.
         _changed, lpar_properties = update_lpar_properties(
-            cpc, lpar, params, check_mode, check_status=True)
+            lpar, params, check_mode, check_status=True)
         changed |= _changed
 
         add_artificial_properties(lpar_properties, lpar)
@@ -1198,6 +1199,7 @@ def ensure_set(params, check_mode):
 
 
 def facts(params, check_mode):
+    # pylint: disable=unused-argument
     """
     Return LPAR facts.
 
@@ -1263,6 +1265,7 @@ def perform_task(params, check_mode):
 
 
 def main():
+    """Main function"""
 
     # The following definition of module input parameters must match the
     # description of the options in the DOCUMENTATION string.
@@ -1306,7 +1309,7 @@ def main():
         module.fail_json(msg=missing_required_lib("requests"),
                          exception=IMP_URLLIB3_ERR)
 
-    requests.packages.urllib3.disable_warnings()
+    urllib3.disable_warnings()
 
     if IMP_ZHMCCLIENT_ERR is not None:
         module.fail_json(msg=missing_required_lib("zhmcclient"),

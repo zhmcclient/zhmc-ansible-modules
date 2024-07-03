@@ -21,12 +21,12 @@ __metaclass__ = type
 
 import uuid
 import copy
-import pytest
 from unittest import mock
 import re
 import random
 from pprint import pformat
-import requests.packages.urllib3
+import pytest
+import urllib3
 import zhmcclient
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
@@ -36,7 +36,7 @@ from zhmcclient.testutils import dpm_mode_cpcs  # noqa: F401, E501
 from plugins.modules import zhmc_adapter
 from .utils import mock_ansible_module, get_failure_msg
 
-requests.packages.urllib3.disable_warnings()
+urllib3.disable_warnings()
 
 DEBUG = False  # Print debug messages
 DEBUG_LOG = False  # Write log file
@@ -283,6 +283,7 @@ def assert_adapter_props(act_props, exp_props, hmc_version_info, where):
 def test_zhmc_adapter_facts(
         ansible_mod_cls, adapter_family, check_mode,
         dpm_mode_cpcs):  # noqa: F811, E501
+    # pylint: disable=redefined-outer-name
     """
     Test the zhmc_adapter module with state=facts on DPM mode CPCs.
     """
@@ -391,8 +392,8 @@ HIPERSOCKET_UPDATE1_INPUT_PROPS = {
 }
 HIPERSOCKET_UPDATE1_EXP_PROPS_HMC = dict(STD_HIPERSOCKET_EXP_PROPS_HMC)
 for pname, pvalue in HIPERSOCKET_UPDATE1_INPUT_PROPS.items():
-    pname_hmc = pname.replace('_', '-')
-    HIPERSOCKET_UPDATE1_EXP_PROPS_HMC[pname_hmc] = pvalue
+    _PNAME_HMC = pname.replace('_', '-')
+    HIPERSOCKET_UPDATE1_EXP_PROPS_HMC[_PNAME_HMC] = pvalue
 
 ADAPTER_STATES_TESTCASES = [
     # The list items are tuples with the following items:
@@ -580,6 +581,7 @@ def test_zhmc_adapter_states(
         desc, initial_props, input_state, input_name, input_match, input_props,
         exp_props, exp_changed, exp_msg_pattern,
         check_mode, dpm_mode_cpcs):  # noqa: F811, E501
+    # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_adapter module with state=absent/present on DPM mode CPCs,
     with Hipersocket adapters.

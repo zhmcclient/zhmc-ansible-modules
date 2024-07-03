@@ -377,7 +377,7 @@ from ..module_utils.common import log_init, open_session, close_session, \
 
 
 try:
-    import requests.packages.urllib3
+    import urllib3
     IMP_URLLIB3_ERR = None
 except ImportError:
     IMP_URLLIB3_ERR = traceback.format_exc()
@@ -579,7 +579,8 @@ def ensure_attached(params, check_mode):
                 raise ParameterError(
                     "The 'adapter_count' parameter must be at least 1, but "
                     f"is: {adapter_count}")
-            elif adapter_count > len(all_adapters):
+
+            if adapter_count > len(all_adapters):
                 raise ParameterError(
                     "The 'adapter_count' parameter must not exceed the "
                     f"number of {len(all_adapters)} crypto adapters of type "
@@ -989,6 +990,7 @@ def ensure_detached(params, check_mode):
 
 
 def facts(params, check_mode):
+    # pylint: disable=unused-argument
     """
     Return facts about the crypto configuration of the partition.
 
@@ -1043,6 +1045,7 @@ def perform_task(params, check_mode):
 
 
 def main():
+    """Main function"""
 
     # The following definition of module input parameters must match the
     # description of the options in the DOCUMENTATION string.
@@ -1074,7 +1077,7 @@ def main():
         module.fail_json(msg=missing_required_lib("requests"),
                          exception=IMP_URLLIB3_ERR)
 
-    requests.packages.urllib3.disable_warnings()
+    urllib3.disable_warnings()
 
     if IMP_ZHMCCLIENT_ERR is not None:
         module.fail_json(msg=missing_required_lib("zhmcclient"),

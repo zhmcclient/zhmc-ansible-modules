@@ -22,9 +22,9 @@ Function tests for the 'zhmc_cpc' Ansible module.
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-import pytest
 from unittest import mock
 import re
+import pytest
 
 from zhmcclient import Client
 from zhmcclient_mock import FakedSession
@@ -349,13 +349,16 @@ class TestCpc:
     All tests for CPCs.
     """
 
+    def __init__(self):
+        self.session = None
+        self.client = None
+
     def setup_method(self):
         """
         Using the zhmcclient mock support, set up a CPC in classic mode.
         """
         self.session = FakedSession(**FAKED_SESSION_KWARGS)
         self.client = Client(self.session)
-        self.console = self.session.hmc.consoles.add(FAKED_CONSOLE)
 
     @pytest.mark.parametrize(
         "check_mode", [False, True])
@@ -382,18 +385,18 @@ class TestCpc:
         exp_changed = testcases['exp_changed']
 
         # Create the faked CPC
-        self.faked_cpc = self.session.hmc.cpcs.add(faked_cpc)
+        faked_cpc = self.session.hmc.cpcs.add(faked_cpc)
         cpcs = self.client.cpcs.list()
         assert len(cpcs) == 1
-        self.cpc = cpcs[0]
-        self.cpc.pull_full_properties()
+        cpc = cpcs[0]
+        cpc.pull_full_properties()
 
         # Prepare module input parameters (must be all required + optional)
         params = {
             'hmc_host': 'fake-host',
             'hmc_auth': dict(userid='fake-userid',
                              password='fake-password'),
-            'name': self.cpc.name,
+            'name': cpc.name,
             'state': input_state,
             'select_properties': None,
             'activation_profile_name': None,
@@ -444,9 +447,9 @@ class TestCpc:
             # Assert the updated CPC resource
             if input_state in ('active', 'set') and not check_mode:
                 if exp_cpc_properties:
-                    self.cpc.pull_full_properties()
+                    cpc.pull_full_properties()
                     for ansi_name, exp_value in exp_cpc_properties.items():
                         hmc_name = ansi_name.replace('_', '-')
-                        assert hmc_name in self.cpc.properties
-                        assert exp_value == self.cpc.properties[hmc_name], \
+                        assert hmc_name in cpc.properties
+                        assert exp_value == cpc.properties[hmc_name], \
                             f"Unexpected value for property {hmc_name!r}"

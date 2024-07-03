@@ -454,7 +454,7 @@ from ..module_utils.common import log_init, open_session, close_session, \
     common_fail_on_import_errors, parse_hmc_host  # noqa: E402
 
 try:
-    import requests.packages.urllib3
+    import urllib3
     IMP_URLLIB3_ERR = None
 except ImportError:
     IMP_URLLIB3_ERR = traceback.format_exc()
@@ -586,6 +586,7 @@ def process_properties(client, urole, params):
                 f"Property {prop_name!r} is not defined in the data model for "
                 "user roles.")
 
+        # pylint: disable=unused-variable
         allowed, create, update, update_while_active, eq_func, type_cast = \
             ZHMC_USER_ROLE_PROPERTIES[prop_name]
 
@@ -615,14 +616,14 @@ def process_properties(client, urole, params):
             tgt_perms = target_perm_dict(client, input_props[prop_name])
 
             # Mark missing permissions as to be added
-            for perm_key in tgt_perms:
+            for perm_key, tgt_perm in tgt_perms.items():
                 if perm_key not in cur_perms:
-                    add_perms[perm_key] = tgt_perms[perm_key]
+                    add_perms[perm_key] = tgt_perm
 
             # Mark superfluous permissions as to be removed
-            for perm_key in cur_perms:
+            for perm_key, cur_perm in cur_perms.items():
                 if perm_key not in tgt_perms:
-                    rem_perms[perm_key] = cur_perms[perm_key]
+                    rem_perms[perm_key] = cur_perm
 
             continue
 
@@ -1088,8 +1089,8 @@ def ensure_present(params, check_mode):
             result = dict(urole.properties)
             changed = True
 
-            for perm_key in rem_perms:
-                opt_kwargs, obj = rem_perms[perm_key]
+            for perm_key, rem_perm in rem_perms.items():
+                opt_kwargs, obj = rem_perm
                 if obj is None:  # resource class
                     kwargs = dict(permitted_object=perm_key)
                 else:
@@ -1101,8 +1102,8 @@ def ensure_present(params, check_mode):
                 if not check_mode:
                     urole.remove_permission(**kwargs)
                 del cur_perms[perm_key]
-            for perm_key in add_perms:
-                opt_kwargs, obj = add_perms[perm_key]
+            for perm_key, add_perm in add_perms.items():
+                opt_kwargs, obj = add_perm
                 if obj is None:  # resource class
                     kwargs = dict(permitted_object=perm_key)
                 else:
@@ -1136,8 +1137,8 @@ def ensure_present(params, check_mode):
                     result.update(update_props)
                 changed = True
 
-                for perm_key in rem_perms:
-                    opt_kwargs, obj = rem_perms[perm_key]
+                for perm_key, rem_perm in rem_perms.items():
+                    opt_kwargs, obj = rem_perm
                     if obj is None:  # resource class
                         kwargs = dict(permitted_object=perm_key)
                     else:
@@ -1149,8 +1150,8 @@ def ensure_present(params, check_mode):
                     if not check_mode:
                         urole.remove_permission(**kwargs)
                     del cur_perms[perm_key]
-                for perm_key in add_perms:
-                    opt_kwargs, obj = add_perms[perm_key]
+                for perm_key, add_perm in add_perms.items():
+                    opt_kwargs, obj = add_perm
                     if obj is None:  # resource class
                         kwargs = dict(permitted_object=perm_key)
                     else:
@@ -1219,6 +1220,7 @@ def ensure_absent(params, check_mode):
 
 
 def facts(params, check_mode):
+    # pylint: disable=unused-argument
     """
     Return facts about a user role.
 
@@ -1282,6 +1284,7 @@ def perform_task(params, check_mode):
 
 
 def main():
+    """Main function"""
 
     # The following definition of module input parameters must match the
     # description of the options in the DOCUMENTATION string.
@@ -1304,7 +1307,7 @@ def main():
         module.fail_json(msg=missing_required_lib("requests"),
                          exception=IMP_URLLIB3_ERR)
 
-    requests.packages.urllib3.disable_warnings()
+    urllib3.disable_warnings()
 
     if IMP_ZHMCCLIENT_ERR is not None:
         module.fail_json(msg=missing_required_lib("zhmcclient"),

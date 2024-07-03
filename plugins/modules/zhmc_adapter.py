@@ -352,7 +352,7 @@ from ..module_utils.common import log_init, open_session, close_session, \
     common_fail_on_import_errors, parse_hmc_host  # noqa: E402
 
 try:
-    import requests.packages.urllib3
+    import urllib3
     IMP_URLLIB3_ERR = None
 except ImportError:
     IMP_URLLIB3_ERR = traceback.format_exc()
@@ -506,6 +506,7 @@ def process_properties(adapter, params):
     for prop_name in input_props:
 
         try:
+            # pylint: disable=unused-variable
             allowed, create, update, update_active, eq_func, type_cast = \
                 ZHMC_ADAPTER_PROPERTIES[prop_name]
         except KeyError:
@@ -629,6 +630,7 @@ def ensure_set(params, check_mode):
         # It was identified by name or match properties, so it does exist.
         # Update its properties and change adapter and crypto type, if
         # needed.
+        # pylint: disable=unused-variable
         create_props, update_props, chg_adapter_type, chg_crypto_type = \
             process_properties(adapter, params)
 
@@ -734,6 +736,7 @@ def ensure_present(params, check_mode):
                     f"creating Hipersockets adapter {adapter_name!r} "
                     "(must specify 'hipersockets').")
 
+            # pylint: disable=unused-variable
             create_props, update_props, _chg_adapter_type, _chg_crypto_type = \
                 process_properties(adapter, params)
 
@@ -872,6 +875,7 @@ def ensure_absent(params, check_mode):
 
 
 def facts(params, check_mode):
+    # pylint: disable=unused-argument
     """
     Identify the target CPC and return facts about the target CPC and its
     child resources.
@@ -923,6 +927,7 @@ def perform_task(params, check_mode):
 
 
 def main():
+    """Main function"""
 
     # The following definition of module input parameters must match the
     # description of the options in the DOCUMENTATION string.
@@ -947,7 +952,7 @@ def main():
         module.fail_json(msg=missing_required_lib("requests"),
                          exception=IMP_URLLIB3_ERR)
 
-    requests.packages.urllib3.disable_warnings()
+    urllib3.disable_warnings()
 
     if IMP_ZHMCCLIENT_ERR is not None:
         module.fail_json(msg=missing_required_lib("zhmcclient"),

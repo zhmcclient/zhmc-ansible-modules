@@ -104,6 +104,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   'state=active,loaded'. For backwards compatibility, its default value is True.
   (issue #986)
 
+* Test: Added a separate pylint run (in addition to the one in the Ansible
+  sanity test), because it can be run on the test sources as well, and because
+  the santy test pylint has important checks disabled. (issue #1007)
+
 **Cleanup:**
 
 * Modernized the code to match the minimum Python version 3.8 (use of f-strings,

@@ -22,10 +22,9 @@ __metaclass__ = type
 import random
 import pdb
 import re
-
-import pytest
 from unittest import mock
-import requests.packages.urllib3
+import pytest
+import urllib3
 import zhmcclient
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
@@ -39,7 +38,7 @@ from .utils import mock_ansible_module, get_failure_msg, skip_warn, \
     setup_logging, set_resource_property
 
 
-requests.packages.urllib3.disable_warnings()
+urllib3.disable_warnings()
 
 # Print debug messages in tests
 DEBUG = False
@@ -577,7 +576,7 @@ def test_zhmc_lpar_state(
         run,
         check_mode,
         classic_mode_cpcs):  # noqa: F811, E501
-    # pylint: disable=redefined-outer-name, unused-argument
+    # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_lpar module with different initial and target state.
 
@@ -667,6 +666,7 @@ def test_zhmc_lpar_state(
         if len(lpar_iaps) >= 1:
             iap = lpar_iaps[0]
         else:
+            iap = None  # avoid pylint possibly-used-before-assignment
             pytest.skip(f"Image activation profile {iap_name!r} does not "
                         f"exist on CPC {cpc.name}.")
         wrong_iap_names = [_iap.name for _iap in all_iaps
@@ -726,7 +726,7 @@ def test_zhmc_lpar_state(
         logger.info(msg)
 
         if run == 'pdb':
-            pdb.set_trace()
+            pdb.set_trace()  # pylint: disable=forgotten-debug-statement
 
         logger.info("Preparation: Ensuring that LPAR %r has status %r",
                     lpar.name, initial_status)
@@ -956,7 +956,7 @@ def test_zhmc_lpar_facts(
         desc, select_properties, exp_prop_names, not_prop_names,
         exp_msg, exp_changed, run,
         check_mode, classic_mode_cpcs):  # noqa: F811, E501
-    # pylint: disable=redefined-outer-name, unused-argument
+    # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_lpar module with state=facts.
 
@@ -992,7 +992,7 @@ def test_zhmc_lpar_facts(
         logger.info(msg)
 
         if run == 'pdb':
-            pdb.set_trace()
+            pdb.set_trace()  # pylint: disable=forgotten-debug-statement
 
         # Prepare module input parameters (must be all required + optional)
         params = {

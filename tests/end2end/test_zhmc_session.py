@@ -20,9 +20,9 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 import re
-import pytest
 from unittest import mock
-import requests.packages.urllib3
+import pytest
+import urllib3
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
@@ -31,7 +31,7 @@ from plugins.modules import zhmc_session, zhmc_cpc_list
 from plugins.module_utils.common import parse_hmc_host
 from .utils import mock_ansible_module, get_failure_msg
 
-requests.packages.urllib3.disable_warnings()
+urllib3.disable_warnings()
 
 # Print debug messages
 DEBUG = False
@@ -219,6 +219,7 @@ def test_zhmc_session_single(
         ansible_mod_cls, desc, check_mode, in_params, exp_exit_code,
         exp_msg_pattern, exp_changed, exp_hmc_auth,
         hmc_definition):  # noqa: F811, E501
+    # pylint: disable=redefined-outer-name,unused-argument
     """
     Test specific input parameters on single invocations of the zhmc_session
     module.
@@ -337,6 +338,7 @@ def test_zhmc_session_single(
 @mock.patch("plugins.modules.zhmc_cpc_list.AnsibleModule", autospec=True)
 def test_zhmc_session_sequence(
         cpc_list_mod_cls, session_mod_cls, hmc_definition):  # noqa: F811, E501
+    # pylint: disable=redefined-outer-name
     """
     Test a sequence of playbook tasks with create, use, delete of sessions
     with the zhmc_session module.
