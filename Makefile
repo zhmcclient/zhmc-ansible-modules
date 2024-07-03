@@ -30,7 +30,7 @@ ifndef PACKAGE_LEVEL
   PACKAGE_LEVEL := latest
 endif
 ifeq ($(PACKAGE_LEVEL),minimum)
-  pip_level_opts := -c minimum-constraints.txt
+  pip_level_opts := -c minimum-constraints-develop.txt -c minimum-constraints-install.txt
   pip_level_opts_new :=
 else
   ifeq ($(PACKAGE_LEVEL),ansible)
@@ -127,7 +127,7 @@ sanity_tar_file := tmp_sanity.tar
 
 #Safety policy file (for packages needed for installation)
 safety_install_policy_file := .safety-policy-install.yml
-safety_all_policy_file := .safety-policy-all.yml
+safety_develop_policy_file := .safety-policy-develop.yml
 
 # Packages whose dependencies are checked using pip-missing-reqs
 # ansible_test and pylint are checked only on officially supported Python versions
@@ -225,7 +225,8 @@ help:
 	@echo "  PACKAGE_LEVEL - Package level to be used for installing dependent Python"
 	@echo "      packages in 'install' and 'develop' targets:"
 	@echo "        latest - Latest package versions available on Pypi"
-	@echo "        minimum - A minimum version as defined in minimum-constraints.txt"
+	@echo "        ansible - Specific Ansible versions"
+	@echo "        minimum - A minimum version as defined in minimum-constraints*.txt"
 	@echo "      Optional, defaults to 'latest'."
 	@echo '  PYTHON_CMD=... - Name of python command. Default: python'
 	@echo '  PIP_CMD=... - Name of pip command. Default: pip'
@@ -269,7 +270,7 @@ check: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 	@echo '$@ done.'
 
 .PHONY: safety
-safety: $(done_dir)/safety_all_$(pymn)_$(PACKAGE_LEVEL).done $(done_dir)/safety_install_$(pymn)_$(PACKAGE_LEVEL).done
+safety: $(done_dir)/safety_develop_$(pymn)_$(PACKAGE_LEVEL).done $(done_dir)/safety_install_$(pymn)_$(PACKAGE_LEVEL).done
 	@echo "Makefile: $@ done."
 
 .PHONY: bandit
@@ -331,7 +332,7 @@ endif
 	@echo '$@ done.'
 
 .PHONY: check_reqs
-check_reqs: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done minimum-constraints.txt minimum-constraints-install.txt requirements.txt
+check_reqs: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done minimum-constraints-develop.txt minimum-constraints-install.txt requirements.txt
 ifeq ($(PACKAGE_LEVEL),ansible)
 	@echo "Makefile: Warning: Skipping the checking of missing dependencies for PACKAGE_LEVEL=ansible" >&2
 else
@@ -341,7 +342,9 @@ else
 	# pip-missing-reqs $(src_py_dir) --requirements-file=minimum-constraints-install.txt
 	@echo "Makefile: Done checking missing dependencies of this package"
 	@echo "Makefile: Checking missing dependencies of some development packages"
-	@rc=0; for pkg in $(check_reqs_packages); do dir=$$($(PYTHON_CMD) -c "import $${pkg} as m,os; dm=os.path.dirname(m.__file__); d=dm if not dm.endswith('site-packages') else m.__file__; print(d)"); cmd="pip-missing-reqs $${dir} --requirements-file=minimum-constraints.txt"; echo $${cmd}; $${cmd}; rc=$$(expr $${rc} + $${?}); done; exit $${rc}
+	bash -c "cat minimum-constraints-develop.txt minimum-constraints-install.txt >tmp_minimum-constraints.txt"
+	@rc=0; for pkg in $(check_reqs_packages); do dir=$$($(PYTHON_CMD) -c "import $${pkg} as m,os; dm=os.path.dirname(m.__file__); d=dm if not dm.endswith('site-packages') else m.__file__; print(d)"); cmd="pip-missing-reqs $${dir} --requirements-file=tmp_minimum-constraints.txt"; echo $${cmd}; $${cmd}; rc=$$(expr $${rc} + $${?}); done; exit $${rc}
+	-$(call RM_FUNC,tmp_minimum-constraints.txt)
 	@echo "Makefile: Done checking missing dependencies of some development packages"
 endif
 	@echo "Makefile: $@ done."
@@ -426,28 +429,29 @@ else
 	@true >/dev/null
 endif
 
-$(done_dir)/install_deps_$(pymn)_$(PACKAGE_LEVEL).done: Makefile requirements.txt
+$(done_dir)/install_deps_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/base_$(pymn)_$(PACKAGE_LEVEL).done requirements.txt
 	$(PYTHON_CMD) -m pip install $(pip_level_opts) $(pip_level_opts_new) -r requirements.txt
 	echo "done" >$@
 
-$(done_dir)/install_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/install_deps_$(pymn)_$(PACKAGE_LEVEL).done $(dist_file) requirements.txt
+$(done_dir)/install_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/base_$(pymn)_$(PACKAGE_LEVEL).done $(done_dir)/install_deps_$(pymn)_$(PACKAGE_LEVEL).done $(dist_file) requirements.txt
 	ansible-galaxy collection install --force $(dist_file)
 	echo "done" >$@
 
-$(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/install_pip_$(pymn)_$(PACKAGE_LEVEL).done tools/os_setup.sh dev-requirements.txt
+$(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/base_$(pymn)_$(PACKAGE_LEVEL).done tools/os_setup.sh requirements-develop.txt
 	bash -c 'tools/os_setup.sh'
-	$(PYTHON_CMD) -m pip install $(pip_level_opts) $(pip_level_opts_new) -r dev-requirements.txt
+	$(PYTHON_CMD) -m pip install $(pip_level_opts) $(pip_level_opts_new) -r requirements-develop.txt
 	echo "done" >$@
 
-$(done_dir)/install_pip_$(pymn)_$(PACKAGE_LEVEL).done: Makefile
-	bash -c 'pv=$$($(PYTHON_CMD) -m pip --version); if [[ $$pv =~ (^pip [1-8]\..*) ]]; then $(PYTHON_CMD) -m pip install pip==9.0.1; fi'
-	$(PYTHON_CMD) -m pip install $(pip_level_opts) pip setuptools wheel
+$(done_dir)/base_$(pymn)_$(PACKAGE_LEVEL).done: Makefile requirements-base.txt minimum-constraints-develop.txt minimum-constraints-install.txt
+	-$(call RM_FUNC,$@)
+	@echo "Installing/upgrading pip, setuptools and wheel with PACKAGE_LEVEL=$(PACKAGE_LEVEL)"
+	$(PYTHON_CMD) -m pip install $(pip_level_opts) -r requirements-base.txt
 	echo "done" >$@
 
-$(done_dir)/safety_all_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_all_policy_file) minimum-constraints.txt minimum-constraints-install.txt
+$(done_dir)/safety_develop_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_develop_policy_file) minimum-constraints-develop.txt minimum-constraints-install.txt
 	@echo "Makefile: Running Safety for all packages"
 	-$(call RM_FUNC,$@)
-	bash -c "safety check --policy-file $(safety_all_policy_file) -r minimum-constraints.txt --full-report || test '$(RUN_TYPE)' != 'release' || exit 1"
+	bash -c "safety check --policy-file $(safety_develop_policy_file) -r minimum-constraints-develop.txt --full-report || test '$(RUN_TYPE)' != 'release' || exit 1"
 	echo "done" >$@
 	@echo "Makefile: Done running Safety"
 

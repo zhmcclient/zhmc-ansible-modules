@@ -1,12 +1,8 @@
 # Pip requirements file for development dependencies.
 
 
-# Include install dependencies
--r requirements.txt
-
-
 # Direct dependencies for development and indirect dependencies for development
-# that are needed for some reason (must be consistent with minimum-constraints.txt)
+# that are needed for some reason (must be consistent with minimum-constraints-develop.txt)
 
 # Ansible validate-modules (no imports, invoked via validate-modules script)
 mock>=2.0.0
@@ -104,7 +100,7 @@ Babel>=2.9.1
 git+https://github.com/andy-maier/sphinx-versions.git@1.1.3.post2#egg=sphinx-versions
 
 # ansible-doc-extractor and it's dependent theme for docs generation (no imports, invoked via script):
-# The Makefile defines in doc_build on which Python versions docs are built. Keep in sync with Makefile and minimum-constraints.txt.
+# The Makefile defines in doc_build on which Python versions docs are built. Keep in sync with Makefile and minimum-constraints-develop.txt.
 ansible-doc-extractor>=0.1.8
 antsibull-docs-parser>=1.0.0
 

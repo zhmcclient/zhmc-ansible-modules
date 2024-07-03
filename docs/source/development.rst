@@ -168,9 +168,9 @@ test matrix in the ``.github/workflows/test.yml`` file.
 The following table shows for the full set of test environments which Ansible
 versions are tested on which Python versions. The 'Packages' column indicates
 whether the latest versions of Python packages are used (i.e. what pip installs
-by default, given the ``requirements.txt`` and ``dev-requirements.txt`` files),
-the minimum versions as defined in the ``minimum-constraint.txt`` file, or
-specific Ansible versions as defined in the ``ansible-constraint.txt`` file:
+by default, given the ``requirements*.txt`` files),
+the minimum versions as defined in the ``minimum-constraints*.txt`` files, or
+specific Ansible versions as defined in the ``ansible-constraints.txt`` file:
 
 ======  ========  =======  ============
 Python  Packages  Ansible  Ansible core
