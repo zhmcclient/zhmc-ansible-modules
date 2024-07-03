@@ -280,7 +280,7 @@ from ..module_utils.common import log_init, open_session, close_session, \
     common_fail_on_import_errors, parse_hmc_host  # noqa: E402
 
 try:
-    import requests.packages.urllib3
+    import urllib3
     IMP_URLLIB3_ERR = None
 except ImportError:
     IMP_URLLIB3_ERR = traceback.format_exc()
@@ -352,7 +352,7 @@ ZHMC_STORAGE_VOLUME_PROPERTIES = {
 }
 
 
-def process_properties(cpc, storage_group, storage_volume, params):
+def process_properties(storage_volume, params):
     """
     Process the properties specified in the 'properties' module parameter,
     and return two dictionaries (create_props, update_props) that contain
@@ -370,12 +370,6 @@ def process_properties(cpc, storage_group, storage_volume, params):
       added to the returned dictionaries.
 
     Parameters:
-
-      cpc (zhmcclient.Cpc): CPC associated to the storage group of the target
-        storage volume.
-
-      storage_group (zhmcclient.StorageGroup): Storage group of the target
-        storage volume.
 
       storage_volume (zhmcclient.StorageVolume): Target storage volume if it
         currently exists, or `None` if it does not currently exist.
@@ -417,6 +411,7 @@ def process_properties(cpc, storage_group, storage_volume, params):
                 f"Property {prop_name!r} is not defined in the data model for "
                 "storage volumes.")
 
+        # pylint: disable=unused-variable
         allowed, create, update, update_while_active, eq_func, type_cast = \
             ZHMC_STORAGE_VOLUME_PROPERTIES[prop_name]
 
@@ -499,8 +494,7 @@ def ensure_present(params, check_mode):
             # update-only properties.
             if not check_mode:
                 create_props, update_props = \
-                    process_properties(cpc, storage_group, storage_volume,
-                                       params)
+                    process_properties(storage_volume, params)
                 storage_volume = storage_group.storage_volumes.create(
                     create_props)
                 update2_props = {}
@@ -520,7 +514,7 @@ def ensure_present(params, check_mode):
             # It exists. Update its properties.
             storage_volume.pull_full_properties()
             create_props, update_props = \
-                process_properties(cpc, storage_group, storage_volume, params)
+                process_properties(storage_volume, params)
             if create_props:
                 raise AssertionError("Unexpected "
                                      "create_props: %r" % create_props)
@@ -601,6 +595,7 @@ def ensure_absent(params, check_mode):
 
 
 def facts(params, check_mode):
+    # pylint: disable=unused-argument
     """
     Return facts about a storage volume.
 
@@ -670,6 +665,7 @@ def perform_task(params, check_mode):
 
 
 def main():
+    """Main function"""
 
     # The following definition of module input parameters must match the
     # description of the options in the DOCUMENTATION string.
@@ -694,7 +690,7 @@ def main():
         module.fail_json(msg=missing_required_lib("requests"),
                          exception=IMP_URLLIB3_ERR)
 
-    requests.packages.urllib3.disable_warnings()
+    urllib3.disable_warnings()
 
     if IMP_ZHMCCLIENT_ERR is not None:
         module.fail_json(msg=missing_required_lib("zhmcclient"),

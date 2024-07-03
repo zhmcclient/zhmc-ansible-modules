@@ -21,13 +21,13 @@ __metaclass__ = type
 
 import uuid
 import copy
-import pytest
 from unittest import mock
 import re
 import random
 import pdb
 from pprint import pformat
-import requests.packages.urllib3
+import pytest
+import urllib3
 import zhmcclient
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
@@ -39,7 +39,7 @@ from plugins.module_utils.common import pull_partition_status
 from .utils import mock_ansible_module, get_failure_msg, setup_logging, \
     skip_warn
 
-requests.packages.urllib3.disable_warnings()
+urllib3.disable_warnings()
 
 DEBUG = False  # Print debug messages
 
@@ -210,9 +210,8 @@ def setup_partition(hd, cpc, name, properties, status='stopped'):
                       f"{name!r} into status 'starting'")
             try:
                 partition.start(wait_for_completion=False)
-            except zhmcclient.Error as exc:
-                if isinstance(exc, zhmcclient.HTTPError) \
-                        and exc.http_status == 409 and exc.reason == 131:
+            except zhmcclient.HTTPError as exc:
+                if exc.http_status == 409 and exc.reason == 131:
                     # SSC partitions boot the built-in installer. However,
                     # there seems to be an issue where the SSC partition fails
                     # to start with "HTTPError: 409,131: The operating system in
@@ -224,6 +223,10 @@ def setup_partition(hd, cpc, name, properties, status='stopped'):
                     raise AssertionError(
                         "Starting test partition without waiting for "
                         f"completion failed with: {exc}")
+            except zhmcclient.Error as exc:
+                raise AssertionError(
+                    "Starting test partition without waiting for "
+                    f"completion failed with: {exc}")
             current_status = pull_partition_status(partition)
             if current_status != 'starting':
                 raise AssertionError(
@@ -272,9 +275,8 @@ def setup_partition(hd, cpc, name, properties, status='stopped'):
             try:
                 job = partition.start(wait_for_completion=False)
                 job.wait_for_completion()
-            except zhmcclient.Error as exc:
-                if isinstance(exc, zhmcclient.HTTPError) \
-                        and exc.http_status == 409 and exc.reason == 131:
+            except zhmcclient.HTTPError as exc:
+                if exc.http_status == 409 and exc.reason == 131:
                     # SSC partitions boot the built-in installer. However,
                     # there seems to be an issue where the SSC partition fails
                     # to start with "HTTPError: 409,131: The operating system in
@@ -287,6 +289,11 @@ def setup_partition(hd, cpc, name, properties, status='stopped'):
                         "setup_partition: Starting SSC test partition "
                         f"{name!r} and waiting for completion failed with: "
                         f"{exc}")
+            except zhmcclient.Error as exc:
+                raise AssertionError(
+                    "setup_partition: Starting SSC test partition "
+                    f"{name!r} and waiting for completion failed with: "
+                    f"{exc}")
             current_status = pull_partition_status(partition)
             if current_status != 'active':
                 raise AssertionError(
@@ -329,14 +336,14 @@ def setup_partition(hd, cpc, name, properties, status='stopped'):
                   f"{name!r}.")
 
     except zhmcclient.Error as exc:
-        teardown_partition(hd, cpc, name)
+        teardown_partition(cpc, name)
         pytest.skip("Error in HMC operation during test partition setup: "
                     f"{exc}")
 
     return partition
 
 
-def teardown_partition(hd, cpc, name):
+def teardown_partition(cpc, name):
     """
     Delete a partition created for test purposes by setup_partition().
 
@@ -347,7 +354,6 @@ def teardown_partition(hd, cpc, name):
     deleted.
 
     Parameters:
-      hd(zhmcclient.testutils.HMCDefinition): HMC definition context.
       cpc(zhmcclient.Cpc): CPC on which the partition has been created.
       name(string): Partition name.
     """
@@ -623,6 +629,7 @@ def test_zhmc_partition_facts(
         desc, select_properties, exp_prop_names, not_prop_names,
         exp_msg, exp_changed, run,
         check_mode, dpm_mode_cpcs):  # noqa: F811, E501
+    # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_partition module with state=facts on DPM mode CPCs.
     """
@@ -893,6 +900,7 @@ def test_zhmc_partition_state(
         desc, initial_props, initial_status, input_state, input_props, exp_msg,
         exp_props, exp_changed, run,
         check_mode, dpm_mode_cpcs):  # noqa: F811, E501
+    # pylint: disable=redefined-outer-name
     """
     Test the zhmc_partition module with different initial and target state.
     """
@@ -960,7 +968,7 @@ def test_zhmc_partition_state(
             with pytest.raises(SystemExit) as exc_info:
 
                 if run == 'pdb':
-                    pdb.set_trace()
+                    pdb.set_trace()  # pylint: disable=forgotten-debug-statement
 
                 # Exercise the code to be tested
                 zhmc_partition.main()
@@ -1015,7 +1023,7 @@ def test_zhmc_partition_state(
                     assert_partition_props(output_props, exp_props, where)
 
         finally:
-            teardown_partition(hd, cpc, partition_name)
+            teardown_partition(cpc, partition_name)
 
 
 # New values for updating properties.
@@ -1192,6 +1200,7 @@ NON_RETRIEVABLE_PROPS = ('boot_ftp_password', 'ssc_master_pw')
 @mock.patch("plugins.modules.zhmc_partition.AnsibleModule", autospec=True)
 def test_zhmc_partition_properties(
         ansible_mod_cls, type_state, check_mode, dpm_mode_cpcs):  # noqa: F811, E501
+    # pylint: disable=redefined-outer-name
     """
     Test the zhmc_partition module with updating properties.
     """
@@ -1299,6 +1308,7 @@ def test_zhmc_partition_properties(
                     else:
                         new_value = value_item
                         new_hmc_value = value_item
+                    # pylint: disable=unused-variable
                     allowed, create, update, update_while_active, eq_func, \
                         type_cast, required, default = \
                         zhmc_partition.ZHMC_PARTITION_PROPERTIES[prop_name]
@@ -1415,7 +1425,7 @@ def test_zhmc_partition_properties(
                 assert_partition_props(output_props, exp_props, where)
 
         finally:
-            teardown_partition(hd, cpc, partition_name)
+            teardown_partition(cpc, partition_name)
 
 
 @pytest.mark.parametrize(
@@ -1438,6 +1448,7 @@ def test_zhmc_partition_properties(
 @mock.patch("plugins.modules.zhmc_partition.AnsibleModule", autospec=True)
 def test_zhmc_partition_boot_stovol(
         ansible_mod_cls, type_state, via, check_mode, dpm_mode_cpcs):  # noqa: F811, E501
+    # pylint: disable=redefined-outer-name
     """
     Test the zhmc_partition module when configuring boot from a storage volume.
     """
@@ -1576,7 +1587,7 @@ def test_zhmc_partition_boot_stovol(
             if stogrp:
                 partition.detach_storage_group(stogrp)
                 stogrp.delete()
-            teardown_partition(hd, cpc, partition_name)
+            teardown_partition(cpc, partition_name)
 
 
 PARTITION_ISO_MOUNT_TESTCASES = [
@@ -1639,6 +1650,7 @@ def test_zhmc_partition_iso_mount(
         ansible_mod_cls,
         desc, image_name, image_file, ins_file, exp_msg, exp_changed,
         check_mode, dpm_mode_cpcs):  # noqa: F811, E501
+    # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_partition module with state='iso_mount'.
     """
@@ -1719,7 +1731,7 @@ def test_zhmc_partition_iso_mount(
             image_name = partition.get_property('boot-iso-image-name')
             if image_name:
                 partition.unmount_iso_image()
-            teardown_partition(hd, cpc, partition_name)
+            teardown_partition(cpc, partition_name)
 
 
 # TODO: Testcases for ISO unmount

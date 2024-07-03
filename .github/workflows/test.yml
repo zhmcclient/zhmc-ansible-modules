@@ -195,6 +195,12 @@ jobs:
         RUN_TYPE: ${{ steps.set-run-type.outputs.result }}
       run: |
         make check
+    - name: Run pylint
+      env:
+        PACKAGE_LEVEL: ${{ matrix.package_level }}
+        RUN_TYPE: ${{ steps.set-run-type.outputs.result }}
+      run: |
+        make pylint
     - name: Run sanity
       env:
         PACKAGE_LEVEL: ${{ matrix.package_level }}

@@ -19,9 +19,9 @@ End2end tests for zhmc_adapter_list module.
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-import pytest
 from unittest import mock
-import requests.packages.urllib3
+import pytest
+import urllib3
 import zhmcclient
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
@@ -31,7 +31,7 @@ from zhmcclient.testutils import dpm_mode_cpcs  # noqa: F401, E501
 from plugins.modules import zhmc_adapter_list
 from .utils import mock_ansible_module, get_failure_msg
 
-requests.packages.urllib3.disable_warnings()
+urllib3.disable_warnings()
 
 # Print debug messages
 DEBUG = False
@@ -141,6 +141,7 @@ def assert_adapter_list(adapter_list, exp_adapter_dict):
 def test_zhmc_adapter_list(
         ansible_mod_cls, check_mode, property_flags, filters, with_cpc,
         dpm_mode_cpcs):  # noqa: F811, E501
+    # pylint: disable=redefined-outer-name
     """
     Test the zhmc_adapter_list module with DPM mode CPCs.
     """
@@ -247,8 +248,7 @@ def test_zhmc_adapter_list(
             all_adapters = cpc.adapters.list()
             all_adapter_ids = [ad.properties['adapter-id']
                                for ad in all_adapters].sort()
-            exp_adapter_ids = \
-                [item[1] for item in exp_adapter_dict.keys()].sort()
+            exp_adapter_ids = [item[1] for item in exp_adapter_dict].sort()
             assert exp_adapter_ids == all_adapter_ids, \
                 "cpc.adapters.list() with 'name' filter does not seem to " \
                 "support regular expressions"

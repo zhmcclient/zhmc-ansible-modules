@@ -22,9 +22,9 @@ Function tests for the 'zhmc_partition' Ansible module.
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-import pytest
 from unittest import mock
 import re
+import pytest
 
 from zhmcclient import Client
 from zhmcclient_mock import FakedSession
@@ -818,6 +818,33 @@ class TestPartition:
     All tests for partitions.
     """
 
+    def __init__(self):
+        self.session = None
+        self.client = None
+        self.faked_console = None
+        self.console = None
+        self.faked_cpc = None
+        self.cpc = None
+        self.faked_crypto_adapters = None
+        self.faked_crypto_adapter_names = None
+        self.partition_name = None
+        self.faked_partition = None
+        self.partition = None
+        self.hba_name = None
+        self.faked_hba = None
+        self.hba = None
+        self.sg_name = None
+        self.faked_sg = None
+        self.sg = None
+        self.sv_name = None
+        self.faked_sv = None
+        self.sv = None
+        self.faked_adapter = None
+        self.faked_vswitch = None
+        self.nic_name = None
+        self.faked_nic = None
+        self.nic = None
+
     def setup_method(self):
         """
         Using the zhmcclient mock support, set up a CPC in DPM mode, that has
@@ -1593,6 +1620,7 @@ class TestPartition:
     def test_crypto_config_success(
             self, ansible_mod_cls, desc, adapters, initial_config, input_props,
             exp_config, exp_changed, desired_state, initial_state, check_mode):
+        # pylint: disable=unused-argument
         """
         Tests for successful crypto configuration.
         """

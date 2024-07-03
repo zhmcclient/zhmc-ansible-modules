@@ -123,6 +123,7 @@ COMMON_PARSE_HMC_HOST_TESTCASES = [
     COMMON_PARSE_HMC_HOST_TESTCASES)
 def test_common_parse_hmc_host(
         desc, in_hmc_host, exp_hmc_host, exp_exc_type, exp_exc_pattern):
+    # pylint: disable=unused-argument
     """
     Test the parse_hmc_host() function.
     """

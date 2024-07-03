@@ -19,9 +19,9 @@ End2end tests for zhmc_partition_list module.
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-import pytest
 from unittest import mock
-import requests.packages.urllib3
+import pytest
+import urllib3
 import zhmcclient
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
@@ -31,7 +31,7 @@ from zhmcclient.testutils import dpm_mode_cpcs  # noqa: F401, E501
 from plugins.modules import zhmc_partition_list
 from .utils import mock_ansible_module, get_failure_msg, setup_logging
 
-requests.packages.urllib3.disable_warnings()
+urllib3.disable_warnings()
 
 # Create log file
 LOGGING = False
@@ -138,6 +138,7 @@ def assert_partition_list(partition_list, exp_partition_dict):
 def test_zhmc_partition_list(
         ansible_mod_cls, check_mode, property_flags, with_cpc,
         dpm_mode_cpcs):  # noqa: F811, E501
+    # pylint: disable=redefined-outer-name
     """
     Test the zhmc_partition_list module with DPM mode CPCs.
     """

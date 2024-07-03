@@ -582,7 +582,7 @@ from ..module_utils.common import log_init, open_session, close_session, \
     common_fail_on_import_errors, parse_hmc_host  # noqa: E402
 
 try:
-    import requests.packages.urllib3
+    import urllib3
     IMP_URLLIB3_ERR = None
 except ImportError:
     IMP_URLLIB3_ERR = traceback.format_exc()
@@ -732,6 +732,7 @@ def process_properties(cpc, storage_group, params):
                 f"Property {prop_name!r} is not defined in the data model for "
                 "storage groups.")
 
+        # pylint: disable=unused-variable
         allowed, create, update, update_while_active, eq_func, type_cast = \
             ZHMC_STORAGE_GROUP_PROPERTIES[prop_name]
 
@@ -979,6 +980,7 @@ def ensure_absent(params, check_mode):
 
 
 def discover(params, check_mode):
+    # pylint: disable=unused-argument
     """
     Trigger LUN discovery for a FCP storage group and return its current facts.
 
@@ -1034,6 +1036,7 @@ def discover(params, check_mode):
 
 
 def facts(params, check_mode):
+    # pylint: disable=unused-argument
     """
     Return facts about a storage group and its storage volumes and virtual
     storage resources.
@@ -1098,6 +1101,7 @@ def perform_task(params, check_mode):
 
 
 def main():
+    """Main function"""
 
     # The following definition of module input parameters must match the
     # description of the options in the DOCUMENTATION string.
@@ -1124,7 +1128,7 @@ def main():
         module.fail_json(msg=missing_required_lib("requests"),
                          exception=IMP_URLLIB3_ERR)
 
-    requests.packages.urllib3.disable_warnings()
+    urllib3.disable_warnings()
 
     if IMP_ZHMCCLIENT_ERR is not None:
         module.fail_json(msg=missing_required_lib("zhmcclient"),

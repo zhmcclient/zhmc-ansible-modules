@@ -383,15 +383,18 @@ def stop_partition(logger, partition, check_mode):
     turns = 0
     while turns < max_turns:
         turns += 1
+
         if status in PART_BAD_STATUSES:
             raise StatusError(
                 f"CPC {partition.manager.cpc.name!r} has issues; partition "
                 f"{partition.name!r} has bad status: {status!r}")
-        elif status in ('stopped', 'reservation-error'):
+
+        if status in ('stopped', 'reservation-error'):
             logger.debug("Partition %r on CPC %r is now in status %r",
                          partition.name, partition.manager.cpc.name, status)
             break
-        elif status == 'starting':
+
+        if status == 'starting':
             logger.debug("Waiting for completion of starting of partition %r "
                          "on CPC %r",
                          partition.name, partition.manager.cpc.name)
@@ -490,15 +493,18 @@ def start_partition(logger, partition, check_mode):
     tried_start = False
     while turns < max_turns:
         turns += 1
+
         if status in PART_BAD_STATUSES:
             raise StatusError(
                 f"CPC {partition.manager.cpc.name!r} has issues; partition "
                 f"{partition.name!r} has bad status: {status!r}")
-        elif status in ('active', 'degraded'):
+
+        if status in ('active', 'degraded'):
             logger.debug("Partition %r on CPC %r is now in status %r",
                          partition.name, partition.manager.cpc.name, status)
             break
-        elif status == 'stopping':
+
+        if status == 'stopping':
             logger.debug("Waiting for completion of stopping of partition %r "
                          "on CPC %r",
                          partition.name, partition.manager.cpc.name)
@@ -608,11 +614,13 @@ def wait_for_transition_completion(logger, partition):
     turns = 0
     while turns < max_turns:
         turns += 1
+
         if status in PART_BAD_STATUSES:
             raise StatusError(
                 f"CPC {partition.manager.cpc.name!r} has issues; partition "
                 f"{partition.name!r} has bad status: {status!r}")
-        elif status == 'stopping':
+
+        if status == 'stopping':
             logger.debug("Waiting for completion of stopping of partition %r "
                          "on CPC %r",
                          partition.name, partition.manager.cpc.name)
@@ -1015,16 +1023,19 @@ def to_unicode(value):
             uval = to_unicode(val)
             list_uval.append(uval)
         return list_uval
-    elif isinstance(value, bytes):
+
+    if isinstance(value, bytes):
         return value.decode('utf-8')
-    elif isinstance(value, str):
+
+    if isinstance(value, str):
         return value
-    elif value is None:
+
+    if value is None:
         return None
-    else:
-        raise TypeError(
-            f"Value of {type(value)} cannot be converted to unicode: "
-            f"{value!r}")
+
+    raise TypeError(
+        f"Value of {type(value)} cannot be converted to unicode: "
+        f"{value!r}")
 
 
 def process_normal_property(

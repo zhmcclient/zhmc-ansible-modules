@@ -265,7 +265,7 @@ from ..module_utils.common import log_init, open_session, close_session, \
     common_fail_on_import_errors, parse_hmc_host  # noqa: E402
 
 try:
-    import requests.packages.urllib3
+    import urllib3
     IMP_URLLIB3_ERR = None
 except ImportError:
     IMP_URLLIB3_ERR = traceback.format_exc()
@@ -336,7 +336,7 @@ ZHMC_PASSWORD_RULE_PROPERTIES = {
 }
 
 
-def process_properties(console, pwrule, params):
+def process_properties(pwrule, params):
     """
     Process the properties specified in the 'properties' module parameter,
     and return two dictionaries (create_props, update_props) that contain
@@ -396,6 +396,7 @@ def process_properties(console, pwrule, params):
                 f"Property {prop_name!r} is not defined in the data model for "
                 "password rules.")
 
+        # pylint: disable=unused-variable
         allowed, create, update, update_while_active, eq_func, type_cast = \
             ZHMC_PASSWORD_RULE_PROPERTIES[prop_name]
 
@@ -496,8 +497,7 @@ def ensure_present(params, check_mode):
         if pwrule is None:
             # It does not exist. Create it and update it if there are
             # update-only properties.
-            create_props, update_props = \
-                process_properties(console, pwrule, params)
+            create_props, update_props = process_properties(pwrule, params)
             update2_props = {}
             for name, value in update_props.items():
                 if name not in create_props:
@@ -519,8 +519,7 @@ def ensure_present(params, check_mode):
             # It exists. Update its properties.
             pwrule.pull_full_properties()
             result = dict(pwrule.properties)
-            create_props, update_props = \
-                process_properties(console, pwrule, params)
+            create_props, update_props = process_properties(pwrule, params)
             if create_props:
                 raise AssertionError("Unexpected "
                                      "create_props: %r" % create_props)
@@ -584,6 +583,7 @@ def ensure_absent(params, check_mode):
 
 
 def facts(params, check_mode):
+    # pylint: disable=unused-argument
     """
     Return facts about a password rule.
 
@@ -634,6 +634,7 @@ def perform_task(params, check_mode):
 
 
 def main():
+    """Main function"""
 
     # The following definition of module input parameters must match the
     # description of the options in the DOCUMENTATION string.
@@ -656,7 +657,7 @@ def main():
         module.fail_json(msg=missing_required_lib("requests"),
                          exception=IMP_URLLIB3_ERR)
 
-    requests.packages.urllib3.disable_warnings()
+    urllib3.disable_warnings()
 
     if IMP_ZHMCCLIENT_ERR is not None:
         module.fail_json(msg=missing_required_lib("zhmcclient"),

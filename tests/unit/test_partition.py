@@ -20,7 +20,6 @@ Unit tests for the 'zhmc_partition' Ansible module.
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-import unittest
 from unittest import mock
 import re
 import pdb
@@ -32,300 +31,293 @@ from plugins.modules import zhmc_partition
 from plugins.module_utils import common as module_utils
 
 
-class TestZhmcPartitionMain(unittest.TestCase):
+@mock.patch("plugins.modules.zhmc_partition.perform_task",
+            autospec=True)
+@mock.patch("plugins.modules.zhmc_partition.AnsibleModule",
+            autospec=True)
+def test_main_success(ansible_mod_cls, perform_task_func):
     """
-    Unit tests for the main() function.
+    Test main() with all required module parameters.
     """
 
-    @mock.patch("plugins.modules.zhmc_partition.perform_task",
-                autospec=True)
-    @mock.patch("plugins.modules.zhmc_partition.AnsibleModule",
-                autospec=True)
-    def test_main_success(self, ansible_mod_cls, perform_task_func):
-        """
-        Test main() with all required module parameters.
-        """
+    # Module invocation
+    params = {
+        'hmc_host': 'fake-host',
+        'hmc_auth': dict(userid='fake-userid',
+                         password='fake-password'),
+        'cpc_name': 'fake-cpc-name',
+        'name': 'fake-name',
+        'state': 'absent',
+        'select_properties': None,
+        'image_name': None,
+        'image_file': None,
+        'ins_file': None,
+        'properties': None,
+        'expand_storage_groups': False,
+        'expand_crypto_adapters': False,
+        'log_file': None,
+    }
+    check_mode = False
 
-        # Module invocation
-        params = {
-            'hmc_host': 'fake-host',
-            'hmc_auth': dict(userid='fake-userid',
-                             password='fake-password'),
-            'cpc_name': 'fake-cpc-name',
-            'name': 'fake-name',
-            'state': 'absent',
-            'select_properties': None,
-            'image_name': None,
-            'image_file': None,
-            'ins_file': None,
-            'properties': None,
-            'expand_storage_groups': False,
-            'expand_crypto_adapters': False,
-            'log_file': None,
-        }
-        check_mode = False
+    # Return values of perform_task()
+    perform_task_changed = True
+    perform_task_result = {}
 
-        # Return values of perform_task()
-        perform_task_changed = True
-        perform_task_result = {}
+    # Prepare mocks
+    mod_obj = ansible_mod_cls.return_value
+    mod_obj.params = params
+    mod_obj.check_mode = check_mode
+    mod_obj.fail_json.configure_mock(side_effect=SystemExit(1))
+    mod_obj.exit_json.configure_mock(side_effect=SystemExit(0))
+    perform_task_func.return_value = (perform_task_changed,
+                                      perform_task_result)
 
-        # Prepare mocks
-        mod_obj = ansible_mod_cls.return_value
-        mod_obj.params = params
-        mod_obj.check_mode = check_mode
-        mod_obj.fail_json.configure_mock(side_effect=SystemExit(1))
-        mod_obj.exit_json.configure_mock(side_effect=SystemExit(0))
-        perform_task_func.return_value = (perform_task_changed,
-                                          perform_task_result)
+    # Exercise code
+    with pytest.raises(SystemExit) as exc_info:
+        zhmc_partition.main()
+    exit_code = exc_info.value.args[0]
 
-        # Exercise code
-        with self.assertRaises(SystemExit) as cm:
-            zhmc_partition.main()
-        exit_code = cm.exception.args[0]
+    # Assert module exit code
+    assert exit_code == 0
 
-        # Assert module exit code
-        assert exit_code == 0
-
-        # Assert call to AnsibleModule()
-        expected_argument_spec = dict(
-            hmc_host=dict(required=True, type='raw'),
-            hmc_auth=dict(
-                required=True,
-                type='dict',
-                options=dict(
-                    userid=dict(required=False, type='str', default=None),
-                    password=dict(required=False, type='str', default=None,
-                                  no_log=True),
-                    session_id=dict(required=False, type='str', default=None,
-                                    no_log=True),
-                    ca_certs=dict(required=False, type='str', default=None),
-                    verify=dict(required=False, type='bool', default=True),
-                ),
+    # Assert call to AnsibleModule()
+    expected_argument_spec = dict(
+        hmc_host=dict(required=True, type='raw'),
+        hmc_auth=dict(
+            required=True,
+            type='dict',
+            options=dict(
+                userid=dict(required=False, type='str', default=None),
+                password=dict(required=False, type='str', default=None,
+                              no_log=True),
+                session_id=dict(required=False, type='str', default=None,
+                                no_log=True),
+                ca_certs=dict(required=False, type='str', default=None),
+                verify=dict(required=False, type='bool', default=True),
             ),
-            cpc_name=dict(required=True, type='str'),
-            name=dict(required=True, type='str'),
-            state=dict(required=True, type='str',
-                       choices=['absent', 'stopped', 'active', 'iso_mount',
-                                'iso_unmount', 'facts']),
-            select_properties=dict(required=False, type='list', elements='str',
-                                   default=None),
-            properties=dict(required=False, type='dict', default=None),
-            image_name=dict(required=False, type='str', default=None),
-            image_file=dict(required=False, type='str', default=None),
-            ins_file=dict(required=False, type='str', default=None),
-            expand_storage_groups=dict(required=False, type='bool',
-                                       default=False),
-            expand_crypto_adapters=dict(required=False, type='bool',
-                                        default=False),
-            log_file=dict(required=False, type='str', default=None),
-            _faked_session=dict(required=False, type='raw'),
-        )
-        assert ansible_mod_cls.call_args == \
-            mock.call(argument_spec=expected_argument_spec,
-                      supports_check_mode=True)
+        ),
+        cpc_name=dict(required=True, type='str'),
+        name=dict(required=True, type='str'),
+        state=dict(required=True, type='str',
+                   choices=['absent', 'stopped', 'active', 'iso_mount',
+                            'iso_unmount', 'facts']),
+        select_properties=dict(required=False, type='list', elements='str',
+                               default=None),
+        properties=dict(required=False, type='dict', default=None),
+        image_name=dict(required=False, type='str', default=None),
+        image_file=dict(required=False, type='str', default=None),
+        ins_file=dict(required=False, type='str', default=None),
+        expand_storage_groups=dict(required=False, type='bool',
+                                   default=False),
+        expand_crypto_adapters=dict(required=False, type='bool',
+                                    default=False),
+        log_file=dict(required=False, type='str', default=None),
+        _faked_session=dict(required=False, type='raw'),
+    )
+    assert ansible_mod_cls.call_args == \
+        mock.call(argument_spec=expected_argument_spec,
+                  supports_check_mode=True)
 
-        # Assert call to perform_task()
-        assert perform_task_func.call_args == mock.call(params, check_mode)
+    # Assert call to perform_task()
+    assert perform_task_func.call_args == mock.call(params, check_mode)
 
-        # Assert call to exit_json()
-        assert mod_obj.exit_json.call_args == \
-            mock.call(changed=perform_task_changed,
-                      partition=perform_task_result)
+    # Assert call to exit_json()
+    assert mod_obj.exit_json.call_args == \
+        mock.call(changed=perform_task_changed,
+                  partition=perform_task_result)
 
-        # Assert no call to fail_json()
-        assert mod_obj.fail_json.called is False
-
-    @mock.patch("plugins.modules.zhmc_partition.perform_task",
-                autospec=True)
-    @mock.patch("plugins.modules.zhmc_partition.AnsibleModule",
-                autospec=True)
-    def test_main_param_error(self, ansible_mod_cls, perform_task_func):
-        """
-        Test main() with ParameterError being raised in perform_task().
-        """
-
-        # Module invocation
-        params = {
-            'hmc_host': 'fake-host',
-            'hmc_auth': dict(userid='fake-userid',
-                             password='fake-password'),
-            'cpc_name': 'fake-cpc-name',
-            'name': 'fake-name',
-            'state': 'absent',
-            'select_properties': None,
-            'image_name': None,
-            'image_file': None,
-            'ins_file': None,
-            'properties': None,
-            'expand_storage_groups': False,
-            'expand_crypto_adapters': False,
-            'log_file': None,
-        }
-        check_mode = False
-
-        # Exception raised by perform_task()
-        perform_task_exc = module_utils.ParameterError("fake message")
-
-        # Prepare mocks
-        mod_obj = ansible_mod_cls.return_value
-        mod_obj.params = params
-        mod_obj.check_mode = check_mode
-        mod_obj.fail_json.configure_mock(side_effect=SystemExit(1))
-        mod_obj.exit_json.configure_mock(side_effect=SystemExit(0))
-        perform_task_func.mock.configure_mock(side_effect=perform_task_exc)
-
-        # Exercise code
-        with self.assertRaises(SystemExit) as cm:
-            zhmc_partition.main()
-        exit_code = cm.exception.args[0]
-
-        # Assert module exit code
-        assert exit_code == 1
-
-        # Assert call to perform_task()
-        assert perform_task_func.call_args == mock.call(params, check_mode)
-
-        # Assert call to fail_json()
-        assert mod_obj.fail_json.call_args == \
-            mock.call(msg="ParameterError: fake message")
-
-        # Assert no call to exit_json()
-        assert mod_obj.exit_json.called is False
+    # Assert no call to fail_json()
+    assert mod_obj.fail_json.called is False
 
 
-class TestZhmcPartitionPerformTask(unittest.TestCase):
+@mock.patch("plugins.modules.zhmc_partition.perform_task",
+            autospec=True)
+@mock.patch("plugins.modules.zhmc_partition.AnsibleModule",
+            autospec=True)
+def test_main_param_error(ansible_mod_cls, perform_task_func):
     """
-    Unit tests for the perform_task() function.
+    Test main() with ParameterError being raised in perform_task().
     """
 
-    @mock.patch("plugins.modules.zhmc_partition.ensure_absent",
-                autospec=True)
-    @mock.patch("plugins.modules.zhmc_partition.ensure_active",
-                autospec=True)
-    @mock.patch("plugins.modules.zhmc_partition.ensure_stopped",
-                autospec=True)
-    def test_pt_active(self, ensure_stopped_func, ensure_active_func,
-                       ensure_absent_func):
-        """
-        Test perform_task() with state 'active'.
-        """
+    # Module invocation
+    params = {
+        'hmc_host': 'fake-host',
+        'hmc_auth': dict(userid='fake-userid',
+                         password='fake-password'),
+        'cpc_name': 'fake-cpc-name',
+        'name': 'fake-name',
+        'state': 'absent',
+        'select_properties': None,
+        'image_name': None,
+        'image_file': None,
+        'ins_file': None,
+        'properties': None,
+        'expand_storage_groups': False,
+        'expand_crypto_adapters': False,
+        'log_file': None,
+    }
+    check_mode = False
 
-        # Prepare input arguments
-        params = {
-            'state': 'active',
-            'log_file': None,
-        }
-        check_mode = True
+    # Exception raised by perform_task()
+    perform_task_exc = module_utils.ParameterError("fake message")
 
-        # Prepare return values
-        changed = False
-        result = {
-            'fake-prop': 'fake-value',
-        }
+    # Prepare mocks
+    mod_obj = ansible_mod_cls.return_value
+    mod_obj.params = params
+    mod_obj.check_mode = check_mode
+    mod_obj.fail_json.configure_mock(side_effect=SystemExit(1))
+    mod_obj.exit_json.configure_mock(side_effect=SystemExit(0))
+    perform_task_func.mock.configure_mock(side_effect=perform_task_exc)
 
-        # Prepare mocks
-        ensure_active_func.return_value = (changed, result)
+    # Exercise code
+    with pytest.raises(SystemExit) as exc_info:
+        zhmc_partition.main()
+    exit_code = exc_info.value.args[0]
 
-        # Exercise code
-        actual_changed, actual_result = zhmc_partition.perform_task(
-            params, check_mode)
+    # Assert module exit code
+    assert exit_code == 1
 
-        # Assert return values
-        assert actual_changed == changed
-        assert actual_result == result
+    # Assert call to perform_task()
+    assert perform_task_func.call_args == mock.call(params, check_mode)
 
-        # Assert call to the desired action function
-        assert ensure_active_func.call_args == mock.call(params, check_mode)
+    # Assert call to fail_json()
+    assert mod_obj.fail_json.call_args == \
+        mock.call(msg="ParameterError: fake message")
 
-        # Assert no call to the other action functions
-        assert ensure_stopped_func.called is False
-        assert ensure_absent_func.called is False
+    # Assert no call to exit_json()
+    assert mod_obj.exit_json.called is False
 
-    @mock.patch("plugins.modules.zhmc_partition.ensure_absent",
-                autospec=True)
-    @mock.patch("plugins.modules.zhmc_partition.ensure_active",
-                autospec=True)
-    @mock.patch("plugins.modules.zhmc_partition.ensure_stopped",
-                autospec=True)
-    def test_pt_stopped(self, ensure_stopped_func, ensure_active_func,
-                        ensure_absent_func):
-        """
-        Test perform_task() with state 'stopped'.
-        """
 
-        # Prepare input arguments
-        params = {
-            'state': 'stopped',
-            'log_file': None,
-        }
-        check_mode = True
+@mock.patch("plugins.modules.zhmc_partition.ensure_absent",
+            autospec=True)
+@mock.patch("plugins.modules.zhmc_partition.ensure_active",
+            autospec=True)
+@mock.patch("plugins.modules.zhmc_partition.ensure_stopped",
+            autospec=True)
+def test_pt_active(ensure_stopped_func, ensure_active_func,
+                   ensure_absent_func):
+    """
+    Test perform_task() with state 'active'.
+    """
 
-        # Prepare return values
-        changed = True
-        result = {
-            'fake-prop': 'fake-value',
-        }
+    # Prepare input arguments
+    params = {
+        'state': 'active',
+        'log_file': None,
+    }
+    check_mode = True
 
-        # Prepare mocks
-        ensure_stopped_func.return_value = (changed, result)
+    # Prepare return values
+    changed = False
+    result = {
+        'fake-prop': 'fake-value',
+    }
 
-        # Exercise code
-        actual_changed, actual_result = zhmc_partition.perform_task(
-            params, check_mode)
+    # Prepare mocks
+    ensure_active_func.return_value = (changed, result)
 
-        # Assert return values
-        assert actual_changed == changed
-        assert actual_result == result
+    # Exercise code
+    actual_changed, actual_result = zhmc_partition.perform_task(
+        params, check_mode)
 
-        # Assert call to the desired action function
-        assert ensure_stopped_func.call_args == mock.call(params, check_mode)
+    # Assert return values
+    assert actual_changed == changed
+    assert actual_result == result
 
-        # Assert no call to the other action functions
-        assert ensure_active_func.called is False
-        assert ensure_absent_func.called is False
+    # Assert call to the desired action function
+    assert ensure_active_func.call_args == mock.call(params, check_mode)
 
-    @mock.patch("plugins.modules.zhmc_partition.ensure_absent",
-                autospec=True)
-    @mock.patch("plugins.modules.zhmc_partition.ensure_active",
-                autospec=True)
-    @mock.patch("plugins.modules.zhmc_partition.ensure_stopped",
-                autospec=True)
-    def test_pt_absent(self, ensure_stopped_func, ensure_active_func,
-                       ensure_absent_func):
-        """
-        Test perform_task() with state 'absent'.
-        """
+    # Assert no call to the other action functions
+    assert ensure_stopped_func.called is False
+    assert ensure_absent_func.called is False
 
-        # Prepare input arguments
-        params = {
-            'state': 'absent',
-            'log_file': None,
-        }
-        check_mode = False
 
-        # Prepare return values
-        changed = True
-        result = {
-            'fake-prop': 'fake-value',
-        }
+@mock.patch("plugins.modules.zhmc_partition.ensure_absent",
+            autospec=True)
+@mock.patch("plugins.modules.zhmc_partition.ensure_active",
+            autospec=True)
+@mock.patch("plugins.modules.zhmc_partition.ensure_stopped",
+            autospec=True)
+def test_pt_stopped(ensure_stopped_func, ensure_active_func,
+                    ensure_absent_func):
+    """
+    Test perform_task() with state 'stopped'.
+    """
 
-        # Prepare mocks
-        ensure_absent_func.return_value = (changed, result)
+    # Prepare input arguments
+    params = {
+        'state': 'stopped',
+        'log_file': None,
+    }
+    check_mode = True
 
-        # Exercise code
-        actual_changed, actual_result = zhmc_partition.perform_task(
-            params, check_mode)
+    # Prepare return values
+    changed = True
+    result = {
+        'fake-prop': 'fake-value',
+    }
 
-        # Assert return values
-        assert actual_changed == changed
-        assert actual_result == result
+    # Prepare mocks
+    ensure_stopped_func.return_value = (changed, result)
 
-        # Assert call to the desired action function
-        assert ensure_absent_func.call_args == mock.call(params, check_mode)
+    # Exercise code
+    actual_changed, actual_result = zhmc_partition.perform_task(
+        params, check_mode)
 
-        # Assert no call to the other action functions
-        assert ensure_active_func.called is False
-        assert ensure_stopped_func.called is False
+    # Assert return values
+    assert actual_changed == changed
+    assert actual_result == result
+
+    # Assert call to the desired action function
+    assert ensure_stopped_func.call_args == mock.call(params, check_mode)
+
+    # Assert no call to the other action functions
+    assert ensure_active_func.called is False
+    assert ensure_absent_func.called is False
+
+
+@mock.patch("plugins.modules.zhmc_partition.ensure_absent",
+            autospec=True)
+@mock.patch("plugins.modules.zhmc_partition.ensure_active",
+            autospec=True)
+@mock.patch("plugins.modules.zhmc_partition.ensure_stopped",
+            autospec=True)
+def test_pt_absent(ensure_stopped_func, ensure_active_func,
+                   ensure_absent_func):
+    """
+    Test perform_task() with state 'absent'.
+    """
+
+    # Prepare input arguments
+    params = {
+        'state': 'absent',
+        'log_file': None,
+    }
+    check_mode = False
+
+    # Prepare return values
+    changed = True
+    result = {
+        'fake-prop': 'fake-value',
+    }
+
+    # Prepare mocks
+    ensure_absent_func.return_value = (changed, result)
+
+    # Exercise code
+    actual_changed, actual_result = zhmc_partition.perform_task(
+        params, check_mode)
+
+    # Assert return values
+    assert actual_changed == changed
+    assert actual_result == result
+
+    # Assert call to the desired action function
+    assert ensure_absent_func.call_args == mock.call(params, check_mode)
+
+    # Assert no call to the other action functions
+    assert ensure_active_func.called is False
+    assert ensure_stopped_func.called is False
 
 
 # Faked CPC in DPM mode that is used for all tests
@@ -366,8 +358,8 @@ def mocked_cpc():
     return cpc
 
 
-PARTITION_CREATE_CHECK_MODE_PARTITION_TESTCASES = [
-    # Testcases for test_partition_create_check_mode_partition()
+PART_CREATE_CHECK_MODE_PARTITION_TESTCASES = [
+    # Testcases for test_part_create_check_mode_partition()
     # The list items are tuples with the following items:
     # - desc (string): description of the testcase.
     # - create_props (dict): HMC-formatted properties for the create_props
@@ -651,8 +643,8 @@ PARTITION_CREATE_CHECK_MODE_PARTITION_TESTCASES = [
 @pytest.mark.parametrize(
     "desc, create_props, update_props, exp_props, exp_exc_type, "
     "exp_exc_pattern, run",
-    PARTITION_CREATE_CHECK_MODE_PARTITION_TESTCASES)
-def test_partition_create_check_mode_partition(
+    PART_CREATE_CHECK_MODE_PARTITION_TESTCASES)
+def test_part_create_check_mode_partition(
         desc, create_props, update_props, exp_props, exp_exc_type,
         exp_exc_pattern, run):
     """
@@ -669,7 +661,7 @@ def test_partition_create_check_mode_partition(
         with pytest.raises(exp_exc_type) as exc_info:
 
             if run == 'pdb':
-                pdb.set_trace()
+                pdb.set_trace()  # pylint: disable=forgotten-debug-statement
 
             # The function to be tested
             part_obj = zhmc_partition.create_check_mode_partition(
@@ -685,7 +677,7 @@ def test_partition_create_check_mode_partition(
     else:
 
         if run == 'pdb':
-            pdb.set_trace()
+            pdb.set_trace()  # pylint: disable=forgotten-debug-statement
 
         # The function to be tested
         part_obj = zhmc_partition.create_check_mode_partition(

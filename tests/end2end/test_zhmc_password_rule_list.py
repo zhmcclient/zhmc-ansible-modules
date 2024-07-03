@@ -19,9 +19,9 @@ End2end tests for zhmc_password_rule_list module.
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-import pytest
 from unittest import mock
-import requests.packages.urllib3
+import pytest
+import urllib3
 import zhmcclient
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
@@ -30,7 +30,7 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 from plugins.modules import zhmc_password_rule_list
 from .utils import mock_ansible_module, get_failure_msg
 
-requests.packages.urllib3.disable_warnings()
+urllib3.disable_warnings()
 
 # Print debug messages
 DEBUG = False
@@ -121,6 +121,7 @@ def assert_pwrule_list(pwrule_list, exp_pwrule_dict):
 def test_zhmc_password_rule_list(
         ansible_mod_cls, check_mode, property_flags,
         hmc_session):  # noqa: F811, E501
+    # pylint: disable=redefined-outer-name
     """
     Test the zhmc_password_rule_list module.
     """

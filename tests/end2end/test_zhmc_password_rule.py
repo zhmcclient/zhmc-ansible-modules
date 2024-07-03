@@ -20,12 +20,12 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 import uuid
-import pytest
 from unittest import mock
 import random
-import requests.packages.urllib3
 from collections import OrderedDict
 from pprint import pformat
+import pytest
+import urllib3
 import zhmcclient
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
@@ -34,7 +34,7 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 from plugins.modules import zhmc_password_rule
 from .utils import mock_ansible_module, get_failure_msg
 
-requests.packages.urllib3.disable_warnings()
+urllib3.disable_warnings()
 
 # Print debug messages
 DEBUG = False
@@ -81,13 +81,8 @@ STD_PWRULE_PROPERTIES = {
 }
 
 
-def updated_copy(dict1, dict2):
-    dict1c = dict1.copy()
-    dict1c.update(dict2)
-    return dict1c
-
-
 def new_pwrule_name():
+    """Return random unique passsword rule name"""
     pwrule_name = f'test_{uuid.uuid4()}'
     return pwrule_name
 
@@ -134,6 +129,7 @@ def assert_pwrule_props(pwrule_props, where):
 @mock.patch("plugins.modules.zhmc_password_rule.AnsibleModule", autospec=True)
 def test_zhmc_password_rule_facts(
         ansible_mod_cls, check_mode, hmc_session):  # noqa: F811, E501
+    # pylint: disable=redefined-outer-name
     """
     Test the zhmc_password_rule module with state=facts.
     """
@@ -258,6 +254,7 @@ def test_zhmc_password_rule_absent_present(
         input_props, exp_pwrule_props, exp_changed,
         check_mode,
         hmc_session):  # noqa: F811, E501
+    # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_password_rule module with state=absent/present.
     """
