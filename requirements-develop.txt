@@ -48,6 +48,13 @@ rich>=12.0.0; python_version >= '3.10'
 wcmatch>=8.5; python_version >= '3.10'
 ansible-compat>=4.1.10; python_version >= '3.10'
 
+# antsibull-changelog - invoked only on Python>=3.6
+# antsibull-changelog 0.18.0 removed support for Python 3.6-3.8
+antsibull-changelog>=0.17.0; python_version >= '3.6'
+semantic-version>=2.10.0; python_version >= '3.6'
+# antsibull-changelog also uses rstcheck on Python>=3.8
+rstcheck-core>=1.0.3; python_version >= '3.8'
+
 # Safety CI by pyup.io
 # TODO: Remove temporary circumvention to pin safety to <3.0.0 when pyo3-ffi
 #       supports Python 3.13 (see https://github.com/PyO3/pyo3/issues/4038#issuecomment-2156363013)
