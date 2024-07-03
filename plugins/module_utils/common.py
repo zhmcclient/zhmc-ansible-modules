@@ -24,6 +24,7 @@ import traceback
 import platform
 import sys
 import re
+from collections.abc import Mapping
 
 try:
     from zhmcclient import Session, ClientAuthError
@@ -1241,3 +1242,95 @@ def parse_hmc_host(hmc_host):
             "Module parameter 'hmc_host' must be a string or list type, but "
             f"is of type {type(hmc_host)}")
     return hmc_host
+
+
+def underscore_properties(prop_dict):
+    """
+    Return a copy of the input property dict with property names converted from
+    hyphens (as used by HMC) to underscores (as used by Ansible).
+
+    This is done recursively on all property values.
+
+    Note that property values that are not mappings are not copied, so the
+    returned object is not a full deep copy of the input object.
+
+    This is used to convert properties returned by the HMC to return values of
+    Ansible modules that use underscores in their result.
+
+    Parameters:
+        prop_dict (Mapping): The input property dict (key: property name,
+          value: property value).
+
+          Note that this includes the following types:
+            * a plain dict
+            * an immutable_views.DictView object as returned by
+              zhmcclient.BaseResource.properties
+
+    Returns:
+        dict: Converted property dict, recursively.
+    """
+    under_prop_dict = {}
+    for pname_hyphen, pvalue in prop_dict.items():
+        pname_under = pname_hyphen.replace('-', '_')
+        if isinstance(pvalue, Mapping):
+            pvalue = underscore_properties(pvalue)
+        under_prop_dict[pname_under] = pvalue
+    return under_prop_dict
+
+
+def underscore_properties_list(res_list):
+    """
+    Return a list of dicts from the input resource list with property names
+    converted from hyphens (as used by HMC) to underscores (as used by Ansible).
+
+    This is done recursively on all property values.
+
+    Note that property values that are not mappings are not copied, so the
+    returned object is not a full deep copy of the input object.
+
+    This is used to convert lists of resource objects returned by the HMC to
+    return values of Ansible modules that use underscores in their result.
+
+    Parameters:
+        res_list (iterable of zhmcclient.BaseResource): The input resource list,
+          as returned by zhmcclient list() or findall() methods.
+
+    Returns:
+        list of dict: Converted list of property dicts of the input resources,
+        recursively.
+    """
+    under_prop_dicts = []
+    for res in res_list:
+        under_prop_dict = underscore_properties(res.properties)
+        under_prop_dicts.append(under_prop_dict)
+    return under_prop_dicts
+
+
+def hyphen_properties(prop_dict):
+    """
+    Return a copy of the input property dict with property names converted from
+    underscores (as used by Ansible) to hyphens (as used by HMC).
+
+    This is done recursively on all property values.
+
+    Note that property values that are not mappings are not copied, so the
+    returned object is not a full deep copy of the input object.
+
+    This is used when property names specified in Ansible that have underscores
+    in the name need to be converted to property names for HMC operations,
+    where they need to have hyphens in the name.
+
+    Parameters:
+        prop_dict (Mapping): The input property dict (key: property name,
+          value: property value).
+
+    Returns:
+        dict: Converted property dict, recursively.
+    """
+    hyphen_prop_dict = {}
+    for pname_under, pvalue in prop_dict.items():
+        pname_hyphen = pname_under.replace('_', '-')
+        if isinstance(pvalue, Mapping):
+            pvalue = hyphen_properties(pvalue)
+        hyphen_prop_dict[pname_hyphen] = pvalue
+    return hyphen_prop_dict

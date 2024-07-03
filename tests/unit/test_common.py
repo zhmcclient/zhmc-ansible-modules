@@ -22,6 +22,9 @@ __metaclass__ = type
 
 import re
 import pytest
+from immutable_views import DictView
+
+from zhmcclient import BaseResource
 
 from plugins.module_utils import common
 
@@ -144,3 +147,300 @@ def test_common_parse_hmc_host(
         hmc_host = common.parse_hmc_host(in_hmc_host)
 
         assert hmc_host == exp_hmc_host
+
+
+class DummyResource(BaseResource):
+    """
+    Dummy zhmcclient.BaseResource object that can be created without any
+    parent or manager objects, for test purposes.
+
+    It is good for accessing its 'properties' property, but not for much more.
+    """
+
+    def __init__(self, properties):
+        # pylint: disable=super-init-not-called
+        self._properties = dict(properties) if properties else {}
+
+
+COMMON_UNDER_PROPS_TESTCASES = [
+    # Testcases for test_common_under_props()
+    # The list items are tuples with the following items:
+    # - desc (string): description of the testcase.
+    # - input: Input object
+    # - exp_result: Expected result object
+    # - exp_exc_type: Expected exception type, or None for no exc. expected.
+
+    (
+        "Empty plain dict",
+        {},
+        {},
+        None,
+    ),
+    (
+        "Empty DictView",
+        DictView({}),
+        {},
+        None,
+    ),
+    (
+        "Plain dict",
+        {
+            'prop-name-1': 'value-1',
+            'prop_name_2': ['value-2a', 'value_2b'],
+        },
+        {
+            'prop_name_1': 'value-1',
+            'prop_name_2': ['value-2a', 'value_2b'],
+        },
+        None,
+    ),
+    (
+        "Plain dict, 1 level recursive",
+        {
+            'prop-name-1': 'value-1',
+            'prop_name_2': {
+                'prop-name-3': 'value-3',
+                'prop_name_4': ['value-4a', 'value_4b'],
+            },
+        },
+        {
+            'prop_name_1': 'value-1',
+            'prop_name_2': {
+                'prop_name_3': 'value-3',
+                'prop_name_4': ['value-4a', 'value_4b'],
+            },
+        },
+        None,
+    ),
+    (
+        "DictView",
+        DictView({
+            'prop-name-1': 'value-1',
+            'prop_name_2': ['value-2a', 'value_2b'],
+        }),
+        {
+            'prop_name_1': 'value-1',
+            'prop_name_2': ['value-2a', 'value_2b'],
+        },
+        None,
+    ),
+    (
+        "DictView, 1 level recursive",
+        DictView({
+            'prop-name-1': 'value1',
+            'prop_name_2': {
+                'prop-name-3': 'value-3',
+                'prop_name_4': ['value-4a', 'value_4b'],
+            },
+        }),
+        {
+            'prop_name_1': 'value1',
+            'prop_name_2': {
+                'prop_name_3': 'value-3',
+                'prop_name_4': ['value-4a', 'value_4b'],
+            },
+        },
+        None,
+    ),
+    (
+        "List of strings (illegal)",
+        ['prop-name-1', 'prop_name_2'],
+        None,
+        AttributeError,
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "desc, input, exp_result, exp_exc_type",
+    COMMON_UNDER_PROPS_TESTCASES)
+def test_common_under_props(desc, input, exp_result, exp_exc_type):
+    # pylint: disable=unused-argument
+    """
+    Test the underscore_properties() function.
+    """
+
+    if exp_exc_type:
+        with pytest.raises(exp_exc_type):
+
+            # The code to be tested
+            common.underscore_properties(input)
+
+    else:
+
+        # The code to be tested
+        result = common.underscore_properties(input)
+
+        assert result == exp_result
+
+
+COMMON_UNDER_PROPS_LIST_TESTCASES = [
+    # Testcases for test_common_under_props_list()
+    # The list items are tuples with the following items:
+    # - desc (string): description of the testcase.
+    # - input: Input object
+    # - exp_result: Expected result object
+    # - exp_exc_type: Expected exception type, or None for no exc. expected.
+
+    (
+        "Empty list",
+        [],
+        [],
+        None,
+    ),
+    (
+        "List of one zhmcclient.BaseResource object",
+        [
+            DummyResource({
+                'prop-name-1': 'value_1',
+                'prop_name_2': ['value-2a', 'value_2b'],
+            }),
+        ],
+        [
+            {
+                'prop_name_1': 'value_1',
+                'prop_name_2': ['value-2a', 'value_2b'],
+            },
+        ],
+        None,
+    ),
+    (
+        "List of one zhmcclient.BaseResource object, 1 level recursive",
+        [
+            DummyResource({
+                'prop-name-1': 'value_1',
+                'prop_name_2': {
+                    'prop-name-3': 'value_3',
+                    'prop_name_4': ['value-4a', 'value_4b'],
+                },
+            }),
+        ],
+        [
+            {
+                'prop_name_1': 'value_1',
+                'prop_name_2': {
+                    'prop_name_3': 'value_3',
+                    'prop_name_4': ['value-4a', 'value_4b'],
+                },
+            },
+        ],
+        None,
+    ),
+    (
+        "Single zhmcclient.BaseResource object (illegal)",
+        DummyResource({
+            'prop-name-1': 'value_1',
+            'prop_name_2': 'value-2',
+        }),
+        None,
+        TypeError,
+    ),
+    (
+        "List of strings (illegal)",
+        ['prop-name-1', 'prop_name_2'],
+        None,
+        AttributeError,
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "desc, input, exp_result, exp_exc_type",
+    COMMON_UNDER_PROPS_LIST_TESTCASES)
+def test_common_under_props_list(desc, input, exp_result, exp_exc_type):
+    # pylint: disable=unused-argument
+    """
+    Test the underscore_properties_list() function.
+    """
+
+    if exp_exc_type:
+        with pytest.raises(exp_exc_type):
+
+            # The code to be tested
+            common.underscore_properties_list(input)
+
+    else:
+
+        # The code to be tested
+        result = common.underscore_properties_list(input)
+
+        assert result == exp_result
+
+
+COMMON_HYPHEN_PROPS_TESTCASES = [
+    # Testcases for test_common_hyphen_props()
+    # The list items are tuples with the following items:
+    # - desc (string): description of the testcase.
+    # - input: Input object
+    # - exp_result: Expected result object
+    # - exp_exc_type: Expected exception type, or None for no exc. expected.
+
+    (
+        "Plain dict",
+        {
+            'prop-name-1': 'value1',
+            'prop_name_2': 'value2',
+        },
+        {
+            'prop-name-1': 'value1',
+            'prop-name-2': 'value2',
+        },
+        None,
+    ),
+    (
+        "Plain dict, 1 level recursive",
+        {
+            'prop-name-1': {
+                'prop-name-3': 'value3',
+                'prop_name_4': 'value4',
+            },
+            'prop_name_2': 'value2',
+        },
+        {
+            'prop-name-1': {
+                'prop-name-3': 'value3',
+                'prop-name-4': 'value4',
+            },
+            'prop-name-2': 'value2',
+        },
+        None,
+    ),
+    (
+        "Single zhmcclient.BaseResource object (illegal)",
+        DummyResource({
+            'prop-name-1': 'value1',
+            'prop_name_2': 'value2',
+        }),
+        None,
+        AttributeError,
+    ),
+    (
+        "List of strings (illegal)",
+        ['prop-name-1', 'prop_name_2'],
+        None,
+        AttributeError,
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "desc, input, exp_result, exp_exc_type",
+    COMMON_HYPHEN_PROPS_TESTCASES)
+def test_common_hyphen_props(desc, input, exp_result, exp_exc_type):
+    # pylint: disable=unused-argument
+    """
+    Test the hyphen_properties() function.
+    """
+
+    if exp_exc_type:
+        with pytest.raises(exp_exc_type):
+
+            # The code to be tested
+            common.hyphen_properties(input)
+
+    else:
+
+        # The code to be tested
+        result = common.hyphen_properties(input)
+
+        assert result == exp_result
