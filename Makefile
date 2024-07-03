@@ -332,9 +332,6 @@ endif
 
 .PHONY: check_reqs
 check_reqs: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done minimum-constraints.txt minimum-constraints-install.txt requirements.txt
-ifeq ($(python_major_version),2)
-	@echo "Makefile: Warning: Skipping the checking of missing dependencies on Python 2.x" >&2
-else
 ifeq ($(PACKAGE_LEVEL),ansible)
 	@echo "Makefile: Warning: Skipping the checking of missing dependencies for PACKAGE_LEVEL=ansible" >&2
 else
@@ -346,7 +343,6 @@ else
 	@echo "Makefile: Checking missing dependencies of some development packages"
 	@rc=0; for pkg in $(check_reqs_packages); do dir=$$($(PYTHON_CMD) -c "import $${pkg} as m,os; dm=os.path.dirname(m.__file__); d=dm if not dm.endswith('site-packages') else m.__file__; print(d)"); cmd="pip-missing-reqs $${dir} --requirements-file=minimum-constraints.txt"; echo $${cmd}; $${cmd}; rc=$$(expr $${rc} + $${?}); done; exit $${rc}
 	@echo "Makefile: Done checking missing dependencies of some development packages"
-endif
 endif
 	@echo "Makefile: $@ done."
 
