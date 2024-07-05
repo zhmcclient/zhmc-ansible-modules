@@ -74,22 +74,23 @@ options:
       userid:
         description:
           - The userid (username) for authenticating with the HMC.
-            This is mutually exclusive with providing C(session_id).
+            This is mutually exclusive with providing O(hmc_auth.session_id).
         type: str
         required: false
         default: null
       password:
         description:
           - The password for authenticating with the HMC.
-            This is mutually exclusive with providing C(session_id).
+            This is mutually exclusive with providing O(hmc_auth.session_id).
         type: str
         required: false
         default: null
       session_id:
         description:
           - HMC session ID to be used.
-            This is mutually exclusive with providing C(userid) and C(password)
-            and can be created as described in :ref:`zhmc_session_module`.
+            This is mutually exclusive with providing O(hmc_auth.userid) and
+            O(hmc_auth.password) and can be created as described in the
+            R(zhmc_session module,zhmc_session_module).
         type: str
         required: false
         default: null
@@ -97,8 +98,8 @@ options:
         description:
           - Path name of certificate file or certificate directory to be used
             for verifying the HMC certificate. If null (default), the path name
-            in the 'REQUESTS_CA_BUNDLE' environment variable or the path name
-            in the 'CURL_CA_BUNDLE' environment variable is used, or if neither
+            in the E(REQUESTS_CA_BUNDLE) environment variable or the path name
+            in the E(CURL_CA_BUNDLE) environment variable is used, or if neither
             of these variables is set, the certificates in the Mozilla CA
             Certificate List provided by the 'certifi' Python package are used
             for verifying the HMC certificate.
@@ -108,8 +109,8 @@ options:
       verify:
         description:
           - If True (default), verify the HMC certificate as specified in the
-            C(ca_certs) parameter. If False, ignore what is specified in the
-            C(ca_certs) parameter and do not verify the HMC certificate.
+            O(hmc_auth.ca_certs) parameter. If False, ignore what is specified in the
+            O(hmc_auth.ca_certs) parameter and do not verify the HMC certificate.
         type: bool
         required: false
         default: true
@@ -134,13 +135,13 @@ options:
       - "The desired state for the storage group attachment. All states are
          fully idempotent within the limits of the properties that can be
          changed, unless otherwise stated:"
-      - "* C(detached): Ensures that the storage group is not attached to the
+      - "* V(detached): Ensures that the storage group is not attached to the
          partition. If the storage group is currently attached to the partition
          and the partition is currently active, the module will fail (this is
          an idempotency limitation)."
-      - "* C(attached): Ensures that the storage group is attached to the
+      - "* V(attached): Ensures that the storage group is attached to the
          partition."
-      - "* C(facts): Returns the attachment status."
+      - "* V(facts): Returns the attachment status."
     type: str
     required: true
     choices: ['detached', 'attached', 'facts']
@@ -196,7 +197,7 @@ EXAMPLES = """
 RETURN = """
 changed:
   description: Indicates if any change has been made by the module.
-    For C(state=facts), always will be false.
+    For O(state=facts), always will be false.
   returned: always
   type: bool
 msg:

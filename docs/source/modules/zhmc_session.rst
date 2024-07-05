@@ -73,7 +73,7 @@ hmc_auth
 
 
   ca_certs
-    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the 'REQUESTS\_CA\_BUNDLE' environment variable or the path name in the 'CURL\_CA\_BUNDLE' environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
+    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the \ :envvar:`REQUESTS\_CA\_BUNDLE`\  environment variable or the path name in the \ :envvar:`CURL\_CA\_BUNDLE`\  environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
 
     Optional for \ :literal:`action=create`\ , not permitted for \ :literal:`action=delete`\ .
 
@@ -82,7 +82,7 @@ hmc_auth
 
 
   verify
-    If True (default), verify the HMC certificate as specified in the \ :literal:`ca\_certs`\  parameter. If False, ignore what is specified in the \ :literal:`ca\_certs`\  parameter and do not verify the HMC certificate.
+    If True (default), verify the HMC certificate as specified in the \ :literal:`hmc\_auth.ca\_certs`\  parameter. If False, ignore what is specified in the \ :literal:`hmc\_auth.ca\_certs`\  parameter and do not verify the HMC certificate.
 
     Optional for \ :literal:`action=create`\ , not permitted for \ :literal:`action=delete`\ .
 
@@ -175,7 +175,7 @@ msg
   | **type**: str
 
 hmc_host
-  The hostname or IP address of the HMC that was actually used for the session creation, for \ :literal:`action=create`\ . This value must be specified as 'hmc\_host' for \ :literal:`action=delete`\ .
+  The hostname or IP address of the HMC that was actually used for the session creation, for \ :literal:`action=create`\ . This value must be specified as \ :literal:`hmc\_host`\  for \ :literal:`action=delete`\ .
 
   For \ :literal:`action=delete`\ , returns the null value.
 
@@ -203,12 +203,12 @@ hmc_auth
     | **type**: str
 
   ca_certs
-    Value of \ :literal:`ca\_certs`\  input parameter for \ :literal:`action=create`\ , or null for \ :literal:`action=delete`\ .
+    Value of \ :literal:`hmc\_auth.ca\_certs`\  input parameter for \ :literal:`action=create`\ , or null for \ :literal:`action=delete`\ .
 
     | **type**: str
 
   verify
-    Value of \ :literal:`verify`\  input parameter for \ :literal:`action=create`\ , or null for \ :literal:`action=delete`\ .
+    Value of \ :literal:`hmc\_auth.verify`\  input parameter for \ :literal:`action=create`\ , or null for \ :literal:`action=delete`\ .
 
     | **type**: bool
 

@@ -52,35 +52,35 @@ hmc_auth
 
 
   userid
-    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`session\_id`\ .
+    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`hmc\_auth.session\_id`\ .
 
     | **required**: False
     | **type**: str
 
 
   password
-    The password for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`session\_id`\ .
+    The password for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`hmc\_auth.session\_id`\ .
 
     | **required**: False
     | **type**: str
 
 
   session_id
-    HMC session ID to be used. This is mutually exclusive with providing \ :literal:`userid`\  and \ :literal:`password`\  and can be created as described in :ref:\`zhmc\_session\_module\`.
+    HMC session ID to be used. This is mutually exclusive with providing \ :literal:`hmc\_auth.userid`\  and \ :literal:`hmc\_auth.password`\  and can be created as described in the \ :ref:`zhmc\_session module <zhmc_session_module>`\ .
 
     | **required**: False
     | **type**: str
 
 
   ca_certs
-    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the 'REQUESTS\_CA\_BUNDLE' environment variable or the path name in the 'CURL\_CA\_BUNDLE' environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
+    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the \ :envvar:`REQUESTS\_CA\_BUNDLE`\  environment variable or the path name in the \ :envvar:`CURL\_CA\_BUNDLE`\  environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
 
     | **required**: False
     | **type**: str
 
 
   verify
-    If True (default), verify the HMC certificate as specified in the \ :literal:`ca\_certs`\  parameter. If False, ignore what is specified in the \ :literal:`ca\_certs`\  parameter and do not verify the HMC certificate.
+    If True (default), verify the HMC certificate as specified in the \ :literal:`hmc\_auth.ca\_certs`\  parameter. If False, ignore what is specified in the \ :literal:`hmc\_auth.ca\_certs`\  parameter and do not verify the HMC certificate.
 
     | **required**: False
     | **type**: bool
@@ -142,9 +142,9 @@ properties
 
   \* \ :literal:`name`\ : Cannot be specified as a property because the name has already been specified in the \ :literal:`name`\  module parameter.
 
-  \* \ :literal:`type`\ : The desired adapter type can be specified in order to support adapters that can change their type (e.g. the FICON Express adapter can change its type between 'not-configured', 'fcp' and 'fc').
+  \* \ :literal:`type`\ : The desired adapter type can be specified in order to support adapters that can change their type (e.g. the FICON Express adapter can change its type between \ :literal:`not-configured`\ , \ :literal:`fcp`\  and \ :literal:`fc`\ ).
 
-  \* \ :literal:`crypto\_type`\ : The crypto type can be specified in order to support the ability of the Crypto Express adapters to change their crypto type. Valid values are 'ep11', 'cca' and 'acc'. Changing to 'acc' will zeroize the crypto adapter.
+  \* \ :literal:`crypto\_type`\ : The crypto type can be specified in order to support the ability of the Crypto Express adapters to change their crypto type. Valid values are \ :literal:`ep11`\ , \ :literal:`cca`\  and \ :literal:`acc`\ . Changing to \ :literal:`acc`\  will zeroize the crypto adapter.
 
   | **required**: False
   | **type**: dict
@@ -309,7 +309,7 @@ adapter
     | **type**: str
 
   {property}
-    Additional properties of the adapter, as described in the data model of the 'Adapter' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
+    Additional properties of the adapter, as described in the data model of the 'Adapter' object in the \ :ref:`HMC API <HMC API>`\  book. The property names have hyphens (-) as described in that book.
 
     | **type**: raw
 
@@ -325,7 +325,7 @@ adapter
       | **type**: str
 
     {property}
-      Additional properties of the port, as described in the data model of the 'Network Port' or 'Storage Port' element object of the 'Adapter' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book. In case of unconfigured FICON adapters, the property list is short.
+      Additional properties of the port, as described in the data model of the 'Network Port' or 'Storage Port' element object of the 'Adapter' object in the \ :ref:`HMC API <HMC API>`\  book. The property names have hyphens (-) as described in that book. In case of unconfigured FICON adapters, the property list is short.
 
       | **type**: raw
 

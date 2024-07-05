@@ -53,35 +53,35 @@ hmc_auth
 
 
   userid
-    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`session\_id`\ .
+    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`hmc\_auth.session\_id`\ .
 
     | **required**: False
     | **type**: str
 
 
   password
-    The password for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`session\_id`\ .
+    The password for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`hmc\_auth.session\_id`\ .
 
     | **required**: False
     | **type**: str
 
 
   session_id
-    HMC session ID to be used. This is mutually exclusive with providing \ :literal:`userid`\  and \ :literal:`password`\  and can be created as described in :ref:\`zhmc\_session\_module\`.
+    HMC session ID to be used. This is mutually exclusive with providing \ :literal:`hmc\_auth.userid`\  and \ :literal:`hmc\_auth.password`\  and can be created as described in the \ :ref:`zhmc\_session module <zhmc_session_module>`\ .
 
     | **required**: False
     | **type**: str
 
 
   ca_certs
-    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the 'REQUESTS\_CA\_BUNDLE' environment variable or the path name in the 'CURL\_CA\_BUNDLE' environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
+    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the \ :envvar:`REQUESTS\_CA\_BUNDLE`\  environment variable or the path name in the \ :envvar:`CURL\_CA\_BUNDLE`\  environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
 
     | **required**: False
     | **type**: str
 
 
   verify
-    If True (default), verify the HMC certificate as specified in the \ :literal:`ca\_certs`\  parameter. If False, ignore what is specified in the \ :literal:`ca\_certs`\  parameter and do not verify the HMC certificate.
+    If True (default), verify the HMC certificate as specified in the \ :literal:`hmc\_auth.ca\_certs`\  parameter. If False, ignore what is specified in the \ :literal:`hmc\_auth.ca\_certs`\  parameter and do not verify the HMC certificate.
 
     | **required**: False
     | **type**: bool
@@ -155,7 +155,7 @@ properties
 
 
 bundle_level
-  Name of the bundle to be installed on the SE of the CPC (e.g. 'S71')
+  Name of the bundle to be installed on the SE of the CPC (e.g. \ :literal:`S71`\ )
 
   Required for \ :literal:`state=upgrade`\ 
 
@@ -339,12 +339,12 @@ cpc
     | **type**: str
 
   {property}
-    Additional properties of the CPC, as described in the data model of the 'CPC' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
+    Additional properties of the CPC, as described in the data model of the 'CPC' object in the \ :ref:`HMC API <HMC API>`\  book. The property names have hyphens (-) as described in that book.
 
     | **type**: raw
 
   adapters
-    The adapters of the CPC, with a subset of their properties. For details, see the :term:\`HMC API\` book.
+    The adapters of the CPC, with a subset of their properties. For details, see the \ :ref:`HMC API <HMC API>`\  book.
 
     | **type**: list
     | **elements**: dict
@@ -381,7 +381,7 @@ cpc
 
 
   partitions
-    The defined partitions of the CPC, with a subset of their properties. For details, see the :term:\`HMC API\` book.
+    The defined partitions of the CPC, with a subset of their properties. For details, see the \ :ref:`HMC API <HMC API>`\  book.
 
     | **type**: list
     | **elements**: dict
@@ -408,7 +408,7 @@ cpc
 
 
   storage-groups
-    The storage groups associated with the CPC, with a subset of their properties. For details, see the :term:\`HMC API\` book.
+    The storage groups associated with the CPC, with a subset of their properties. For details, see the \ :ref:`HMC API <HMC API>`\  book.
 
     | **type**: list
     | **elements**: dict

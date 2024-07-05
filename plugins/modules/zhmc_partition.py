@@ -78,22 +78,23 @@ options:
       userid:
         description:
           - The userid (username) for authenticating with the HMC.
-            This is mutually exclusive with providing C(session_id).
+            This is mutually exclusive with providing O(hmc_auth.session_id).
         type: str
         required: false
         default: null
       password:
         description:
           - The password for authenticating with the HMC.
-            This is mutually exclusive with providing C(session_id).
+            This is mutually exclusive with providing O(hmc_auth.session_id).
         type: str
         required: false
         default: null
       session_id:
         description:
           - HMC session ID to be used.
-            This is mutually exclusive with providing C(userid) and C(password)
-            and can be created as described in :ref:`zhmc_session_module`.
+            This is mutually exclusive with providing O(hmc_auth.userid) and
+            O(hmc_auth.password) and can be created as described in the
+            R(zhmc_session module,zhmc_session_module).
         type: str
         required: false
         default: null
@@ -101,8 +102,8 @@ options:
         description:
           - Path name of certificate file or certificate directory to be used
             for verifying the HMC certificate. If null (default), the path name
-            in the 'REQUESTS_CA_BUNDLE' environment variable or the path name
-            in the 'CURL_CA_BUNDLE' environment variable is used, or if neither
+            in the E(REQUESTS_CA_BUNDLE) environment variable or the path name
+            in the E(CURL_CA_BUNDLE) environment variable is used, or if neither
             of these variables is set, the certificates in the Mozilla CA
             Certificate List provided by the 'certifi' Python package are used
             for verifying the HMC certificate.
@@ -112,8 +113,8 @@ options:
       verify:
         description:
           - If True (default), verify the HMC certificate as specified in the
-            C(ca_certs) parameter. If False, ignore what is specified in the
-            C(ca_certs) parameter and do not verify the HMC certificate.
+            O(hmc_auth.ca_certs) parameter. If False, ignore what is specified in the
+            O(hmc_auth.ca_certs) parameter and do not verify the HMC certificate.
         type: bool
         required: false
         default: true
@@ -131,20 +132,20 @@ options:
     description:
       - "The desired state for the partition. All states are fully idempotent
          within the limits of the properties that can be changed:"
-      - "* C(absent): Ensures that the partition does not exist in the specified
+      - "* V(absent): Ensures that the partition does not exist in the specified
          CPC."
-      - "* C(stopped): Ensures that the partition exists in the specified CPC,
+      - "* V(stopped): Ensures that the partition exists in the specified CPC,
          has the specified properties, and is in one of the inactive statuses
          ('stopped', 'terminated', 'paused', 'reservation-error')."
-      - "* C(active): Ensures that the partition exists in the specified CPC,
+      - "* V(active): Ensures that the partition exists in the specified CPC,
          has the specified properties, and is in one of the active statuses
          ('active', 'degraded')."
-      - "* C(mount_iso): Ensures that an ISO image with the specified name
+      - "* V(mount_iso): Ensures that an ISO image with the specified name
          is mounted to the partition, and that the specified INS file is set.
          The content of a currnetly mounted ISO image is not verified."
-      - "* C(unmount_iso): Ensures that no ISO image is unmounted to the
+      - "* V(unmount_iso): Ensures that no ISO image is unmounted to the
          partition."
-      - "* C(facts): Returns the partition properties and the properties of its
+      - "* V(facts): Returns the partition properties and the properties of its
          child resources (HBAs, NICs, and virtual functions)."
     type: str
     required: true
@@ -153,11 +154,11 @@ options:
   select_properties:
     description:
       - "Limits the returned properties of the partition to those specified in
-         this parameter plus those specified in the C(properties) parameter."
+         this parameter plus those specified in the O(properties) parameter."
       - "The properties can be specified with underscores or hyphens in their
          names."
       - "Null indicates not to limit the returned properties in this way."
-      - "This parameter is ignored for C(state) values that cause no properties
+      - "This parameter is ignored for O(state) values that cause no properties
          to be returned."
       - "The specified properties are passed to the 'Get Partition Properties'
          HMC operation using the 'properties' query parameter and save time for
@@ -169,16 +170,16 @@ options:
   properties:
     description:
       - "Dictionary with input properties for the partition, for
-         C(state=stopped) and C(state=active). Key is the property name with
+         O(state=stopped) and O(state=active). Key is the property name with
          underscores instead of hyphens, and value is the property value in
          YAML syntax. Integer properties may also be provided as decimal
-         strings. Will be ignored for C(state=absent)."
+         strings. Will be ignored for O(state=absent)."
       - "The possible input properties in this dictionary are the properties
          defined as writeable in the data model for Partition resources
          (where the property names contain underscores instead of hyphens),
          with the following exceptions:"
       - "* C(name): Cannot be specified because the name has already been
-         specified in the C(name) module parameter."
+         specified in the O(name) module parameter."
       - "* C(type): Cannot be changed once the partition exists, because
          updating it is not supported."
       - "* C(boot_storage_device): Cannot be specified because this information
@@ -200,23 +201,23 @@ options:
          construct C(boot_network_device). Specifying it requires that the
          partition exists."
       - "* C(crypto_configuration): The crypto configuration for the partition,
-         in the format of the C(crypto-configuration) property of the
-         partition (see :term:`HMC API` for details), with the exception that
+         in the format of the V(crypto-configuration) property of the
+         partition (see R(HMC API,HMC API) for details), with the exception that
          adapters are specified with their names in field
          C(crypto_adapter_names) instead of their URIs in field
          C(crypto_adapter_uris). If the C(crypto_adapter_names) field is null,
          all crypto adapters of the CPC will be used."
       - "Properties omitted in this dictionary will remain unchanged when the
          partition already exists, and will get the default value defined in
-         the data model for partitions in the :term:`HMC API` when the partition
-         is being created."
+         the data model for partitions in the R(HMC API,HMC API) book when the
+         partition is being created."
     type: dict
     required: false
     default: null
   image_name:
     description:
-      - "Name of the ISO image for C(state=iso_mount)
-         (required). Not permitted for any other C(state) values."
+      - "Name of the ISO image for O(state=iso_mount)
+         (required). Not permitted for any other O(state) values."
       - "This value is shown in the 'boot-iso-image-name' property of the
          partition."
       - "If an ISO image with this name is already mounted to the partition,
@@ -227,20 +228,20 @@ options:
     default: null
   image_file:
     description:
-      - "Path name of the local ISO image file for C(state=iso_mount)
-         (required). Not permitted for any other C(state) values."
+      - "Path name of the local ISO image file for O(state=iso_mount)
+         (required). Not permitted for any other O(state) values."
       - "When mounting an ISO image, this file is opened for reading and
          its content is sent to the HMC using the 'Mount ISO Image' operation.
          This file is not used when an image with the name specified in
-         C(image_name) was already mounted."
+         O(image_name) was already mounted."
     type: str
     required: false
     default: null
   ins_file:
     description:
       - "Path name of the INS file within the ISO image that will be used when
-         booting from the ISO image for C(state=iso_mount)
-         (required). Not permitted for any other C(state) values."
+         booting from the ISO image for O(state=iso_mount)
+         (required). Not permitted for any other O(state) values."
       - "This value is shown in the 'boot-iso-ins-file' property of the
          partition."
       - "The 'boot-iso-ins-file' property of the partition is always updated,
@@ -252,17 +253,17 @@ options:
   expand_storage_groups:
     description:
       - "Boolean that controls whether the returned partition contains
-         an additional artificial property 'storage-groups' that is the list
+         an additional artificial property RV(partition.storage-groups) that is the list
          of storage groups attached to the partition, with properties as
-         described for the zhmc_storage_group module with expand=true."
+         described for the zhmc_storage_group module with C(expand=true)."
     type: bool
     required: false
     default: false
   expand_crypto_adapters:
     description:
       - "Boolean that controls whether the returned partition contains
-         an additional artificial property 'crypto-adapters' in its
-         'crypto-configuration' property that is the list
+         an additional artificial property C(crypto-adapters) in its
+         C(crypto-configuration) property that is the list
          of crypto adapters attached to the partition, with properties as
          described for the zhmc_adapter module."
     type: bool
@@ -391,7 +392,7 @@ EXAMPLES = """
 RETURN = """
 changed:
   description: Indicates if any change has been made by the module.
-    For C(state=facts), always will be false.
+    For O(state=facts), always will be false.
   returned: always
   type: bool
 msg:
@@ -400,8 +401,8 @@ msg:
   type: str
 partition:
   description:
-    - "For C(state=absent|iso_mount|iso_unmount), an empty dictionary."
-    - "For C(state=stopped|active|facts), the resource properties of the
+    - "For O(state=absent|iso_mount|iso_unmount), an empty dictionary."
+    - "For O(state=stopped|active|facts), the resource properties of the
        partition after any changes, including its child resources as described
        below."
   returned: success
@@ -412,7 +413,7 @@ partition:
       type: str
     "{property}":
       description: "Additional properties of the partition, as described in
-        the data model of the 'Partition' object in the :term:`HMC API` book.
+        the data model of the 'Partition' object in the R(HMC API,HMC API) book.
         The property names have hyphens (-) as described in that book."
       type: raw
     hbas:
@@ -428,7 +429,7 @@ partition:
         "{property}":
           description: "Additional properties of the HBA, as described in the
             data model of the 'HBA' element object of the 'Partition' object
-            in the :term:`HMC API` book.
+            in the R(HMC API,HMC API) book.
             The property names have hyphens (-) as described in that book."
           type: raw
     nics:
@@ -442,7 +443,7 @@ partition:
         "{property}":
           description: "Additional properties of the NIC, as described in the
             data model of the 'NIC' element object of the 'Partition' object
-            in the :term:`HMC API` book.
+            in the R(HMC API,HMC API) book.
             The property names have hyphens (-) as described in that book."
           type: raw
     virtual-functions:
@@ -456,8 +457,21 @@ partition:
         "{property}":
           description: "Additional properties of the virtual function, as
             described in the data model of the 'Virtual Function' element
-            object of the 'Partition' object in the :term:`HMC API` book.
+            object of the 'Partition' object in the R(HMC API,HMC API) book.
             The property names have hyphens (-) as described in that book."
+          type: raw
+    storage-groups:
+      description: "Storage groups attached to the partition. Only present for
+        O(expand_storage_groups=true)."
+      type: list
+      elements: dict
+      contains:
+        name:
+          description: "Storage group name"
+          type: str
+        "{property}":
+          description: "Additional properties of the storage group, as
+            described for the zhmc_storage_group module with C(expand=true)."
           type: raw
   sample:
     {

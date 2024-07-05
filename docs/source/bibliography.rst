@@ -21,6 +21,8 @@ Resources
 
 .. glossary::
 
+.. _`HMC API`:
+
    HMC API
        The Web Services API of the z Systems Hardware Management Console, described in the following books:
 

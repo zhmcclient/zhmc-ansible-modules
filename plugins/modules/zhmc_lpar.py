@@ -71,22 +71,23 @@ options:
       userid:
         description:
           - The userid (username) for authenticating with the HMC.
-            This is mutually exclusive with providing C(session_id).
+            This is mutually exclusive with providing O(hmc_auth.session_id).
         type: str
         required: false
         default: null
       password:
         description:
           - The password for authenticating with the HMC.
-            This is mutually exclusive with providing C(session_id).
+            This is mutually exclusive with providing O(hmc_auth.session_id).
         type: str
         required: false
         default: null
       session_id:
         description:
           - HMC session ID to be used.
-            This is mutually exclusive with providing C(userid) and C(password)
-            and can be created as described in :ref:`zhmc_session_module`.
+            This is mutually exclusive with providing O(hmc_auth.userid) and
+            O(hmc_auth.password) and can be created as described in the
+            R(zhmc_session module,zhmc_session_module).
         type: str
         required: false
         default: null
@@ -94,8 +95,8 @@ options:
         description:
           - Path name of certificate file or certificate directory to be used
             for verifying the HMC certificate. If null (default), the path name
-            in the 'REQUESTS_CA_BUNDLE' environment variable or the path name
-            in the 'CURL_CA_BUNDLE' environment variable is used, or if neither
+            in the E(REQUESTS_CA_BUNDLE) environment variable or the path name
+            in the E(CURL_CA_BUNDLE) environment variable is used, or if neither
             of these variables is set, the certificates in the Mozilla CA
             Certificate List provided by the 'certifi' Python package are used
             for verifying the HMC certificate.
@@ -105,8 +106,8 @@ options:
       verify:
         description:
           - If True (default), verify the HMC certificate as specified in the
-            C(ca_certs) parameter. If False, ignore what is specified in the
-            C(ca_certs) parameter and do not verify the HMC certificate.
+            O(hmc_auth.ca_certs) parameter. If False, ignore what is specified in the
+            O(hmc_auth.ca_certs) parameter and do not verify the HMC certificate.
         type: bool
         required: false
         default: true
@@ -123,41 +124,41 @@ options:
   state:
     description:
       - "The desired state for the LPAR:"
-      - "* C(inactive): Ensures that the LPAR is inactive (i.e. status
+      - "* V(inactive): Ensures that the LPAR is inactive (i.e. status
          'not-activated'), unless the LPAR is currently operating and the
-         C(force) parameter was not set to True. Properties cannot be updated.
+         O(force) parameter was not set to True. Properties cannot be updated.
          The LPAR is deactivated if needed."
-      - "* C(active): Ensures that the LPAR is at least active (i.e. status
+      - "* V(active): Ensures that the LPAR is at least active (i.e. status
          is 'not-operating', 'operating' or 'exceptions'), and then ensures
          that the LPAR properties have the specified values. The LPAR is
          activated if needed using the 'Activate Logical Partition' operation.
          In certain cases, that operation will automatically load the LPAR.
-         For details, see the C(activation_profile_name) parameter."
-      - "* C(loaded): Ensures that the LPAR is loaded (i.e. status is
+         For details, see the O(activation_profile_name) parameter."
+      - "* V(loaded): Ensures that the LPAR is loaded (i.e. status is
          'operating' or 'exceptions'), and then ensures that the LPAR properties
          have the specified values. The LPAR is first activated if needed using
          the 'Activate Logical Partition' operation, and then loaded if needed
          using the 'Load Logical Partition' operation. For details, see the
-         C(activation_profile_name) parameter."
-      - "* C(reset_clear): Performs the 'Reset Clear' HMC operation on the
+         O(activation_profile_name) parameter."
+      - "* V(reset_clear): Performs the 'Reset Clear' HMC operation on the
          LPAR. This initializes the LPAR for loading by clearing its pending
          interruptions, resetting its channel subsystem, resetting its
          processors, and clearing its memory). The LPAR must be in status
          'not-operating', 'operating', or 'exceptions'. If the LPAR status is
          'operating' or 'exceptions', the operation will fail unless the
-         C(force) parameter is set to True. Properties cannot be updated."
-      - "* C(reset_normal): Performs the 'Reset Normal' HMC operation on the
+         O(force) parameter is set to True. Properties cannot be updated."
+      - "* V(reset_normal): Performs the 'Reset Normal' HMC operation on the
          LPAR. This initializes the LPAR for loading by clearing its pending
          interruptions, resetting its channel subsystem, and resetting its
          processors). It does not clear the memory. The LPAR must be in status
          'not-operating', 'operating', or 'exceptions'. If the LPAR status is
          'operating' or 'exceptions', the operation will fail unless the
-         C(force) parameter is set to True. Properties cannot be updated."
-      - "* C(set): Ensures that the LPAR properties have the specified
+         O(force) parameter is set to True. Properties cannot be updated."
+      - "* V(set): Ensures that the LPAR properties have the specified
          values. Requires that the LPAR is at least active (i.e. status is
          'not-operating', 'operating' or 'exceptions') but does not activate
          the LPAR if that is not the case."
-      - "* C(facts): Returns the current LPAR properties."
+      - "* V(facts): Returns the current LPAR properties."
       - "In all cases, the LPAR must exist."
     type: str
     required: true
@@ -166,11 +167,11 @@ options:
   select_properties:
     description:
       - "Limits the returned properties of the LPAR to those specified in this
-         parameter plus those specified in the C(properties) parameter."
+         parameter plus those specified in the O(properties) parameter."
       - "The properties can be specified with underscores or hyphens in their
          names."
       - "Null indicates not to limit the returned properties in this way."
-      - "This parameter is ignored for C(state) values that cause no properties
+      - "This parameter is ignored for O(state) values that cause no properties
          to be returned."
       - "The specified properties are passed to the 'Get Logical Partition
          Properties' HMC operation using the 'properties' query parameter and
@@ -182,8 +183,8 @@ options:
   activation_profile_name:
     description:
       - "The name of the image or load activation profile to be used when the
-         LPAR needs to be activated, for C(state=active) and C(state=loaded)."
-      - "This parameter is not allowed for the other C(state) values."
+         LPAR needs to be activated, for O(state=active) and O(state=loaded)."
+      - "This parameter is not allowed for the other O(state) values."
       - "Default: The image or load activation profile specified in the
          'next-activation-profile-name' property of the LPAR is used when the
          LPAR needs to be activated."
@@ -207,8 +208,8 @@ options:
   load_address:
     description:
       - "The hexadecimal address of an I/O device that provides access to the
-        control program to be loaded, for C(state=loaded)."
-      - "This parameter is not allowed for the other C(state) values."
+        control program to be loaded, for O(state=loaded)."
+      - "This parameter is not allowed for the other O(state) values."
       - "This parameter is used only when the LPAR is explicitly loaded using
         the 'Load Logical Partition' operation. It is not used when the LPAR
         is automatically loaded during the 'Activate Logical Partition'
@@ -222,8 +223,8 @@ options:
   load_parameter:
     description:
       - "A parameter string that is passed to the control program when loading
-        it, for C(state=loaded)."
-      - "This parameter is not allowed for the other C(state) values."
+        it, for O(state=loaded)."
+      - "This parameter is not allowed for the other O(state) values."
       - "This parameter is used only when the LPAR is explicitly loaded using
         the 'Load Logical Partition' operation. It is not used when the LPAR
         is automatically loaded during the 'Activate Logical Partition'
@@ -234,8 +235,8 @@ options:
   clear_indicator:
     description:
       - "Controls whether memory is cleared before performing the load, for
-        C(state=loaded)."
-      - "This parameter is not allowed for the other C(state) values."
+        O(state=loaded)."
+      - "This parameter is not allowed for the other O(state) values."
       - "This parameter is used only when the LPAR is explicitly loaded using
         the 'Load Logical Partition' operation. It is not used when the LPAR
         is automatically loaded during the 'Activate Logical Partition'
@@ -248,8 +249,8 @@ options:
       - "Controls whether the current values of CPU timer, clock comparator,
         program status word, and the contents of the processor registers are
         stored to their assigned absolute storage locations, for
-        C(state=loaded)."
-      - "This parameter is not allowed for the other C(state) values."
+        O(state=loaded)."
+      - "This parameter is not allowed for the other O(state) values."
       - "This parameter is used only when the LPAR is explicitly loaded using
         the 'Load Logical Partition' operation. It is not used when the LPAR
         is automatically loaded during the 'Activate Logical Partition'
@@ -260,15 +261,15 @@ options:
   timeout:
     description:
       - "Timeout in seconds, for the HMC operation to complete, for
-        C(state=inactive), C(state=active) and C(state=loaded)."
+        O(state=inactive), O(state=active) and O(state=loaded)."
     type: int
     required: false
     default: 60
   status_timeout:
     description:
       - "Timeout in seconds, for reaching the desired status after the HMC
-        operation completed, for C(state=inactive), C(state=active) and
-        C(state=loaded)."
+        operation completed, for O(state=inactive), O(state=active) and
+        O(state=loaded)."
     type: int
     required: false
     default: 60
@@ -298,20 +299,20 @@ options:
     default: false
   os_ipl_token:
     description:
-      - "Setting this parameter for C(state=reset_clear) or
-        C(state=reset_normal) requests that the corresponding HMC operations
+      - "Setting this parameter for O(state=reset_clear) or
+        O(state=reset_normal) requests that the corresponding HMC operations
         only be performed if the provided value matches the current value of
         the 'os-ipl-token' property of the LPAR, and be rejected otherwise.
         Note that the 'os-ipl-token' property of the LPAR is set by the
         operating system and is set only by some operating systems, such as
-        z/OS. This parameter is ignored for other C(state) values."
+        z/OS. This parameter is ignored for other O(state) values."
     type: str
     required: false
     default: null
   properties:
     description:
       - "Dictionary with new values for the LPAR properties, for
-         C(state=active), C(state=loaded) and C(state=set). Key is the property
+         O(state=active), O(state=loaded) and O(state=set). Key is the property
          name with underscores instead of hyphens, and value is the property
          value in YAML syntax. Integer properties may also be provided as
          decimal strings."
@@ -319,7 +320,7 @@ options:
          defined as writeable in the data model for LPAR resources
          (where the property names contain underscores instead of hyphens)."
       - "Properties omitted in this dictionary will not be updated."
-      - "This parameter is not allowed for the other C(state) values."
+      - "This parameter is not allowed for the other O(state) values."
     type: dict
     required: false
     default: null
@@ -425,7 +426,7 @@ EXAMPLES = """
 RETURN = """
 changed:
   description: Indicates if any change has been made by the module.
-    For C(state=facts), always will be false.
+    For O(state=facts), always will be false.
   returned: always
   type: bool
 msg:
@@ -434,15 +435,15 @@ msg:
   type: str
 lpar:
   description:
-    - "For C(state=inactive|reset_clear|reset_normal), an empty dictionary."
-    - "For C(state=active|loaded|set|facts), the resource properties
+    - "For O(state=inactive|reset_clear|reset_normal), an empty dictionary."
+    - "For O(state=active|loaded|set|facts), the resource properties
        of the LPAR after after any specified updates have been applied."
     - "Note that the returned properties may show different values than the ones
        that were specified as input for the update. For example, memory
        properties may be rounded up, hexadecimal strings may be shown with a
        different representation format, and other properties may change as a
        result of updating some properties. For details, see the data model of
-       the 'Logical Partition' object in the :term:`HMC API` book."
+       the 'Logical Partition' object in the R(HMC API,HMC API) book."
   returned: success
   type: dict
   contains:
@@ -452,7 +453,7 @@ lpar:
     "{property}":
       description: "Additional properties of the LPAR, as described in
         the data model of the 'Logical Partition' object in the
-        :term:`HMC API` book.
+        R(HMC API,HMC API) book.
         The property names have hyphens (-) as described in that book."
       type: raw
   sample:

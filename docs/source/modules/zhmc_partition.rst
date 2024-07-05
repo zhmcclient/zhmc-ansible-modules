@@ -52,35 +52,35 @@ hmc_auth
 
 
   userid
-    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`session\_id`\ .
+    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`hmc\_auth.session\_id`\ .
 
     | **required**: False
     | **type**: str
 
 
   password
-    The password for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`session\_id`\ .
+    The password for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`hmc\_auth.session\_id`\ .
 
     | **required**: False
     | **type**: str
 
 
   session_id
-    HMC session ID to be used. This is mutually exclusive with providing \ :literal:`userid`\  and \ :literal:`password`\  and can be created as described in :ref:\`zhmc\_session\_module\`.
+    HMC session ID to be used. This is mutually exclusive with providing \ :literal:`hmc\_auth.userid`\  and \ :literal:`hmc\_auth.password`\  and can be created as described in the \ :ref:`zhmc\_session module <zhmc_session_module>`\ .
 
     | **required**: False
     | **type**: str
 
 
   ca_certs
-    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the 'REQUESTS\_CA\_BUNDLE' environment variable or the path name in the 'CURL\_CA\_BUNDLE' environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
+    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the \ :envvar:`REQUESTS\_CA\_BUNDLE`\  environment variable or the path name in the \ :envvar:`CURL\_CA\_BUNDLE`\  environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
 
     | **required**: False
     | **type**: str
 
 
   verify
-    If True (default), verify the HMC certificate as specified in the \ :literal:`ca\_certs`\  parameter. If False, ignore what is specified in the \ :literal:`ca\_certs`\  parameter and do not verify the HMC certificate.
+    If True (default), verify the HMC certificate as specified in the \ :literal:`hmc\_auth.ca\_certs`\  parameter. If False, ignore what is specified in the \ :literal:`hmc\_auth.ca\_certs`\  parameter and do not verify the HMC certificate.
 
     | **required**: False
     | **type**: bool
@@ -159,9 +159,9 @@ properties
 
   \* \ :literal:`boot\_network\_nic\_name`\ : The name of the NIC whose URI is used to construct \ :literal:`boot\_network\_device`\ . Specifying it requires that the partition exists.
 
-  \* \ :literal:`crypto\_configuration`\ : The crypto configuration for the partition, in the format of the \ :literal:`crypto-configuration`\  property of the partition (see :term:\`HMC API\` for details), with the exception that adapters are specified with their names in field \ :literal:`crypto\_adapter\_names`\  instead of their URIs in field \ :literal:`crypto\_adapter\_uris`\ . If the \ :literal:`crypto\_adapter\_names`\  field is null, all crypto adapters of the CPC will be used.
+  \* \ :literal:`crypto\_configuration`\ : The crypto configuration for the partition, in the format of the \ :literal:`crypto-configuration`\  property of the partition (see \ :ref:`HMC API <HMC API>`\  for details), with the exception that adapters are specified with their names in field \ :literal:`crypto\_adapter\_names`\  instead of their URIs in field \ :literal:`crypto\_adapter\_uris`\ . If the \ :literal:`crypto\_adapter\_names`\  field is null, all crypto adapters of the CPC will be used.
 
-  Properties omitted in this dictionary will remain unchanged when the partition already exists, and will get the default value defined in the data model for partitions in the :term:\`HMC API\` when the partition is being created.
+  Properties omitted in this dictionary will remain unchanged when the partition already exists, and will get the default value defined in the data model for partitions in the \ :ref:`HMC API <HMC API>`\  book when the partition is being created.
 
   | **required**: False
   | **type**: dict
@@ -199,14 +199,14 @@ ins_file
 
 
 expand_storage_groups
-  Boolean that controls whether the returned partition contains an additional artificial property 'storage-groups' that is the list of storage groups attached to the partition, with properties as described for the zhmc\_storage\_group module with expand=true.
+  Boolean that controls whether the returned partition contains an additional artificial property \ :literal:`partition.storage-groups`\  that is the list of storage groups attached to the partition, with properties as described for the zhmc\_storage\_group module with \ :literal:`expand=true`\ .
 
   | **required**: False
   | **type**: bool
 
 
 expand_crypto_adapters
-  Boolean that controls whether the returned partition contains an additional artificial property 'crypto-adapters' in its 'crypto-configuration' property that is the list of crypto adapters attached to the partition, with properties as described for the zhmc\_adapter module.
+  Boolean that controls whether the returned partition contains an additional artificial property \ :literal:`crypto-adapters`\  in its \ :literal:`crypto-configuration`\  property that is the list of crypto adapters attached to the partition, with properties as described for the zhmc\_adapter module.
 
   | **required**: False
   | **type**: bool
@@ -515,7 +515,7 @@ partition
     | **type**: str
 
   {property}
-    Additional properties of the partition, as described in the data model of the 'Partition' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
+    Additional properties of the partition, as described in the data model of the 'Partition' object in the \ :ref:`HMC API <HMC API>`\  book. The property names have hyphens (-) as described in that book.
 
     | **type**: raw
 
@@ -531,7 +531,7 @@ partition
       | **type**: str
 
     {property}
-      Additional properties of the HBA, as described in the data model of the 'HBA' element object of the 'Partition' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
+      Additional properties of the HBA, as described in the data model of the 'HBA' element object of the 'Partition' object in the \ :ref:`HMC API <HMC API>`\  book. The property names have hyphens (-) as described in that book.
 
       | **type**: raw
 
@@ -548,7 +548,7 @@ partition
       | **type**: str
 
     {property}
-      Additional properties of the NIC, as described in the data model of the 'NIC' element object of the 'Partition' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
+      Additional properties of the NIC, as described in the data model of the 'NIC' element object of the 'Partition' object in the \ :ref:`HMC API <HMC API>`\  book. The property names have hyphens (-) as described in that book.
 
       | **type**: raw
 
@@ -565,7 +565,24 @@ partition
       | **type**: str
 
     {property}
-      Additional properties of the virtual function, as described in the data model of the 'Virtual Function' element object of the 'Partition' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
+      Additional properties of the virtual function, as described in the data model of the 'Virtual Function' element object of the 'Partition' object in the \ :ref:`HMC API <HMC API>`\  book. The property names have hyphens (-) as described in that book.
+
+      | **type**: raw
+
+
+  storage-groups
+    Storage groups attached to the partition. Only present for \ :literal:`expand\_storage\_groups=true`\ .
+
+    | **type**: list
+    | **elements**: dict
+
+    name
+      Storage group name
+
+      | **type**: str
+
+    {property}
+      Additional properties of the storage group, as described for the zhmc\_storage\_group module with \ :literal:`expand=true`\ .
 
       | **type**: raw
 

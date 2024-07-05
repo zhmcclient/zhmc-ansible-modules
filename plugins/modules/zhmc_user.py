@@ -65,22 +65,23 @@ options:
       userid:
         description:
           - The userid (username) for authenticating with the HMC.
-            This is mutually exclusive with providing C(session_id).
+            This is mutually exclusive with providing O(hmc_auth.session_id).
         type: str
         required: false
         default: null
       password:
         description:
           - The password for authenticating with the HMC.
-            This is mutually exclusive with providing C(session_id).
+            This is mutually exclusive with providing O(hmc_auth.session_id).
         type: str
         required: false
         default: null
       session_id:
         description:
           - HMC session ID to be used.
-            This is mutually exclusive with providing C(userid) and C(password)
-            and can be created as described in :ref:`zhmc_session_module`.
+            This is mutually exclusive with providing O(hmc_auth.userid) and
+            O(hmc_auth.password) and can be created as described in the
+            R(zhmc_session module,zhmc_session_module).
         type: str
         required: false
         default: null
@@ -88,8 +89,8 @@ options:
         description:
           - Path name of certificate file or certificate directory to be used
             for verifying the HMC certificate. If null (default), the path name
-            in the 'REQUESTS_CA_BUNDLE' environment variable or the path name
-            in the 'CURL_CA_BUNDLE' environment variable is used, or if neither
+            in the E(REQUESTS_CA_BUNDLE) environment variable or the path name
+            in the E(CURL_CA_BUNDLE) environment variable is used, or if neither
             of these variables is set, the certificates in the Mozilla CA
             Certificate List provided by the 'certifi' Python package are used
             for verifying the HMC certificate.
@@ -99,8 +100,8 @@ options:
       verify:
         description:
           - If True (default), verify the HMC certificate as specified in the
-            C(ca_certs) parameter. If False, ignore what is specified in the
-            C(ca_certs) parameter and do not verify the HMC certificate.
+            O(hmc_auth.ca_certs) parameter. If False, ignore what is specified in the
+            O(hmc_auth.ca_certs) parameter and do not verify the HMC certificate.
         type: bool
         required: false
         default: true
@@ -114,17 +115,17 @@ options:
     description:
       - "The desired state for the HMC user. All states are fully idempotent
          within the limits of the properties that can be changed:"
-      - "* C(absent): Ensures that the user does not exist."
-      - "* C(present): Ensures that the user exists and has the specified
+      - "* V(absent): Ensures that the user does not exist."
+      - "* V(present): Ensures that the user exists and has the specified
          properties."
-      - "* C(facts): Returns the user properties."
+      - "* V(facts): Returns the user properties."
     type: str
     required: true
     choices: ['absent', 'present', 'facts']
   properties:
     description:
       - "Dictionary with desired properties for the user.
-         Used for C(state=present); ignored for C(state=absent|facts).
+         Used for O(state=present); ignored for O(state=absent|facts).
          Dictionary key is the property name with underscores instead
          of hyphens, and dictionary value is the property value in YAML syntax.
          Integer properties may also be provided as decimal strings."
@@ -133,7 +134,7 @@ options:
          (where the property names contain underscores instead of hyphens),
          with the following exceptions:"
       - "* C(name): Cannot be specified because the name has already been
-         specified in the C(name) module parameter."
+         specified in the O(name) module parameter."
       - "* C(type): Cannot be changed once the user exists."
       - "* C(user_roles): Cannot be set directly, but indirectly via
          the artificial property C(user_role_names) which replaces the
@@ -149,14 +150,14 @@ options:
          the artificial property C(default_group_name)."
       - "Properties omitted in this dictionary will remain unchanged when the
          user already exists, and will get the default value defined
-         in the data model for users in the :term:`HMC API` when the
+         in the data model for users in the R(HMC API,HMC API) book when the
          user is being created."
     type: dict
     required: false
     default: null
   expand:
     description:
-      - "Deprecated: The C(expand) parameter is deprecated because the
+      - "Deprecated: The O(expand) parameter is deprecated because the
          returned password rule, user role, user pattern and LDAP server
          definition objects have an independent lifecycle, so the same objects
          are returned when invoking this module in a loop through all users.
@@ -225,7 +226,7 @@ EXAMPLES = """
 RETURN = """
 changed:
   description: Indicates if any change has been made by the module.
-    For C(state=facts), always will be false.
+    For O(state=facts), always will be false.
   returned: always
   type: bool
 msg:
@@ -234,8 +235,8 @@ msg:
   type: str
 user:
   description:
-    - "For C(state=absent), an empty dictionary."
-    - "For C(state=present|facts), a
+    - "For O(state=absent), an empty dictionary."
+    - "For O(state=present|facts), a
        dictionary with the resource properties of the target user,
        plus additional artificial properties as described in the following
        list items."
@@ -247,7 +248,7 @@ user:
       type: str
     "{property}":
       description: "Additional properties of the user, as described in the
-        data model of the 'User' object in the :term:`HMC API` book.
+        data model of the 'User' object in the R(HMC API,HMC API) book.
         The property names have hyphens (-) as described in that book."
       type: raw
     user-role-names:
@@ -257,14 +258,14 @@ user:
     user-role-objects:
       description:
         - "Deprecated: This result property is deprecated because the
-           C(expand) parameter is deprecated."
-        - "Only if C(expand=true): User roles referenced by property
+           O(expand) parameter is deprecated."
+        - "Only if O(expand=true): User roles referenced by property
            C(user-roles)."
       type: dict
       contains:
         "{property}":
           description: "Properties of the user role, as described in the
-            data model of the 'User Pattern' object in the :term:`HMC API`
+            data model of the 'User Pattern' object in the R(HMC API,HMC API)
             book.
             The property names have hyphens (-) as described in that book."
           type: raw
@@ -275,14 +276,14 @@ user:
     user-pattern:
       description:
         - "Deprecated: This result property is deprecated because the
-           C(expand) parameter is deprecated."
-        - "Only for users with C(type=pattern) and if C(expand=true):
+           O(expand) parameter is deprecated."
+        - "Only for users with C(type=pattern) and if O(expand=true):
            User pattern referenced by property C(user-pattern-uri)."
       type: dict
       contains:
         "{property}":
           description: "Properties of the user pattern, as described in the
-            data model of the 'User Pattern' object in the :term:`HMC API`
+            data model of the 'User Pattern' object in the R(HMC API,HMC API)
             book.
             The property names have hyphens (-) as described in that book."
           type: raw
@@ -293,15 +294,15 @@ user:
     password-rule:
       description:
         - "Deprecated: This result property is deprecated because the
-           C(expand) parameter is deprecated."
+           O(expand) parameter is deprecated."
         - "Only for users with C(authentication-type=local) and if
-           C(expand=true): Password rule referenced by property
+           O(expand=true): Password rule referenced by property
            C(password-rule-uri)."
       type: dict
       contains:
         "{property}":
           description: "Properties of the password rule, as described in the
-            data model of the 'Password Rule' object in the :term:`HMC API`
+            data model of the 'Password Rule' object in the R(HMC API,HMC API)
             book.
             The property names have hyphens (-) as described in that book."
           type: raw
@@ -313,16 +314,16 @@ user:
     ldap-server-definition:
       description:
         - "Deprecated: This result property is deprecated because the
-           C(expand) parameter is deprecated."
+           O(expand) parameter is deprecated."
         - "Only for users with C(authentication-type=ldap) and if
-           C(expand=true): LDAP server definition referenced by property
+           O(expand=true): LDAP server definition referenced by property
            C(ldap-server-definition-uri)."
       type: dict
       contains:
         "{property}":
           description: "Properties of the LDAP server definition, as described
             in the data model of the 'LDAP Server Definition' object in the
-            :term:`HMC API` book.
+            R(HMC API,HMC API) book.
             The property names have hyphens (-) as described in that book."
           type: raw
   sample:
@@ -700,7 +701,7 @@ def add_artificial_properties(user_properties, console, user, expand):
       TODO: Implement default-group-name; requires support for Group objects in
       zhmcclient
 
-    If C(expand) (deprecated) is True, in addition:
+    If O(expand) (deprecated) is True, in addition:
 
     * 'user-role-objects': List of UserRole objects corresponding to the
       URIs in the 'user-roles' property.

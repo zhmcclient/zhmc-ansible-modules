@@ -49,35 +49,35 @@ hmc_auth
 
 
   userid
-    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`session\_id`\ .
+    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`hmc\_auth.session\_id`\ .
 
     | **required**: False
     | **type**: str
 
 
   password
-    The password for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`session\_id`\ .
+    The password for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`hmc\_auth.session\_id`\ .
 
     | **required**: False
     | **type**: str
 
 
   session_id
-    HMC session ID to be used. This is mutually exclusive with providing \ :literal:`userid`\  and \ :literal:`password`\  and can be created as described in :ref:\`zhmc\_session\_module\`.
+    HMC session ID to be used. This is mutually exclusive with providing \ :literal:`hmc\_auth.userid`\  and \ :literal:`hmc\_auth.password`\  and can be created as described in the \ :ref:`zhmc\_session module <zhmc_session_module>`\ .
 
     | **required**: False
     | **type**: str
 
 
   ca_certs
-    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the 'REQUESTS\_CA\_BUNDLE' environment variable or the path name in the 'CURL\_CA\_BUNDLE' environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
+    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the \ :envvar:`REQUESTS\_CA\_BUNDLE`\  environment variable or the path name in the \ :envvar:`CURL\_CA\_BUNDLE`\  environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
 
     | **required**: False
     | **type**: str
 
 
   verify
-    If True (default), verify the HMC certificate as specified in the \ :literal:`ca\_certs`\  parameter. If False, ignore what is specified in the \ :literal:`ca\_certs`\  parameter and do not verify the HMC certificate.
+    If True (default), verify the HMC certificate as specified in the \ :literal:`hmc\_auth.ca\_certs`\  parameter. If False, ignore what is specified in the \ :literal:`hmc\_auth.ca\_certs`\  parameter and do not verify the HMC certificate.
 
     | **required**: False
     | **type**: bool
@@ -119,7 +119,7 @@ properties
 
   \* \ :literal:`permissions`\ : Can be specified as if it were writeable.
 
-  Properties omitted in this dictionary will remain unchanged when the user role already exists, and will get the default value defined in the data model for user roles in the :term:\`HMC API\` when the user role is being created.
+  Properties omitted in this dictionary will remain unchanged when the user role already exists, and will get the default value defined in the data model for user roles in the \ :ref:`HMC API <HMC API>`\  book when the user role is being created.
 
   | **required**: False
   | **type**: dict
@@ -135,7 +135,7 @@ properties
   associated_system_defined_user_role_name
     The name of the associated system-defined user role. Specifying it requires that the referenced user role exists.
 
-    Optional, default: 'hmc-operator-tasks'.
+    Optional, default: \ :literal:`hmc-operator-tasks`\ .
 
     | **required**: False
     | **type**: str
@@ -144,7 +144,7 @@ properties
   permissions
     The permissions for this user role.
 
-    This property is represented different from its description in the :term:\`HMC API\`: The property is a list of permissions. Each list item is a dictionary that specifies a single permission item, any required scoping items, and optional option items.
+    This property is represented different from its description in the \ :ref:`HMC API <HMC API>`\ : The property is a list of permissions. Each list item is a dictionary that specifies a single permission item, any required scoping items, and optional option items.
 
     | **required**: False
     | **type**: list
@@ -166,7 +166,7 @@ properties
 
 
     class
-      Permission item: Object permission to all objects of the specified resource class (= value of 'class' property).
+      Permission item: Object permission to all objects of the specified resource class (= value of \ :literal:`class`\  property).
 
       | **required**: False
       | **type**: str
@@ -387,7 +387,7 @@ user_role
   permissions
     The permissions for this user role.
 
-    This property is represented different from its description in the :term:\`HMC API\`: The property is a list of permissions. Each list item is a dictionary that specifies a single permission item, any needed scoping items, and any applicable option items.
+    This property is represented different from its description in the \ :ref:`HMC API <HMC API>`\ : The property is a list of permissions. Each list item is a dictionary that specifies a single permission item, any needed scoping items, and any applicable option items.
 
     | **type**: list
     | **elements**: dict
@@ -403,7 +403,7 @@ user_role
       | **type**: bool
 
     class
-      Permission item: Object permission to all objects of the specified resource class (= value of 'class' property).
+      Permission item: Object permission to all objects of the specified resource class (= value of \ :literal:`class`\  property).
 
       | **type**: str
 
@@ -461,7 +461,7 @@ user_role
 
 
   {property}
-    Additional properties of the user role, as described in the data model of the 'User Role' object in the :term:\`HMC API\` book. The property names have hyphens (-) as described in that book.
+    Additional properties of the user role, as described in the data model of the 'User Role' object in the \ :ref:`HMC API <HMC API>`\  book. The property names have hyphens (-) as described in that book.
 
     | **type**: raw
 

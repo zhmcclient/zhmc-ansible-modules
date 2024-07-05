@@ -39,9 +39,9 @@ description:
 author:
   - Andreas Maier (@andy-maier)
 requirements:
-  - "For C(state=facts), no specific task or object-access permissions are
+  - "For O(state=facts), no specific task or object-access permissions are
      required."
-  - "For C(state=upgrade), task permission to the 'Single Step Console
+  - "For O(state=upgrade), task permission to the 'Single Step Console
      Internal Code' task is required."
 options:
   hmc_host:
@@ -63,22 +63,23 @@ options:
       userid:
         description:
           - The userid (username) for authenticating with the HMC.
-            This is mutually exclusive with providing C(session_id).
+            This is mutually exclusive with providing O(hmc_auth.session_id).
         type: str
         required: false
         default: null
       password:
         description:
           - The password for authenticating with the HMC.
-            This is mutually exclusive with providing C(session_id).
+            This is mutually exclusive with providing O(hmc_auth.session_id).
         type: str
         required: false
         default: null
       session_id:
         description:
           - HMC session ID to be used.
-            This is mutually exclusive with providing C(userid) and C(password)
-            and can be created as described in :ref:`zhmc_session_module`.
+            This is mutually exclusive with providing O(hmc_auth.userid) and
+            O(hmc_auth.password) and can be created as described in the
+            R(zhmc_session module,zhmc_session_module).
         type: str
         required: false
         default: null
@@ -86,8 +87,8 @@ options:
         description:
           - Path name of certificate file or certificate directory to be used
             for verifying the HMC certificate. If null (default), the path name
-            in the 'REQUESTS_CA_BUNDLE' environment variable or the path name
-            in the 'CURL_CA_BUNDLE' environment variable is used, or if neither
+            in the E(REQUESTS_CA_BUNDLE) environment variable or the path name
+            in the E(CURL_CA_BUNDLE) environment variable is used, or if neither
             of these variables is set, the certificates in the Mozilla CA
             Certificate List provided by the 'certifi' Python package are used
             for verifying the HMC certificate.
@@ -97,16 +98,16 @@ options:
       verify:
         description:
           - If True (default), verify the HMC certificate as specified in the
-            C(ca_certs) parameter. If False, ignore what is specified in the
-            C(ca_certs) parameter and do not verify the HMC certificate.
+            O(hmc_auth.ca_certs) parameter. If False, ignore what is specified in the
+            O(hmc_auth.ca_certs) parameter and do not verify the HMC certificate.
         type: bool
         required: false
         default: true
   state:
     description:
       - "The action to be performed on the HMC:"
-      - "* C(facts): Returns facts about the HMC."
-      - "* C(upgrade): Upgrades the firmware of the HMC and returns the new
+      - "* V(facts): Returns facts about the HMC."
+      - "* V(upgrade): Upgrades the firmware of the HMC and returns the new
          facts after the upgrade. If the HMC firmware is already at the
          requested bundle level, nothing is changed and the module succeeds."
     type: str
@@ -114,8 +115,8 @@ options:
     required: true
   bundle_level:
     description:
-      - "Name of the bundle to be installed on the HMC (e.g. 'H71')"
-      - "Required for C(state=upgrade)"
+      - "Name of the bundle to be installed on the HMC (e.g. V(H71))"
+      - "Required for O(state=upgrade)"
     type: str
     required: false
     default: null
@@ -128,11 +129,11 @@ options:
   backup_location_type:
     description:
       - "Type of backup location for the HMC backup that is performed:"
-      - "* 'ftp': The FTP server that was used for the last console backup as
+      - "* V(ftp): The FTP server that was used for the last console backup as
          defined on the 'Configure Backup Settings' user interface task in the
          HMC GUI."
-      - "* 'usb': The USB storage device mounted to the HMC."
-      - "Optional for C(state=upgrade), default: 'usb'"
+      - "* V(usb): The USB storage device mounted to the HMC."
+      - "Optional for O(state=upgrade), default: V(usb)"
     type: str
     choices: ['ftp', 'usb']
     required: false
@@ -140,7 +141,7 @@ options:
   accept_firmware:
     description:
       - "Accept the previous bundle level before installing the new level."
-      - "Optional for C(state=upgrade), default: True"
+      - "Optional for O(state=upgrade), default: True"
     type: bool
     required: false
     default: true
@@ -184,7 +185,7 @@ EXAMPLES = """
 RETURN = """
 changed:
   description: Indicates if any change has been made by the module.
-    For C(state=facts), always will be false.
+    For O(state=facts), always will be false.
   returned: always
   type: bool
 msg:
@@ -202,7 +203,7 @@ hmc:
     "{property}":
       description: "Additional properties of the Console object representing
         the targeted HMC, as described in the data model of the 'Console'
-        object in the :term:`HMC API` book.
+        object in the R(HMC API,HMC API) book.
         Note that the set of properties has been extended over the past
         HMC versions, so you will get less properties on older HMC versions.
         The property names have hyphens (-) as described in that book."
@@ -214,7 +215,7 @@ hmc:
         "{property}":
           description: "The properties returned from the
             'Query API Version' operation, as described in the
-            :term:`HMC API` book.
+            R(HMC API,HMC API) book.
             Note that the set of properties has been extended over the past
             HMC versions, so you will get less properties on older HMC
             versions.

@@ -61,22 +61,23 @@ options:
       userid:
         description:
           - The userid (username) for authenticating with the HMC.
-            This is mutually exclusive with providing C(session_id).
+            This is mutually exclusive with providing O(hmc_auth.session_id).
         type: str
         required: false
         default: null
       password:
         description:
           - The password for authenticating with the HMC.
-            This is mutually exclusive with providing C(session_id).
+            This is mutually exclusive with providing O(hmc_auth.session_id).
         type: str
         required: false
         default: null
       session_id:
         description:
           - HMC session ID to be used.
-            This is mutually exclusive with providing C(userid) and C(password)
-            and can be created as described in :ref:`zhmc_session_module`.
+            This is mutually exclusive with providing O(hmc_auth.userid) and
+            O(hmc_auth.password) and can be created as described in the
+            R(zhmc_session module,zhmc_session_module).
         type: str
         required: false
         default: null
@@ -84,8 +85,8 @@ options:
         description:
           - Path name of certificate file or certificate directory to be used
             for verifying the HMC certificate. If null (default), the path name
-            in the 'REQUESTS_CA_BUNDLE' environment variable or the path name
-            in the 'CURL_CA_BUNDLE' environment variable is used, or if neither
+            in the E(REQUESTS_CA_BUNDLE) environment variable or the path name
+            in the E(CURL_CA_BUNDLE) environment variable is used, or if neither
             of these variables is set, the certificates in the Mozilla CA
             Certificate List provided by the 'certifi' Python package are used
             for verifying the HMC certificate.
@@ -95,8 +96,8 @@ options:
       verify:
         description:
           - If True (default), verify the HMC certificate as specified in the
-            C(ca_certs) parameter. If False, ignore what is specified in the
-            C(ca_certs) parameter and do not verify the HMC certificate.
+            O(hmc_auth.ca_certs) parameter. If False, ignore what is specified in the
+            O(hmc_auth.ca_certs) parameter and do not verify the HMC certificate.
         type: bool
         required: false
         default: true
@@ -110,17 +111,17 @@ options:
     description:
       - "The desired state for the LDAP Server Definition. All states are fully
          idempotent within the limits of the properties that can be changed:"
-      - "* C(absent): Ensures that the LDAP Server Definition does not exist."
-      - "* C(present): Ensures that the LDAP Server Definition exists and has
+      - "* V(absent): Ensures that the LDAP Server Definition does not exist."
+      - "* V(present): Ensures that the LDAP Server Definition exists and has
          the specified properties."
-      - "* C(facts): Returns the LDAP Server Definition properties."
+      - "* V(facts): Returns the LDAP Server Definition properties."
     type: str
     required: true
     choices: ['absent', 'present', 'facts']
   properties:
     description:
       - "Dictionary with desired properties for the LDAP Server Definition.
-         Used for C(state=present); ignored for C(state=absent|facts).
+         Used for O(state=present); ignored for O(state=absent|facts).
          Dictionary key is the property name with underscores instead
          of hyphens, and dictionary value is the property value in YAML syntax.
          Integer properties may also be provided as decimal strings."
@@ -129,11 +130,12 @@ options:
          resources (where the property names contain underscores instead of
          hyphens), with the following exceptions:"
       - "* C(name): Cannot be specified because the name has already been
-         specified in the C(name) module parameter."
+         specified in the O(name) module parameter."
       - "Properties omitted in this dictionary will remain unchanged when the
          LDAP Server Definition already exists, and will get the default value
          defined in the data model for LDAP Server Definitions in the
-         :term:`HMC API` when the LDAP Server Definition is being created."
+         R(HMC API,HMC API) book when the LDAP Server Definition is being
+         created."
     type: dict
     required: false
     default: null
@@ -188,7 +190,7 @@ EXAMPLES = """
 RETURN = """
 changed:
   description: Indicates if any change has been made by the module.
-    For C(state=facts), always will be false.
+    For O(state=facts), always will be false.
   returned: always
   type: bool
 msg:
@@ -197,8 +199,8 @@ msg:
   type: str
 ldap_server_definition:
   description:
-    - "For C(state=absent), an empty dictionary."
-    - "For C(state=present|facts), a dictionary with the resource properties of
+    - "For O(state=absent), an empty dictionary."
+    - "For O(state=present|facts), a dictionary with the resource properties of
        the target LDAP Server Definition."
   returned: success
   type: dict
@@ -209,7 +211,7 @@ ldap_server_definition:
     "{property}":
       description: "Additional properties of the LDAP Server Definition, as
         described in the data model of the 'LDAP Server Definition' object in
-        the :term:`HMC API` book.
+        the R(HMC API,HMC API) book.
         The property names have hyphens (-) as described in that book."
       type: raw
   sample:

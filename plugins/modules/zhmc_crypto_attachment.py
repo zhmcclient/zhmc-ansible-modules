@@ -70,22 +70,23 @@ options:
       userid:
         description:
           - The userid (username) for authenticating with the HMC.
-            This is mutually exclusive with providing C(session_id).
+            This is mutually exclusive with providing O(hmc_auth.session_id).
         type: str
         required: false
         default: null
       password:
         description:
           - The password for authenticating with the HMC.
-            This is mutually exclusive with providing C(session_id).
+            This is mutually exclusive with providing O(hmc_auth.session_id).
         type: str
         required: false
         default: null
       session_id:
         description:
           - HMC session ID to be used.
-            This is mutually exclusive with providing C(userid) and C(password)
-            and can be created as described in :ref:`zhmc_session_module`.
+            This is mutually exclusive with providing O(hmc_auth.userid) and
+            O(hmc_auth.password) and can be created as described in the
+            R(zhmc_session module,zhmc_session_module).
         type: str
         required: false
         default: null
@@ -93,8 +94,8 @@ options:
         description:
           - Path name of certificate file or certificate directory to be used
             for verifying the HMC certificate. If null (default), the path name
-            in the 'REQUESTS_CA_BUNDLE' environment variable or the path name
-            in the 'CURL_CA_BUNDLE' environment variable is used, or if neither
+            in the E(REQUESTS_CA_BUNDLE) environment variable or the path name
+            in the E(CURL_CA_BUNDLE) environment variable is used, or if neither
             of these variables is set, the certificates in the Mozilla CA
             Certificate List provided by the 'certifi' Python package are used
             for verifying the HMC certificate.
@@ -104,8 +105,8 @@ options:
       verify:
         description:
           - If True (default), verify the HMC certificate as specified in the
-            C(ca_certs) parameter. If False, ignore what is specified in the
-            C(ca_certs) parameter and do not verify the HMC certificate.
+            O(hmc_auth.ca_certs) parameter. If False, ignore what is specified in the
+            O(hmc_auth.ca_certs) parameter and do not verify the HMC certificate.
         type: bool
         required: false
         default: true
@@ -124,40 +125,40 @@ options:
     description:
       - "The desired state for the crypto attachment. All states are fully
          idempotent within the limits of the properties that can be changed:"
-      - "* C(attached): Ensures that the specified number of crypto adapters
+      - "* V(attached): Ensures that the specified number of crypto adapters
          of the specified crypto type, and the specified range of domain index
          numbers in the specified access mode are attached to the partition."
-      - "* C(detached): Ensures that no crypto adapter and no crypto domains
+      - "* V(detached): Ensures that no crypto adapter and no crypto domains
          are attached to the partition."
-      - "* C(facts): Returns the crypto configuration of the partition."
+      - "* V(facts): Returns the crypto configuration of the partition."
     type: str
     required: true
     choices: ['attached', 'detached', 'facts']
   adapter_count:
     description:
-      - "Only for C(state=attached): The number of crypto adapters the
+      - "Only for O(state=attached): The number of crypto adapters the
          partition needs to have attached.
          The special value -1 means all adapters of the desired crypto type in
          the CPC.
-         The C(adapter_names) and C(adapter_count) parameters are mutually
+         The O(adapter_names) and O(adapter_count) parameters are mutually
          exclusive and one of them must be specified."
     type: int
     required: false
     default: null
   crypto_type:
     description:
-      - "Only for C(state=attached): The crypto type of the crypto adapters
-         that will be selected from when C(adapter_count) is specified.
-         Ignored when C(adapter_names) is specified."
+      - "Only for O(state=attached): The crypto type of the crypto adapters
+         that will be selected from when O(adapter_count) is specified.
+         Ignored when O(adapter_names) is specified."
     type: str
     required: false
     default: 'ep11'
     choices: ['ep11', 'cca', 'acc']
   adapter_names:
     description:
-      - "Only for C(state=attached): The names of the crypto adapters the
+      - "Only for O(state=attached): The names of the crypto adapters the
          partition needs to have attached.
-         The C(adapter_names) and C(adapter_count) parameters are mutually
+         The O(adapter_names) and O(adapter_count) parameters are mutually
          exclusive and one of them must be specified."
     type: list
     elements: str
@@ -165,7 +166,7 @@ options:
     default: []
   domain_range:
     description:
-      - "Only for C(state=attached): The domain range the partition needs to
+      - "Only for O(state=attached): The domain range the partition needs to
          have attached, as a tuple of integers (min, max) that specify the
          inclusive range of domain index numbers.
          Other domains attached to the partition remain unchanged.
@@ -177,8 +178,8 @@ options:
     default: [0,-1]
   access_mode:
     description:
-      - "Only for C(state=attached): The access mode in which the crypto
-         domains specified in C(domain_range) need to be attached."
+      - "Only for O(state=attached): The access mode in which the crypto
+         domains specified in O(domain_range) need to be attached."
     type: str
     required: false
     default: 'usage'
@@ -263,7 +264,7 @@ EXAMPLES = """
 RETURN = """
 changed:
   description: Indicates if any change has been made by the module.
-    For C(state=facts), always will be false.
+    For O(state=facts), always will be false.
   returned: always
   type: bool
 msg:
@@ -308,7 +309,7 @@ crypto_configuration:
                 "{property}":
                   description: "Additional properties of the adapter, as
                     described in the data model of the 'Adapter' object in the
-                    :term:`HMC API` book. The property names have hyphens
+                    R(HMC API,HMC API) book. The property names have hyphens
                     (-) as described in that book."
                   type: raw
         domain_config:
