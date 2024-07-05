@@ -66,6 +66,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Fixed that the 'timeout' parameter of the zhmc_lpar module was not used for
   'state=inactive'. (related to issue #986)
 
+* Test: Fixed that coverage was calculated only for the Ansible module
+  source files, but not for the utility files in module_utils. (issue #1020)
+
 **Enhancements:**
 
 * Test: Added tests for Ansible 10. The testing of Ansible 3 was dropped

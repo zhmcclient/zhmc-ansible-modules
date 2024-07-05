@@ -189,7 +189,7 @@ endif
 # Note: The --cov-report=html option creates an HTML coverage report in the htmlcov
 #       directory, but it is incorrect in case the coverage data file is appended
 #       to. The 'coverage html' command fixes that.
-pytest_cov_opts := --cov $(module_py_dir) --cov-append --cov-config $(coverage_rc_file) --cov-report=html
+pytest_cov_opts := --cov $(src_py_dir) --cov-append --cov-config $(coverage_rc_file) --cov-report=html
 
 # No built-in rules needed:
 .SUFFIXES:
