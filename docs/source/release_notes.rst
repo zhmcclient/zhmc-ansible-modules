@@ -108,6 +108,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   sanity test), because it can be run on the test sources as well, and because
   the santy test pylint has important checks disabled. (issue #1007)
 
+* Test: Added virtual storage resource objects to the mocked end2end test
+  environments.
+
 **Cleanup:**
 
 * Modernized the code to match the minimum Python version 3.8 (use of f-strings,
