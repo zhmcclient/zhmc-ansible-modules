@@ -70,22 +70,23 @@ options:
       userid:
         description:
           - The userid (username) for authenticating with the HMC.
-            This is mutually exclusive with providing C(session_id).
+            This is mutually exclusive with providing O(hmc_auth.session_id).
         type: str
         required: false
         default: null
       password:
         description:
           - The password for authenticating with the HMC.
-            This is mutually exclusive with providing C(session_id).
+            This is mutually exclusive with providing O(hmc_auth.session_id).
         type: str
         required: false
         default: null
       session_id:
         description:
           - HMC session ID to be used.
-            This is mutually exclusive with providing C(userid) and C(password)
-            and can be created as described in :ref:`zhmc_session_module`.
+            This is mutually exclusive with providing O(hmc_auth.userid) and
+            O(hmc_auth.password) and can be created as described in the
+            R(zhmc_session module,zhmc_session_module).
         type: str
         required: false
         default: null
@@ -93,8 +94,8 @@ options:
         description:
           - Path name of certificate file or certificate directory to be used
             for verifying the HMC certificate. If null (default), the path name
-            in the 'REQUESTS_CA_BUNDLE' environment variable or the path name
-            in the 'CURL_CA_BUNDLE' environment variable is used, or if neither
+            in the E(REQUESTS_CA_BUNDLE) environment variable or the path name
+            in the E(CURL_CA_BUNDLE) environment variable is used, or if neither
             of these variables is set, the certificates in the Mozilla CA
             Certificate List provided by the 'certifi' Python package are used
             for verifying the HMC certificate.
@@ -104,8 +105,8 @@ options:
       verify:
         description:
           - If True (default), verify the HMC certificate as specified in the
-            C(ca_certs) parameter. If False, ignore what is specified in the
-            C(ca_certs) parameter and do not verify the HMC certificate.
+            O(hmc_auth.ca_certs) parameter. If False, ignore what is specified in the
+            O(hmc_auth.ca_certs) parameter and do not verify the HMC certificate.
         type: bool
         required: false
         default: true
@@ -122,16 +123,16 @@ options:
     required: true
   match:
     description:
-      - "Only for C(state=set): Match properties for identifying the
+      - "Only for O(state=set): Match properties for identifying the
          target adapter in the set of adapters in the CPC, if an adapter with
-         the name specified in the C(name) module parameter does not exist in
+         the name specified in the O(name) module parameter does not exist in
          that set. This parameter will be ignored otherwise."
       - "Use of this parameter allows renaming an adapter:
-         The C(name) module parameter specifies the new name of the target
-         adapter, and the C(match) module parameter identifies the adapter to
+         The O(name) module parameter specifies the new name of the target
+         adapter, and the O(match) module parameter identifies the adapter to
          be renamed.
          This can be combined with other property updates by using the
-         C(properties) module parameter."
+         O(properties) module parameter."
       - "The parameter is a dictionary. The key of each dictionary item is the
          property name as specified in the data model for adapter resources,
          with underscores instead of hyphens. The value of each dictionary item
@@ -149,18 +150,18 @@ options:
     description:
       - "The desired state for the adapter. All states are fully idempotent
          within the limits of the properties that can be changed:"
-      - "* C(set): Ensures that an existing adapter has the specified
+      - "* V(set): Ensures that an existing adapter has the specified
          properties."
-      - "* C(present): Ensures that a Hipersockets adapter exists and has the
+      - "* V(present): Ensures that a Hipersockets adapter exists and has the
          specified properties."
-      - "* C(absent): Ensures that a Hipersockets adapter does not exist."
-      - "* C(facts): Returns the adapter properties including its ports."
+      - "* V(absent): Ensures that a Hipersockets adapter does not exist."
+      - "* V(facts): Returns the adapter properties including its ports."
     type: str
     required: true
     choices: ['set', 'present', 'absent', 'facts']
   properties:
     description:
-      - "Only for C(state=set|present): New values for the properties of the
+      - "Only for O(state=set|present): New values for the properties of the
          adapter.
          Properties omitted in this dictionary will remain unchanged.
          This parameter will be ignored for other states."
@@ -173,14 +174,14 @@ options:
          defined as writeable in the data model for adapter resources, with the
          following exceptions:"
       - "* C(name): Cannot be specified as a property because the name has
-         already been specified in the C(name) module parameter."
+         already been specified in the O(name) module parameter."
       - "* C(type): The desired adapter type can be specified in order to
          support adapters that can change their type (e.g. the FICON Express
-         adapter can change its type between 'not-configured', 'fcp' and
-         'fc')."
+         adapter can change its type between V(not-configured), V(fcp) and
+         V(fc))."
       - "* C(crypto_type): The crypto type can be specified in order to support
          the ability of the Crypto Express adapters to change their crypto
-         type. Valid values are 'ep11', 'cca' and 'acc'. Changing to 'acc'
+         type. Valid values are V(ep11), V(cca) and V(acc). Changing to V(acc)
          will zeroize the crypto adapter."
     type: dict
     required: false
@@ -264,7 +265,7 @@ EXAMPLES = """
 RETURN = """
 changed:
   description: Indicates if any change has been made by the module.
-    For C(state=facts), always will be false.
+    For O(state=facts), always will be false.
   returned: always
   type: bool
 msg:
@@ -273,8 +274,8 @@ msg:
   type: str
 adapter:
   description:
-    - "For C(state=absent), an empty dictionary."
-    - "For C(state=set|present|facts), the adapter and its ports."
+    - "For O(state=absent), an empty dictionary."
+    - "For O(state=set|present|facts), the adapter and its ports."
   returned: success
   type: dict
   contains:
@@ -283,7 +284,7 @@ adapter:
       type: str
     "{property}":
       description: "Additional properties of the adapter, as described in the
-        data model of the 'Adapter' object in the :term:`HMC API` book.
+        data model of the 'Adapter' object in the R(HMC API,HMC API) book.
         The property names have hyphens (-) as described in that book."
       type: raw
     ports:
@@ -297,7 +298,7 @@ adapter:
         "{property}":
           description: "Additional properties of the port, as described in the
             data model of the 'Network Port' or 'Storage Port' element object
-            of the 'Adapter' object in the :term:`HMC API` book.
+            of the 'Adapter' object in the R(HMC API,HMC API) book.
             The property names have hyphens (-) as described in that book.
             In case of unconfigured FICON adapters, the property list is
             short."

@@ -35,8 +35,8 @@ version_added: "2.9.0"
 short_description: Manage HMC sessions across tasks
 description:
   - Create a session on the HMC for use by other ibm_zhmc modules, with
-    C(action=create).
-  - Delete a session on the HMC, with C(action=delete).
+    O(action=create).
+  - Delete a session on the HMC, with O(action=delete).
   - This module can be used in order to create an HMC session once and then use
     it for multiple tasks that use ibm_zhmc modules, reducing the number of HMC
     sessions that need to be created, to just one. When this module is not used,
@@ -65,21 +65,21 @@ options:
       userid:
         description:
           - The userid (username) for creating the HMC session.
-          - Required for C(action=create), not permitted for C(action=delete).
+          - Required for O(action=create), not permitted for O(action=delete).
         type: str
         required: false
         default: null
       password:
         description:
           - The password for creating the HMC session.
-          - Required for C(action=create), not permitted for C(action=delete).
+          - Required for O(action=create), not permitted for O(action=delete).
         type: str
         required: false
         default: null
       session_id:
         description:
           - Session ID of the HMC session to be deleted.
-          - Required for C(action=delete), not permitted for C(action=create).
+          - Required for O(action=delete), not permitted for O(action=create).
         type: str
         required: false
         default: null
@@ -87,21 +87,21 @@ options:
         description:
           - Path name of certificate file or certificate directory to be used
             for verifying the HMC certificate. If null (default), the path name
-            in the 'REQUESTS_CA_BUNDLE' environment variable or the path name
-            in the 'CURL_CA_BUNDLE' environment variable is used, or if neither
+            in the E(REQUESTS_CA_BUNDLE) environment variable or the path name
+            in the E(CURL_CA_BUNDLE) environment variable is used, or if neither
             of these variables is set, the certificates in the Mozilla CA
             Certificate List provided by the 'certifi' Python package are used
             for verifying the HMC certificate.
-          - Optional for C(action=create), not permitted for C(action=delete).
+          - Optional for O(action=create), not permitted for O(action=delete).
         type: str
         required: false
         default: null
       verify:
         description:
           - If True (default), verify the HMC certificate as specified in the
-            C(ca_certs) parameter. If False, ignore what is specified in the
-            C(ca_certs) parameter and do not verify the HMC certificate.
-          - Optional for C(action=create), not permitted for C(action=delete).
+            O(hmc_auth.ca_certs) parameter. If False, ignore what is specified in the
+            O(hmc_auth.ca_certs) parameter and do not verify the HMC certificate.
+          - Optional for O(action=create), not permitted for O(action=delete).
         type: bool
         required: false
         default: true
@@ -110,11 +110,11 @@ options:
       - "The action to perform for the HMC session. Since an HMC session does
          not have a name, it is not possible to specify the desired end state
          in an idempotent manner, so this module uses actions:"
-      - "* C(create): Create a new session on the HMC and verify that the
+      - "* V(create): Create a new session on the HMC and verify that the
          credentials are valid.
          Requires C(hmc_auth.userid) and C(hmc_auth.password) and uses
          C(hmc_auth.ca_certs) and C(hmc_auth.verify) if provided."
-      - "* C(delete): Delete the specified session on the HMC. No longer
+      - "* V(delete): Delete the specified session on the HMC. No longer
          existing sessions are tolerated. Requires C(hmc_auth.session_id)."
     type: str
     required: true
@@ -181,31 +181,31 @@ msg:
 hmc_host:
   description:
     - The hostname or IP address of the HMC that was actually used for the
-      session creation, for C(action=create). This value must be specified as
-      'hmc_host' for C(action=delete).
-    - For C(action=delete), returns the null value.
+      session creation, for O(action=create). This value must be specified as
+      O(hmc_host) for O(action=delete).
+    - For O(action=delete), returns the null value.
   returned: success
   type: str
 hmc_auth:
   description: Credentials for the HMC session, for use by other tasks. This
-    return value should be protected with C(no_log=true) for C(action=create),
-    since it contains the HMC session ID. For C(action=delete), the same
+    return value should be protected with C(no_log=true) for O(action=create),
+    since it contains the HMC session ID. For O(action=delete), the same
     structure is returned, just with null values. This can be used to reset
-    the variable that was set for C(action=create).
+    the variable that was set for O(action=create).
   returned: success
   type: dict
   contains:
     session_id:
-      description: "New HMC session ID for C(action=create), or null for
-        C(action=delete)."
+      description: "New HMC session ID for O(action=create), or null for
+        O(action=delete)."
       type: str
     ca_certs:
-      description: "Value of C(ca_certs) input parameter for C(action=create),
-        or null for C(action=delete)."
+      description: "Value of O(hmc_auth.ca_certs) input parameter for O(action=create),
+        or null for O(action=delete)."
       type: str
     verify:
-      description: "Value of C(verify) input parameter for C(action=create),
-        or null for C(action=delete)."
+      description: "Value of O(hmc_auth.verify) input parameter for O(action=create),
+        or null for O(action=delete)."
       type: bool
   sample:
     {

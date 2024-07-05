@@ -75,22 +75,23 @@ options:
       userid:
         description:
           - The userid (username) for authenticating with the HMC.
-            This is mutually exclusive with providing C(session_id).
+            This is mutually exclusive with providing O(hmc_auth.session_id).
         type: str
         required: false
         default: null
       password:
         description:
           - The password for authenticating with the HMC.
-            This is mutually exclusive with providing C(session_id).
+            This is mutually exclusive with providing O(hmc_auth.session_id).
         type: str
         required: false
         default: null
       session_id:
         description:
           - HMC session ID to be used.
-            This is mutually exclusive with providing C(userid) and C(password)
-            and can be created as described in :ref:`zhmc_session_module`.
+            This is mutually exclusive with providing O(hmc_auth.userid) and
+            O(hmc_auth.password) and can be created as described in the
+            R(zhmc_session module,zhmc_session_module).
         type: str
         required: false
         default: null
@@ -98,8 +99,8 @@ options:
         description:
           - Path name of certificate file or certificate directory to be used
             for verifying the HMC certificate. If null (default), the path name
-            in the 'REQUESTS_CA_BUNDLE' environment variable or the path name
-            in the 'CURL_CA_BUNDLE' environment variable is used, or if neither
+            in the E(REQUESTS_CA_BUNDLE) environment variable or the path name
+            in the E(CURL_CA_BUNDLE) environment variable is used, or if neither
             of these variables is set, the certificates in the Mozilla CA
             Certificate List provided by the 'certifi' Python package are used
             for verifying the HMC certificate.
@@ -109,8 +110,8 @@ options:
       verify:
         description:
           - If True (default), verify the HMC certificate as specified in the
-            C(ca_certs) parameter. If False, ignore what is specified in the
-            C(ca_certs) parameter and do not verify the HMC certificate.
+            O(hmc_auth.ca_certs) parameter. If False, ignore what is specified in the
+            O(hmc_auth.ca_certs) parameter and do not verify the HMC certificate.
         type: bool
         required: false
         default: true
@@ -129,24 +130,24 @@ options:
       - "The desired state for the storage group. All states are fully
          idempotent within the limits of the properties that can be changed,
          unless otherwise stated:"
-      - "* C(absent): Ensures that the storage group does not exist. If the
+      - "* V(absent): Ensures that the storage group does not exist. If the
          storage group is currently attached to any partitions, the module will
          fail (this is an idempotency limitation)."
-      - "* C(present): Ensures that the storage group exists and is associated
+      - "* V(present): Ensures that the storage group exists and is associated
          with the specified CPC, and has the specified properties. The
          attachment state of an already existing storage group to a partition
          is not changed."
-      - "* C(discover): Triggers LUN discovery. If C(discover_wait) is
+      - "* V(discover): Triggers LUN discovery. If O(discover_wait) is
          specified, waits for completion of the discovery.
          Requires that the storage group exists and is of type 'fcp'."
-      - "* C(facts): Returns the storage group properties."
+      - "* V(facts): Returns the storage group properties."
     type: str
     required: true
     choices: ['absent', 'present', 'discover', 'facts']
   properties:
     description:
       - "Dictionary with desired properties for the storage group.
-         Used for C(state=present); ignored for C(state=absent|facts).
+         Used for O(state=present); ignored for O(state=absent|facts).
          Dictionary key is the property name with underscores instead
          of hyphens, and dictionary value is the property value in YAML syntax.
          Integer properties may also be provided as decimal strings."
@@ -155,12 +156,12 @@ options:
          (where the property names contain underscores instead of hyphens),
          with the following exceptions:"
       - "* C(name): Cannot be specified because the name has already been
-         specified in the C(name) module parameter."
+         specified in the O(name) module parameter."
       - "* C(type): Cannot be changed once the storage group exists."
       - "Properties omitted in this dictionary will remain unchanged when the
          storage group already exists, and will get the default value defined
-         in the data model for storage groups in the :term:`HMC API` when the
-         storage group is being created."
+         in the data model for storage groups in the R(HMC API,HMC API) book
+         when the storage group is being created."
     type: dict
     required: false
     default: null
@@ -176,14 +177,14 @@ options:
   discover_wait:
     description:
       - "Boolean that controls whether to wait for completion of the FCP
-         discovery for C(state=discover)."
+         discovery for O(state=discover)."
     type: bool
     required: false
     default: false
   discover_timeout:
     description:
       - "Timeout in seconds for how long to wait for completion of the FCP
-         discovery for C(state=discover)."
+         discovery for O(state=discover)."
     type: int
     required: false
     default: 300
@@ -254,7 +255,7 @@ EXAMPLES = """
 RETURN = """
 changed:
   description: Indicates if any change has been made by the module.
-    For C(state=facts), always will be false.
+    For O(state=facts), always will be false.
   returned: always
   type: bool
 msg:
@@ -263,8 +264,8 @@ msg:
   type: str
 storage_group:
   description:
-    - "For C(state=absent), an empty dictionary."
-    - "For C(state=present|facts|discover), the resource properties of the
+    - "For O(state=absent), an empty dictionary."
+    - "For O(state=present|facts|discover), the resource properties of the
        target storage group after any changes, plus additional artificial
        properties as described below."
   returned: success
@@ -276,7 +277,7 @@ storage_group:
     "{property}":
       description: "Additional properties of the storage group, as described
         in the data model of the 'Storage Group' object in the
-        :term:`HMC API` book.
+        R(HMC API,HMC API) book.
         The property names have hyphens (-) as described in that book."
       type: raw
     attached-partition-names:
@@ -285,7 +286,7 @@ storage_group:
       type: list
       elements: str
     candidate-adapter-ports:
-      description: "Only present if C(expand=true): List of candidate storage
+      description: "Only present if O(expand=true): List of candidate storage
         adapter ports of the storage group. Will be empty for storage group
         types other than FCP."
       returned: "success+expand"
@@ -301,7 +302,7 @@ storage_group:
         "{property}":
           description: "Additional properties of the storage port, as described
             in the data model of the 'Storage Port' element object of the
-            'Adapter' object in the :term:`HMC API` book.
+            'Adapter' object in the R(HMC API,HMC API) book.
             The property names have hyphens (-) as described in that book."
           type: raw
         parent-adapter:
@@ -314,11 +315,11 @@ storage_group:
             "{property}":
               description: "Additional properties of the storage adapter, as
                 described in the data model of the 'Adapter' object in the
-                :term:`HMC API` book.
+                R(HMC API,HMC API) book.
                 The property names have hyphens (-) as described in that book."
               type: raw
     storage-volumes:
-      description: "Only present if C(expand=true): Storage volumes of the
+      description: "Only present if O(expand=true): Storage volumes of the
         storage group."
       returned: "success+expand"
       type: list
@@ -330,11 +331,11 @@ storage_group:
         "{property}":
           description: "Additional properties of the storage volume, as
             described in the data model of the 'Storage Volume' element object
-            of the 'Storage Group' object in the :term:`HMC API` book.
+            of the 'Storage Group' object in the R(HMC API,HMC API) book.
             The property names have hyphens (-) as described in that book."
           type: raw
     virtual-storage-resources:
-      description: "Only present if C(expand=true): Virtual storage resources
+      description: "Only present if O(expand=true): Virtual storage resources
         of the storage group. Will be empty for storage group types other than
         FCP."
       returned: "success+expand"
@@ -345,11 +346,11 @@ storage_group:
           description: "Properties of the virtual storage resource, as
             described in the data model of the 'Virtual Storage Resource'
             element object of the 'Storage Group' object in the
-            :term:`HMC API` book.
+            R(HMC API,HMC API) book.
             The property names have hyphens (-) as described in that book."
           type: raw
     attached-partitions:
-      description: "Only present if C(expand=true): Partitions to which the
+      description: "Only present if O(expand=true): Partitions to which the
         storage group is attached."
       returned: "success+expand"
       type: list
@@ -357,7 +358,7 @@ storage_group:
       contains:
         "{property}":
           description: "Properties of the partition, as described in the data
-            model of the 'Partition' object in the :term:`HMC API` book.
+            model of the 'Partition' object in the R(HMC API,HMC API) book.
             The property names have hyphens (-) as described in that book."
           type: raw
   sample:

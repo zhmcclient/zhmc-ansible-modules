@@ -71,22 +71,23 @@ options:
       userid:
         description:
           - The userid (username) for authenticating with the HMC.
-            This is mutually exclusive with providing C(session_id).
+            This is mutually exclusive with providing O(hmc_auth.session_id).
         type: str
         required: false
         default: null
       password:
         description:
           - The password for authenticating with the HMC.
-            This is mutually exclusive with providing C(session_id).
+            This is mutually exclusive with providing O(hmc_auth.session_id).
         type: str
         required: false
         default: null
       session_id:
         description:
           - HMC session ID to be used.
-            This is mutually exclusive with providing C(userid) and C(password)
-            and can be created as described in :ref:`zhmc_session_module`.
+            This is mutually exclusive with providing O(hmc_auth.userid) and
+            O(hmc_auth.password) and can be created as described in the
+            R(zhmc_session module,zhmc_session_module).
         type: str
         required: false
         default: null
@@ -94,8 +95,8 @@ options:
         description:
           - Path name of certificate file or certificate directory to be used
             for verifying the HMC certificate. If null (default), the path name
-            in the 'REQUESTS_CA_BUNDLE' environment variable or the path name
-            in the 'CURL_CA_BUNDLE' environment variable is used, or if neither
+            in the E(REQUESTS_CA_BUNDLE) environment variable or the path name
+            in the E(CURL_CA_BUNDLE) environment variable is used, or if neither
             of these variables is set, the certificates in the Mozilla CA
             Certificate List provided by the 'certifi' Python package are used
             for verifying the HMC certificate.
@@ -105,8 +106,8 @@ options:
       verify:
         description:
           - If True (default), verify the HMC certificate as specified in the
-            C(ca_certs) parameter. If False, ignore what is specified in the
-            C(ca_certs) parameter and do not verify the HMC certificate.
+            O(hmc_auth.ca_certs) parameter. If False, ignore what is specified in the
+            O(hmc_auth.ca_certs) parameter and do not verify the HMC certificate.
         type: bool
         required: false
         default: true
@@ -119,13 +120,13 @@ options:
     description:
       - "The desired state for the CPC. All states are fully idempotent
          within the limits of the properties that can be changed:"
-      - "* C(inactive): Ensures the CPC is inactive."
-      - "* C(active): Ensures the CPC is active and then ensures that the CPC
+      - "* V(inactive): Ensures the CPC is inactive."
+      - "* V(active): Ensures the CPC is active and then ensures that the CPC
          has the specified properties. The operational mode of the CPC cannot
          be changed."
-      - "* C(set): Ensures that the CPC has the specified properties."
-      - "* C(facts): Returns the CPC properties including its child resources."
-      - "* C(upgrade): Upgrades the firmware of the SE of the CPC and returns
+      - "* V(set): Ensures that the CPC has the specified properties."
+      - "* V(facts): Returns the CPC properties including its child resources."
+      - "* V(upgrade): Upgrades the firmware of the SE of the CPC and returns
          the new facts after the upgrade. If the SE firmware is already at the
          requested bundle level, nothing is changed and the module succeeds."
     type: str
@@ -134,11 +135,11 @@ options:
   select_properties:
     description:
       - "Limits the returned properties of the CPC to those specified in this
-         parameter plus those specified in the C(properties) parameter."
+         parameter plus those specified in the O(properties) parameter."
       - "The properties can be specified with underscores or hyphens in their
          names."
       - "Null indicates not to limit the returned properties in this way."
-      - "This parameter is ignored for C(state) values that cause no properties
+      - "This parameter is ignored for O(state) values that cause no properties
          to be returned."
       - "The returned child resources (adapters, partitions, storage groups)
          cannot be excluded using this parameter."
@@ -152,21 +153,21 @@ options:
   activation_profile_name:
     description:
       - "The name of the reset activation profile to be used when activating the
-         CPC in the classic operational mode, for C(state=active).
+         CPC in the classic operational mode, for O(state=active).
          This parameter is ignored when the CPC is in classic mode and was
          already active, and when the CPC is in DPM mode."
       - "Default: The reset activation profile specified in the
          'next-activation-profile-name' property of the CPC."
-      - "This parameter is not allowed for the other C(state) values."
+      - "This parameter is not allowed for the other O(state) values."
     type: str
     required: false
     default: null
   properties:
     description:
-      - "Only for C(state=set) and C(state=active): New values for the
+      - "Only for O(state=set) and O(state=active): New values for the
          properties of the CPC.
          Properties omitted in this dictionary will remain unchanged.
-         This parameter will be ignored for other C(state) values."
+         This parameter will be ignored for other O(state) values."
       - "The parameter is a dictionary. The key of each dictionary item is the
          property name as specified in the data model for CPC resources, with
          underscores instead of hyphens. The value of each dictionary item is
@@ -179,8 +180,8 @@ options:
     default: null
   bundle_level:
     description:
-      - "Name of the bundle to be installed on the SE of the CPC (e.g. 'S71')"
-      - "Required for C(state=upgrade)"
+      - "Name of the bundle to be installed on the SE of the CPC (e.g. V(S71))"
+      - "Required for O(state=upgrade)"
     type: str
     required: false
     default: null
@@ -193,7 +194,7 @@ options:
   accept_firmware:
     description:
       - "Accept the previous bundle level before installing the new level."
-      - "Optional for C(state=upgrade), default: True"
+      - "Optional for O(state=upgrade), default: True"
     type: bool
     required: false
     default: true
@@ -266,7 +267,7 @@ EXAMPLES = """
 RETURN = """
 changed:
   description: Indicates if any change has been made by the module.
-    For C(state=facts), always will be false.
+    For O(state=facts), always will be false.
   returned: always
   type: bool
 msg:
@@ -275,8 +276,8 @@ msg:
   type: str
 cpc:
   description:
-    - "For C(state=inactive), an empty dictionary."
-    - "For C(state=active|set|facts|upgrade), the resource properties of the
+    - "For O(state=inactive), an empty dictionary."
+    - "For O(state=active|set|facts|upgrade), the resource properties of the
        CPC after after any specified updates have been applied, and its
        adapters, partitions, and storage groups."
   returned: success
@@ -287,12 +288,12 @@ cpc:
       type: str
     "{property}":
       description: "Additional properties of the CPC, as described in the data
-        model of the 'CPC' object in the :term:`HMC API` book.
+        model of the 'CPC' object in the R(HMC API,HMC API) book.
         The property names have hyphens (-) as described in that book."
       type: raw
     adapters:
       description: "The adapters of the CPC, with a subset of their
-        properties. For details, see the :term:`HMC API` book."
+        properties. For details, see the R(HMC API,HMC API) book."
       type: list
       elements: dict
       contains:
@@ -316,7 +317,7 @@ cpc:
           type: str
     partitions:
       description: "The defined partitions of the CPC, with a subset of their
-        properties. For details, see the :term:`HMC API` book."
+        properties. For details, see the R(HMC API,HMC API) book."
       type: list
       elements: dict
       contains:
@@ -334,7 +335,7 @@ cpc:
           type: str
     storage-groups:
       description: "The storage groups associated with the CPC, with a subset
-        of their properties. For details, see the :term:`HMC API` book."
+        of their properties. For details, see the R(HMC API,HMC API) book."
       type: list
       elements: dict
       contains:

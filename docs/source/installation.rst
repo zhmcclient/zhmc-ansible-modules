@@ -246,7 +246,7 @@ need to be opened:
 * 61612 (TCP) - for the HMC API message broker via JMS over STOMP
 
 For details, see sections "Connecting to the API HTTP server" and
-"Connecting to the API message broker" in the :term:`HMC API` book.
+"Connecting to the API message broker" in the :ref:`HMC API <HMC API>` book.
 
 
 .. _`Supported environments`:

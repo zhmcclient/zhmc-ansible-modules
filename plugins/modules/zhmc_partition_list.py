@@ -38,7 +38,7 @@ description:
   - CPCs in classic mode are ignored (i.e. do not lead to a failure).
   - Partitions for which the user has no object access permission are ignored
     (i.e. do not lead to a failure).
-  - On HMCs with version 2.14.0 or higher and when the C(additional_properties)
+  - On HMCs with version 2.14.0 or higher and when the O(additional_properties)
     module parameter is not used, the "List Permitted Partitions" operation is
     used by this module. Otherwise, the managed CPCs are listed and then the
     partitions on each desired CPC or CPCs are listed. This improves the
@@ -71,22 +71,23 @@ options:
       userid:
         description:
           - The userid (username) for authenticating with the HMC.
-            This is mutually exclusive with providing C(session_id).
+            This is mutually exclusive with providing O(hmc_auth.session_id).
         type: str
         required: false
         default: null
       password:
         description:
           - The password for authenticating with the HMC.
-            This is mutually exclusive with providing C(session_id).
+            This is mutually exclusive with providing O(hmc_auth.session_id).
         type: str
         required: false
         default: null
       session_id:
         description:
           - HMC session ID to be used.
-            This is mutually exclusive with providing C(userid) and C(password)
-            and can be created as described in :ref:`zhmc_session_module`.
+            This is mutually exclusive with providing O(hmc_auth.userid) and
+            O(hmc_auth.password) and can be created as described in the
+            R(zhmc_session module,zhmc_session_module).
         type: str
         required: false
         default: null
@@ -94,8 +95,8 @@ options:
         description:
           - Path name of certificate file or certificate directory to be used
             for verifying the HMC certificate. If null (default), the path name
-            in the 'REQUESTS_CA_BUNDLE' environment variable or the path name
-            in the 'CURL_CA_BUNDLE' environment variable is used, or if neither
+            in the E(REQUESTS_CA_BUNDLE) environment variable or the path name
+            in the E(CURL_CA_BUNDLE) environment variable is used, or if neither
             of these variables is set, the certificates in the Mozilla CA
             Certificate List provided by the 'certifi' Python package are used
             for verifying the HMC certificate.
@@ -105,8 +106,8 @@ options:
       verify:
         description:
           - If True (default), verify the HMC certificate as specified in the
-            C(ca_certs) parameter. If False, ignore what is specified in the
-            C(ca_certs) parameter and do not verify the HMC certificate.
+            O(hmc_auth.ca_certs) parameter. If False, ignore what is specified in the
+            O(hmc_auth.ca_certs) parameter and do not verify the HMC certificate.
         type: bool
         required: false
         default: true
@@ -121,7 +122,7 @@ options:
     description:
       - List of additional properties to be returned for each partition, in
         addition to the default properties (see result description).
-      - Mutually exclusive with C(full_properties).
+      - Mutually exclusive with O(full_properties).
       - The property names are specified with underscores instead of hyphens.
       - On HMCs with an HMC version below 2.14.0, all properties of each
         partition will be returned if this parameter is specified, but you
@@ -134,10 +135,10 @@ options:
     description:
       - "If True, all properties of each partition will be returned.
         Default: False."
-      - Mutually exclusive with C(additional_properties).
+      - Mutually exclusive with O(additional_properties).
       - "Note: Setting this to True causes a loop of 'Get Partition Properties'
         operations to be executed. It is preferable from a performance
-        perspective to use the C(additional_properties) parameter instead."
+        perspective to use the O(additional_properties) parameter instead."
     type: bool
     required: false
     default: false
@@ -204,15 +205,15 @@ partitions:
     status:
       description: The current status of the partition. For details, see the
         description of the 'status' property in the data model of the
-        'Logical Partition' resource (see :term:`HMC API`).
+        'Logical Partition' resource (see R(HMC API,HMC API)).
       type: str
     has_unacceptable_status:
       description: Indicates whether the current status of the partition is
         unacceptable, based on its 'acceptable-status' property.
       type: bool
     "{additional_property}":
-      description: Additional properties requested via C(full_properties) or
-        C(additional_properties).
+      description: Additional properties requested via O(full_properties) or
+        O(additional_properties).
         The property names will have underscores instead of hyphens.
       type: raw
   sample:

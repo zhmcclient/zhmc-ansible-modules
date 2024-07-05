@@ -71,22 +71,23 @@ options:
       userid:
         description:
           - The userid (username) for authenticating with the HMC.
-            This is mutually exclusive with providing C(session_id).
+            This is mutually exclusive with providing O(hmc_auth.session_id).
         type: str
         required: false
         default: null
       password:
         description:
           - The password for authenticating with the HMC.
-            This is mutually exclusive with providing C(session_id).
+            This is mutually exclusive with providing O(hmc_auth.session_id).
         type: str
         required: false
         default: null
       session_id:
         description:
           - HMC session ID to be used.
-            This is mutually exclusive with providing C(userid) and C(password)
-            and can be created as described in :ref:`zhmc_session_module`.
+            This is mutually exclusive with providing O(hmc_auth.userid) and
+            O(hmc_auth.password) and can be created as described in the
+            R(zhmc_session module,zhmc_session_module).
         type: str
         required: false
         default: null
@@ -94,8 +95,8 @@ options:
         description:
           - Path name of certificate file or certificate directory to be used
             for verifying the HMC certificate. If null (default), the path name
-            in the 'REQUESTS_CA_BUNDLE' environment variable or the path name
-            in the 'CURL_CA_BUNDLE' environment variable is used, or if neither
+            in the E(REQUESTS_CA_BUNDLE) environment variable or the path name
+            in the E(CURL_CA_BUNDLE) environment variable is used, or if neither
             of these variables is set, the certificates in the Mozilla CA
             Certificate List provided by the 'certifi' Python package are used
             for verifying the HMC certificate.
@@ -105,8 +106,8 @@ options:
       verify:
         description:
           - If True (default), verify the HMC certificate as specified in the
-            C(ca_certs) parameter. If False, ignore what is specified in the
-            C(ca_certs) parameter and do not verify the HMC certificate.
+            O(hmc_auth.ca_certs) parameter. If False, ignore what is specified in the
+            O(hmc_auth.ca_certs) parameter and do not verify the HMC certificate.
         type: bool
         required: false
         default: true
@@ -130,27 +131,27 @@ options:
     description:
       - "The desired state for the NIC. All states are fully idempotent
          within the limits of the properties that can be changed:"
-      - "* C(absent): Ensures that the NIC does not exist in the specified
+      - "* V(absent): Ensures that the NIC does not exist in the specified
          partition."
-      - "* C(present): Ensures that the NIC exists in the specified partition
+      - "* V(present): Ensures that the NIC exists in the specified partition
          and has the specified properties."
-      - "* C(facts): Returns the NIC properties."
+      - "* V(facts): Returns the NIC properties."
     type: str
     required: true
     choices: ["absent", "present", "facts"]
   properties:
     description:
-      - "Dictionary with input properties for the NIC, for C(state=present).
+      - "Dictionary with input properties for the NIC, for O(state=present).
          Key is the property name with underscores instead of hyphens, and
          value is the property value in YAML syntax. Integer properties may
          also be provided as decimal strings. Will be ignored for
-         C(state=absent)."
+         O(state=absent)."
       - "The possible input properties in this dictionary are the properties
          defined as writeable in the data model for NIC resources (where the
          property names contain underscores instead of hyphens), with the
          following exceptions:"
       - "* C(name): Cannot be specified because the name has already been
-         specified in the C(name) module parameter."
+         specified in the O(name) module parameter."
       - "* C(network_adapter_port_uri) and C(virtual_switch_uri): Cannot be
          specified because this information is specified using the artificial
          properties C(adapter_name) and C(adapter_port)."
@@ -223,7 +224,7 @@ EXAMPLES = """
 RETURN = """
 changed:
   description: Indicates if any change has been made by the module.
-    For C(state=facts), always will be false.
+    For O(state=facts), always will be false.
   returned: always
   type: bool
 msg:
@@ -232,8 +233,8 @@ msg:
   type: str
 nic:
   description:
-    - "For C(state=absent), an empty dictionary."
-    - "For C(state=present|facts), the resource properties of the NIC after any
+    - "For O(state=absent), an empty dictionary."
+    - "For O(state=present|facts), the resource properties of the NIC after any
        changes."
   returned: success
   type: dict
@@ -244,7 +245,7 @@ nic:
     "{property}":
       description: "Additional properties of the NIC, as described in the data
         model of the 'NIC' element object of the 'Partition' object in the
-        :term:`HMC API` book.
+        R(HMC API,HMC API) book.
         The property names have hyphens (-) as described in that book."
       type: raw
   sample:
