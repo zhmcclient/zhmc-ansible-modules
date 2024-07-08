@@ -86,7 +86,7 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   minimum-constraints.txt file. (issue #939)
 
 * The safety run for all dependencies now must succeed when the test workflow
-  is run for a release (i.e. branch name 'release_...').
+  is run for a release (i.e. branch name 'release\_...').
 
 * Aded check to the test workflow when running on macos or Ubuntu for whether
   the 'xz' tool is at a version that is affected by CVE-2024-3094.
