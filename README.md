@@ -178,9 +178,12 @@ All releases will meet the following test criteria:
 * 100% success for [Unit](https://github.com/zhmcclient/zhmc-ansible-modules/tree/master/tests/unit) tests.
 * 100% success for [Function](https://github.com/zhmcclient/zhmc-ansible-modules/tree/master/tests/function) tests.
 * 100% success for [End2end](https://github.com/zhmcclient/zhmc-ansible-modules/tree/master/tests/end2end) tests.
-* 100% success for [Sanity](https://docs.ansible.com/ansible/latest/dev_guide/testing/sanity/index.html#all-sanity-tests) tests as part of [ansible-test](https://docs.ansible.com/ansible/latest/dev_guide/testing.html#run-sanity-tests).
+* 100% success for [Ansible sanity](https://docs.ansible.com/ansible/latest/dev_guide/testing/sanity/index.html#all-sanity-tests) tests as part of [ansible-test](https://docs.ansible.com/ansible/latest/dev_guide/testing.html#run-sanity-tests).
 * 100% success for [flake8](https://flake8.pycqa.org).
+* 100% success for [pylint](https://pylint.readthedocs.io/en/stable/).
 * 100% success for [ansible-lint](https://ansible.readthedocs.io/projects/lint/) allowing only false positives.
+* 100% success for [safety](https://docs.safetycli.com/safety-docs) vulnerability checks.
+* 100% success for [pip-missing-reqs](https://github.com/adamtheturtle/pip-check-reqs/blob/master/README.rst) checks for missing dependencies.
 
 For more details on testing the IBM Z HMC collection, including the specific version
 combinations that were tested, refer to documentation section
