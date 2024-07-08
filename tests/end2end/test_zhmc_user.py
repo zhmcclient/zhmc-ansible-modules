@@ -440,6 +440,7 @@ def test_zhmc_user_absent_present(
                 # User is not permitted to create users
                 pytest.skip(f"HMC user '{hd.userid}' is not permitted to "
                             "create initial test user")
+            raise
     else:
         user_props = None
 
@@ -493,6 +494,185 @@ def test_zhmc_user_absent_present(
 
     finally:
         # Delete user, if it exists
+        try:
+            # We invalidate the name cache of our client, because the user
+            # was possibly deleted by the Ansible module and not through our
+            # client instance.
+            console.users.invalidate_cache()
+            user = console.users.find_by_name(user_name)
+        except zhmcclient.NotFound:
+            user = None
+        if user:
+            user.delete()
+
+
+UPDATE_USER_ROLES_TESTCASES = [
+    # The list items are tuples with the following items:
+    # - desc (string): description of the testcase.
+    # - initial_urole_names (list): Names of user roles on the initial user.
+    # - input_urole_names (list): 'user_role_names' input property for update
+    #   of the user.
+    # - exp_urole_names (list): Expected user role names after update of the
+    #   user.
+    # - exp_exc_type (type): Expected exception type, or None for success.
+    # - exp_changed (bool): Expected 'changed' flag.
+
+    (
+        "No initial user role, no input user role",
+        [],
+        [],
+        [],
+        None,
+        False,
+    ),
+    (
+        "No initial user role, one input user role",
+        [],
+        ['hmc-access-administrator-tasks'],
+        ['hmc-access-administrator-tasks'],
+        None,
+        True,
+    ),
+    (
+        "One initial user role, no input user role",
+        ['hmc-access-administrator-tasks'],
+        [],
+        [],
+        None,
+        True,
+    ),
+    (
+        "One initial user role, another input user role",
+        ['hmc-access-administrator-tasks'],
+        ['hmc-all-system-managed-objects'],
+        ['hmc-all-system-managed-objects'],
+        None,
+        True,
+    ),
+    (
+        "One initial user role, the same input user role",
+        ['hmc-access-administrator-tasks'],
+        ['hmc-access-administrator-tasks'],
+        ['hmc-access-administrator-tasks'],
+        None,
+        False,
+    ),
+    (
+        "One initial user role, the same and another input user role",
+        ['hmc-access-administrator-tasks'],
+        ['hmc-access-administrator-tasks', 'hmc-all-system-managed-objects'],
+        ['hmc-access-administrator-tasks', 'hmc-all-system-managed-objects'],
+        None,
+        True,
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "check_mode", [
+        pytest.param(False, id="check_mode=False"),
+        pytest.param(True, id="check_mode=True"),
+    ]
+)
+@pytest.mark.parametrize(
+    "desc, initial_urole_names, input_urole_names, exp_urole_names, "
+    "exp_exc_type, exp_changed",
+    UPDATE_USER_ROLES_TESTCASES)
+@mock.patch("plugins.modules.zhmc_user.AnsibleModule", autospec=True)
+def test_zhmc_update_user_roles(
+        ansible_mod_cls,
+        desc, initial_urole_names, input_urole_names, exp_urole_names,
+        exp_exc_type, exp_changed,
+        check_mode,
+        hmc_session):  # noqa: F811, E501
+    # pylint: disable=redefined-outer-name,unused-argument
+    """
+    Test the zhmc_user module with updating user roles on existing users.
+    """
+
+    hd = hmc_session.hmc_definition
+    hmc_host = hd.host
+    hmc_auth = dict(userid=hd.userid, password=hd.password,
+                    ca_certs=hd.ca_certs, verify=hd.verify)
+
+    faked_session = hmc_session if hd.mock_file else None
+
+    expand = False  # Expansion is tested elsewhere
+    client = zhmcclient.Client(hmc_session)
+    console = client.consoles.console
+
+    user_name = new_user_name()
+    where = f"user '{user_name}'"
+
+    try:
+        # Create a user with a unique new name
+        user_create_props = dict(STD_USER_PROPERTIES_WITH_PW)
+        user_create_props['name'] = user_name
+        pwrule = console.password_rules.find(name='Standard')
+        user_create_props['password-rule-uri'] = pwrule.uri
+
+        try:
+            user = console.users.create(user_create_props)
+        except zhmcclient.HTTPError as exc:
+            if exc.http_status == 403 and exc.reason == 1:
+                # User is not permitted to create users
+                pytest.skip(f"HMC user '{hd.userid}' is not permitted to "
+                            "create initial test user")
+            raise
+
+        # Add the initial user roles to the user
+        for urole_name in initial_urole_names:
+            urole = console.user_roles.find(name=urole_name)
+            user.add_user_role(urole)
+
+        # Prepare module input parameters (must be all required + optional)
+        params = {
+            'hmc_host': hmc_host,
+            'hmc_auth': hmc_auth,
+            'name': user_name,
+            'state': 'present',
+            'properties': {
+                'user_role_names': input_urole_names,
+            },
+            'expand': False,
+            'log_file': LOG_FILE,
+            '_faked_session': faked_session,
+        }
+
+        mod_obj = mock_ansible_module(ansible_mod_cls, params, check_mode)
+
+        # Exercise the code to be tested
+        with pytest.raises(SystemExit) as exc_info:
+            zhmc_user.main()
+        exit_code = exc_info.value.args[0]
+
+        assert exit_code == 0, \
+            f"{where}: Module failed with exit code {exit_code} and " \
+            f"message:\n{get_failure_msg(mod_obj)}"
+
+        changed, output_props = get_module_output(mod_obj)
+        output_urole_names = output_props['user-role-names']
+
+        if changed != exp_changed:
+            initial_uroles_sorted = sorted(initial_urole_names)
+            input_uroles_sorted = sorted(input_urole_names)
+            output_uroles_sorted = sorted(output_urole_names)
+            intial_uroles_str = pformat(initial_uroles_sorted, indent=2)
+            input_uroles_str = pformat(input_uroles_sorted, indent=2)
+            output_uroles_str = pformat(output_uroles_sorted, indent=2)
+            raise AssertionError(
+                "Unexpected change flag returned: "
+                f"actual: {changed}, expected: {exp_changed}\n"
+                f"Initial user roles:\n{intial_uroles_str}\n"
+                f"Module input user roles:\n{input_uroles_str}\n"
+                f"Resulting user roles:\n{output_uroles_str}")
+
+        assert_user_props(output_props, expand, where)
+
+        assert set(output_urole_names) == set(exp_urole_names)
+
+    finally:
+        # Delete user
         try:
             # We invalidate the name cache of our client, because the user
             # was possibly deleted by the Ansible module and not through our

@@ -123,6 +123,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Added new Ansible modules 'zhmc_user_pattern_list' and 'zhmc_user_pattern'
   for listing and managing user patterns on the HMC. (issue #361)
 
+* Test: Added end2end tests for adding and removing user roles to/from existing
+  users. (related to issue #716)
+
 **Cleanup:**
 
 * Modernized the code to match the minimum Python version 3.8 (use of f-strings,
