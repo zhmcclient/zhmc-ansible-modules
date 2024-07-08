@@ -286,6 +286,7 @@ def test_zhmc_password_rule_absent_present(
                 # User is not permitted to create password rules
                 pytest.skip(f"HMC user '{hd.userid}' is not permitted to "
                             "create initial test password rule")
+            raise
     else:
         pwrule_props = None
 
