@@ -180,7 +180,7 @@ user_patterns
 
     \ :literal:`glob-like`\  - Glob-like pattern as used in file names, supporting the special characters \ :literal:`\*`\  and \ :literal:`?`\ .
 
-    \ :literal:`regular-expression`\  - Regular expression pattern using :term:\`Java regular expressions\`.
+    \ :literal:`regular-expression`\  - Regular expression pattern using \ :ref:`Java regular expressions <Java regular expressions>`\ .
 
     | **type**: str
 

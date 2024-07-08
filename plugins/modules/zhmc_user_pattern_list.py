@@ -167,7 +167,7 @@ user_patterns:
         - "V(glob-like) - Glob-like pattern as used in file names, supporting
           the special characters C(*) and C(?)."
         - "V(regular-expression) - Regular expression pattern using
-          :term:`Java regular expressions`."
+          R(Java regular expressions,Java regular expressions)."
       type: str
     "{additional_property}":
       description: "Additional properties requested via O(full_properties), as
