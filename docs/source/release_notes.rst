@@ -69,6 +69,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Test: Fixed that coverage was calculated only for the Ansible module
   source files, but not for the utility files in module_utils. (issue #1020)
 
+* Test: Fixed exception handling in end2end tests for password rules.
+
 **Enhancements:**
 
 * Test: Added tests for Ansible 10. The testing of Ansible 3 was dropped
