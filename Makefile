@@ -350,8 +350,7 @@ ifeq ($(PACKAGE_LEVEL),ansible)
 else
 	@echo "Makefile: Checking missing dependencies of this package"
 	pip-missing-reqs $(src_py_dir) --requirements-file=requirements.txt
-	# TODO-ZHMC: Enable again once zhmcclient 1.17.0 is released
-	# pip-missing-reqs $(src_py_dir) --requirements-file=minimum-constraints-install.txt
+	pip-missing-reqs $(src_py_dir) --requirements-file=minimum-constraints-install.txt
 	@echo "Makefile: Done checking missing dependencies of this package"
 	@echo "Makefile: Checking missing dependencies of some development packages"
 	bash -c "cat minimum-constraints-develop.txt minimum-constraints-install.txt >tmp_minimum-constraints.txt"

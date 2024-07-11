@@ -39,9 +39,8 @@ requests>=2.32.2
 
 pytz>=2019.1
 
-# TODO-ZHMC: Use zhmcclient 1.17.0 once releaed.
-zhmcclient @ git+https://github.com/zhmcclient/python-zhmcclient.git@master
-# zhmcclient>=1.17.0
+# zhmcclient @ git+https://github.com/zhmcclient/python-zhmcclient.git@master
+zhmcclient>=1.17.0
 
 
 # Indirect dependencies for install that are needed for some reason (must be consistent with minimum-constraints-install.txt)
