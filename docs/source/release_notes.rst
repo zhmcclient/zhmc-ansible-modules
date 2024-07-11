@@ -51,8 +51,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   modules where the 'se-version' property was fetched from CPCs even if it
   was already available in the LPAR/partition properties. (issue #904)
 
-* Increased the minimum version of zhmcclient to 1.13.3 to pick up fixes and
-  performance improvements. (related to issue #904)
+* Increased the minimum version of zhmcclient to 1.17.0 to pick up fixes,
+  performance improvements and new functions. (related to issue #904 and others)
 
 * Fixed readable attribute error when ensuring ISO mounted onto the partition. (related to issue #932)
 
