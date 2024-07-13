@@ -222,7 +222,7 @@ messages:
       type: str
     os_name:
       description:
-        - "The name of the operating system that generated this omessage, or
+        - "The name of the operating system that generated this message, or
            null indicating there is no operating system name  associated with
            this message."
         - "This name is determined by the operating system and may be unrelated

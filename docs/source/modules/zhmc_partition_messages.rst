@@ -254,7 +254,7 @@ messages
     | **type**: str
 
   os_name
-    The name of the operating system that generated this omessage, or null indicating there is no operating system name  associated with this message.
+    The name of the operating system that generated this message, or null indicating there is no operating system name  associated with this message.
 
     This name is determined by the operating system and may be unrelated to the name of the partition in which the operating system is running.
 
