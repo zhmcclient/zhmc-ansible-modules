@@ -20,12 +20,12 @@ Releases
 ========
 
 
-Version 1.9.0-dev1
-------------------
+Version 1.9.0
+-------------
 
-This version contains all fixes up to version 1.8.x.
+This version contains all fixes up to version 1.8.3.
 
-Released: not yet
+Released: 2024-07-18
 
 Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
@@ -38,8 +38,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Increased minimum officially supported Ansible version to Ansible 8 /
   ansible-core 2.15. (issue #988)
-
-**Deprecations:**
 
 **Bug fixes:**
 
@@ -167,12 +165,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Docs: Adjusted README file to new Ansible Automation Hub requirements.
   (issue #993)
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 1.8.1
