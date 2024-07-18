@@ -20,16 +20,12 @@ Releases
 ========
 
 
-Version 1.9.1-dev1
-------------------
+Version 1.9.1
+-------------
 
-Released: not yet
+Released: 2024-07-18
 
 Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
-
-**Incompatible changes:**
-
-**Deprecations:**
 
 **Bug fixes:**
 
@@ -44,8 +40,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   modules of this collection run only on the controller node, so the additional
   Python versions for the target node are no longer used for these sanity tests.
 
-**Enhancements:**
-
 **Cleanup:**
 
 * Removed the unnecessary .pylintrc file from the distribution archive of the
@@ -53,12 +47,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Dev: Brought the list of dependent files for the distribution archive in the
   Makefile back in sync with its content.
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 1.9.0
