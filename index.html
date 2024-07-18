@@ -17,7 +17,7 @@
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="_static/documentation_options.js?v=7f41d439"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -37,7 +37,7 @@
             IBM Z HMC collection
           </a>
               <div class="version">
-                1.8.3
+                1.9.0
 
               </div>
 <div role="search">
@@ -143,10 +143,12 @@ invoke these modules in playbook tasks.</p>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#standard-installation-with-system-python">Standard installation with system Python</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#alternative-installation-with-virtual-python-environment">Alternative installation with virtual Python environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#installing-a-development-version">Installing a development version</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#setting-up-the-hmc">Setting up the HMC</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#hmc-userid-requirements">HMC userid requirements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#setting-up-firewalls-or-proxies">Setting up firewalls or proxies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#supported-environments">Supported environments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#support-matrix">Support matrix</a></li>
 </ul>
 </li>
 </ul>
@@ -162,6 +164,14 @@ invoke these modules in playbook tasks.</p>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_session.html#return-values">Return Values</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_versions.html">zhmc_versions – Retrieve HMC/CPC version and feature facts</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_versions.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_versions.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_versions.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_versions.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_versions.html#return-values">Return Values</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="modules/zhmc_console.html">zhmc_console – Manage the HMC</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_console.html#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_console.html#requirements">Requirements</a></li>
@@ -170,7 +180,7 @@ invoke these modules in playbook tasks.</p>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_console.html#return-values">Return Values</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_user.html">zhmc_user – Create HMC users</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_user.html">zhmc_user – Manage an HMC user</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user.html#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user.html#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user.html#parameters">Parameters</a></li>
@@ -186,7 +196,7 @@ invoke these modules in playbook tasks.</p>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_list.html#return-values">Return Values</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_password_rule.html">zhmc_password_rule – Create HMC password rules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_password_rule.html">zhmc_password_rule – Manage an HMC password rule</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_password_rule.html#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_password_rule.html#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_password_rule.html#parameters">Parameters</a></li>
@@ -194,7 +204,7 @@ invoke these modules in playbook tasks.</p>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_password_rule.html#return-values">Return Values</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_password_rule_list.html">zhmc_password_rule_list – List Password Rules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_password_rule_list.html">zhmc_password_rule_list – List HMC password rules</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_password_rule_list.html#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_password_rule_list.html#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_password_rule_list.html#parameters">Parameters</a></li>
@@ -202,7 +212,7 @@ invoke these modules in playbook tasks.</p>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_password_rule_list.html#return-values">Return Values</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_user_role.html">zhmc_user_role – Create HMC user roles</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_user_role.html">zhmc_user_role – Manage an HMC user role</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_role.html#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_role.html#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_role.html#parameters">Parameters</a></li>
@@ -218,7 +228,23 @@ invoke these modules in playbook tasks.</p>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_role_list.html#return-values">Return Values</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_ldap_server_definition.html">zhmc_ldap_server_definition – Manage LDAP Server Definitions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_user_pattern.html">zhmc_user_pattern – Manage an HMC user pattern</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_pattern.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_pattern.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_pattern.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_pattern.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_pattern.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_user_pattern_list.html">zhmc_user_pattern_list – List HMC user patterns</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_pattern_list.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_pattern_list.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_pattern_list.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_pattern_list.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_user_pattern_list.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_ldap_server_definition.html">zhmc_ldap_server_definition – Manage an LDAP Server Definition on the HMC</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_ldap_server_definition.html#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_ldap_server_definition.html#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_ldap_server_definition.html#parameters">Parameters</a></li>
@@ -226,7 +252,7 @@ invoke these modules in playbook tasks.</p>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_ldap_server_definition.html#return-values">Return Values</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_ldap_server_definition_list.html">zhmc_ldap_server_definition_list – List LDAP Server Definitions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_ldap_server_definition_list.html">zhmc_ldap_server_definition_list – List LDAP Server Definitions on the HMC</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_ldap_server_definition_list.html#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_ldap_server_definition_list.html#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_ldap_server_definition_list.html#parameters">Parameters</a></li>
@@ -234,7 +260,7 @@ invoke these modules in playbook tasks.</p>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_ldap_server_definition_list.html#return-values">Return Values</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_cpc.html">zhmc_cpc – Manage CPCs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_cpc.html">zhmc_cpc – Manage a CPC</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_cpc.html#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_cpc.html#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_cpc.html#parameters">Parameters</a></li>
@@ -250,7 +276,15 @@ invoke these modules in playbook tasks.</p>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_cpc_list.html#return-values">Return Values</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_adapter.html">zhmc_adapter – Update adapters and create Hipersocket adapters</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_cpc_capacity.html">zhmc_cpc_capacity – Manage temporary processor capacity</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_cpc_capacity.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_cpc_capacity.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_cpc_capacity.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_cpc_capacity.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_cpc_capacity.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_adapter.html">zhmc_adapter – Manage an adapter (DPM mode)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter.html#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter.html#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter.html#parameters">Parameters</a></li>
@@ -259,7 +293,7 @@ invoke these modules in playbook tasks.</p>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter.html#return-values">Return Values</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_adapter_list.html">zhmc_adapter_list – List adapters</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_adapter_list.html">zhmc_adapter_list – List adapters (DPM mode)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter_list.html#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter_list.html#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter_list.html#parameters">Parameters</a></li>
@@ -268,7 +302,7 @@ invoke these modules in playbook tasks.</p>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_adapter_list.html#return-values">Return Values</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_crypto_attachment.html">zhmc_crypto_attachment – Attach crypto resources to partitions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_crypto_attachment.html">zhmc_crypto_attachment – Manage the crypto configuration of a partition (DPM mode)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_crypto_attachment.html#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_crypto_attachment.html#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_crypto_attachment.html#parameters">Parameters</a></li>
@@ -276,7 +310,7 @@ invoke these modules in playbook tasks.</p>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_crypto_attachment.html#return-values">Return Values</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_hba.html">zhmc_hba – Create HBAs in partitions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_hba.html">zhmc_hba – Manage an HBA of a partition (z13 only, DPM mode)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_hba.html#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_hba.html#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_hba.html#parameters">Parameters</a></li>
@@ -284,7 +318,7 @@ invoke these modules in playbook tasks.</p>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_hba.html#return-values">Return Values</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_nic.html">zhmc_nic – Create NICs in partitions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_nic.html">zhmc_nic – Manage a NIC of a partition (DPM mode)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_nic.html#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_nic.html#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_nic.html#parameters">Parameters</a></li>
@@ -292,7 +326,7 @@ invoke these modules in playbook tasks.</p>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_nic.html#return-values">Return Values</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_nic_list.html">zhmc_nic_list – List NICs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_nic_list.html">zhmc_nic_list – List NICs of a partition (DPM mode)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_nic_list.html#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_nic_list.html#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_nic_list.html#parameters">Parameters</a></li>
@@ -301,7 +335,7 @@ invoke these modules in playbook tasks.</p>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_nic_list.html#return-values">Return Values</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_partition.html">zhmc_partition – Create partitions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_partition.html">zhmc_partition – Manage a partition (DPM mode)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition.html#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition.html#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition.html#parameters">Parameters</a></li>
@@ -310,7 +344,15 @@ invoke these modules in playbook tasks.</p>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition.html#return-values">Return Values</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_partition_list.html">zhmc_partition_list – List partitions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_partition_command.html">zhmc_partition_command – Execute OS console command in a partition (DPM mode)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition_command.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition_command.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition_command.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition_command.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition_command.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_partition_list.html">zhmc_partition_list – List partitions (DPM mode)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition_list.html#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition_list.html#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition_list.html#parameters">Parameters</a></li>
@@ -319,7 +361,7 @@ invoke these modules in playbook tasks.</p>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition_list.html#return-values">Return Values</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_partition_messages.html">zhmc_partition_messages – Get console messages for OS in a partition</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_partition_messages.html">zhmc_partition_messages – Get console messages for OS in a partition (DPM mode)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition_messages.html#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition_messages.html#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition_messages.html#parameters">Parameters</a></li>
@@ -327,7 +369,7 @@ invoke these modules in playbook tasks.</p>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_partition_messages.html#return-values">Return Values</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_storage_group.html">zhmc_storage_group – Create storage groups</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_storage_group.html">zhmc_storage_group – Manage a storage group (DPM mode)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_group.html#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_group.html#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_group.html#parameters">Parameters</a></li>
@@ -336,7 +378,7 @@ invoke these modules in playbook tasks.</p>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_group.html#return-values">Return Values</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Attach storage groups to partitions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Manage attachment of a storage group to a partition (DPM mode)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_group_attachment.html#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_group_attachment.html#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_group_attachment.html#parameters">Parameters</a></li>
@@ -345,7 +387,7 @@ invoke these modules in playbook tasks.</p>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_group_attachment.html#return-values">Return Values</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_storage_volume.html">zhmc_storage_volume – Create storage volumes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_storage_volume.html">zhmc_storage_volume – Manage a storage volume (DPM mode)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_volume.html#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_volume.html#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_volume.html#parameters">Parameters</a></li>
@@ -354,7 +396,7 @@ invoke these modules in playbook tasks.</p>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_storage_volume.html#return-values">Return Values</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_virtual_function.html">zhmc_virtual_function – Create virtual functions in partitions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_virtual_function.html">zhmc_virtual_function – Manage a virtual function of a partition (DPM mode)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_virtual_function.html#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_virtual_function.html#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_virtual_function.html#parameters">Parameters</a></li>
@@ -362,7 +404,7 @@ invoke these modules in playbook tasks.</p>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_virtual_function.html#return-values">Return Values</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_lpar.html">zhmc_lpar – Manage LPARs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_lpar.html">zhmc_lpar – Manage an LPAR (classic mode)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_lpar.html#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_lpar.html#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_lpar.html#parameters">Parameters</a></li>
@@ -370,7 +412,15 @@ invoke these modules in playbook tasks.</p>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_lpar.html#return-values">Return Values</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_lpar_list.html">zhmc_lpar_list – List LPARs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_lpar_command.html">zhmc_lpar_command – Execute OS console command in an LPAR (classic mode)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_lpar_command.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_lpar_command.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_lpar_command.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_lpar_command.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/zhmc_lpar_command.html#return-values">Return Values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_lpar_list.html">zhmc_lpar_list – List LPARs (classic mode)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_lpar_list.html#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_lpar_list.html#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_lpar_list.html#parameters">Parameters</a></li>
@@ -378,7 +428,7 @@ invoke these modules in playbook tasks.</p>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_lpar_list.html#return-values">Return Values</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_lpar_messages.html">zhmc_lpar_messages – Get console messages for OS in an LPAR</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/zhmc_lpar_messages.html">zhmc_lpar_messages – Get console messages for OS in an LPAR (classic mode)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_lpar_messages.html#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_lpar_messages.html#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/zhmc_lpar_messages.html#parameters">Parameters</a></li>
@@ -468,41 +518,22 @@ please open an issue in the <a class="reference external" href="https://github.c
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.8.3
+        v: 1.9.0
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
         <dl>
             <dt>Tags</dt>
-            <dd><a href="0.9.0/index.html">0.9.0</a></dd>
-            <dd><a href="0.9.1/index.html">0.9.1</a></dd>
-            <dd><a href="0.9.2/index.html">0.9.2</a></dd>
-            <dd><a href="0.9.3/index.html">0.9.3</a></dd>
-            <dd><a href="0.10.0/index.html">0.10.0</a></dd>
-            <dd><a href="0.10.1/index.html">0.10.1</a></dd>
-            <dd><a href="1.0.0/index.html">1.0.0</a></dd>
-            <dd><a href="1.0.2/index.html">1.0.2</a></dd>
             <dd><a href="1.0.3/index.html">1.0.3</a></dd>
-            <dd><a href="1.1.0/index.html">1.1.0</a></dd>
             <dd><a href="1.1.1/index.html">1.1.1</a></dd>
-            <dd><a href="1.2.0/index.html">1.2.0</a></dd>
             <dd><a href="1.2.1/index.html">1.2.1</a></dd>
-            <dd><a href="1.3.0/index.html">1.3.0</a></dd>
             <dd><a href="1.3.1/index.html">1.3.1</a></dd>
-            <dd><a href="1.4.0/index.html">1.4.0</a></dd>
             <dd><a href="1.4.1/index.html">1.4.1</a></dd>
             <dd><a href="1.5.0/index.html">1.5.0</a></dd>
-            <dd><a href="1.6.0/index.html">1.6.0</a></dd>
             <dd><a href="1.6.1/index.html">1.6.1</a></dd>
-            <dd><a href="1.7.0/index.html">1.7.0</a></dd>
-            <dd><a href="1.7.1/index.html">1.7.1</a></dd>
-            <dd><a href="1.7.2/index.html">1.7.2</a></dd>
-            <dd><a href="1.7.3/index.html">1.7.3</a></dd>
             <dd><a href="1.7.4/index.html">1.7.4</a></dd>
-            <dd><a href="1.8.0/index.html">1.8.0</a></dd>
-            <dd><a href="1.8.1/index.html">1.8.1</a></dd>
-            <dd><a href="1.8.2/index.html">1.8.2</a></dd>
             <dd><a href="1.8.3/index.html">1.8.3</a></dd>
+            <dd><a href="1.9.0/index.html">1.9.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

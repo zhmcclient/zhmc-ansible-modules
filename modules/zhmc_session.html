@@ -17,12 +17,12 @@
         <script src="../_static/jquery.js?v=5d32c60e"></script>
         <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="../_static/documentation_options.js?v=7f41d439"></script>
-        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
         <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="zhmc_console – Manage the HMC" href="zhmc_console.html" />
+    <link rel="next" title="zhmc_versions – Retrieve HMC/CPC version and feature facts" href="zhmc_versions.html" />
     <link rel="prev" title="Modules" href="../modules.html" /> 
 </head>
 
@@ -38,7 +38,7 @@
             IBM Z HMC collection
           </a>
               <div class="version">
-                1.8.3
+                1.9.0
 
               </div>
 <div role="search">
@@ -63,33 +63,39 @@
 <li class="toctree-l3"><a class="reference internal" href="#return-values">Return Values</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_versions.html">zhmc_versions – Retrieve HMC/CPC version and feature facts</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_console.html">zhmc_console – Manage the HMC</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_user.html">zhmc_user – Create HMC users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_user.html">zhmc_user – Manage an HMC user</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_user_list.html">zhmc_user_list – List HMC users</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_password_rule.html">zhmc_password_rule – Create HMC password rules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_password_rule_list.html">zhmc_password_rule_list – List Password Rules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_user_role.html">zhmc_user_role – Create HMC user roles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_password_rule.html">zhmc_password_rule – Manage an HMC password rule</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_password_rule_list.html">zhmc_password_rule_list – List HMC password rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_user_role.html">zhmc_user_role – Manage an HMC user role</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_user_role_list.html">zhmc_user_role_list – List HMC user roles</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_ldap_server_definition.html">zhmc_ldap_server_definition – Manage LDAP Server Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_ldap_server_definition_list.html">zhmc_ldap_server_definition_list – List LDAP Server Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_cpc.html">zhmc_cpc – Manage CPCs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_user_pattern.html">zhmc_user_pattern – Manage an HMC user pattern</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_user_pattern_list.html">zhmc_user_pattern_list – List HMC user patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_ldap_server_definition.html">zhmc_ldap_server_definition – Manage an LDAP Server Definition on the HMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_ldap_server_definition_list.html">zhmc_ldap_server_definition_list – List LDAP Server Definitions on the HMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_cpc.html">zhmc_cpc – Manage a CPC</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_cpc_list.html">zhmc_cpc_list – List CPCs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_adapter.html">zhmc_adapter – Update adapters and create Hipersocket adapters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_adapter_list.html">zhmc_adapter_list – List adapters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_crypto_attachment.html">zhmc_crypto_attachment – Attach crypto resources to partitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_hba.html">zhmc_hba – Create HBAs in partitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_nic.html">zhmc_nic – Create NICs in partitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_nic_list.html">zhmc_nic_list – List NICs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_partition.html">zhmc_partition – Create partitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_partition_list.html">zhmc_partition_list – List partitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_partition_messages.html">zhmc_partition_messages – Get console messages for OS in a partition</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group.html">zhmc_storage_group – Create storage groups</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Attach storage groups to partitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_volume.html">zhmc_storage_volume – Create storage volumes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_virtual_function.html">zhmc_virtual_function – Create virtual functions in partitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_lpar.html">zhmc_lpar – Manage LPARs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_list.html">zhmc_lpar_list – List LPARs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_messages.html">zhmc_lpar_messages – Get console messages for OS in an LPAR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_cpc_capacity.html">zhmc_cpc_capacity – Manage temporary processor capacity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_adapter.html">zhmc_adapter – Manage an adapter (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_adapter_list.html">zhmc_adapter_list – List adapters (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_crypto_attachment.html">zhmc_crypto_attachment – Manage the crypto configuration of a partition (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_hba.html">zhmc_hba – Manage an HBA of a partition (z13 only, DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_nic.html">zhmc_nic – Manage a NIC of a partition (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_nic_list.html">zhmc_nic_list – List NICs of a partition (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_partition.html">zhmc_partition – Manage a partition (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_partition_command.html">zhmc_partition_command – Execute OS console command in a partition (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_partition_list.html">zhmc_partition_list – List partitions (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_partition_messages.html">zhmc_partition_messages – Get console messages for OS in a partition (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group.html">zhmc_storage_group – Manage a storage group (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Manage attachment of a storage group to a partition (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_volume.html">zhmc_storage_volume – Manage a storage volume (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_virtual_function.html">zhmc_virtual_function – Manage a virtual function of a partition (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_lpar.html">zhmc_lpar – Manage an LPAR (classic mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_command.html">zhmc_lpar_command – Execute OS console command in an LPAR (classic mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_list.html">zhmc_lpar_list – List LPARs (classic mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_messages.html">zhmc_lpar_messages – Get console messages for OS in an LPAR (classic mode)</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../playbooks.html">Playbooks</a></li>
@@ -193,14 +199,14 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>ca_certs</dt><dd><p>Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the ‘REQUESTS_CA_BUNDLE’ environment variable or the path name in the ‘CURL_CA_BUNDLE’ environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the ‘certifi’ Python package are used for verifying the HMC certificate.</p>
+<dt>ca_certs</dt><dd><p>Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the <span class="target" id="index-0"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">REQUESTS_CA_BUNDLE</span></code> environment variable or the path name in the <span class="target" id="index-1"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">CURL_CA_BUNDLE</span></code> environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the ‘certifi’ Python package are used for verifying the HMC certificate.</p>
 <p>Optional for <code class="docutils literal notranslate"><span class="pre">action=create</span></code>, not permitted for <code class="docutils literal notranslate"><span class="pre">action=delete</span></code>.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>verify</dt><dd><p>If True (default), verify the HMC certificate as specified in the <code class="docutils literal notranslate"><span class="pre">ca_certs</span></code> parameter. If False, ignore what is specified in the <code class="docutils literal notranslate"><span class="pre">ca_certs</span></code> parameter and do not verify the HMC certificate.</p>
+<dt>verify</dt><dd><p>If True (default), verify the HMC certificate as specified in the <code class="docutils literal notranslate"><span class="pre">hmc_auth.ca_certs</span></code> parameter. If False, ignore what is specified in the <code class="docutils literal notranslate"><span class="pre">hmc_auth.ca_certs</span></code> parameter and do not verify the HMC certificate.</p>
 <p>Optional for <code class="docutils literal notranslate"><span class="pre">action=create</span></code>, not permitted for <code class="docutils literal notranslate"><span class="pre">action=delete</span></code>.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
@@ -276,7 +282,7 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>hmc_host</dt><dd><p>The hostname or IP address of the HMC that was actually used for the session creation, for <code class="docutils literal notranslate"><span class="pre">action=create</span></code>. This value must be specified as ‘hmc_host’ for <code class="docutils literal notranslate"><span class="pre">action=delete</span></code>.</p>
+<dt>hmc_host</dt><dd><p>The hostname or IP address of the HMC that was actually used for the session creation, for <code class="docutils literal notranslate"><span class="pre">action=create</span></code>. This value must be specified as <code class="docutils literal notranslate"><span class="pre">hmc_host</span></code> for <code class="docutils literal notranslate"><span class="pre">action=delete</span></code>.</p>
 <p>For <code class="docutils literal notranslate"><span class="pre">action=delete</span></code>, returns the null value.</p>
 <div class="line-block">
 <div class="line"><strong>returned</strong>: success</div>
@@ -304,12 +310,12 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>ca_certs</dt><dd><p>Value of <code class="docutils literal notranslate"><span class="pre">ca_certs</span></code> input parameter for <code class="docutils literal notranslate"><span class="pre">action=create</span></code>, or null for <code class="docutils literal notranslate"><span class="pre">action=delete</span></code>.</p>
+<dt>ca_certs</dt><dd><p>Value of <code class="docutils literal notranslate"><span class="pre">hmc_auth.ca_certs</span></code> input parameter for <code class="docutils literal notranslate"><span class="pre">action=create</span></code>, or null for <code class="docutils literal notranslate"><span class="pre">action=delete</span></code>.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>verify</dt><dd><p>Value of <code class="docutils literal notranslate"><span class="pre">verify</span></code> input parameter for <code class="docutils literal notranslate"><span class="pre">action=create</span></code>, or null for <code class="docutils literal notranslate"><span class="pre">action=delete</span></code>.</p>
+<dt>verify</dt><dd><p>Value of <code class="docutils literal notranslate"><span class="pre">hmc_auth.verify</span></code> input parameter for <code class="docutils literal notranslate"><span class="pre">action=create</span></code>, or null for <code class="docutils literal notranslate"><span class="pre">action=delete</span></code>.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: bool</div>
 </div>
@@ -325,7 +331,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../modules.html" class="btn btn-neutral float-left" title="Modules" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="zhmc_console.html" class="btn btn-neutral float-right" title="zhmc_console – Manage the HMC" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="zhmc_versions.html" class="btn btn-neutral float-right" title="zhmc_versions – Retrieve HMC/CPC version and feature facts" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
@@ -348,41 +354,22 @@
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.8.3
+        v: 1.9.0
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
         <dl>
             <dt>Tags</dt>
-            <dd><a href="../0.9.0/index.html">0.9.0</a></dd>
-            <dd><a href="../0.9.1/index.html">0.9.1</a></dd>
-            <dd><a href="../0.9.2/index.html">0.9.2</a></dd>
-            <dd><a href="../0.9.3/index.html">0.9.3</a></dd>
-            <dd><a href="../0.10.0/index.html">0.10.0</a></dd>
-            <dd><a href="../0.10.1/index.html">0.10.1</a></dd>
-            <dd><a href="../1.0.0/index.html">1.0.0</a></dd>
-            <dd><a href="../1.0.2/index.html">1.0.2</a></dd>
             <dd><a href="../1.0.3/index.html">1.0.3</a></dd>
-            <dd><a href="../1.1.0/index.html">1.1.0</a></dd>
             <dd><a href="../1.1.1/index.html">1.1.1</a></dd>
-            <dd><a href="../1.2.0/index.html">1.2.0</a></dd>
             <dd><a href="../1.2.1/index.html">1.2.1</a></dd>
-            <dd><a href="../1.3.0/index.html">1.3.0</a></dd>
             <dd><a href="../1.3.1/index.html">1.3.1</a></dd>
-            <dd><a href="../1.4.0/modules/zhmc_session.html">1.4.0</a></dd>
             <dd><a href="../1.4.1/modules/zhmc_session.html">1.4.1</a></dd>
             <dd><a href="../1.5.0/modules/zhmc_session.html">1.5.0</a></dd>
-            <dd><a href="../1.6.0/modules/zhmc_session.html">1.6.0</a></dd>
             <dd><a href="../1.6.1/modules/zhmc_session.html">1.6.1</a></dd>
-            <dd><a href="../1.7.0/modules/zhmc_session.html">1.7.0</a></dd>
-            <dd><a href="../1.7.1/modules/zhmc_session.html">1.7.1</a></dd>
-            <dd><a href="../1.7.2/modules/zhmc_session.html">1.7.2</a></dd>
-            <dd><a href="../1.7.3/modules/zhmc_session.html">1.7.3</a></dd>
             <dd><a href="../1.7.4/modules/zhmc_session.html">1.7.4</a></dd>
-            <dd><a href="../1.8.0/modules/zhmc_session.html">1.8.0</a></dd>
-            <dd><a href="../1.8.1/modules/zhmc_session.html">1.8.1</a></dd>
-            <dd><a href="../1.8.2/modules/zhmc_session.html">1.8.2</a></dd>
             <dd><a href="../1.8.3/modules/zhmc_session.html">1.8.3</a></dd>
+            <dd><a href="../1.9.0/modules/zhmc_session.html">1.9.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
