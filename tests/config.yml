@@ -1,0 +1,10 @@
+# ansible-test configuration file for collections.
+# Support for this feature was first added in ansible-core 2.12.
+# For documentation, see the sample file at
+# https://github.com/ansible/ansible/blob/devel/test/lib/ansible_test/config/config.yml
+
+modules:
+
+  python_requires: controller
+  # The modules of the ibm_zhmc collection can only run on the controller.
+  # They use the Web Services API of the HMC, and the HMC does not provide SSH access.

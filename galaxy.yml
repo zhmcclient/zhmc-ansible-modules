@@ -79,6 +79,7 @@ build_ignore:
   - .gitignore
   - .coveragerc
   - .flake8  # only in older branches
+  - .pylintrc
   - .travis.yml
   - .whitesource
   - .safety-policy-all.yml  # old name
