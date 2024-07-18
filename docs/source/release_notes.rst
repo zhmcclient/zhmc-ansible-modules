@@ -129,6 +129,13 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Added a new Ansible module 'zhmc_cpc_capacity' for managing the temporary
   processor capacity of a CPC. (issue #243)
 
+* Added new modules 'zhmc_lpar_command' and 'zhmc_partition_command' for
+  executing an OS consosle command in the OS running in an LPAR or
+  partition. (issue #938)
+
+* Enabled notification logging via the 'zhmcclient.jms' Python logger.
+  (related to issue #938)
+
 **Cleanup:**
 
 * Modernized the code to match the minimum Python version 3.8 (use of f-strings,

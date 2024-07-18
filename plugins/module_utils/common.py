@@ -21,6 +21,7 @@ __metaclass__ = type
 
 import logging
 import traceback
+import threading
 import platform
 import sys
 import re
@@ -1184,6 +1185,11 @@ def log_init(logger_name, log_file=None):
     if handler:
         ensure_one_handler(logger, handler)
 
+    logger = logging.getLogger('zhmcclient.jms')
+    logger.setLevel(logging.DEBUG)
+    if handler:
+        ensure_one_handler(logger, handler)
+
 
 def ensure_one_handler(logger, handler):
     """
@@ -1334,3 +1340,71 @@ def hyphen_properties(prop_dict):
             pvalue = hyphen_properties(pvalue)
         hyphen_prop_dict[pname_hyphen] = pvalue
     return hyphen_prop_dict
+
+
+class NotificationThread(threading.Thread):
+    """
+    A thread class derived from :class:`py:threading.Thread` that is designed
+    for running threads that receive zhmcclient notifications.
+
+    Capabilities:
+
+    * handles exceptions that are raised in the started thread, by re-raising
+      them in the thread that joins the started thread.
+
+    * can be stopped by calling stop(). The thread function must regularly
+      check for whether it should stop by calling need_to_stop().
+
+    * can indicate an arbitrary readiness condition to the calling thread.
+
+    The thread function needs to be specified with the 'target' init argument.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._exc_info = None
+        self._stop_event = threading.Event()
+        self._ready_event = threading.Event()
+
+    def run(self):
+        """
+        Call inherited run() and save exception info.
+        """
+        try:
+            super().run()
+        except Exception:  # noqa: E722 pylint: disable=broad-except
+            self._exc_info = sys.exc_info()
+
+    def join(self, timeout=None):
+        """
+        Call inherited join() and reraise exception if exception info was saved.
+        """
+        super().join(timeout)
+        if self._exc_info:
+            raise self._exc_info.value
+
+    def stop(self):
+        """
+        In the code that started the thread, request the thread to stop.
+        """
+        self._stop_event.set()
+
+    def need_to_stop(self):
+        """
+        In the thread function, check whether a stop has been requested.
+        """
+        return self._stop_event.is_set()
+
+    def ready(self):
+        """
+        In the thread function, indicate readiness.
+        """
+        self._ready_event.set()
+
+    def wait_ready(self, timeout=None):
+        """
+        In the code that started the thread, wait for readiness.
+
+        The timeout is an int or float in seconds.
+        """
+        return self._ready_event.wait(timeout)
