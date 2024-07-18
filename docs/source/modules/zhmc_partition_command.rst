@@ -17,6 +17,8 @@ zhmc_partition_command -- Execute OS console command in a partition (DPM mode)
 Synopsis
 --------
 - Execute a command in the console of the OS running in a partition and get back the command output.
+- Note: The OS console interface provided by the HMC WS-API does not allow separating multiple concurrent interactions. For example, when OS console commands are executed via the HMC GUI at the same time when executing this Ansible module, the command output returned by the Ansible module may be mixed with output from the concurrently executed command.
+- Note: The logic for determining which lines on the OS console belong to the executed command is as follows: The OS console messages are started to be captured just before the console command is sent. The captured console messages are then searched for the occurrence of the command. The command itself and all messages following the command are considered part of the command output, until there are no more new messages for 2 seconds. If there is a lot of traffic on the OS console, that may lead to other messages being included in the command output.
 
 
 Requirements
