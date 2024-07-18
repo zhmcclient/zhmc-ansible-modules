@@ -126,12 +126,18 @@ pylint_opts := --disable=fixme
 #       There is issue https://github.com/ansible/ansible/issues/60215 that
 #       discusses improving that.
 #       We perform the sanity test in a directory that contains the content
-#       of the sanity_tar_file and the distribution archive.
-sanity_dir := tmp_sanity/collections/ansible_collections/ibm/ibm_zhmc
-sanity_dir1 := tmp_sanity
-sanity_tar_file := tmp_sanity.tar
+#       of the sanity TAR file and the distribution archive.
+sanity_root_dir := tmp_sanity
+sanity_coll_dir := $(sanity_root_dir)/collections/ansible_collections/ibm/ibm_zhmc
 
-#Safety policy file (for packages needed for installation)
+# Sanity TAR file and the files and directories that need to go into it.
+sanity_tar_file := tmp_sanity.tar
+sanity_tar_files := \
+    .git \
+    .gitignore \
+    galaxy.yml \
+
+# Safety policy file (for packages needed for installation)
 safety_install_policy_file := .safety-policy-install.yml
 safety_develop_policy_file := .safety-policy-develop.yml
 
@@ -169,12 +175,26 @@ doc_rst_files := \
 # The Ansible Galaxy distribution archive
 dist_dir := dist
 dist_file := $(dist_dir)/$(collection_namespace)-$(collection_name)-$(collection_version).tar.gz
-# The dependent files must be in sync with the build_ignore list in galaxy.yml
-dist_dependent_files := \
+
+# The files in the distribution archive, in addition to dynamically created files
+# such as MANIFEST.json and FILES.json.
+# Must be in sync with the build_ignore list in galaxy.yml
+dist_files := \
     README.md \
+    CHANGELOG.rst \
+    SECURITY.md \
+    bindep.txt \
     requirements.txt \
-    $(wildcard *.py) \
+    collections/requirements.yml \
+    $(wildcard meta/*) \
+    $(wildcard tests/sanity/*.txt) \
+    tests/config.yml \
     $(src_py_files) \
+
+# Files the build of the distribution archive depends upon
+dist_dependent_files := \
+    $(dist_files) \
+    galaxy.yml \
 
 # Sphinx options (besides -M)
 sphinx_opts := -v
@@ -303,22 +323,22 @@ run_sanity_virtual := $(shell PL=$(PACKAGE_LEVEL) MIN_AC=$(min_ansible_core_vers
 
 # The sanity check requires the .git directory to be present.
 .PHONY:	sanity
-sanity: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(dist_file)
+sanity: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(dist_file) $(sanity_tar_files)
 	rm -f $(sanity_tar_file)
-	tar -rf $(sanity_tar_file) .git .gitignore galaxy.yml collections
-	rm -rf $(sanity_dir)
-	mkdir -p $(sanity_dir)
-	tar -xf $(sanity_tar_file) --directory $(sanity_dir)
-	tar -xf $(dist_file) --directory $(sanity_dir)
+	tar -rf $(sanity_tar_file) $(sanity_tar_files)
+	rm -rf $(sanity_root_dir)
+	mkdir -p $(sanity_coll_dir)
+	tar -xf $(sanity_tar_file) --directory $(sanity_coll_dir)
+	tar -xf $(dist_file) --directory $(sanity_coll_dir)
 ifeq ($(run_sanity_current),true)
 	echo "Running ansible sanity test in the current Python env (using ansible-core $(ansible_core_version) and Python $(python_version))"
-	sh -c "cd $(sanity_dir); ansible-test sanity --verbose --truncate 0 --local --python $(python_m_n_version)"
+	sh -c "cd $(sanity_coll_dir); ansible-test sanity --verbose --truncate 0 --local"
 else
 	echo "Skipping ansible sanity test in the current Python env (using ansible-core $(ansible_core_version) and Python $(python_version))"
 endif
 ifeq ($(run_sanity_virtual),true)
 	echo "Running ansible sanity test in its own virtual Python env (using ansible-core $(ansible_core_version) and Python $(python_version))"
-	sh -c "cd $(sanity_dir); ansible-test sanity --verbose --truncate 0 --venv --requirements --python $(python_m_n_version)"
+	sh -c "cd $(sanity_coll_dir); ansible-test sanity --verbose --truncate 0 --venv --requirements"
 else
 	echo "Skipping ansible sanity test in its own virtual Python env (using ansible-core $(ansible_core_version) and Python $(python_version))"
 endif
@@ -423,7 +443,7 @@ endif
 # The second rm command of each type is for files that were used before 1.0.0, to make it easier to switch.
 .PHONY: clobber
 clobber:
-	rm -Rf .cache .pytest_cache $(sanity_dir1) htmlcov $(doc_linkcheck_dir) $(doc_build_dir) $(doc_build_local_dir) tests/output build .tox *.egg-info *.done $(done_dir)/*.done
+	rm -Rf .cache .pytest_cache $(sanity_root_dir) htmlcov $(doc_linkcheck_dir) $(doc_build_dir) $(doc_build_local_dir) tests/output build .tox *.egg-info *.done $(done_dir)/*.done
 	rm -f .coverage MANIFEST MANIFEST.in AUTHORS ChangeLog
 	find . -name "*.pyc" -delete -o -name "__pycache__" -delete -o -name "*.tmp" -delete -o -name "tmp_*" -delete
 	@echo '$@ done.'
@@ -480,7 +500,7 @@ $(done_dir)/bandit_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(
 	echo "done" >$@
 	@echo "Makefile: Done running Bandit"
 
-$(dist_file): $(done_dir)/install_deps_$(pymn)_$(PACKAGE_LEVEL).done $(dist_dependent_files) galaxy.yml
+$(dist_file): $(done_dir)/install_deps_$(pymn)_$(PACKAGE_LEVEL).done $(dist_dependent_files)
 	mkdir -p $(dist_dir)
 	ansible-galaxy collection build --output-path=$(dist_dir) --force .
 

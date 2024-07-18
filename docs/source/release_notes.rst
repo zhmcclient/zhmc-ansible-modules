@@ -33,9 +33,26 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Bug fixes:**
 
+* Sanity test: Fixed the sanity test on AutomationHub which failed because the
+  "compile" and "import" tests were run for all target node Python versions,
+  which includes Python 2.7. As we had dropped support for Python < 3.8 in
+  collection version 1.9.0, the source code now uses Python 3-only features
+  such as f-strings.
+
+  This was done by adding a file tests/config.yml to the distribution archive
+  that is consumed by the sanity test if present and that declares that the
+  modules of this collection run only on the controller node, so the additional
+  Python versions for the target node are no longer used for these sanity tests.
+
 **Enhancements:**
 
 **Cleanup:**
+
+* Removed the unnecessary .pylintrc file from the distribution archive of the
+  collection.
+
+* Dev: Brought the list of dependent files for the distribution archive in the
+  Makefile back in sync with its content.
 
 **Known issues:**
 
