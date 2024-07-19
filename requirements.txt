@@ -61,8 +61,8 @@ cryptography>=42.0.5
 # importlib-metadata is used for development by flake8 (and others).
 importlib-metadata>=4.8.3
 
-# packaging is used by TBD, and for dev also by pytest, pip-check-reqs, sphinx
-packaging>=21.3
+# packaging is used by ansible-core (and for dev also by pytest, pip-check-reqs, sphinx and others)
+packaging>=22.0
 
 # PyYAML 5.3 has wheel archives for Python 2.7, 3.5 - 3.9
 # PyYAML 5.4 has wheel archives for Python 2.7, 3.6 - 3.9
