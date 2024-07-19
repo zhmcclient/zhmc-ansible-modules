@@ -206,8 +206,9 @@ Ansible versions.
 Releasing a version
 -------------------
 
-This section shows the steps for releasing a version to `Ansible Galaxy
-<https://galaxy.ansible.com/>`_.
+This section shows the steps for releasing a version of this collection to
+`Ansible Galaxy <https://galaxy.ansible.com/>`_ and
+`Ansible AutomationHub <https://console.redhat.com/ansible/automation-hub>`_.
 
 It covers all variants of versions that can be released:
 
@@ -401,7 +402,7 @@ local clone of the zhmc-ansible-modules Git repo.
 
       If the new version is not shown there, verify that the import on Ansible
       Galaxy succeeded, by checking the status at
-      https://galaxy.ansible.com/my-imports (you need to log in).
+      https://galaxy.ansible.com/ui/my-imports/?namespace=ibm (you need to log in).
 
     * Verify that the new version has a release on Github at
       https://github.com/zhmcclient/zhmc-ansible-modules/releases
@@ -419,11 +420,11 @@ local clone of the zhmc-ansible-modules Git repo.
 
     * Build the distribution archive locally:
 
-    .. code-block:: sh
+      .. code-block:: sh
 
-        make dist
+          make dist
 
-    * Open https://console.redhat.com/ansible/automation-hub/repo/published/ibm
+    * Open https://console.redhat.com/ansible/automation-hub/namespaces/ibm/
       and log in to your account.
 
     * Click on the "Upload Collection" button at the top right of the page,
@@ -439,7 +440,7 @@ local clone of the zhmc-ansible-modules Git repo.
 
     Verify that the import on Ansible AutomationHub succeeded, by checking the
     status at
-    https://console.redhat.com/ansible/automation-hub/my-imports?namespace=ibm
+    https://console.redhat.com/ansible/automation-hub/my-imports/?namespace=ibm
     (you need to log in).
 
     After the import succeeded, the release must still be approved by RedHat
@@ -448,7 +449,7 @@ local clone of the zhmc-ansible-modules Git repo.
 
     The RedHat team should approve the release within a day or so. Once it has
     been approved, the new version will be visible on Ansible AutomationHub at
-    https://console.redhat.com/ansible/automation-hub/repo/published/ibm/ibm_zhmc .
+    https://console.redhat.com/ansible/automation-hub/repo/published/ibm/ibm_zhmc/ .
 
 
 .. _`Starting a new version`:
