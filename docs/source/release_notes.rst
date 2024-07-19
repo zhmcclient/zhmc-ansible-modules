@@ -58,6 +58,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Dev: Brought the list of dependent files for the distribution archive in the
   Makefile back in sync with its content.
 
+* Removed the 'collections' directory from the distribution archive, because it
+  is not needed there.
+
 **Known issues:**
 
 * See `list of open issues`_.
