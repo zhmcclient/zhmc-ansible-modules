@@ -125,14 +125,15 @@ pylint_opts := --disable=fixme
 #       The .git subtree must also be present.
 #       There is issue https://github.com/ansible/ansible/issues/60215 that
 #       discusses improving that.
-#       We perform the sanity test in a directory that contains the content
-#       of the sanity TAR file and the distribution archive.
+#       We perform the sanity test in a temporary directory that contains the
+#       content of the distribution archive and some additional files and
+#       directories.
 sanity_root_dir := tmp_sanity
 sanity_coll_dir := $(sanity_root_dir)/collections/ansible_collections/ibm/ibm_zhmc
 
-# Sanity TAR file and the files and directories that need to go into it.
-sanity_tar_file := tmp_sanity.tar
-sanity_tar_files := \
+# Additional files and directories that need to go into the temporary sanity
+# test directory
+sanity_additional_files := \
     .git \
     .gitignore \
     galaxy.yml \
@@ -323,12 +324,10 @@ run_sanity_virtual := $(shell PL=$(PACKAGE_LEVEL) MIN_AC=$(min_ansible_core_vers
 
 # The sanity check requires the .git directory to be present.
 .PHONY:	sanity
-sanity: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(dist_file) $(sanity_tar_files)
-	rm -f $(sanity_tar_file)
-	tar -rf $(sanity_tar_file) $(sanity_tar_files)
+sanity: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(dist_file) $(sanity_additional_files)
 	rm -rf $(sanity_root_dir)
 	mkdir -p $(sanity_coll_dir)
-	tar -xf $(sanity_tar_file) --directory $(sanity_coll_dir)
+	cp -R $(sanity_additional_files) $(sanity_coll_dir)
 	tar -xf $(dist_file) --directory $(sanity_coll_dir)
 ifeq ($(run_sanity_current),true)
 	echo "Running ansible sanity test in the current Python env (using ansible-core $(ansible_core_version) and Python $(python_version))"
