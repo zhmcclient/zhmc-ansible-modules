@@ -3,18 +3,15 @@
 #
 # Basic prerequisites for running this Makefile, to be provided manually:
 #   One of these OS platforms:
-#     Windows with CygWin
-#     Linux (any)
-#     OS-X
+#     Linux
+#     macOS
 #   These commands on all OS platforms:
 #     make (GNU make)
 #     bash
-#     rm, find
-#   These commands on all OS platforms in the active Python environment:
-#     python (or python3 on OS-X)
-#     pip (or pip3 on OS-X)
-#   These commands on Linux and OS-X:
 #     uname
+#     rm, mkdir, cp, find, tar
+#     git
+#     python, pip
 # ------------------------------------------------------------------------------
 
 # Python / Pip commands
@@ -52,17 +49,9 @@ ifndef RUN_TYPE
 endif
 
 # Determine OS platform make runs on
-ifeq ($(OS),Windows_NT)
-  PLATFORM := Windows
-  DEV_NULL := nul
-else
-  # Values: Linux, Darwin
-  PLATFORM := $(shell uname -s)
-  DEV_NULL := /dev/null
-endif
+PLATFORM := $(shell uname -s)
 
 # Namespace and name of this collection
-# TODO: Check out whether this needs to match the 'name' attribute specified in setup.py.
 collection_namespace := ibm
 collection_name := ibm_zhmc
 collection_full_name := $(collection_namespace).$(collection_name)
@@ -76,7 +65,7 @@ collection_version := $(shell $(PYTHON_CMD) tools/version.py)
 min_ansible_core_version := 2.15.0
 
 # Installed ansible-core version (empty if ansible is not installed)
-ansible_core_version := $(shell $(PYTHON_CMD) -c "import sys,ansible; sys.stdout.write(ansible.__version__)" 2>$(DEV_NULL))
+ansible_core_version := $(shell $(PYTHON_CMD) -c "import sys,ansible; sys.stdout.write(ansible.__version__)" 2>/dev/null)
 
 # Python versions
 python_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('{v[0]}.{v[1]}.{v[2]}'.format(v=sys.version_info))")
@@ -314,13 +303,13 @@ bandit: $(done_dir)/bandit_$(pymn)_$(PACKAGE_LEVEL).done
 # The variable is empty if ansible is not installed.
 # We run the sanity test only on officially supported Ansible versions, except for:
 #  * Python 3.10 with minimum package levels because sanity setup fails with PyYAML 5.4.1 install issue with Cython 3
-run_sanity_current := $(shell PL=$(PACKAGE_LEVEL) MIN_AC=$(min_ansible_core_version) $(PYTHON_CMD) -c "import sys,os,ansible; py=sys.version_info[0:2]; ac=list(map(int,ansible.__version__.split('.'))); min_ac=list(map(int,os.getenv('MIN_AC').split('.'))); pl=os.getenv('PL'); sys.stdout.write('true' if ac>=min_ac and not (py==(3,10) and pl=='minimum') and not py>=(3,13) else 'false')" 2>$(DEV_NULL))
+run_sanity_current := $(shell PL=$(PACKAGE_LEVEL) MIN_AC=$(min_ansible_core_version) $(PYTHON_CMD) -c "import sys,os,ansible; py=sys.version_info[0:2]; ac=list(map(int,ansible.__version__.split('.'))); min_ac=list(map(int,os.getenv('MIN_AC').split('.'))); pl=os.getenv('PL'); sys.stdout.write('true' if ac>=min_ac and not (py==(3,10) and pl=='minimum') and not py>=(3,13) else 'false')" 2>/dev/null)
 
 # Boolean variable indicating that the Ansible sanity test should be run in its own virtual Python environment.
 # The variable is empty if ansible is not installed.
 # We run the sanity test only on officially supported Ansible versions, except for:
 #  * Python 3.10 with minimum package levels because sanity setup fails with PyYAML 5.4.1 install issue with Cython 3
-run_sanity_virtual := $(shell PL=$(PACKAGE_LEVEL) MIN_AC=$(min_ansible_core_version) $(PYTHON_CMD) -c "import sys,os,ansible; py=sys.version_info[0:2]; ac=list(map(int,ansible.__version__.split('.'))); min_ac=list(map(int,os.getenv('MIN_AC').split('.'))); pl=os.getenv('PL'); sys.stdout.write('true' if ac>=min_ac and not (py==(3,10) and pl=='minimum') and not py>=(3,13) else 'false')" 2>$(DEV_NULL))
+run_sanity_virtual := $(shell PL=$(PACKAGE_LEVEL) MIN_AC=$(min_ansible_core_version) $(PYTHON_CMD) -c "import sys,os,ansible; py=sys.version_info[0:2]; ac=list(map(int,ansible.__version__.split('.'))); min_ac=list(map(int,os.getenv('MIN_AC').split('.'))); pl=os.getenv('PL'); sys.stdout.write('true' if ac>=min_ac and not (py==(3,10) and pl=='minimum') and not py>=(3,13) else 'false')" 2>/dev/null)
 
 # The sanity check requires the .git directory to be present.
 .PHONY:	sanity
@@ -331,13 +320,13 @@ sanity: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(dist_
 	tar -xf $(dist_file) --directory $(sanity_coll_dir)
 ifeq ($(run_sanity_current),true)
 	echo "Running ansible sanity test in the current Python env (using ansible-core $(ansible_core_version) and Python $(python_version))"
-	sh -c "cd $(sanity_coll_dir); ansible-test sanity --verbose --truncate 0 --local"
+	bash -c "cd $(sanity_coll_dir); ansible-test sanity --verbose --truncate 0 --local"
 else
 	echo "Skipping ansible sanity test in the current Python env (using ansible-core $(ansible_core_version) and Python $(python_version))"
 endif
 ifeq ($(run_sanity_virtual),true)
 	echo "Running ansible sanity test in its own virtual Python env (using ansible-core $(ansible_core_version) and Python $(python_version))"
-	sh -c "cd $(sanity_coll_dir); ansible-test sanity --verbose --truncate 0 --venv --requirements"
+	bash -c "cd $(sanity_coll_dir); ansible-test sanity --verbose --truncate 0 --venv --requirements"
 else
 	echo "Skipping ansible sanity test in its own virtual Python env (using ansible-core $(ansible_core_version) and Python $(python_version))"
 endif
@@ -347,7 +336,7 @@ endif
 # The variable is empty if ansible is not installed.
 # We run ansible-lint only on officially supported Ansible versions, except for:
 #  * Python 3.9 with minimum package levels because ansible-lint 6.14.0 requires ansible-core>=2.12 which is incompatible with ansible's requirement
-run_ansible_lint := $(shell PL=$(PACKAGE_LEVEL) MIN_AC=$(min_ansible_core_version) $(PYTHON_CMD) -c "import sys,os,ansible; py=sys.version_info[0:2]; ac=ansible.__version__.split('.'); min_ac=os.getenv('MIN_AC').split('.'); pl=os.getenv('PL'); sys.stdout.write('true' if ac>=min_ac and py>=(3,10) else 'false')" 2>$(DEV_NULL))
+run_ansible_lint := $(shell PL=$(PACKAGE_LEVEL) MIN_AC=$(min_ansible_core_version) $(PYTHON_CMD) -c "import sys,os,ansible; py=sys.version_info[0:2]; ac=ansible.__version__.split('.'); min_ac=os.getenv('MIN_AC').split('.'); pl=os.getenv('PL'); sys.stdout.write('true' if ac>=min_ac and py>=(3,10) else 'false')" 2>/dev/null)
 
 .PHONY:	ansible_lint
 ansible_lint: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(dist_file)
@@ -356,7 +345,7 @@ ifeq ($(run_ansible_lint),true)
 	rm -rf $(dist_dir)/tmp
 	mkdir -p $(dist_dir)/tmp
 	tar -xf $(dist_file) --directory $(dist_dir)/tmp
-	-sh -c "cd $(dist_dir)/tmp; ansible-lint --profile production -f pep8"
+	-bash -c "cd $(dist_dir)/tmp; ansible-lint --profile production -f pep8"
 else
 	echo "Skipping ansible-lint (using ansible-core $(ansible_core_version) and Python $(python_version))"
 endif

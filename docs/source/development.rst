@@ -65,8 +65,13 @@ Setting up the development environment
 
 The development environment is pretty easy to set up.
 
-Besides having a supported operating system with a supported Python version
-(see :ref:`Supported environments`), it is recommended that you set up a
+The supported operating sytems for developing this project are:
+
+  * Linux
+  * macOS
+
+You need to have a supported Python version installed
+(see :ref:`Supported environments`), and it is recommended that you set up a
 `virtual Python environment`_.
 
 .. _virtual Python environment: https://docs.python-guide.org/dev/virtualenvs/
