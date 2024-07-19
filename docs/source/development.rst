@@ -135,7 +135,7 @@ Testing
 
 Again, an invocation of Make runs against the currently active Python environment.
 
-There are four kinds of tests currently, available as make targets:
+There are several kinds of tests currently, available as make targets:
 
 * ``make check`` - Run flake8
 * ``make pylint`` - Run pylint
@@ -143,6 +143,7 @@ There are four kinds of tests currently, available as make targets:
 * ``make sanity`` - Run Ansible sanity tests
 * ``make ansible_lint`` - Run ansible_lint
 * ``make safety`` - Run safety vulnerability checks
+* ``make bandit`` - Run bandit vulnerability checks
 * ``make check_reqs`` - Run pip-missing-reqs to perform missing dependency checks
 * ``make test`` - Run unit and function tests with test coverage
 * ``make end2end_mocked`` - Run end2end tests against a mocked environment

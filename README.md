@@ -183,6 +183,7 @@ All releases will meet the following test criteria:
 * 100% success for [pylint](https://pylint.readthedocs.io/en/stable/).
 * 100% success for [ansible-lint](https://ansible.readthedocs.io/projects/lint/) allowing only false positives.
 * 100% success for [safety](https://docs.safetycli.com/safety-docs) vulnerability checks.
+* 100% success for [bandit](https://bandit.readthedocs.io/) vulnerability checks.
 * 100% success for [pip-missing-reqs](https://github.com/adamtheturtle/pip-check-reqs/blob/master/README.rst) checks for missing dependencies.
 
 For more details on testing the IBM Z HMC collection, including the specific version
