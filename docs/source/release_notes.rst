@@ -61,6 +61,13 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Removed the 'collections' directory from the distribution archive, because it
   is not needed there.
 
+* Updated authors in the collection metadata to be in sync with contributions to
+  the repo, and changed from showing Github nicknames to showing email
+  addresses.
+
+* Updated collection description in the collection metadata to be in sync with
+  the overview description in the README.md file.
+
 **Known issues:**
 
 * See `list of open issues`_.

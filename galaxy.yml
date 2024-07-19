@@ -6,14 +6,26 @@ version: 1.10.0-dev1
 
 readme: README.md
 
+# Keep in sync with AUTHORS.md
 authors:
-  - Andy Maier (@andy-maier)
-  - Juergen Leopold (@leopoldjuergen)
-  - Andreas Scheuring (@scheuran)
-  - Kathiravan Velusamy (@vkahir)
-  - Adilet Sabyrbaev (@sabyadi)
+  - Abhiram Santhosh <abhiram.santhosh1@ibm.com>
+  - Adilet Sabyrbaev <adilet.sabyrbaev2@ibm.com>
+  - Andreas Maier <maiera@de.ibm.com>
+  - Andreas Scheuring <andreas.scheuring@de.ibm.com>
+  - Anil Kumar Dakarapu <anil.kumar.dakarapu@ibm.com>
+  - Demetrios Dimatos <dimatos@gmail.com>
+  - Juergen Leopold <leopoldj@de.ibm.com>
+  - Kathiravan Velusamy <kathir.velu@in.ibm.com>
+  - Klaus Smolin <smolin@de.ibm.com>
+  - Uday Kiran Reddy Konda <Uday.Kiran.Reddy.Konda@ibm.com>
+  - Vance Morris <vmorris@us.ibm.com>
 
-description: This collection can manage platform resources on IBM Z and LinuxONE machines, for example partitions, adapters, the Z system itself, or various resources on its Hardware Management Console (HMC).
+# Keep in sync with the overview description in README.md
+description:
+  This collection supports automation tasks on the IBM Z HMC such as creating,
+  updating or deleting partitions, accesssing operating system messages,
+  configuring adapters, managing HMC users, upgrading the SE and HMC firmware,
+  and many more. It supports CPCs in classic mode and in DPM mode.
 
 license:
   - "Apache-2.0"
