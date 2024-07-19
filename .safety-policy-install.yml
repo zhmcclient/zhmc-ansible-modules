@@ -22,32 +22,26 @@ security:
     #     reason: {text}    # optional: Reason for ignoring it. Will be reported in the Safety reports
     #     expires: {date}   # optional: Date when this ignore will expire
     ignore-vulnerabilities:
-        39611:
-            reason: PyYAML full_load method or FullLoader is not used
-        42923:
-            reason: Fixed Ansible version is stated to be 0
         54219:
-            reason: Fixed ansible version is 2.10.0, but need to support ansible 2.9
+            reason: Fixed ansible version is 2.10.0, but we support older ansible versions
         54229:
-            reason: Not yet fixed in any ansible version, but need to support ansible 2.9
+            reason: Fixed ansible version is 2.10.5, but we support older ansible versions
         54230:
-            reason: Not yet fixed in any ansible version, but need to support ansible 2.9
+            reason: Fixed ansible version is 2.10.5, but we support older ansible versions
         54564:
-            reason: Fixed ansible version is 7.0.0, but need to support ansible 2.9
+            reason: Fixed ansible version is 7.0.0, but we support older ansible versions
         63066:
-            reason: Fixed ansible-core version 2.15.8 requires Python>=3.9 and is used on Python>=3.12
+            reason: Fixed ansible-core version is 2.15.8, but we support older ansible versions
         65511:
-            reason: Fixed ansible-core version 2.13.13 requires Python>=3.8 and 2.13.x is not used
+            reason: Fixed ansible-core version is 2.13.13, but we support older ansible versions
         66667:
-            reason: Fixed ansible-core version 2.12.0 requires Python>=3.8 and is used on Python>=3.10
+            reason: Fixed ansible-core version is 2.12.0, but we support older ansible versions
         66700:
-            reason: Fixed ansible-core version 2.14.14 requires Python>=3.9 and is used on Python>=3.11
-        67599:
-            reason: Disputed issue in pip version 23.3 - No known fix
+            reason: Fixed ansible-core versions are 2.14.14 and 2.16.3, but we support older ansible versions
         70612:
-            reason: Disputed issue in jinja2 version 3.1.3 - No known fix
+            reason: Safety issue and CVE do not list a fixed version of Jinja2
         70895:
-            reason: Fixed ansible-core version 2.15.2 requires Python>=3.9 and is used on Python>=3.12
+            reason: Fixed ansible-core version is 2.15.2, but we support older ansible versions
 
     # Continue with exit code 0 when vulnerabilities are found.
     continue-on-vulnerability-error: False
