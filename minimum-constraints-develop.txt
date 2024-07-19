@@ -42,7 +42,7 @@ rstcheck==3.3.1; python_version <= '3.9'  # ansible <= 2.10 (on minimum package 
 
 # ansible-lint
 ansible-lint==6.14.0; python_version >= '3.10'
-black==22.8.0; python_version >= '3.10'
+black==24.3.0; python_version >= '3.10'
 rich==12.0.0; python_version >= '3.10'
 wcmatch==8.5; python_version >= '3.10'
 ansible-compat==4.1.10; python_version >= '3.10'
@@ -138,7 +138,7 @@ keyring==21.4.0
 more-itertools==5.0.0
 pathlib2==2.2.1
 ply==3.10
-py==1.11.0
+py==1.11.0  # Still required by pytest 6.2.5
 requests-toolbelt==0.8.0
 smmap==3.0.1
 snowballstemmer==2.0.0
