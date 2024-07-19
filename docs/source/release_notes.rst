@@ -53,6 +53,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Bug fixes:**
 
+* Fixed safety issues up to 20024-07-19.
+
 * Sanity test: Fixed the sanity test on AutomationHub which failed because the
   "compile" and "import" tests were run for all target node Python versions,
   which includes Python 2.7. As we had dropped support for Python < 3.8 in
