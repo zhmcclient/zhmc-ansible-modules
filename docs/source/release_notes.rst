@@ -68,6 +68,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Updated collection description in the collection metadata to be in sync with
   the overview description in the README.md file.
 
+* Dev: Cleaned up preparation of sanity test in Makefile.
+
 **Known issues:**
 
 * See `list of open issues`_.
