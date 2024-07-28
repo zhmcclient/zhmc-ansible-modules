@@ -33,6 +33,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Bug fixes:**
 
+* Fixed safety issues up to 20024-07-28.
+
 **Enhancements:**
 
 **Cleanup:**
