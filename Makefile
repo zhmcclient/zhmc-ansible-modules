@@ -375,7 +375,7 @@ else
 	@echo "Makefile: Checking missing dependencies of some development packages"
 	bash -c "cat minimum-constraints-develop.txt minimum-constraints-install.txt >tmp_minimum-constraints.txt"
 	@rc=0; for pkg in $(check_reqs_packages); do dir=$$($(PYTHON_CMD) -c "import $${pkg} as m,os; dm=os.path.dirname(m.__file__); d=dm if not dm.endswith('site-packages') else m.__file__; print(d)"); cmd="pip-missing-reqs $${dir} --requirements-file=tmp_minimum-constraints.txt"; echo $${cmd}; $${cmd}; rc=$$(expr $${rc} + $${?}); done; exit $${rc}
-	-$(call RM_FUNC,tmp_minimum-constraints.txt)
+	rm tmp_minimum-constraints.txt
 	@echo "Makefile: Done checking missing dependencies of some development packages"
 endif
 	@echo "Makefile: $@ done."
@@ -474,28 +474,28 @@ $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/base_$(p
 	echo "done" >$@
 
 $(done_dir)/base_$(pymn)_$(PACKAGE_LEVEL).done: Makefile requirements-base.txt minimum-constraints-develop.txt minimum-constraints-install.txt
-	-$(call RM_FUNC,$@)
-	@echo "Installing/upgrading pip, setuptools and wheel with PACKAGE_LEVEL=$(PACKAGE_LEVEL)"
+	rm -f $@
+	@echo "Makefile: Installing/upgrading pip, setuptools and wheel with PACKAGE_LEVEL=$(PACKAGE_LEVEL)"
 	$(PYTHON_CMD) -m pip install $(pip_level_opts) -r requirements-base.txt
 	echo "done" >$@
 
 $(done_dir)/safety_develop_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_develop_policy_file) minimum-constraints-develop.txt minimum-constraints-install.txt
 	@echo "Makefile: Running Safety for all packages"
-	-$(call RM_FUNC,$@)
+	rm -f $@
 	bash -c "safety check --policy-file $(safety_develop_policy_file) -r minimum-constraints-develop.txt --full-report || test '$(RUN_TYPE)' != 'release' || exit 1"
 	echo "done" >$@
 	@echo "Makefile: Done running Safety"
 
 $(done_dir)/safety_install_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_install_policy_file) minimum-constraints-install.txt
 	@echo "Makefile: Running Safety for install packages"
-	-$(call RM_FUNC,$@)
+	rm -f $@
 	safety check --policy-file $(safety_install_policy_file) -r minimum-constraints-install.txt --full-report
 	echo "done" >$@
 	@echo "Makefile: Done running Safety for install packages"
 
 $(done_dir)/bandit_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile
 	@echo "Makefile: Running Bandit"
-	-$(call RM_FUNC,$@)
+	rm -f $@
 	bandit $(src_py_dir) -r -l
 	echo "done" >$@
 	@echo "Makefile: Done running Bandit"
