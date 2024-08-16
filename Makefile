@@ -144,16 +144,16 @@ safety_develop_policy_file := .safety-policy-develop.yml
 # Packages whose dependencies are checked using pip-missing-reqs
 # ansible_test is checked only on officially supported Python versions
 ifeq ($(python_m_n_version),3.8)
-  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor pylint
+  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor pylint safety bandit
 else ifeq ($(python_m_n_version),3.9)
-  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor ansible_test pylint
+  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor pylint safety bandit ansible_test
 else ifeq ($(python_m_n_version),3.10)
-  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor ansible_test ansiblelint pylint
+  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor pylint safety bandit ansible_test ansiblelint
 else ifeq ($(python_m_n_version),3.11)
-  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor ansible_test ansiblelint pylint
+  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor pylint safety bandit ansible_test ansiblelint
 else
 # sphinx is excluded because pip-missing-reqs 2.5 reports missing sphinx-versions package (rightfully)
-  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 ansible_doc_extractor ansible_test ansiblelint pylint
+  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 ansible_doc_extractor pylint safety bandit ansible_test ansiblelint
 endif
 
 # Directories for documentation
