@@ -35,6 +35,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Fixed safety issues up to 20024-08-16.
 
+* Dev: Fixed removal of some files in the Makefile.
+
 **Enhancements:**
 
 **Cleanup:**
