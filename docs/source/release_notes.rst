@@ -48,6 +48,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   modules of this collection run only on the controller node, so the additional
   Python versions for the target node are no longer used for these sanity tests.
 
+* Dev: Fixed removal of some files in the Makefile.
+
 **Enhancements:**
 
 **Cleanup:**
