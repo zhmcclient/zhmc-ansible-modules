@@ -265,7 +265,32 @@ local clone of the zhmc-ansible-modules Git repo.
         MN=0.8
         BRANCH=stable_${MN}
 
-2.  Create a topic branch for the version that is being released:
+2.  Run the Safety tool:
+
+    .. code-block:: sh
+
+        make safety
+
+    If any of the two safety runs fails, fix the safety issues that are reported,
+    in a separate branch/PR.
+
+    Roll back the PR into any maintained stable branches.
+
+3.  Check for any
+    `dependabot issues <https://github.com/zhmcclient/zhmc-ansible-modules/security/dependabot>`_.
+
+    If there are any dependabot issues, fix them in a separate branch/PR.
+
+    Roll back the PR into any maintained stable branches.
+
+4.  Review the result of the latest Mend scan in
+    `this Box folder <https://ibm.ent.box.com/folder/190964336381?s=070khx70ijj3ime3k4yfx7r7cjb2xx0k>`_.
+
+    If the Mend scan shows any issues, fix them in a separate branch/PR.
+
+    Roll back the PR into any maintained stable branches.
+
+5.  Create a topic branch for the version that is being released:
 
     .. code-block:: sh
 
@@ -273,7 +298,7 @@ local clone of the zhmc-ansible-modules Git repo.
         git pull
         git checkout -b release_${MNU}
 
-3.  Edit the Galaxy metadata file:
+6.  Edit the Galaxy metadata file:
 
     .. code-block:: sh
 
@@ -285,7 +310,7 @@ local clone of the zhmc-ansible-modules Git repo.
 
         version: M.N.U
 
-4.  Edit the change log:
+7.  Edit the change log:
 
     .. code-block:: sh
 
@@ -303,7 +328,7 @@ local clone of the zhmc-ansible-modules Git repo.
       add text for any known issues you want users to know about.
     * Remove all empty list items.
 
-5.  When releasing a new major or minor version, edit the support matrix:
+8.  When releasing a new major or minor version, edit the support matrix:
 
     .. code-block:: sh
 
@@ -316,7 +341,7 @@ local clone of the zhmc-ansible-modules Git repo.
     * Add a new row in the table for the current release (M.N.U), that has
       today's date as the GA date and an empty End of Life cell.
 
-6.  Edit the change log table:
+9.  Edit the change log table:
 
     .. code-block:: sh
 
@@ -328,34 +353,11 @@ local clone of the zhmc-ansible-modules Git repo.
     * When releasing a major or minor version, add a row with the released
       version to the table, and increase the version in development.
 
-7.  Update the authors:
+10. Update the authors:
 
     .. code-block:: sh
 
         make authors
-
-8.  Run the Safety tool:
-
-    .. code-block:: sh
-
-        RUN_TYPE=release make safety
-
-    When releasing a version, the safety run for all dependencies will fail
-    if there are any safety issues reported. In normal and scheduled runs,
-    safety issues reported for all dependencies will be ignored.
-
-    If the safety run fails, you need to fix the safety issues that are
-    reported.
-
-9.  Review the result of the latest Mend scan in
-    `this Box folder <https://ibm.ent.box.com/folder/190964336381?s=070khx70ijj3ime3k4yfx7r7cjb2xx0k>`_.
-
-    If the Mend scan shows any issues, fix them.
-
-10. Check for any
-    `dependabot issues <https://github.com/zhmcclient/zhmc-ansible-modules/security/dependabot>`_.
-
-    If there are any dependebot issues, fix them.
 
 11. Commit your changes and push the topic branch to the remote repo:
 
