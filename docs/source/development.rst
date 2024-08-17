@@ -277,9 +277,9 @@ local clone of the zhmc-ansible-modules Git repo.
     Roll back the PR into any maintained stable branches.
 
 3.  Check for any
-    `dependabot issues <https://github.com/zhmcclient/zhmc-ansible-modules/security/dependabot>`_.
+    `dependabot alerts <https://github.com/zhmcclient/zhmc-ansible-modules/security/dependabot>`_.
 
-    If there are any dependabot issues, fix them in a separate branch/PR.
+    If there are any dependabot alerts, fix them in a separate branch/PR.
 
     Roll back the PR into any maintained stable branches.
 
