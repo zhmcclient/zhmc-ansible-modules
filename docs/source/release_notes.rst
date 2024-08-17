@@ -72,6 +72,15 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Dev: Cleaned up preparation of sanity test in Makefile.
 
+* Dev: Added to the release instructions to roll back fixes for safety issues,
+  dependabot issues and Mend issues, into any maintained stable branches.
+
+* Dev: Relaxed the conditions when safety issues are tolerated:
+  Issues in development dependencies are now tolerated in normal and scheduled
+  test workflow runs (but not in local make runs and release test workflow runs).
+  Issues in installation dependencies are now tolerated in normal test workflow
+  runs (but not in local make runs and scheduled/release test workflow runs).
+
 **Known issues:**
 
 * See `list of open issues`_.
