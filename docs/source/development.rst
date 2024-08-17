@@ -230,7 +230,20 @@ has the remote name ``origin`` in your local clone.
 Any commands in the following steps are executed in the main directory of your
 local clone of the zhmc-ansible-modules Git repo.
 
-1.  Set shell variables for the version that is being released and the branch
+1.  On GitHub, verify open items in milestone ``M.N.U``.
+
+    Verify that milestone ``M.N.U`` has no open issues or PRs anymore. If there
+    are open PRs or open issues, make a decision for each of those whether or
+    not it should go into version ``M.N.U`` you are about to release.
+
+    If there are open issues or PRs that should go into this version, abandon
+    the release process.
+
+    If none of the open issues or PRs should go into this version, change their
+    milestones to a future version, and proceed with the release process. You
+    may need to create the milestone for the future version.
+
+2.  Set shell variables for the version that is being released and the branch
     it is based on:
 
     * ``MNU`` - Full version M.N.U that is being released
@@ -265,7 +278,7 @@ local clone of the zhmc-ansible-modules Git repo.
         MN=0.8
         BRANCH=stable_${MN}
 
-2.  Run the Safety tool:
+3.  Run the Safety tool:
 
     .. code-block:: sh
 
@@ -276,21 +289,21 @@ local clone of the zhmc-ansible-modules Git repo.
 
     Roll back the PR into any maintained stable branches.
 
-3.  Check for any
+4.  Check for any
     `dependabot alerts <https://github.com/zhmcclient/zhmc-ansible-modules/security/dependabot>`_.
 
     If there are any dependabot alerts, fix them in a separate branch/PR.
 
     Roll back the PR into any maintained stable branches.
 
-4.  Review the result of the latest Mend scan in
+5.  Review the result of the latest Mend scan in
     `this Box folder <https://ibm.ent.box.com/folder/190964336381?s=070khx70ijj3ime3k4yfx7r7cjb2xx0k>`_.
 
     If the Mend scan shows any issues, fix them in a separate branch/PR.
 
     Roll back the PR into any maintained stable branches.
 
-5.  Create a topic branch for the version that is being released:
+6.  Create a topic branch for the version that is being released:
 
     .. code-block:: sh
 
@@ -298,7 +311,7 @@ local clone of the zhmc-ansible-modules Git repo.
         git pull
         git checkout -b release_${MNU}
 
-6.  Edit the Galaxy metadata file:
+7.  Edit the Galaxy metadata file:
 
     .. code-block:: sh
 
@@ -310,7 +323,7 @@ local clone of the zhmc-ansible-modules Git repo.
 
         version: M.N.U
 
-7.  Edit the change log:
+8.  Edit the change log:
 
     .. code-block:: sh
 
@@ -328,7 +341,7 @@ local clone of the zhmc-ansible-modules Git repo.
       add text for any known issues you want users to know about.
     * Remove all empty list items.
 
-8.  When releasing a new major or minor version, edit the support matrix:
+9.  When releasing a new major or minor version, edit the support matrix:
 
     .. code-block:: sh
 
@@ -341,7 +354,7 @@ local clone of the zhmc-ansible-modules Git repo.
     * Add a new row in the table for the current release (M.N.U), that has
       today's date as the GA date and an empty End of Life cell.
 
-9.  Edit the change log table:
+10. Edit the change log table:
 
     .. code-block:: sh
 
@@ -353,20 +366,20 @@ local clone of the zhmc-ansible-modules Git repo.
     * When releasing a major or minor version, add a row with the released
       version to the table, and increase the version in development.
 
-10. Update the authors:
+11. Update the authors:
 
     .. code-block:: sh
 
         make authors
 
-11. Commit your changes and push the topic branch to the remote repo:
+12. Commit your changes and push the topic branch to the remote repo:
 
     .. code-block:: sh
 
         git commit -asm "Release ${MNU}"
         git push --set-upstream origin release_${MNU}
 
-12. On GitHub, create a Pull Request for branch ``release_M.N.U``.
+13. On GitHub, create a Pull Request for branch ``release_M.N.U``.
 
     Important: When creating Pull Requests, GitHub by default targets the
     ``master`` branch. When releasing based on a stable branch, you need to
@@ -376,16 +389,16 @@ local clone of the zhmc-ansible-modules Git repo.
     tests for all defined environments, since it discovers by the branch name
     that this is a PR for a release.
 
-13. On GitHub, once the checks for that Pull Request have succeeded, merge the
+14. On GitHub, once the checks for that Pull Request have succeeded, merge the
     Pull Request (no review is needed). This automatically deletes the branch
     on GitHub.
 
     If the PR did not succeed, fix the issues.
 
-14. On GitHub, close milestone ``M.N.U``.
+15. On GitHub, close milestone ``M.N.U``.
 
     Verify that the milestone has no open items anymore. If it does have open
-    items, investigate why and fix.
+    items, investigate why and fix (probably step 1 was not performed).
 
 15. Publish the collection to Ansible Galaxy
 
