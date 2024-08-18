@@ -5,6 +5,6 @@
 # Base dependencies (must be consistent with minimum-constraints-install.txt)
 
 pip>=23.3
-setuptools>=66.1.0
+setuptools>=70.0.0
 setuptools-scm[toml]>=6.4.0
 wheel>=0.38.1
