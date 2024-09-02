@@ -53,35 +53,35 @@ hmc_auth
 
 
   userid
-    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`hmc\_auth.session\_id`\ .
+    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing :literal:`hmc\_auth.session\_id`.
 
     | **required**: False
     | **type**: str
 
 
   password
-    The password for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`hmc\_auth.session\_id`\ .
+    The password for authenticating with the HMC. This is mutually exclusive with providing :literal:`hmc\_auth.session\_id`.
 
     | **required**: False
     | **type**: str
 
 
   session_id
-    HMC session ID to be used. This is mutually exclusive with providing \ :literal:`hmc\_auth.userid`\  and \ :literal:`hmc\_auth.password`\  and can be created as described in the \ :ref:`zhmc\_session module <zhmc_session_module>`\ .
+    HMC session ID to be used. This is mutually exclusive with providing :literal:`hmc\_auth.userid` and :literal:`hmc\_auth.password` and can be created as described in the :ref:`zhmc\_session module <zhmc_session_module>`.
 
     | **required**: False
     | **type**: str
 
 
   ca_certs
-    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the \ :envvar:`REQUESTS\_CA\_BUNDLE`\  environment variable or the path name in the \ :envvar:`CURL\_CA\_BUNDLE`\  environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
+    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the :envvar:`REQUESTS\_CA\_BUNDLE` environment variable or the path name in the :envvar:`CURL\_CA\_BUNDLE` environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
 
     | **required**: False
     | **type**: str
 
 
   verify
-    If True (default), verify the HMC certificate as specified in the \ :literal:`hmc\_auth.ca\_certs`\  parameter. If False, ignore what is specified in the \ :literal:`hmc\_auth.ca\_certs`\  parameter and do not verify the HMC certificate.
+    If True (default), verify the HMC certificate as specified in the :literal:`hmc\_auth.ca\_certs` parameter. If False, ignore what is specified in the :literal:`hmc\_auth.ca\_certs` parameter and do not verify the HMC certificate.
 
     | **required**: False
     | **type**: bool
@@ -99,15 +99,15 @@ name
 state
   The desired state for the CPC. All states are fully idempotent within the limits of the properties that can be changed:
 
-  \* \ :literal:`inactive`\ : Ensures the CPC is inactive.
+  \* :literal:`inactive`\ : Ensures the CPC is inactive.
 
-  \* \ :literal:`active`\ : Ensures the CPC is active and then ensures that the CPC has the specified properties. The operational mode of the CPC cannot be changed.
+  \* :literal:`active`\ : Ensures the CPC is active and then ensures that the CPC has the specified properties. The operational mode of the CPC cannot be changed.
 
-  \* \ :literal:`set`\ : Ensures that the CPC has the specified properties.
+  \* :literal:`set`\ : Ensures that the CPC has the specified properties.
 
-  \* \ :literal:`facts`\ : Returns the CPC properties including its child resources.
+  \* :literal:`facts`\ : Returns the CPC properties including its child resources.
 
-  \* \ :literal:`upgrade`\ : Upgrades the firmware of the SE of the CPC and returns the new facts after the upgrade. If the SE firmware is already at the requested bundle level, nothing is changed and the module succeeds.
+  \* :literal:`upgrade`\ : Upgrades the firmware of the SE of the CPC and returns the new facts after the upgrade. If the SE firmware is already at the requested bundle level, nothing is changed and the module succeeds.
 
   | **required**: True
   | **type**: str
@@ -115,13 +115,13 @@ state
 
 
 select_properties
-  Limits the returned properties of the CPC to those specified in this parameter plus those specified in the \ :literal:`properties`\  parameter.
+  Limits the returned properties of the CPC to those specified in this parameter plus those specified in the :literal:`properties` parameter.
 
   The properties can be specified with underscores or hyphens in their names.
 
   Null indicates not to limit the returned properties in this way.
 
-  This parameter is ignored for \ :literal:`state`\  values that cause no properties to be returned.
+  This parameter is ignored for :literal:`state` values that cause no properties to be returned.
 
   The returned child resources (adapters, partitions, storage groups) cannot be excluded using this parameter.
 
@@ -133,18 +133,18 @@ select_properties
 
 
 activation_profile_name
-  The name of the reset activation profile to be used when activating the CPC in the classic operational mode, for \ :literal:`state=active`\ . This parameter is ignored when the CPC is in classic mode and was already active, and when the CPC is in DPM mode.
+  The name of the reset activation profile to be used when activating the CPC in the classic operational mode, for :literal:`state=active`. This parameter is ignored when the CPC is in classic mode and was already active, and when the CPC is in DPM mode.
 
   Default: The reset activation profile specified in the 'next-activation-profile-name' property of the CPC.
 
-  This parameter is not allowed for the other \ :literal:`state`\  values.
+  This parameter is not allowed for the other :literal:`state` values.
 
   | **required**: False
   | **type**: str
 
 
 properties
-  Only for \ :literal:`state=set`\  and \ :literal:`state=active`\ : New values for the properties of the CPC. Properties omitted in this dictionary will remain unchanged. This parameter will be ignored for other \ :literal:`state`\  values.
+  Only for :literal:`state=set` and :literal:`state=active`\ : New values for the properties of the CPC. Properties omitted in this dictionary will remain unchanged. This parameter will be ignored for other :literal:`state` values.
 
   The parameter is a dictionary. The key of each dictionary item is the property name as specified in the data model for CPC resources, with underscores instead of hyphens. The value of each dictionary item is the property value (in YAML syntax). Integer properties may also be provided as decimal strings.
 
@@ -155,9 +155,9 @@ properties
 
 
 bundle_level
-  Name of the bundle to be installed on the SE of the CPC (e.g. \ :literal:`S71`\ )
+  Name of the bundle to be installed on the SE of the CPC (e.g. :literal:`S71`\ )
 
-  Required for \ :literal:`state=upgrade`\ 
+  Required for :literal:`state=upgrade`
 
   | **required**: False
   | **type**: str
@@ -174,7 +174,7 @@ upgrade_timeout
 accept_firmware
   Accept the previous bundle level before installing the new level.
 
-  Optional for \ :literal:`state=upgrade`\ , default: True
+  Optional for :literal:`state=upgrade`\ , default: True
 
   | **required**: False
   | **type**: bool
@@ -258,7 +258,7 @@ Return Values
 
 
 changed
-  Indicates if any change has been made by the module. For \ :literal:`state=facts`\ , always will be false.
+  Indicates if any change has been made by the module. For :literal:`state=facts`\ , always will be false.
 
   | **returned**: always
   | **type**: bool
@@ -270,9 +270,9 @@ msg
   | **type**: str
 
 cpc
-  For \ :literal:`state=inactive`\ , an empty dictionary.
+  For :literal:`state=inactive`\ , an empty dictionary.
 
-  For \ :literal:`state=active|set|facts|upgrade`\ , the resource properties of the CPC after after any specified updates have been applied, and its adapters, partitions, and storage groups.
+  For :literal:`state=active|set|facts|upgrade`\ , the resource properties of the CPC after after any specified updates have been applied, and its adapters, partitions, and storage groups.
 
   | **returned**: success
   | **type**: dict
@@ -339,12 +339,12 @@ cpc
     | **type**: str
 
   {property}
-    Additional properties of the CPC, as described in the data model of the 'CPC' object in the \ :ref:`HMC API <HMC API>`\  book. The property names have hyphens (-) as described in that book.
+    Additional properties of the CPC, as described in the data model of the 'CPC' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
 
     | **type**: raw
 
   adapters
-    The adapters of the CPC, with a subset of their properties. For details, see the \ :ref:`HMC API <HMC API>`\  book.
+    The adapters of the CPC, with a subset of their properties. For details, see the :ref:`HMC API <HMC API>` book.
 
     | **type**: list
     | **elements**: dict
@@ -381,7 +381,7 @@ cpc
 
 
   partitions
-    The defined partitions of the CPC, with a subset of their properties. For details, see the \ :ref:`HMC API <HMC API>`\  book.
+    The defined partitions of the CPC, with a subset of their properties. For details, see the :ref:`HMC API <HMC API>` book.
 
     | **type**: list
     | **elements**: dict
@@ -408,7 +408,7 @@ cpc
 
 
   storage-groups
-    The storage groups associated with the CPC, with a subset of their properties. For details, see the \ :ref:`HMC API <HMC API>`\  book.
+    The storage groups associated with the CPC, with a subset of their properties. For details, see the :ref:`HMC API <HMC API>` book.
 
     | **type**: list
     | **elements**: dict
