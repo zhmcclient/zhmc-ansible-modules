@@ -23,8 +23,8 @@ Synopsis
 Requirements
 ------------
 
-- For \ :literal:`state=facts`\ , no specific task or object-access permissions are required.
-- For \ :literal:`state=upgrade`\ , task permission to the 'Single Step Console Internal Code' task is required.
+- For :literal:`state=facts`\ , no specific task or object-access permissions are required.
+- For :literal:`state=upgrade`\ , task permission to the 'Single Step Console Internal Code' task is required.
 
 
 
@@ -50,35 +50,35 @@ hmc_auth
 
 
   userid
-    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`hmc\_auth.session\_id`\ .
+    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing :literal:`hmc\_auth.session\_id`.
 
     | **required**: False
     | **type**: str
 
 
   password
-    The password for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`hmc\_auth.session\_id`\ .
+    The password for authenticating with the HMC. This is mutually exclusive with providing :literal:`hmc\_auth.session\_id`.
 
     | **required**: False
     | **type**: str
 
 
   session_id
-    HMC session ID to be used. This is mutually exclusive with providing \ :literal:`hmc\_auth.userid`\  and \ :literal:`hmc\_auth.password`\  and can be created as described in the \ :ref:`zhmc\_session module <zhmc_session_module>`\ .
+    HMC session ID to be used. This is mutually exclusive with providing :literal:`hmc\_auth.userid` and :literal:`hmc\_auth.password` and can be created as described in the :ref:`zhmc\_session module <zhmc_session_module>`.
 
     | **required**: False
     | **type**: str
 
 
   ca_certs
-    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the \ :envvar:`REQUESTS\_CA\_BUNDLE`\  environment variable or the path name in the \ :envvar:`CURL\_CA\_BUNDLE`\  environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
+    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the :envvar:`REQUESTS\_CA\_BUNDLE` environment variable or the path name in the :envvar:`CURL\_CA\_BUNDLE` environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
 
     | **required**: False
     | **type**: str
 
 
   verify
-    If True (default), verify the HMC certificate as specified in the \ :literal:`hmc\_auth.ca\_certs`\  parameter. If False, ignore what is specified in the \ :literal:`hmc\_auth.ca\_certs`\  parameter and do not verify the HMC certificate.
+    If True (default), verify the HMC certificate as specified in the :literal:`hmc\_auth.ca\_certs` parameter. If False, ignore what is specified in the :literal:`hmc\_auth.ca\_certs` parameter and do not verify the HMC certificate.
 
     | **required**: False
     | **type**: bool
@@ -89,9 +89,9 @@ hmc_auth
 state
   The action to be performed on the HMC:
 
-  \* \ :literal:`facts`\ : Returns facts about the HMC.
+  \* :literal:`facts`\ : Returns facts about the HMC.
 
-  \* \ :literal:`upgrade`\ : Upgrades the firmware of the HMC and returns the new facts after the upgrade. If the HMC firmware is already at the requested bundle level, nothing is changed and the module succeeds.
+  \* :literal:`upgrade`\ : Upgrades the firmware of the HMC and returns the new facts after the upgrade. If the HMC firmware is already at the requested bundle level, nothing is changed and the module succeeds.
 
   | **required**: True
   | **type**: str
@@ -99,9 +99,9 @@ state
 
 
 bundle_level
-  Name of the bundle to be installed on the HMC (e.g. \ :literal:`H71`\ )
+  Name of the bundle to be installed on the HMC (e.g. :literal:`H71`\ )
 
-  Required for \ :literal:`state=upgrade`\ 
+  Required for :literal:`state=upgrade`
 
   | **required**: False
   | **type**: str
@@ -118,11 +118,11 @@ upgrade_timeout
 backup_location_type
   Type of backup location for the HMC backup that is performed:
 
-  \* \ :literal:`ftp`\ : The FTP server that was used for the last console backup as defined on the 'Configure Backup Settings' user interface task in the HMC GUI.
+  \* :literal:`ftp`\ : The FTP server that was used for the last console backup as defined on the 'Configure Backup Settings' user interface task in the HMC GUI.
 
-  \* \ :literal:`usb`\ : The USB storage device mounted to the HMC.
+  \* :literal:`usb`\ : The USB storage device mounted to the HMC.
 
-  Optional for \ :literal:`state=upgrade`\ , default: \ :literal:`usb`\ 
+  Optional for :literal:`state=upgrade`\ , default: :literal:`usb`
 
   | **required**: False
   | **type**: str
@@ -133,7 +133,7 @@ backup_location_type
 accept_firmware
   Accept the previous bundle level before installing the new level.
 
-  Optional for \ :literal:`state=upgrade`\ , default: True
+  Optional for :literal:`state=upgrade`\ , default: True
 
   | **required**: False
   | **type**: bool
@@ -188,7 +188,7 @@ Return Values
 
 
 changed
-  Indicates if any change has been made by the module. For \ :literal:`state=facts`\ , always will be false.
+  Indicates if any change has been made by the module. For :literal:`state=facts`\ , always will be false.
 
   | **returned**: always
   | **type**: bool
@@ -222,7 +222,7 @@ hmc
     | **type**: str
 
   {property}
-    Additional properties of the Console object representing the targeted HMC, as described in the data model of the 'Console' object in the \ :ref:`HMC API <HMC API>`\  book. Note that the set of properties has been extended over the past HMC versions, so you will get less properties on older HMC versions. The property names have hyphens (-) as described in that book.
+    Additional properties of the Console object representing the targeted HMC, as described in the data model of the 'Console' object in the :ref:`HMC API <HMC API>` book. Note that the set of properties has been extended over the past HMC versions, so you will get less properties on older HMC versions. The property names have hyphens (-) as described in that book.
 
     | **type**: raw
 
@@ -232,7 +232,7 @@ hmc
     | **type**: dict
 
     {property}
-      The properties returned from the 'Query API Version' operation, as described in the \ :ref:`HMC API <HMC API>`\  book. Note that the set of properties has been extended over the past HMC versions, so you will get less properties on older HMC versions. The property names have hyphens (-) as described in that book.
+      The properties returned from the 'Query API Version' operation, as described in the :ref:`HMC API <HMC API>` book. Note that the set of properties has been extended over the past HMC versions, so you will get less properties on older HMC versions. The property names have hyphens (-) as described in that book.
 
       | **type**: raw
 

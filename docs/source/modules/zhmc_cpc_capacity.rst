@@ -18,7 +18,7 @@ Synopsis
 --------
 - Gather facts about the processor capacity of a CPC (Z system).
 - Update the processor capacity of a CPC (Z system) via adding or removing temporary capacity (On/Off CoD).
-- For details on processor capacity on demand, see the \ :ref:`Capacity on Demand User's Guide <CoD Users Guide>`\ .
+- For details on processor capacity on demand, see the :ref:`Capacity on Demand User's Guide <CoD Users Guide>`.
 
 
 Requirements
@@ -52,35 +52,35 @@ hmc_auth
 
 
   userid
-    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`hmc\_auth.session\_id`\ .
+    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing :literal:`hmc\_auth.session\_id`.
 
     | **required**: False
     | **type**: str
 
 
   password
-    The password for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`hmc\_auth.session\_id`\ .
+    The password for authenticating with the HMC. This is mutually exclusive with providing :literal:`hmc\_auth.session\_id`.
 
     | **required**: False
     | **type**: str
 
 
   session_id
-    HMC session ID to be used. This is mutually exclusive with providing \ :literal:`hmc\_auth.userid`\  and \ :literal:`hmc\_auth.password`\  and can be created as described in the \ :ref:`zhmc\_session module <zhmc_session_module>`\ .
+    HMC session ID to be used. This is mutually exclusive with providing :literal:`hmc\_auth.userid` and :literal:`hmc\_auth.password` and can be created as described in the :ref:`zhmc\_session module <zhmc_session_module>`.
 
     | **required**: False
     | **type**: str
 
 
   ca_certs
-    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the \ :envvar:`REQUESTS\_CA\_BUNDLE`\  environment variable or the path name in the \ :envvar:`CURL\_CA\_BUNDLE`\  environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
+    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the :envvar:`REQUESTS\_CA\_BUNDLE` environment variable or the path name in the :envvar:`CURL\_CA\_BUNDLE` environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
 
     | **required**: False
     | **type**: str
 
 
   verify
-    If True (default), verify the HMC certificate as specified in the \ :literal:`hmc\_auth.ca\_certs`\  parameter. If False, ignore what is specified in the \ :literal:`hmc\_auth.ca\_certs`\  parameter and do not verify the HMC certificate.
+    If True (default), verify the HMC certificate as specified in the :literal:`hmc\_auth.ca\_certs` parameter. If False, ignore what is specified in the :literal:`hmc\_auth.ca\_certs` parameter and do not verify the HMC certificate.
 
     | **required**: False
     | **type**: bool
@@ -98,9 +98,9 @@ name
 state
   The desired state for the operation:
 
-  \* \ :literal:`set`\ : Ensures that the CPC has the specified specialty processor capacity and the specified software model, and returns the resulting processor capacity of the CPC.
+  \* :literal:`set`\ : Ensures that the CPC has the specified specialty processor capacity and the specified software model, and returns the resulting processor capacity of the CPC.
 
-  \* \ :literal:`facts`\ : Does not change anything on the CPC and returns the current processor capacity of the CPC.
+  \* :literal:`facts`\ : Does not change anything on the CPC and returns the current processor capacity of the CPC.
 
   | **required**: True
   | **type**: str
@@ -110,7 +110,7 @@ state
 record_id
   The ID of the capacity record to be used for any updates of the processor capacity.
 
-  Required for \ :literal:`state=set`\ .
+  Required for :literal:`state=set`.
 
   | **required**: False
   | **type**: str
@@ -126,13 +126,13 @@ software_model
 
 
 software_model_direction
-  Indicates the direction of the capacity change for general purpose processors in \ :literal:`software\_model`\ , relative to the current software model:
+  Indicates the direction of the capacity change for general purpose processors in :literal:`software\_model`\ , relative to the current software model:
 
-  \* \ :literal:`increase`\ : The specified software model defines more general purpose processors than the current software model.
+  \* :literal:`increase`\ : The specified software model defines more general purpose processors than the current software model.
 
-  \* \ :literal:`decrease`\ : The specified software model defines less general purpose processors than the current software model.
+  \* :literal:`decrease`\ : The specified software model defines less general purpose processors than the current software model.
 
-  Ignored when \ :literal:`software\_model`\  is null, not provided, or specifies the current software model. Otherwise required.
+  Ignored when :literal:`software\_model` is null, not provided, or specifies the current software model. Otherwise required.
 
   | **required**: False
   | **type**: str
@@ -140,13 +140,13 @@ software_model_direction
 
 
 specialty_processors
-  The target number of specialty processors to be active. Processor types not provided will not be changed. Target numbers of general purpose processors can be set via the \ :literal:`software\_model`\  parameter.
+  The target number of specialty processors to be active. Processor types not provided will not be changed. Target numbers of general purpose processors can be set via the :literal:`software\_model` parameter.
 
-  Each item in the dictionary identifies the target number of processors of one type of specialty processor. The key identifies the type of specialty processor (\ :literal:`icf`\ , \ :literal:`ifl`\ , \ :literal:`iip`\ , \ :literal:`sap`\ ), and the value is the target number of processors of that type. Note that the target number is the number of permanently activated processors plus the number of temporarily activated processors.
+  Each item in the dictionary identifies the target number of processors of one type of specialty processor. The key identifies the type of specialty processor (\ :literal:`icf`\ , :literal:`ifl`\ , :literal:`iip`\ , :literal:`sap`\ ), and the value is the target number of processors of that type. Note that the target number is the number of permanently activated processors plus the number of temporarily activated processors.
 
   The target number for each processor type may be larger, equal or lower than the current number, but it must not be lower than the number of permanent processors of that type.
 
-  If the target number of processors is not installed in the CPC, the \ :literal:`force`\  parameter controls what happens.
+  If the target number of processors is not installed in the CPC, the :literal:`force` parameter controls what happens.
 
   If null, empty or not provided, the specialty processor capacity will remain unchanged.
 
@@ -155,7 +155,7 @@ specialty_processors
 
 
 test_activation
-  Indicates that test resources instead of real resources from the capacity record should be activated. Test resources are automatically deactivated after 24h. This is mainly used for Capacity Backup Upgrade (CBU) test activations. For details, see the \ :ref:`Capacity on Demand User's Guide <CoD Users Guide>`\ .
+  Indicates that test resources instead of real resources from the capacity record should be activated. Test resources are automatically deactivated after 24h. This is mainly used for Capacity Backup Upgrade (CBU) test activations. For details, see the :ref:`Capacity on Demand User's Guide <CoD Users Guide>`.
 
   | **required**: False
   | **type**: bool
@@ -229,7 +229,7 @@ Return Values
 
 
 changed
-  Indicates if any change has been made by the module. For \ :literal:`state=facts`\ , always will be false.
+  Indicates if any change has been made by the module. For :literal:`state=facts`\ , always will be false.
 
   | **returned**: always
   | **type**: bool
