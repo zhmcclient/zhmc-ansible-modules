@@ -51,35 +51,35 @@ hmc_auth
 
 
   userid
-    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`hmc\_auth.session\_id`\ .
+    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing :literal:`hmc\_auth.session\_id`.
 
     | **required**: False
     | **type**: str
 
 
   password
-    The password for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`hmc\_auth.session\_id`\ .
+    The password for authenticating with the HMC. This is mutually exclusive with providing :literal:`hmc\_auth.session\_id`.
 
     | **required**: False
     | **type**: str
 
 
   session_id
-    HMC session ID to be used. This is mutually exclusive with providing \ :literal:`hmc\_auth.userid`\  and \ :literal:`hmc\_auth.password`\  and can be created as described in the \ :ref:`zhmc\_session module <zhmc_session_module>`\ .
+    HMC session ID to be used. This is mutually exclusive with providing :literal:`hmc\_auth.userid` and :literal:`hmc\_auth.password` and can be created as described in the :ref:`zhmc\_session module <zhmc_session_module>`.
 
     | **required**: False
     | **type**: str
 
 
   ca_certs
-    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the \ :envvar:`REQUESTS\_CA\_BUNDLE`\  environment variable or the path name in the \ :envvar:`CURL\_CA\_BUNDLE`\  environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
+    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the :envvar:`REQUESTS\_CA\_BUNDLE` environment variable or the path name in the :envvar:`CURL\_CA\_BUNDLE` environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
 
     | **required**: False
     | **type**: str
 
 
   verify
-    If True (default), verify the HMC certificate as specified in the \ :literal:`hmc\_auth.ca\_certs`\  parameter. If False, ignore what is specified in the \ :literal:`hmc\_auth.ca\_certs`\  parameter and do not verify the HMC certificate.
+    If True (default), verify the HMC certificate as specified in the :literal:`hmc\_auth.ca\_certs` parameter. If False, ignore what is specified in the :literal:`hmc\_auth.ca\_certs` parameter and do not verify the HMC certificate.
 
     | **required**: False
     | **type**: bool
@@ -99,7 +99,7 @@ cpc_name
 additional_properties
   List of additional properties to be returned for each LPAR, in addition to the default properties (see result description).
 
-  Mutually exclusive with \ :literal:`full\_properties`\ .
+  Mutually exclusive with :literal:`full\_properties`.
 
   The property names are specified with underscores instead of hyphens.
 
@@ -113,9 +113,9 @@ additional_properties
 full_properties
   If True, all properties of each LPAR will be returned. Default: False.
 
-  Mutually exclusive with \ :literal:`additional\_properties`\ .
+  Mutually exclusive with :literal:`additional\_properties`.
 
-  Note: Setting this to True causes a loop of 'Get Logical Partition Properties' operations to be executed. It is preferable from a performance perspective to use the \ :literal:`additional\_properties`\  parameter instead.
+  Note: Setting this to True causes a loop of 'Get Logical Partition Properties' operations to be executed. It is preferable from a performance perspective to use the :literal:`additional\_properties` parameter instead.
 
   | **required**: False
   | **type**: bool
@@ -214,7 +214,7 @@ lpars
     | **type**: str
 
   status
-    The current status of the LPAR. For details, see the description of the 'status' property in the data model of the 'Logical Partition' resource (see \ :ref:`HMC API <HMC API>`\ ).
+    The current status of the LPAR. For details, see the description of the 'status' property in the data model of the 'Logical Partition' resource (see :ref:`HMC API <HMC API>`\ ).
 
     | **type**: str
 
@@ -224,12 +224,12 @@ lpars
     | **type**: bool
 
   activation_mode
-    The activation mode of the LPAR. For details, see the description of the 'activation-mode' property in the data model of the 'Logical Partition' resource (see \ :ref:`HMC API <HMC API>`\ ).
+    The activation mode of the LPAR. For details, see the description of the 'activation-mode' property in the data model of the 'Logical Partition' resource (see :ref:`HMC API <HMC API>`\ ).
 
     | **type**: str
 
   {additional_property}
-    Additional properties requested via \ :literal:`full\_properties`\  or \ :literal:`additional\_properties`\ . The property names will have underscores instead of hyphens.
+    Additional properties requested via :literal:`full\_properties` or :literal:`additional\_properties`. The property names will have underscores instead of hyphens.
 
     | **type**: raw
 

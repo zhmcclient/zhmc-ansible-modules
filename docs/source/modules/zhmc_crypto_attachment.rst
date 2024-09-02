@@ -52,35 +52,35 @@ hmc_auth
 
 
   userid
-    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`hmc\_auth.session\_id`\ .
+    The userid (username) for authenticating with the HMC. This is mutually exclusive with providing :literal:`hmc\_auth.session\_id`.
 
     | **required**: False
     | **type**: str
 
 
   password
-    The password for authenticating with the HMC. This is mutually exclusive with providing \ :literal:`hmc\_auth.session\_id`\ .
+    The password for authenticating with the HMC. This is mutually exclusive with providing :literal:`hmc\_auth.session\_id`.
 
     | **required**: False
     | **type**: str
 
 
   session_id
-    HMC session ID to be used. This is mutually exclusive with providing \ :literal:`hmc\_auth.userid`\  and \ :literal:`hmc\_auth.password`\  and can be created as described in the \ :ref:`zhmc\_session module <zhmc_session_module>`\ .
+    HMC session ID to be used. This is mutually exclusive with providing :literal:`hmc\_auth.userid` and :literal:`hmc\_auth.password` and can be created as described in the :ref:`zhmc\_session module <zhmc_session_module>`.
 
     | **required**: False
     | **type**: str
 
 
   ca_certs
-    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the \ :envvar:`REQUESTS\_CA\_BUNDLE`\  environment variable or the path name in the \ :envvar:`CURL\_CA\_BUNDLE`\  environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
+    Path name of certificate file or certificate directory to be used for verifying the HMC certificate. If null (default), the path name in the :envvar:`REQUESTS\_CA\_BUNDLE` environment variable or the path name in the :envvar:`CURL\_CA\_BUNDLE` environment variable is used, or if neither of these variables is set, the certificates in the Mozilla CA Certificate List provided by the 'certifi' Python package are used for verifying the HMC certificate.
 
     | **required**: False
     | **type**: str
 
 
   verify
-    If True (default), verify the HMC certificate as specified in the \ :literal:`hmc\_auth.ca\_certs`\  parameter. If False, ignore what is specified in the \ :literal:`hmc\_auth.ca\_certs`\  parameter and do not verify the HMC certificate.
+    If True (default), verify the HMC certificate as specified in the :literal:`hmc\_auth.ca\_certs` parameter. If False, ignore what is specified in the :literal:`hmc\_auth.ca\_certs` parameter and do not verify the HMC certificate.
 
     | **required**: False
     | **type**: bool
@@ -105,11 +105,11 @@ partition_name
 state
   The desired state for the crypto attachment. All states are fully idempotent within the limits of the properties that can be changed:
 
-  \* \ :literal:`attached`\ : Ensures that the specified number of crypto adapters of the specified crypto type, and the specified range of domain index numbers in the specified access mode are attached to the partition.
+  \* :literal:`attached`\ : Ensures that the specified number of crypto adapters of the specified crypto type, and the specified range of domain index numbers in the specified access mode are attached to the partition.
 
-  \* \ :literal:`detached`\ : Ensures that no crypto adapter and no crypto domains are attached to the partition.
+  \* :literal:`detached`\ : Ensures that no crypto adapter and no crypto domains are attached to the partition.
 
-  \* \ :literal:`facts`\ : Returns the crypto configuration of the partition.
+  \* :literal:`facts`\ : Returns the crypto configuration of the partition.
 
   | **required**: True
   | **type**: str
@@ -117,14 +117,14 @@ state
 
 
 adapter_count
-  Only for \ :literal:`state=attached`\ : The number of crypto adapters the partition needs to have attached. The special value -1 means all adapters of the desired crypto type in the CPC. The \ :literal:`adapter\_names`\  and \ :literal:`adapter\_count`\  parameters are mutually exclusive and one of them must be specified.
+  Only for :literal:`state=attached`\ : The number of crypto adapters the partition needs to have attached. The special value -1 means all adapters of the desired crypto type in the CPC. The :literal:`adapter\_names` and :literal:`adapter\_count` parameters are mutually exclusive and one of them must be specified.
 
   | **required**: False
   | **type**: int
 
 
 crypto_type
-  Only for \ :literal:`state=attached`\ : The crypto type of the crypto adapters that will be selected from when \ :literal:`adapter\_count`\  is specified. Ignored when \ :literal:`adapter\_names`\  is specified.
+  Only for :literal:`state=attached`\ : The crypto type of the crypto adapters that will be selected from when :literal:`adapter\_count` is specified. Ignored when :literal:`adapter\_names` is specified.
 
   | **required**: False
   | **type**: str
@@ -133,7 +133,7 @@ crypto_type
 
 
 adapter_names
-  Only for \ :literal:`state=attached`\ : The names of the crypto adapters the partition needs to have attached. The \ :literal:`adapter\_names`\  and \ :literal:`adapter\_count`\  parameters are mutually exclusive and one of them must be specified.
+  Only for :literal:`state=attached`\ : The names of the crypto adapters the partition needs to have attached. The :literal:`adapter\_names` and :literal:`adapter\_count` parameters are mutually exclusive and one of them must be specified.
 
   | **required**: False
   | **type**: list
@@ -141,7 +141,7 @@ adapter_names
 
 
 domain_range
-  Only for \ :literal:`state=attached`\ : The domain range the partition needs to have attached, as a tuple of integers (min, max) that specify the inclusive range of domain index numbers. Other domains attached to the partition remain unchanged. The special value -1 for the max item means the maximum supported domain index number.
+  Only for :literal:`state=attached`\ : The domain range the partition needs to have attached, as a tuple of integers (min, max) that specify the inclusive range of domain index numbers. Other domains attached to the partition remain unchanged. The special value -1 for the max item means the maximum supported domain index number.
 
   | **required**: False
   | **type**: list
@@ -150,7 +150,7 @@ domain_range
 
 
 access_mode
-  Only for \ :literal:`state=attached`\ : The access mode in which the crypto domains specified in \ :literal:`domain\_range`\  need to be attached.
+  Only for :literal:`state=attached`\ : The access mode in which the crypto domains specified in :literal:`domain\_range` need to be attached.
 
   | **required**: False
   | **type**: str
@@ -246,7 +246,7 @@ Return Values
 
 
 changed
-  Indicates if any change has been made by the module. For \ :literal:`state=facts`\ , always will be false.
+  Indicates if any change has been made by the module. For :literal:`state=facts`\ , always will be false.
 
   | **returned**: always
   | **type**: bool
@@ -342,7 +342,7 @@ crypto_configuration
           | **type**: str
 
         {property}
-          Additional properties of the adapter, as described in the data model of the 'Adapter' object in the \ :ref:`HMC API <HMC API>`\  book. The property names have hyphens (-) as described in that book.
+          Additional properties of the adapter, as described in the data model of the 'Adapter' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
 
           | **type**: raw
 
