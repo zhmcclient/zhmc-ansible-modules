@@ -70,6 +70,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   modules of this collection run only on the controller node, so the additional
   Python versions for the target node are no longer used for these sanity tests.
 
+* Dev: Fixed new issue 'too-many-positional-arguments' reported by Pylint 3.3.0.
+
 **Cleanup:**
 
 * Removed the unnecessary .pylintrc file from the distribution archive of the
