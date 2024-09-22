@@ -50,6 +50,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Dev: Fixed removal of some files in the Makefile.
 
+* Dev: Fixed new issue 'too-many-positional-arguments' reported by Pylint 3.3.0.
+
 **Enhancements:**
 
 **Cleanup:**
