@@ -37,6 +37,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Fixed safety issues up to 20024-08-18.
 
+* Increased zhmcclient version to 1.18.0 to pick up fixes. (issue #1074)
+
 * Sanity test: Fixed the sanity test on AutomationHub which failed because the
   "compile" and "import" tests were run for all target node Python versions,
   which includes Python 2.7. As we had dropped support for Python < 3.8 in
