@@ -42,6 +42,8 @@ security:
             reason: Safety issue and CVE do not list a fixed version of Jinja2
         70895:
             reason: Fixed ansible-core version is 2.15.2, but we support older ansible versions
+        73302:
+            reason: Advice to use no_log when reading sensitive variables - not related to any fixes
 
     # Continue with exit code 0 when vulnerabilities are found.
     continue-on-vulnerability-error: False
