@@ -39,6 +39,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Enhancements:**
 
+* Support for ansible-core 2.18, by adding an ignore file for the sanity tests.
+
 **Cleanup:**
 
 **Known issues:**
