@@ -26,6 +26,7 @@ import platform
 import sys
 import re
 from collections.abc import Mapping
+from copy import deepcopy
 
 try:
     from zhmcclient import Session, ClientAuthError
@@ -1408,3 +1409,29 @@ class NotificationThread(threading.Thread):
         The timeout is an int or float in seconds.
         """
         return self._ready_event.wait(timeout)
+
+
+def params_deepcopy(params):
+    """
+    Return a deep copy of the module input parameters, for dict items where
+    a deep copy is possible.
+
+    For items where a deep copy is not possible, it keeps the original value.
+
+    Reason for this function (instead of simply using `copy.deepcopy()`) is
+    the fact that in this collection, the module input params may contain
+    an optional '_faked_session' item with a value that cannot be copied.
+
+    Parameters:
+      params (dict): Module input parameters.
+
+    Returns:
+      dict: Deep copy of params, where possible.
+    """
+    copy_params = {}
+    for key, value in params.items():
+        try:
+            copy_params[key] = deepcopy(value)
+        except TypeError:
+            copy_params[key] = value
+    return copy_params

@@ -380,7 +380,8 @@ from ansible.module_utils.basic import AnsibleModule  # noqa: E402
 from ..module_utils.common import log_init, open_session, close_session, \
     hmc_auth_parameter, Error, ParameterError, to_unicode, \
     process_normal_property, missing_required_lib, \
-    common_fail_on_import_errors, parse_hmc_host, BLANKED_OUT  # noqa: E402
+    common_fail_on_import_errors, parse_hmc_host, BLANKED_OUT, \
+    params_deepcopy  # noqa: E402
 
 try:
     import urllib3
@@ -1167,7 +1168,10 @@ def main():
 
     module.params['hmc_host'] = parse_hmc_host(module.params['hmc_host'])
 
-    _params = dict(module.params)
+    # We need to deepcopy the input parameters, because the dict in which we
+    # blank out the password is at the second level. With a shallow copy,
+    # that would blank out the password in the original params.
+    _params = params_deepcopy(module.params)
     del _params['hmc_auth']
     if _params['properties'] and 'password' in _params['properties']:
         # This is not a hard-coded password. Added # nosec to avoid

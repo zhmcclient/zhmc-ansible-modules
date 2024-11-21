@@ -31,6 +31,7 @@ import zhmcclient
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
 
+from plugins.module_utils.common import params_deepcopy
 from plugins.modules import zhmc_user
 from .utils import mock_ansible_module, get_failure_msg
 
@@ -460,6 +461,9 @@ def test_zhmc_user_absent_present(
 
         mod_obj = mock_ansible_module(ansible_mod_cls, params, check_mode)
 
+        # Save the input params
+        saved_params = params_deepcopy(params)
+
         # Exercise the code to be tested
         with pytest.raises(SystemExit) as exc_info:
             zhmc_user.main()
@@ -468,6 +472,9 @@ def test_zhmc_user_absent_present(
         assert exit_code == 0, \
             f"{where}: Module failed with exit code {exit_code} and " \
             f"message:\n{get_failure_msg(mod_obj)}"
+
+        # Check that the input params have not been changed
+        assert params == saved_params
 
         changed, output_props = get_module_output(mod_obj)
         if changed != exp_changed:

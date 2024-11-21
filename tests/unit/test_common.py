@@ -21,6 +21,8 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 import re
+from collections.abc import Sequence, Mapping, Set
+from types import ModuleType
 import pytest
 from immutable_views import DictView
 
@@ -444,3 +446,105 @@ def test_common_hyphen_props(desc, input, exp_result, exp_exc_type):
         result = common.hyphen_properties(input)
 
         assert result == exp_result
+
+
+COMMON_PARAMS_DEEPCOPY_TESTCASES = [
+    # Testcases for test_common_params_deepcopy()
+    # The list items are tuples with the following items:
+    # - desc (string): description of the testcase.
+    # - in_params (dict): Input params
+
+    (
+        "Empty dict",
+        {}
+    ),
+    (
+        "Dict with string keys and immutable values",
+        {
+            'int': 1,
+            'float': 1.1,
+            'complex': (1.1 + 1.1j),
+            'short str': 'foo',
+            'long str': 'foo' * 100,
+            'tuple int': (1, 2),
+            'short bytes': b'foo',
+            'long bytes': b'foo' * 100,
+            'bool': True,
+            'frozenset': frozenset({1, 2, 3}),
+            'none': None,
+        }
+    ),
+    (
+        "Dict with string keys and mutable values",
+        {
+            'dict': {'a': 1},
+            'list': ['a', 'b'],
+            'set': ('a', 'b'),
+        }
+    ),
+    (
+        "Dict with string keys and values that cannot be deepcopy()'ed",
+        {
+            'module': re,
+        }
+    ),
+]
+
+# Types used in the testcases that are mutable
+MUTABLE_TYPES = (list, dict, set)
+
+# Types used in the testcases on which deepcopy() fails
+DEEPCOPY_FAILS_TYPES = (ModuleType, )
+
+
+def assert_disparate_equal(obj_a, obj_b):
+    """
+    Assert that obj_a and obj_b are equal but not identical (except when
+    immutable).
+
+    obj_a and obj_b must not have dependency loops.
+
+    In other words, assert that the two objects are separate deep copies.
+    """
+
+    # Depending on the type, this checks for value equality or just same object
+    assert obj_a == obj_b
+
+    # Immutable types may be identical, mutable types must be disparate.
+    if isinstance(obj_a, MUTABLE_TYPES):
+        assert id(obj_a) != id(obj_b)
+
+    # params_deepcopy() does not copy types where deepcopy() fails.
+    if isinstance(obj_a, DEEPCOPY_FAILS_TYPES):
+        assert id(obj_a) == id(obj_b)
+
+    # For collections, check the items recursively
+    if isinstance(obj_a, Sequence) and not isinstance(obj_a, (str, bytes)):
+        for i, value_a in enumerate(obj_a):
+            value_b = obj_b[i]
+            assert_disparate_equal(value_a, value_b)
+    elif isinstance(obj_a, Mapping):
+        for key, value_a in obj_a.items():
+            value_b = obj_b[key]
+            assert_disparate_equal(value_a, value_b)
+    elif isinstance(obj_a, Set):
+        sorted_a = sorted(obj_a)
+        sorted_b = sorted(obj_b)
+        for i, value_a in enumerate(sorted_a):
+            value_b = sorted_b[i]
+            assert_disparate_equal(value_a, value_b)
+
+
+@pytest.mark.parametrize(
+    "desc, in_params",
+    COMMON_PARAMS_DEEPCOPY_TESTCASES)
+def test_common_params_deepcopy(desc, in_params):
+    # pylint: disable=unused-argument
+    """
+    Test the params_deepcopy() function.
+    """
+
+    # The code to be tested
+    params = common.params_deepcopy(in_params)
+
+    assert_disparate_equal(params, in_params)
