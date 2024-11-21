@@ -35,8 +35,8 @@ The **IBM Z HMC collection** provides sample playbooks in the
 The starting point for reading about them is `IBM Z HMC Sample Playbooks`_.
 
 .. _Ansible playbook:
-   https://docs.ansible.com/ansible/latest/user_guide/playbooks_intro.html#playbooks-intro
+   https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_intro.html
 .. _IBM Z Ansible Collection Samples:
    https://github.com/IBM/z_ansible_collections_samples/
 .. _IBM Z HMC Sample Playbooks:
-   https://github.com/IBM/z_ansible_collections_samples/tree/master/z_systems_administration/zhmc
+   https://github.com/IBM/z_ansible_collections_samples/tree/main/z_systems_administration/zhmc

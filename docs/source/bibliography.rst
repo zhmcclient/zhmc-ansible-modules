@@ -27,29 +27,36 @@ Resources
        The Web Services API of the z Systems Hardware Management Console, described in the following books:
 
    HMC API 2.11.1
-       `IBM SC27-2616, System z Hardware Management Console Web Services API (Version 2.11.1) <https://www.ibm.com/support/pages/node/6017542>`_
+       IBM SC27-2616, System z Hardware Management Console Web Services API (Version 2.11.1) (no longer available for download)
 
    HMC API 2.12.0
-       `IBM SC27-2617, System z Hardware Management Console Web Services API (Version 2.12.0) <https://www.ibm.com/support/pages/node/6019030>`_
+       IBM SC27-2617, System z Hardware Management Console Web Services API (Version 2.12.0) (no longer available for download)
 
    HMC API 2.12.1
-       `IBM SC27-2626, System z Hardware Management Console Web Services API (Version 2.12.1) <https://www.ibm.com/support/pages/node/6017614>`_
+       IBM SC27-2626, System z Hardware Management Console Web Services API (Version 2.12.1) (no longer available for download)
 
    HMC API 2.13.0
-       `IBM SC27-2627, z Systems Hardware Management Console Web Services API (Version 2.13.0) <https://www.ibm.com/support/pages/node/6018628>`_
+       `IBM SC27-2627-00a, z Systems Hardware Management Console Web Services API (Version 2.13.0) <https://www.ibm.com/docs/en/module_1707928542006/pdf/SC27-2627-00a.pdf>`_
 
    HMC API 2.13.1
-       `IBM SC27-2634, z Systems Hardware Management Console Web Services API (Version 2.13.1) <https://www.ibm.com/support/pages/node/6019732>`_
+       `IBM SC27-2634-03a, z Systems Hardware Management Console Web Services API (Version 2.13.1) <https://www.ibm.com/docs/en/module_1707928542006/pdf/SC27-2634-03a.pdf>`_
 
    HMC API 2.14.0
-       `IBM SC27-2636, IBM Z Hardware Management Console Web Services API (Version 2.14.0) <https://www.ibm.com/support/pages/node/6020008>`_
+       `IBM SC27-2636-04a, IBM Z Hardware Management Console Web Services API (Version 2.14.0) <https://www.ibm.com/docs/en/module_1687361734185/pdf/SC27-2636-04a.pdf>`_
 
    HMC API 2.14.1
-       `IBM SC27-2637, IBM Z Hardware Management Console Web Services API (Version 2.14.1) <https://www.ibm.com/support/pages/node/6019768>`_
+       `IBM SC27-2637-01a, IBM Z Hardware Management Console Web Services API (Version 2.14.1) <https://www.ibm.com/docs/en/module_1687361734185/pdf/SC27-2637-01a.pdf>`_
 
    HMC API 2.15.0
-       `IBM SC27-2638, IBM Z Hardware Management Console Web Services API (Version 2.15.0) <https://www.ibm.com/support/pages/node/6019720>`_
+       `IBM SC27-2638-04c, IBM Z Hardware Management Console Web Services API (Version 2.15.0) <https://www.ibm.com/docs/en/module_1687296212988/pdf/SC27-2638-04c.pdf>`_
        (covers both GA1 and GA2)
+
+   HMC API 2.16.0
+       `IBM SC27-2642-02, IBM Z Hardware Management Console Web Services API (Version 2.16.0) <https://www.ibm.com/docs/en/module_1675371155154/pdf/SC27-2642-02.pdf>`_
+       (covers both GA1 and GA2)
+
+   HMC Security
+       `IBM SC28-6987-01, Hardware Management Console Security <https://www.ibm.com/docs/en/module_1687361734185/pdf/SC28-6987-01.pdf>`_
 
 .. _`Java regular expressions`:
 
@@ -59,4 +66,4 @@ Resources
 .. _`CoD Users Guide`:
 
    Capacity on Demand User's Guide
-       `IBM SC28-6985, IBM Z Capacity on Demand User's Guide <https://www.ibm.com/support/pages/node/6018790>`_
+       `IBM SC28-6985, IBM Z Capacity on Demand User's Guide <https://www.ibm.com/support/pages/sites/default/files/inline-files/SC28-6985-04.pdf>`_

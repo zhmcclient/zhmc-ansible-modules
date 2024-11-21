@@ -246,3 +246,32 @@ scv_sort = ('semver',)
 # documents. The default order is whatever git prints when
 # running "git ls-remote --tags ./."
 scv_invert = True
+
+
+##############################################################################
+#                              linkcheck                                     #
+##############################################################################
+
+linkcheck_request_headers = {
+    r'https://.*/': {
+        'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:24.0) '
+        'Gecko/20100101 Firefox/24.0',
+    },
+}
+
+# All HTTP redirections from a matching source URI to the matching target URI
+# will be treated as "working".
+linkcheck_allowed_redirects = {
+    r'https://virtualenv.pypa.io/': r'https://virtualenv.pypa.io/en/latest/',
+    r'https://ibm-systems-z.slack.com/archives/.*': r'https://ibm.enterprise.slack.com/.*',
+    r'https://ibm.ent.box.com/folder/.*': r'https://ibm.account.box.com/login.*',
+}
+
+linkcheck_ignore = [
+
+    # Page exists, but linkchedck gets HTTP 404 "Not Found"
+    r'https://github.com/zhmcclient/zhmc-ansible-modules/security/dependabot',
+
+    # Page exists, but linkchedck gets HTTP 403 "Forbidden"
+    r'https://opensource.org/license/apache-2-0',
+]

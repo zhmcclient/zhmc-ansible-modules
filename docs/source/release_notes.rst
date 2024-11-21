@@ -41,6 +41,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   the input params before passing them on to the zhmcclient
   'User.update_properties()' method. (issue #1081)
 
+* Docs: Fixed broken links to IBM documentation and updated permanently
+  redirected links.
+
 **Enhancements:**
 
 * Support for ansible-core 2.18, by adding an ignore file for the sanity tests.

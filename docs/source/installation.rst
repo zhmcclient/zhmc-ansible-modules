@@ -51,7 +51,7 @@ Standard installation with system Python
 All commands shown are to be executed in a terminal or command prompt on the
 control system. The instructions are written for a bash shell.
 
-.. _`Installing Ansible on specific operating systems`: https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-specific-operating-systems
+.. _`Installing Ansible on specific operating systems`: https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html
 
 1.  Install Ansible as an operating system package on the control system.
 
