@@ -282,7 +282,7 @@ docs: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(doc_bui
 
 .PHONY: linkcheck
 linkcheck: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(doc_rst_files)
-	-sphinx-build -b linkcheck $(sphinx_opts) $(doc_source_dir) $(doc_linkcheck_dir)
+	sphinx-build -b linkcheck $(sphinx_opts) $(doc_source_dir) $(doc_linkcheck_dir)
 	@echo '$@ done.'
 
 .PHONY: test

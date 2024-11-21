@@ -38,7 +38,7 @@ For more details on these approaches, see the description and sample playbooks
 in `IBM Z HMC Sample Playbooks`_.
 
 .. _IBM Z HMC Sample Playbooks:
-   https://github.com/IBM/z_ansible_collections_samples/tree/master/z_systems_administration/zhmc
+   https://github.com/IBM/z_ansible_collections_samples/tree/main/z_systems_administration/zhmc
 
 Control node
 ============
