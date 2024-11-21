@@ -33,7 +33,7 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Bug fixes:**
 
-* Fixed safety issues up to 2024-11-03.
+* Fixed safety issues up to 2024-11-21.
 
 * Dev: Fixed removal of some files in the Makefile.
 
