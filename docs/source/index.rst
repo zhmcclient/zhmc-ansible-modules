@@ -124,7 +124,7 @@ please open an issue in the `issue tracker`_.
 .. _`issue tracker`:
    https://github.com/zhmcclient/zhmc-ansible-modules/issues
 .. _Apache 2.0 License:
-   https://opensource.org/licenses/Apache-2.0
+   https://opensource.org/license/apache-2-0
 .. _ibm.ibm_zhmc collection on Ansible Galaxy:
    https://galaxy.ansible.com/ibm/ibm_zhmc/
 .. _ibm.ibm_zhmc collection on Ansible AutomationHub:
@@ -134,6 +134,6 @@ please open an issue in the `issue tracker`_.
 .. _Ansible:
    https://www.ansible.com/
 .. _IBM Z:
-   https://www.ibm.com/it-infrastructure/z
+   https://www.ibm.com/z
 .. _LinuxONE:
-   https://www.ibm.com/it-infrastructure/linuxone/
+   https://www.ibm.com/linuxone
