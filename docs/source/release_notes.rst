@@ -54,6 +54,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Dev: Fixed new issue 'too-many-positional-arguments' reported by Pylint 3.3.0.
 
+* Fixed that the zhmc_user module blanked out the 'password' property in
+  the input params before passing them on to the zhmcclient
+  'User.update_properties()' method. (issue #1081)
+
 **Enhancements:**
 
 * Support for ansible-core 2.18, by adding an ignore file for the sanity tests.
