@@ -20,16 +20,12 @@ Releases
 ========
 
 
-Version 1.9.2-dev1
-------------------
+Version 1.9.2
+-------------
 
-Released: not yet
+Released: 2024-11-22
 
 Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
-
-**Incompatible changes:**
-
-**Deprecations:**
 
 **Bug fixes:**
 
@@ -47,14 +43,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 **Enhancements:**
 
 * Support for ansible-core 2.18, by adding an ignore file for the sanity tests.
-
-**Cleanup:**
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 1.9.1
