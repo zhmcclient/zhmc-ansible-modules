@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
@@ -6,19 +8,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Releases &mdash; IBM Z HMC collection  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/banner.css?v=fd51b7f5" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=7f41d439"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7f41d439"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -37,10 +35,6 @@
           <a href="index.html" class="icon icon-home">
             IBM Z HMC collection
           </a>
-              <div class="version">
-                1.10.0-dev1
-
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -133,6 +127,8 @@
 <p><strong>Deprecations:</strong></p>
 <p><strong>Bug fixes:</strong></p>
 <ul>
+<li><p>Fixed safety issues up to 2024-11-21.</p></li>
+<li><p>Increased zhmcclient version to 1.18.0 to pick up fixes. (issue #1074)</p></li>
 <li><p>Sanity test: Fixed the sanity test on AutomationHub which failed because the
 “compile” and “import” tests were run for all target node Python versions,
 which includes Python 2.7. As we had dropped support for Python &lt; 3.8 in
@@ -143,14 +139,39 @@ that is consumed by the sanity test if present and that declares that the
 modules of this collection run only on the controller node, so the additional
 Python versions for the target node are no longer used for these sanity tests.</p>
 </li>
+<li><p>Dev: Fixed removal of some files in the Makefile.</p></li>
+<li><p>Dev: Fixed new issue ‘too-many-positional-arguments’ reported by Pylint 3.3.0.</p></li>
+<li><p>Fixed that the zhmc_user module blanked out the ‘password’ property in
+the input params before passing them on to the zhmcclient
+‘User.update_properties()’ method. (issue #1081)</p></li>
+<li><p>Docs: Fixed broken links to IBM documentation and updated permanently
+redirected links.</p></li>
 </ul>
 <p><strong>Enhancements:</strong></p>
+<ul class="simple">
+<li><p>Support for ansible-core 2.18, by adding an ignore file for the sanity tests.</p></li>
+</ul>
 <p><strong>Cleanup:</strong></p>
 <ul class="simple">
 <li><p>Removed the unnecessary .pylintrc file from the distribution archive of the
 collection.</p></li>
 <li><p>Dev: Brought the list of dependent files for the distribution archive in the
 Makefile back in sync with its content.</p></li>
+<li><p>Removed the ‘collections’ directory from the distribution archive, because it
+is not needed there.</p></li>
+<li><p>Updated authors in the collection metadata to be in sync with contributions to
+the repo, and changed from showing Github nicknames to showing email
+addresses.</p></li>
+<li><p>Updated collection description in the collection metadata to be in sync with
+the overview description in the README.md file.</p></li>
+<li><p>Dev: Cleaned up preparation of sanity test in Makefile.</p></li>
+<li><p>Dev: Added to the release instructions to roll back fixes for safety issues,
+dependabot issues and Mend issues, into any maintained stable branches.</p></li>
+<li><p>Dev: Relaxed the conditions when safety issues are tolerated:
+Issues in development dependencies are now tolerated in normal and scheduled
+test workflow runs (but not in local make runs and release test workflow runs).
+Issues in installation dependencies are now tolerated in normal test workflow
+runs (but not in local make runs and scheduled/release test workflow runs).</p></li>
 </ul>
 <p><strong>Known issues:</strong></p>
 <ul class="simple">
@@ -1181,7 +1202,7 @@ property update.</p></li>
             <dd><a href="../1.6.1/release_notes.html">1.6.1</a></dd>
             <dd><a href="../1.7.4/release_notes.html">1.7.4</a></dd>
             <dd><a href="../1.8.3/release_notes.html">1.8.3</a></dd>
-            <dd><a href="../1.9.1/release_notes.html">1.9.1</a></dd>
+            <dd><a href="../1.9.2/release_notes.html">1.9.2</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
