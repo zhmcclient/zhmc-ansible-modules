@@ -33,6 +33,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Bug fixes:**
 
+* Docs: Ignored www.ansible.com in linkcheck, because it occasionally times out.
+
 **Enhancements:**
 
 **Cleanup:**
