@@ -61,6 +61,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Docs: Fixed broken links to IBM documentation and updated permanently
   redirected links.
 
+* Docs: Ignored www.ansible.com in linkcheck, because it occasionally times out.
+
 **Enhancements:**
 
 * Support for ansible-core 2.18, by adding an ignore file for the sanity tests.

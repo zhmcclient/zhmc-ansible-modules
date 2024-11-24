@@ -274,4 +274,7 @@ linkcheck_ignore = [
 
     # Page exists, but linkchedck gets HTTP 403 "Forbidden"
     r'https://opensource.org/license/apache-2-0',
+
+    # Page exists, but linkchedck occasionally gets timeout"
+    r'https://www.ansible.com',
 ]
