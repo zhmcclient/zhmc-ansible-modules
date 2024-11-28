@@ -37,7 +37,16 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Fixed safety issues up to 2024-11-21.
 
-* Increased zhmcclient version to 1.18.0 to pick up fixes. (issue #1074)
+* Increased zhmcclient version to 1.18.2 to pick up fixes. (issue #1074)
+
+* Fixed that all password-like input parameters that were written in clear text
+  to the module entry log are now blanked out. This affected the following
+  modules: zhmc_ldap_server_definition, zhmc_lpar, zhmc_partition, zhmc_user.
+
+* Fixed that all password-like input parameters that were added to the
+  module return value in clear text for 'state' values that created or updated
+  the resource are now removed from the return value. This affected the
+  following modules: zhmc_ldap_server_definition, zhmc_lpar, zhmc_partition.
 
 * Sanity test: Fixed the sanity test on AutomationHub which failed because the
   "compile" and "import" tests were run for all target node Python versions,
@@ -66,6 +75,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 **Enhancements:**
 
 * Support for ansible-core 2.18, by adding an ignore file for the sanity tests.
+
+* The 'hmc_auth' input parameter is no longer completely removed from the
+  module entry log, but instead its sensitive items 'password' and 'session_id'
+  are now blanked out.
 
 **Cleanup:**
 

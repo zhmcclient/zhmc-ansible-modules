@@ -224,6 +224,10 @@ def assert_user_props(user_props, expand, where):
     if expand:
         assert 'user-role-objects' in user_props, where
 
+    # Assert that none of the write-only properties is in the output object
+    for prop_name in zhmc_user.WRITEONLY_PROPERTIES_HYPHEN:
+        assert prop_name not in user_props, where
+
 
 @pytest.mark.parametrize(
     "check_mode", [

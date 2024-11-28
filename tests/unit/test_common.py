@@ -21,6 +21,7 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 import re
+from copy import deepcopy
 from collections.abc import Sequence, Mapping, Set
 from types import ModuleType
 import pytest
@@ -548,3 +549,282 @@ def test_common_params_deepcopy(desc, in_params):
     params = common.params_deepcopy(in_params)
 
     assert_disparate_equal(params, in_params)
+
+
+COMMON_BLANKED_PARAMS_TESTCASES = [
+    # Testcases for test_common_blanked_params()
+    # The list items are tuples with the following items:
+    # - desc (string): description of the testcase.
+    # - in_params (dict): Input params. Must not be None
+    # - blanked_properties (list): Properties to be blanked out, may be None
+
+    (
+        "Params without hmc_auth or properties",
+        {
+            'state': 'bla',
+        },
+        None
+    ),
+    (
+        "Params with hmc_auth that does not have sensitive items",
+        {
+            'state': 'bla',
+            'hmc_auth': {'userid': 'user'},
+        },
+        None
+    ),
+    (
+        "Params with hmc_auth that does have all sensitive items",
+        {
+            'state': 'bla',
+            'hmc_auth': {
+                'userid': 'user',
+                'password': 'pass',
+                'session_id': 'sid',
+            },
+        },
+        None
+    ),
+    (
+        "Params with properties but without blanked props specified",
+        {
+            'state': 'bla',
+            'properties': {
+                'name': 'foo',
+            },
+        },
+        None
+    ),
+    (
+        "Params with properties being None",
+        {
+            'state': 'bla',
+            'properties': None,
+        },
+        None
+    ),
+    (
+        "Params with properties with different blanked props specified",
+        {
+            'state': 'bla',
+            'properties': {
+                'name': 'foo',
+            },
+        },
+        ['password']
+    ),
+    (
+        "Params with properties with one blanked props specified",
+        {
+            'state': 'bla',
+            'properties': {
+                'name': 'foo',
+                'password': 'pass',
+            },
+        },
+        ['password']
+    ),
+    (
+        "Params with properties with one blanked prop and excess blanked prop",
+        {
+            'state': 'bla',
+            'properties': {
+                'name': 'foo',
+                'password': 'pass',
+            },
+        },
+        ['password', 'extra']
+    ),
+]
+
+BLANKED_PROPS_HMC_AUTH = ['password', 'session_id']
+
+
+@pytest.mark.parametrize(
+    "desc, in_params, blanked_properties",
+    COMMON_BLANKED_PARAMS_TESTCASES)
+def test_common_blanked_params(desc, in_params, blanked_properties):
+    # pylint: disable=unused-argument
+    """
+    Test the blanked_params() function.
+    """
+
+    saved_params = common.params_deepcopy(in_params)
+
+    # The code to be tested
+    act_params = common.blanked_params(in_params, blanked_properties)
+
+    # Check that the input parameters have not been changed
+    assert_disparate_equal(in_params, saved_params)
+
+    # Check that all dict items are still there.
+    in_keys = sorted(in_params.keys())
+    act_keys = sorted(act_params.keys())
+    assert act_keys == in_keys
+
+    # Check that the 'hmc_auth' item, if present, has its sensitive items
+    # blanked out.
+    if 'hmc_auth' in act_params:
+        hmc_auth = act_params['hmc_auth']
+        for pname in BLANKED_PROPS_HMC_AUTH:
+            if pname in hmc_auth:
+                assert hmc_auth[pname] == common.BLANKED_OUT
+
+    # Check that the 'properties' item, if present, has its sensitive items
+    # blanked out.
+    if 'properties' in act_params and act_params['properties'] and \
+            blanked_properties:
+        properties = act_params['properties']
+        for pname in blanked_properties:
+            if pname in properties:
+                assert properties[pname] == common.BLANKED_OUT
+
+
+COMMON_BLANKED_DICT_TESTCASES = [
+    # Testcases for test_common_blanked_dict()
+    # The list items are tuples with the following items:
+    # - desc (string): description of the testcase.
+    # - in_dict (dict): Input dict. Must not be None
+    # - blanked_properties (list): Prop to be blanked out. Must not be None
+
+    (
+        "Empty dict and empty blanked props",
+        {},
+        []
+    ),
+    (
+        "Empty dict and one excess blanked prop",
+        {},
+        ['foo']
+    ),
+    (
+        "Dict and empty blanked props",
+        {
+            'p1': 'v1',
+            'p2': None,
+        },
+        []
+    ),
+    (
+        "Dict and one matching blanked prop",
+        {
+            'p1': 'v1',
+            'p2': None,
+        },
+        ['p1']
+    ),
+    (
+        "Dict and one matching and one excess blanked prop",
+        {
+            'p1': 'v1',
+            'p2': None,
+        },
+        ['p1', 'foo']
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "desc, in_dict, blanked_properties",
+    COMMON_BLANKED_DICT_TESTCASES)
+def test_common_blanked_dict(desc, in_dict, blanked_properties):
+    # pylint: disable=unused-argument
+    """
+    Test the blanked_dict() function.
+    """
+
+    saved_dict = deepcopy(in_dict)
+
+    # The code to be tested
+    act_dict = common.blanked_dict(in_dict, blanked_properties)
+
+    # Check that the input dict has not been changed
+    assert_disparate_equal(in_dict, saved_dict)
+
+    # Check that the returned dict did not get additional keys
+    for pname in act_dict.keys():
+        assert pname in in_dict
+
+    # Check that the specified items have been blanked out, and that all other
+    # items have unchanged values.
+    for pname, in_value in in_dict.items():
+        assert pname in act_dict
+        act_value = act_dict[pname]
+        if pname in blanked_properties:
+            assert act_value == common.BLANKED_OUT
+        else:
+            assert act_value == in_value
+
+
+COMMON_REMOVED_DICT_TESTCASES = [
+    # Testcases for test_common_removed_dict()
+    # The list items are tuples with the following items:
+    # - desc (string): description of the testcase.
+    # - in_dict (dict): Input dict. Must not be None
+    # - removed_properties (list): Properties to be removed. Must not be None
+
+    (
+        "Empty dict and empty removed props",
+        {},
+        []
+    ),
+    (
+        "Empty dict and one excess removed prop",
+        {},
+        ['foo']
+    ),
+    (
+        "Dict and empty removed props",
+        {
+            'p1': 'v1',
+            'p2': None,
+        },
+        []
+    ),
+    (
+        "Dict and one matching removed prop",
+        {
+            'p1': 'v1',
+            'p2': None,
+        },
+        ['p1']
+    ),
+    (
+        "Dict and one matching and one excess removed prop",
+        {
+            'p1': 'v1',
+            'p2': None,
+        },
+        ['p1', 'foo']
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "desc, in_dict, removed_properties",
+    COMMON_REMOVED_DICT_TESTCASES)
+def test_common_removed_dict(desc, in_dict, removed_properties):
+    # pylint: disable=unused-argument
+    """
+    Test the removed_dict() function.
+    """
+
+    saved_dict = deepcopy(in_dict)
+
+    # The code to be tested
+    act_dict = common.removed_dict(in_dict, removed_properties)
+
+    # Check that the input dict has not been changed
+    assert_disparate_equal(in_dict, saved_dict)
+
+    # Check that the returned dict did not get additional keys
+    for pname in act_dict.keys():
+        assert pname in in_dict
+
+    # Check that the specified items have been removed, and that all other
+    # items have unchanged values.
+    for pname, in_value in in_dict.items():
+        if pname in removed_properties:
+            assert pname not in act_dict
+        else:
+            assert act_dict[pname] == in_value

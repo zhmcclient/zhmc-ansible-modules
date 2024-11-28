@@ -1423,7 +1423,7 @@ def params_deepcopy(params):
     an optional '_faked_session' item with a value that cannot be copied.
 
     Parameters:
-      params (dict): Module input parameters.
+      params (dict): Module input parameters. Must not be None.
 
     Returns:
       dict: Deep copy of params, where possible.
@@ -1435,3 +1435,79 @@ def params_deepcopy(params):
         except TypeError:
             copy_params[key] = value
     return copy_params
+
+
+def blanked_params(params, blanked_properties=None):
+    """
+    Return a copy of the module input parameters, with the following items
+    blanked out:
+
+    * params['properties'][...] according to the blanked_properties list
+    * params['hmc_auth']['password']
+    * params['hmc_auth']['session_id']
+
+    Parameters:
+      params (dict): Module input parameters. Must not be None.
+      blanked_properties (Sequence): List of property names that will be
+        blanked out in the 'properties' item of the module input parameters.
+        Property names that are not in the input properties will be ignored.
+
+    Returns:
+      dict: Deep copy of the input parameters, with blanked out values.
+    """
+    # The params['properties'] dict and the params['hmc_auth'] dict in the
+    # return value will be copies of the corresponding input items, and
+    # therefore it is sufficient to make a shallow copy of params.
+    copied_params = dict(params)
+    if 'properties' in copied_params and copied_params['properties'] \
+            and blanked_properties:
+        copied_params['properties'] = \
+            blanked_dict(copied_params['properties'], blanked_properties)
+    if 'hmc_auth' in copied_params:
+        copied_params['hmc_auth'] = \
+            blanked_dict(copied_params['hmc_auth'], ['password', 'session_id'])
+    return copied_params
+
+
+def blanked_dict(properties, blanked_properties):
+    """
+    Return a shallow copy of the input properties, where the values of the
+    specified properties have been blanked out.
+
+    Parameters:
+      properties (Mapping): Input properties. Must not be None.
+      blanked_properties (Sequence): List of property names that will be
+        blanked out. Property names that are not in the input properties
+        will be ignored. Must not be None.
+
+    Returns:
+      dict: Shallow copy of the input properties, with blanked out values.
+    """
+    copied_properties = dict(properties)
+    for pname in blanked_properties:
+        if pname in copied_properties:
+            copied_properties[pname] = BLANKED_OUT
+    return copied_properties
+
+
+def removed_dict(properties, removed_properties):
+    """
+    Return a shallow copy of the input properties, where the specified
+    properties have been removed.
+
+    Parameters:
+      properties (Mapping): Input properties. Must not be None.
+      removed_properties (Sequence): List of property names that will be
+        removed. Property names that are not in the input properties
+        will be ignored. Must not be None.
+
+    Returns:
+      dict: Shallow copy of the input properties, with removed properties.
+    """
+    copied_properties = dict(properties)
+    for pname in removed_properties:
+        try:
+            del copied_properties[pname]
+        except KeyError:
+            pass
+    return copied_properties
