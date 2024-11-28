@@ -454,6 +454,7 @@ lpar:
       description: "Additional properties of the LPAR, as described in
         the data model of the 'Logical Partition' object in the
         R(HMC API,HMC API) book.
+        Write-only properties in the data model are not included.
         The property names have hyphens (-) as described in that book."
       type: raw
   sample:
@@ -620,7 +621,8 @@ from ..module_utils.common import log_init, open_session, close_session, \
     hmc_auth_parameter, Error, ParameterError, StatusError, \
     ensure_lpar_inactive, ensure_lpar_active, ensure_lpar_loaded, to_unicode, \
     process_normal_property, missing_required_lib, \
-    common_fail_on_import_errors, pull_properties, parse_hmc_host  # noqa: E402
+    common_fail_on_import_errors, pull_properties, parse_hmc_host, \
+    blanked_params, removed_dict  # noqa: E402
 
 try:
     import urllib3
@@ -780,6 +782,11 @@ ZHMC_LPAR_PROPERTIES = {
     'target_name': (False, False, False, None, None, None),
     'request_origin': (False, False, False, None, None, None),
 }
+
+# Write-only properties (blanked out in logs and removed in output)
+WRITEONLY_PROPERTIES_USCORE = ['ssc_master_pw', 'zaware_master_pw']
+WRITEONLY_PROPERTIES_HYPHEN = [p.replace('_', '-')
+                               for p in WRITEONLY_PROPERTIES_USCORE]
 
 
 def process_properties(lpar, params):
@@ -1094,6 +1101,9 @@ def ensure_active(params, check_mode):
 
         add_artificial_properties(lpar_properties, lpar)
 
+        lpar_properties = removed_dict(
+            lpar_properties, WRITEONLY_PROPERTIES_HYPHEN)
+
         return changed, lpar_properties
 
     finally:
@@ -1152,6 +1162,9 @@ def ensure_loaded(params, check_mode):
         changed |= _changed
 
         add_artificial_properties(lpar_properties, lpar)
+
+        lpar_properties = removed_dict(
+            lpar_properties, WRITEONLY_PROPERTIES_HYPHEN)
 
         return changed, lpar_properties
 
@@ -1323,9 +1336,9 @@ def main():
 
     module.params['hmc_host'] = parse_hmc_host(module.params['hmc_host'])
 
-    _params = dict(module.params)
-    del _params['hmc_auth']
-    LOGGER.debug("Module entry: params: %r", _params)
+    if LOGGER.isEnabledFor(logging.DEBUG):
+        LOGGER.debug("Module entry: params: %r",
+                     blanked_params(module.params, WRITEONLY_PROPERTIES_USCORE))
 
     try:
 

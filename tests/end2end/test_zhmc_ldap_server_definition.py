@@ -57,7 +57,6 @@ STD_LSD_MODULE_INPUT_PROPS = {
     'search_distinguished_name': 'test_user{0}',
 }
 
-
 # A standard test LDAP server definition, as the input properties for
 # LDAPServerDefinitionManager.create() (i.e. using dashes, and limited to valid
 # input parameters)
@@ -67,6 +66,16 @@ STD_LSD_HMC_INPUT_PROPS = {
     'primary-hostname-ipaddr': '10.11.12.13',
     'search-distinguished-name': 'test_user{0}',
 }
+STD_LSD_HMC_EXP_PROPS = dict(STD_LSD_HMC_INPUT_PROPS)
+
+# LDAP server definition with bind data
+STD_LSD_MODULE_INPUT_PROPS_WITH_BIND = dict(STD_LSD_MODULE_INPUT_PROPS)
+STD_LSD_MODULE_INPUT_PROPS_WITH_BIND['bind_password'] = "Bumerang9x"
+STD_LSD_MODULE_INPUT_PROPS_WITH_BIND['bind_distinguished_name'] = "bind_dn"
+STD_LSD_HMC_INPUT_PROPS_WITH_BIND = dict(STD_LSD_HMC_INPUT_PROPS)
+STD_LSD_HMC_INPUT_PROPS_WITH_BIND['bind-distinguished-name'] = "bind_dn"
+STD_LSD_HMC_EXP_PROPS_WITH_BIND = dict(STD_LSD_HMC_INPUT_PROPS_WITH_BIND)
+STD_LSD_HMC_INPUT_PROPS_WITH_BIND['bind-password'] = "Bumerang9x"
 
 
 def new_lsd_name():
@@ -134,6 +143,10 @@ def assert_lsd_props(lsd_props, exp_lsd_props, where):
         act_value = lsd_props[prop_name]
         where_prop = where + f", property {prop_name!r}"
         assert act_value == exp_value, where_prop
+
+    # Assert that none of the write-only properties is in the output object
+    for prop_name in zhmc_ldap_server_definition.WRITEONLY_PROPERTIES_HYPHEN:
+        assert prop_name not in lsd_props, where
 
 
 @pytest.mark.parametrize(
@@ -220,11 +233,19 @@ LSD_ABSENT_PRESENT_TESTCASES = [
     # - exp_changed (bool): Boolean for expected 'changed' flag.
 
     (
-        "Present with non-existing LDAP server definition",
+        "Present with non-existing LDAP server definition, without password",
         None,
         'present',
         STD_LSD_MODULE_INPUT_PROPS,
-        STD_LSD_HMC_INPUT_PROPS,
+        STD_LSD_HMC_EXP_PROPS,
+        True,
+    ),
+    (
+        "Present with non-existing LDAP server definition, with password",
+        None,
+        'present',
+        STD_LSD_MODULE_INPUT_PROPS_WITH_BIND,
+        STD_LSD_HMC_EXP_PROPS_WITH_BIND,
         True,
     ),
     (
@@ -232,7 +253,7 @@ LSD_ABSENT_PRESENT_TESTCASES = [
         {},
         'present',
         None,
-        STD_LSD_HMC_INPUT_PROPS,
+        STD_LSD_HMC_EXP_PROPS,
         False,
     ),
     (
@@ -242,7 +263,18 @@ LSD_ABSENT_PRESENT_TESTCASES = [
         },
         'present',
         STD_LSD_MODULE_INPUT_PROPS,
-        STD_LSD_HMC_INPUT_PROPS,
+        STD_LSD_HMC_EXP_PROPS,
+        True,
+    ),
+    (
+        "Present with existing LDAP server definition, some properties "
+        "changed, with password",
+        {
+            'description': 'bla',
+        },
+        'present',
+        STD_LSD_MODULE_INPUT_PROPS_WITH_BIND,
+        STD_LSD_HMC_EXP_PROPS_WITH_BIND,
         True,
     ),
     (

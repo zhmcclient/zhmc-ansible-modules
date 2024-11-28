@@ -414,6 +414,7 @@ partition:
     "{property}":
       description: "Additional properties of the partition, as described in
         the data model of the 'Partition' object in the R(HMC API,HMC API) book.
+        Write-only properties in the data model are not included.
         The property names have hyphens (-) as described in that book."
       type: raw
     hbas:
@@ -625,7 +626,8 @@ from ..module_utils.common import log_init, open_session, close_session, \
     hmc_auth_parameter, Error, ParameterError, StatusError, stop_partition, \
     start_partition, wait_for_transition_completion, eq_hex, to_unicode, \
     process_normal_property, missing_required_lib, ImageError, \
-    common_fail_on_import_errors, pull_properties, parse_hmc_host  # noqa: E402
+    common_fail_on_import_errors, pull_properties, parse_hmc_host, \
+    blanked_params, removed_dict  # noqa: E402
 
 try:
     import urllib3
@@ -1041,6 +1043,11 @@ ZHMC_PARTITION_PROPERTIES = {
         False, False, False, None, None, None,
         False, []),
 }
+
+# Write-only properties (blanked out in logs and removed in output)
+WRITEONLY_PROPERTIES_USCORE = ['boot_ftp_password', 'ssc_master_pw']
+WRITEONLY_PROPERTIES_HYPHEN = [p.replace('_', '-')
+                               for p in WRITEONLY_PROPERTIES_USCORE]
 
 
 def storage_mgmt_enabled(cpc):
@@ -1876,6 +1883,8 @@ def ensure_active(params, check_mode):
         add_artificial_properties(
             result, partition, expand_storage_groups, expand_crypto_adapters)
 
+        result = removed_dict(result, WRITEONLY_PROPERTIES_HYPHEN)
+
         return changed, result
 
     finally:
@@ -1973,6 +1982,8 @@ def ensure_stopped(params, check_mode):
         result = dict(partition.properties)
         add_artificial_properties(
             result, partition, expand_storage_groups, expand_crypto_adapters)
+
+        result = removed_dict(result, WRITEONLY_PROPERTIES_HYPHEN)
 
         return changed, result
 
@@ -2231,9 +2242,9 @@ def main():
 
     module.params['hmc_host'] = parse_hmc_host(module.params['hmc_host'])
 
-    _params = dict(module.params)
-    del _params['hmc_auth']
-    LOGGER.debug("Module entry: params: %r", _params)
+    if LOGGER.isEnabledFor(logging.DEBUG):
+        LOGGER.debug("Module entry: params: %r",
+                     blanked_params(module.params, WRITEONLY_PROPERTIES_USCORE))
 
     try:
 
