@@ -249,6 +249,7 @@ user:
     "{property}":
       description: "Additional properties of the user, as described in the
         data model of the 'User' object in the R(HMC API,HMC API) book.
+        Write-only properties in the data model are not included.
         The property names have hyphens (-) as described in that book."
       type: raw
     user-role-names:
@@ -324,6 +325,7 @@ user:
           description: "Properties of the LDAP server definition, as described
             in the data model of the 'LDAP Server Definition' object in the
             R(HMC API,HMC API) book.
+            Write-only properties in the data model are not included.
             The property names have hyphens (-) as described in that book."
           type: raw
   sample:
@@ -380,8 +382,8 @@ from ansible.module_utils.basic import AnsibleModule  # noqa: E402
 from ..module_utils.common import log_init, open_session, close_session, \
     hmc_auth_parameter, Error, ParameterError, to_unicode, \
     process_normal_property, missing_required_lib, \
-    common_fail_on_import_errors, parse_hmc_host, BLANKED_OUT, \
-    params_deepcopy  # noqa: E402
+    common_fail_on_import_errors, parse_hmc_host, blanked_params, \
+    blanked_dict, removed_dict  # noqa: E402
 
 try:
     import urllib3
@@ -492,6 +494,11 @@ ZHMC_USER_PROPERTIES = {
     'ldap_server_definition': (False, False, False, None, None, None),
     'user_role_objects': (False, False, False, None, None, None),
 }
+
+# Write-only properties (blanked out in logs and removed in output)
+WRITEONLY_PROPERTIES_USCORE = ['password']
+WRITEONLY_PROPERTIES_HYPHEN = [p.replace('_', '-')
+                               for p in WRITEONLY_PROPERTIES_USCORE]
 
 
 def process_properties(console, user, params):
@@ -986,14 +993,11 @@ def ensure_present(params, check_mode):
                 raise AssertionError("Unexpected "
                                      "create_props: %r" % create_props)
             if update_props:
-                logged_props = dict(update_props)
-                if 'password' in logged_props:
-                    # This is not a hard-coded password. Added # nosec to avoid
-                    # generating false positive in bandit
-                    logged_props['password'] = BLANKED_OUT    # nosec
-                LOGGER.debug(
-                    "Existing user %r needs to get properties updated: %r",
-                    user_name, logged_props)
+                if LOGGER.isEnabledFor(logging.DEBUG):
+                    LOGGER.debug(
+                        "Existing user %r needs to get properties updated: %r",
+                        user_name,
+                        blanked_dict(update_props, WRITEONLY_PROPERTIES_USCORE))
                 if not check_mode:
                     user.update_properties(update_props)
                     # We refresh the properties after the update, in case an
@@ -1030,10 +1034,7 @@ def ensure_present(params, check_mode):
 
         add_artificial_properties(result, console, user, expand)
 
-        if 'password' in result:
-            # This is not a hard-coded password. Added # nosec to avoid
-            # generating false positive in bandit
-            result['password'] = BLANKED_OUT    # nosec
+        result = removed_dict(result, WRITEONLY_PROPERTIES_HYPHEN)
 
         return changed, result
 
@@ -1168,16 +1169,9 @@ def main():
 
     module.params['hmc_host'] = parse_hmc_host(module.params['hmc_host'])
 
-    # We need to deepcopy the input parameters, because the dict in which we
-    # blank out the password is at the second level. With a shallow copy,
-    # that would blank out the password in the original params.
-    _params = params_deepcopy(module.params)
-    del _params['hmc_auth']
-    if _params['properties'] and 'password' in _params['properties']:
-        # This is not a hard-coded password. Added # nosec to avoid
-        # generating false positive in bandit
-        _params['properties']['password'] = BLANKED_OUT    # nosec
-    LOGGER.debug("Module entry: params: %r", _params)
+    if LOGGER.isEnabledFor(logging.DEBUG):
+        LOGGER.debug("Module entry: params: %r",
+                     blanked_params(module.params, WRITEONLY_PROPERTIES_USCORE))
 
     try:
 

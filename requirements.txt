@@ -40,7 +40,7 @@ requests>=2.32.2
 pytz>=2019.1
 
 # zhmcclient @ git+https://github.com/zhmcclient/python-zhmcclient.git@master
-zhmcclient>=1.18.0
+zhmcclient>=1.18.2
 
 
 # Indirect dependencies for install that are needed for some reason (must be consistent with minimum-constraints-install.txt)
@@ -74,6 +74,8 @@ PyYAML>=6.0.2
 python-dateutil>=2.8.2
 
 # jsonschema
-jsonschema>=4.18.1
+jsonschema>=4.18.2
+# TODO: Python 3.13 support requires pyo3-ffi fixing its issue with Python 3.13
+#       (see https://github.com/PyO3/pyo3/issues/4038#issuecomment-2156363013)
 
 urllib3>=1.26.19

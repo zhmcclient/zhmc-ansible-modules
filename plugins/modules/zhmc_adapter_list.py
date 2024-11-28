@@ -279,7 +279,7 @@ from ansible.module_utils.basic import AnsibleModule  # noqa: E402
 
 from ..module_utils.common import log_init, open_session, close_session, \
     hmc_auth_parameter, Error, ParameterError, \
-    missing_required_lib, parse_hmc_host  # noqa: E402
+    missing_required_lib, parse_hmc_host, blanked_params  # noqa: E402
 
 try:
     import urllib3
@@ -474,9 +474,9 @@ def main():
 
     module.params['hmc_host'] = parse_hmc_host(module.params['hmc_host'])
 
-    _params = dict(module.params)
-    del _params['hmc_auth']
-    LOGGER.debug("Module entry: params: %r", _params)
+    if LOGGER.isEnabledFor(logging.DEBUG):
+        LOGGER.debug("Module entry: params: %r",
+                     blanked_params(module.params))
 
     changed = False
     try:

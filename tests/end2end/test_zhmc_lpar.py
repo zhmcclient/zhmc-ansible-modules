@@ -172,6 +172,10 @@ def assert_lpar_props(act_props, exp_props, where):
                               f"Actual: {act_value!r}")
         assert act_value == exp_value, where_prop
 
+    # Assert that none of the write-only properties is in the output object
+    for prop_name in zhmc_lpar.WRITEONLY_PROPERTIES_HYPHEN:
+        assert prop_name not in act_props, where
+
 
 def ensure_lpar_status(logger, lpar, iap, status):
     """
