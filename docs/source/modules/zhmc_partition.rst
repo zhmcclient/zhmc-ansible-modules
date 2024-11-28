@@ -515,7 +515,7 @@ partition
     | **type**: str
 
   {property}
-    Additional properties of the partition, as described in the data model of the 'Partition' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
+    Additional properties of the partition, as described in the data model of the 'Partition' object in the :ref:`HMC API <HMC API>` book. Write-only properties in the data model are not included. The property names have hyphens (-) as described in that book.
 
     | **type**: raw
 

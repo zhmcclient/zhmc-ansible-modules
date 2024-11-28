@@ -115,6 +115,7 @@ STD_LINUX_PARTITION_HMC_INPUT_PROPS = {
     'initial-memory': MIN_MEMORY,
     'maximum-memory': MIN_MEMORY,
 }
+STD_LINUX_PARTITION_HMC_EXP_PROPS = dict(STD_LINUX_PARTITION_HMC_INPUT_PROPS)
 STD_SSC_PARTITION_HMC_INPUT_PROPS = {
     # 'name': updated upon use
     'description': "zhmc test partition",
@@ -126,6 +127,8 @@ STD_SSC_PARTITION_HMC_INPUT_PROPS = {
     'ssc-master-userid': 'sscuser',
     'ssc-master-pw': 'Need2ChangeSoon!',
 }
+STD_SSC_PARTITION_HMC_EXP_PROPS = dict(STD_SSC_PARTITION_HMC_INPUT_PROPS)
+del STD_SSC_PARTITION_HMC_EXP_PROPS['ssc-master-pw']
 
 
 def storage_mgmt_enabled(cpc):
@@ -499,6 +502,10 @@ def assert_partition_props(act_props, exp_props, where):
         exp_boot_sv_name = exp_props['boot-storage-volume-name']
         assert act_props['boot-storage-volume-name'] == exp_boot_sv_name
 
+    # Assert that none of the write-only properties is in the output object
+    for prop_name in zhmc_partition.WRITEONLY_PROPERTIES_HYPHEN:
+        assert prop_name not in act_props, where
+
 
 PARTITION_FACTS_TESTCASES = [
     # The list items are tuples with the following items:
@@ -727,7 +734,7 @@ PARTITION_STATE_TESTCASES = [
         'stopped',
         STD_LINUX_PARTITION_MODULE_INPUT_PROPS,
         None,
-        STD_LINUX_PARTITION_HMC_INPUT_PROPS,
+        STD_LINUX_PARTITION_HMC_EXP_PROPS,
         True,
         True,
     ),
@@ -739,7 +746,7 @@ PARTITION_STATE_TESTCASES = [
         'stopped',
         None,
         None,
-        STD_LINUX_PARTITION_HMC_INPUT_PROPS,
+        STD_LINUX_PARTITION_HMC_EXP_PROPS,
         False,
         True,
     ),
@@ -751,7 +758,7 @@ PARTITION_STATE_TESTCASES = [
         'stopped',
         None,
         None,
-        STD_LINUX_PARTITION_HMC_INPUT_PROPS,
+        STD_LINUX_PARTITION_HMC_EXP_PROPS,
         True,
         True,
     ),
@@ -791,7 +798,7 @@ PARTITION_STATE_TESTCASES = [
         'stopped',
         STD_LINUX_PARTITION_MODULE_INPUT_PROPS,
         None,
-        STD_LINUX_PARTITION_HMC_INPUT_PROPS,
+        STD_LINUX_PARTITION_HMC_EXP_PROPS,
         True,
         True,
     ),
@@ -802,7 +809,7 @@ PARTITION_STATE_TESTCASES = [
         'stopped',
         STD_SSC_PARTITION_MODULE_INPUT_PROPS,
         None,
-        STD_SSC_PARTITION_HMC_INPUT_PROPS,
+        STD_SSC_PARTITION_HMC_EXP_PROPS,
         True,
         True,
     ),
@@ -818,7 +825,7 @@ PARTITION_STATE_TESTCASES = [
         'stopped',
         None,
         None,
-        STD_SSC_PARTITION_HMC_INPUT_PROPS,
+        STD_SSC_PARTITION_HMC_EXP_PROPS,
         False,
         True,
     ),
@@ -830,7 +837,7 @@ PARTITION_STATE_TESTCASES = [
         'active',
         None,
         None,  # Code ignores "HTTPError: 409,131"
-        STD_SSC_PARTITION_HMC_INPUT_PROPS,
+        STD_SSC_PARTITION_HMC_EXP_PROPS,
         True,
         True,
     ),
@@ -844,7 +851,7 @@ PARTITION_STATE_TESTCASES = [
         'stopped',
         STD_SSC_PARTITION_MODULE_INPUT_PROPS,
         None,
-        STD_SSC_PARTITION_HMC_INPUT_PROPS,
+        STD_SSC_PARTITION_HMC_EXP_PROPS,
         True,
         True,
     ),

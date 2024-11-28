@@ -212,6 +212,7 @@ ldap_server_definition:
       description: "Additional properties of the LDAP Server Definition, as
         described in the data model of the 'LDAP Server Definition' object in
         the R(HMC API,HMC API) book.
+        Write-only properties in the data model are not included.
         The property names have hyphens (-) as described in that book."
       type: raw
   sample:
@@ -244,7 +245,8 @@ from ansible.module_utils.basic import AnsibleModule  # noqa: E402
 from ..module_utils.common import log_init, open_session, close_session, \
     hmc_auth_parameter, Error, ParameterError, to_unicode, \
     process_normal_property, missing_required_lib, \
-    common_fail_on_import_errors, parse_hmc_host  # noqa: E402
+    common_fail_on_import_errors, parse_hmc_host, blanked_params, \
+    blanked_dict, removed_dict  # noqa: E402
 
 try:
     import urllib3
@@ -324,6 +326,11 @@ ZHMC_LSD_PROPERTIES = {
     'parent': (False, False, False, None, None, None),
     'class': (False, False, False, None, None, None),
 }
+
+# Write-only properties (blanked out in logs and removed in output)
+WRITEONLY_PROPERTIES_USCORE = ['bind_password']
+WRITEONLY_PROPERTIES_HYPHEN = [p.replace('_', '-')
+                               for p in WRITEONLY_PROPERTIES_USCORE]
 
 
 def process_properties(lsd, params):
@@ -521,9 +528,11 @@ def ensure_present(params, check_mode):
                 raise AssertionError("Unexpected "
                                      "create_props: %r" % create_props)
             if update_props:
-                LOGGER.debug(
-                    "Existing LDAP Server Definition %r needs to get "
-                    "properties updated: %r", lsd_name, update_props)
+                if LOGGER.isEnabledFor(logging.DEBUG):
+                    LOGGER.debug(
+                        "Existing LDAP Server Definition %r needs to get "
+                        "properties updated: %r", lsd_name,
+                        blanked_dict(update_props, WRITEONLY_PROPERTIES_USCORE))
                 if not check_mode:
                     lsd.update_properties(update_props)
                     # We refresh the properties after the update, in case an
@@ -538,6 +547,8 @@ def ensure_present(params, check_mode):
 
         if not lsd:
             raise AssertionError()
+
+        result = removed_dict(result, WRITEONLY_PROPERTIES_HYPHEN)
 
         return changed, result
 
@@ -669,9 +680,9 @@ def main():
 
     module.params['hmc_host'] = parse_hmc_host(module.params['hmc_host'])
 
-    _params = dict(module.params)
-    del _params['hmc_auth']
-    LOGGER.debug("Module entry: params: %r", _params)
+    if LOGGER.isEnabledFor(logging.DEBUG):
+        LOGGER.debug("Module entry: params: %r",
+                     blanked_params(module.params, WRITEONLY_PROPERTIES_USCORE))
 
     try:
 
