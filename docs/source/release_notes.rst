@@ -20,16 +20,12 @@ Releases
 ========
 
 
-Version 1.9.3-dev1
-------------------
+Version 1.9.3
+-------------
 
-Released: not yet
+Released: 2024-11-29
 
 Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
-
-**Incompatible changes:**
-
-**Deprecations:**
 
 **Bug fixes:**
 
@@ -45,16 +41,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   following modules: zhmc_ldap_server_definition, zhmc_lpar, zhmc_partition.
 
 * Docs: Ignored www.ansible.com in linkcheck, because it occasionally times out.
-
-**Enhancements:**
-
-**Cleanup:**
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 1.9.2
