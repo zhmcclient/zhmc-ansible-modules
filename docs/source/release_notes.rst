@@ -33,6 +33,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Bug fixes:**
 
+* Test: Fixed duplicate 'description' properties in test YAML files.
+  (issue #1097)
+
 **Enhancements:**
 
 **Cleanup:**
