@@ -315,11 +315,10 @@ hmc_definition:
         - properties:
             element-id: lsd1
             name: LDAP server definition 1
-            description: LDAP server definition 1
+            description: "LSD 1"
             primary-hostname-ipaddr: 10.11.12.13
             search-distinguished-name: "test{0}"
             replication-overwrite-possible: false
-            description: "LSD 1"
             connection-port: null
             backup-hostname-ipaddr: null
             use-ssl: false
