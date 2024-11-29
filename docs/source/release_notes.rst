@@ -63,6 +63,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Docs: Ignored www.ansible.com in linkcheck, because it occasionally times out.
 
+* Test: Fixed duplicate 'description' properties in test YAML files.
+  (issue #1097)
+
 **Enhancements:**
 
 * Support for ansible-core 2.18, by adding an ignore file for the sanity tests.
