@@ -112,6 +112,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   Issues in installation dependencies are now tolerated in normal test workflow
   runs (but not in local make runs and scheduled/release test workflow runs).
 
+* Test: Accommodated rollout of Ubuntu 24.04 on GitHub Actions by using
+  ubuntu-22.04 as the OS image for Python 3.8 based test runs.
+
 **Known issues:**
 
 * See `list of open issues`_.
