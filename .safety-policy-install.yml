@@ -44,6 +44,10 @@ security:
             reason: Fixed ansible-core version is 2.15.2, but we support older ansible versions
         73302:
             reason: Advice to use no_log when reading sensitive variables - not related to any fixes
+        74221:
+            reason: Fixed ansible-core version is 2.14.18rc1, but we support older ansible versions
+        74261:
+            reason: Fixed ansible-core version is 2.18, but we support older ansible versions
 
     # Continue with exit code 0 when vulnerabilities are found.
     continue-on-vulnerability-error: False
