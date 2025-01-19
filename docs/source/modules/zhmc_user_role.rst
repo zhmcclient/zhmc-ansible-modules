@@ -107,7 +107,7 @@ state
 
 
 properties
-  Dictionary with desired properties for the user role. Used for :literal:`state=present`\ ; ignored for :literal:`state=absent|facts`. Dictionary key is the property name with underscores instead of hyphens, and dictionary value is the property value in YAML syntax. Integer properties may also be provided as decimal strings.
+  Dictionary with desired properties for the user role. Used for :literal:`state=present`\ ; ignored for :literal:`state=absent\|facts`. Dictionary key is the property name with underscores instead of hyphens, and dictionary value is the property value in YAML syntax. Integer properties may also be provided as decimal strings.
 
   The possible input properties in this dictionary are the properties defined as writeable in the data model for user role resources (where the property names contain underscores instead of hyphens), with the following exceptions:
 
@@ -327,7 +327,7 @@ msg
 user_role
   For :literal:`state=absent`\ , an empty dictionary.
 
-  For :literal:`state=present|facts`\ , a dictionary with the resource properties of the target user role.
+  For :literal:`state=present\|facts`\ , a dictionary with the resource properties of the target user role.
 
   | **returned**: success
   | **type**: dict
