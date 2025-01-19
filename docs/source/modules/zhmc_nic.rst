@@ -222,7 +222,7 @@ msg
 nic
   For :literal:`state=absent`\ , an empty dictionary.
 
-  For :literal:`state=present|facts`\ , the resource properties of the NIC after any changes.
+  For :literal:`state=present\|facts`\ , the resource properties of the NIC after any changes.
 
   | **returned**: success
   | **type**: dict

@@ -118,7 +118,7 @@ state
 
 
 properties
-  Dictionary with desired properties for the storage group. Used for :literal:`state=present`\ ; ignored for :literal:`state=absent|facts`. Dictionary key is the property name with underscores instead of hyphens, and dictionary value is the property value in YAML syntax. Integer properties may also be provided as decimal strings.
+  Dictionary with desired properties for the storage group. Used for :literal:`state=present`\ ; ignored for :literal:`state=absent\|facts`. Dictionary key is the property name with underscores instead of hyphens, and dictionary value is the property value in YAML syntax. Integer properties may also be provided as decimal strings.
 
   The possible input properties in this dictionary are the properties defined as writeable in the data model for Storage Group resources (where the property names contain underscores instead of hyphens), with the following exceptions:
 
@@ -251,7 +251,7 @@ msg
 storage_group
   For :literal:`state=absent`\ , an empty dictionary.
 
-  For :literal:`state=present|facts|discover`\ , the resource properties of the target storage group after any changes, plus additional artificial properties as described below.
+  For :literal:`state=present\|facts\|discover`\ , the resource properties of the target storage group after any changes, plus additional artificial properties as described below.
 
   | **returned**: success
   | **type**: dict
