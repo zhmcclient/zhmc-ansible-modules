@@ -388,9 +388,9 @@ msg
   | **type**: str
 
 lpar
-  For :literal:`state=inactive|reset\_clear|reset\_normal`\ , an empty dictionary.
+  For :literal:`state=inactive\|reset\_clear\|reset\_normal`\ , an empty dictionary.
 
-  For :literal:`state=active|loaded|set|facts`\ , the resource properties of the LPAR after after any specified updates have been applied.
+  For :literal:`state=active\|loaded\|set\|facts`\ , the resource properties of the LPAR after after any specified updates have been applied.
 
   Note that the returned properties may show different values than the ones that were specified as input for the update. For example, memory properties may be rounded up, hexadecimal strings may be shown with a different representation format, and other properties may change as a result of updating some properties. For details, see the data model of the 'Logical Partition' object in the :ref:`HMC API <HMC API>` book.
 

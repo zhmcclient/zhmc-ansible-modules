@@ -272,7 +272,7 @@ msg
 cpc
   For :literal:`state=inactive`\ , an empty dictionary.
 
-  For :literal:`state=active|set|facts|upgrade`\ , the resource properties of the CPC after after any specified updates have been applied, and its adapters, partitions, and storage groups.
+  For :literal:`state=active\|set\|facts\|upgrade`\ , the resource properties of the CPC after after any specified updates have been applied, and its adapters, partitions, and storage groups.
 
   | **returned**: success
   | **type**: dict
