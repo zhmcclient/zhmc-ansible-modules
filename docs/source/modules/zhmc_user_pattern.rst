@@ -107,7 +107,7 @@ state
 
 
 properties
-  Dictionary with desired properties for the user pattern. Used for :literal:`state=present`\ ; ignored for :literal:`state=absent|facts`. Dictionary key is the property name with underscores instead of hyphens, and dictionary value is the property value in YAML syntax. Integer properties may also be provided as decimal strings.
+  Dictionary with desired properties for the user pattern. Used for :literal:`state=present`\ ; ignored for :literal:`state=absent\|facts`. Dictionary key is the property name with underscores instead of hyphens, and dictionary value is the property value in YAML syntax. Integer properties may also be provided as decimal strings.
 
   The possible input properties in this dictionary are the properties defined as writeable in the data model for User Pattern resources (where the property names contain underscores instead of hyphens), with the following exceptions:
 
@@ -192,7 +192,7 @@ msg
 user_pattern
   For :literal:`state=absent`\ , an empty dictionary.
 
-  For :literal:`state=present|facts`\ , a dictionary with the resource properties of the target user pattern and some additional artificial properties.
+  For :literal:`state=present\|facts`\ , a dictionary with the resource properties of the target user pattern and some additional artificial properties.
 
   | **returned**: success
   | **type**: dict

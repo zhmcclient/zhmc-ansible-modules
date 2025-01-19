@@ -134,7 +134,7 @@ state
 
 
 properties
-  Only for :literal:`state=set|present`\ : New values for the properties of the adapter. Properties omitted in this dictionary will remain unchanged. This parameter will be ignored for other states.
+  Only for :literal:`state=set\|present`\ : New values for the properties of the adapter. Properties omitted in this dictionary will remain unchanged. This parameter will be ignored for other states.
 
   The parameter is a dictionary. The key of each dictionary item is the property name as specified in the data model for adapter resources, with underscores instead of hyphens. The value of each dictionary item is the property value (in YAML syntax). Integer properties may also be provided as decimal strings.
 
@@ -257,7 +257,7 @@ msg
 adapter
   For :literal:`state=absent`\ , an empty dictionary.
 
-  For :literal:`state=set|present|facts`\ , the adapter and its ports.
+  For :literal:`state=set\|present\|facts`\ , the adapter and its ports.
 
   | **returned**: success
   | **type**: dict

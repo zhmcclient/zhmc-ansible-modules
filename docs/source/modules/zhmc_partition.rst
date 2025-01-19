@@ -364,9 +364,9 @@ msg
   | **type**: str
 
 partition
-  For :literal:`state=absent|iso\_mount|iso\_unmount`\ , an empty dictionary.
+  For :literal:`state=absent\|iso\_mount\|iso\_unmount`\ , an empty dictionary.
 
-  For :literal:`state=stopped|active|facts`\ , the resource properties of the partition after any changes, including its child resources as described below.
+  For :literal:`state=stopped\|active\|facts`\ , the resource properties of the partition after any changes, including its child resources as described below.
 
   | **returned**: success
   | **type**: dict

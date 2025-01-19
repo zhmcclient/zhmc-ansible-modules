@@ -123,7 +123,7 @@ state
 
 
 properties
-  Dictionary with desired properties for the storage volume. Used for :literal:`state=present`\ ; ignored for :literal:`state=absent|facts`. Dictionary key is the property name with underscores instead of hyphens, and dictionary value is the property value in YAML syntax. Integer properties may also be provided as decimal strings.
+  Dictionary with desired properties for the storage volume. Used for :literal:`state=present`\ ; ignored for :literal:`state=absent\|facts`. Dictionary key is the property name with underscores instead of hyphens, and dictionary value is the property value in YAML syntax. Integer properties may also be provided as decimal strings.
 
   The possible input properties in this dictionary are the properties defined as writeable in the data model for Storage Volume resources (where the property names contain underscores instead of hyphens), with the following exceptions:
 
@@ -219,7 +219,7 @@ msg
 storage_volume
   For :literal:`state=absent`\ , an empty dictionary.
 
-  For :literal:`state=present|facts`\ , the resource properties of the storage volume after any changes.
+  For :literal:`state=present\|facts`\ , the resource properties of the storage volume after any changes.
 
   | **returned**: success
   | **type**: dict
