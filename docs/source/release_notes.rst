@@ -35,7 +35,7 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Bug fixes:**
 
-* Fixed safety issues up to 2024-12-29.
+* Fixed safety issues up to 2025-01-29.
 
 * Increased zhmcclient version to 1.18.2 to pick up fixes. (issue #1074)
 
