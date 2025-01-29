@@ -44,7 +44,7 @@ zhmcclient==1.18.2
 # Indirect dependencies for install that are needed for some reason (must be consistent with requirements.txt)
 
 # Jinja2 is used by ansible/ansible-core and by ansible-doc-extractor.
-Jinja2==3.1.4
+Jinja2==3.1.5
 
 # MarkupSafe is used by Jinja2
 MarkupSafe==2.0.0

@@ -49,7 +49,7 @@ zhmcclient>=1.18.2
 # Ansible 6 requires Jinja2>=3.0
 # Python 3.10 requires Jinja>=2.11
 # Sphinx 7.x requires Jinja2>=3.0
-Jinja2>=3.1.4
+Jinja2>=3.1.5
 
 # MarkupSafe is used by Jinja2
 # Jinja2 3.0 requires MarkupSafe>=2.0
