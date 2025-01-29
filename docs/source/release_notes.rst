@@ -33,7 +33,7 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Bug fixes:**
 
-* Fixed safety issues up to 2024-12-29.
+* Fixed safety issues up to 2025-01-29.
 
 * Test: Fixed duplicate 'description' properties in test YAML files.
   (issue #1097)
