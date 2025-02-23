@@ -35,6 +35,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Fixed safety issues up to 2025-01-29.
 
+* Fixed missing dependencies for development.
+
 * Test: Fixed duplicate 'description' properties in test YAML files.
   (issue #1097)
 
