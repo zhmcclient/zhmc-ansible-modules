@@ -37,6 +37,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Fixed safety issues up to 2025-01-29.
 
+* Fixed missing dependencies for development.
+
 * Increased zhmcclient version to 1.18.2 to pick up fixes. (issue #1074)
 
 * Fixed that all password-like input parameters that were written in clear text
