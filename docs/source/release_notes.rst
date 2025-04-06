@@ -85,6 +85,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   module entry log, but instead its sensitive items 'password' and 'session_id'
   are now blanked out.
 
+* Dev: Added display of environment variables and platform details in test
+  workflow.
+
 **Cleanup:**
 
 * Removed the unnecessary .pylintrc file from the distribution archive of the

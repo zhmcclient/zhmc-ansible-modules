@@ -51,6 +51,9 @@ endif
 # Determine OS platform make runs on
 PLATFORM := $(shell uname -s)
 
+ENV = env | sort
+WHICH = which -a
+
 # Namespace and name of this collection
 collection_namespace := ibm
 collection_name := ibm_zhmc
@@ -233,6 +236,8 @@ help:
 	@echo '  upload     - Publish the collection to Ansible Galaxy'
 	@echo '  uploadhub  - Publish the collection to Ansible AutomationHub'
 	@echo '  clobber    - Remove any produced files'
+	@echo "  platform   - Display the information about the platform as seen by make"
+	@echo "  env        - Display the environment as seen by make"
 	@echo 'Environment variables:'
 	@echo "  TESTCASES=... - Testcase filter for pytest -k (e.g. 'test_func' or 'test_mod.py')"
 	@echo "  TESTOPTS=... - Additional options for pytest (e.g. '-x')"
@@ -257,6 +262,35 @@ help:
 .PHONY: all
 all: install develop dist safety bandit check pylint sanity ansible_lint check_reqs docs docslocal linkcheck test end2end_mocked
 	@echo '$@ done.'
+
+.PHONY: platform
+platform:
+ifeq ($(PLATFORM),Linux)
+	@echo "Makefile: Installing ld to get Linux distributions"
+	$(PYTHON_CMD) -m pip -q install ld
+endif
+	@echo "Makefile: Platform information as seen by make:"
+	@echo "Platform detected by Makefile: $(PLATFORM)"
+	@$(PYTHON_CMD) -c "import platform; print(f'Platform detected by Python: {platform.platform()}')"
+	@$(PYTHON_CMD) -c "import platform; print(f'HW platform detected by Python: {platform.machine()}')"
+ifeq ($(PLATFORM),Linux)
+	@$(PYTHON_CMD) -c "import ld; d=ld.linux_distribution(); print(f'Linux distro detected by ld: {d[0]} {d[1]}')"
+endif
+	@echo "Shell used for commands: $(SHELL)"
+	@echo "Shell flags: $(.SHELLFLAGS)"
+	@echo "Make version: $(MAKE_VERSION)"
+	@echo "Python command name: $(PYTHON_CMD)"
+	@echo "Python command location: $(shell $(WHICH) $(PYTHON_CMD))"
+	@echo "Python version: $(python_mn_version)"
+	@echo "Pip command name: $(PIP_CMD)"
+	@echo "Pip command location: $(shell $(WHICH) $(PIP_CMD))"
+	@echo "Pip version: $(shell $(PIP_CMD) --version)"
+	@echo "$(package_name) package version: $(package_version)"
+
+.PHONY: env
+env:
+	@echo "Makefile: Environment variables as seen by make:"
+	$(ENV)
 
 .PHONY: install
 install: _check_version $(done_dir)/install_$(pymn)_$(PACKAGE_LEVEL).done
