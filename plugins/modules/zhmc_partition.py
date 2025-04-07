@@ -613,7 +613,6 @@ partition:
     }
 """
 
-from collections import OrderedDict  # noqa: E402
 import logging  # noqa: E402
 import traceback  # noqa: E402
 import uuid
@@ -1575,7 +1574,7 @@ def add_artificial_properties(
     # Get the NIC child elements of the partition
     nics_prop = []
     for nic in partition.nics.list(full_properties=True):
-        nic_props = OrderedDict()
+        nic_props = {}
         nic_props.update(nic.properties)
         # Add artificial properties adapter-name/-port/-id:
         vswitch_uri = nic.prop("virtual-switch-uri", None)

@@ -22,7 +22,6 @@ __metaclass__ = type
 import uuid
 from unittest import mock
 import random
-from collections import OrderedDict
 from pprint import pformat
 import pytest
 import urllib3
@@ -483,13 +482,13 @@ def test_zhmc_user_absent_present(
         changed, output_props = get_module_output(mod_obj)
         if changed != exp_changed:
             user_props_sorted = \
-                OrderedDict(sorted(user_props.items(), key=lambda x: x[0])) \
+                dict(sorted(user_props.items(), key=lambda x: x[0])) \
                 if user_props is not None else None
             input_props_sorted = \
-                OrderedDict(sorted(input_props.items(), key=lambda x: x[0])) \
+                dict(sorted(input_props.items(), key=lambda x: x[0])) \
                 if input_props is not None else None
             output_props_sorted = \
-                OrderedDict(sorted(output_props.items(), key=lambda x: x[0])) \
+                dict(sorted(output_props.items(), key=lambda x: x[0])) \
                 if output_props is not None else None
             user_props_str = pformat(user_props_sorted, indent=2)
             input_props_str = pformat(input_props_sorted, indent=2)
