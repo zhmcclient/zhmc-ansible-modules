@@ -42,6 +42,9 @@ except ImportError:
 
 BLANKED_OUT = '********'  # Replacement for blanked out sensitive values
 
+# Default for get() indicating a property is not present
+NOT_PRESENT = "@@not-present@@"
+
 
 class Error(Exception):
     """

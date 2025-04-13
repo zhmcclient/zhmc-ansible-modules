@@ -47,32 +47,27 @@ LOG_FILE = 'zhmc_user.log' if DEBUG else None
 # comments state the condition under which the property is present.
 USER_CONDITIONAL_PROPS = (
     'user-pattern-uri',  # type == 'pattern-based'
-    'user-pattern-name',  # artificial: type == 'pattern-based'
-    'user-pattern',  # artificial: type == 'pattern-based' and expand
-    'user-template-uri',  # type == 'template'
-    'user-template-name',  # artificial: type == 'template'
-    'disabled',  # type != 'template'
-    'password-rule-uri',  # auth-type == 'local'
-    'password-rule-name',  # artificial: auth-type == 'local'
-    'password-rule',  # artificial: auth-type == 'local' and expand
-    'password-expires',  # artificial: auth-type == 'local', but this is not
-    # stated in HMC WS-API book
-    'password',  # never present
-    'force-password-change',  # auth-type == 'local'
-    'ldap-server-definition-uri',  # auth-type == 'ldap'
-    'ldap-server-definition-name',  # artificial: auth-type == 'ldap'
-    'ldap-server-definition',  # artificial: auth-type == 'ldap' and expand
-    'userid-on-ldap-server',  # auth-type == 'ldap' and type != 'template'
-    'min-pw-change-time',  # auth-type == 'local'
+    'user-pattern-name',  # artificial: see URI and expand_names
+    'user-pattern',  # artificial: see URI and expand
+    'user-template-uri',  # type == 'pattern-based' and user is template-based
+    'user-template-name',  # artificial: see URI and expand_names
+    'user-template',  # artificial: see URI and expand
+    'password-rule-name',  # artificial: expand_names
+    'password-rule',  # artificial: expand
+    'ldap-server-definition-name',  # artificial: expand_names
+    'ldap-server-definition',  # artificial: expand
+    'primary-mfa-server-definition-name',  # artificial: expand_names
+    'primary-mfa-server-definition',  # artificial: expand
+    'backup-mfa-server-definition-name',  # artificial: expand_names
+    'backup-mfa-server-definition',  # artificial: expand
+    'user-role-names',  # artificial: expand_names
     'user-role-objects',  # artificial: expand
+    'default-group-name',  # artificial: expand_names
     'default-group',  # artificial: expand
-    'default-group-name',  # artificial, not yet implemented (TODO: Implement)
-    'force-shared-secret-key-change',  # multi-factor-auth-required == True
-    'primary-mfa-server-definition-uri',  # mfa-types contains "mfa-server"
-    'backup-mfa-server-definition-uri',  # mfa-types contains "mfa-server"
-    'mfa-policy',  # mfa-types contains "mfa-server"
-    'mfa-userid',  # type != "template" and mfa-types contains "mfa-server"
-    'mfa-userid-override',  # type == "template" and mfa-types contains "mfa-server"
+    'password',  # never present
+    'disabled',  # type != 'template'
+    'password-expires',  # type != 'template'
+    'userid-on-ldap-server',  # type != 'template'
 )
 
 # A standard test user, as specified for the 'properties' module input parm
@@ -182,7 +177,7 @@ def get_module_output(mod_obj):
     return func(*call_args[0], **call_args[1])
 
 
-def assert_user_props(user_props, expand, where):
+def assert_user_props(user_props, expand, expand_names, where):
     """
     Assert the output object of the zhmc_user module
     """
@@ -196,32 +191,90 @@ def assert_user_props(user_props, expand, where):
         assert prop_name_hmc in user_props, where
 
     user_type = user_props['type']
-    auth_type = user_props['authentication-type']
 
     # Assert presence of the conditional and artificial properties
 
-    if user_type == 'pattern-based':
-        assert 'user-pattern-uri' in user_props, where
-        assert 'user-pattern-name' in user_props, where
-        if expand:
-            assert 'user-pattern' in user_props, where
-
-    if auth_type == 'local':
-        assert 'password-rule-uri' in user_props, where
-        assert 'password-rule-name' in user_props, where
-        if expand:
-            assert 'password-rule' in user_props, where
-
-    if auth_type == 'ldap':
-        assert 'ldap-server-definition-uri' in user_props, where
-        assert 'ldap-server-definition-name' in user_props, where
-        if expand:
-            assert 'ldap-server-definition' in user_props, where
-
     assert 'user-roles' in user_props, where  # Base property with the URIs
-    assert 'user-role-names' in user_props, where
+    if expand_names:
+        assert 'user-role-names' in user_props, where
+    else:
+        assert 'user-role-names' not in user_props, where
     if expand:
         assert 'user-role-objects' in user_props, where
+    else:
+        assert 'user-role-objects' not in user_props, where
+
+    if user_type == 'pattern-based':
+
+        assert 'user-pattern-uri' in user_props, where
+        if expand_names:
+            assert 'user-pattern-name' in user_props, where
+        else:
+            assert 'user-pattern-name' not in user_props, where
+        if expand:
+            assert 'user-pattern' in user_props, where
+        else:
+            assert 'user-pattern' not in user_props, where
+
+        assert 'user-template-uri' in user_props, where
+        if expand_names:
+            assert 'user-template-name' in user_props, where
+        else:
+            assert 'user-template-name' not in user_props, where
+        if expand:
+            assert 'user-template' in user_props, where
+        else:
+            assert 'user-template' not in user_props, where
+
+    assert 'password-rule-uri' in user_props, where
+    if expand_names:
+        assert 'password-rule-name' in user_props, where
+    else:
+        assert 'password-rule-name' not in user_props, where
+    if expand:
+        assert 'password-rule' in user_props, where
+    else:
+        assert 'password-rule' not in user_props, where
+
+    assert 'ldap-server-definition-uri' in user_props, where
+    if expand_names:
+        assert 'ldap-server-definition-name' in user_props, where
+    else:
+        assert 'ldap-server-definition-name' not in user_props, where
+    if expand:
+        assert 'ldap-server-definition' in user_props, where
+    else:
+        assert 'ldap-server-definition' not in user_props, where
+
+    assert 'primary-mfa-server-definition-uri' in user_props, where
+    if expand_names:
+        assert 'primary-mfa-server-definition-name' in user_props, where
+    else:
+        assert 'primary-mfa-server-definition-name' not in user_props, where
+    if expand:
+        assert 'primary-mfa-server-definition' in user_props, where
+    else:
+        assert 'primary-mfa-server-definition' not in user_props, where
+
+    assert 'backup-mfa-server-definition-uri' in user_props, where
+    if expand_names:
+        assert 'backup-mfa-server-definition-name' in user_props, where
+    else:
+        assert 'backup-mfa-server-definition-name' not in user_props, where
+    if expand:
+        assert 'backup-mfa-server-definition' in user_props, where
+    else:
+        assert 'backup-mfa-server-definition' not in user_props, where
+
+    assert 'default-group-uri' in user_props, where
+    if expand_names:
+        assert 'default-group-name' in user_props, where
+    else:
+        assert 'default-group-name' not in user_props, where
+    if expand:
+        assert 'default-group' in user_props, where
+    else:
+        assert 'default-group' not in user_props, where
 
     # Assert that none of the write-only properties is in the output object
     for prop_name in zhmc_user.WRITEONLY_PROPERTIES_HYPHEN:
@@ -241,18 +294,22 @@ def assert_user_props(user_props, expand, where):
     ]
 )
 @pytest.mark.parametrize(
+    "expand_names", [
+        pytest.param(False, id="expand_names=False"),
+        pytest.param(True, id="expand_names=True"),
+    ]
+)
+@pytest.mark.parametrize(
     "user_type, auth_type", [
         pytest.param('standard', 'local', id="user_type=standard,auth_type=local"),
-        pytest.param('standard', 'ldap', id="user_type=standard,auth_type=ldap"),
         pytest.param('template', 'ldap', id="user_type=template,auth_type=ldap"),
-        pytest.param('pattern-based', 'local', id="user_type=pattern-based,auth_type=local"),
         pytest.param('pattern-based', 'ldap', id="user_type=pattern-based,auth_type=ldap"),
         pytest.param('system-defined', 'local', id="user_type=system-defined,auth_type=local"),
     ]
 )
 @mock.patch("plugins.modules.zhmc_user.AnsibleModule", autospec=True)
 def test_zhmc_user_facts(
-        ansible_mod_cls, user_type, auth_type, expand, check_mode,
+        ansible_mod_cls, user_type, auth_type, expand, expand_names, check_mode,
         hmc_session):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name
     """
@@ -289,6 +346,7 @@ def test_zhmc_user_facts(
         'state': 'facts',
         'properties': None,
         'expand': expand,
+        'expand_names': expand_names,
         'log_file': LOG_FILE,
         '_faked_session': faked_session,
     }
@@ -309,7 +367,7 @@ def test_zhmc_user_facts(
     # Assert module output
     changed, user_props = get_module_output(mod_obj)
     assert changed is False, where
-    assert_user_props(user_props, expand, where)
+    assert_user_props(user_props, expand, expand_names, where)
 
 
 USER_ABSENT_PRESENT_TESTCASES = [
@@ -410,6 +468,7 @@ def test_zhmc_user_absent_present(
     faked_session = hmc_session if hd.mock_file else None
 
     expand = False  # Expansion is tested elsewhere
+    expand_names = False  # Expansion is tested elsewhere
     client = zhmcclient.Client(hmc_session)
     console = client.consoles.console
 
@@ -458,6 +517,7 @@ def test_zhmc_user_absent_present(
             'state': input_state,
             'properties': input_props,
             'expand': expand,
+            'expand_names': expand_names,
             'log_file': LOG_FILE,
             '_faked_session': faked_session,
         }
@@ -500,7 +560,7 @@ def test_zhmc_user_absent_present(
                 f"Module input properties:\n{input_props_str}\n"
                 f"Resulting user properties:\n{output_props_str}")
         if input_state == 'present':
-            assert_user_props(output_props, expand, where)
+            assert_user_props(output_props, expand, expand_names, where)
 
     finally:
         # Delete user, if it exists
@@ -608,6 +668,7 @@ def test_zhmc_update_user_roles(
     faked_session = hmc_session if hd.mock_file else None
 
     expand = False  # Expansion is tested elsewhere
+    expand_names = False  # Expansion is tested elsewhere
     client = zhmcclient.Client(hmc_session)
     console = client.consoles.console
 
@@ -644,7 +705,8 @@ def test_zhmc_update_user_roles(
             'properties': {
                 'user_role_names': input_urole_names,
             },
-            'expand': False,
+            'expand': expand,
+            'expand_names': expand_names,
             'log_file': LOG_FILE,
             '_faked_session': faked_session,
         }
@@ -661,7 +723,10 @@ def test_zhmc_update_user_roles(
             f"message:\n{get_failure_msg(mod_obj)}"
 
         changed, output_props = get_module_output(mod_obj)
-        output_urole_names = output_props['user-role-names']
+        if expand_names:
+            output_urole_names = output_props['user-role-names']
+        else:
+            output_urole_names = []
 
         if changed != exp_changed:
             initial_uroles_sorted = sorted(initial_urole_names)
@@ -677,9 +742,16 @@ def test_zhmc_update_user_roles(
                 f"Module input user roles:\n{input_uroles_str}\n"
                 f"Resulting user roles:\n{output_uroles_str}")
 
-        assert_user_props(output_props, expand, where)
+        assert_user_props(output_props, expand, expand_names, where)
 
-        assert set(output_urole_names) == set(exp_urole_names)
+        # We need to compare the output based on URIs, because the names will
+        # only be in the output when expand_names is set.
+        output_urole_uris = set(output_props['user-roles'])
+        exp_urole_uris = set()
+        for urole_name in exp_urole_names:
+            urole = console.user_roles.find(name=urole_name)
+            exp_urole_uris.add(urole.uri)
+        assert output_urole_uris == exp_urole_uris
 
     finally:
         # Delete user

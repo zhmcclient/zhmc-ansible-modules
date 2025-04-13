@@ -108,6 +108,14 @@ options:
     type: bool
     required: false
     default: false
+  expand_names:
+    description:
+      - "If True and O(full_properties) is set, additional artificial properties
+         will be returned for the names of referenced objects, such as user
+         roles, password rule, etc. Default: False."
+    type: bool
+    required: false
+    default: false
   log_file:
     description:
       - "File path of a log file to which the logic flow of this module as well
@@ -162,6 +170,43 @@ users:
       description: Additional properties requested via O(full_properties).
         The property names will have underscores instead of hyphens.
       type: raw
+    user_role_names:
+      description: "Only present if O(expand_names=true): Name of the user
+        roles referenced by property C(user_roles)."
+      type: str
+    user_pattern_name:
+      description: "Only present for users with C(type=pattern) and if
+        O(expand_names=true): Name of the user pattern referenced by property
+        C(user_pattern_uri)."
+      type: str
+    user_template_name:
+      description: "Only present for users with C(type=pattern) and if
+        O(expand_names=true): Name of the template user referenced by property
+        C(user_template_uri)."
+      type: str
+    password_rule_name:
+      description: "Only present if O(expand_names=true): Name of the password
+        rule referenced by property C(password_rule_uri)."
+      type: str
+    ldap_server_definition_name:
+      description: "Only present if O(expand_names=true): Name of the LDAP
+        server definition referenced by property
+        C(ldap_server_definition_uri)."
+      type: str
+    primary_mfa_server_definition_name:
+      description: "Only present if O(expand_names=true): Name of the MFA
+        server definition referenced by property
+        C(primary_mfa_server_definition_uri)."
+      type: str
+    backup_mfa_server_definition_name:
+      description: "Only present if O(expand_names=true): Name of the MFA
+        server definition referenced by property
+        C(backup_mfa_server_definition_uri)."
+      type: str
+    default_group_name:
+      description: "Only present if O(expand_names=true): Name of the Group
+        referenced by property C(default_group_uri)."
+      type: str
   sample:
     [
         {
@@ -181,7 +226,8 @@ from ansible.module_utils.basic import AnsibleModule  # noqa: E402
 
 from ..module_utils.common import log_init, open_session, close_session, \
     hmc_auth_parameter, Error, missing_required_lib, \
-    common_fail_on_import_errors, parse_hmc_host, blanked_params  # noqa: E402
+    common_fail_on_import_errors, parse_hmc_host, blanked_params, \
+    NOT_PRESENT  # noqa: E402
 
 try:
     import urllib3
@@ -201,9 +247,139 @@ LOGGER_NAME = 'zhmc_user_list'
 LOGGER = logging.getLogger(LOGGER_NAME)
 
 
+def add_artificial_properties_expand(
+        user_properties, user, user_roles_by_uri, user_patterns_by_uri,
+        users_by_uri, password_rules_by_uri, ldap_server_definitions_by_uri,
+        mfa_server_definitions_by_uri, groups_by_uri):
+    """
+    Add artificial properties to the user_properties dict. This function is
+    called only when full_properties and expand_names are specified.
+
+    Upon return, the user_properties dict has been extended by these properties:
+
+    * 'user-role-names': Names of UserRole objects corresponding to the URIs
+      in the 'user-roles' property.
+
+    * 'user-pattern-name': Name of UserPattern object corresponding to the URI
+      in the 'user-pattern-uri' property, if type='pattern-based'.
+
+    * 'user-template-name': Name of User object corresponding to the
+      URI in the 'user-template-uri' property, if type='pattern-based'.
+
+    * 'password-rule-name': Name of PasswordRule object corresponding to the
+      URI in the 'password-rule-uri' property.
+
+    * 'ldap-server-definition-name': Name of LdapServerDefinition object
+      corresponding to the URI in the 'ldap-server-definition-uri' property.
+
+    * 'primary-mfa-server-definition-name': Name of MfaServerDefinition object
+      corresponding to the URI in the 'primary-mfa-server-definition-uri'
+      property.
+
+    * 'backup-mfa-server-definition-name': Name of MfaServerDefinition object
+      corresponding to the URI in the 'backup-mfa-server-definition-uri'
+      property.
+
+    * 'default-group-name': Name of the Group object corresponding to the URI
+      in the 'default-group-uri' property.
+    """
+
+    # Handle User Role references
+    user_role_uris = user.properties['user-roles']
+    # This property always exists
+    uroles = [user_roles_by_uri[uri] for uri in user_role_uris]
+    user_properties['user-role-names'] = [ur.name for ur in uroles]
+
+    # Handle User Pattern reference
+    if user.properties['type'] == 'pattern-based':
+
+        # This property exists only for type='pattern-based', and will not be
+        # None.
+        user_pattern_uri = user.properties['user-pattern-uri']
+        if user_pattern_uri is None:  # Defensive programming
+            user_properties['user-pattern-name'] = None
+        else:
+            # Note: Accessing 'name' triggers a full pull, and the
+            # User Pattern object does not support selective get.
+            user_properties['user-pattern-name'] = \
+                user_patterns_by_uri[user_pattern_uri].name
+
+        # This property exists only for type='pattern-based' and if the user
+        # is template-based, and may be None.
+        user_template_uri = user.properties.get(
+            'user-template-uri', NOT_PRESENT)
+        if user_template_uri == NOT_PRESENT:
+            pass
+        elif user_template_uri is None:
+            user_properties['user-template-name'] = None
+        else:
+            # Note: Accessing 'name' triggers a full pull, and the
+            # User object does not support selective get.
+            user_properties['user-template-name'] = \
+                users_by_uri[user_template_uri].name
+
+    # Handle Password Rule reference
+    password_rule_uri = user.properties['password-rule-uri']
+    # This property always exists. It will be non-Null for auth-type='local'.
+    if password_rule_uri is None:
+        user_properties['password-rule-name'] = None
+    else:
+        # Note: Accessing 'name' triggers a full pull, and the
+        # Password Rule object does not support selective get.
+        user_properties['password-rule-name'] = \
+            password_rules_by_uri[password_rule_uri].name
+
+    # Handle LDAP Server Definition reference
+    ldap_srv_def_uri = user.properties['ldap-server-definition-uri']
+    # This property always exists and is non-Null for auth.-type='ldap'.
+    if ldap_srv_def_uri is None:
+        user_properties['ldap-server-definition-name'] = None
+    else:
+        # Note: Accessing 'name' triggers a full pull, and the
+        # LDAP Server Definition object does not support selective get.
+        user_properties['ldap-server-definition-name'] = \
+            ldap_server_definitions_by_uri[ldap_srv_def_uri].name
+
+    # Handle primary MFA Server Definition reference
+    pri_mfa_srv_def_uri = user.properties['primary-mfa-server-definition-uri']
+    # This property always exists and may be None
+    if pri_mfa_srv_def_uri is None:
+        user_properties['primary-mfa-server-definition-name'] = None
+    else:
+        # Note: Accessing 'name' triggers a full pull, and the
+        # MFA Server Definition object does not support selective get.
+        user_properties['primary-mfa-server-definition-name'] = \
+            mfa_server_definitions_by_uri[pri_mfa_srv_def_uri].name
+
+    # Handle backup MFA Server Definition reference
+    bac_mfa_srv_def_uri = user.properties['backup-mfa-server-definition-uri']
+    # This property always exists and may be None
+    if bac_mfa_srv_def_uri is None:
+        user_properties['backup-mfa-server-definition-name'] = None
+    else:
+        # Note: Accessing 'name' triggers a full pull, and the
+        # MFA Server Definition object does not support selective get.
+        user_properties['backup-mfa-server-definition-name'] = \
+            mfa_server_definitions_by_uri[bac_mfa_srv_def_uri].name
+
+    # Handle default Group reference
+    default_group_uri = user.properties['default-group-uri']
+    # This property always exists, and may be None
+    if default_group_uri is None:
+        user_properties['default-group-name'] = None
+    else:
+        # Note: Accessing 'name' triggers a full pull, and the
+        # default Group object does not support selective get.
+        user_properties['default-group-name'] = \
+            groups_by_uri[default_group_uri].name
+
+
 def perform_list(params):
     """
-    List the users and return a subset of properties.
+    List the users, expand artificial properties and return a list of users.
+
+    The set of properties in the returned users depends on module parameters
+    'full_properties' and 'expand_names'.
 
     Raises:
       ParameterError: An issue with the module parameters.
@@ -211,6 +387,7 @@ def perform_list(params):
     """
 
     full_properties = params['full_properties']
+    expand_names = params['expand_names']
 
     session, logoff = open_session(params)
     try:
@@ -221,15 +398,37 @@ def perform_list(params):
 
         # List the users
         users = console.users.list(full_properties=full_properties)
+
+        # Get the data for the name expansions only once
+        if full_properties and expand_names:
+            user_roles_by_uri = {x.uri: x for x in console.user_roles.list()}
+            user_patterns_by_uri = {
+                x.uri: x for x in console.user_patterns.list()}
+            users_by_uri = {x.uri: x for x in users}
+            password_rules_by_uri = {
+                x.uri: x for x in console.password_rules.list()}
+            ldap_server_definitions_by_uri = {
+                x.uri: x for x in console.ldap_server_definitions.list()}
+            mfa_server_definitions_by_uri = {
+                x.uri: x for x in console.mfa_server_definitions.list()}
+            groups_by_uri = {x.uri: x for x in console.groups.list()}
+
         # The default exception handling is sufficient for the above.
+
         for user in users:
 
-            user_properties = {}
-            for pname_hmc, pvalue in user.properties.items():
-                pname = pname_hmc.replace('-', '_')
-                user_properties[pname] = pvalue
+            user_properties = dict(user.properties)
+            if full_properties and expand_names:
+                add_artificial_properties_expand(
+                    user_properties, user, user_roles_by_uri,
+                    user_patterns_by_uri, users_by_uri, password_rules_by_uri,
+                    ldap_server_definitions_by_uri,
+                    mfa_server_definitions_by_uri, groups_by_uri)
 
-            user_list.append(user_properties)
+            user_properties_under = {
+                n.replace('-', '_'): v for n, v in user_properties.items()}
+
+            user_list.append(user_properties_under)
 
         return user_list
 
@@ -246,6 +445,7 @@ def main():
         hmc_host=dict(required=True, type='raw'),
         hmc_auth=hmc_auth_parameter(),
         full_properties=dict(required=False, type='bool', default=False),
+        expand_names=dict(required=False, type='bool', default=False),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),
     )

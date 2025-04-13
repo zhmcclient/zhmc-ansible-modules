@@ -120,9 +120,15 @@ properties
 
   \* :literal:`user\_pattern\_uri`\ : Cannot be set directly, but indirectly via the artificial property :literal:`user\_pattern\_name`.
 
+  \* :literal:`user\_template\_uri`\ : Cannot be set directly, but indirectly via the artificial property :literal:`user\_template\_name`.
+
   \* :literal:`password\_rule\_uri`\ : Cannot be set directly, but indirectly via the artificial property :literal:`password\_rule\_name`.
 
   \* :literal:`ldap\_server\_definition\_uri`\ : Cannot be set directly, but indirectly via the artificial property :literal:`ldap\_server\_definition\_name`.
+
+  \* :literal:`primary\_mfa\_server\_definition\_uri`\ : Cannot be set directly, but indirectly via the artificial property :literal:`primary\_mfa\_server\_definition\_name`.
+
+  \* :literal:`backup\_mfa\_server\_definition\_uri`\ : Cannot be set directly, but indirectly via the artificial property :literal:`backup\_mfa\_server\_definition\_name`.
 
   \* :literal:`default\_group\_uri`\ : Cannot be set directly, but indirectly via the artificial property :literal:`default\_group\_name`.
 
@@ -139,6 +145,16 @@ expand
 
   | **required**: False
   | **type**: bool
+
+
+expand_names
+  Boolean that controls whether the returned user contains additional artificial properties for the names of referenced objects, such as user roles, password rule, etc.
+
+  For backwards compatibility, this parameter defaults to True.
+
+  | **required**: False
+  | **type**: bool
+  | **default**: True
 
 
 log_file
@@ -231,7 +247,10 @@ user
             "allow-management-interfaces": true,
             "allow-remote-access": true,
             "authentication-type": "local",
+            "backup-mfa-server-definition-name": null,
+            "backup-mfa-server-definition-uri": null,
             "class": "user",
+            "default-group-name": null,
             "default-group-uri": null,
             "description": "",
             "disable-delay": 1,
@@ -248,15 +267,22 @@ user
             "ldap-server-definition-uri": null,
             "max-failed-logins": 3,
             "max-web-services-api-sessions": 1000,
+            "mfa-policy": null,
+            "mfa-types": null,
+            "mfa-userid": null,
+            "mfa-userid-override": null,
             "min-pw-change-time": 0,
             "multi-factor-authentication-required": false,
             "name": "VALUE_SPECIFIED_IN_NO_LOG_PARAMETER",
             "object-id": "91773b88-0c99-11eb-b4d3-00106f237ab1",
             "object-uri": "/api/users/91773b88-0c99-11eb-b4d3-00106f237ab1",
             "parent": "/api/console",
+            "parent-name": "HMC1",
             "password-expires": 87,
             "password-rule-name": "ZaaS",
             "password-rule-uri": "/api/console/password-rules/518ac1d8-bf98-11e9-b9dd-00106f237ab1",
+            "primary-mfa-server-definition-name": null,
+            "primary-mfa-server-definition-uri": null,
             "replication-overwrite-possible": true,
             "session-timeout": 0,
             "type": "standard",
@@ -282,14 +308,14 @@ user
     | **type**: raw
 
   user-role-names
-    Name of the user roles referenced by property :literal:`user-roles`.
+    Only present if :literal:`expand\_names=true`\ : Name of the user roles referenced by property :literal:`user-roles`.
 
     | **type**: str
 
   user-role-objects
     Deprecated: This result property is deprecated because the :literal:`expand` parameter is deprecated.
 
-    Only if :literal:`expand=true`\ : User roles referenced by property :literal:`user-roles`.
+    Only present if :literal:`expand=true`\ : User roles referenced by property :literal:`user-roles`.
 
     | **type**: dict
 
@@ -300,14 +326,14 @@ user
 
 
   user-pattern-name
-    Only for users with :literal:`type=pattern`\ : Name of the user pattern referenced by property :literal:`user-pattern-uri`.
+    Only present for users with :literal:`type=pattern` and if :literal:`expand\_names=true`\ : Name of the user pattern referenced by property :literal:`user-pattern-uri`.
 
     | **type**: str
 
   user-pattern
     Deprecated: This result property is deprecated because the :literal:`expand` parameter is deprecated.
 
-    Only for users with :literal:`type=pattern` and if :literal:`expand=true`\ : User pattern referenced by property :literal:`user-pattern-uri`.
+    Only present for users with :literal:`type=pattern` and if :literal:`expand=true`\ : User pattern referenced by property :literal:`user-pattern-uri`.
 
     | **type**: dict
 
@@ -317,15 +343,33 @@ user
       | **type**: raw
 
 
+  user-template-name
+    Only present for users with :literal:`type=pattern` and if :literal:`expand\_names=true`\ : Name of the template user referenced by property :literal:`user-template-uri`.
+
+    | **type**: str
+
+  user-template
+    Deprecated: This result property is deprecated because the :literal:`expand` parameter is deprecated.
+
+    Only present for users with :literal:`type=pattern` and if :literal:`expand=true`\ : User template referenced by property :literal:`user-template-uri`.
+
+    | **type**: dict
+
+    {property}
+      Properties of the template user, as described in the data model of the 'User' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
+
+      | **type**: raw
+
+
   password-rule-name
-    Only for users with :literal:`authentication-type=local`\ : Name of the password rule referenced by property :literal:`password-rule-uri`.
+    Only present if :literal:`expand\_names=true`\ : Name of the password rule referenced by property :literal:`password-rule-uri`.
 
     | **type**: str
 
   password-rule
     Deprecated: This result property is deprecated because the :literal:`expand` parameter is deprecated.
 
-    Only for users with :literal:`authentication-type=local` and if :literal:`expand=true`\ : Password rule referenced by property :literal:`password-rule-uri`.
+    Only present if :literal:`expand=true`\ : Password rule referenced by property :literal:`password-rule-uri`.
 
     | **type**: dict
 
@@ -336,19 +380,73 @@ user
 
 
   ldap-server-definition-name
-    Only for users with :literal:`authentication-type=ldap`\ : Name of the LDAP server definition referenced by property :literal:`ldap-server-definition-uri`.
+    Only present if :literal:`expand\_names=true`\ : Name of the LDAP server definition referenced by property :literal:`ldap-server-definition-uri`.
 
     | **type**: str
 
   ldap-server-definition
     Deprecated: This result property is deprecated because the :literal:`expand` parameter is deprecated.
 
-    Only for users with :literal:`authentication-type=ldap` and if :literal:`expand=true`\ : LDAP server definition referenced by property :literal:`ldap-server-definition-uri`.
+    Only present if :literal:`expand=true`\ : LDAP server definition referenced by property :literal:`ldap-server-definition-uri`.
 
     | **type**: dict
 
     {property}
       Properties of the LDAP server definition, as described in the data model of the 'LDAP Server Definition' object in the :ref:`HMC API <HMC API>` book. Write-only properties in the data model are not included. The property names have hyphens (-) as described in that book.
+
+      | **type**: raw
+
+
+  primary-mfa-server-definition-name
+    Only present if :literal:`expand\_names=true`\ : Name of the MFA server definition referenced by property :literal:`primary-mfa-server-definition-uri`.
+
+    | **type**: str
+
+  primary-mfa-server-definition
+    Deprecated: This result property is deprecated because the :literal:`expand` parameter is deprecated.
+
+    Only present if :literal:`expand=true`\ : MFA server definition referenced by property :literal:`primary-mfa-server-definition-uri`.
+
+    | **type**: dict
+
+    {property}
+      Properties of the MFA server definition, as described in the data model of the 'MFA Server Definition' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
+
+      | **type**: raw
+
+
+  backup-mfa-server-definition-name
+    Only present if :literal:`expand\_names=true`\ : Name of the MFA server definition referenced by property :literal:`backup-mfa-server-definition-uri`.
+
+    | **type**: str
+
+  backup-mfa-server-definition
+    Deprecated: This result property is deprecated because the :literal:`expand` parameter is deprecated.
+
+    Only present if :literal:`expand=true`\ : MFA server definition referenced by property :literal:`backup-mfa-server-definition-uri`.
+
+    | **type**: dict
+
+    {property}
+      Properties of the MFA server definition, as described in the data model of the 'MFA Server Definition' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
+
+      | **type**: raw
+
+
+  default-group-name
+    Only present if :literal:`expand\_names=true`\ : Name of the Group referenced by property :literal:`default-group-uri`.
+
+    | **type**: str
+
+  default-group
+    Deprecated: This result property is deprecated because the :literal:`expand` parameter is deprecated.
+
+    Only present if :literal:`expand=true`\ : Group referenced by property :literal:`default-group-uri`.
+
+    | **type**: dict
+
+    {property}
+      Properties of the Group, as described in the data model of the 'Group' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
 
       | **type**: raw
 
