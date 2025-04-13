@@ -77,6 +77,18 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Test: Fixed duplicate 'description' properties in test YAML files.
   (issue #1097)
 
+* Test: For the password-rule related properties of the 'zhmc_user' and
+  'zhmc_user_list' modules, fixed that they are always present, and not
+  dependent on auth-type=local.
+
+* Test: For the ldap-server-definition related properties of the 'zhmc_user' and
+  'zhmc_user_list' modules, fixed that they are always present, and not
+  dependent on auth-type=local.
+
+* Test: For the MFA related properties of the 'zhmc_user' and
+  'zhmc_user_list' modules, fixed that they are always present, and not
+  dependent on mfa-types or other MFA related properties.
+
 **Enhancements:**
 
 * Support for ansible-core 2.18, by adding an ignore file for the sanity tests.
@@ -87,6 +99,27 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Dev: Added display of environment variables and platform details in test
   workflow.
+
+* Added a boolean 'expand_names' parameter to the 'zhmc_user' module. This
+  allows disabling the addition of names for referenced objects. For
+  backwards compatibility, this parameter is True by default.
+
+* Added a boolean 'expand_names' parameter to the 'zhmc_user_list' module. This
+  allows enabling the addition of names for referenced objects, which improves
+  the performance compared to a loop of calls to the 'zhmc_user' module
+  with 'expand_names', because the data needed for translating the URIs to names
+  is retrieved only once. To save these extra retrieval operations by default,
+  this parameter is False by default.
+
+* Added support for the following properties and input parameters in the
+  'zhmc_user' and 'zhmc_user_list' modules:
+  - user-template related
+  - primary-mfa-server-definition related
+  - backup-mfa-server-definition related
+  - default-group related
+
+* Added a logged warning if the deprecated parameter 'expand' is used for
+  the 'zhmc_user' module.
 
 **Cleanup:**
 
@@ -119,6 +152,13 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Test: Accommodated rollout of Ubuntu 24.04 on GitHub Actions by using
   ubuntu-22.04 as the OS image for Python 3.8 based test runs.
+
+* Docs: In the parameter documentation for the 'zhmc_user' and 'zhmc_user_list'
+  modules, made the language more explicit that states under which conditions
+  each parameter is present.
+
+* Test: Removed the invalid combinations of type and auth-type from the end2end
+  test 'test_zhmc_user_facts()'.
 
 **Known issues:**
 

@@ -93,6 +93,13 @@ full_properties
   | **type**: bool
 
 
+expand_names
+  If True and :literal:`full\_properties` is set, additional artificial properties will be returned for the names of referenced objects, such as user roles, password rule, etc. Default: False.
+
+  | **required**: False
+  | **type**: bool
+
+
 log_file
   File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.
 
@@ -177,5 +184,45 @@ users
     Additional properties requested via :literal:`full\_properties`. The property names will have underscores instead of hyphens.
 
     | **type**: raw
+
+  user_role_names
+    Only present if :literal:`expand\_names=true`\ : Name of the user roles referenced by property :literal:`user\_roles`.
+
+    | **type**: str
+
+  user_pattern_name
+    Only present for users with :literal:`type=pattern` and if :literal:`expand\_names=true`\ : Name of the user pattern referenced by property :literal:`user\_pattern\_uri`.
+
+    | **type**: str
+
+  user_template_name
+    Only present for users with :literal:`type=pattern` and if :literal:`expand\_names=true`\ : Name of the template user referenced by property :literal:`user\_template\_uri`.
+
+    | **type**: str
+
+  password_rule_name
+    Only present if :literal:`expand\_names=true`\ : Name of the password rule referenced by property :literal:`password\_rule\_uri`.
+
+    | **type**: str
+
+  ldap_server_definition_name
+    Only present if :literal:`expand\_names=true`\ : Name of the LDAP server definition referenced by property :literal:`ldap\_server\_definition\_uri`.
+
+    | **type**: str
+
+  primary_mfa_server_definition_name
+    Only present if :literal:`expand\_names=true`\ : Name of the MFA server definition referenced by property :literal:`primary\_mfa\_server\_definition\_uri`.
+
+    | **type**: str
+
+  backup_mfa_server_definition_name
+    Only present if :literal:`expand\_names=true`\ : Name of the MFA server definition referenced by property :literal:`backup\_mfa\_server\_definition\_uri`.
+
+    | **type**: str
+
+  default_group_name
+    Only present if :literal:`expand\_names=true`\ : Name of the Group referenced by property :literal:`default\_group\_uri`.
+
+    | **type**: str
 
 

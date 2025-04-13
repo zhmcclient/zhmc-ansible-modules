@@ -141,11 +141,19 @@ options:
          current user roles, if specified."
       - "* C(user_pattern_uri): Cannot be set directly, but indirectly via
          the artificial property C(user_pattern_name)."
+      - "* C(user_template_uri): Cannot be set directly, but indirectly via
+         the artificial property C(user_template_name)."
       - "* C(password_rule_uri): Cannot be set directly, but indirectly via
          the artificial property C(password_rule_name)."
       - "* C(ldap_server_definition_uri): Cannot be set directly, but
          indirectly via the artificial property
          C(ldap_server_definition_name)."
+      - "* C(primary_mfa_server_definition_uri): Cannot be set directly, but
+         indirectly via the artificial property
+         C(primary_mfa_server_definition_name)."
+      - "* C(backup_mfa_server_definition_uri): Cannot be set directly, but
+         indirectly via the artificial property
+         C(backup_mfa_server_definition_name)."
       - "* C(default_group_uri): Cannot be set directly, but indirectly via
          the artificial property C(default_group_name)."
       - "Properties omitted in this dictionary will remain unchanged when the
@@ -170,6 +178,15 @@ options:
     type: bool
     required: false
     default: false
+  expand_names:
+    description:
+      - "Boolean that controls whether the returned user contains additional
+         artificial properties for the names of referenced objects, such as
+         user roles, password rule, etc."
+      - "For backwards compatibility, this parameter defaults to True."
+    type: bool
+    required: false
+    default: true
   log_file:
     description:
       - "File path of a log file to which the logic flow of this module as well
@@ -253,14 +270,14 @@ user:
         The property names have hyphens (-) as described in that book."
       type: raw
     user-role-names:
-      description: "Name of the user roles referenced by property
-        C(user-roles)."
+      description: "Only present if O(expand_names=true): Name of the user
+        roles referenced by property C(user-roles)."
       type: str
     user-role-objects:
       description:
         - "Deprecated: This result property is deprecated because the
            O(expand) parameter is deprecated."
-        - "Only if O(expand=true): User roles referenced by property
+        - "Only present if O(expand=true): User roles referenced by property
            C(user-roles)."
       type: dict
       contains:
@@ -271,14 +288,15 @@ user:
             The property names have hyphens (-) as described in that book."
           type: raw
     user-pattern-name:
-      description: "Only for users with C(type=pattern): Name of the user
-        pattern referenced by property C(user-pattern-uri)."
+      description: "Only present for users with C(type=pattern) and if
+        O(expand_names=true): Name of the user pattern referenced by property
+        C(user-pattern-uri)."
       type: str
     user-pattern:
       description:
         - "Deprecated: This result property is deprecated because the
            O(expand) parameter is deprecated."
-        - "Only for users with C(type=pattern) and if O(expand=true):
+        - "Only present for users with C(type=pattern) and if O(expand=true):
            User pattern referenced by property C(user-pattern-uri)."
       type: dict
       contains:
@@ -288,16 +306,33 @@ user:
             book.
             The property names have hyphens (-) as described in that book."
           type: raw
+    user-template-name:
+      description: "Only present for users with C(type=pattern) and if
+        O(expand_names=true): Name of the template user referenced by property
+        C(user-template-uri)."
+      type: str
+    user-template:
+      description:
+        - "Deprecated: This result property is deprecated because the
+           O(expand) parameter is deprecated."
+        - "Only present for users with C(type=pattern) and if O(expand=true):
+           User template referenced by property C(user-template-uri)."
+      type: dict
+      contains:
+        "{property}":
+          description: "Properties of the template user, as described in the
+            data model of the 'User' object in the R(HMC API,HMC API) book.
+            The property names have hyphens (-) as described in that book."
+          type: raw
     password-rule-name:
-      description: "Only for users with C(authentication-type=local): Name of
-        the password rule referenced by property C(password-rule-uri)."
+      description: "Only present if O(expand_names=true): Name of the password
+        rule referenced by property C(password-rule-uri)."
       type: str
     password-rule:
       description:
         - "Deprecated: This result property is deprecated because the
            O(expand) parameter is deprecated."
-        - "Only for users with C(authentication-type=local) and if
-           O(expand=true): Password rule referenced by property
+        - "Only present if O(expand=true): Password rule referenced by property
            C(password-rule-uri)."
       type: dict
       contains:
@@ -308,17 +343,16 @@ user:
             The property names have hyphens (-) as described in that book."
           type: raw
     ldap-server-definition-name:
-      description: "Only for users with C(authentication-type=ldap): Name of
-        the LDAP server definition referenced by property
+      description: "Only present if O(expand_names=true): Name of the LDAP
+        server definition referenced by property
         C(ldap-server-definition-uri)."
       type: str
     ldap-server-definition:
       description:
         - "Deprecated: This result property is deprecated because the
            O(expand) parameter is deprecated."
-        - "Only for users with C(authentication-type=ldap) and if
-           O(expand=true): LDAP server definition referenced by property
-           C(ldap-server-definition-uri)."
+        - "Only present if O(expand=true): LDAP server definition referenced by
+           property C(ldap-server-definition-uri)."
       type: dict
       contains:
         "{property}":
@@ -328,12 +362,70 @@ user:
             Write-only properties in the data model are not included.
             The property names have hyphens (-) as described in that book."
           type: raw
+    primary-mfa-server-definition-name:
+      description: "Only present if O(expand_names=true): Name of the MFA
+        server definition referenced by property
+        C(primary-mfa-server-definition-uri)."
+      type: str
+    primary-mfa-server-definition:
+      description:
+        - "Deprecated: This result property is deprecated because the
+           O(expand) parameter is deprecated."
+        - "Only present if O(expand=true): MFA server definition referenced by
+           property C(primary-mfa-server-definition-uri)."
+      type: dict
+      contains:
+        "{property}":
+          description: "Properties of the MFA server definition, as described
+            in the data model of the 'MFA Server Definition' object in the
+            R(HMC API,HMC API) book.
+            The property names have hyphens (-) as described in that book."
+          type: raw
+    backup-mfa-server-definition-name:
+      description: "Only present if O(expand_names=true): Name of the MFA
+        server definition referenced by property
+        C(backup-mfa-server-definition-uri)."
+      type: str
+    backup-mfa-server-definition:
+      description:
+        - "Deprecated: This result property is deprecated because the
+           O(expand) parameter is deprecated."
+        - "Only present if O(expand=true): MFA server definition referenced by
+           property C(backup-mfa-server-definition-uri)."
+      type: dict
+      contains:
+        "{property}":
+          description: "Properties of the MFA server definition, as described
+            in the data model of the 'MFA Server Definition' object in the
+            R(HMC API,HMC API) book.
+            The property names have hyphens (-) as described in that book."
+          type: raw
+    default-group-name:
+      description: "Only present if O(expand_names=true): Name of the Group
+        referenced by property C(default-group-uri)."
+      type: str
+    default-group:
+      description:
+        - "Deprecated: This result property is deprecated because the
+           O(expand) parameter is deprecated."
+        - "Only present if O(expand=true): Group referenced by property
+           C(default-group-uri)."
+      type: dict
+      contains:
+        "{property}":
+          description: "Properties of the Group, as described in the data model
+            of the 'Group' object in the R(HMC API,HMC API) book.
+            The property names have hyphens (-) as described in that book."
+          type: raw
   sample:
     {
         "allow-management-interfaces": true,
         "allow-remote-access": true,
         "authentication-type": "local",
+        "backup-mfa-server-definition-name": null,
+        "backup-mfa-server-definition-uri": null,
         "class": "user",
+        "default-group-name": null,
         "default-group-uri": null,
         "description": "",
         "disable-delay": 1,
@@ -350,15 +442,22 @@ user:
         "ldap-server-definition-uri": null,
         "max-failed-logins": 3,
         "max-web-services-api-sessions": 1000,
+        "mfa-policy": null,
+        "mfa-types": null,
+        "mfa-userid": null,
+        "mfa-userid-override": null,
         "min-pw-change-time": 0,
         "multi-factor-authentication-required": false,
         "name": "VALUE_SPECIFIED_IN_NO_LOG_PARAMETER",
         "object-id": "91773b88-0c99-11eb-b4d3-00106f237ab1",
         "object-uri": "/api/users/91773b88-0c99-11eb-b4d3-00106f237ab1",
         "parent": "/api/console",
+        "parent-name": "HMC1",
         "password-expires": 87,
         "password-rule-name": "ZaaS",
         "password-rule-uri": "/api/console/password-rules/518ac1d8-bf98-11e9-b9dd-00106f237ab1",
+        "primary-mfa-server-definition-name": null,
+        "primary-mfa-server-definition-uri": null,
         "replication-overwrite-possible": true,
         "session-timeout": 0,
         "type": "standard",
@@ -383,7 +482,7 @@ from ..module_utils.common import log_init, open_session, close_session, \
     hmc_auth_parameter, Error, ParameterError, to_unicode, \
     process_normal_property, missing_required_lib, \
     common_fail_on_import_errors, parse_hmc_host, blanked_params, \
-    blanked_dict, removed_dict  # noqa: E402
+    blanked_dict, removed_dict, NOT_PRESENT  # noqa: E402
 
 try:
     import urllib3
@@ -431,8 +530,6 @@ ZHMC_USER_PROPERTIES = {
     # update-only properties:
     'default_group_uri': (False, False, True, None, None, None),
     # default_group_uri: Modified via default_group_name.
-    'default_group_name': (True, True, True, True, None, None),
-    # default_group_name: Artificial property, based on default_group_uri
 
     # create+update properties:
     'name': (False, True, True, True, None, None),
@@ -442,20 +539,13 @@ ZHMC_USER_PROPERTIES = {
     'authentication_type': (True, True, True, True, None, None),
     'user_roles': (False, False, False, None, None, None),
     # user_roles: Modified via user_role_names.
-    'user_role_names': (True, True, True, True, None, None),
-    # user_role_names: Artificial property, based on user_roles
     'password_rule_uri': (False, True, True, None, None, None),
     # password_rule_uri: Modified via password_rule_name.
-    'password_rule_name': (True, True, True, True, None, None),
-    # password_rule_name: Artificial property, based on password_rule_uri
     'password': (True, True, True, True, None, None),
     # password: Write-only
     'force_password_change': (True, True, True, True, None, bool),
     'ldap_server_definition_uri': (False, True, True, None, None, None),
     # ldap_server_definition_uri: Modified via ldap_server_definition_name.
-    'ldap_server_definition_name': (True, True, True, True, None, None),
-    # ldap_server_definition_name: Artificial property, based on
-    # ldap_server_definition_uri
     'userid_on_ldap_server': (True, True, True, True, None, None),
     'session_timeout': (True, True, True, True, None, int),
     'verify_timeout': (True, True, True, True, None, int),
@@ -484,15 +574,30 @@ ZHMC_USER_PROPERTIES = {
     'parent': (False, False, False, None, None, None),
     'class': (False, False, False, None, None, None),
     'user_pattern_uri': (False, False, False, None, None, None),
+    'user_template_uri': (False, False, False, None, None, None),
     'password_expires': (False, False, False, None, None, None),
     'replication_overwrite_possible': (False, False, False, None, None, None),
 
     # read-only artificial if-expand properties:
+    'user_role_objects': (False, False, False, None, None, None),
     'user_pattern': (False, False, False, None, None, None),
-    'default_group': (False, False, False, None, None, None),
+    'user_template': (False, False, False, None, None, None),
     'password_rule': (False, False, False, None, None, None),
     'ldap_server_definition': (False, False, False, None, None, None),
-    'user_role_objects': (False, False, False, None, None, None),
+    'primary_mfa_server_definition': (False, False, False, None, None, None),
+    'backup_mfa_server_definition': (False, False, False, None, None, None),
+    'default_group': (False, False, False, None, None, None),
+
+    # artificial if-expand-names properties:
+    # Can be specxified as input, but are in output only if expand_names.
+    'user_role_names': (True, True, True, True, None, None),
+    'user_pattern_name': (True, True, True, True, None, None),
+    'user_template_name': (True, True, True, True, None, None),
+    'password_rule_name': (True, True, True, True, None, None),
+    'ldap_server_definition_name': (True, True, True, True, None, None),
+    'primary_mfa_server_definition_name': (True, True, True, True, None, None),
+    'backup_mfa_server_definition_name': (True, True, True, True, None, None),
+    'default_group_name': (True, True, True, True, None, None),
 }
 
 # Write-only properties (blanked out in logs and removed in output)
@@ -625,6 +730,25 @@ def process_properties(console, user, params):
                 update_props['user-pattern-uri'] = user_pattern_uri
             continue
 
+        if prop_name == 'user_template_name':
+            user_template_name = input_props[prop_name]
+            if user_template_name:
+                try:
+                    user_template = console.users.find_by_name(
+                        user_template_name)
+                except zhmcclient.NotFound:
+                    raise ParameterError(
+                        f"Template user {user_template_name!r} specified in "
+                        f"parameter {prop_name!r} does not exist.")
+                user_template_uri = user_template.uri
+            else:
+                user_template_uri = None
+            if user is None:
+                create_props['user-template-uri'] = user_template_uri
+            elif user.prop('user-template-uri') != user_template_uri:
+                update_props['user-template-uri'] = user_template_uri
+            continue
+
         if prop_name == 'password_rule_name':
             password_rule_name = input_props[prop_name]
             if password_rule_name:
@@ -663,11 +787,65 @@ def process_properties(console, user, params):
                 update_props['ldap-server-definition-uri'] = ldap_srv_def_uri
             continue
 
+        if prop_name == 'primary_mfa_server_definition_name':
+            pri_mfa_srv_def_name = input_props[prop_name]
+            if pri_mfa_srv_def_name:
+                try:
+                    pri_mfa_srv_def = \
+                        console.mfa_server_definitions.find_by_name(
+                            pri_mfa_srv_def_name)
+                except zhmcclient.NotFound:
+                    raise ParameterError(
+                        f"MFA server definition {pri_mfa_srv_def_name!r} "
+                        f"specified in parameter {prop_name!r} does not exist.")
+                pri_mfa_srv_def_uri = pri_mfa_srv_def.uri
+            else:
+                pri_mfa_srv_def_uri = None
+            if user is None:
+                create_props['primary-mfa-server-definition-uri'] = \
+                    pri_mfa_srv_def_uri
+            elif user.prop('primary-mfa-server-definition-uri') != \
+                    pri_mfa_srv_def_uri:
+                update_props['primary-mfa-server-definition-uri'] = \
+                    pri_mfa_srv_def_uri
+            continue
+
+        if prop_name == 'backup_mfa_server_definition_name':
+            bac_mfa_srv_def_name = input_props[prop_name]
+            if bac_mfa_srv_def_name:
+                try:
+                    bac_mfa_srv_def = \
+                        console.mfa_server_definitions.find_by_name(
+                            bac_mfa_srv_def_name)
+                except zhmcclient.NotFound:
+                    raise ParameterError(
+                        f"MFA server definition {bac_mfa_srv_def_name!r} "
+                        f"specified in parameter {prop_name!r} does not exist.")
+                bac_mfa_srv_def_uri = bac_mfa_srv_def.uri
+            else:
+                bac_mfa_srv_def_uri = None
+            if user is None:
+                create_props['backup-mfa-server-definition-uri'] = \
+                    bac_mfa_srv_def_uri
+            elif user.prop('backup-mfa-server-definition-uri') != \
+                    bac_mfa_srv_def_uri:
+                update_props['backup-mfa-server-definition-uri'] = \
+                    bac_mfa_srv_def_uri
+            continue
+
         if prop_name == 'default_group_name':
             default_group_name = input_props[prop_name]
-            # TODO: Add support for Group objects to zhmcclient
-            # default_group = console.groups.find_by_name(default_group_name)
-            default_group_uri = f'fake-uri-{default_group_name}'
+            if default_group_name:
+                try:
+                    default_group = console.groups.find_by_name(
+                        default_group_name)
+                except zhmcclient.NotFound:
+                    raise ParameterError(
+                        f"Group {default_group_name!r} "
+                        f"specified in parameter {prop_name!r} does not exist.")
+                default_group_uri = default_group.uri
+            else:
+                default_group_uri = None
             if user is None:
                 create_props['default-group-uri'] = default_group_uri
             elif user.prop('default-group-uri') != default_group_uri:
@@ -684,18 +862,23 @@ def process_properties(console, user, params):
     return create_props, update_props, add_roles, rem_roles
 
 
-def add_artificial_properties(user_properties, console, user, expand):
+def add_artificial_properties(
+        user_properties, console, user, expand, expand_names):
     """
     Add artificial properties to the user_properties dict.
 
     Upon return, the user_properties dict has been extended by these properties:
 
+    If O(expand_names) is True:
+
     * 'user-role-names': Names of UserRole objects corresponding to the URIs
       in the 'user-roles' property.
 
     * 'user-pattern-name': Name of UserPattern object corresponding to the URI
-      in the 'user-pattern-uri' property. That property only exists for
-      type='pattern-based'.
+      in the 'user-pattern-uri' property, if type='pattern-based'.
+
+    * 'user-template-name': Name of UserTemplate object corresponding to the
+      URI in the 'user-template-uri' property, if type='pattern-based'.
 
     * 'password-rule-name': Name of PasswordRule object corresponding to the
       URI in the 'password-rule-uri' property.
@@ -703,11 +886,16 @@ def add_artificial_properties(user_properties, console, user, expand):
     * 'ldap-server-definition-name': Name of LdapServerDefinition object
       corresponding to the URI in the 'ldap-server-definition-uri' property.
 
-    * 'default-group-name': Name of Group object corresponding to the URI in
-      the 'default-group-uri' property.
+    * 'primary-mfa-server-definition-name': Name of MfaServerDefinition object
+      corresponding to the URI in the 'primary-mfa-server-definition-uri'
+      property.
 
-      TODO: Implement default-group-name; requires support for Group objects in
-      zhmcclient
+    * 'backup-mfa-server-definition-name': Name of MfaServerDefinition object
+      corresponding to the URI in the 'backup-mfa-server-definition-uri'
+      property.
+
+    * 'default-group-name': Name of the Group object corresponding to the URI
+      in the 'default-group-uri' property.
 
     If O(expand) (deprecated) is True, in addition:
 
@@ -715,8 +903,10 @@ def add_artificial_properties(user_properties, console, user, expand):
       URIs in the 'user-roles' property.
 
     * 'user-pattern': UserPattern object corresponding to the URI in the
-      'user-pattern-uri' property. That property only exists for
-      type='pattern-based'.
+      'user-pattern-uri' property, if type='pattern-based'.
+
+    * 'user-template': UserTemplate object corresponding to the URI in the
+      'user-template-uri' property, if type='pattern-based'.
 
     * 'password-rule': PasswordRule object corresponding to the URI in the
       'password-rule-uri' property.
@@ -724,97 +914,183 @@ def add_artificial_properties(user_properties, console, user, expand):
     * 'ldap-server-definition': LdapServerDefinition object corresponding to
       the URI in the 'ldap-server-definition-uri' property.
 
+    * 'primary-mfa-server-definition': MfaServerDefinition object corresponding
+      to the URI in the 'primary-mfa-server-definition-uri' property.
+
+    * 'backup-mfa-server-definition': MfaServerDefinition object corresponding
+      to the URI in the 'backup-mfa-server-definition-uri' property.
+
     * 'default-group': Group object corresponding to the URI in the
       'default-group-uri' property.
-
-      TODO: Implement default-group; requires support for Group objects in
-      zhmcclient
     """
 
-    # The User object either exists on the HMC, or in case of creating a user
-    # in check mode it is a local User object that does not exist on the HMC.
-    # In that case, we cannot retrieve properties from the HMC, so we take them
-    # from the user object directly.
-    type_ = user.properties['type']
-    auth_type = user.properties['authentication-type']
+    if expand or expand_names:
 
-    if type_ == 'pattern-based':
-        # For that type, the property exists, but may be null.
-        # Note: For other types, the property does not exist.
-        user_pattern_uri = user.properties['user-pattern-uri']
-        if user_pattern_uri is not None:
-            user_pattern = \
-                console.user_patterns.resource_object(user_pattern_uri)
-            # We pull the properties, since that is done anyway in .name,
-            # so that in case of expand it is not done twice.
-            user_pattern.pull_full_properties()
-            user_properties['user-pattern-name'] = user_pattern.name
-            if expand:
-                user_properties['user-pattern'] = dict(user_pattern.properties)
-    # Make sure that the artificial properties exist exactly when the uri
-    # property does
-    if 'user-pattern-uri' in user.properties and \
-            'user-pattern-name' not in user_properties:
-        user_properties['user-pattern-name'] = None
+        # Handle User Role references
+        user_role_uris = user.properties['user-roles']
+        # This property always exists
+        all_uroles_by_uri = {ur.uri: ur for ur in console.user_roles.list()}
+        uroles = [all_uroles_by_uri[uri] for uri in user_role_uris]
+        if expand_names:
+            user_properties['user-role-names'] = [ur.name for ur in uroles]
         if expand:
-            user_properties['user-pattern'] = None
+            user_role_objects = []
+            for urole in uroles:
+                urole.pull_full_properties()
+                user_role_objects.append(dict(urole.properties))
+            user_properties['user-role-objects'] = user_role_objects
 
-    if auth_type == 'local':
-        # For that auth type, the property exists and is non-null.
-        # Note: For other auth types, the property does not exist.
+        # Handle User Pattern reference
+        if user.properties['type'] == 'pattern-based':
+
+            # The 'user-pattern-uri' property exists only for
+            # type='pattern-based', and will not be None.
+            user_pattern_uri = user.properties['user-pattern-uri']
+            if user_pattern_uri is None:  # Defensive programming
+                if expand_names:
+                    user_properties['user-pattern-name'] = None
+                if expand:
+                    user_properties['user-pattern'] = None
+            else:
+                user_pattern = \
+                    console.user_patterns.resource_object(user_pattern_uri)
+                # Note: Accessing 'name' triggers a full pull, and the
+                # User Pattern object does not support selective get.
+                user_pattern.pull_full_properties()
+                if expand_names:
+                    user_properties['user-pattern-name'] = user_pattern.name
+                if expand:
+                    user_properties['user-pattern'] = \
+                        dict(user_pattern.properties)
+
+            # The 'user-template-uri' property exists only for
+            # type='pattern-based' and if the user is template-based, and may
+            # be None.
+            user_template_uri = user.properties.get(
+                'user-template-uri', NOT_PRESENT)
+            if user_template_uri == NOT_PRESENT:
+                pass
+            elif user_template_uri is None:
+                if expand_names:
+                    user_properties['user-template-name'] = None
+                if expand:
+                    user_properties['user-template'] = None
+            else:
+                user_template = console.users.resource_object(user_template_uri)
+                # Note: Accessing 'name' triggers a full pull, and the
+                # User object does not support selective get.
+                user_template.pull_full_properties()
+                if expand_names:
+                    user_properties['user-template-name'] = user_template.name
+                if expand:
+                    user_properties['user-template'] = \
+                        dict(user_template.properties)
+
+        # Handle Password Rule reference
         password_rule_uri = user.properties['password-rule-uri']
-        if password_rule_uri is not None:
+        # This property always exists. It will be non-Null for
+        # auth-type='local'.
+        if password_rule_uri is None:
+            if expand_names:
+                user_properties['password-rule-name'] = None
+            if expand:
+                user_properties['password-rule'] = None
+        else:
             password_rule = console.password_rules.resource_object(
                 password_rule_uri)
-            # We pull the properties, since that is done anyway in .name,
-            # so that in case of expand it is not done twice.
+            # Note: Accessing 'name' triggers a full pull, and the
+            # Password Rule object does not support selective get.
             password_rule.pull_full_properties()
-            user_properties['password-rule-name'] = password_rule.name
+            if expand_names:
+                user_properties['password-rule-name'] = password_rule.name
             if expand:
                 user_properties['password-rule'] = \
                     dict(password_rule.properties)
-    # Make sure that the artificial properties exist exactly when the uri
-    # property does
-    if 'password-rule-uri' in user.properties and \
-            'password-rule-name' not in user_properties:
-        user_properties['password-rule-name'] = None
-        if expand:
-            user_properties['password-rule'] = None
 
-    if auth_type == 'ldap':
-        # For that auth type, the property exists and is non-null.
-        # Note: For other auth types, the property exists and is null.
+        # Handle LDAP Server Definition reference
         ldap_srv_def_uri = user.properties['ldap-server-definition-uri']
-        if ldap_srv_def_uri is not None:
+        # This property always exists and is non-Null for auth.-type='ldap'.
+        if ldap_srv_def_uri is None:
+            if expand_names:
+                user_properties['ldap-server-definition-name'] = None
+            if expand:
+                user_properties['ldap-server-definition'] = None
+        else:
             ldap_srv_def = console.ldap_server_definitions.resource_object(
                 ldap_srv_def_uri)
-            # We pull the properties, since that is done anyway in .name,
-            # so that in case of expand it is not done twice.
+            # Note: Accessing 'name' triggers a full pull, and the
+            # LDAP Server Definition object does not support selective get.
             ldap_srv_def.pull_full_properties()
-            user_properties['ldap-server-definition-name'] = ldap_srv_def.name
+            if expand_names:
+                user_properties['ldap-server-definition-name'] = \
+                    ldap_srv_def.name
             if expand:
                 user_properties['ldap-server-definition'] = \
                     dict(ldap_srv_def.properties)
-    # Make sure that the artificial properties exist exactly when the uri
-    # property does
-    if 'ldap-server-definition-uri' in user.properties and \
-            'ldap-server-definition-name' not in user_properties:
-        user_properties['ldap-server-definition-name'] = None
-        if expand:
-            user_properties['ldap-server-definition'] = None
 
-    all_uroles = console.user_roles.list()
-    all_uroles_by_uri = {}
-    for urole in all_uroles:
-        all_uroles_by_uri[urole.uri] = urole
-    uroles = [all_uroles_by_uri[uri] for uri in user.properties['user-roles']]
-    user_properties['user-role-names'] = [ur.name for ur in uroles]
-    if expand:
-        user_role_objects = []
-        for urole in uroles:
-            urole.pull_full_properties()
-            user_role_objects.append(dict(urole.properties))
-        user_properties['user-role-objects'] = user_role_objects
+        # Handle primary MFA Server Definition reference
+        pri_mfa_srv_def_uri = \
+            user.properties['primary-mfa-server-definition-uri']
+        # This property always exists and may be None
+        if pri_mfa_srv_def_uri is None:
+            if expand_names:
+                user_properties['primary-mfa-server-definition-name'] = None
+            if expand:
+                user_properties['primary-mfa-server-definition'] = None
+        else:
+            pri_mfa_srv_def = console.mfa_server_definitions.resource_object(
+                pri_mfa_srv_def_uri)
+            # Note: Accessing 'name' triggers a full pull, and the
+            # MFA Server Definition object does not support selective get.
+            pri_mfa_srv_def.pull_full_properties()
+            if expand_names:
+                user_properties['primary-mfa-server-definition-name'] = \
+                    pri_mfa_srv_def.name
+            if expand:
+                user_properties['primary-mfa-server-definition'] = \
+                    dict(pri_mfa_srv_def.properties)
+
+        # Handle backu0p MFA Server Definition reference
+        bac_mfa_srv_def_uri = \
+            user.properties['backup-mfa-server-definition-uri']
+        # This property always exists and may be None
+        if bac_mfa_srv_def_uri is None:
+            if expand_names:
+                user_properties['backup-mfa-server-definition-name'] = None
+            if expand:
+                user_properties['backup-mfa-server-definition'] = None
+        else:
+            bac_mfa_srv_def = console.mfa_server_definitions.resource_object(
+                bac_mfa_srv_def_uri)
+            # Note: Accessing 'name' triggers a full pull, and the
+            # MFA Server Definition object does not support selective get.
+            bac_mfa_srv_def.pull_full_properties()
+            if expand_names:
+                user_properties['backup-mfa-server-definition-name'] = \
+                    bac_mfa_srv_def.name
+            if expand:
+                user_properties['backup-mfa-server-definition'] = \
+                    dict(bac_mfa_srv_def.properties)
+
+        # Handle default Group reference
+        default_group_uri = user.properties['default-group-uri']
+        # This property always exists, and may be None
+        if default_group_uri is None:
+            if expand_names:
+                user_properties['default-group-name'] = None
+            if expand:
+                user_properties['default-group'] = None
+        else:
+            default_group = console.groups.resource_object(
+                default_group_uri)
+            # Note: Accessing 'name' triggers a full pull, and the
+            # Password Rule object does not support selective get.
+            default_group.pull_full_properties()
+            if expand_names:
+                user_properties['default-group-name'] = default_group.name
+            if expand:
+                user_properties['default-group'] = \
+                    dict(default_group.properties)
 
 
 def create_check_mode_user(console, create_props, update_props):
@@ -882,37 +1158,36 @@ def create_check_mode_user(console, create_props, update_props):
         'multi-factor-authentication-required': False,
         'email-address': None,
         'mfa-types': None,
+        'password-rule-uri': None,
+        'force-password-change': True,
+        'min-pw-change-time': 0,
+        'ldap-server-definition-uri': None,
+        'primary-mfa-server-definition-uri': None,
+        'backup-mfa-server-definition-uri': None,
+        'mfa-policy': None,
+        'mfa-userid-override': None,
     }
 
     # Defaults for optional properties that depend on the case
     if user_type == 'pattern-based':
         props['user-pattern-uri'] = None
-    if user_type == 'template':
         props['user-template-uri'] = None
     if user_type != 'template':
         props['disabled'] = False
-    if auth_type == 'local':
-        props['password-rule-uri'] = None
-        props['password'] = None
         props['password-expires'] = None
-        props['force-password-change'] = True
-        props['min-pw-change-time'] = 0
-    if auth_type == 'ldap':
-        props['ldap-server-definition-uri'] = None
-        if user_type != 'template':
-            props['userid-on-ldap-server'] = ''
+        props['userid-on-ldap-server'] = ''
+    if auth_type == 'local':
+        props['password'] = None
     mfa_required = input_props.get(
         'multi-factor-authentication-required', False)
     if mfa_required:
         props['force-shared-secret-key-change'] = False
-    if 'mfa-server' in mfa_types:
-        props['primary-mfa-server-definition-uri'] = None
-        props['backup-mfa-server-definition-uri'] = None
-        props['mfa-policy'] = None
-        if user_type != 'template':
-            props['mfa-userid'] = name
-        if user_type == 'template':
-            props['mfa-userid-override'] = None
+    else:
+        props['force-shared-secret-key-change'] = None
+    if 'mfa-server' in mfa_types and user_type != 'template':
+        props['mfa-userid'] = name
+    else:
+        props['mfa-userid'] = None
 
     # Apply specified input properties on top of the defaults
     props.update(input_props)
@@ -934,6 +1209,7 @@ def ensure_present(params, check_mode):
 
     user_name = params['name']
     expand = params['expand']
+    expand_names = params['expand_names']
 
     changed = False
     result = {}
@@ -1032,7 +1308,8 @@ def ensure_present(params, check_mode):
         if not user:
             raise AssertionError()
 
-        add_artificial_properties(result, console, user, expand)
+        add_artificial_properties(
+            result, console, user, expand, expand_names)
 
         result = removed_dict(result, WRITEONLY_PROPERTIES_HYPHEN)
 
@@ -1089,6 +1366,7 @@ def facts(params, check_mode):
 
     user_name = params['name']
     expand = params['expand']
+    expand_names = params['expand_names']
 
     changed = False
     result = {}
@@ -1103,7 +1381,8 @@ def facts(params, check_mode):
         user.pull_full_properties()
 
         result = dict(user.properties)
-        add_artificial_properties(result, console, user, expand)
+        add_artificial_properties(
+            result, console, user, expand, expand_names)
 
         return changed, result
 
@@ -1144,6 +1423,7 @@ def main():
                    choices=['absent', 'present', 'facts']),
         properties=dict(required=False, type='dict', default=None),
         expand=dict(required=False, type='bool', default=False),
+        expand_names=dict(required=False, type='bool', default=True),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),
     )
@@ -1172,6 +1452,10 @@ def main():
     if LOGGER.isEnabledFor(logging.DEBUG):
         LOGGER.debug("Module entry: params: %r",
                      blanked_params(module.params, WRITEONLY_PROPERTIES_USCORE))
+
+    if module.params['expand']:
+        LOGGER.warning(
+            "Deprecated parameter 'expand' is used for zhmc_user module")
 
     try:
 
