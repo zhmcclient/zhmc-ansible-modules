@@ -250,7 +250,7 @@ The collection's changelogs can be reviewed in the following table:
 | Version  | Status         | Release notes & change log |
 |----------|----------------|----------------------------|
 | 1.10.0   | In development | unreleased                 |
-| 1.9.3    | Released       | [Release notes & change log](https://zhmcclient.github.io/zhmc-ansible-modules/1.9.3/release_notes.html) |
+| 1.9.4    | Released       | [Release notes & change log](https://zhmcclient.github.io/zhmc-ansible-modules/1.9.4/release_notes.html) |
 | 1.8.3    | Released       | [Release notes & change log](https://zhmcclient.github.io/zhmc-ansible-modules/1.8.3/release_notes.html) |
 | 1.7.4    | Released       | [Release notes & change log](https://zhmcclient.github.io/zhmc-ansible-modules/1.7.4/release_notes.html) |
 | 1.6.1    | Released       | [Release notes & change log](https://zhmcclient.github.io/zhmc-ansible-modules/1.6.1/release_notes.html) |
