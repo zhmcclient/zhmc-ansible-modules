@@ -89,6 +89,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   'zhmc_user_list' modules, fixed that they are always present, and not
   dependent on mfa-types or other MFA related properties.
 
+* Circumvention for HTTP error 500.12 when creating NICs on Hipersocket
+  adapters on z16 when the PartitionLink feature is enabled. This is a
+  temporary circumvention until the defect will be fixed.
+
 **Enhancements:**
 
 * Support for ansible-core 2.18, by adding an ignore file for the sanity tests.
