@@ -20,16 +20,12 @@ Releases
 ========
 
 
-Version 1.9.4-dev1
-------------------
+Version 1.9.4
+-------------
 
-Released: not yet
+Released: 2025-04-14
 
 Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
-
-**Incompatible changes:**
-
-**Deprecations:**
 
 **Bug fixes:**
 
@@ -44,18 +40,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   adapters on z16 when the PartitionLink feature is enabled. This is a
   temporary circumvention until the defect will be fixed.
 
-**Enhancements:**
-
 **Cleanup:**
 
 * Test: Accommodated rollout of Ubuntu 24.04 on GitHub Actions by using
   ubuntu-22.04 as the OS image for Python 3.8 based test runs.
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 1.9.3
