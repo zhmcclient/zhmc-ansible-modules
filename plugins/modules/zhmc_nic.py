@@ -272,6 +272,7 @@ nic:
     }
 """
 
+import time  # noqa: E402
 import logging  # noqa: E402
 import traceback  # noqa: E402
 from ansible.module_utils.basic import AnsibleModule  # noqa: E402
@@ -527,6 +528,119 @@ def process_properties(partition, nic, params):
     return create_props, update_props, stop
 
 
+class Error_500_12(Error):
+    # pylint: disable=invalid-name
+    """
+    Error while circumventing HTTP 500.12 in find_nic_for_500_12().
+    """
+    pass
+
+
+def find_nic_for_500_12(params, partition):
+    """
+    Circumvention for a defect where "Create NIC" on a Hipersocket adapter
+    fails with HTTP 500.12 when the Partition Link feature on z16 is enabled.
+
+    The NIC has been created in this case, but it still has the name that was
+    created automatically by the Partition Link support.
+
+    We identify the NIC based on its underlying Hipersockets adapter and the
+    device number, and return that NIC.
+    """
+    # Pull nic-uris property in partition to get the new NIC. If this is done
+    # immediately, the number if NICs will not have changed, so we try a few
+    # times, with a wait time in between.
+    initial_nic_uris = partition.get_property('nic-uris')
+    nic_uris = initial_nic_uris
+    attempts = 0
+    max_attempts = 10
+    nic_uri = None
+    while True:
+        time.sleep(1)
+        partition.pull_properties(['nic-uris'])
+        nic_uris = partition.get_property('nic-uris')
+        if len(nic_uris) == len(initial_nic_uris) + 1:
+            nic_uri = next(iter(set(nic_uris) - set(initial_nic_uris)))
+            LOGGER.debug(
+                "Found NIC URI after %d attempts: %r", attempts, nic_uri)
+            break
+        attempts += 1
+        if attempts >= max_attempts:
+            LOGGER.warning(
+                "Could not get partition property 'nic-uris' updated with "
+                "new NIC after %d attempts, trying filtering", attempts)
+            break
+    if nic_uri:
+        LOGGER.debug(
+            "Finding NIC by URI %r", nic_uri)
+        filter_args = {
+            'element-uri': nic_uri,
+        }
+        try:
+            nic = partition.nics.find(**filter_args)
+        except zhmcclient.NotFound:
+            raise Error_500_12(
+                f"Cannot find NIC with URI {nic_uri!r}"
+            )
+    else:
+        try:
+            props = params['properties']
+            adapter_name = props['adapter_name']
+            adapter_port_index = int(props['adapter_port'])
+            device_number = props['device_number']
+        except KeyError:
+            raise Error_500_12(
+                "Not all input parameters provided that are required for the "
+                "circumvention: adapter_name, adapter_port, device_number"
+            )
+        try:
+            adapter = partition.manager.cpc.adapters.find(name=adapter_name)
+            adapter.ports.find(index=adapter_port_index)
+        except zhmcclient.HTTPError as exc:
+            raise Error_500_12(
+                f"Cannot find adapter {adapter_name!r} or port "
+                f"{adapter_port_index!r}: {exc}"
+            )
+        adapter_family = adapter.get_property('adapter-family')
+        if adapter_family != 'hipersockets':
+            raise Error_500_12(
+                "HTTP error 500.12 happened for a non-Hipersockets adapter "
+                f"{adapter_name!r}"
+            )
+        try:
+            vswitches = partition.manager.cpc.virtual_switches.findall(
+                **{'backing-adapter-uri': adapter.uri})
+        except zhmcclient.HTTPError as exc:
+            raise Error_500_12(
+                "Cannot find virtual switch for backing adapter "
+                f"{adapter_name!r}: {exc}"
+            )
+        found_vswitch = None
+        for vswitch in vswitches:
+            if vswitch.get_property('port') == adapter_port_index:
+                found_vswitch = vswitch
+                break
+        if not found_vswitch:
+            raise Error_500_12(
+                f"Cannot find virtual switch for port {adapter_port_index!r} "
+                f"on backing adapter {adapter_name!r}"
+            )
+        filter_args = {
+            'type': 'iqd',
+            'device-number': device_number,
+            'virtual-switch-uri': found_vswitch.uri,
+        }
+        LOGGER.debug(
+            "Finding NIC by filter arguments: %r", filter_args)
+        try:
+            nic = partition.nics.find(**filter_args)
+        except zhmcclient.NotFound:
+            raise Error_500_12(
+                f"Cannot find NIC with filter arguments {filter_args!r}"
+            )
+    return nic
+
+
 def ensure_present(params, check_mode):
     """
     Ensure that the NIC exists and has the specified properties.
@@ -572,7 +686,29 @@ def ensure_present(params, check_mode):
             if not check_mode:
                 create_props, update_props, stop = process_properties(
                     partition, nic, params)
-                nic = partition.nics.create(create_props)
+                try:
+                    nic = partition.nics.create(create_props)
+                except zhmcclient.HTTPError as exc:
+                    if exc.http_status == 500 and exc.reason == 12:
+                        # Circumvention for a defect that happens with
+                        # Hipersocket NICs when the Partition Link feature on
+                        # z16 is enabled.
+                        LOGGER.warning(
+                            "Circumventing HTTP 500.12 when creating NIC %r "
+                            "on partition %r", nic_name, partition.name)
+                        nic = find_nic_for_500_12(params, partition)
+                        create_props, update_props, stop = process_properties(
+                            partition, nic, params)
+                        update_props['name'] = create_props.pop('name')
+                        if 'virtual-switch-uri' in update_props:
+                            del update_props['virtual-switch-uri']
+                        if 'virtual-switch-uri' in create_props:
+                            del create_props['virtual-switch-uri']
+                        LOGGER.debug(
+                            "Updating NIC properties for HTTP 500.12 "
+                            "circumvention: %r", update_props)
+                    else:
+                        raise
                 update2_props = {}
                 for name, value in update_props.items():
                     if name not in create_props:
