@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Releases &mdash; IBM Z HMC collection  documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/banner.css?v=fd51b7f5" />
 
@@ -65,6 +65,7 @@
 <p class="caption" role="heading"><span class="caption-text">Appendices</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Releases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-9-4">Version 1.9.4</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-9-3">Version 1.9.3</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-9-2">Version 1.9.2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-9-1">Version 1.9.1</a></li>
@@ -120,6 +121,26 @@
              
   <section id="releases">
 <span id="id1"></span><h1>Releases<a class="headerlink" href="#releases" title="Link to this heading"></a></h1>
+<section id="version-1-9-4">
+<h2>Version 1.9.4<a class="headerlink" href="#version-1-9-4" title="Link to this heading"></a></h2>
+<p>Released: 2025-04-14</p>
+<p>Availability: <a class="reference external" href="https://console.redhat.com/ansible/automation-hub/repo/published/ibm/ibm_zhmc">AutomationHub</a>, <a class="reference external" href="https://galaxy.ansible.com/ibm/ibm_zhmc">Galaxy</a>, <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">GitHub</a></p>
+<p><strong>Bug fixes:</strong></p>
+<ul class="simple">
+<li><p>Fixed safety issues up to 2025-02-26.</p></li>
+<li><p>Fixed missing dependencies for development.</p></li>
+<li><p>Test: Fixed duplicate ‘description’ properties in test YAML files.
+(issue #1097)</p></li>
+<li><p>Circumvention for HTTP error 500.12 when creating NICs on Hipersocket
+adapters on z16 when the PartitionLink feature is enabled. This is a
+temporary circumvention until the defect will be fixed.</p></li>
+</ul>
+<p><strong>Cleanup:</strong></p>
+<ul class="simple">
+<li><p>Test: Accommodated rollout of Ubuntu 24.04 on GitHub Actions by using
+ubuntu-22.04 as the OS image for Python 3.8 based test runs.</p></li>
+</ul>
+</section>
 <section id="version-1-9-3">
 <h2>Version 1.9.3<a class="headerlink" href="#version-1-9-3" title="Link to this heading"></a></h2>
 <p>Released: 2024-11-29</p>
@@ -1195,7 +1216,7 @@ property update.</p></li>
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.9.3
+        v: 1.9.4
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -1210,7 +1231,7 @@ property update.</p></li>
             <dd><a href="1.6.1/release_notes.html">1.6.1</a></dd>
             <dd><a href="1.7.4/release_notes.html">1.7.4</a></dd>
             <dd><a href="1.8.3/release_notes.html">1.8.3</a></dd>
-            <dd><a href="1.9.3/release_notes.html">1.9.3</a></dd>
+            <dd><a href="1.9.4/release_notes.html">1.9.4</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

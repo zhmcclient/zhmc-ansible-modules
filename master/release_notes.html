@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Releases &mdash; IBM Z HMC collection  documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/banner.css?v=fd51b7f5" />
 
@@ -127,7 +127,8 @@
 <p><strong>Deprecations:</strong></p>
 <p><strong>Bug fixes:</strong></p>
 <ul>
-<li><p>Fixed safety issues up to 2024-11-21.</p></li>
+<li><p>Fixed safety issues up to 2025-02-26.</p></li>
+<li><p>Fixed missing dependencies for development.</p></li>
 <li><p>Increased zhmcclient version to 1.18.2 to pick up fixes. (issue #1074)</p></li>
 <li><p>Fixed that all password-like input parameters that were written in clear text
 to the module entry log are now blanked out. This affected the following
@@ -154,6 +155,8 @@ the input params before passing them on to the zhmcclient
 <li><p>Docs: Fixed broken links to IBM documentation and updated permanently
 redirected links.</p></li>
 <li><p>Docs: Ignored www.ansible.com in linkcheck, because it occasionally times out.</p></li>
+<li><p>Test: Fixed duplicate ‘description’ properties in test YAML files.
+(issue #1097)</p></li>
 </ul>
 <p><strong>Enhancements:</strong></p>
 <ul class="simple">
@@ -161,6 +164,8 @@ redirected links.</p></li>
 <li><p>The ‘hmc_auth’ input parameter is no longer completely removed from the
 module entry log, but instead its sensitive items ‘password’ and ‘session_id’
 are now blanked out.</p></li>
+<li><p>Dev: Added display of environment variables and platform details in test
+workflow.</p></li>
 </ul>
 <p><strong>Cleanup:</strong></p>
 <ul class="simple">
@@ -183,6 +188,8 @@ Issues in development dependencies are now tolerated in normal and scheduled
 test workflow runs (but not in local make runs and release test workflow runs).
 Issues in installation dependencies are now tolerated in normal test workflow
 runs (but not in local make runs and scheduled/release test workflow runs).</p></li>
+<li><p>Test: Accommodated rollout of Ubuntu 24.04 on GitHub Actions by using
+ubuntu-22.04 as the OS image for Python 3.8 based test runs.</p></li>
 </ul>
 <p><strong>Known issues:</strong></p>
 <ul class="simple">
@@ -1213,7 +1220,7 @@ property update.</p></li>
             <dd><a href="../1.6.1/release_notes.html">1.6.1</a></dd>
             <dd><a href="../1.7.4/release_notes.html">1.7.4</a></dd>
             <dd><a href="../1.8.3/release_notes.html">1.8.3</a></dd>
-            <dd><a href="../1.9.3/release_notes.html">1.9.3</a></dd>
+            <dd><a href="../1.9.4/release_notes.html">1.9.4</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
