@@ -35,7 +35,7 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Bug fixes:**
 
-* Fixed safety issues up to 2025-02-26.
+* Fixed safety issues up to 2025-04-24.
 
 * Fixed missing dependencies for development.
 
