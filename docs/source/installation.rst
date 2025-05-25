@@ -338,6 +338,6 @@ The `Ansible-core Support Matrix <https://docs.ansible.com/ansible/latest/refere
 shows for each ansible-core version the supported Python versions and the
 support timeframe.
 
-The `AAP included packages and versions <https://access.redhat.com/support/policy/updates/ansible-automation-platform#packages-and-versions>`_
+The `Red Hat Ansible Automation Platform Life Cycle <https://access.redhat.com/support/policy/updates/ansible-automation-platform>`_
 shows for each AAP version the ansible-core version it includes and the
 support timeframe.
