@@ -33,7 +33,7 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Bug fixes:**
 
-* Fixed safety issues up to 2025-05-04.
+* Fixed safety issues up to 2025-06-04.
 
 * Dev: The test workflow now tolerates linkcheck errors. It now succeeds if there
   are linkcheck errors, but they are still displayed in the Actions summary.
