@@ -93,6 +93,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   adapters on z16 when the PartitionLink feature is enabled. This is a
   temporary circumvention until the defect will be fixed.
 
+* Dev: The test workflow now tolerates linkcheck errors. It now succeeds if there
+  are linkcheck errors, but they are still displayed in the Actions summary.
+
 **Enhancements:**
 
 * Support for ansible-core 2.18, by adding an ignore file for the sanity tests.
