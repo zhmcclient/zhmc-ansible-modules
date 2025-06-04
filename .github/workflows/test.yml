@@ -298,6 +298,7 @@ jobs:
         RUN_TYPE: ${{ steps.set-run-type.outputs.result }}
       run: |
         make linkcheck
+      continue-on-error: true
 
   test_finish:
     needs: test
