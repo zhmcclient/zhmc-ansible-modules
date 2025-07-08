@@ -128,6 +128,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Added a logged warning if the deprecated parameter 'expand' is used for
   the 'zhmc_user' module.
 
+* Dev: Added commit message checker to test workflow. (issue #1137)
+
 **Cleanup:**
 
 * Removed the unnecessary .pylintrc file from the distribution archive of the
