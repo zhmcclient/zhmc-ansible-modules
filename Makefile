@@ -210,35 +210,35 @@ pytest_cov_opts := --cov $(src_py_dir) --cov-append --cov-config $(coverage_rc_f
 
 .PHONY: help
 help:
-	@echo 'Makefile for Ansible collection:     $(collection_full_name)'
-	@echo 'Collection version will be:          $(collection_version)'
-	@echo 'Currently active Python environment: Python $(python_m_n_version)'
-	@echo 'Valid targets are:'
-	@echo '  install    - Install collection and its dependent Python packages'
-	@echo '  develop    - Set up the development environment'
-	@echo '  dist       - Build the collection distribution archive in: $(dist_dir)'
-	@echo '  check      - Run flake8'
+	@echo "Makefile for Ansible collection:     $(collection_full_name)"
+	@echo "Collection version will be:          $(collection_version)"
+	@echo "Currently active Python environment: Python $(python_m_n_version)"
+	@echo "Valid targets are:"
+	@echo "  install    - Install collection and its dependent Python packages"
+	@echo "  develop    - Set up the development environment"
+	@echo "  dist       - Build the collection distribution archive in: $(dist_dir)"
+	@echo "  check      - Run flake8"
 	@echo "  pylint     - Run PyLint on sources"
-	@echo '  sanity     - Run Ansible sanity tests (includes pep8, pylint, validate-modules)'
-	@echo '  ansible_lint - Run ansible-lint on distribution archive (and built it)'
-	@echo '  safety     - Run safety for install and all'
-	@echo '  bandit     - Run bandit checker'
-	@echo '  check_reqs - Perform missing dependency checks'
-	@echo '  docs       - Build the documentation for all enabled (docs/source/conf.py) versions in: $(doc_build_dir) using remote repo'
-	@echo '  docslocal  - Build the documentation from local repo contents in: $(doc_build_local_dir)'
-	@echo '  linkcheck  - Check links in documentation'
-	@echo '  test       - Run unit and function tests (adds to coverage results)'
-	@echo '  end2end_mocked - Run end2end tests using mocked environment (adds to coverage results)'
-	@echo '  all        - Do all of the above'
-	@echo '  end2end    - Run end2end tests using environment defined by TESTINVENTORY/TESTHMC (adds to coverage results)'
+	@echo "  sanity     - Run Ansible sanity tests (includes pep8, pylint, validate-modules)"
+	@echo "  ansible_lint - Run ansible-lint on distribution archive (and built it)"
+	@echo "  safety     - Run safety for install and all"
+	@echo "  bandit     - Run bandit checker"
+	@echo "  check_reqs - Perform missing dependency checks"
+	@echo "  docs       - Build the documentation for all enabled (docs/source/conf.py) versions in: $(doc_build_dir) using remote repo"
+	@echo "  docslocal  - Build the documentation from local repo contents in: $(doc_build_local_dir)"
+	@echo "  linkcheck  - Check links in documentation"
+	@echo "  test       - Run unit and function tests (adds to coverage results)"
+	@echo "  end2end_mocked - Run end2end tests using mocked environment (adds to coverage results)"
+	@echo "  all        - Do all of the above"
+	@echo "  end2end    - Run end2end tests using environment defined by TESTINVENTORY/TESTHMC (adds to coverage results)"
 	@echo "  end2end_show - Show HMCs defined for end2end tests"
-	@echo '  authors    - Generate AUTHORS.md file from git log'
-	@echo '  upload     - Publish the collection to Ansible Galaxy'
-	@echo '  uploadhub  - Publish the collection to Ansible AutomationHub'
-	@echo '  clobber    - Remove any produced files'
+	@echo "  authors    - Generate AUTHORS.md file from git log"
+	@echo "  upload     - Publish the collection to Ansible Galaxy"
+	@echo "  uploadhub  - Publish the collection to Ansible AutomationHub"
+	@echo "  clobber    - Remove any produced files"
 	@echo "  platform   - Display the information about the platform as seen by make"
 	@echo "  env        - Display the environment as seen by make"
-	@echo 'Environment variables:'
+	@echo "Environment variables:"
 	@echo "  TESTCASES=... - Testcase filter for pytest -k (e.g. 'test_func' or 'test_mod.py')"
 	@echo "  TESTOPTS=... - Additional options for pytest (e.g. '-x')"
 	@echo "  TESTHMC=... - HMC group or host name in HMC inventory file to be used in end2end tests. Default: $(default_testhmc)"
@@ -250,18 +250,18 @@ help:
 	@echo "        ansible - Specific Ansible versions"
 	@echo "        minimum - A minimum version as defined in minimum-constraints*.txt"
 	@echo "      Optional, defaults to 'latest'."
-	@echo '  PYTHON_CMD=... - Name of python command. Default: python'
-	@echo '  PIP_CMD=... - Name of pip command. Default: pip'
-	@echo '  GALAXY_TOKEN=... - Your Ansible Galaxy API token, required for upload (see https://galaxy.ansible.com/me/preferences)'
-	@echo '  AUTOMATIONHUB_TOKEN=... - Your Ansible AutomationHub API token, required for upload (see https://cloud.redhat.com/ansible/automation-hub/token)'
-	@echo 'Invocation of ansible commands from within repo main directory:'
-	@echo '  export ANSIBLE_LIBRARY="$$(pwd)/$(module_py_dir);$$ANSIBLE_LIBRARY"'
-	@echo '  # currently: ANSIBLE_LIBRARY=$(ANSIBLE_LIBRARY)'
-	@echo '  ansible-playbook playbooks/....'
+	@echo "  PYTHON_CMD=... - Name of python command. Default: python"
+	@echo "  PIP_CMD=... - Name of pip command. Default: pip"
+	@echo "  GALAXY_TOKEN=... - Your Ansible Galaxy API token, required for upload (see https://galaxy.ansible.com/me/preferences)"
+	@echo "  AUTOMATIONHUB_TOKEN=... - Your Ansible AutomationHub API token, required for upload (see https://cloud.redhat.com/ansible/automation-hub/token)"
+	@echo "Invocation of ansible commands from within repo main directory:"
+	@echo "  export ANSIBLE_LIBRARY="$$(pwd)/$(module_py_dir);$$ANSIBLE_LIBRARY""
+	@echo "  # currently: ANSIBLE_LIBRARY=$(ANSIBLE_LIBRARY)"
+	@echo "  ansible-playbook playbooks/...."
 
 .PHONY: all
 all: install develop dist safety bandit check pylint sanity ansible_lint check_reqs docs docslocal linkcheck test end2end_mocked
-	@echo '$@ done.'
+	@echo "Makefile: $@ done."
 
 .PHONY: platform
 platform:
@@ -294,36 +294,36 @@ env:
 
 .PHONY: install
 install: _check_version $(done_dir)/install_$(pymn)_$(PACKAGE_LEVEL).done
-	@echo '$@ done.'
+	@echo "Makefile: $@ done."
 
 .PHONY: develop
 develop: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
-	@echo '$@ done.'
+	@echo "Makefile: $@ done."
 
 .PHONY: docs
 docs: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(doc_build_dir)/index.html
-	@echo '$@ done.'
+	@echo "Makefile: $@ done."
 
 .PHONY: linkcheck
 linkcheck: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(doc_rst_files)
 	sphinx-build -b linkcheck $(sphinx_opts) $(doc_source_dir) $(doc_linkcheck_dir)
-	@echo '$@ done.'
+	@echo "Makefile: $@ done."
 
 .PHONY: test
 test: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 	bash -c 'PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. pytest $(pytest_cov_opts) $(pytest_opts) $(test_dir)/unit $(test_dir)/function'
 	coverage html --rcfile $(coverage_rc_file)
-	@echo '$@ done.'
+	@echo "Makefile: $@ done."
 
 .PHONY: check
 check: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 	flake8 $(flake8_opts) $(src_py_dir) $(test_dir)
-	@echo '$@ done.'
+	@echo "Makefile: $@ done."
 
 .PHONY: pylint
 pylint: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(pylint_rc_file) $(src_py_files) $(test_py_files)
 	pylint $(pylint_opts) --rcfile=$(pylint_rc_file) --output-format=text $(src_py_files) $(test_py_files)
-	@echo '$@ done.'
+	@echo "Makefile: $@ done."
 
 .PHONY: safety
 safety: $(done_dir)/safety_develop_$(pymn)_$(PACKAGE_LEVEL).done $(done_dir)/safety_install_$(pymn)_$(PACKAGE_LEVEL).done
@@ -364,7 +364,7 @@ ifeq ($(run_sanity_virtual),true)
 else
 	echo "Skipping ansible sanity test in its own virtual Python env (using ansible-core $(ansible_core_version) and Python $(python_version))"
 endif
-	@echo '$@ done.'
+	@echo "Makefile: $@ done."
 
 # Boolean variable indicating that ansible-lint should be run.
 # The variable is empty if ansible is not installed.
@@ -383,7 +383,7 @@ ifeq ($(run_ansible_lint),true)
 else
 	echo "Skipping ansible-lint (using ansible-core $(ansible_core_version) and Python $(python_version))"
 endif
-	@echo '$@ done.'
+	@echo "Makefile: $@ done."
 
 .PHONY: check_reqs
 check_reqs: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done minimum-constraints-develop.txt minimum-constraints-install.txt requirements.txt
@@ -405,7 +405,7 @@ endif
 .PHONY:	end2end
 end2end: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 	bash -c 'PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. TESTEND2END_LOAD=true pytest -v $(pytest_cov_opts) $(pytest_opts) $(test_dir)/end2end'
-	@echo '$@ done.'
+	@echo "Makefile: $@ done."
 
 .PHONY:	end2end_show
 end2end_show:
@@ -416,7 +416,7 @@ end2end_show:
 end2end_mocked: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 	-bash -c 'PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. TESTEND2END_LOAD=true TESTINVENTORY=$(test_dir)/end2end/mocked_inventory.yaml TESTVAULT=$(test_dir)/end2end/mocked_vault.yaml pytest -v $(pytest_cov_opts) $(pytest_opts) $(test_dir)/end2end'
 	coverage html --rcfile $(coverage_rc_file)
-	@echo '$@ done.'
+	@echo "Makefile: $@ done."
 
 .PHONY: authors
 authors: _check_version
@@ -426,7 +426,7 @@ authors: _check_version
 	echo '```' >>AUTHORS.md
 	git shortlog --summary --email | cut -f 2 | sort >>AUTHORS.md
 	echo '```' >>AUTHORS.md
-	@echo '$@ done.'
+	@echo "Makefile: $@ done."
 
 .PHONY: upload
 upload: _check_version $(dist_file)
@@ -436,13 +436,13 @@ endif
 ifndef GALAXY_TOKEN
 	$(error Error: Environment variable GALAXY_TOKEN with your Galaxy API token is required for uploading to Ansible Galaxy - get one on https://galaxy.ansible.com/me/preferences)
 endif
-	@echo '==> This will publish collection $(collection_full_name) version $(collection_version) on Ansible Galaxy'
+	@echo "==> This will publish collection $(collection_full_name) version $(collection_version) on Ansible Galaxy"
 	@echo -n '==> Continue? [yN] '
 	@bash -c 'read answer; if [[ "$$answer" != "y" ]]; then echo "Aborted."; false; fi'
-	@echo ''
+	@echo ""
 	ansible-galaxy collection publish --server https://galaxy.ansible.com/ --token $(GALAXY_TOKEN) $(dist_file)
-	@echo 'Done: Published collection $(collection_full_name) version $(collection_version) on Ansible Galaxy'
-	@echo '$@ done.'
+	@echo "Done: Published collection $(collection_full_name) version $(collection_version) on Ansible Galaxy"
+	@echo "Makefile: $@ done."
 
 .PHONY: uploadhub
 uploadhub: _check_version $(dist_file)
@@ -452,15 +452,15 @@ endif
 ifndef AUTOMATIONHUB_TOKEN
 	$(error Error: Environment variable AUTOMATIONHUB_TOKEN with your Ansible AutomationHub API token is required for uploading to Ansible AutomationHub - get one on https://cloud.redhat.com/ansible/automation-hub/token)
 endif
-	@echo '==> This will publish collection $(collection_full_name) version $(collection_version) on Ansible AutomationHub'
+	@echo "==> This will publish collection $(collection_full_name) version $(collection_version) on Ansible AutomationHub"
 	@echo -n '==> Continue? [yN] '
 	@bash -c 'read answer; if [[ "$$answer" != "y" ]]; then echo "Aborted."; false; fi'
-	@echo ''
-	@echo 'Note: If the following upload fails, upload the collection manually as described in docs/source/development.rst'
-	@echo ''
+	@echo ""
+	@echo "Note: If the following upload fails, upload the collection manually as described in docs/source/development.rst"
+	@echo ""
 	ansible-galaxy collection publish --server https://console.redhat.com/api/automation-hub/ --token $(AUTOMATIONHUB_TOKEN) $(dist_file)
-	@echo 'Done: Published collection $(collection_full_name) version $(collection_version) on Ansible AutomationHub'
-	@echo '$@ done.'
+	@echo "Done: Published collection $(collection_full_name) version $(collection_version) on Ansible AutomationHub"
+	@echo "Makefile: $@ done."
 
 # The second rm command of each type is for files that were used before 1.0.0, to make it easier to switch.
 .PHONY: clobber
@@ -468,11 +468,11 @@ clobber:
 	rm -Rf .cache .pytest_cache $(sanity_root_dir) htmlcov $(doc_linkcheck_dir) $(doc_build_dir) $(doc_build_local_dir) tests/output build .tox *.egg-info *.done $(done_dir)/*.done
 	rm -f .coverage MANIFEST MANIFEST.in AUTHORS ChangeLog
 	find . -name "*.pyc" -delete -o -name "__pycache__" -delete -o -name "*.tmp" -delete -o -name "tmp_*" -delete
-	@echo '$@ done.'
+	@echo "Makefile: $@ done."
 
 .PHONY: dist
 dist: _check_version $(dist_file)
-	@echo '$@ done.'
+	@echo "Makefile: $@ done."
 
 .PHONY: _check_version
 _check_version:
@@ -501,28 +501,28 @@ $(done_dir)/base_$(pymn)_$(PACKAGE_LEVEL).done: Makefile requirements-base.txt m
 	$(PYTHON_CMD) -m pip install $(pip_level_opts) -r requirements-base.txt
 	echo "done" >$@
 
-$(done_dir)/safety_develop_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_develop_policy_file) minimum-constraints-develop.txt minimum-constraints-install.txt
+$(done_dir)/safety_develop_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(safety_develop_policy_file) minimum-constraints-develop.txt minimum-constraints-install.txt
 	@echo "Makefile: Running Safety for development packages (and tolerate safety issues when RUN_TYPE is normal or scheduled)"
 	rm -f $@
 	bash -c "safety check --policy-file $(safety_develop_policy_file) -r minimum-constraints-develop.txt --full-report || test '$(RUN_TYPE)' == 'normal' || test '$(RUN_TYPE)' == 'scheduled' || exit 1"
 	echo "done" >$@
 	@echo "Makefile: Done running Safety for development packages"
 
-$(done_dir)/safety_install_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_install_policy_file) minimum-constraints-install.txt
+$(done_dir)/safety_install_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(safety_install_policy_file) minimum-constraints-install.txt
 	@echo "Makefile: Running Safety for install packages (and tolerate safety issues when RUN_TYPE is normal)"
 	rm -f $@
 	bash -c "safety check --policy-file $(safety_install_policy_file) -r minimum-constraints-install.txt --full-report || test '$(RUN_TYPE)' == 'normal' || exit 1"
 	echo "done" >$@
 	@echo "Makefile: Done running Safety for install packages"
 
-$(done_dir)/bandit_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile
+$(done_dir)/bandit_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 	@echo "Makefile: Running Bandit"
 	rm -f $@
 	bandit $(src_py_dir) -r -l
 	echo "done" >$@
 	@echo "Makefile: Done running Bandit"
 
-$(dist_file): $(done_dir)/install_deps_$(pymn)_$(PACKAGE_LEVEL).done $(dist_dependent_files)
+$(dist_file): Makefile $(done_dir)/install_deps_$(pymn)_$(PACKAGE_LEVEL).done $(dist_dependent_files)
 	mkdir -p $(dist_dir)
 	ansible-galaxy collection build --output-path=$(dist_dir) --force .
 
@@ -533,7 +533,7 @@ $(module_rst_dir)/%.rst: $(module_py_dir)/%.py $(module_rst_dir) $(doc_templates
 	ansible-doc-extractor --template $(doc_templates_dir)/module.rst.j2 $(module_rst_dir) $<
 
 # .nojekyll file disables GitHub pages jekyll pre-processing
-$(doc_build_dir)/index.html: $(doc_rst_files) $(doc_source_dir)/conf.py
+$(doc_build_dir)/index.html: Makefile $(doc_rst_files) $(doc_source_dir)/conf.py
 	sphinx-versioning -l $(doc_source_dir)/conf.py build $(doc_source_dir) $(doc_build_dir) -- $(sphinx_opts)
 	touch $(doc_build_dir)/.nojekyll
 
