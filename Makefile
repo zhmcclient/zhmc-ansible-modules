@@ -424,7 +424,7 @@ authors: _check_version
 	echo "" >>AUTHORS.md
 	echo "Sorted list of authors derived from git commit history:" >>AUTHORS.md
 	echo '```' >>AUTHORS.md
-	git shortlog --summary --email | cut -f 2 | sort >>AUTHORS.md
+	git shortlog --summary --email | cut -f 2 | LC_ALL=C.UTF-8 sort >>AUTHORS.md
 	echo '```' >>AUTHORS.md
 	@echo "Makefile: $@ done."
 
