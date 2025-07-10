@@ -38,6 +38,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Dev: The test workflow now tolerates linkcheck errors. It now succeeds if there
   are linkcheck errors, but they are still displayed in the Actions summary.
 
+* Dev: Made order of names in AUTHORS.md reliable. (issue #1141)
+
 **Enhancements:**
 
 **Cleanup:**
