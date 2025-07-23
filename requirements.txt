@@ -35,7 +35,7 @@ ansible-core>=2.12.10; python_version == '3.10'
 ansible-core>=2.14.18; python_version == '3.11'
 ansible-core>=2.16.0; python_version >= '3.12'
 
-requests>=2.32.2
+requests>=2.32.4
 
 pytz>=2019.1
 
@@ -78,4 +78,5 @@ jsonschema>=4.18.2
 # TODO: Python 3.13 support requires pyo3-ffi fixing its issue with Python 3.13
 #       (see https://github.com/PyO3/pyo3/issues/4038#issuecomment-2156363013)
 
-urllib3>=1.26.19
+urllib3>=2.2.3; python_version == '3.8'
+urllib3>=2.5.0; python_version >= '3.9'
