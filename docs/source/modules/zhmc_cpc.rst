@@ -2,6 +2,7 @@
 :github_url: https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_cpc.py
 
 .. _zhmc_cpc_module:
+.. _ibm.ibm_zhmc.zhmc_cpc_module:
 
 
 zhmc_cpc -- Manage a CPC

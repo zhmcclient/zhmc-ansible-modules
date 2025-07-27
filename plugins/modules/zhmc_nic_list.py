@@ -36,7 +36,7 @@ short_description: List NICs of a partition (DPM mode)
 description:
   - List NICs on a specific partition of a CPC (Z system).
 seealso:
-  - module: zhmc_nic
+  - module: ibm.ibm_zhmc.zhmc_nic
 author:
   - Andreas Maier (@andy-maier)
 requirements:
