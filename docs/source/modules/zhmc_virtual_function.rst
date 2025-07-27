@@ -2,6 +2,7 @@
 :github_url: https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_virtual_function.py
 
 .. _zhmc_virtual_function_module:
+.. _ibm.ibm_zhmc.zhmc_virtual_function_module:
 
 
 zhmc_virtual_function -- Manage a virtual function of a partition (DPM mode)

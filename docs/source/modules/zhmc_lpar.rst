@@ -2,6 +2,7 @@
 :github_url: https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_lpar.py
 
 .. _zhmc_lpar_module:
+.. _ibm.ibm_zhmc.zhmc_lpar_module:
 
 
 zhmc_lpar -- Manage an LPAR (classic mode)

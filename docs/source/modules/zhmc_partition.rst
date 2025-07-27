@@ -2,6 +2,7 @@
 :github_url: https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_partition.py
 
 .. _zhmc_partition_module:
+.. _ibm.ibm_zhmc.zhmc_partition_module:
 
 
 zhmc_partition -- Manage a partition (DPM mode)
@@ -339,10 +340,10 @@ See Also
 
 .. seealso::
 
-   - :ref:`zhmc_partition_list_module`
-   - :ref:`zhmc_hba_module`
-   - :ref:`zhmc_nic_module`
-   - :ref:`zhmc_virtual_function_module`
+   - :ref:`ibm.ibm_zhmc.zhmc_partition_list_module`
+   - :ref:`ibm.ibm_zhmc.zhmc_hba_module`
+   - :ref:`ibm.ibm_zhmc.zhmc_nic_module`
+   - :ref:`ibm.ibm_zhmc.zhmc_virtual_function_module`
 
 
 

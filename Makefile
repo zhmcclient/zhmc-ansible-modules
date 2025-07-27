@@ -61,6 +61,9 @@ else
   DEV_NULL := /dev/null
 endif
 
+# Current working directory
+PWD := $(shell pwd)
+
 # Namespace and name of this collection
 # TODO: Check out whether this needs to match the 'name' attribute specified in setup.py.
 collection_namespace := ibm
@@ -260,7 +263,7 @@ help:
 	@echo '  GALAXY_TOKEN=... - Your Ansible Galaxy API token, required for upload (see https://galaxy.ansible.com/me/preferences)'
 	@echo '  AUTOMATIONHUB_TOKEN=... - Your Ansible AutomationHub API token, required for upload (see https://cloud.redhat.com/ansible/automation-hub/token)'
 	@echo 'Invocation of ansible commands from within repo main directory:'
-	@echo '  export ANSIBLE_LIBRARY="$$(pwd)/$(module_py_dir);$$ANSIBLE_LIBRARY"'
+	@echo '  export ANSIBLE_LIBRARY="$(PWD)/$(module_py_dir);$$ANSIBLE_LIBRARY"'
 	@echo '  # currently: ANSIBLE_LIBRARY=$(ANSIBLE_LIBRARY)'
 	@echo '  ansible-playbook playbooks/....'
 
@@ -508,7 +511,7 @@ $(module_rst_dir):
 	mkdir -p $(module_rst_dir)
 
 $(module_rst_dir)/%.rst: $(module_py_dir)/%.py $(module_rst_dir) $(doc_templates_dir)/module.rst.j2
-	ansible-doc-extractor --template $(doc_templates_dir)/module.rst.j2 $(module_rst_dir) $<
+	ansible-doc-extractor --template $(doc_templates_dir)/module.rst.j2 $(module_rst_dir) $(PWD)/$<
 
 # .nojekyll file disables GitHub pages jekyll pre-processing
 $(doc_build_dir)/index.html: $(doc_rst_files) $(doc_source_dir)/conf.py

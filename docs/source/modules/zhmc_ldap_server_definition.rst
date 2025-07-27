@@ -2,6 +2,7 @@
 :github_url: https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_ldap_server_definition.py
 
 .. _zhmc_ldap_server_definition_module:
+.. _ibm.ibm_zhmc.zhmc_ldap_server_definition_module:
 
 
 zhmc_ldap_server_definition -- Manage an LDAP Server Definition on the HMC

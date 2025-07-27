@@ -2,6 +2,7 @@
 :github_url: https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_lpar_command.py
 
 .. _zhmc_lpar_command_module:
+.. _ibm.ibm_zhmc.zhmc_lpar_command_module:
 
 
 zhmc_lpar_command -- Execute OS console command in an LPAR (classic mode)

@@ -2,6 +2,7 @@
 :github_url: https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_console.py
 
 .. _zhmc_console_module:
+.. _ibm.ibm_zhmc.zhmc_console_module:
 
 
 zhmc_console -- Manage the HMC

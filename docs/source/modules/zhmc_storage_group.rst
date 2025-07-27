@@ -2,6 +2,7 @@
 :github_url: https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_storage_group.py
 
 .. _zhmc_storage_group_module:
+.. _ibm.ibm_zhmc.zhmc_storage_group_module:
 
 
 zhmc_storage_group -- Manage a storage group (DPM mode)

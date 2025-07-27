@@ -2,6 +2,7 @@
 :github_url: https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_partition_command.py
 
 .. _zhmc_partition_command_module:
+.. _ibm.ibm_zhmc.zhmc_partition_command_module:
 
 
 zhmc_partition_command -- Execute OS console command in a partition (DPM mode)

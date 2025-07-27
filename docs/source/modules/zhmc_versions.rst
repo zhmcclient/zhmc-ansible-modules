@@ -2,6 +2,7 @@
 :github_url: https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_versions.py
 
 .. _zhmc_versions_module:
+.. _ibm.ibm_zhmc.zhmc_versions_module:
 
 
 zhmc_versions -- Retrieve HMC/CPC version and feature facts

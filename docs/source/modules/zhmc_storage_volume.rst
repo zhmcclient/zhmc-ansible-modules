@@ -2,6 +2,7 @@
 :github_url: https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_storage_volume.py
 
 .. _zhmc_storage_volume_module:
+.. _ibm.ibm_zhmc.zhmc_storage_volume_module:
 
 
 zhmc_storage_volume -- Manage a storage volume (DPM mode)

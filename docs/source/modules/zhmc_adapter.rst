@@ -2,6 +2,7 @@
 :github_url: https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_adapter.py
 
 .. _zhmc_adapter_module:
+.. _ibm.ibm_zhmc.zhmc_adapter_module:
 
 
 zhmc_adapter -- Manage an adapter (DPM mode)
@@ -233,7 +234,7 @@ See Also
 
 .. seealso::
 
-   - :ref:`zhmc_adapter_list_module`
+   - :ref:`ibm.ibm_zhmc.zhmc_adapter_list_module`
 
 
 

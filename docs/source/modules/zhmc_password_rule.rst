@@ -2,6 +2,7 @@
 :github_url: https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_password_rule.py
 
 .. _zhmc_password_rule_module:
+.. _ibm.ibm_zhmc.zhmc_password_rule_module:
 
 
 zhmc_password_rule -- Manage an HMC password rule
