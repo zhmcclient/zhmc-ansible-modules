@@ -45,7 +45,7 @@ description:
     execution time of the module on newer HMCs but does not affect the module
     result data.
 seealso:
-  - module: zhmc_partition
+  - module: ibm.ibm_zhmc.zhmc_partition
 author:
   - Andreas Maier (@andy-maier)
 requirements:

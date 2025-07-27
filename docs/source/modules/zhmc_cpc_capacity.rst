@@ -2,6 +2,7 @@
 :github_url: https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_cpc_capacity.py
 
 .. _zhmc_cpc_capacity_module:
+.. _ibm.ibm_zhmc.zhmc_cpc_capacity_module:
 
 
 zhmc_cpc_capacity -- Manage temporary processor capacity

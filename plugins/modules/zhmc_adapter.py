@@ -38,7 +38,7 @@ description:
   - Update the properties of an adapter and its ports.
   - Create or delete a Hipersocket adapter.
 seealso:
-  - module: zhmc_adapter_list
+  - module: ibm.ibm_zhmc.zhmc_adapter_list
 author:
   - Andreas Maier (@andy-maier)
   - Andreas Scheuring (@scheuran)

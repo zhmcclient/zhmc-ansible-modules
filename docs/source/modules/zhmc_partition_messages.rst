@@ -2,6 +2,7 @@
 :github_url: https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_partition_messages.py
 
 .. _zhmc_partition_messages_module:
+.. _ibm.ibm_zhmc.zhmc_partition_messages_module:
 
 
 zhmc_partition_messages -- Get console messages for OS in a partition (DPM mode)

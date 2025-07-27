@@ -2,6 +2,7 @@
 :github_url: https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_nic.py
 
 .. _zhmc_nic_module:
+.. _ibm.ibm_zhmc.zhmc_nic_module:
 
 
 zhmc_nic -- Manage a NIC of a partition (DPM mode)

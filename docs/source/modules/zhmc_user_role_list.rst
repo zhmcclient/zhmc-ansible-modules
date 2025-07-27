@@ -2,6 +2,7 @@
 :github_url: https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_user_role_list.py
 
 .. _zhmc_user_role_list_module:
+.. _ibm.ibm_zhmc.zhmc_user_role_list_module:
 
 
 zhmc_user_role_list -- List HMC user roles

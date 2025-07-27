@@ -2,6 +2,7 @@
 :github_url: https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_hba.py
 
 .. _zhmc_hba_module:
+.. _ibm.ibm_zhmc.zhmc_hba_module:
 
 
 zhmc_hba -- Manage an HBA of a partition (z13 only, DPM mode)

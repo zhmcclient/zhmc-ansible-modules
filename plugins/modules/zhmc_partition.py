@@ -41,10 +41,10 @@ description:
    functions of the partition are managed by separate Ansible modules.
   - Start or stop a partition.
 seealso:
-  - module: zhmc_partition_list
-  - module: zhmc_hba
-  - module: zhmc_nic
-  - module: zhmc_virtual_function
+  - module: ibm.ibm_zhmc.zhmc_partition_list
+  - module: ibm.ibm_zhmc.zhmc_hba
+  - module: ibm.ibm_zhmc.zhmc_nic
+  - module: ibm.ibm_zhmc.zhmc_virtual_function
 author:
   - Andreas Maier (@andy-maier)
   - Andreas Scheuring (@scheuran)

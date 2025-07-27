@@ -2,6 +2,7 @@
 :github_url: https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_session.py
 
 .. _zhmc_session_module:
+.. _ibm.ibm_zhmc.zhmc_session_module:
 
 
 zhmc_session -- Manage HMC sessions across tasks

@@ -2,6 +2,7 @@
 :github_url: https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_nic_list.py
 
 .. _zhmc_nic_list_module:
+.. _ibm.ibm_zhmc.zhmc_nic_list_module:
 
 
 zhmc_nic_list -- List NICs of a partition (DPM mode)
@@ -143,7 +144,7 @@ See Also
 
 .. seealso::
 
-   - :ref:`zhmc_nic_module`
+   - :ref:`ibm.ibm_zhmc.zhmc_nic_module`
 
 
 
