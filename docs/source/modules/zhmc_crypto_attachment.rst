@@ -2,6 +2,7 @@
 :github_url: https://github.com/ansible-collections/ibm_zos_core/blob/dev/plugins/modules/zhmc_crypto_attachment.py
 
 .. _zhmc_crypto_attachment_module:
+.. _ibm.ibm_zhmc.zhmc_crypto_attachment_module:
 
 
 zhmc_crypto_attachment -- Manage the crypto configuration of a partition (DPM mode)
