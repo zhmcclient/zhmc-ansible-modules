@@ -2072,17 +2072,14 @@ def ensure_iso_mount(params, check_mode):
 
         if image_name != current_image_name:
             # We need to mount the image
-            image = None
-            try:
-                with open(image_file, 'rb') as fp:
-                    if not check_mode:
-                        image = fp.read()
-            except OSError as exc:
-                raise ImageError(
-                    f"Cannot open ISO image file {image_file!r} for reading: "
-                    f"{exc}")
             if not check_mode:
-                partition.mount_iso_image(image, image_name, ins_file)
+                try:
+                    with open(image_file, 'rb') as fp:
+                        partition.mount_iso_image(fp, image_name, ins_file)
+                except OSError as exc:
+                    raise ImageError(
+                        f"Cannot open ISO image file {image_file!r} for "
+                        f"reading: {exc}")
             changed = True
         elif ins_file != current_ins_file:
             # We only need to update the INS file
