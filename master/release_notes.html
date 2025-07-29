@@ -127,7 +127,7 @@
 <p><strong>Deprecations:</strong></p>
 <p><strong>Bug fixes:</strong></p>
 <ul>
-<li><p>Fixed safety issues up to 2025-02-26.</p></li>
+<li><p>Fixed safety issues up to 2025-07-23.</p></li>
 <li><p>Fixed missing dependencies for development.</p></li>
 <li><p>Increased zhmcclient version to 1.18.2 to pick up fixes. (issue #1074)</p></li>
 <li><p>Fixed that all password-like input parameters that were written in clear text
@@ -157,6 +157,21 @@ redirected links.</p></li>
 <li><p>Docs: Ignored www.ansible.com in linkcheck, because it occasionally times out.</p></li>
 <li><p>Test: Fixed duplicate ‘description’ properties in test YAML files.
 (issue #1097)</p></li>
+<li><p>Test: For the password-rule related properties of the ‘zhmc_user’ and
+‘zhmc_user_list’ modules, fixed that they are always present, and not
+dependent on auth-type=local.</p></li>
+<li><p>Test: For the ldap-server-definition related properties of the ‘zhmc_user’ and
+‘zhmc_user_list’ modules, fixed that they are always present, and not
+dependent on auth-type=local.</p></li>
+<li><p>Test: For the MFA related properties of the ‘zhmc_user’ and
+‘zhmc_user_list’ modules, fixed that they are always present, and not
+dependent on mfa-types or other MFA related properties.</p></li>
+<li><p>Circumvention for HTTP error 500.12 when creating NICs on Hipersocket
+adapters on z16 when the PartitionLink feature is enabled. This is a
+temporary circumvention until the defect will be fixed.</p></li>
+<li><p>Dev: The test workflow now tolerates linkcheck errors. It now succeeds if there
+are linkcheck errors, but they are still displayed in the Actions summary.</p></li>
+<li><p>Dev: Made order of names in AUTHORS.md reliable. (issue #1141)</p></li>
 </ul>
 <p><strong>Enhancements:</strong></p>
 <ul class="simple">
@@ -166,6 +181,26 @@ module entry log, but instead its sensitive items ‘password’ and ‘session_
 are now blanked out.</p></li>
 <li><p>Dev: Added display of environment variables and platform details in test
 workflow.</p></li>
+<li><p>Added a boolean ‘expand_names’ parameter to the ‘zhmc_user’ module. This
+allows disabling the addition of names for referenced objects. For
+backwards compatibility, this parameter is True by default.</p></li>
+<li><p>Added a boolean ‘expand_names’ parameter to the ‘zhmc_user_list’ module. This
+allows enabling the addition of names for referenced objects, which improves
+the performance compared to a loop of calls to the ‘zhmc_user’ module
+with ‘expand_names’, because the data needed for translating the URIs to names
+is retrieved only once. To save these extra retrieval operations by default,
+this parameter is False by default.</p></li>
+<li><p>Added support for the following properties and input parameters in the
+‘zhmc_user’ and ‘zhmc_user_list’ modules:
+- user-template related
+- primary-mfa-server-definition related
+- backup-mfa-server-definition related
+- default-group related</p></li>
+<li><p>Added a logged warning if the deprecated parameter ‘expand’ is used for
+the ‘zhmc_user’ module.</p></li>
+<li><p>Dev: Added commit message checker to test workflow. (issue #1137)</p></li>
+<li><p>Lifted the size limit of 2GB for ISO images that can be mounted with the
+‘zhmc_partition’ module using ‘state=mount_iso’.</p></li>
 </ul>
 <p><strong>Cleanup:</strong></p>
 <ul class="simple">
@@ -190,6 +225,11 @@ Issues in installation dependencies are now tolerated in normal test workflow
 runs (but not in local make runs and scheduled/release test workflow runs).</p></li>
 <li><p>Test: Accommodated rollout of Ubuntu 24.04 on GitHub Actions by using
 ubuntu-22.04 as the OS image for Python 3.8 based test runs.</p></li>
+<li><p>Docs: In the parameter documentation for the ‘zhmc_user’ and ‘zhmc_user_list’
+modules, made the language more explicit that states under which conditions
+each parameter is present.</p></li>
+<li><p>Test: Removed the invalid combinations of type and auth-type from the end2end
+test ‘test_zhmc_user_facts()’.</p></li>
 </ul>
 <p><strong>Known issues:</strong></p>
 <ul class="simple">
@@ -1220,7 +1260,7 @@ property update.</p></li>
             <dd><a href="../1.6.1/release_notes.html">1.6.1</a></dd>
             <dd><a href="../1.7.4/release_notes.html">1.7.4</a></dd>
             <dd><a href="../1.8.3/release_notes.html">1.8.3</a></dd>
-            <dd><a href="../1.9.4/release_notes.html">1.9.4</a></dd>
+            <dd><a href="../1.9.5/release_notes.html">1.9.5</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

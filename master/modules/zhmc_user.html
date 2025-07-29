@@ -140,7 +140,7 @@
            <div itemprop="articleBody">
              
   <section id="zhmc-user-manage-an-hmc-user">
-<span id="zhmc-user-module"></span><h1>zhmc_user – Manage an HMC user<a class="headerlink" href="#zhmc-user-manage-an-hmc-user" title="Link to this heading"></a></h1>
+<span id="ibm-ibm-zhmc-zhmc-user-module"></span><span id="zhmc-user-module"></span><h1>zhmc_user – Manage an HMC user<a class="headerlink" href="#zhmc-user-manage-an-hmc-user" title="Link to this heading"></a></h1>
 <nav class="contents local" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
@@ -235,8 +235,11 @@
 <p>* <code class="docutils literal notranslate"><span class="pre">type</span></code>: Cannot be changed once the user exists.</p>
 <p>* <code class="docutils literal notranslate"><span class="pre">user_roles</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">user_role_names</span></code> which replaces the current user roles, if specified.</p>
 <p>* <code class="docutils literal notranslate"><span class="pre">user_pattern_uri</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">user_pattern_name</span></code>.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">user_template_uri</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">user_template_name</span></code>.</p>
 <p>* <code class="docutils literal notranslate"><span class="pre">password_rule_uri</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">password_rule_name</span></code>.</p>
 <p>* <code class="docutils literal notranslate"><span class="pre">ldap_server_definition_uri</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">ldap_server_definition_name</span></code>.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">primary_mfa_server_definition_uri</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">primary_mfa_server_definition_name</span></code>.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">backup_mfa_server_definition_uri</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">backup_mfa_server_definition_name</span></code>.</p>
 <p>* <code class="docutils literal notranslate"><span class="pre">default_group_uri</span></code>: Cannot be set directly, but indirectly via the artificial property <code class="docutils literal notranslate"><span class="pre">default_group_name</span></code>.</p>
 <p>Properties omitted in this dictionary will remain unchanged when the user already exists, and will get the default value defined in the data model for users in the <a class="reference internal" href="../bibliography.html#hmc-api"><span class="std std-ref">HMC API</span></a> book when the user is being created.</p>
 <div class="line-block">
@@ -249,6 +252,14 @@
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: bool</div>
+</div>
+</dd>
+<dt>expand_names</dt><dd><p>Boolean that controls whether the returned user contains additional artificial properties for the names of referenced objects, such as user roles, password rule, etc.</p>
+<p>For backwards compatibility, this parameter defaults to True.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: bool</div>
+<div class="line"><strong>default</strong>: True</div>
 </div>
 </dd>
 <dt>log_file</dt><dd><p>File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.</p>
@@ -325,7 +336,10 @@
 <span class="w">    </span><span class="nt">&quot;allow-management-interfaces&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;allow-remote-access&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;authentication-type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;backup-mfa-server-definition-name&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;backup-mfa-server-definition-uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;class&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;default-group-name&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;default-group-uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;disable-delay&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
@@ -342,15 +356,22 @@
 <span class="w">    </span><span class="nt">&quot;ldap-server-definition-uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;max-failed-logins&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;max-web-services-api-sessions&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;mfa-policy&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;mfa-types&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;mfa-userid&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;mfa-userid-override&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;min-pw-change-time&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;multi-factor-authentication-required&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;VALUE_SPECIFIED_IN_NO_LOG_PARAMETER&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;object-id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;91773b88-0c99-11eb-b4d3-00106f237ab1&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;object-uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/api/users/91773b88-0c99-11eb-b4d3-00106f237ab1&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;parent&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/api/console&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;parent-name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;HMC1&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;password-expires&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">87</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;password-rule-name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ZaaS&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;password-rule-uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/api/console/password-rules/518ac1d8-bf98-11e9-b9dd-00106f237ab1&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;primary-mfa-server-definition-name&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;primary-mfa-server-definition-uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;replication-overwrite-possible&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;session-timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;standard&quot;</span><span class="p">,</span>
@@ -378,13 +399,13 @@
 <div class="line"><strong>type</strong>: raw</div>
 </div>
 </dd>
-<dt>user-role-names</dt><dd><p>Name of the user roles referenced by property <code class="docutils literal notranslate"><span class="pre">user-roles</span></code>.</p>
+<dt>user-role-names</dt><dd><p>Only present if <code class="docutils literal notranslate"><span class="pre">expand_names=true</span></code>: Name of the user roles referenced by property <code class="docutils literal notranslate"><span class="pre">user-roles</span></code>.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
 <dt>user-role-objects</dt><dd><p>Deprecated: This result property is deprecated because the <code class="docutils literal notranslate"><span class="pre">expand</span></code> parameter is deprecated.</p>
-<p>Only if <code class="docutils literal notranslate"><span class="pre">expand=true</span></code>: User roles referenced by property <code class="docutils literal notranslate"><span class="pre">user-roles</span></code>.</p>
+<p>Only present if <code class="docutils literal notranslate"><span class="pre">expand=true</span></code>: User roles referenced by property <code class="docutils literal notranslate"><span class="pre">user-roles</span></code>.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: dict</div>
 </div>
@@ -396,13 +417,13 @@
 </dd>
 </dl>
 </dd>
-<dt>user-pattern-name</dt><dd><p>Only for users with <code class="docutils literal notranslate"><span class="pre">type=pattern</span></code>: Name of the user pattern referenced by property <code class="docutils literal notranslate"><span class="pre">user-pattern-uri</span></code>.</p>
+<dt>user-pattern-name</dt><dd><p>Only present for users with <code class="docutils literal notranslate"><span class="pre">type=pattern</span></code> and if <code class="docutils literal notranslate"><span class="pre">expand_names=true</span></code>: Name of the user pattern referenced by property <code class="docutils literal notranslate"><span class="pre">user-pattern-uri</span></code>.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
 <dt>user-pattern</dt><dd><p>Deprecated: This result property is deprecated because the <code class="docutils literal notranslate"><span class="pre">expand</span></code> parameter is deprecated.</p>
-<p>Only for users with <code class="docutils literal notranslate"><span class="pre">type=pattern</span></code> and if <code class="docutils literal notranslate"><span class="pre">expand=true</span></code>: User pattern referenced by property <code class="docutils literal notranslate"><span class="pre">user-pattern-uri</span></code>.</p>
+<p>Only present for users with <code class="docutils literal notranslate"><span class="pre">type=pattern</span></code> and if <code class="docutils literal notranslate"><span class="pre">expand=true</span></code>: User pattern referenced by property <code class="docutils literal notranslate"><span class="pre">user-pattern-uri</span></code>.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: dict</div>
 </div>
@@ -414,13 +435,31 @@
 </dd>
 </dl>
 </dd>
-<dt>password-rule-name</dt><dd><p>Only for users with <code class="docutils literal notranslate"><span class="pre">authentication-type=local</span></code>: Name of the password rule referenced by property <code class="docutils literal notranslate"><span class="pre">password-rule-uri</span></code>.</p>
+<dt>user-template-name</dt><dd><p>Only present for users with <code class="docutils literal notranslate"><span class="pre">type=pattern</span></code> and if <code class="docutils literal notranslate"><span class="pre">expand_names=true</span></code>: Name of the template user referenced by property <code class="docutils literal notranslate"><span class="pre">user-template-uri</span></code>.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>user-template</dt><dd><p>Deprecated: This result property is deprecated because the <code class="docutils literal notranslate"><span class="pre">expand</span></code> parameter is deprecated.</p>
+<p>Only present for users with <code class="docutils literal notranslate"><span class="pre">type=pattern</span></code> and if <code class="docutils literal notranslate"><span class="pre">expand=true</span></code>: User template referenced by property <code class="docutils literal notranslate"><span class="pre">user-template-uri</span></code>.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: dict</div>
+</div>
+<dl>
+<dt>{property}</dt><dd><p>Properties of the template user, as described in the data model of the ‘User’ object in the <a class="reference internal" href="../bibliography.html#hmc-api"><span class="std std-ref">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: raw</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>password-rule-name</dt><dd><p>Only present if <code class="docutils literal notranslate"><span class="pre">expand_names=true</span></code>: Name of the password rule referenced by property <code class="docutils literal notranslate"><span class="pre">password-rule-uri</span></code>.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
 <dt>password-rule</dt><dd><p>Deprecated: This result property is deprecated because the <code class="docutils literal notranslate"><span class="pre">expand</span></code> parameter is deprecated.</p>
-<p>Only for users with <code class="docutils literal notranslate"><span class="pre">authentication-type=local</span></code> and if <code class="docutils literal notranslate"><span class="pre">expand=true</span></code>: Password rule referenced by property <code class="docutils literal notranslate"><span class="pre">password-rule-uri</span></code>.</p>
+<p>Only present if <code class="docutils literal notranslate"><span class="pre">expand=true</span></code>: Password rule referenced by property <code class="docutils literal notranslate"><span class="pre">password-rule-uri</span></code>.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: dict</div>
 </div>
@@ -432,18 +471,72 @@
 </dd>
 </dl>
 </dd>
-<dt>ldap-server-definition-name</dt><dd><p>Only for users with <code class="docutils literal notranslate"><span class="pre">authentication-type=ldap</span></code>: Name of the LDAP server definition referenced by property <code class="docutils literal notranslate"><span class="pre">ldap-server-definition-uri</span></code>.</p>
+<dt>ldap-server-definition-name</dt><dd><p>Only present if <code class="docutils literal notranslate"><span class="pre">expand_names=true</span></code>: Name of the LDAP server definition referenced by property <code class="docutils literal notranslate"><span class="pre">ldap-server-definition-uri</span></code>.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
 <dt>ldap-server-definition</dt><dd><p>Deprecated: This result property is deprecated because the <code class="docutils literal notranslate"><span class="pre">expand</span></code> parameter is deprecated.</p>
-<p>Only for users with <code class="docutils literal notranslate"><span class="pre">authentication-type=ldap</span></code> and if <code class="docutils literal notranslate"><span class="pre">expand=true</span></code>: LDAP server definition referenced by property <code class="docutils literal notranslate"><span class="pre">ldap-server-definition-uri</span></code>.</p>
+<p>Only present if <code class="docutils literal notranslate"><span class="pre">expand=true</span></code>: LDAP server definition referenced by property <code class="docutils literal notranslate"><span class="pre">ldap-server-definition-uri</span></code>.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: dict</div>
 </div>
 <dl>
 <dt>{property}</dt><dd><p>Properties of the LDAP server definition, as described in the data model of the ‘LDAP Server Definition’ object in the <a class="reference internal" href="../bibliography.html#hmc-api"><span class="std std-ref">HMC API</span></a> book. Write-only properties in the data model are not included. The property names have hyphens (-) as described in that book.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: raw</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>primary-mfa-server-definition-name</dt><dd><p>Only present if <code class="docutils literal notranslate"><span class="pre">expand_names=true</span></code>: Name of the MFA server definition referenced by property <code class="docutils literal notranslate"><span class="pre">primary-mfa-server-definition-uri</span></code>.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>primary-mfa-server-definition</dt><dd><p>Deprecated: This result property is deprecated because the <code class="docutils literal notranslate"><span class="pre">expand</span></code> parameter is deprecated.</p>
+<p>Only present if <code class="docutils literal notranslate"><span class="pre">expand=true</span></code>: MFA server definition referenced by property <code class="docutils literal notranslate"><span class="pre">primary-mfa-server-definition-uri</span></code>.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: dict</div>
+</div>
+<dl>
+<dt>{property}</dt><dd><p>Properties of the MFA server definition, as described in the data model of the ‘MFA Server Definition’ object in the <a class="reference internal" href="../bibliography.html#hmc-api"><span class="std std-ref">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: raw</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>backup-mfa-server-definition-name</dt><dd><p>Only present if <code class="docutils literal notranslate"><span class="pre">expand_names=true</span></code>: Name of the MFA server definition referenced by property <code class="docutils literal notranslate"><span class="pre">backup-mfa-server-definition-uri</span></code>.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>backup-mfa-server-definition</dt><dd><p>Deprecated: This result property is deprecated because the <code class="docutils literal notranslate"><span class="pre">expand</span></code> parameter is deprecated.</p>
+<p>Only present if <code class="docutils literal notranslate"><span class="pre">expand=true</span></code>: MFA server definition referenced by property <code class="docutils literal notranslate"><span class="pre">backup-mfa-server-definition-uri</span></code>.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: dict</div>
+</div>
+<dl>
+<dt>{property}</dt><dd><p>Properties of the MFA server definition, as described in the data model of the ‘MFA Server Definition’ object in the <a class="reference internal" href="../bibliography.html#hmc-api"><span class="std std-ref">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: raw</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>default-group-name</dt><dd><p>Only present if <code class="docutils literal notranslate"><span class="pre">expand_names=true</span></code>: Name of the Group referenced by property <code class="docutils literal notranslate"><span class="pre">default-group-uri</span></code>.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>default-group</dt><dd><p>Deprecated: This result property is deprecated because the <code class="docutils literal notranslate"><span class="pre">expand</span></code> parameter is deprecated.</p>
+<p>Only present if <code class="docutils literal notranslate"><span class="pre">expand=true</span></code>: Group referenced by property <code class="docutils literal notranslate"><span class="pre">default-group-uri</span></code>.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: dict</div>
+</div>
+<dl>
+<dt>{property}</dt><dd><p>Properties of the Group, as described in the data model of the ‘Group’ object in the <a class="reference internal" href="../bibliography.html#hmc-api"><span class="std std-ref">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: raw</div>
 </div>
@@ -499,7 +592,7 @@
             <dd><a href="../../1.6.1/modules/zhmc_user.html">1.6.1</a></dd>
             <dd><a href="../../1.7.4/modules/zhmc_user.html">1.7.4</a></dd>
             <dd><a href="../../1.8.3/modules/zhmc_user.html">1.8.3</a></dd>
-            <dd><a href="../../1.9.4/modules/zhmc_user.html">1.9.4</a></dd>
+            <dd><a href="../../1.9.5/modules/zhmc_user.html">1.9.5</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

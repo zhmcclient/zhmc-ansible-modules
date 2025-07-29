@@ -140,7 +140,7 @@
            <div itemprop="articleBody">
              
   <section id="zhmc-user-list-list-hmc-users">
-<span id="zhmc-user-list-module"></span><h1>zhmc_user_list – List HMC users<a class="headerlink" href="#zhmc-user-list-list-hmc-users" title="Link to this heading"></a></h1>
+<span id="ibm-ibm-zhmc-zhmc-user-list-module"></span><span id="zhmc-user-list-module"></span><h1>zhmc_user_list – List HMC users<a class="headerlink" href="#zhmc-user-list-list-hmc-users" title="Link to this heading"></a></h1>
 <nav class="contents local" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
@@ -213,6 +213,12 @@
 </dd>
 <dt>full_properties</dt><dd><p>If True, all properties of each user will be returned. Default: False.</p>
 <p>Note: Setting this to True causes a loop of ‘Get User Properties’ operations to be executed.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: bool</div>
+</div>
+</dd>
+<dt>expand_names</dt><dd><p>If True and <code class="docutils literal notranslate"><span class="pre">full_properties</span></code> is set, additional artificial properties will be returned for the names of referenced objects, such as user roles, password rule, etc. Default: False.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: bool</div>
@@ -291,6 +297,46 @@
 <div class="line"><strong>type</strong>: raw</div>
 </div>
 </dd>
+<dt>user_role_names</dt><dd><p>Only present if <code class="docutils literal notranslate"><span class="pre">expand_names=true</span></code>: Name of the user roles referenced by property <code class="docutils literal notranslate"><span class="pre">user_roles</span></code>.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>user_pattern_name</dt><dd><p>Only present for users with <code class="docutils literal notranslate"><span class="pre">type=pattern</span></code> and if <code class="docutils literal notranslate"><span class="pre">expand_names=true</span></code>: Name of the user pattern referenced by property <code class="docutils literal notranslate"><span class="pre">user_pattern_uri</span></code>.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>user_template_name</dt><dd><p>Only present for users with <code class="docutils literal notranslate"><span class="pre">type=pattern</span></code> and if <code class="docutils literal notranslate"><span class="pre">expand_names=true</span></code>: Name of the template user referenced by property <code class="docutils literal notranslate"><span class="pre">user_template_uri</span></code>.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>password_rule_name</dt><dd><p>Only present if <code class="docutils literal notranslate"><span class="pre">expand_names=true</span></code>: Name of the password rule referenced by property <code class="docutils literal notranslate"><span class="pre">password_rule_uri</span></code>.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>ldap_server_definition_name</dt><dd><p>Only present if <code class="docutils literal notranslate"><span class="pre">expand_names=true</span></code>: Name of the LDAP server definition referenced by property <code class="docutils literal notranslate"><span class="pre">ldap_server_definition_uri</span></code>.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>primary_mfa_server_definition_name</dt><dd><p>Only present if <code class="docutils literal notranslate"><span class="pre">expand_names=true</span></code>: Name of the MFA server definition referenced by property <code class="docutils literal notranslate"><span class="pre">primary_mfa_server_definition_uri</span></code>.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>backup_mfa_server_definition_name</dt><dd><p>Only present if <code class="docutils literal notranslate"><span class="pre">expand_names=true</span></code>: Name of the MFA server definition referenced by property <code class="docutils literal notranslate"><span class="pre">backup_mfa_server_definition_uri</span></code>.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>default_group_name</dt><dd><p>Only present if <code class="docutils literal notranslate"><span class="pre">expand_names=true</span></code>: Name of the Group referenced by property <code class="docutils literal notranslate"><span class="pre">default_group_uri</span></code>.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -340,7 +386,7 @@
             <dd><a href="../../1.6.1/modules/zhmc_user_list.html">1.6.1</a></dd>
             <dd><a href="../../1.7.4/modules/zhmc_user_list.html">1.7.4</a></dd>
             <dd><a href="../../1.8.3/modules/zhmc_user_list.html">1.8.3</a></dd>
-            <dd><a href="../../1.9.4/modules/zhmc_user_list.html">1.9.4</a></dd>
+            <dd><a href="../../1.9.5/modules/zhmc_user_list.html">1.9.5</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
