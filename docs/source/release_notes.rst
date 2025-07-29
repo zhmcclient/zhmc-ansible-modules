@@ -20,16 +20,12 @@ Releases
 ========
 
 
-Version 1.9.5-dev1
-------------------
+Version 1.9.5
+-------------
 
-Released: not yet
+Released: 2025-07-29
 
 Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
-
-**Incompatible changes:**
-
-**Deprecations:**
 
 **Bug fixes:**
 
@@ -44,14 +40,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Lifted the size limit of 2GB for ISO images that can be mounted with the
   'zhmc_partition' module using 'state=mount_iso'.
-
-**Cleanup:**
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 1.9.4
