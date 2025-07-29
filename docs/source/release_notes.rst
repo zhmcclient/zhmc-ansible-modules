@@ -42,6 +42,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Enhancements:**
 
+* Lifted the size limit of 2GB for ISO images that can be mounted with the
+  'zhmc_partition' module using 'state=mount_iso'.
+
 **Cleanup:**
 
 **Known issues:**
