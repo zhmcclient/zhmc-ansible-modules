@@ -132,6 +132,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Dev: Added commit message checker to test workflow. (issue #1137)
 
+* Lifted the size limit of 2GB for ISO images that can be mounted with the
+  'zhmc_partition' module using 'state=mount_iso'.
+
 **Cleanup:**
 
 * Removed the unnecessary .pylintrc file from the distribution archive of the
