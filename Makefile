@@ -55,7 +55,7 @@ PLATFORM := $(shell uname -s)
 PWD := $(shell pwd)
 
 ENV = env | sort
-WHICH = which -a
+WHICH = which
 
 # Namespace and name of this collection
 collection_namespace := ibm
@@ -66,18 +66,36 @@ collection_full_name := $(collection_namespace).$(collection_name)
 # Note: The collection version is defined in galaxy.yml
 collection_version := $(shell $(PYTHON_CMD) tools/version.py)
 
-# Minimum ansible-core version that is officially supported
-# If this version is changed, update the check_reqs_packages variable as well
-min_ansible_core_version := 2.15.0
-
-# Installed ansible-core version (empty if ansible is not installed)
-ansible_core_version := $(shell $(PYTHON_CMD) -c "import sys,ansible; sys.stdout.write(ansible.__version__)" 2>/dev/null)
-
 # Python versions
 python_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('{v[0]}.{v[1]}.{v[2]}'.format(v=sys.version_info))")
 python_major_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('%s'%sys.version_info[0])")
 python_m_n_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('%s.%s'%(sys.version_info[0],sys.version_info[1]))")
 pymn := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('py%s%s'%(sys.version_info[0],sys.version_info[1]))")
+
+# Installed ansible-core version (empty if ansible is not installed)
+ansible_core_version := $(shell $(PYTHON_CMD) -c "import sys,ansible; sys.stdout.write(ansible.__version__)" 2>/dev/null)
+
+# Python versions for which Ansible is supported (i.e. where its sanity test and ansible-lint check can run).
+# The format is a string defining a Python dict with key = ansible-core version (m, n), value = Python version (m, n)
+# ansible 8 (ansible-core 2.15) requires Python >=3.9 and its sanity test supports Python 3.9 to 3.11.
+# ansible 9 (ansible-core 2.16) requires Python >=3.10 and its sanity test supports Python 3.10 to 3.12.
+# ansible 10 (ansible-core 2.17) requires Python >=3.10 and its sanity test supports Python 3.10 to 3.12.
+# ansible 11 (ansible-core 2.18) requires Python >=3.11 and its sanity test supports Python 3.11 to 3.13.
+# ansible 12 (ansible-core 2.19) requires Python >=3.11 and its sanity test supports Python 3.11 to 3.13.
+ansible_min_python_versions := "{(2, 15): (3, 9), (2, 16): (3, 10), (2, 17): (3, 10), (2, 18): (3, 11), (2, 19): (3, 11)}"
+ansible_max_python_versions := "{(2, 15): (3, 11), (2, 16): (3, 12), (2, 17): (3, 12), (2, 18): (3, 13), (2, 19): (3, 13)}"
+
+# Boolean variable indicating that the Ansible sanity test should be run (in the current and virtual Python environment).
+# The variable is empty if ansible is not installed.
+# We run the sanity test only on Python and Ansible version combinations that support the sanity test, and in addition exclude:
+#  * Python 3.10 with minimum package levels because sanity setup fails with PyYAML 5.4.1 install issue with Cython 3
+run_sanity := $(shell PL=$(PACKAGE_LEVEL) PY_MIN_STR=$(ansible_min_python_versions) PY_MAX_STR=$(ansible_max_python_versions) $(PYTHON_CMD) -c "import sys,os,ansible; py=sys.version_info[0:2]; ac=tuple(map(int,ansible.__version__.split('.')))[0:2]; py_min=eval(os.getenv('PY_MIN_STR'))[ac]; py_max=eval(os.getenv('PY_MAX_STR'))[ac]; pl=os.getenv('PL'); sys.stdout.write('true' if py>=py_min and py<=py_max and not (py==(3,10) and pl=='minimum') else 'false')" 2>/dev/null)
+
+# Boolean variable indicating that ansible-lint should be run.
+# The variable is empty if ansible is not installed.
+# We run ansible-lint only on Python and Ansible version combinations that support the sanity test, and in addition exclude:
+# * Nothing
+run_ansible_lint := $(shell PL=$(PACKAGE_LEVEL) PY_MIN_STR=$(ansible_min_python_versions) PY_MAX_STR=$(ansible_max_python_versions) $(PYTHON_CMD) -c "import sys,os,ansible; py=sys.version_info[0:2]; ac=tuple(map(int,ansible.__version__.split('.')))[0:2]; py_min=eval(os.getenv('PY_MIN_STR'))[ac]; py_max=eval(os.getenv('PY_MAX_STR'))[ac]; pl=os.getenv('PL'); sys.stdout.write('true' if py>=py_min and py<=py_max else 'false')" 2>/dev/null)
 
 # The Python source files that are Ansible modules
 module_py_dir := plugins/modules
@@ -138,17 +156,14 @@ safety_install_policy_file := .safety-policy-install.yml
 safety_develop_policy_file := .safety-policy-develop.yml
 
 # Packages whose dependencies are checked using pip-missing-reqs
-# ansible_test is checked only on officially supported Python versions
-ifeq ($(python_m_n_version),3.8)
-  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor pylint safety bandit
-else ifeq ($(python_m_n_version),3.9)
+ifeq ($(python_m_n_version),3.9)
   check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor pylint safety bandit ansible_test
 else ifeq ($(python_m_n_version),3.10)
   check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor pylint safety bandit ansible_test ansiblelint
 else ifeq ($(python_m_n_version),3.11)
   check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor pylint safety bandit ansible_test ansiblelint
 else
-# sphinx is excluded because pip-missing-reqs 2.5 reports missing sphinx-versions package (rightfully)
+# sphinx is excluded for Python >=3.12 because pip-missing-reqs 2.5 reports missing sphinx-versions package (rightfully)
   check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 ansible_doc_extractor pylint safety bandit ansible_test ansiblelint
 endif
 
@@ -284,11 +299,20 @@ endif
 	@echo "Make version: $(MAKE_VERSION)"
 	@echo "Python command name: $(PYTHON_CMD)"
 	@echo "Python command location: $(shell $(WHICH) $(PYTHON_CMD))"
-	@echo "Python version: $(python_mn_version)"
+	@echo "Python version: $(python_m_n_version)"
 	@echo "Pip command name: $(PIP_CMD)"
 	@echo "Pip command location: $(shell $(WHICH) $(PIP_CMD))"
 	@echo "Pip version: $(shell $(PIP_CMD) --version)"
-	@echo "$(package_name) package version: $(package_version)"
+	@echo "$(collection_name) collection version: $(collection_version)"
+ifneq ($(ansible_core_version),)
+	@echo "ansible-core version: $(ansible_core_version)"
+endif
+ifneq ($(run_sanity),)
+	@echo "Run sanity tests: $(run_sanity)"
+endif
+ifneq ($(run_ansible_lint),)
+	@echo "Run ansible lint check: $(run_ansible_lint)"
+endif
 
 .PHONY: env
 env:
@@ -336,18 +360,6 @@ safety: $(done_dir)/safety_develop_$(pymn)_$(PACKAGE_LEVEL).done $(done_dir)/saf
 bandit: $(done_dir)/bandit_$(pymn)_$(PACKAGE_LEVEL).done
 	@echo "Makefile: $@ done."
 
-# Boolean variable indicating that the Ansible sanity test should be run in the current Python environment.
-# The variable is empty if ansible is not installed.
-# We run the sanity test only on officially supported Ansible versions, except for:
-#  * Python 3.10 with minimum package levels because sanity setup fails with PyYAML 5.4.1 install issue with Cython 3
-run_sanity_current := $(shell PL=$(PACKAGE_LEVEL) MIN_AC=$(min_ansible_core_version) $(PYTHON_CMD) -c "import sys,os,ansible; py=sys.version_info[0:2]; ac=list(map(int,ansible.__version__.split('.'))); min_ac=list(map(int,os.getenv('MIN_AC').split('.'))); pl=os.getenv('PL'); sys.stdout.write('true' if ac>=min_ac and not (py==(3,10) and pl=='minimum') and not py>=(3,13) else 'false')" 2>/dev/null)
-
-# Boolean variable indicating that the Ansible sanity test should be run in its own virtual Python environment.
-# The variable is empty if ansible is not installed.
-# We run the sanity test only on officially supported Ansible versions, except for:
-#  * Python 3.10 with minimum package levels because sanity setup fails with PyYAML 5.4.1 install issue with Cython 3
-run_sanity_virtual := $(shell PL=$(PACKAGE_LEVEL) MIN_AC=$(min_ansible_core_version) $(PYTHON_CMD) -c "import sys,os,ansible; py=sys.version_info[0:2]; ac=list(map(int,ansible.__version__.split('.'))); min_ac=list(map(int,os.getenv('MIN_AC').split('.'))); pl=os.getenv('PL'); sys.stdout.write('true' if ac>=min_ac and not (py==(3,10) and pl=='minimum') and not py>=(3,13) else 'false')" 2>/dev/null)
-
 # The sanity check requires the .git directory to be present.
 .PHONY:	sanity
 sanity: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(dist_file) $(sanity_additional_files)
@@ -355,25 +367,19 @@ sanity: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(dist_
 	mkdir -p $(sanity_coll_dir)
 	cp -R $(sanity_additional_files) $(sanity_coll_dir)
 	tar -xf $(dist_file) --directory $(sanity_coll_dir)
-ifeq ($(run_sanity_current),true)
+ifeq ($(run_sanity),true)
 	echo "Running ansible sanity test in the current Python env (using ansible-core $(ansible_core_version) and Python $(python_version))"
 	bash -c "cd $(sanity_coll_dir); ansible-test sanity --verbose --truncate 0 --local"
 else
 	echo "Skipping ansible sanity test in the current Python env (using ansible-core $(ansible_core_version) and Python $(python_version))"
 endif
-ifeq ($(run_sanity_virtual),true)
+ifeq ($(run_sanity),true)
 	echo "Running ansible sanity test in its own virtual Python env (using ansible-core $(ansible_core_version) and Python $(python_version))"
 	bash -c "cd $(sanity_coll_dir); ansible-test sanity --verbose --truncate 0 --venv --requirements"
 else
 	echo "Skipping ansible sanity test in its own virtual Python env (using ansible-core $(ansible_core_version) and Python $(python_version))"
 endif
 	@echo "Makefile: $@ done."
-
-# Boolean variable indicating that ansible-lint should be run.
-# The variable is empty if ansible is not installed.
-# We run ansible-lint only on officially supported Ansible versions, except for:
-#  * Python 3.9 with minimum package levels because ansible-lint 6.14.0 requires ansible-core>=2.12 which is incompatible with ansible's requirement
-run_ansible_lint := $(shell PL=$(PACKAGE_LEVEL) MIN_AC=$(min_ansible_core_version) $(PYTHON_CMD) -c "import sys,os,ansible; py=sys.version_info[0:2]; ac=ansible.__version__.split('.'); min_ac=os.getenv('MIN_AC').split('.'); pl=os.getenv('PL'); sys.stdout.write('true' if ac>=min_ac and py>=(3,10) else 'false')" 2>/dev/null)
 
 .PHONY:	ansible_lint
 ansible_lint: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(dist_file)

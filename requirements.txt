@@ -6,34 +6,22 @@
 
 # Direct dependencies for install (must be consistent with minimum-constraints-install.txt)
 
-# Keep minimum versions consistent with table for 'minimum' packages in development.rst and with minimum-constraints.txt
-# Starting with Python 3.9, ansible >=4 is needed.
-# ansible 4 requires Python 2.7 or >=3.5.
-# ansible 5 requires Python >=3.8.
-# ansible 6 requires Python >=3.8.
-# ansible 7 requires Python >=3.9.
-# ansible 8 requires Python >=3.9.
-# ansible 9 requires Python >=3.10.
-# ansible 10 requires Python >=3.10.
-# The sanity check of ansible 4 supports Python 2.7, 3.5 to 3.9.
-# The sanity check of ansible 5 supports Python 3.8 to 3.10.
-# The sanity check of ansible 6 supports Python 3.8 to 3.10.
-# The sanity check of ansible 7 supports Python 3.9 to 3.11.
-# The sanity check of ansible 8 supports Python 3.9 to 3.11.
-# The sanity check of ansible 9 supports Python 3.10 to 3.12.
-# The sanity check of ansible 10 supports Python 3.10 to 3.12.
-# We require the lowest ansible version that supports the sanity check an a given Python version:
-ansible>=2.9.27; python_version == '3.8'
-ansible>=4.1.0; python_version == '3.9'
-ansible>=5.0.1; python_version == '3.10'
-ansible>=7.0.0; python_version == '3.11'
-ansible>=9.0.1; python_version >= '3.12'
+# Keep minimum versions consistent with table for 'minimum' packages in development.rst and with minimum-constraints-install.txt
+# ansible 8 (ansible-core 2.15) requires Python >=3.9 and its sanity test supports Python 3.9 to 3.11.
+# ansible 9 (ansible-core 2.16) requires Python >=3.10 and its sanity test supports Python 3.10 to 3.12.
+# ansible 10 (ansible-core 2.17) requires Python >=3.10 and its sanity test supports Python 3.10 to 3.12.
+# ansible 11 (ansible-core 2.18) requires Python >=3.11 and its sanity test supports Python 3.11 to 3.13.
+# ansible 12 (ansible-core 2.19) requires Python >=3.11 and its sanity test supports Python 3.11 to 3.13.
+# Ansible 8 requires Python >=3.9 - this is the check that no Python version below 3.9 is used.
+# Apart from that, we require the lowest Ansible version that supports a given Python version.
+ansible>=8.0.0; python_version <= '3.11'
+ansible>=9.0.1; python_version == '3.12'
+ansible>=11.0.0; python_version >= '3.13'
 
-# ansible-core is pulled in by ansible>=4.0, and is needed for pip-check-reqs checks.
-ansible-core>=2.11.12; python_version == '3.9'
-ansible-core>=2.12.10; python_version == '3.10'
-ansible-core>=2.14.18; python_version == '3.11'
-ansible-core>=2.16.0; python_version >= '3.12'
+# ansible-core is pulled in by ansible, but is needed for pip-check-reqs checks.
+ansible-core>=2.15.13; python_version <= '3.11'
+ansible-core>=2.16.13; python_version == '3.12'
+ansible-core>=2.18.0; python_version >= '3.13'
 
 requests>=2.32.4
 
@@ -78,5 +66,4 @@ jsonschema>=4.18.2
 # TODO: Python 3.13 support requires pyo3-ffi fixing its issue with Python 3.13
 #       (see https://github.com/PyO3/pyo3/issues/4038#issuecomment-2156363013)
 
-urllib3>=2.2.3; python_version == '3.8'
-urllib3>=2.5.0; python_version >= '3.9'
+urllib3>=2.5.0

@@ -28,8 +28,7 @@ decorator>=4.0.11
 #   Python>=3.13.
 # Note: The earlier repetition of pinnings to avoid pip backtracking no longer
 #       seems to be needed.
-coverage>=7.6.1; python_version == '3.8'
-coverage>=7.8.0; python_version >= '3.9' and python_version <= '3.12'
+coverage>=7.8.0; python_version <= '3.12'
 coverage>=6.5.0; python_version >= '3.13'
 pytest-cov>=2.7.0
 coveralls>=4.0.1; python_version <= '3.12'
@@ -37,12 +36,10 @@ coveralls>=3.3.0; python_version >= '3.13'
 # PyYAML is specified in requirements.txt
 
 # ansible-test
-yamllint>=1.25.0; python_version <= '3.9'
+yamllint>=1.25.0; python_version == '3.9'
 yamllint>=1.26.3; python_version >= '3.10'
 pathspec>=0.9.0
-# rstcheck 3.5.0 introduced a FutureWarning about Python 3.7 causing ansible sanity check "rstcheck" to fail.
-# ansible sanity check "rstcheck" is used only in ansible <= 2.10.
-rstcheck>=3.3.1,<4.0; python_version <= '3.9'  # ansible >= 4
+# rstcheck is used only in ansible <= 2.10 / ansible <= 4
 
 # ansible-lint
 # ansible-lint is run only on officially supported ansible-core versions
@@ -77,12 +74,8 @@ psutil~=6.1.0
 bandit>=1.7.8
 
 # Sphinx (no imports, invoked via sphinx-build script):
-# Sphinx 7.2.0 started requiring Python>=3.9
-Sphinx>=7.1.0; python_version == '3.8'
-Sphinx>=7.2.0; python_version >= '3.9'
-# Sphinx 7.1.0 pins docutils to <0.21
-docutils>=0.18.1,<0.21; python_version == '3.8'
-docutils>=0.18.1; python_version >= '3.9'
+Sphinx>=7.2.0
+docutils>=0.18.1
 sphinx-git>=10.1.1
 GitPython>=3.1.41
 Pygments>=2.15.0
@@ -93,8 +86,7 @@ sphinxcontrib-htmlhelp>=2.0.1
 sphinxcontrib-jquery>=4.1
 sphinxcontrib-jsmath>=1.0.1
 sphinxcontrib-qthelp>=1.0.3
-sphinxcontrib-serializinghtml>=1.1.5; python_version == '3.8'
-sphinxcontrib-serializinghtml>=1.1.9; python_version >= '3.9'
+sphinxcontrib-serializinghtml>=1.1.9
 sphinxcontrib-websupport>=1.2.4
 autodocsumm>=0.2.12
 Babel>=2.9.1
@@ -133,7 +125,6 @@ entrypoints>=0.3.0
 
 # Package dependency management tools (not used by any make rules)
 pipdeptree>=2.2.0
-# pip-check-reqs 2.4.0 requires Python>=3.8.
 # pip-check-reqs 2.4.3 fixes a speed issue on Python 3.11 and requires pip>=21.2.4
 # pip-check-reqs 2.5.0 has issue https://github.com/r1chardj0n3s/pip-check-reqs/issues/143
 pip-check-reqs>=2.4.3,!=2.5.0; python_version <= '3.11'
