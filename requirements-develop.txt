@@ -36,7 +36,7 @@ yamllint>=1.26.3; python_version >= '3.10'
 pathspec>=0.9.0
 # rstcheck 3.5.0 introduced a FutureWarning about Python 3.7 causing ansible sanity check "rstcheck" to fail.
 # ansible sanity check "rstcheck" is used only in ansible <= 2.10.
-rstcheck>=3.3.1,<4.0; python_version <= '3.9'  # ansible >= 4
+rstcheck>=6.2.5,<6.3; python_version <= '3.9'  # ansible >= 4
 
 # ansible-lint
 # ansible-lint is run only on officially supported ansible-core versions
