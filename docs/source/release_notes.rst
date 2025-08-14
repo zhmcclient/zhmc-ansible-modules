@@ -105,6 +105,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Enhancements:**
 
+* Test: Added Python 3.13 to the tests in GitHub Actions.
+
 * Support for ansible-core 2.18, by adding an ignore file for the sanity tests.
 
 * The 'hmc_auth' input parameter is no longer completely removed from the
