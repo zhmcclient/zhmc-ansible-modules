@@ -135,6 +135,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Lifted the size limit of 2GB for ISO images that can be mounted with the
   'zhmc_partition' module using 'state=mount_iso'.
 
+* Added support for checking with Mend Renovate.
+
 **Cleanup:**
 
 * Removed the unnecessary .pylintrc file from the distribution archive of the

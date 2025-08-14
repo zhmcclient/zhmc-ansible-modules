@@ -14,4 +14,5 @@ Klaus Smolin <smolin@de.ibm.com>
 Uday Kiran Reddy Konda <Uday.Kiran.Reddy.Konda@ibm.com>
 Vance Morris <vmorris@us.ibm.com>
 dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 ```
