@@ -35,13 +35,13 @@ jobs:
         if [[ "${{ github.event_name }}" == "schedule" || "${{ github.head_ref }}" =~ ^release_ ]]; then \
           echo "matrix={ \
             \"os\": [ \"ubuntu-latest\", \"macos-latest\" ], \
-            \"python-version\": [ \"3.9\", \"3.10\", \"3.11\", \"3.12\" ], \
+            \"python-version\": [ \"3.9\", \"3.10\", \"3.11\", \"3.12\", \"3.13\" ], \
             \"package_level\": [ \"minimum\", \"ansible\", \"latest\" ] \
           }" >> $GITHUB_OUTPUT; \
         else \
           echo "matrix={ \
             \"os\": [ \"ubuntu-latest\" ], \
-            \"python-version\": [ \"3.9\", \"3.12\" ], \
+            \"python-version\": [ \"3.9\", \"3.13\" ], \
             \"package_level\": [ \"minimum\", \"latest\" ], \
             \"include\": [ \
               { \
@@ -55,13 +55,18 @@ jobs:
                 \"package_level\": \"ansible\" \
               }, \
               { \
+                \"os\": \"ubuntu-latest\", \
+                \"python-version\": \"3.12\", \
+                \"package_level\": \"ansible\" \
+              }, \
+              { \
                 \"os\": \"macos-latest\", \
                 \"python-version\": \"3.9\", \
                 \"package_level\": \"latest\" \
               }, \
               { \
                 \"os\": \"macos-latest\", \
-                \"python-version\": \"3.12\", \
+                \"python-version\": \"3.13\", \
                 \"package_level\": \"latest\" \
               } \
             ] \
@@ -180,7 +185,7 @@ jobs:
     - name: Check that module .rst files are up to date
       # Because the Ansible rst generator changed its output over time, we only
       # check this on the latest Python release with latest package levels.
-      if: ${{ matrix.python-version == '3.12' && matrix.package_level == 'latest' }}
+      if: ${{ matrix.python-version == '3.13' && matrix.package_level == 'latest' }}
       run: |
         bash -c "if ! git diff --exit-code HEAD docs/source/modules; then
           echo 'Error: Module .rst files are not up to date in this PR. Run make docslocal to update.';
