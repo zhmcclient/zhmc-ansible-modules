@@ -184,21 +184,18 @@ specific Ansible versions as defined in the ``ansible-constraints.txt`` file:
 ======  ========  =======  ============
 Python  Packages  Ansible  Ansible core
 ------  --------  -------  ------------
-3.8     latest    6.x      2.13
 3.9     latest    8.x      2.15
-3.10    latest    9.x      2.16
-3.11    latest    9.x      2.16
-3.12    latest    9.x      2.16
-3.8     minimum   2.9      2.9
-3.9     minimum   4.0      2.11
-3.10    minimum   5.0      2.12
-3.11    minimum   7.0      2.14
+3.10    latest    10.x     2.17
+3.11    latest    11.x     2.18
+3.12    latest    11.x     2.18
+3.9     minimum   8.0      2.15
+3.10    minimum   8.0      2.15
+3.11    minimum   8.0      2.15
 3.12    minimum   9.0      2.16
-3.8     ansible   6.x      2.13
-3.9     ansible   7.x      2.14
-3.10    ansible   8.x      2.15
-3.11    ansible   9.x      2.16
-3.12    ansible   10.x     2.17
+3.9     ansible   8.0      2.15
+3.10    ansible   9.0      2.16
+3.11    ansible   10.0     2.17
+3.12    ansible   11.0     2.18
 ======  ========  =======  ============
 
 The versions for the 'latest' and 'minimum' package levels are in sync with the
