@@ -31,6 +31,11 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Incompatible changes:**
 
+* Removed the ability to install this collection on Ansible < 8
+  (ansible-core < 2.15). This increases the minimum Python version to 3.9,
+  because Ansible 8 requires Python >= 3.9. Note that Ansible versions < 8 were
+  already unsupported by this collection since its version 1.9.
+
 **Deprecations:**
 
 **Bug fixes:**

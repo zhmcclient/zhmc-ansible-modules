@@ -9,30 +9,22 @@
 # Base dependencies (must be consistent with requirements-base.txt)
 
 pip==25.0
-setuptools==70.0.0
+setuptools==78.1.1
 wheel==0.38.1
 
 
 # Direct dependencies for install (must be consistent with requirements.txt)
 
 # Keep consistent with table for 'minimum' packages in development.rst and with requirements.txt
-ansible==2.9.27; python_version == '3.8'
-ansible==4.1.0; python_version == '3.9'
-ansible==5.0.1; python_version == '3.10'
-ansible==7.0.0; python_version == '3.11'
-ansible==9.0.1; python_version >= '3.12'
+# Ansible 8 requires Python >=3.9 - this is the check that no Python version below 3.9 is used.
+ansible==8.0.0; python_version <= '3.11'
+ansible==9.0.1; python_version == '3.12'
+ansible==11.0.0; python_version >= '3.13'
 
-# ansible-core is pulled in by ansible>=4.0, and is needed for pip-check-reqs checks.
-ansible-core==2.11.12; python_version == '3.9'
-ansible-core==2.12.10; python_version == '3.10'
-ansible-core==2.14.18; python_version == '3.11'
-ansible-core==2.16.3; python_version >= '3.12'
-
-# other ansible or ansible-core dependencies
-resolvelib==0.5.3; python_version == '3.9'
-resolvelib==0.5.3; python_version == '3.10'
-resolvelib==0.5.3; python_version >= '3.11'
-distlib==0.3.6
+# ansible-core is pulled in by ansible, but is needed for pip-check-reqs checks.
+ansible-core==2.15.13; python_version <= '3.11'
+ansible-core==2.16.13; python_version == '3.12'
+ansible-core==2.18.0; python_version >= '3.13'
 
 requests==2.32.4
 
@@ -58,10 +50,11 @@ PyYAML==6.0.2
 
 python-dateutil==2.8.2
 jsonschema==4.18.2
-urllib3==2.2.3; python_version == '3.8'
-urllib3==2.5.0; python_version >= '3.9'
+urllib3==2.5.0
 
 
 # All other indirect dependencies for install that are not in requirements.txt
 
-# None
+# other ansible or ansible-core dependencies
+resolvelib==0.5.3
+distlib==0.3.6

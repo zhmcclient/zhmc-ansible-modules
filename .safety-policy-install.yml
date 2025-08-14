@@ -22,38 +22,8 @@ security:
     #     reason: {text}    # optional: Reason for ignoring it. Will be reported in the Safety reports
     #     expires: {date}   # optional: Date when this ignore will expire
     ignore-vulnerabilities:
-        54219:
-            reason: Fixed ansible version is 2.10.0, but we support older ansible versions
-        54229:
-            reason: Fixed ansible version is 2.10.5, but we support older ansible versions
-        54230:
-            reason: Fixed ansible version is 2.10.5, but we support older ansible versions
-        54564:
-            reason: Fixed ansible version is 7.0.0, but we support older ansible versions
-        63066:
-            reason: Fixed ansible-core version is 2.15.8, but we support older ansible versions
-        65511:
-            reason: Fixed ansible-core version is 2.13.13, but we support older ansible versions
-        66667:
-            reason: Fixed ansible-core version is 2.12.0, but we support older ansible versions
-        66700:
-            reason: Fixed ansible-core versions are 2.14.14 and 2.16.3, but we support older ansible versions
-        70612:
-            reason: Safety issue and CVE do not list a fixed version of Jinja2
-        70895:
-            reason: Fixed ansible-core version is 2.15.2, but we support older ansible versions
-        73302:
-            reason: Advice to use no_log when reading sensitive variables - not related to any fixes
-        74221:
-            reason: Fixed ansible-core version is 2.14.18rc1, but we support older ansible versions
         74261:
-            reason: Fixed ansible-core version is 2.18, but we support older ansible versions
-        76752:
-            reason: Fixed setuptools version 78.1.1 requires Python>=3.9 and pyproject.toml does not support python_version markers
-        77744:
-            reason: Fixed urllib3 version 2.5.0 requires Python>=3.9 and is used there
-        77745:
-            reason: Fixed urllib3 version 2.5.0 requires Python>=3.9 and is used there
+            reason: Fixed ansible-core version is 2.18.0 and is used where possible, but we require ansible-core>=2.15
 
     # Continue with exit code 0 when vulnerabilities are found.
     continue-on-vulnerability-error: False
