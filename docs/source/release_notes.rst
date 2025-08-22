@@ -106,6 +106,12 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Docs: Fixed incorrect module name in examples for the 'zhmc_nic' module.
   (issue #1058)
 
+* Fixed that resource objects for which the user has no access permission but
+  that are referenced via URIs in other objects do not cause errors anymore.
+  Such cases are now tolerated and the referenced objects are shown with their
+  URI, with name "(unknown)" and with 'None' for their properties in any module
+  results that show objects. (issue #1173)
+
 **Enhancements:**
 
 * Test: Added Python 3.13 to the tests in GitHub Actions.

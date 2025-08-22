@@ -227,7 +227,7 @@ from ansible.module_utils.basic import AnsibleModule  # noqa: E402
 from ..module_utils.common import log_init, open_session, close_session, \
     hmc_auth_parameter, Error, missing_required_lib, \
     common_fail_on_import_errors, parse_hmc_host, blanked_params, \
-    NOT_PRESENT  # noqa: E402
+    NOT_PRESENT, ObjectsByUriCache  # noqa: E402
 
 try:
     import urllib3
@@ -248,9 +248,9 @@ LOGGER = logging.getLogger(LOGGER_NAME)
 
 
 def add_artificial_properties_expand(
-        user_properties, user, user_roles_by_uri, user_patterns_by_uri,
-        users_by_uri, password_rules_by_uri, ldap_server_definitions_by_uri,
-        mfa_server_definitions_by_uri, groups_by_uri):
+        user_properties, user, user_roles_cache, user_patterns_cache,
+        users_cache, password_rules_cache, ldap_server_definitions_cache,
+        mfa_server_definitions_cache, groups_cache):
     """
     Add artificial properties to the user_properties dict. This function is
     called only when full_properties and expand_names are specified.
@@ -285,10 +285,9 @@ def add_artificial_properties_expand(
     """
 
     # Handle User Role references
-    user_role_uris = user.properties['user-roles']
     # This property always exists
-    uroles = [user_roles_by_uri[uri] for uri in user_role_uris]
-    user_properties['user-role-names'] = [ur.name for ur in uroles]
+    user_role_uris = user.properties['user-roles']
+    user_properties['user-role-names'] = user_roles_cache.object_name_list(user_role_uris)
 
     # Handle User Pattern reference
     if user.properties['type'] == 'pattern-based':
@@ -299,24 +298,17 @@ def add_artificial_properties_expand(
         if user_pattern_uri is None:  # Defensive programming
             user_properties['user-pattern-name'] = None
         else:
-            # Note: Accessing 'name' triggers a full pull, and the
-            # User Pattern object does not support selective get.
-            user_properties['user-pattern-name'] = \
-                user_patterns_by_uri[user_pattern_uri].name
+            user_properties['user-pattern-name'] = user_patterns_cache.object_name(user_pattern_uri)
 
         # This property exists only for type='pattern-based' and if the user
         # is template-based, and may be None.
-        user_template_uri = user.properties.get(
-            'user-template-uri', NOT_PRESENT)
+        user_template_uri = user.properties.get('user-template-uri', NOT_PRESENT)
         if user_template_uri == NOT_PRESENT:
             pass
         elif user_template_uri is None:
             user_properties['user-template-name'] = None
         else:
-            # Note: Accessing 'name' triggers a full pull, and the
-            # User object does not support selective get.
-            user_properties['user-template-name'] = \
-                users_by_uri[user_template_uri].name
+            user_properties['user-template-name'] = users_cache.object_name(user_template_uri)
 
     # Handle Password Rule reference
     password_rule_uri = user.properties['password-rule-uri']
@@ -324,10 +316,7 @@ def add_artificial_properties_expand(
     if password_rule_uri is None:
         user_properties['password-rule-name'] = None
     else:
-        # Note: Accessing 'name' triggers a full pull, and the
-        # Password Rule object does not support selective get.
-        user_properties['password-rule-name'] = \
-            password_rules_by_uri[password_rule_uri].name
+        user_properties['password-rule-name'] = password_rules_cache.object_name(password_rule_uri)
 
     # Handle LDAP Server Definition reference
     ldap_srv_def_uri = user.properties['ldap-server-definition-uri']
@@ -335,10 +324,7 @@ def add_artificial_properties_expand(
     if ldap_srv_def_uri is None:
         user_properties['ldap-server-definition-name'] = None
     else:
-        # Note: Accessing 'name' triggers a full pull, and the
-        # LDAP Server Definition object does not support selective get.
-        user_properties['ldap-server-definition-name'] = \
-            ldap_server_definitions_by_uri[ldap_srv_def_uri].name
+        user_properties['ldap-server-definition-name'] = ldap_server_definitions_cache.object_name(ldap_srv_def_uri)
 
     # Handle primary MFA Server Definition reference
     pri_mfa_srv_def_uri = user.properties['primary-mfa-server-definition-uri']
@@ -346,10 +332,7 @@ def add_artificial_properties_expand(
     if pri_mfa_srv_def_uri is None:
         user_properties['primary-mfa-server-definition-name'] = None
     else:
-        # Note: Accessing 'name' triggers a full pull, and the
-        # MFA Server Definition object does not support selective get.
-        user_properties['primary-mfa-server-definition-name'] = \
-            mfa_server_definitions_by_uri[pri_mfa_srv_def_uri].name
+        user_properties['primary-mfa-server-definition-name'] = mfa_server_definitions_cache.object_name(pri_mfa_srv_def_uri)
 
     # Handle backup MFA Server Definition reference
     bac_mfa_srv_def_uri = user.properties['backup-mfa-server-definition-uri']
@@ -357,10 +340,7 @@ def add_artificial_properties_expand(
     if bac_mfa_srv_def_uri is None:
         user_properties['backup-mfa-server-definition-name'] = None
     else:
-        # Note: Accessing 'name' triggers a full pull, and the
-        # MFA Server Definition object does not support selective get.
-        user_properties['backup-mfa-server-definition-name'] = \
-            mfa_server_definitions_by_uri[bac_mfa_srv_def_uri].name
+        user_properties['backup-mfa-server-definition-name'] = mfa_server_definitions_cache.object_name(bac_mfa_srv_def_uri)
 
     # Handle default Group reference
     default_group_uri = user.properties['default-group-uri']
@@ -368,10 +348,7 @@ def add_artificial_properties_expand(
     if default_group_uri is None:
         user_properties['default-group-name'] = None
     else:
-        # Note: Accessing 'name' triggers a full pull, and the
-        # default Group object does not support selective get.
-        user_properties['default-group-name'] = \
-            groups_by_uri[default_group_uri].name
+        user_properties['default-group-name'] = groups_cache.object_name(default_group_uri)
 
 
 def perform_list(params):
@@ -401,29 +378,23 @@ def perform_list(params):
 
         # Get the data for the name expansions only once
         if full_properties and expand_names:
-            user_roles_by_uri = {x.uri: x for x in console.user_roles.list()}
-            user_patterns_by_uri = {
-                x.uri: x for x in console.user_patterns.list()}
-            users_by_uri = {x.uri: x for x in users}
-            password_rules_by_uri = {
-                x.uri: x for x in console.password_rules.list()}
-            ldap_server_definitions_by_uri = {
-                x.uri: x for x in console.ldap_server_definitions.list()}
-            mfa_server_definitions_by_uri = {
-                x.uri: x for x in console.mfa_server_definitions.list()}
-            groups_by_uri = {x.uri: x for x in console.groups.list()}
-
-        # The default exception handling is sufficient for the above.
+            user_roles_cache = ObjectsByUriCache(console.user_roles)
+            user_patterns_cache = ObjectsByUriCache(console.user_patterns)
+            users_cache = ObjectsByUriCache(console.users, objects=users)
+            password_rules_cache = ObjectsByUriCache(console.password_rules)
+            ldap_server_definitions_cache = ObjectsByUriCache(console.ldap_server_definitions)
+            mfa_server_definitions_cache = ObjectsByUriCache(console.mfa_server_definitions)
+            groups_cache = ObjectsByUriCache(console.groups)
 
         for user in users:
 
             user_properties = dict(user.properties)
             if full_properties and expand_names:
                 add_artificial_properties_expand(
-                    user_properties, user, user_roles_by_uri,
-                    user_patterns_by_uri, users_by_uri, password_rules_by_uri,
-                    ldap_server_definitions_by_uri,
-                    mfa_server_definitions_by_uri, groups_by_uri)
+                    user_properties, user, user_roles_cache,
+                    user_patterns_cache, users_cache, password_rules_cache,
+                    ldap_server_definitions_cache,
+                    mfa_server_definitions_cache, groups_cache)
 
             user_properties_under = {
                 n.replace('-', '_'): v for n, v in user_properties.items()}

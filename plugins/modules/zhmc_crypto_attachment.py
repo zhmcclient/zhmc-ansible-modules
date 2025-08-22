@@ -374,7 +374,8 @@ from ansible.module_utils.basic import AnsibleModule  # noqa: E402
 
 from ..module_utils.common import log_init, open_session, close_session, \
     hmc_auth_parameter, Error, ParameterError, missing_required_lib, \
-    common_fail_on_import_errors, parse_hmc_host, blanked_params  # noqa: E402
+    common_fail_on_import_errors, parse_hmc_host, blanked_params, \
+    UNKNOWN_NAME  # noqa: E402
 
 
 try:
@@ -486,8 +487,12 @@ def get_conflicting_domains(
                         # domain is already attached in the desired
                         # mode.
                         continue
-                    p = all_partitions[p_uri]
-                    conflicting_domains[di] = (am, p.name)
+                    try:
+                        p = all_partitions[p_uri]
+                        p_name = p.name
+                    except KeyError:
+                        p_name = UNKNOWN_NAME
+                    conflicting_domains[di] = (am, p_name)
     return conflicting_domains
 
 

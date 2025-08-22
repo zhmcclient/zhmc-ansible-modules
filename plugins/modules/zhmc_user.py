@@ -482,7 +482,8 @@ from ..module_utils.common import log_init, open_session, close_session, \
     hmc_auth_parameter, Error, ParameterError, to_unicode, \
     process_normal_property, missing_required_lib, \
     common_fail_on_import_errors, parse_hmc_host, blanked_params, \
-    blanked_dict, removed_dict, NOT_PRESENT  # noqa: E402
+    blanked_dict, removed_dict, NOT_PRESENT, ObjectsByUriCache, \
+    object_from_uri, object_name, object_properties  # noqa: E402
 
 try:
     import urllib3
@@ -927,18 +928,12 @@ def add_artificial_properties(
     if expand or expand_names:
 
         # Handle User Role references
-        user_role_uris = user.properties['user-roles']
-        # This property always exists
-        all_uroles_by_uri = {ur.uri: ur for ur in console.user_roles.list()}
-        uroles = [all_uroles_by_uri[uri] for uri in user_role_uris]
+        user_role_uris = user.properties['user-roles']  # This property always exists
+        user_roles_cache = ObjectsByUriCache(console.user_roles)
         if expand_names:
-            user_properties['user-role-names'] = [ur.name for ur in uroles]
+            user_properties['user-role-names'] = user_roles_cache.object_name_list(user_role_uris)
         if expand:
-            user_role_objects = []
-            for urole in uroles:
-                urole.pull_full_properties()
-                user_role_objects.append(dict(urole.properties))
-            user_properties['user-role-objects'] = user_role_objects
+            user_properties['user-role-objects'] = user_roles_cache.object_properties_list(user_role_uris)
 
         # Handle User Pattern reference
         if user.properties['type'] == 'pattern-based':
@@ -952,16 +947,13 @@ def add_artificial_properties(
                 if expand:
                     user_properties['user-pattern'] = None
             else:
-                user_pattern = \
-                    console.user_patterns.resource_object(user_pattern_uri)
-                # Note: Accessing 'name' triggers a full pull, and the
-                # User Pattern object does not support selective get.
-                user_pattern.pull_full_properties()
+                # Note: This resource class does not support selective property
+                # retrieval.
+                user_pattern = object_from_uri(user_pattern_uri, console.user_patterns)
                 if expand_names:
-                    user_properties['user-pattern-name'] = user_pattern.name
+                    user_properties['user-pattern-name'] = object_name(user_pattern)
                 if expand:
-                    user_properties['user-pattern'] = \
-                        dict(user_pattern.properties)
+                    user_properties['user-pattern'] = object_properties(user_pattern)
 
             # The 'user-template-uri' property exists only for
             # type='pattern-based' and if the user is template-based, and may
@@ -976,15 +968,13 @@ def add_artificial_properties(
                 if expand:
                     user_properties['user-template'] = None
             else:
-                user_template = console.users.resource_object(user_template_uri)
-                # Note: Accessing 'name' triggers a full pull, and the
-                # User object does not support selective get.
-                user_template.pull_full_properties()
+                # Note: This resource class does not support selective property
+                # retrieval.
+                user_template = object_from_uri(user_template_uri, console.users)
                 if expand_names:
-                    user_properties['user-template-name'] = user_template.name
+                    user_properties['user-template-name'] = object_name(user_template)
                 if expand:
-                    user_properties['user-template'] = \
-                        dict(user_template.properties)
+                    user_properties['user-template'] = object_properties(user_template)
 
         # Handle Password Rule reference
         password_rule_uri = user.properties['password-rule-uri']
@@ -996,16 +986,13 @@ def add_artificial_properties(
             if expand:
                 user_properties['password-rule'] = None
         else:
-            password_rule = console.password_rules.resource_object(
-                password_rule_uri)
-            # Note: Accessing 'name' triggers a full pull, and the
-            # Password Rule object does not support selective get.
-            password_rule.pull_full_properties()
+            # Note: This resource class does not support selective property
+            # retrieval.
+            password_rule = object_from_uri(password_rule_uri, console.password_rules)
             if expand_names:
-                user_properties['password-rule-name'] = password_rule.name
+                user_properties['password-rule-name'] = object_name(password_rule)
             if expand:
-                user_properties['password-rule'] = \
-                    dict(password_rule.properties)
+                user_properties['password-rule'] = object_properties(password_rule)
 
         # Handle LDAP Server Definition reference
         ldap_srv_def_uri = user.properties['ldap-server-definition-uri']
@@ -1016,17 +1003,13 @@ def add_artificial_properties(
             if expand:
                 user_properties['ldap-server-definition'] = None
         else:
-            ldap_srv_def = console.ldap_server_definitions.resource_object(
-                ldap_srv_def_uri)
-            # Note: Accessing 'name' triggers a full pull, and the
-            # LDAP Server Definition object does not support selective get.
-            ldap_srv_def.pull_full_properties()
+            # Note: This resource class does not support selective property
+            # retrieval.
+            ldap_srv_def = object_from_uri(ldap_srv_def_uri, console.ldap_server_definitions)
             if expand_names:
-                user_properties['ldap-server-definition-name'] = \
-                    ldap_srv_def.name
+                user_properties['ldap-server-definition-name'] = object_name(ldap_srv_def)
             if expand:
-                user_properties['ldap-server-definition'] = \
-                    dict(ldap_srv_def.properties)
+                user_properties['ldap-server-definition'] = object_properties(ldap_srv_def)
 
         # Handle primary MFA Server Definition reference
         pri_mfa_srv_def_uri = \
@@ -1038,17 +1021,13 @@ def add_artificial_properties(
             if expand:
                 user_properties['primary-mfa-server-definition'] = None
         else:
-            pri_mfa_srv_def = console.mfa_server_definitions.resource_object(
-                pri_mfa_srv_def_uri)
-            # Note: Accessing 'name' triggers a full pull, and the
-            # MFA Server Definition object does not support selective get.
-            pri_mfa_srv_def.pull_full_properties()
+            # Note: This resource class does not support selective property
+            # retrieval.
+            pri_mfa_srv_def = object_from_uri(pri_mfa_srv_def_uri, console.mfa_server_definitions)
             if expand_names:
-                user_properties['primary-mfa-server-definition-name'] = \
-                    pri_mfa_srv_def.name
+                user_properties['primary-mfa-server-definition-name'] = object_name(pri_mfa_srv_def)
             if expand:
-                user_properties['primary-mfa-server-definition'] = \
-                    dict(pri_mfa_srv_def.properties)
+                user_properties['primary-mfa-server-definition'] = object_properties(pri_mfa_srv_def)
 
         # Handle backu0p MFA Server Definition reference
         bac_mfa_srv_def_uri = \
@@ -1060,17 +1039,13 @@ def add_artificial_properties(
             if expand:
                 user_properties['backup-mfa-server-definition'] = None
         else:
-            bac_mfa_srv_def = console.mfa_server_definitions.resource_object(
-                bac_mfa_srv_def_uri)
-            # Note: Accessing 'name' triggers a full pull, and the
-            # MFA Server Definition object does not support selective get.
-            bac_mfa_srv_def.pull_full_properties()
+            # Note: This resource class does not support selective property
+            # retrieval.
+            bac_mfa_srv_def = object_from_uri(bac_mfa_srv_def_uri, console.mfa_server_definitions)
             if expand_names:
-                user_properties['backup-mfa-server-definition-name'] = \
-                    bac_mfa_srv_def.name
+                user_properties['backup-mfa-server-definition-name'] = object_name(bac_mfa_srv_def)
             if expand:
-                user_properties['backup-mfa-server-definition'] = \
-                    dict(bac_mfa_srv_def.properties)
+                user_properties['backup-mfa-server-definition'] = object_properties(bac_mfa_srv_def)
 
         # Handle default Group reference
         default_group_uri = user.properties['default-group-uri']
@@ -1081,16 +1056,13 @@ def add_artificial_properties(
             if expand:
                 user_properties['default-group'] = None
         else:
-            default_group = console.groups.resource_object(
-                default_group_uri)
-            # Note: Accessing 'name' triggers a full pull, and the
-            # Password Rule object does not support selective get.
-            default_group.pull_full_properties()
+            # Note: This resource class does not support selective property
+            # retrieval.
+            default_group = object_from_uri(default_group_uri, console.groups)
             if expand_names:
-                user_properties['default-group-name'] = default_group.name
+                user_properties['default-group-name'] = object_name(default_group)
             if expand:
-                user_properties['default-group'] = \
-                    dict(default_group.properties)
+                user_properties['default-group'] = object_properties(default_group)
 
 
 def create_check_mode_user(console, create_props, update_props):
