@@ -162,7 +162,7 @@ Examples
    # Note: The following examples assume that some variables named 'my_*' are set.
 
    - name: Ensure NIC exists in the partition
-     zhmc_partition:
+     zhmc_nic:
        hmc_host: "{{ my_hmc_host }}"
        hmc_auth: "{{ my_hmc_auth }}"
        cpc_name: "{{ my_cpc_name }}"
@@ -177,7 +177,7 @@ Examples
      register: nic1
 
    - name: Ensure NIC does not exist in the partition
-     zhmc_partition:
+     zhmc_nic:
        hmc_host: "{{ my_hmc_host }}"
        hmc_auth: "{{ my_hmc_auth }}"
        cpc_name: "{{ my_cpc_name }}"
@@ -186,7 +186,7 @@ Examples
        state: absent
 
    - name: Gather facts about a NIC
-     zhmc_partition:
+     zhmc_nic:
        hmc_host: "{{ my_hmc_host }}"
        hmc_auth: "{{ my_hmc_auth }}"
        cpc_name: "{{ my_cpc_name }}"

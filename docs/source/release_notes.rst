@@ -33,6 +33,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Bug fixes:**
 
+* Docs: Fixed incorrect module name in examples for the 'zhmc_nic' module.
+  (issue #1058)
+
 **Enhancements:**
 
 **Cleanup:**
