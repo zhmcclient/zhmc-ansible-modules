@@ -103,6 +103,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Dev: Made order of names in AUTHORS.md reliable. (issue #1141)
 
+* Docs: Fixed incorrect module name in examples for the 'zhmc_nic' module.
+  (issue #1058)
+
 **Enhancements:**
 
 * Test: Added Python 3.13 to the tests in GitHub Actions.
