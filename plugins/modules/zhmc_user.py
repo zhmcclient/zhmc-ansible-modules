@@ -383,7 +383,8 @@ from ..module_utils.common import log_init, open_session, close_session, \
     hmc_auth_parameter, Error, ParameterError, to_unicode, \
     process_normal_property, missing_required_lib, \
     common_fail_on_import_errors, parse_hmc_host, blanked_params, \
-    blanked_dict, removed_dict  # noqa: E402
+    blanked_dict, removed_dict, ObjectsByUriCache, \
+    object_from_uri, object_name, object_properties  # noqa: E402
 
 try:
     import urllib3
@@ -743,14 +744,13 @@ def add_artificial_properties(user_properties, console, user, expand):
         # Note: For other types, the property does not exist.
         user_pattern_uri = user.properties['user-pattern-uri']
         if user_pattern_uri is not None:
-            user_pattern = \
-                console.user_patterns.resource_object(user_pattern_uri)
-            # We pull the properties, since that is done anyway in .name,
-            # so that in case of expand it is not done twice.
-            user_pattern.pull_full_properties()
-            user_properties['user-pattern-name'] = user_pattern.name
+            # Note: This resource class does not support selective property
+            # retrieval.
+            user_pattern = object_from_uri(user_pattern_uri, console.user_patterns)
+            user_properties['user-pattern-name'] = object_name(user_pattern)
             if expand:
-                user_properties['user-pattern'] = dict(user_pattern.properties)
+                user_properties['user-pattern'] = object_properties(user_pattern)
+
     # Make sure that the artificial properties exist exactly when the uri
     # property does
     if 'user-pattern-uri' in user.properties and \
@@ -764,15 +764,13 @@ def add_artificial_properties(user_properties, console, user, expand):
         # Note: For other auth types, the property does not exist.
         password_rule_uri = user.properties['password-rule-uri']
         if password_rule_uri is not None:
-            password_rule = console.password_rules.resource_object(
-                password_rule_uri)
-            # We pull the properties, since that is done anyway in .name,
-            # so that in case of expand it is not done twice.
-            password_rule.pull_full_properties()
-            user_properties['password-rule-name'] = password_rule.name
+            # Note: This resource class does not support selective property
+            # retrieval.
+            password_rule = object_from_uri(password_rule_uri, console.password_rules)
+            user_properties['password-rule-name'] = object_name(password_rule)
             if expand:
-                user_properties['password-rule'] = \
-                    dict(password_rule.properties)
+                user_properties['password-rule'] = object_properties(password_rule)
+
     # Make sure that the artificial properties exist exactly when the uri
     # property does
     if 'password-rule-uri' in user.properties and \
@@ -786,15 +784,13 @@ def add_artificial_properties(user_properties, console, user, expand):
         # Note: For other auth types, the property exists and is null.
         ldap_srv_def_uri = user.properties['ldap-server-definition-uri']
         if ldap_srv_def_uri is not None:
-            ldap_srv_def = console.ldap_server_definitions.resource_object(
-                ldap_srv_def_uri)
-            # We pull the properties, since that is done anyway in .name,
-            # so that in case of expand it is not done twice.
-            ldap_srv_def.pull_full_properties()
-            user_properties['ldap-server-definition-name'] = ldap_srv_def.name
+            # Note: This resource class does not support selective property
+            # retrieval.
+            ldap_srv_def = object_from_uri(ldap_srv_def_uri, console.ldap_server_definitions)
+            user_properties['ldap-server-definition-name'] = object_name(ldap_srv_def)
             if expand:
-                user_properties['ldap-server-definition'] = \
-                    dict(ldap_srv_def.properties)
+                user_properties['ldap-server-definition'] = object_properties(ldap_srv_def)
+
     # Make sure that the artificial properties exist exactly when the uri
     # property does
     if 'ldap-server-definition-uri' in user.properties and \
@@ -803,18 +799,11 @@ def add_artificial_properties(user_properties, console, user, expand):
         if expand:
             user_properties['ldap-server-definition'] = None
 
-    all_uroles = console.user_roles.list()
-    all_uroles_by_uri = {}
-    for urole in all_uroles:
-        all_uroles_by_uri[urole.uri] = urole
-    uroles = [all_uroles_by_uri[uri] for uri in user.properties['user-roles']]
-    user_properties['user-role-names'] = [ur.name for ur in uroles]
+    user_role_uris = user.properties['user-roles']  # This property always exists
+    user_roles_cache = ObjectsByUriCache(console.user_roles)
+    user_properties['user-role-names'] = user_roles_cache.object_name_list(user_role_uris)
     if expand:
-        user_role_objects = []
-        for urole in uroles:
-            urole.pull_full_properties()
-            user_role_objects.append(dict(urole.properties))
-        user_properties['user-role-objects'] = user_role_objects
+        user_properties['user-role-objects'] = user_roles_cache.object_properties_list(user_role_uris)
 
 
 def create_check_mode_user(console, create_props, update_props):

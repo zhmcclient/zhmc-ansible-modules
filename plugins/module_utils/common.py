@@ -29,7 +29,7 @@ from collections.abc import Mapping
 from copy import deepcopy
 
 try:
-    from zhmcclient import Session, ClientAuthError
+    from zhmcclient import Session, ClientAuthError, HTTPError
     IMP_ZHMCCLIENT_ERR = None
 except ImportError:
     IMP_ZHMCCLIENT_ERR = traceback.format_exc()
@@ -41,6 +41,9 @@ except ImportError:
     IMP_ZHMCCLIENT_MOCK_ERR = traceback.format_exc()
 
 BLANKED_OUT = '********'  # Replacement for blanked out sensitive values
+
+# Resource name indicating that the resource is unknown
+UNKNOWN_NAME = "(unknown)"
 
 
 class Error(Exception):
@@ -1511,3 +1514,273 @@ def removed_dict(properties, removed_properties):
         except KeyError:
             pass
     return copied_properties
+
+
+def object_from_uri(uri, manager):
+    """
+    Return the zhmcclient resource object for the specified URI, using the
+    specified manager object for listing them. The resource object will have
+    all properties.
+
+    If the resource object is not found (e.g. because it is not accessible),
+    None is returned.
+
+    For resource classes that support selective property retrieval, this
+    could be optimized by adding the desired properties to the interface of
+    this function, so that only the name is retrieved when only the name is
+    exported. However, this function is used only for resource classes that do
+    not support selective property retrieval, so this optimization is not
+    needed.
+
+    Parameters:
+      uri(str): URI for which the resource object is to be looked up.
+      manager(zhmcclient.BaseManager): Manager object for listing all
+        resource objects.
+
+    Returns:
+      zhmcclient.BaseResource: Resource object, or None.
+    """
+    obj = manager.resource_object(uri)
+    try:
+        obj.pull_full_properties()
+    except HTTPError as exc:
+        if exc.http_status == 404 and exc.reason == 1:
+            obj = None
+    except Exception:
+        raise
+    return obj
+
+
+def object_name(obj):
+    """
+    Return the names of the specified object. If the object is None, the name in
+    the constant `UNKNOWN_NAME` is used.
+
+    Parameters:
+      object(zhmcclient.BaseResource or None): The resource object or None.
+
+    Returns:
+      str: The name of the resource object, or the value of `UNKNOWN_NAME`.
+    """
+    if obj is None:
+        return UNKNOWN_NAME
+    return obj.name
+
+
+def object_properties(obj):
+    """
+    Return the properties of the specified object as a dict. If the object is
+    None, None is returned.
+
+    Parameters:
+      obj(zhmcclient.BaseResource or None): The resource object with all
+        properties, or None.
+
+    Returns:
+      dict or None: The properties of the resource object, or None.
+    """
+    if obj is None:
+        return None
+    return dict(obj.properties)
+
+
+class ObjectsByUriCache:
+    """
+    Object cache that contains a list of zhmcclient resource objects and allows
+    lookup of these resource objects by URI.
+
+    The cache is not automatically updated, but it is used only for short
+    periods of time, i.e. within the scope of a single zhmc module call.
+    """
+
+    def __init__(self, manager, objects=None):
+        """
+        Parameters:
+          manager(zhmcclient.BaseManager): Resource manager for listing the
+            resources.
+          objects(list of zhmcclient.BaseResource): Initial resources to be put
+            into the cache. If None, the resources will be fetched from the HMC
+            when the cache is used.
+        """
+        self._manager = manager
+        if objects is None:
+            self._objects_by_uri = None
+        else:
+            self._objects_by_uri = {}
+            for obj in objects:
+                self._objects_by_uri[obj.uri] = obj
+
+    def fetch(self):
+        """
+        Fetch the objects from the HMC and put them into the cache.
+        Any existing cache content is replaced.
+        """
+        self._objects_by_uri = {}
+        for obj in self._manager.list(full_properties=False):
+            self._objects_by_uri[obj.uri] = obj
+
+    def resource_object(self, uri):
+        """
+        Return the resource object for the specified URI by looking it up in the
+        cache. If the URI cannot be found in the cache (e.g. due to missing
+        access), None is used.
+
+        If the cache is empty (e.g. initially), the resource objects are
+        fetched from the HMC and put into the cache.
+
+        Parameters:
+          uri(str): URI of the resource object to be looked up.
+
+        Returns:
+          zhmcclient.BaseResource or None
+        """
+        if self._objects_by_uri is None:
+            self.fetch()
+        try:
+            return self._objects_by_uri[uri]
+        except KeyError:
+            return None
+
+    def object_name(self, uri):
+        """
+        Return the name of the resource object of the specified URI. If the
+        URI cannot be found in the cache (e.g. due to missing access), the name
+        in the constant `UNKNOWN_NAME` is used.
+
+        If the cache is empty (e.g. initially), the resource objects are
+        fetched from the HMC and put into the cache.
+
+        Parameters:
+          uri(str): URI for which the resource object is to be looked up.
+
+        Returns:
+          str: Name of the resource object.
+        """
+        obj = self.resource_object(uri)
+        if obj is None:
+            return UNKNOWN_NAME
+        return obj.name
+
+    def object_properties(self, uri):
+        """
+        Return the full set of properties of the resource object of the
+        specified URI. If the URI cannot be found in the cache (e.g. due to
+        missing access), None is used.
+
+        If the cache is empty (e.g. initially), the resource objects are
+        fetched from the HMC and put into the cache.
+
+        This method pulls the full properties for the object if it does not
+        yet have full properties.
+
+        Parameters:
+          uri(str): URI for which the resource object is to be looked up.
+
+        Returns:
+          dict: Properties of the resource object. If the object cannot be
+          found, None will be returned.
+        """
+        obj = self.resource_object(uri)
+        if obj is None:
+            return None
+        if not obj.has_full_properties:
+            obj.pull_full_properties()
+        return dict(obj.properties)
+
+    def resource_object_list(self, uris):
+        """
+        Return the resource objects for the specified URIs by looking them up
+        in the cache. For URIs that cannot be found in the cache (e.g. due to
+        missing access), None is used.
+
+        If the cache is empty (e.g. initially), the resource objects are
+        fetched from the HMC and put into the cache.
+
+        The list items in the return value are index-correlated with the
+        specified URIs.
+
+        Parameters:
+          uris(list of str): URIs for which the resource objects are to be
+            looked up.
+
+        Returns:
+          list of BaseResource: List of zhmcclient resource objects, in the same
+          order as the specified URIs. For URIs that cannot be found, the list
+          items are None.
+        """
+        if self._objects_by_uri is None:
+            self.fetch()
+        objs = []
+        for uri in uris:
+            try:
+                obj = self._objects_by_uri[uri]
+            except KeyError:
+                obj = None
+            objs.append(obj)
+        return objs
+
+    def object_name_list(self, uris):
+        """
+        Return a list with the names of the resource objects of the specified
+        URIs. For URIs that cannot be found in the cache (e.g. due to
+        missing access), the name in the constant `UNKNOWN_NAME` is used.
+
+        If the cache is empty (e.g. initially), the resource objects are
+        fetched from the HMC and put into the cache.
+
+        The list items in the return value are index-correlated with the
+        specified URIs.
+
+        Parameters:
+          uris(list of str): URIs for which the resource objects are to be
+            looked up.
+
+        Returns:
+          list of str: List of the names of the resource objects. For URIs that
+          cannot be found, the list item will be the name in the constant
+          `UNKNOWN_NAME`.
+        """
+        objs = self.resource_object_list(uris)
+        names = []
+        for obj in objs:
+            if obj is None:
+                name = UNKNOWN_NAME
+            else:
+                name = obj.name
+            names.append(name)
+        return names
+
+    def object_properties_list(self, uris):
+        """
+        Return a list with the full set of properties of the resource objects of
+        the specified URIs. For URIs that cannot be found in the cache (e.g. due
+        to missing access), None is used.
+
+        If the cache is empty (e.g. initially), the resource objects are
+        fetched from the HMC and put into the cache.
+
+        The list items in the return value are index-correlated with the
+        specified URIs.
+
+        This method pulls the full properties for each object that does not
+        yet have full properties.
+
+        Parameters:
+          uris(list of str): URIs for which the resource objects are to be
+            looked up.
+
+        Returns:
+          list of dict: List of the properties of the resource objects. For
+          URIs that cannot be found, the list item will be None.
+        """
+        objs = self.resource_object_list(uris)
+        properties = []
+        for obj in objs:
+            if obj is None:
+                props = None
+            else:
+                if not obj.full_properties:
+                    obj.pull_full_properties()  # updates the object in the cache
+                props = dict(obj.properties)
+            properties.append(props)
+        return properties
