@@ -626,7 +626,8 @@ from ..module_utils.common import log_init, open_session, close_session, \
     start_partition, wait_for_transition_completion, eq_hex, to_unicode, \
     process_normal_property, missing_required_lib, ImageError, \
     common_fail_on_import_errors, pull_properties, parse_hmc_host, \
-    blanked_params, removed_dict  # noqa: E402
+    blanked_params, removed_dict, UNKNOWN_NAME, object_from_uri, \
+    object_properties  # noqa: E402
 
 try:
     import urllib3
@@ -1609,10 +1610,14 @@ def add_artificial_properties(
     bsv_uri = partition.prop('boot-storage-volume', None)
     if bsv_uri:
         sg_uri = bsv_uri.split('/storage-volumes/')[0]
-        storage_group = console.storage_groups.resource_object(sg_uri)
-        bsv = storage_group.storage_volumes.find(**{'element-uri': bsv_uri})
-        bsg_name = storage_group.name
-        bsv_name = bsv.name
+        storage_group = object_from_uri(sg_uri, console.storage_groups)
+        if storage_group is None:
+            bsg_name = UNKNOWN_NAME
+            bsv_name = UNKNOWN_NAME
+        else:
+            bsv = storage_group.storage_volumes.find(**{'element-uri': bsv_uri})
+            bsg_name = storage_group.name
+            bsv_name = bsv.name
     else:
         bsg_name = None
         bsv_name = None
@@ -1622,44 +1627,46 @@ def add_artificial_properties(
     if expand_storage_groups:
         sgs_prop = []
         for sg_uri in partition.properties['storage-group-uris']:
-            storage_group = console.storage_groups.resource_object(sg_uri)
-            storage_group.pull_full_properties()
-            sg_properties = dict(storage_group.properties)
+            storage_group = object_from_uri(sg_uri, console.storage_groups)
+            if storage_group is None:
+                sg_properties = None
+            else:
+                storage_group.pull_full_properties()
+                sg_properties = dict(storage_group.properties)
 
-            # Candidate adapter ports and their adapters (full set of props)
-            caps_prop = []
-            for cap in storage_group.list_candidate_adapter_ports(
-                    full_properties=True):
-                cap_properties = dict(cap.properties)
-                adapter = cap.manager.adapter
-                adapter.pull_full_properties()
-                cap_properties['parent-adapter'] = dict(adapter.properties)
-                caps_prop.append(cap_properties)
-            sg_properties['candidate-adapter-ports'] = caps_prop
+                # Candidate adapter ports and their adapters (full set of props)
+                caps_prop = []
+                for cap in storage_group.list_candidate_adapter_ports(
+                        full_properties=True):
+                    cap_properties = dict(cap.properties)
+                    adapter = cap.manager.adapter
+                    adapter.pull_full_properties()
+                    cap_properties['parent-adapter'] = dict(adapter.properties)
+                    caps_prop.append(cap_properties)
+                sg_properties['candidate-adapter-ports'] = caps_prop
 
-            # Storage volumes (full set of properties).
-            # Note: We create the storage volumes from the
-            # 'storage-volume-uris' property, because the 'List Storage
-            # Volumes of a Storage Group' operation returns an empty list for
-            # auto-discovered volumes.
-            svs_prop = []
-            sv_uris = storage_group.get_property('storage-volume-uris')
-            for sv_uri in sv_uris:
-                sv = storage_group.storage_volumes.resource_object(sv_uri)
-                sv.pull_full_properties()
-                svs_prop.append(dict(sv.properties))
-            sg_properties['storage-volumes'] = svs_prop
+                # Storage volumes (full set of properties).
+                # Note: We create the storage volumes from the
+                # 'storage-volume-uris' property, because the 'List Storage
+                # Volumes of a Storage Group' operation returns an empty list
+                # for auto-discovered volumes.
+                svs_prop = []
+                sv_uris = storage_group.get_property('storage-volume-uris')
+                for sv_uri in sv_uris:
+                    sv = storage_group.storage_volumes.resource_object(sv_uri)
+                    sv.pull_full_properties()
+                    svs_prop.append(dict(sv.properties))
+                sg_properties['storage-volumes'] = svs_prop
 
-            # Virtual storage resources (full set of properties).
-            vsrs_prop = []
-            vsr_uris = storage_group.get_property(
-                'virtual-storage-resource-uris')
-            for vsr_uri in vsr_uris:
-                vsr = storage_group.virtual_storage_resources.resource_object(
-                    vsr_uri)
-                vsr.pull_full_properties()
-                vsrs_prop.append(dict(vsr.properties))
-            sg_properties['virtual-storage-resources'] = vsrs_prop
+                # Virtual storage resources (full set of properties).
+                vsrs_prop = []
+                vsr_uris = storage_group.get_property(
+                    'virtual-storage-resource-uris')
+                for vsr_uri in vsr_uris:
+                    vsr = storage_group.virtual_storage_resources.resource_object(vsr_uri)
+                    vsr.pull_full_properties()
+                    vsrs_prop.append(dict(vsr.properties))
+                sg_properties['virtual-storage-resources'] = vsrs_prop
 
             sgs_prop.append(sg_properties)
 
@@ -1674,12 +1681,12 @@ def add_artificial_properties(
             # original Partition.properties dict. Therefore, we copy cc
             # since we modify it.
             cc = cc.copy()
-            cas_prop = []
+            cas_props = []
             for ca_uri in cc['crypto-adapter-uris']:
-                ca = cpc.adapters.resource_object(ca_uri)
-                ca.pull_full_properties()
-                cas_prop.append(dict(ca.properties))
-            cc['crypto-adapters'] = cas_prop
+                ca = object_from_uri(ca_uri, cpc.adapters)
+                ca_props = object_properties(ca)
+                cas_props.append(ca_props)
+            cc['crypto-adapters'] = cas_props
             partition_properties['crypto-configuration'] = cc
 
 
