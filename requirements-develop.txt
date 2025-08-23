@@ -28,7 +28,7 @@ decorator>=4.0.11
 #   Python>=3.13.
 # Note: The pinnings on Python 3.13 prevent pip backtracking.
 coverage>=7.8.0; python_version <= '3.12'
-coverage>=6.5.0,<7.0; python_version >= '3.13'  # repeats pinning in coveralls 3.3.1
+coverage>=7.10.4,<7.11; python_version >= '3.13'  # repeats pinning in coveralls 3.3.1
 pytest-cov>=5.0.0; python_version <= '3.12'
 pytest-cov>=5.0.0,<6.0; python_version >= '3.13'  # 6.0 would require coverage>=7.5
 coveralls>=4.0.1; python_version <= '3.12'
