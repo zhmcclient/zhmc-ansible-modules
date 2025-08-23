@@ -26,13 +26,13 @@ decorator>=4.0.11
 #   but they have also added a constraint for Python to <3.13. Due to that
 #   Python pinning, we need to use the older coverage and coveralls versions on
 #   Python>=3.13.
-# Note: The earlier repetition of pinnings to avoid pip backtracking no longer
-#       seems to be needed.
+# Note: The pinnings on Python 3.13 prevent pip backtracking.
 coverage>=7.8.0; python_version <= '3.12'
-coverage>=6.5.0; python_version >= '3.13'
-pytest-cov>=2.7.0
+coverage>=6.5.0,<7.0; python_version >= '3.13'  # repeats pinning in coveralls 3.3.1
+pytest-cov>=5.0.0; python_version <= '3.12'
+pytest-cov>=5.0.0,<6.0; python_version >= '3.13'  # 6.0 would require coverage>=7.5
 coveralls>=4.0.1; python_version <= '3.12'
-coveralls>=3.3.0; python_version >= '3.13'
+coveralls>=3.3.1; python_version >= '3.13'  # 4.0 pins Python to <3.13
 # PyYAML is specified in requirements.txt
 
 # ansible-test
