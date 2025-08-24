@@ -180,18 +180,26 @@ def setup_partition(hd, cpc, name, properties, status='stopped'):
         # For SSC partitions, create it as an SSC mgmt NIC.
         osa_adapters = cpc.adapters.findall(**{'type': 'osd'})
         if len(osa_adapters) == 0:
-            pytest.skip(f"No OSA adapters found on CPC {cpc.name!r}")
+            pytest.skip("No OSA adapters with type OSD found on CPC "
+                        f"{cpc.name!r}")
         osa_adapter = osa_adapters[0]
-        vswitches = cpc.virtual_switches.findall(
-            **{'backing-adapter-uri': osa_adapter.uri})
-        vswitch = vswitches[0]  # any port is ok
-        osa_port_index = vswitch.get_property('port')
+        osa_port_index = 0
         nic_properties = {
             'name': 'nic1',
             'description': f'OSA adapter {osa_adapter.name!r}, port index '
             f'{osa_port_index}',
-            'virtual-switch-uri': vswitch.uri,
         }
+
+        nes_feature = cpc.api_feature_enabled('network-express-support')
+        if not nes_feature:
+            vswitch = cpc.virtual_switches.find(
+                **{'backing-adapter-uri': osa_adapter.uri,
+                   'port:': osa_port_index})
+            nic_properties['virtual-switch-uri'] = vswitch.uri
+        else:
+            port = osa_adapter.ports.find(**{'index': osa_port_index})
+            nic_properties['network-adapter-port-uri'] = port.uri
+
         if partition.get_property('type') == 'ssc':
             nic_properties.update({
                 'ssc-management-nic': True,
@@ -1153,7 +1161,7 @@ PARTITION_UPDATE_ITEMS_BASE_LINUX = PARTITION_UPDATE_ITEMS_BASE + [
         'boot_ftp_host': 'fake',
         'boot_ftp_username': 'fake',
         'boot_ftp_password': 'fake',
-        'boot_ftp_insfile': 'fake',
+        'boot_ftp_insfile': 'fake.ins',
     },
     {
         'boot_device': 'removable-media',
@@ -1210,6 +1218,10 @@ PARTITION_UPDATE_ITEMS_Z16_SSC = PARTITION_UPDATE_ITEMS_Z15_SSC
 # access-coprocessor-group-set has become read-only in z16
 PARTITION_UPDATE_ITEMS_Z16_LINUX.remove({'access_coprocessor_group_set': True})
 PARTITION_UPDATE_ITEMS_Z16_SSC.remove({'access_coprocessor_group_set': True})
+
+# Properties that should be tested on z17:
+PARTITION_UPDATE_ITEMS_Z17_LINUX = PARTITION_UPDATE_ITEMS_Z16_LINUX
+PARTITION_UPDATE_ITEMS_Z17_SSC = PARTITION_UPDATE_ITEMS_Z16_SSC
 
 # Properties that do not come back with Get Partition Properies:
 NON_RETRIEVABLE_PROPS = ('boot_ftp_password', 'ssc_master_pw')
@@ -1308,6 +1320,12 @@ def test_zhmc_partition_properties(
                     update_items = PARTITION_UPDATE_ITEMS_Z16_SSC
                 else:
                     update_items = PARTITION_UPDATE_ITEMS_Z16_LINUX
+            elif machine_type in ('9175'):
+                # z16
+                if partition_type == 'ssc':
+                    update_items = PARTITION_UPDATE_ITEMS_Z17_SSC
+                else:
+                    update_items = PARTITION_UPDATE_ITEMS_Z17_LINUX
             else:
                 raise AssertionError(
                     f"Unknown machine type: {machine_type!r}")
