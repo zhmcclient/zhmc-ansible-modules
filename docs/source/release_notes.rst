@@ -177,6 +177,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Dev: Fixed new issue 'too-many-positional-arguments' reported by Pylint 3.3.0.
 
+* Test: Speed up end2end test function test_zhmc_partition_properties() by
+  combining properties that are updated, to groups.
+
 **Cleanup:**
 
 * Removed the unnecessary .pylintrc file from the distribution archive of the
