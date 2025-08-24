@@ -1581,7 +1581,7 @@ def add_artificial_properties(
         # Add artificial properties adapter-name/-port/-id:
         vswitch_uri = nic.prop("virtual-switch-uri", None)
         if vswitch_uri:
-            # OSA, Hipersockets
+            # vswitch-based NIC (OSA, HS up to z16)
             vswitch = cpc.virtual_switches.find(**{'object-uri': vswitch_uri})
             adapter_uri = vswitch.get_property('backing-adapter-uri')
             adapter_port = vswitch.get_property('port')
@@ -1590,7 +1590,8 @@ def add_artificial_properties(
             nic_props['adapter-port'] = adapter_port
             nic_props['adapter-id'] = adapter.get_property('adapter-id')
         else:
-            # RoCE, CNA
+            # adapter-based NIC (RoCE, CNA up to z16 or all adapter types
+            # since z17)
             port_uri = nic.prop("network-adapter-port-uri", None)
             port_props = session.get(port_uri)
             adapter_uri = port_props['parent']
