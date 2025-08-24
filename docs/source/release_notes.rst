@@ -117,6 +117,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Dev: Circumvented safety issue with import of typer module by pinning typer
   to <0.17.0.
 
+* Fixed that for z17 CPCs, NICs backed by OSA or HiperSocket adapters could not
+  be created or updated to change their backing adapter. (issue #1178)
+
 **Enhancements:**
 
 * Test: Added Python 3.13 to the tests in GitHub Actions.
