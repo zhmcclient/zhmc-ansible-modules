@@ -42,6 +42,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   URI, with name "(unknown)" and with 'None' for their properties in any module
   results that show objects. (issue #1173)
 
+* Docs: Fixed Ansible Galaxy badge on README page. (issue #1136)
+
 **Enhancements:**
 
 **Cleanup:**
