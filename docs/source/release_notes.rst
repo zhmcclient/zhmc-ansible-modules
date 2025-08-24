@@ -153,6 +153,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Added support for checking with Mend Renovate.
 
+* Test: Speed up end2end test function test_zhmc_partition_properties() by
+  combining properties that are updated, to groups.
+
 **Cleanup:**
 
 * Removed the unnecessary .pylintrc file from the distribution archive of the
