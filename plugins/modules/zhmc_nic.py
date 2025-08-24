@@ -410,6 +410,9 @@ def process_properties(partition, nic, params):
     update_props = {}
     stop = False
 
+    cpc = partition.manager.parent
+    nes_feature = cpc.api_feature_enabled('network-express-support')
+
     # handle 'name' property
     nic_name = to_unicode(params['name'])
     create_props['name'] = nic_name
@@ -479,19 +482,8 @@ def process_properties(partition, nic, params):
 
         # The rest of it depends on the network adapter family:
         adapter_family = adapter.get_property('adapter-family')
-        if adapter_family in ('roce', 'cna'):
-            # Here we perform the same logic as in the property loop, just now
-            # simplified by the knowledge about the property flags (create,
-            # update, etc.).
-            hmc_prop_name = 'network-adapter-port-uri'
-            input_prop_value = port.uri
-            if nic:
-                if nic.properties.get(hmc_prop_name) != input_prop_value:
-                    update_props[hmc_prop_name] = input_prop_value
-            else:
-                update_props[hmc_prop_name] = input_prop_value
-            create_props[hmc_prop_name] = input_prop_value
-        elif adapter_family in ('osa', 'hipersockets'):
+        if adapter_family in ('osa', 'hipersockets') and not nes_feature:
+            # The NIC is vswitch-based
             vswitches = partition.manager.cpc.virtual_switches.findall(
                 **{'backing-adapter-uri': adapter.uri})
             # Adapters of this family always have a vswitch (one for each
@@ -513,6 +505,20 @@ def process_properties(partition, nic, params):
             # update, etc.).
             hmc_prop_name = 'virtual-switch-uri'
             input_prop_value = found_vswitch.uri
+            if nic:
+                if nic.properties.get(hmc_prop_name) != input_prop_value:
+                    update_props[hmc_prop_name] = input_prop_value
+            else:
+                update_props[hmc_prop_name] = input_prop_value
+            create_props[hmc_prop_name] = input_prop_value
+        elif adapter_family in ('osa', 'hipersockets') and nes_feature or \
+                adapter_family in ('roce', 'cna'):
+            # The NIC is adapter-based
+            # Here we perform the same logic as in the property loop, just now
+            # simplified by the knowledge about the property flags (create,
+            # update, etc.).
+            hmc_prop_name = 'network-adapter-port-uri'
+            input_prop_value = port.uri
             if nic:
                 if nic.properties.get(hmc_prop_name) != input_prop_value:
                     update_props[hmc_prop_name] = input_prop_value
