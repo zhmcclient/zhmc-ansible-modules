@@ -55,7 +55,7 @@ However, for now this does not work, so it has been removed again from the READM
 For details, see the discussion at https://github.com/ansible-collections/overview/discussions/202
 -->
 
-[![Version on Galaxy](https://img.shields.io/badge/dynamic/json?style=flat&label=galaxy&prefix=v&url=https://galaxy.ansible.com/api/v3/plugin/ansible/content/published/collections/index/ibm/ibm_zhmc/versions/%3Fis_highest=true&query=data[0].version)](https://galaxy.ansible.com/ui/repo/published/ibm/ibm_zhmc/ "Version on Galaxy")
+[![Version on Galaxy](https://img.shields.io/badge/dynamic/json?style=flat&label=galaxy&prefix=v&url=https://galaxy.ansible.com/api/v3/plugin/ansible/content/published/collections/index/ibm/ibm_zhmc/versions/%3Flimit=1&query=data[0].version)](https://galaxy.ansible.com/ui/repo/published/ibm/ibm_zhmc/ "Version on Galaxy")
 [![Test status (master)](https://github.com/zhmcclient/zhmc-ansible-modules/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/zhmcclient/zhmc-ansible-modules/actions/workflows/test.yml?query=branch%3Amaster "Test status (master)")
 [![Docs status (master)](https://github.com/zhmcclient/zhmc-ansible-modules/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/zhmcclient/zhmc-ansible-modules/actions/workflows/pages/pages-build-deployment "Docs status (master)")
 [![Test coverage (master)](https://img.shields.io/coveralls/zhmcclient/zhmc-ansible-modules.svg)](https://coveralls.io/github/zhmcclient/zhmc-ansible-modules "Test coverage (master)")
