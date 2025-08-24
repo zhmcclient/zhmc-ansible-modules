@@ -1052,46 +1052,70 @@ PARTITION_UPDATE_ITEMS_BASE = [
     {'description': 'fak\u00E9'},
     {'short_name': f'ZHMC{random.randrange(16 ^ 4):04X}'},  # noqa: E231
     {'acceptable_status': ['active', 'stopped', 'degraded']},
-    {'ifl_absolute_processor_capping': True},
-    {'ifl_absolute_processor_capping_value': 0.9},
-    {'ifl_absolute_processor_capping_value': ("0.8", 0.8)},
+    {
+        'ifl_absolute_processor_capping': True,
+        'ifl_absolute_processor_capping_value': 0.9,
+    },
+    {
+        'ifl_absolute_processor_capping': False,
+    },
+    {
+        'ifl_absolute_processor_capping_value': ("0.8", 0.8),
+    },
     {'ifl_processing_weight_capped': True},
     {'ifl_processing_weight_capped': False},
-    {'ifl_absolute_processor_capping': False},
-    {'minimum_ifl_processing_weight': 10},
-    {'minimum_ifl_processing_weight': ("9", 9)},
-    {'maximum_ifl_processing_weight': 200},
-    {'maximum_ifl_processing_weight': ("199", 199)},
-    {'initial_ifl_processing_weight': 50},
-    {'initial_ifl_processing_weight': ("49", 49)},
-    {'cp_absolute_processor_capping': True},
-    {'cp_absolute_processor_capping_value': 0.9},
-    {'cp_absolute_processor_capping_value': ("0.8", 0.8)},
+    {
+        'initial_ifl_processing_weight': 50,
+        'minimum_ifl_processing_weight': 10,
+        'maximum_ifl_processing_weight': 200,
+    },
+    {
+        'initial_ifl_processing_weight': ("49", 49),
+        'minimum_ifl_processing_weight': ("9", 9),
+        'maximum_ifl_processing_weight': ("199", 199),
+    },
+    {
+        'cp_absolute_processor_capping': True,
+        'cp_absolute_processor_capping_value': 0.9,
+    },
+    {
+        'cp_absolute_processor_capping': False,
+    },
+    {
+        'cp_absolute_processor_capping_value': ("0.8", 0.8),
+    },
     {'cp_processing_weight_capped': True},
     {'cp_processing_weight_capped': False},
-    {'cp_absolute_processor_capping': False},
-    {'minimum_cp_processing_weight': 10},
-    {'minimum_cp_processing_weight': ("9", 9)},
-    {'maximum_cp_processing_weight': 200},
-    {'maximum_cp_processing_weight': ("199", 199)},
-    {'initial_cp_processing_weight': 50},
-    {'initial_cp_processing_weight': ("49", 49)},
+    {
+        'initial_cp_processing_weight': 50,
+        'minimum_cp_processing_weight': 10,
+        'maximum_cp_processing_weight': 200,
+    },
+    {
+        'initial_cp_processing_weight': ("49", 49),
+        'minimum_cp_processing_weight': ("9", 9),
+        'maximum_cp_processing_weight': ("199", 199),
+    },
     # Enabling processor management requires weight capping disabled, but on
     # S67B still fails with HTTPError: 500,12: "Internal error: Minimum weight
     # : 0can't be zero when work load managment is enabled".
     # {'processor_management_enabled': True},
     # {'processor_management_enabled': False},
-    {'access_global_performance_data': True},
-    {'permit_cross_partition_commands': True},
-    {'access_basic_counter_set': True},
-    {'access_problem_state_counter_set': True},
-    {'access_crypto_activity_counter_set': True},
-    {'access_extended_counter_set': True},
-    {'access_coprocessor_group_set': True},
-    {'access_basic_sampling': True},
-    {'access_diagnostic_sampling': True},
-    {'permit_des_key_import_functions': False},
-    {'permit_aes_key_import_functions': False},
+    {
+        'access_global_performance_data': True,
+        'permit_cross_partition_commands': True,
+        'access_basic_counter_set': True,
+        'access_problem_state_counter_set': True,
+        'access_crypto_activity_counter_set': True,
+        'access_extended_counter_set': True,
+        'access_basic_sampling': True,
+        'access_diagnostic_sampling': True,
+        'permit_des_key_import_functions': False,
+        'permit_aes_key_import_functions': False,
+    },
+    {
+        'access_coprocessor_group_set': True,
+    },
     # TODO: Ensure the partition ID is not used yet
     # {'partition_id': '7F'},
     # {'autogenerate_partition_id': False},
@@ -1134,7 +1158,7 @@ PARTITION_UPDATE_ITEMS_BASE_LINUX = PARTITION_UPDATE_ITEMS_BASE + [
     {
         'boot_device': 'removable-media',
         'boot_removable_media': 'fake',
-        'boot_removable_media_type': 'cdrom',
+        'boot_removable_media_type': 'usb',
     },
     # TODO: Add support for mounting ISO image via boot_iso_image_name prop:
     # {
@@ -1301,14 +1325,13 @@ def test_zhmc_partition_properties(
                 exp_props = {}
                 exp_exit_code = 0
                 exp_changed = False
-                for prop_name in update_item:
+                for prop_name, value_item in update_item.items():
                     prop_hmc_name = prop_name.replace('_', '-')
                     if prop_name in NON_RETRIEVABLE_PROPS:
                         current_hmc_value = '<non-retrievable>'
                     else:
                         current_hmc_value = partition.get_property(
                             prop_hmc_name)
-                    value_item = update_item[prop_name]
                     if isinstance(value_item, tuple):
                         new_value = value_item[0]
                         new_hmc_value = value_item[1]
