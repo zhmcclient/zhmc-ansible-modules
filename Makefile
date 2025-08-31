@@ -213,7 +213,7 @@ sphinx_opts := -v
 # Pytest options
 coverage_rc_file := .coveragerc
 ifdef TESTCASES
-  pytest_opts := --color=yes -s $(TESTOPTS) -k "$(TESTCASES)"
+  pytest_opts := --color=yes -s $(TESTOPTS) -k '$(TESTCASES)'
 else
   pytest_opts := --color=yes -s $(TESTOPTS)
 endif
@@ -338,7 +338,7 @@ linkcheck: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(do
 
 .PHONY: test
 test: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
-	bash -c 'PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. pytest $(pytest_cov_opts) $(pytest_opts) $(test_dir)/unit $(test_dir)/function'
+	bash -c "PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. pytest $(pytest_cov_opts) $(pytest_opts) $(test_dir)/unit $(test_dir)/function"
 	coverage html --rcfile $(coverage_rc_file)
 	@echo "Makefile: $@ done."
 
@@ -413,7 +413,7 @@ endif
 
 .PHONY:	end2end
 end2end: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
-	bash -c 'PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. TESTEND2END_LOAD=true pytest -v $(pytest_cov_opts) $(pytest_opts) $(test_dir)/end2end'
+	bash -c "PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. TESTEND2END_LOAD=true pytest -v $(pytest_cov_opts) $(pytest_opts) $(test_dir)/end2end"
 	@echo "Makefile: $@ done."
 
 .PHONY:	end2end_show
@@ -423,7 +423,7 @@ end2end_show:
 # TODO: Enable rc checking again once the remaining issues are resolved
 .PHONY:	end2end_mocked
 end2end_mocked: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
-	-bash -c 'PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. TESTEND2END_LOAD=true TESTINVENTORY=$(test_dir)/end2end/mocked_inventory.yaml TESTVAULT=$(test_dir)/end2end/mocked_vault.yaml pytest -v $(pytest_cov_opts) $(pytest_opts) $(test_dir)/end2end'
+	-bash -c "PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. TESTEND2END_LOAD=true TESTINVENTORY=$(test_dir)/end2end/mocked_inventory.yaml TESTVAULT=$(test_dir)/end2end/mocked_vault.yaml pytest -v $(pytest_cov_opts) $(pytest_opts) $(test_dir)/end2end"
 	coverage html --rcfile $(coverage_rc_file)
 	@echo "Makefile: $@ done."
 
