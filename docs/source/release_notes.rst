@@ -44,6 +44,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Docs: Fixed Ansible Galaxy badge on README page. (issue #1136)
 
+* Dev: Circumvented safety issue with import of typer module by pinning typer
+  to <0.17.0.
+
 **Enhancements:**
 
 **Cleanup:**
