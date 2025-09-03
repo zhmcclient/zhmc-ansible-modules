@@ -120,6 +120,14 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Fixed that for z17 CPCs, NICs backed by OSA or HiperSocket adapters could not
   be created or updated to change their backing adapter. (issue #1178)
 
+* Docs: Fixed broken links in the documentation. Fixed the description of
+  commit message checking in the development section of the documentation to
+  remove the mentioning of the GitCop service which is no longer used.
+
+* Docs: Updates in Bibliography section: Collapsed the HMC WS-API books to a
+  single version (2.17), Added link to HMC Help, Updated HMC Security book to
+  2.17, Removed the HMC Operations Guide which no longer exists.
+
 **Enhancements:**
 
 * Test: Added Python 3.13 to the tests in GitHub Actions.

@@ -19,7 +19,7 @@
 Troubleshooting
 ===============
 
-The `zhmcclient Troubleshooting <https://python-zhmcclient.readthedocs.io/en/latest/appendix.html#troubleshooting>`_
+The `zhmcclient Troubleshooting <https://python-zhmcclient.readthedocs.io/en/stable/appendix.html#troubleshooting>`_
 section also applies to the **IBM Z HMC collection**.
 
 There are no additional troubleshooting hints at the moment.

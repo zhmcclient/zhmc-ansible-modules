@@ -55,7 +55,7 @@ to run its Github Actions workflows successfully:
   an IBM ID. This variable is set at the organisation level.
 
   To get such a URL, follow the instructions in
-  `Sending messages using Incoming Webhooks <https://api.slack.com/messaging/webhooks>`_
+  `Sending messages using Incoming Webhooks <https://docs.slack.dev/messaging/sending-messages-using-incoming-webhooks/>`_
 
 
 .. _`Setting up the development environment`:
