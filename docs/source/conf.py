@@ -262,19 +262,29 @@ linkcheck_request_headers = {
 # All HTTP redirections from a matching source URI to the matching target URI
 # will be treated as "working".
 linkcheck_allowed_redirects = {
-    r'https://virtualenv.pypa.io/': r'https://virtualenv.pypa.io/en/latest/',
-    r'https://ibm-systems-z.slack.com/archives/.*': r'https://ibm.enterprise.slack.com/.*',
-    r'https://ibm.ent.box.com/folder/.*': r'https://ibm.account.box.com/login.*',
+    r'https://virtualenv.pypa.io/':
+        r'https://virtualenv.pypa.io/en/latest/',
+    r'https://ibm-systems-z.slack.com/archives/.*':
+        r'https://ibm.enterprise.slack.com/.*',
+    r'https://ibm.ent.box.com/folder/.*':
+        r'https://ibm.account.box.com/login.*',
 }
 
 linkcheck_ignore = [
 
-    # Page exists, but linkchedck gets HTTP 404 "Not Found"
+    # Page exists, but linkcheck sometimes gets HTTP 404 "Not Found"
     r'https://github.com/zhmcclient/zhmc-ansible-modules/security/dependabot',
 
-    # Page exists, but linkchedck gets HTTP 403 "Forbidden"
+    # Page exists, but linkcheck sometimes gets HTTP 403 "Forbidden"
     r'https://opensource.org/license/apache-2-0',
 
-    # Page exists, but linkchedck occasionally gets timeout"
+    # Page exists, but linkcheck sometimes gets HTTP 403 "Forbidden"
+    r'https://wiki.mozilla.org/CA/Included_Certificates',
+
+    # Page exists, but linkcheck sometimes gets timeout
     r'https://www.ansible.com',
+
+    # Page exists, but linkcheck sometimes gets timeout
+    r'https://docs.slack.dev/messaging/'
+    r'sending-messages-using-incoming-webhooks/',
 ]

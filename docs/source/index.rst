@@ -134,6 +134,6 @@ please open an issue in the `issue tracker`_.
 .. _Ansible:
    https://www.ansible.com/
 .. _IBM Z:
-   https://www.ibm.com/z
+   https://www.ibm.com/products/z?lnk=flatitem
 .. _LinuxONE:
-   https://www.ibm.com/linuxone
+   https://www.ibm.com/products/linuxone/
