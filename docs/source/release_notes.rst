@@ -114,8 +114,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Docs: Fixed Ansible Galaxy badge on README page. (issue #1136)
 
-* Dev: Circumvented safety issue with import of typer module by pinning typer
-  to <0.17.0.
+* Dev: Removed the pinning of typer version to <0.17.0 with the new release of safety 3.6.1 and
+  also upgraded minimum version of safety to be 3.6.1 to fix the issue with typer>=0.17.0,
+  see  https://github.com/pyupio/safety/issues/778
 
 * Fixed that for z17 CPCs, NICs backed by OSA or HiperSocket adapters could not
   be created or updated to change their backing adapter. (issue #1178)
