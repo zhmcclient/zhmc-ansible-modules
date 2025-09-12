@@ -142,7 +142,7 @@ importlib-resources==1.4.0
 keyring==21.4.0
 levenshtein==0.25.1
 more-itertools==5.0.0
-nltk==3.9
+nltk==3.9.1
 pathlib2==2.2.1
 ply==3.10
 py==1.11.0  # Still required by pytest 6.2.5

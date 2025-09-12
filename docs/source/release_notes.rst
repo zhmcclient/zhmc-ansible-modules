@@ -78,6 +78,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Dev: Made order of names in AUTHORS.md reliable. (issue #1141)
 
+* Dev: Upgrade nltk to 3.9.1 to fix the wordnet error, see https://github.com/nltk/nltk/issues/3416
+
 **Enhancements:**
 
 * Lifted the size limit of 2GB for ISO images that can be mounted with the
