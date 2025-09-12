@@ -129,6 +129,8 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   single version (2.17), Added link to HMC Help, Updated HMC Security book to
   2.17, Removed the HMC Operations Guide which no longer exists.
 
+* Dev: Upgrade nltk to 3.9.1 to fix the wordnet error, see https://github.com/nltk/nltk/issues/3416
+
 **Enhancements:**
 
 * Test: Added Python 3.13 to the tests in GitHub Actions.
