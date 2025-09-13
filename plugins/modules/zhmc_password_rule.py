@@ -267,12 +267,6 @@ from ..module_utils.common import log_init, open_session, close_session, \
     blanked_params  # noqa: E402
 
 try:
-    import urllib3
-    IMP_URLLIB3_ERR = None
-except ImportError:
-    IMP_URLLIB3_ERR = traceback.format_exc()
-
-try:
     import zhmcclient
     IMP_ZHMCCLIENT_ERR = None
 except ImportError:
@@ -654,12 +648,6 @@ def main():
     module = AnsibleModule(
         argument_spec=argument_spec,
         supports_check_mode=True)
-
-    if IMP_URLLIB3_ERR is not None:
-        module.fail_json(msg=missing_required_lib("requests"),
-                         exception=IMP_URLLIB3_ERR)
-
-    urllib3.disable_warnings()
 
     if IMP_ZHMCCLIENT_ERR is not None:
         module.fail_json(msg=missing_required_lib("zhmcclient"),

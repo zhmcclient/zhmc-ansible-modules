@@ -23,8 +23,6 @@ ansible-core>=2.15.13; python_version <= '3.11'
 ansible-core>=2.16.13; python_version == '3.12'
 ansible-core>=2.18.0; python_version >= '3.13'
 
-requests>=2.32.4
-
 # zhmcclient @ git+https://github.com/zhmcclient/python-zhmcclient.git@master
 zhmcclient>=1.23.1
 
@@ -63,5 +61,3 @@ python-dateutil>=2.8.2
 jsonschema>=4.18.2
 # TODO: Python 3.13 support requires pyo3-ffi fixing its issue with Python 3.13
 #       (see https://github.com/PyO3/pyo3/issues/4038#issuecomment-2156363013)
-
-urllib3>=2.5.0
