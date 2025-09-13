@@ -370,6 +370,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Docs: Adjusted README file to new Ansible Automation Hub requirements.
   (issue #993)
 
+* Removed use of pytz package in order to reduce package dependencies, and
+  replaced it with the built-in datetime.timezone module.
+
 
 Version 1.8.1
 -------------

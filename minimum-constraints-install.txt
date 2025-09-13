@@ -28,8 +28,6 @@ ansible-core==2.18.0; python_version >= '3.13'
 
 requests==2.32.4
 
-pytz==2019.1
-
 zhmcclient==1.23.1
 
 
