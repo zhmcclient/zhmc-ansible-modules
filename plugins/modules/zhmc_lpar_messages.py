@@ -282,6 +282,7 @@ messages:
 
 import logging  # noqa: E402
 import traceback  # noqa: E402
+from datetime import timezone  # noqa: E402
 from ansible.module_utils.basic import AnsibleModule, \
     missing_required_lib  # noqa: E402
 
@@ -300,12 +301,6 @@ try:
     IMP_ZHMCCLIENT_ERR = None
 except ImportError:
     IMP_ZHMCCLIENT_ERR = traceback.format_exc()
-
-try:
-    import pytz
-    IMP_PYTZ_ERR = None
-except ImportError:
-    IMP_PYTZ_ERR = traceback.format_exc()
 
 # Python logger name for this module
 LOGGER_NAME = 'zhmc_lpar'
@@ -384,7 +379,8 @@ def perform_os_messages(params):
             if hmc_ts == -1:
                 timestamp = None
             else:
-                dt = zhmcclient.datetime_from_timestamp(hmc_ts, tzinfo=pytz.utc)
+                dt = zhmcclient.datetime_from_timestamp(
+                    hmc_ts, tzinfo=timezone.utc)
                 timestamp = dt.isoformat()
             result_message = {
                 "sequence_number": os_message.get('sequence-number'),
@@ -437,10 +433,6 @@ def main():
     if IMP_ZHMCCLIENT_ERR is not None:
         module.fail_json(msg=missing_required_lib("zhmcclient"),
                          exception=IMP_ZHMCCLIENT_ERR)
-
-    if IMP_PYTZ_ERR is not None:
-        module.fail_json(msg=missing_required_lib("pytz"),
-                         exception=IMP_PYTZ_ERR)
 
     common_fail_on_import_errors(module)
 
