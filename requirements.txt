@@ -25,8 +25,6 @@ ansible-core>=2.18.0; python_version >= '3.13'
 
 requests>=2.32.4
 
-pytz>=2019.1
-
 # zhmcclient @ git+https://github.com/zhmcclient/python-zhmcclient.git@master
 zhmcclient>=1.23.1
 
