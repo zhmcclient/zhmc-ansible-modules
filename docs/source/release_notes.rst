@@ -377,6 +377,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Docs: Adjusted README file to new Ansible Automation Hub requirements.
   (issue #993)
 
+* In order to reduce dependencies to other packages, the use of the pytz
+  package was removed, by replacing 'pytz.utc' with the built-in
+  'datetime.timezone.utc'.
+
 
 Version 1.8.1
 -------------
