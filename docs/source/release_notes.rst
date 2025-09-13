@@ -217,6 +217,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Test: Removed the invalid combinations of type and auth-type from the end2end
   test 'test_zhmc_user_facts()'.
 
+* In order to reduce dependencies to other packages, the use of the urllib3
+  package was removed. The urllib3 package was used to disable its warnings,
+  but for an Ansible module that is not needed.
+
 **Known issues:**
 
 * See `list of open issues`_.
