@@ -28,7 +28,7 @@ requests>=2.32.4
 pytz>=2019.1
 
 # zhmcclient @ git+https://github.com/zhmcclient/python-zhmcclient.git@master
-zhmcclient>=1.18.2
+zhmcclient>=1.23.1
 
 
 # Indirect dependencies for install that are needed for some reason (must be consistent with minimum-constraints-install.txt)
