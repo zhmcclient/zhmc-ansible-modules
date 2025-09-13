@@ -133,6 +133,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 **Enhancements:**
 
+* Increased minimum version of zhmcclient to 1.23.1 to pick up fixes and new
+  functionality.
+
 * Test: Added Python 3.13 to the tests in GitHub Actions.
 
 * Support for ansible-core 2.18, by adding an ignore file for the sanity tests.
