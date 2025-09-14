@@ -406,8 +406,13 @@ else
 	@echo "Makefile: Checking missing dependencies of some development packages"
 	bash -c "cat minimum-constraints-develop.txt minimum-constraints-install.txt >tmp_minimum-constraints.txt"
 	@rc=0; for pkg in $(check_reqs_packages); do dir=$$($(PYTHON_CMD) -c "import $${pkg} as m,os; dm=os.path.dirname(m.__file__); d=dm if not dm.endswith('site-packages') else m.__file__; print(d)"); cmd="pip-missing-reqs $${dir} --requirements-file=tmp_minimum-constraints.txt"; echo $${cmd}; $${cmd}; rc=$$(expr $${rc} + $${?}); done; exit $${rc}
-	rm tmp_minimum-constraints.txt
 	@echo "Makefile: Done checking missing dependencies of some development packages"
+	@echo "Makefile: Checking missing dependencies of all installed packages"
+	bash -c "pip freeze | cut -d '=' -f 1 | grep -v '@' | tr '-' '.' | tr '_' '.' | xargs -I {} sh -c 'if ! grep -iE ^{}== tmp_minimum-constraints.txt >/dev/null; then sh -c \"pip freeze | grep -iE ^{}==\"; fi'" >tmp_missing-reqs.txt
+	bash -c "if [ -s tmp_missing-reqs.txt ]; then echo 'Error: Missing packages in minimum-constraints files compared to what is installed:'; cat tmp_missing-reqs.txt; false; fi"
+	@echo "Makefile: Done checking missing dependencies of all installed packages"
+	rm tmp_missing-reqs.txt
+	rm tmp_minimum-constraints.txt
 endif
 	@echo "Makefile: $@ done."
 
