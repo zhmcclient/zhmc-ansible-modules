@@ -395,13 +395,15 @@ endif
 	@echo "Makefile: $@ done."
 
 .PHONY: check_reqs
-check_reqs: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done minimum-constraints-develop.txt minimum-constraints-install.txt requirements.txt
+check_reqs: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done minimum-constraints-develop.txt minimum-constraints-install.txt requirements.txt requirements-ansible.txt
 ifeq ($(PACKAGE_LEVEL),ansible)
 	@echo "Makefile: Warning: Skipping the checking of missing dependencies for PACKAGE_LEVEL=ansible" >&2
 else
 	@echo "Makefile: Checking missing dependencies of this package"
-	pip-missing-reqs $(src_py_dir) --requirements-file=requirements.txt
+	bash -c "cat requirements.txt requirements-ansible.txt >tmp_requirements.txt"
+	pip-missing-reqs $(src_py_dir) --requirements-file=tmp_requirements.txt
 	pip-missing-reqs $(src_py_dir) --requirements-file=minimum-constraints-install.txt
+	rm tmp_requirements.txt
 	@echo "Makefile: Done checking missing dependencies of this package"
 	@echo "Makefile: Checking missing dependencies of some development packages"
 	bash -c "cat minimum-constraints-develop.txt minimum-constraints-install.txt >tmp_minimum-constraints.txt"
@@ -496,11 +498,11 @@ else
 	@true >/dev/null
 endif
 
-$(done_dir)/install_deps_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/base_$(pymn)_$(PACKAGE_LEVEL).done requirements.txt
-	$(PYTHON_CMD) -m pip install $(pip_level_opts) $(pip_level_opts_new) -r requirements.txt
+$(done_dir)/install_deps_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/base_$(pymn)_$(PACKAGE_LEVEL).done requirements.txt requirements-ansible.txt
+	$(PYTHON_CMD) -m pip install $(pip_level_opts) $(pip_level_opts_new) -r requirements.txt -r requirements-ansible.txt
 	echo "done" >$@
 
-$(done_dir)/install_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/base_$(pymn)_$(PACKAGE_LEVEL).done $(done_dir)/install_deps_$(pymn)_$(PACKAGE_LEVEL).done $(dist_file) requirements.txt
+$(done_dir)/install_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/base_$(pymn)_$(PACKAGE_LEVEL).done $(done_dir)/install_deps_$(pymn)_$(PACKAGE_LEVEL).done $(dist_file)
 	ansible-galaxy collection install --force $(dist_file)
 	echo "done" >$@
 

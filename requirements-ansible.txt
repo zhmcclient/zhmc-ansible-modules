@@ -1,0 +1,25 @@
+# Pip requirements file for install dependencies on ansible/ansible-core
+
+# Note: These are actually install dependencies, but since Ansible EE does not expect dependencies
+# to ansible or ansible-core in the package's requirements file, they have been moved to a separate
+# requirements file.
+
+
+# Direct dependencies on ansible/ansible-core (must be consistent with minimum-constraints-install.txt)
+
+# Keep minimum versions consistent with table for 'minimum' packages in development.rst and with minimum-constraints-install.txt
+# ansible 8 (ansible-core 2.15) requires Python >=3.9 and its sanity test supports Python 3.9 to 3.11.
+# ansible 9 (ansible-core 2.16) requires Python >=3.10 and its sanity test supports Python 3.10 to 3.12.
+# ansible 10 (ansible-core 2.17) requires Python >=3.10 and its sanity test supports Python 3.10 to 3.12.
+# ansible 11 (ansible-core 2.18) requires Python >=3.11 and its sanity test supports Python 3.11 to 3.13.
+# ansible 12 (ansible-core 2.19) requires Python >=3.11 and its sanity test supports Python 3.11 to 3.13.
+# Ansible 8 requires Python >=3.9 - this is the check that no Python version below 3.9 is used.
+# Apart from that, we require the lowest Ansible version that supports a given Python version.
+ansible>=8.0.0; python_version <= '3.11'
+ansible>=9.0.1; python_version == '3.12'
+ansible>=11.0.0; python_version >= '3.13'
+
+# ansible-core is pulled in by ansible, but is needed for pip-check-reqs checks.
+ansible-core>=2.15.13; python_version <= '3.11'
+ansible-core>=2.16.13; python_version == '3.12'
+ansible-core>=2.18.0; python_version >= '3.13'

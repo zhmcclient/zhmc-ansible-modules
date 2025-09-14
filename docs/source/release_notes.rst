@@ -239,6 +239,11 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Added missing dependencies to the minimum constraints files. They now contain
   all direct and indirect dependencies.
 
+* Moved the Python package dependencies for 'ansible' and 'ansible-core' from
+  requirements.txt to a separate file requirements-ansible.txt that is not part
+  of the collection package, because Ansible EE does not expect them to be in
+  the install dependencies.
+
 **Known issues:**
 
 * See `list of open issues`_.
