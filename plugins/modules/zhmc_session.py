@@ -217,11 +217,12 @@ hmc_auth:
 
 import logging  # noqa: E402
 import traceback  # noqa: E402
-from ansible.module_utils.basic import AnsibleModule  # noqa: E402
+from ansible.module_utils.basic import AnsibleModule, \
+    missing_required_lib  # noqa: E402
 
 from ..module_utils.common import log_init, open_session, close_session, \
-    hmc_auth_parameter, Error, ParameterError, \
-    missing_required_lib, parse_hmc_host, blanked_params  # noqa: E402
+    hmc_auth_parameter, Error, ParameterError, common_fail_on_import_errors, \
+    parse_hmc_host, blanked_params  # noqa: E402
 
 try:
     import urllib3
@@ -347,6 +348,8 @@ def main():
     if IMP_ZHMCCLIENT_ERR is not None:
         module.fail_json(msg=missing_required_lib("zhmcclient"),
                          exception=IMP_ZHMCCLIENT_ERR)
+
+    common_fail_on_import_errors(module)
 
     log_file = module.params['log_file']
     log_init(LOGGER_NAME, log_file)

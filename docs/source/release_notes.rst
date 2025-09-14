@@ -131,6 +131,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Dev: Upgrade nltk to 3.9.1 to fix the wordnet error, see https://github.com/nltk/nltk/issues/3416
 
+* Added check for missing imports in 'module_utils/common.py', in the modules
+  'zhmc_adapter_list.py' and 'zhmc_session.py'.
+
 **Enhancements:**
 
 * Increased minimum version of zhmcclient to 1.23.1 to pick up fixes and new
@@ -216,6 +219,10 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * Test: Removed the invalid combinations of type and auth-type from the end2end
   test 'test_zhmc_user_facts()'.
+
+* Replaced our own extended version of 'missing_required_lib()' with the
+  standard version from 'ansible.module_utils.basic' because the extensions
+  were not used.
 
 **Known issues:**
 
