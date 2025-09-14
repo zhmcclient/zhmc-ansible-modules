@@ -15,13 +15,10 @@ wheel==0.38.1
 
 # Direct dependencies for install (must be consistent with requirements.txt)
 
-# Keep consistent with table for 'minimum' packages in development.rst and with requirements.txt
-# Ansible 8 requires Python >=3.9 - this is the check that no Python version below 3.9 is used.
 ansible==8.0.0; python_version <= '3.11'
 ansible==9.0.1; python_version == '3.12'
 ansible==11.0.0; python_version >= '3.13'
 
-# ansible-core is pulled in by ansible, but is needed for pip-check-reqs checks.
 ansible-core==2.15.13; python_version <= '3.11'
 ansible-core==2.16.13; python_version == '3.12'
 ansible-core==2.18.0; python_version >= '3.13'
@@ -31,25 +28,39 @@ zhmcclient==1.23.1
 
 # Indirect dependencies for install that are needed for some reason (must be consistent with requirements.txt)
 
-# Jinja2 is used by ansible/ansible-core and by ansible-doc-extractor.
 Jinja2==3.1.6
-
-# MarkupSafe is used by Jinja2
-MarkupSafe==2.0.0
-
 cryptography==44.0.1
-
-importlib-metadata==4.8.3
-
 packaging==22.0
 PyYAML==6.0.2
-
-python-dateutil==2.8.2
-jsonschema==4.18.2
 
 
 # All other indirect dependencies for install that are not in requirements.txt
 
-# other ansible or ansible-core dependencies
+attrs==22.2.0
+certifi==2024.7.4
+cffi==2.0.0
+charset-normalizer==2.0.0
+decorator==4.0.11
+docopt==0.6.2
+idna==3.7
+immutable-views==0.6.0
+importlib-resources==5.0.0
+jsonschema==4.18.0
+jsonschema-specifications==2023.3.6
+MarkupSafe==2.0.0
+nocasedict==1.0.2
+pycparser==2.23
+pyrsistent==0.20.0
+python-dateutil==2.8.2
+pytz==2019.1
+referencing==0.31.0
+requests==2.32.4
 resolvelib==0.5.3
-distlib==0.3.6
+rpds-py==0.7.1
+six==1.14.0; python_version == '3.9'
+six==1.16.0; python_version >= '3.10'
+stomp.py==8.1.1
+tomli==1.1.0
+typing_extensions==4.12.2
+urllib3==2.5.0
+websocket-client==1.8.0
