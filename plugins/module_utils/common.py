@@ -22,11 +22,11 @@ __metaclass__ = type
 import logging
 import traceback
 import threading
-import platform
 import sys
 import re
 from collections.abc import Mapping
 from copy import deepcopy
+from ansible.module_utils.basic import missing_required_lib
 
 try:
     from zhmcclient import Session, ClientAuthError, HTTPError
@@ -109,25 +109,6 @@ def common_fail_on_import_errors(module):
     if IMP_ZHMCCLIENT_MOCK_ERR is not None:
         module.fail_json(msg=missing_required_lib("zhmcclient_mock"),
                          exception=IMP_ZHMCCLIENT_MOCK_ERR)
-
-
-def missing_required_lib(library, reason=None, url=None):
-    """
-    Return a message for a missing Python library (= module).
-    """
-    hostname = platform.node()
-    msg = "Failed to import the required Python library " \
-          "(%s) on %s's Python %s." % (library, hostname, sys.executable)
-    if reason:
-        msg += " This is required %s." % reason
-    if url:
-        msg += " See %s for more info." % url
-
-    msg += (" Please read module documentation and install in the appropriate "
-            "location. If the required library is installed, but Ansible is "
-            "using the wrong Python interpreter, please consult the "
-            "documentation on ansible_python_interpreter")
-    return msg
 
 
 def open_session(params):
