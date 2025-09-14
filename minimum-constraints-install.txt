@@ -13,7 +13,7 @@ setuptools==78.1.1
 wheel==0.38.1
 
 
-# Direct dependencies for install (must be consistent with requirements.txt)
+# Direct dependencies on ansible/ansible-core for install (must be consistent with requirements-ansible.txt)
 
 ansible==8.0.0; python_version <= '3.11'
 ansible==9.0.1; python_version == '3.12'
@@ -22,6 +22,9 @@ ansible==11.0.0; python_version >= '3.13'
 ansible-core==2.15.13; python_version <= '3.11'
 ansible-core==2.16.13; python_version == '3.12'
 ansible-core==2.18.0; python_version >= '3.13'
+
+
+# Direct dependencies for install, except ansible/ansible-core (must be consistent with requirements.txt)
 
 zhmcclient==1.23.1
 
