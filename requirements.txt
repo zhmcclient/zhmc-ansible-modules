@@ -1,7 +1,7 @@
-# Pip requirements file for install dependencies.
+# Pip requirements file for install dependencies of the ibm.ibm_zhmc Ansible collection.
 
-# Note: The dependencies in this file will become the dependencies stated
-# in the Ansible collection package metadata.
+# Note: This file is included in the Ansible collection package, and its packages
+# need to be installed by the user of this Ansible collection.
 
 
 # Direct dependencies for install (must be consistent with minimum-constraints-install.txt)
@@ -29,35 +29,22 @@ zhmcclient>=1.23.1
 
 # Indirect dependencies for install that are needed for some reason (must be consistent with minimum-constraints-install.txt)
 
-# Jinja2 is used by ansible/ansible-core and by ansible-doc-extractor.
-# Ansible 6 requires Jinja2>=3.0
-# Python 3.10 requires Jinja>=2.11
-# Sphinx 7.x requires Jinja2>=3.0
+# ansible-core 2.15.13 requires Jinja2>=3.0.0.
+# In order to address vulnerabilities, we require a higher version.
 Jinja2>=3.1.6
 
-# MarkupSafe is used by Jinja2
-# Jinja2 3.0 requires MarkupSafe>=2.0
-MarkupSafe>=2.0.0
-
+# ansible-core 2.15.13 requires any version of cryptography.
+# In order to address vulnerabilities, we require a higher version.
 cryptography>=44.0.1
 
-# importlib-metadata is used for install by jsonschema which is used by zhmcclient.
-# importlib-metadata is used for development by flake8 (and others).
-importlib-metadata>=4.8.3
-
-# packaging is used by ansible-core (and for dev also by pytest, pip-check-reqs, sphinx and others)
+# ansible-core 2.15.13 requires any version of packaging.
+# In order to address issue https://github.com/pypa/setuptools/issues/4483 when installing sphinx-versions,
+# we require a version >=22.0.
 packaging>=22.0
 
-# PyYAML 5.3 has wheel archives for Python 2.7, 3.5 - 3.9
-# PyYAML 5.4 has wheel archives for Python 2.7, 3.6 - 3.9
-# PyYAML 6.0 has wheel archives for Python 3.6 - 3.11
-# PyYAML 5.4 and 6.0.0 fails install since Cython 3 was released, see issue
-#   https://github.com/yaml/pyyaml/issues/724.
+# ansible-core 2.15.13 requires PyYAML>=5.1.
+# In order to address issue https://github.com/yaml/pyyaml/issues/724 (PyYAML 5.4 and 6.0.0 fails install since Cython 3
+# was released), we require a version >=6.0.1.
+# In order to address vulnerabilities, we require a higher version.
+# PyYAML 6.0 has wheel archives for Python 3.6 - 3.11.
 PyYAML>=6.0.2
-
-python-dateutil>=2.8.2
-
-# jsonschema
-jsonschema>=4.18.2
-# TODO: Python 3.13 support requires pyo3-ffi fixing its issue with Python 3.13
-#       (see https://github.com/PyO3/pyo3/issues/4038#issuecomment-2156363013)

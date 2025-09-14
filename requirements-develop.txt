@@ -108,7 +108,7 @@ antsibull-docs-parser>=1.0.0
 # PyLint (no imports, invoked via pylint script)
 # Pylint is run in ansible sanity test, but it installs its own version
 pylint>=3.3.1
-astroid>=3.3.7
+astroid>=3.3.8
 lazy-object-proxy>=1.4.3
 wrapt>=1.17.2
 platformdirs>=4.1.0

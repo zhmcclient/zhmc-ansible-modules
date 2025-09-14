@@ -232,6 +232,13 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   package was removed, by replacing 'pytz.utc' with the built-in
   'datetime.timezone.utc'.
 
+* In order to reduce dependencies to other packages, the MarkupSafe,
+  importlib-metadata, python-dateutil and jsonschema packages have been
+  removed from the requirements.txt file, since they are indirect dependencies.
+
+* Added missing dependencies to the minimum constraints files. They now contain
+  all direct and indirect dependencies.
+
 **Known issues:**
 
 * See `list of open issues`_.
