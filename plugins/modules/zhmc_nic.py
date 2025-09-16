@@ -248,6 +248,15 @@ nic:
         R(HMC API,HMC API) book.
         The property names have hyphens (-) as described in that book."
       type: raw
+    adapter-id:
+      description: "Adapter ID (PCHID) of the backing adapter of the NIC."
+      type: str
+    adapter-name:
+      description: "Name of the backing adapter of the NIC."
+      type: str
+    adapter-port:
+      description: "Port index of the backing port of the NIC."
+      type: int
   sample:
     {
         "adapter-id": "128",
@@ -507,7 +516,8 @@ def process_properties(partition, nic, params):
                 update_props[hmc_prop_name] = input_prop_value
             create_props[hmc_prop_name] = input_prop_value
         elif adapter_family in ('osa', 'hipersockets') and nes_feature or \
-                adapter_family in ('roce', 'cna'):
+                adapter_family in ('roce', 'cna', 'network-express',
+                                   'networking'):
             # The NIC is adapter-based
             # Here we perform the same logic as in the property loop, just now
             # simplified by the knowledge about the property flags (create,
@@ -642,6 +652,42 @@ def find_nic_for_500_12(params, partition):
     return nic
 
 
+def add_artificial_properties(nic_properties, nic):
+    """
+    Add artificial properties to the nic_properties dict.
+
+    Upon return, the nic_properties dict has been extended by these
+    artificial properties:
+
+    * 'adapter-name'
+    * 'adapter-port'
+    * 'adapter-id'
+    """
+    partition = nic.manager.parent
+    cpc = partition.manager.cpc
+    session = cpc.manager.client.session
+
+    # Add artificial properties for backing adapter:
+    vswitch_uri = nic.prop('virtual-switch-uri', None)
+    if vswitch_uri:
+        # vswitch-based NIC (OSA, HS up to z16)
+        vswitch = cpc.virtual_switches.find(**{'object-uri': vswitch_uri})
+        adapter_uri = vswitch.get_property('backing-adapter-uri')
+        adapter_port = vswitch.get_property('port')
+    else:
+        # adapter-based NIC (RoCE, CNA up to z16 or all adapter types
+        # since z17)
+        port_uri = nic.get_property('network-adapter-port-uri')
+        port_props = session.get(port_uri)
+        adapter_uri = port_props['parent']
+        adapter_port = port_props['index']
+
+    adapter = cpc.adapters.find(**{'object-uri': adapter_uri})
+    nic_properties['adapter-id'] = adapter.get_property('adapter-id')
+    nic_properties['adapter-name'] = adapter.name
+    nic_properties['adapter-port'] = adapter_port
+
+
 def ensure_present(params, check_mode):
     """
     Ensure that the NIC exists and has the specified properties.
@@ -749,6 +795,7 @@ def ensure_present(params, check_mode):
 
         if nic:
             result = dict(nic.properties)
+            add_artificial_properties(result, nic)
 
         return changed, result
 
@@ -824,6 +871,7 @@ def facts(params, check_mode):
         nic.pull_full_properties()
 
         result = dict(nic.properties)
+        add_artificial_properties(result, nic)
         return changed, result
 
     finally:
