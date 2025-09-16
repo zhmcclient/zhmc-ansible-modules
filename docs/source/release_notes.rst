@@ -181,6 +181,18 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Test: Speed up end2end test function test_zhmc_partition_properties() by
   combining properties that are updated, to groups.
 
+* Added properties 'adapter-id', 'adapter-name' and 'adapter-port' to the
+  properties returned by the NIC in the zhmc_nic module.
+
+* Added properties 'adapter_id', 'adapter_name' and 'adapter_port' to the
+  properties returned for each NIC listed by the zhmc_nic_list module.
+  The inclusion of these properties is controlled with a new 'expand_names'
+  input parameter of that module.
+
+* Test: Added an initial set of end2end testcases for the zhmc_nic module.
+
+* Test: Added end2end testcases for the zhmc_nic_list module.
+
 **Cleanup:**
 
 * Removed the unnecessary .pylintrc file from the distribution archive of the

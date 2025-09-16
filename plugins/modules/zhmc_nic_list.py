@@ -116,8 +116,17 @@ options:
     description:
       - "If True, all properties of each NIC will be returned.
         Default: False."
-      - "Note: Setting this to True causes a loop of 'Get NIC Properties'
-        operations to be executed."
+      - "Note: A loop of 'Get NIC Properties' operations will be executed
+         regardless of the value of O(full_properties) because the NIC name
+         cannot be determined otherwise."
+    type: bool
+    required: false
+    default: false
+  expand_names:
+    description:
+      - "If True and O(full_properties) is set, additional artificial properties
+         will be returned for the names and other identification of the backing
+         adapter and port. Default: False."
     type: bool
     required: false
     default: false
@@ -180,12 +189,25 @@ nics:
       description: Additional properties requested via O(full_properties).
         The property names will have underscores instead of hyphens.
       type: raw
+    adapter_id:
+      description: "Only present if O(expand_names=true) and
+        O(full_properties=true): Adapter ID (PCHID) of the backing adapter of
+        the NIC."
+      type: str
+    adapter_name:
+      description: "Only present if O(expand_names=true) and
+        O(full_properties=true): Name of the backing adapter of the NIC."
+      type: str
+    adapter_port:
+      description: "Only present if O(expand_names=true) and
+        O(full_properties=true): Port index of the backing port of the NIC."
+      type: str
   sample:
     [
         {
+            "cpc_name": "CPC1",
             "name": "nic1",
-            "partition_name": "partition1",
-            "cpc_name": "CPC1"
+            "partition_name": "partition1"
         }
     ]
 """
@@ -197,7 +219,7 @@ from ansible.module_utils.basic import AnsibleModule, \
 
 from ..module_utils.common import log_init, open_session, close_session, \
     hmc_auth_parameter, Error, common_fail_on_import_errors, parse_hmc_host, \
-    blanked_params  # noqa: E402
+    blanked_params, ObjectsByUriCache  # noqa: E402
 
 try:
     import zhmcclient
@@ -211,6 +233,43 @@ LOGGER_NAME = 'zhmc_nic_list'
 LOGGER = logging.getLogger(LOGGER_NAME)
 
 
+def add_artificial_properties_expand(nic_properties, nic, adapters_cache):
+    """
+    Add artificial properties to the nic_properties dict. This function is
+    called only when full_properties and expand_names are specified.
+
+    Upon return, the nic_properties dict has been extended by these properties:
+
+    * 'adapter_id': Adapter ID (PCHID) of the backing adapter of the NIC.
+    * 'adapter_name': Name of the backing adapter of the NIC.
+    * 'adapter_port': Port index of the backing port of the NIC.
+    """
+
+    partition = nic.manager.parent
+    cpc = partition.manager.cpc
+    session = cpc.manager.client.session
+
+    # Add artificial properties for backing adapter:
+    vswitch_uri = nic.prop('virtual-switch-uri', None)
+    if vswitch_uri:
+        # vswitch-based NIC (OSA, HS up to z16)
+        vswitch = cpc.virtual_switches.find(**{'object-uri': vswitch_uri})
+        adapter_uri = vswitch.get_property('backing-adapter-uri')
+        adapter_port = vswitch.get_property('port')
+    else:
+        # adapter-based NIC (RoCE, CNA up to z16 or all adapter types
+        # since z17)
+        port_uri = nic.get_property('network-adapter-port-uri')
+        port_props = session.get(port_uri)
+        adapter_uri = port_props['parent']
+        adapter_port = port_props['index']
+
+    adapter = adapters_cache.resource_object(adapter_uri)
+    nic_properties['adapter_id'] = adapter.get_property('adapter-id')
+    nic_properties['adapter_name'] = adapter.name
+    nic_properties['adapter_port'] = adapter_port
+
+
 def perform_list(params):
     """
     List the NICs and return a subset of properties.
@@ -219,10 +278,10 @@ def perform_list(params):
       ParameterError: An issue with the module parameters.
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
-
     cpc_name = params.get('cpc_name')  # required
     partition_name = params.get('partition_name')  # required
     full_properties = params['full_properties']
+    expand_names = params['expand_names']
 
     session, logoff = open_session(params)
     try:
@@ -240,18 +299,27 @@ def perform_list(params):
         # We need to specify full_properties in order to get 'name'
         nics = partition.nics.list(full_properties=True)
 
+        # Get the data for the name expansions only once
+        if full_properties and expand_names:
+            adapters_cache = ObjectsByUriCache(cpc.adapters)
+
         nic_list = []
         for nic in nics:
 
             nic_properties = {
-                "partition_name": partition_name,
                 "cpc_name": cpc_name,
+                "partition_name": partition_name,
                 "name": nic.name,
             }
+
             if full_properties:
                 for pname_hmc, pvalue in nic.properties.items():
                     pname = pname_hmc.replace('-', '_')
                     nic_properties[pname] = pvalue
+
+            if full_properties and expand_names:
+                add_artificial_properties_expand(
+                    nic_properties, nic, adapters_cache)
 
             nic_list.append(nic_properties)
 
@@ -272,6 +340,7 @@ def main():
         cpc_name=dict(required=True, type='str'),
         partition_name=dict(required=True, type='str'),
         full_properties=dict(required=False, type='bool', default=False),
+        expand_names=dict(required=False, type='bool', default=False),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),
     )

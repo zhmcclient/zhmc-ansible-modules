@@ -263,4 +263,19 @@ nic
 
     | **type**: raw
 
+  adapter-id
+    Adapter ID (PCHID) of the backing adapter of the NIC.
+
+    | **type**: str
+
+  adapter-name
+    Name of the backing adapter of the NIC.
+
+    | **type**: str
+
+  adapter-port
+    Port index of the backing port of the NIC.
+
+    | **type**: int
+
 

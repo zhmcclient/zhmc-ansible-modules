@@ -102,7 +102,14 @@ partition_name
 full_properties
   If True, all properties of each NIC will be returned. Default: False.
 
-  Note: Setting this to True causes a loop of 'Get NIC Properties' operations to be executed.
+  Note: A loop of 'Get NIC Properties' operations will be executed regardless of the value of :literal:`full\_properties` because the NIC name cannot be determined otherwise.
+
+  | **required**: False
+  | **type**: bool
+
+
+expand_names
+  If True and :literal:`full\_properties` is set, additional artificial properties will be returned for the names and other identification of the backing adapter and port. Default: False.
 
   | **required**: False
   | **type**: bool
@@ -202,5 +209,20 @@ nics
     Additional properties requested via :literal:`full\_properties`. The property names will have underscores instead of hyphens.
 
     | **type**: raw
+
+  adapter_id
+    Only present if :literal:`expand\_names=true` and :literal:`full\_properties=true`\ : Adapter ID (PCHID) of the backing adapter of the NIC.
+
+    | **type**: str
+
+  adapter_name
+    Only present if :literal:`expand\_names=true` and :literal:`full\_properties=true`\ : Name of the backing adapter of the NIC.
+
+    | **type**: str
+
+  adapter_port
+    Only present if :literal:`expand\_names=true` and :literal:`full\_properties=true`\ : Port index of the backing port of the NIC.
+
+    | **type**: str
 
 
