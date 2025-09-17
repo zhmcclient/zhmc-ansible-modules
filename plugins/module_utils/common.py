@@ -1257,8 +1257,7 @@ def underscore_properties(prop_dict):
 
           Note that this includes the following types:
             * a plain dict
-            * an immutable_views.DictView object as returned by
-              zhmcclient.BaseResource.properties
+            * immutabledict, as returned by zhmcclient.BaseResource.properties
 
     Returns:
         dict: Converted property dict, recursively.

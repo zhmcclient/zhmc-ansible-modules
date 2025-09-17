@@ -25,7 +25,7 @@ from copy import deepcopy
 from collections.abc import Sequence, Mapping, Set
 from types import ModuleType
 import pytest
-from immutable_views import DictView
+from immutabledict import immutabledict
 
 from zhmcclient import BaseResource
 
@@ -180,8 +180,8 @@ COMMON_UNDER_PROPS_TESTCASES = [
         None,
     ),
     (
-        "Empty DictView",
-        DictView({}),
+        "Empty immutabledict",
+        immutabledict({}),
         {},
         None,
     ),
@@ -216,8 +216,8 @@ COMMON_UNDER_PROPS_TESTCASES = [
         None,
     ),
     (
-        "DictView",
-        DictView({
+        "immutabledict",
+        immutabledict({
             'prop-name-1': 'value-1',
             'prop_name_2': ['value-2a', 'value_2b'],
         }),
@@ -228,8 +228,8 @@ COMMON_UNDER_PROPS_TESTCASES = [
         None,
     ),
     (
-        "DictView, 1 level recursive",
-        DictView({
+        "immutabledict, 1 level recursive",
+        immutabledict({
             'prop-name-1': 'value1',
             'prop_name_2': {
                 'prop-name-3': 'value-3',
