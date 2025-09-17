@@ -256,6 +256,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
   of the collection package, because Ansible EE does not expect them to be in
   the install dependencies.
 
+* Test: In test_common.py, replaced use of the "immutable-views" package with
+  "immutabledict".
+
 **Known issues:**
 
 * See `list of open issues`_.

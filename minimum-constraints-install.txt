@@ -46,7 +46,7 @@ charset-normalizer==2.0.0
 decorator==4.0.11
 docopt==0.6.2
 idna==3.7
-immutable-views==0.6.0
+immutable-views==0.6.0  # to be replaced with immutabledict in a future zhmcclient version
 importlib-resources==5.0.0
 jsonschema==4.18.0
 jsonschema-specifications==2023.3.6
