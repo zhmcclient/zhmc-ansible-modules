@@ -147,6 +147,7 @@ nltk==3.9.1
 pathlib2==2.2.1
 ply==3.10
 py==1.11.0  # Still required by pytest 6.2.5
+pytokens==0.1.10
 requests-toolbelt==0.8.0
 roman-numerals-py==1.0.0; python_version >= '3.9'  # used by Sphinx>=8.2.0
 smmap==3.0.1
