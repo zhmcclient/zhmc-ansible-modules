@@ -151,6 +151,7 @@ pbr==2.0.0
 ply==3.10
 py==1.11.0  # Still required by pytest 6.2.5
 pydantic_core==2.20.0
+pytokens==0.1.10
 regex==2025.7.29
 requests-toolbelt==0.8.0
 roman-numerals-py==1.0.0
