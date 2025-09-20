@@ -421,6 +421,11 @@ local clone of the zhmc-ansible-modules Git repo.
 
 16. Verify the publishing
 
+    Wait for the "publish" workflow for the new release to have completed:
+    https://github.com/zhmcclient/zhmc-ansible-modules/actions/workflows/publish.yml
+
+    Then, perform the following verifications:
+
     * Verify that the new version is available on Ansible Galaxy at
       https://galaxy.ansible.com/ibm/ibm_zhmc/
 
