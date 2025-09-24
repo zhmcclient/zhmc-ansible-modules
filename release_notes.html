@@ -65,6 +65,7 @@
 <p class="caption" role="heading"><span class="caption-text">Appendices</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Releases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-9-6">Version 1.9.6</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-9-5">Version 1.9.5</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-9-4">Version 1.9.4</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-9-3">Version 1.9.3</a></li>
@@ -122,6 +123,29 @@
              
   <section id="releases">
 <span id="id1"></span><h1>Releases<a class="headerlink" href="#releases" title="Link to this heading"></a></h1>
+<section id="version-1-9-6">
+<h2>Version 1.9.6<a class="headerlink" href="#version-1-9-6" title="Link to this heading"></a></h2>
+<p>Released: 2025-09-24</p>
+<p>Availability: <a class="reference external" href="https://console.redhat.com/ansible/automation-hub/repo/published/ibm/ibm_zhmc">AutomationHub</a>, <a class="reference external" href="https://galaxy.ansible.com/ibm/ibm_zhmc">Galaxy</a>, <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/releases">GitHub</a></p>
+<p><strong>Bug fixes:</strong></p>
+<ul class="simple">
+<li><p>Docs: Fixed incorrect module name in examples for the ‘zhmc_nic’ module.
+(issue #1058)</p></li>
+<li><p>Fixed that resource objects for which the user has no access permission but
+that are referenced via URIs in other objects do not cause errors anymore.
+Such cases are now tolerated and the referenced objects are shown with their
+URI, with name “(unknown)” and with ‘None’ for their properties in any module
+results that show objects. (issue #1173)</p></li>
+<li><p>Docs: Fixed Ansible Galaxy badge on README page. (issue #1136)</p></li>
+<li><p>Dev: Removed the pinning of typer version to &lt;0.17.0 with the new release of safety 3.6.1 and
+also upgraded minimum version of safety to be 3.6.1 to fix the issue with typer&gt;=0.17.0,
+see  <a class="reference external" href="https://github.com/pyupio/safety/issues/778">https://github.com/pyupio/safety/issues/778</a></p></li>
+<li><p>Fixed that for z17 CPCs, NICs backed by OSA or HiperSocket adapters could not
+be created or updated to change their backing adapter. (issue #1178)</p></li>
+<li><p>zhmc_cpc_capacity - Fixed a bug where decreasing the capacity resulted in
+TypeError. (issue 1225)</p></li>
+</ul>
+</section>
 <section id="version-1-9-5">
 <h2>Version 1.9.5<a class="headerlink" href="#version-1-9-5" title="Link to this heading"></a></h2>
 <p>Released: 2025-07-29</p>
@@ -132,6 +156,7 @@
 <li><p>Dev: The test workflow now tolerates linkcheck errors. It now succeeds if there
 are linkcheck errors, but they are still displayed in the Actions summary.</p></li>
 <li><p>Dev: Made order of names in AUTHORS.md reliable. (issue #1141)</p></li>
+<li><p>Dev: Upgrade nltk to 3.9.1 to fix the wordnet error, see <a class="reference external" href="https://github.com/nltk/nltk/issues/3416">https://github.com/nltk/nltk/issues/3416</a></p></li>
 </ul>
 <p><strong>Enhancements:</strong></p>
 <ul class="simple">
@@ -216,6 +241,8 @@ modules of this collection run only on the controller node, so the additional
 Python versions for the target node are no longer used for these sanity tests.</p>
 </li>
 <li><p>Dev: Fixed new issue ‘too-many-positional-arguments’ reported by Pylint 3.3.0.</p></li>
+<li><p>Test: Speed up end2end test function test_zhmc_partition_properties() by
+combining properties that are updated, to groups.</p></li>
 </ul>
 <p><strong>Cleanup:</strong></p>
 <ul class="simple">
@@ -1234,7 +1261,7 @@ property update.</p></li>
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.9.5
+        v: 1.9.6
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -1249,7 +1276,7 @@ property update.</p></li>
             <dd><a href="1.6.1/release_notes.html">1.6.1</a></dd>
             <dd><a href="1.7.4/release_notes.html">1.7.4</a></dd>
             <dd><a href="1.8.3/release_notes.html">1.8.3</a></dd>
-            <dd><a href="1.9.5/release_notes.html">1.9.5</a></dd>
+            <dd><a href="1.9.6/release_notes.html">1.9.6</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

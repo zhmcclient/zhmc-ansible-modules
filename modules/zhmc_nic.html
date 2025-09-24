@@ -269,7 +269,7 @@
 <span class="c1"># Note: The following examples assume that some variables named &#39;my_*&#39; are set.</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ensure NIC exists in the partition</span>
-<span class="w">  </span><span class="nt">zhmc_partition</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">zhmc_nic</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
 <span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
 <span class="w">    </span><span class="nt">cpc_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
@@ -284,7 +284,7 @@
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nic1</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ensure NIC does not exist in the partition</span>
-<span class="w">  </span><span class="nt">zhmc_partition</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">zhmc_nic</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
 <span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
 <span class="w">    </span><span class="nt">cpc_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
@@ -293,7 +293,7 @@
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Gather facts about a NIC</span>
-<span class="w">  </span><span class="nt">zhmc_partition</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">zhmc_nic</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
 <span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
 <span class="w">    </span><span class="nt">cpc_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
@@ -396,7 +396,7 @@
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.9.5
+        v: 1.9.6
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -411,7 +411,7 @@
             <dd><a href="../1.6.1/modules/zhmc_nic.html">1.6.1</a></dd>
             <dd><a href="../1.7.4/modules/zhmc_nic.html">1.7.4</a></dd>
             <dd><a href="../1.8.3/modules/zhmc_nic.html">1.8.3</a></dd>
-            <dd><a href="../1.9.5/modules/zhmc_nic.html">1.9.5</a></dd>
+            <dd><a href="../1.9.6/modules/zhmc_nic.html">1.9.6</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

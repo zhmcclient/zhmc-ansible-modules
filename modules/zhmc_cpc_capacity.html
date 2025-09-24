@@ -264,13 +264,13 @@
 <div class="line"><strong>type</strong>: dict</div>
 </div>
 </dd>
-<dt>test_activation</dt><dd><p>Indicates that test resources instead of real resources from the capacity record should be activated. Test resources are automatically deactivated after 24h. This is mainly used for Capacity Backup Upgrade (CBU) test activations. For details, see the <a class="reference internal" href="../bibliography.html#cod-users-guide"><span class="std std-ref">Capacity on Demand User’s Guide</span></a>.</p>
+<dt>test_activation</dt><dd><p>Indicates that for an increase of capacity, test resources instead of real resources from the capacity record should be activated. This parameter has no meaning if the capacity is decreased. Test resources are automatically deactivated after 24h. This is mainly used for Capacity Backup Upgrade (CBU) test activations. For details, see the <a class="reference internal" href="../bibliography.html#cod-users-guide"><span class="std std-ref">Capacity on Demand User’s Guide</span></a>.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: bool</div>
 </div>
 </dd>
-<dt>force</dt><dd><p>Indicates that an increase of capacity should be performed even if the necessary processors are not currently installed in the CPC.</p>
+<dt>force</dt><dd><p>Indicates that an increase of capacity should be performed even if the necessary processors are not currently installed in the CPC. This parameter has no meaning if the capacity is decreased.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: bool</div>
@@ -545,7 +545,7 @@
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.9.5
+        v: 1.9.6
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -560,7 +560,7 @@
             <dd><a href="../1.6.1/index.html">1.6.1</a></dd>
             <dd><a href="../1.7.4/index.html">1.7.4</a></dd>
             <dd><a href="../1.8.3/index.html">1.8.3</a></dd>
-            <dd><a href="../1.9.5/modules/zhmc_cpc_capacity.html">1.9.5</a></dd>
+            <dd><a href="../1.9.6/modules/zhmc_cpc_capacity.html">1.9.6</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

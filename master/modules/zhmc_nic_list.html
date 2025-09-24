@@ -108,7 +108,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Appendices</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes.html">Releases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes.html">ibm.ibm_zhmc Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../versioning.html">Versioning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../bibliography.html">Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../troubleshooting.html">Troubleshooting</a></li>
@@ -226,7 +226,13 @@
 </div>
 </dd>
 <dt>full_properties</dt><dd><p>If True, all properties of each NIC will be returned. Default: False.</p>
-<p>Note: Setting this to True causes a loop of ‘Get NIC Properties’ operations to be executed.</p>
+<p>Note: A loop of ‘Get NIC Properties’ operations will be executed regardless of the value of <code class="docutils literal notranslate"><span class="pre">full_properties</span></code> because the NIC name cannot be determined otherwise.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: bool</div>
+</div>
+</dd>
+<dt>expand_names</dt><dd><p>If True and <code class="docutils literal notranslate"><span class="pre">full_properties</span></code> is set, additional artificial properties will be returned for the names and other identification of the backing adapter and port. Default: False.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: bool</div>
@@ -318,6 +324,21 @@
 <div class="line"><strong>type</strong>: raw</div>
 </div>
 </dd>
+<dt>adapter_id</dt><dd><p>Only present if <code class="docutils literal notranslate"><span class="pre">expand_names=true</span></code> and <code class="docutils literal notranslate"><span class="pre">full_properties=true</span></code>: Adapter ID (PCHID) of the backing adapter of the NIC.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>adapter_name</dt><dd><p>Only present if <code class="docutils literal notranslate"><span class="pre">expand_names=true</span></code> and <code class="docutils literal notranslate"><span class="pre">full_properties=true</span></code>: Name of the backing adapter of the NIC.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>adapter_port</dt><dd><p>Only present if <code class="docutils literal notranslate"><span class="pre">expand_names=true</span></code> and <code class="docutils literal notranslate"><span class="pre">full_properties=true</span></code>: Port index of the backing port of the NIC.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -367,7 +388,7 @@
             <dd><a href="../../1.6.1/modules/zhmc_nic_list.html">1.6.1</a></dd>
             <dd><a href="../../1.7.4/modules/zhmc_nic_list.html">1.7.4</a></dd>
             <dd><a href="../../1.8.3/modules/zhmc_nic_list.html">1.8.3</a></dd>
-            <dd><a href="../../1.9.5/modules/zhmc_nic_list.html">1.9.5</a></dd>
+            <dd><a href="../../1.9.6/modules/zhmc_nic_list.html">1.9.6</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
