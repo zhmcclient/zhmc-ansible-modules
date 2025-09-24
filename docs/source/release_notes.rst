@@ -20,16 +20,12 @@ Releases
 ========
 
 
-Version 1.9.6-dev1
-------------------
+Version 1.9.6
+-------------
 
-Released: not yet
+Released: 2025-09-24
 
 Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
-
-**Incompatible changes:**
-
-**Deprecations:**
 
 **Bug fixes:**
 
@@ -53,16 +49,6 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 
 * zhmc_cpc_capacity - Fixed a bug where decreasing the capacity resulted in
   TypeError. (issue 1225)
-
-**Enhancements:**
-
-**Cleanup:**
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 
 
 Version 1.9.5
