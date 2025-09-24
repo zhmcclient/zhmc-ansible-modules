@@ -180,18 +180,20 @@ options:
     default: null
   test_activation:
     description:
-      - "Indicates that test resources instead of real resources from the
-         capacity record should be activated. Test resources are automatically
-         deactivated after 24h. This is mainly used for Capacity Backup Upgrade
-         (CBU) test activations. For details, see the
-         R(Capacity on Demand User's Guide,CoD Users Guide)."
+      - "Indicates that for an increase of capacity, test resources instead of
+         real resources from the capacity record should be activated.
+         This parameter has no meaning if the capacity is decreased.
+         Test resources are automatically deactivated after 24h. This is mainly
+         used for Capacity Backup Upgrade (CBU) test activations. For details,
+         see the R(Capacity on Demand User's Guide,CoD Users Guide)."
     type: bool
     required: false
     default: false
   force:
     description:
       - "Indicates that an increase of capacity should be performed even if the
-         necessary processors are not currently installed in the CPC."
+         necessary processors are not currently installed in the CPC.
+         This parameter has no meaning if the capacity is decreased."
     type: bool
     required: false
     default: false
@@ -702,7 +704,7 @@ def ensure_set(module):
 
         if add_processors or add_software_model:
             LOGGER.debug(
-                "Adding temporary capacity to cpc %r: software_model=%r, "
+                "Adding temporary capacity to CPC %r: software_model=%r, "
                 "processors=%r",
                 cpc_name, add_software_model, add_processors)
             if not module.check_mode:
@@ -720,15 +722,13 @@ def ensure_set(module):
 
         if remove_processors or remove_software_model:
             LOGGER.debug(
-                "Removing temporary capacity to cpc %r: software_model=%r, "
+                "Removing temporary capacity from CPC %r: software_model=%r, "
                 "processor_info=%r",
                 cpc_name, remove_software_model, remove_processors)
             if not module.check_mode:
                 cpc.remove_temporary_capacity(
                     record_id, software_model=remove_software_model,
-                    processor_info=remove_processors,
-                    test=test_activation,
-                    force=force)
+                    processor_info=remove_processors)
                 need_pull = True
             else:
                 remove_temporary_capacity_check_mode(

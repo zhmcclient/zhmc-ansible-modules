@@ -19,6 +19,7 @@ End2end tests for zhmc_cpc_capacity module.
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
+import re
 import random
 import pytest
 import mock
@@ -38,6 +39,20 @@ urllib3.disable_warnings()
 LOGGING = False
 
 LOG_FILE = 'zhmc_cpc_capacity.log' if LOGGING else None
+
+
+def calc_sw_model(sw_model, delta):
+    """
+    Calculate the string for a new software model, based on the specified
+    software model and a numeric delta.
+
+    The software model string (3 chars) is interpreted as a hex number and the
+    delta is added.
+    """
+    sw_model_number = int(sw_model, 16)
+    sw_model_number += delta
+    sw_model_str = format(sw_model_number, "X")
+    return sw_model_str
 
 
 def get_module_output(mod_obj):
@@ -172,3 +187,100 @@ def test_zhmc_cpc_capacity_facts(
             "Incorrect value for property {p!r} in module result for " \
             "CPC {c!r}: Got {v!r}, expected {ev!r}". \
             format(p=name, c=cpc.name, v=value, ev=exp_value)
+
+
+@pytest.mark.parametrize(
+    "check_mode", [
+        pytest.param(False, id="check_mode=False"),
+        # pytest.param(True, id="check_mode=True"),
+    ]
+)
+@mock.patch("plugins.modules.zhmc_cpc_capacity.AnsibleModule", autospec=True)
+def test_zhmc_cpc_capacity_set(
+        ansible_mod_cls, check_mode, all_cpcs):  # noqa: F811, E501
+    # pylint: disable=redefined-outer-name
+    """
+    Test the zhmc_cpc_capacity module with state=set.
+    """
+    if not all_cpcs:
+        pytest.skip("HMC definition does not include any CPCs")
+
+    setup_logging(LOGGING, 'test_zhmc_cpc_capacity', LOG_FILE)
+
+    cpc = random.choice(all_cpcs)
+
+    session = cpc.manager.session
+    hd = session.hmc_definition
+    hmc_host = hd.host
+    hmc_auth = dict(userid=hd.userid, password=hd.password,
+                    ca_certs=hd.ca_certs, verify=hd.verify)
+
+    faked_session = session if hd.mock_file else None
+
+    temp_sw_model = cpc.get_property('software-model-permanent-plus-temporary')
+
+    # Increase temporary capacity (with incorrect record ID)
+
+    new_sw_model = calc_sw_model(temp_sw_model, 1)
+
+    # Prepare module input parameters (must be all required + optional)
+    params = {
+        'hmc_host': hmc_host,
+        'hmc_auth': hmc_auth,
+        'name': cpc.name,
+        'state': 'set',
+        'record_id': 'foo',  # invalid
+        'software_model': new_sw_model,
+        'software_model_direction': 'increase',
+        'specialty_processors': None,
+        'test_activation': True,
+        'force': False,
+        'log_file': LOG_FILE,
+        '_faked_session': faked_session,
+    }
+
+    # Prepare mocks for AnsibleModule object
+    mod_obj = mock_ansible_module(ansible_mod_cls, params, check_mode)
+
+    # Exercise the code to be tested
+    with pytest.raises(SystemExit) as exc_info:
+        zhmc_cpc_capacity.main()
+    exit_code = exc_info.value.args[0]
+
+    # Assert module exit code
+    assert exit_code == 1
+    msg = get_failure_msg(mod_obj)
+    assert re.match(r"HTTPError: 400,274: record-id .* was not found", msg)
+
+    # Decrease temporary capacity (with incorrect record ID)
+
+    new_sw_model = calc_sw_model(temp_sw_model, -1)
+
+    # Prepare module input parameters (must be all required + optional)
+    params = {
+        'hmc_host': hmc_host,
+        'hmc_auth': hmc_auth,
+        'name': cpc.name,
+        'state': 'set',
+        'record_id': 'foo',  # invalid
+        'software_model': new_sw_model,
+        'software_model_direction': 'decrease',
+        'specialty_processors': None,
+        'test_activation': None,
+        'force': None,
+        'log_file': LOG_FILE,
+        '_faked_session': faked_session,
+    }
+
+    # Prepare mocks for AnsibleModule object
+    mod_obj = mock_ansible_module(ansible_mod_cls, params, check_mode)
+
+    # Exercise the code to be tested
+    with pytest.raises(SystemExit) as exc_info:
+        zhmc_cpc_capacity.main()
+    exit_code = exc_info.value.args[0]
+
+    # Assert module exit code
+    assert exit_code == 1
+    msg = get_failure_msg(mod_obj)
+    assert re.match(r"HTTPError: 400,274: record-id .* was not found", msg)

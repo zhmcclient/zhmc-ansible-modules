@@ -51,6 +51,9 @@ Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
 * Fixed that for z17 CPCs, NICs backed by OSA or HiperSocket adapters could not
   be created or updated to change their backing adapter. (issue #1178)
 
+* zhmc_cpc_capacity - Fixed a bug where decreasing the capacity resulted in
+  TypeError. (issue 1225)
+
 **Enhancements:**
 
 **Cleanup:**
