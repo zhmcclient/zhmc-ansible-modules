@@ -1,3 +1,0 @@
-bugfixes:
-  - zhmc_cpc_capacity - Fixed a bug where decreasing the capacity resulted in
-    TypeError (issue 1225).
