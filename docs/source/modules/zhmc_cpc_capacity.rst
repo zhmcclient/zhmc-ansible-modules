@@ -156,14 +156,14 @@ specialty_processors
 
 
 test_activation
-  Indicates that test resources instead of real resources from the capacity record should be activated. Test resources are automatically deactivated after 24h. This is mainly used for Capacity Backup Upgrade (CBU) test activations. For details, see the :ref:`Capacity on Demand User's Guide <CoD Users Guide>`.
+  Indicates that for an increase of capacity, test resources instead of real resources from the capacity record should be activated. This parameter has no meaning if the capacity is decreased. Test resources are automatically deactivated after 24h. This is mainly used for Capacity Backup Upgrade (CBU) test activations. For details, see the :ref:`Capacity on Demand User's Guide <CoD Users Guide>`.
 
   | **required**: False
   | **type**: bool
 
 
 force
-  Indicates that an increase of capacity should be performed even if the necessary processors are not currently installed in the CPC.
+  Indicates that an increase of capacity should be performed even if the necessary processors are not currently installed in the CPC. This parameter has no meaning if the capacity is decreased.
 
   | **required**: False
   | **type**: bool
