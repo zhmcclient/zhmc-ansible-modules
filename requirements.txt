@@ -11,7 +11,7 @@
 # requirements file requirements-ansible.txt that is not part of the Ansible collection package.
 
 # zhmcclient @ git+https://github.com/zhmcclient/python-zhmcclient.git@master
-zhmcclient>=1.23.1
+zhmcclient>=1.24.0
 
 
 # Indirect dependencies for install that are needed for some reason (must be consistent with minimum-constraints-install.txt)
