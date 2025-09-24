@@ -281,7 +281,15 @@ local clone of the zhmc-ansible-modules Git repo.
         MN=0.8
         BRANCH=stable_${MN}
 
-3.  Run the Safety tool:
+3.  Create a topic branch for the version that is being released:
+
+    .. code-block:: sh
+
+        git checkout ${BRANCH}
+        git pull
+        git checkout -b release_${MNU}
+
+4.  Run the Safety tool:
 
     .. code-block:: sh
 
@@ -292,27 +300,19 @@ local clone of the zhmc-ansible-modules Git repo.
 
     Roll back the PR into any maintained stable branches.
 
-4.  Check for any
+5.  Check for any
     `dependabot alerts <https://github.com/zhmcclient/zhmc-ansible-modules/security/dependabot>`_.
 
     If there are any dependabot alerts, fix them in a separate branch/PR.
 
     Roll back the PR into any maintained stable branches.
 
-5.  Review the result of the latest Mend scan in
+6.  Review the result of the latest Mend scan in
     `this Box folder <https://ibm.ent.box.com/folder/190964336381?s=070khx70ijj3ime3k4yfx7r7cjb2xx0k>`_.
 
     If the Mend scan shows any issues, fix them in a separate branch/PR.
 
     Roll back the PR into any maintained stable branches.
-
-6.  Create a topic branch for the version that is being released:
-
-    .. code-block:: sh
-
-        git checkout ${BRANCH}
-        git pull
-        git checkout -b release_${MNU}
 
 7.  Edit the Galaxy metadata file:
 
