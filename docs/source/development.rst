@@ -575,43 +575,7 @@ local clone of the zhmc-ansible-modules Git repo.
         git pull
         git checkout -b start_${MNU}
 
-3.  Edit the change log:
-
-    .. code-block:: sh
-
-        vi docs/source/release_notes.rst
-
-    and insert the following section before the top-most section, and update
-    the version to a draft version of the version that is being started:
-
-    .. code-block:: text
-
-        Version M.N.U-dev1
-        ------------------
-
-        This version contains all fixes up to version M.N-1.x.
-
-        Released: not yet
-
-        Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
-
-        **Incompatible changes:**
-
-        **Deprecations:**
-
-        **Bug fixes:**
-
-        **Enhancements:**
-
-        **Cleanup:**
-
-        **Known issues:**
-
-        * See `list of open issues`_.
-
-        .. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
-
-4.  Edit the Galaxy metadata file:
+3.  Edit the Galaxy metadata file:
 
     .. code-block:: sh
 
@@ -628,33 +592,33 @@ local clone of the zhmc-ansible-modules Git repo.
     including the description of development/alpha/etc suffixes, as described
     in https://semver.org/
 
-5.  Commit your changes and push them to the remote repo:
+4.  Commit your changes and push them to the remote repo:
 
     .. code-block:: sh
 
         git commit -asm "Start ${MNU}"
         git push --set-upstream origin start_${MNU}
 
-6.  On GitHub, create a Pull Request for branch ``start_M.N.U``.
+5.  On GitHub, create a Pull Request for branch ``start_M.N.U``.
 
     Important: When creating Pull Requests, GitHub by default targets the
     ``master`` branch. When starting a version based on a stable branch, you
     need to change the target branch of the Pull Request to ``stable_M.N``.
 
-7.  On GitHub, create a milestone for the new version ``M.N.U``.
+6.  On GitHub, create a milestone for the new version ``M.N.U``.
 
     You can create a milestone in GitHub via Issues -> Milestones -> New
     Milestone.
 
-8.  On GitHub, go through all open issues and pull requests that still have
+7.  On GitHub, go through all open issues and pull requests that still have
     milestones for previous releases set, and either set them to the new
     milestone, or to have no milestone.
 
-9.  On GitHub, once the checks for the Pull Request for branch ``start_M.N.U``
+8.  On GitHub, once the checks for the Pull Request for branch ``start_M.N.U``
     have succeeded, merge the Pull Request (no review is needed). This
     automatically deletes the branch on GitHub.
 
-10. Update and clean up the local repo:
+9.  Update and clean up the local repo:
 
     .. code-block:: sh
 
