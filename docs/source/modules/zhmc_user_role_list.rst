@@ -23,7 +23,7 @@ Synopsis
 Requirements
 ------------
 
-- The HMC userid must have object-access permission to the target user roles, or task permission to the 'Manage User Roles' task.
+- The HMC userid must have object\-access permission to the target user roles, or task permission to the 'Manage User Roles' task.
 
 
 
@@ -170,7 +170,7 @@ user_roles
     | **type**: str
 
   type
-    Type of the user role (\ :literal:`system-defined`\ , :literal:`user-defined`\ )
+    Type of the user role (\ :literal:`system\-defined`\ , :literal:`user\-defined`\ )
 
     | **type**: str
 

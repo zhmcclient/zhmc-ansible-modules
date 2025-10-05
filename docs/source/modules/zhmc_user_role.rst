@@ -116,7 +116,7 @@ properties
 
   \* :literal:`associated\_system\_defined\_user\_role\_uri`\ : Cannot be specified because this information is specified using the artificial property :literal:`associated\_system\_defined\_user\_role\_name`.
 
-  \* :literal:`associated\_system\_defined\_user\_role\_name`\ : The name of the associated system-defined user role.
+  \* :literal:`associated\_system\_defined\_user\_role\_name`\ : The name of the associated system\-defined user role.
 
   \* :literal:`permissions`\ : Can be specified as if it were writeable.
 
@@ -134,9 +134,9 @@ properties
 
 
   associated_system_defined_user_role_name
-    The name of the associated system-defined user role. Specifying it requires that the referenced user role exists.
+    The name of the associated system\-defined user role. Specifying it requires that the referenced user role exists.
 
-    Optional, default: :literal:`hmc-operator-tasks`.
+    Optional, default: :literal:`hmc\-operator\-tasks`.
 
     | **required**: False
     | **type**: str
@@ -160,7 +160,7 @@ properties
 
 
     view_only
-      Option item only for :literal:`task`\ : Indicates whether the task's view-only version is subject of the permission. Only certain tasks have a view-only version. Default: true.
+      Option item only for :literal:`task`\ : Indicates whether the task's view\-only version is subject of the permission. Only certain tasks have a view\-only version. Default: true.
 
       | **required**: False
       | **type**: bool
@@ -381,7 +381,7 @@ user_role
     | **type**: str
 
   associated-system-defined-user-role-name
-    The name of the associated system-defined user role
+    The name of the associated system\-defined user role
 
     | **type**: str
 
@@ -399,7 +399,7 @@ user_role
       | **type**: str
 
     view_only
-      Option item present for :literal:`task`\ : Indicates whether the task's view-only version is subject of the permission. Only certain tasks have a view-only version, but the option item will be present for all tasks.
+      Option item present for :literal:`task`\ : Indicates whether the task's view\-only version is subject of the permission. Only certain tasks have a view\-only version, but the option item will be present for all tasks.
 
       | **type**: bool
 
@@ -462,7 +462,7 @@ user_role
 
 
   {property}
-    Additional properties of the user role, as described in the data model of the 'User Role' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
+    Additional properties of the user role, as described in the data model of the 'User Role' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
 
     | **type**: raw
 

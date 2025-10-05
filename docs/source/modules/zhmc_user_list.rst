@@ -23,7 +23,7 @@ Synopsis
 Requirements
 ------------
 
-- The HMC userid must have object-access permission to the target users, or task permission to the 'Manage Users' task.
+- The HMC userid must have object\-access permission to the target users, or task permission to the 'Manage Users' task.
 
 
 
@@ -177,7 +177,7 @@ users
     | **type**: str
 
   type
-    Type of the user (\ :literal:`standard`\ , :literal:`template`\ , :literal:`pattern-based`\ , :literal:`system-defined`\ )
+    Type of the user (\ :literal:`standard`\ , :literal:`template`\ , :literal:`pattern\-based`\ , :literal:`system\-defined`\ )
 
     | **type**: str
 

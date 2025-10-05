@@ -23,7 +23,7 @@ Synopsis
 Requirements
 ------------
 
-- No specific task or object-access permissions are required.
+- No specific task or object\-access permissions are required.
 
 
 
@@ -247,7 +247,7 @@ versions
       | **type**: str
 
     has_unacceptable_status
-      Indicates whether the current status of the CPC is unacceptable, based on its 'acceptable-status' property.
+      Indicates whether the current status of the CPC is unacceptable, based on its 'acceptable\-status' property.
 
       | **type**: bool
 

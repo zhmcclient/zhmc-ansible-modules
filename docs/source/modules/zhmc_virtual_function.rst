@@ -26,7 +26,7 @@ Requirements
 
 - The targeted Z system must be in the Dynamic Partition Manager (DPM) operational mode.
 - The HMC userid must have these task permissions: 'Partition Details'.
-- The HMC userid must have object-access permissions to these objects: Backing accelerator adapters of the target virtual functions, partitions of the target virtual functions, CPCs of these partitions.
+- The HMC userid must have object\-access permissions to these objects: Backing accelerator adapters of the target virtual functions, partitions of the target virtual functions, CPCs of these partitions.
 
 
 
@@ -218,7 +218,7 @@ virtual_function
     | **type**: str
 
   {property}
-    Additional properties of the virtual function, as described in the data model of the 'Virtual Function' element object of the 'Partition' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
+    Additional properties of the virtual function, as described in the data model of the 'Virtual Function' element object of the 'Partition' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
 
     | **type**: raw
 

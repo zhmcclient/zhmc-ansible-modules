@@ -26,7 +26,7 @@ Synopsis
 Requirements
 ------------
 
-- The HMC userid must have object-access permissions to these objects: Target partitions, CPCs of target partitions (only for z13 and older).
+- The HMC userid must have object\-access permissions to these objects: Target partitions, CPCs of target partitions (only for z13 and older).
 
 
 
@@ -225,7 +225,7 @@ partitions
     | **type**: str
 
   has_unacceptable_status
-    Indicates whether the current status of the partition is unacceptable, based on its 'acceptable-status' property.
+    Indicates whether the current status of the partition is unacceptable, based on its 'acceptable\-status' property.
 
     | **type**: bool
 

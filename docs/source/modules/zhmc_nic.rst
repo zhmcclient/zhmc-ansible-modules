@@ -27,7 +27,7 @@ Requirements
 
 - The targeted Z system must be in the Dynamic Partition Manager (DPM) operational mode.
 - The HMC userid must have these task permissions: 'Partition Details'.
-- The HMC userid must have object-access permissions to these objects: Partitions of the target NICs, CPCs of these partitions, network adapters backing the target NICs.
+- The HMC userid must have object\-access permissions to these objects: Partitions of the target NICs, CPCs of these partitions, network adapters backing the target NICs.
 
 
 
@@ -259,7 +259,7 @@ nic
     | **type**: str
 
   {property}
-    Additional properties of the NIC, as described in the data model of the 'NIC' element object of the 'Partition' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
+    Additional properties of the NIC, as described in the data model of the 'NIC' element object of the 'Partition' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
 
     | **type**: raw
 

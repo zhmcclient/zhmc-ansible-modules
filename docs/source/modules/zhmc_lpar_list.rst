@@ -26,7 +26,7 @@ Synopsis
 Requirements
 ------------
 
-- The HMC userid must have object-access permissions to these objects: Target LPArs, CPCs of target LPARs (only for z13 and older).
+- The HMC userid must have object\-access permissions to these objects: Target LPArs, CPCs of target LPARs (only for z13 and older).
 
 
 
@@ -104,7 +104,7 @@ additional_properties
 
   The property names are specified with underscores instead of hyphens.
 
-  On HMCs with an API version below 4.10 (= HMC version 2.16.0 plus some post-GA updates), all properties of each LPAR will be returned if this parameter is specified, but you should not rely on that.
+  On HMCs with an API version below 4.10 (= HMC version 2.16.0 plus some post\-GA updates), all properties of each LPAR will be returned if this parameter is specified, but you should not rely on that.
 
   | **required**: False
   | **type**: list
@@ -220,12 +220,12 @@ lpars
     | **type**: str
 
   has_unacceptable_status
-    Indicates whether the current status of the LPAR is unacceptable, based on its 'acceptable-status' property.
+    Indicates whether the current status of the LPAR is unacceptable, based on its 'acceptable\-status' property.
 
     | **type**: bool
 
   activation_mode
-    The activation mode of the LPAR. For details, see the description of the 'activation-mode' property in the data model of the 'Logical Partition' resource (see :ref:`HMC API <HMC API>`\ ).
+    The activation mode of the LPAR. For details, see the description of the 'activation\-mode' property in the data model of the 'Logical Partition' resource (see :ref:`HMC API <HMC API>`\ ).
 
     | **type**: str
 
