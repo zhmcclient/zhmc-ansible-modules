@@ -24,7 +24,7 @@ Synopsis
 Requirements
 ------------
 
-- For :literal:`state=facts`\ , no specific task or object-access permissions are required.
+- For :literal:`state=facts`\ , no specific task or object\-access permissions are required.
 - For :literal:`state=upgrade`\ , task permission to the 'Single Step Console Internal Code' task is required.
 
 
@@ -223,7 +223,7 @@ hmc
     | **type**: str
 
   {property}
-    Additional properties of the Console object representing the targeted HMC, as described in the data model of the 'Console' object in the :ref:`HMC API <HMC API>` book. Note that the set of properties has been extended over the past HMC versions, so you will get less properties on older HMC versions. The property names have hyphens (-) as described in that book.
+    Additional properties of the Console object representing the targeted HMC, as described in the data model of the 'Console' object in the :ref:`HMC API <HMC API>` book. Note that the set of properties has been extended over the past HMC versions, so you will get less properties on older HMC versions. The property names have hyphens (\-) as described in that book.
 
     | **type**: raw
 
@@ -233,7 +233,7 @@ hmc
     | **type**: dict
 
     {property}
-      The properties returned from the 'Query API Version' operation, as described in the :ref:`HMC API <HMC API>` book. Note that the set of properties has been extended over the past HMC versions, so you will get less properties on older HMC versions. The property names have hyphens (-) as described in that book.
+      The properties returned from the 'Query API Version' operation, as described in the :ref:`HMC API <HMC API>` book. Note that the set of properties has been extended over the past HMC versions, so you will get less properties on older HMC versions. The property names have hyphens (\-) as described in that book.
 
       | **type**: raw
 

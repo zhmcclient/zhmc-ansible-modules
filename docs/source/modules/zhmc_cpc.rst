@@ -28,7 +28,7 @@ Requirements
 ------------
 
 - The HMC userid must have these task permissions: 'CPC Details'. For CPCs in DMP mode: 'Start', 'Stop'. For CPCs in classic mode: 'Activate', 'Deactivate'.
-- The HMC userid must have object-access permissions to these objects: Target CPCs. For CPCs in DMP mode: Adapters, partitions, storage groups of target CPCs. For CPCs in classic mode: LPARs, activation profiles of target CPCs.
+- The HMC userid must have object\-access permissions to these objects: Target CPCs. For CPCs in DMP mode: Adapters, partitions, storage groups of target CPCs. For CPCs in classic mode: LPARs, activation profiles of target CPCs.
 
 
 
@@ -136,7 +136,7 @@ select_properties
 activation_profile_name
   The name of the reset activation profile to be used when activating the CPC in the classic operational mode, for :literal:`state=active`. This parameter is ignored when the CPC is in classic mode and was already active, and when the CPC is in DPM mode.
 
-  Default: The reset activation profile specified in the 'next-activation-profile-name' property of the CPC.
+  Default: The reset activation profile specified in the 'next\-activation\-profile\-name' property of the CPC.
 
   This parameter is not allowed for the other :literal:`state` values.
 
@@ -340,7 +340,7 @@ cpc
     | **type**: str
 
   {property}
-    Additional properties of the CPC, as described in the data model of the 'CPC' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
+    Additional properties of the CPC, as described in the data model of the 'CPC' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
 
     | **type**: raw
 

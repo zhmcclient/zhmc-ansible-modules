@@ -27,7 +27,7 @@ Requirements
 
 - The targeted Z system must be in the Dynamic Partition Manager (DPM) operational mode.
 - The HMC userid must have these task permissions: 'Partition Details'.
-- The HMC userid must have object-access permissions to these objects: Target partitions, target crypto adapters, CPC with target partitions and adapters.
+- The HMC userid must have object\-access permissions to these objects: Target partitions, target crypto adapters, CPC with target partitions and adapters.
 
 
 
@@ -118,7 +118,7 @@ state
 
 
 adapter_count
-  Only for :literal:`state=attached`\ : The number of crypto adapters the partition needs to have attached. The special value -1 means all adapters of the desired crypto type in the CPC. The :literal:`adapter\_names` and :literal:`adapter\_count` parameters are mutually exclusive and one of them must be specified.
+  Only for :literal:`state=attached`\ : The number of crypto adapters the partition needs to have attached. The special value \-1 means all adapters of the desired crypto type in the CPC. The :literal:`adapter\_names` and :literal:`adapter\_count` parameters are mutually exclusive and one of them must be specified.
 
   | **required**: False
   | **type**: int
@@ -142,7 +142,7 @@ adapter_names
 
 
 domain_range
-  Only for :literal:`state=attached`\ : The domain range the partition needs to have attached, as a tuple of integers (min, max) that specify the inclusive range of domain index numbers. Other domains attached to the partition remain unchanged. The special value -1 for the max item means the maximum supported domain index number.
+  Only for :literal:`state=attached`\ : The domain range the partition needs to have attached, as a tuple of integers (min, max) that specify the inclusive range of domain index numbers. Other domains attached to the partition remain unchanged. The special value \-1 for the max item means the maximum supported domain index number.
 
   | **required**: False
   | **type**: list
@@ -343,7 +343,7 @@ crypto_configuration
           | **type**: str
 
         {property}
-          Additional properties of the adapter, as described in the data model of the 'Adapter' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
+          Additional properties of the adapter, as described in the data model of the 'Adapter' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
 
           | **type**: raw
 

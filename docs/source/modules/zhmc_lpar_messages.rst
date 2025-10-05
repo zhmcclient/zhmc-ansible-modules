@@ -25,8 +25,8 @@ Requirements
 
 - The targeted CPC must be in the classic operational mode.
 - The targeted LPAR must be loaded (i.e. running an operating system).
-- The HMC userid must have these task permissions: 'Operating System Messages' (view-only is sufficient)
-- The HMC userid must have object-access permissions to these objects: Target CPC, target LPAR.
+- The HMC userid must have these task permissions: 'Operating System Messages' (view\-only is sufficient)
+- The HMC userid must have object\-access permissions to these objects: Target CPC, target LPAR.
 
 
 
@@ -130,7 +130,7 @@ max_messages
 
 
 is_held
-  Limit the returned messages to only held (if true) or only non-held (if false) messages.
+  Limit the returned messages to only held (if true) or only non\-held (if false) messages.
 
   If null, no such filtering is performed.
 
@@ -139,7 +139,7 @@ is_held
 
 
 is_priority
-  Limit the returned messages to only priority (if true) or only non-priority (if false) messages.
+  Limit the returned messages to only priority (if true) or only non\-priority (if false) messages.
 
   If null, no such filtering is performed.
 

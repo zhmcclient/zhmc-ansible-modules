@@ -26,7 +26,7 @@ Synopsis
 Requirements
 ------------
 
-- The HMC userid must have object-access permissions to these objects: Target adapters, CPCs of target adapters (CPC access is only needed for HMC version 2.15 and older).
+- The HMC userid must have object\-access permissions to these objects: Target adapters, CPCs of target adapters (CPC access is only needed for HMC version 2.15 and older).
 
 
 
@@ -105,14 +105,14 @@ name
 
 
 adapter_id
-  Regular expression pattern for the adapter ID (PCHID) ('adapter-id' property) to filter the result list to matching adapters.
+  Regular expression pattern for the adapter ID (PCHID) ('adapter\-id' property) to filter the result list to matching adapters.
 
   | **required**: False
   | **type**: str
 
 
 adapter_family
-  Adapter family ('adapter-family' property) to filter the result list to adapters with that family.
+  Adapter family ('adapter\-family' property) to filter the result list to adapters with that family.
 
   | **required**: False
   | **type**: str
@@ -139,7 +139,7 @@ additional_properties
 
   The property names are specified with underscores instead of hyphens.
 
-  On HMCs with an API version below 4.10 (= HMC version 2.16.0 with some post-GA updates), all properties of each adapter will be returned if this parameter is specified, but you should not rely on that.
+  On HMCs with an API version below 4.10 (= HMC version 2.16.0 with some post\-GA updates), all properties of each adapter will be returned if this parameter is specified, but you should not rely on that.
 
   | **required**: False
   | **type**: list
@@ -259,12 +259,12 @@ adapters
     | **type**: str
 
   adapter_id
-    Adapter ID (PCHID) of the adapter ('adapter-id' property)
+    Adapter ID (PCHID) of the adapter ('adapter\-id' property)
 
     | **type**: str
 
   adapter_family
-    Family of the adapter ('adapter-family' property)
+    Family of the adapter ('adapter\-family' property)
 
     | **type**: str
 

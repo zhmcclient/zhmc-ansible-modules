@@ -26,8 +26,8 @@ Requirements
 ------------
 
 - The HMC userid must have these task permissions: 'Perform Model Conversion'.
-- The HMC userid must have object-access permissions to these objects: Target CPCs.
-- The CPC must be enabled for On-Off Capacity-On-Demand.
+- The HMC userid must have object\-access permissions to these objects: Target CPCs.
+- The CPC must be enabled for On\-Off Capacity\-On\-Demand.
 
 
 

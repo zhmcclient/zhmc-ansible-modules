@@ -242,7 +242,7 @@ user_pattern
   {property}
     Additional properties of the user pattern, as described in the data model of the 'User Pattern' object in the :ref:`HMC API <HMC API>` book. The property names will have underscores instead of hyphens.
 
-    The items in the :literal:`ldap\_group\_to\_template\_mappings` property have an additional item :literal:`template-name` which is the name of the resource object referenced by :literal:`template-uri`.
+    The items in the :literal:`ldap\_group\_to\_template\_mappings` property have an additional item :literal:`template\-name` which is the name of the resource object referenced by :literal:`template\-uri`.
 
     | **type**: raw
 

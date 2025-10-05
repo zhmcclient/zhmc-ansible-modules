@@ -25,7 +25,7 @@ Requirements
 ------------
 
 - The HMC userid must have these task permissions: 'Manage Users' (for standard users), 'Manage User Templates' (for template users).
-- For updating its own HMC password, it is sufficient if the HMC userid has task permission for Manage Users or object-access permission for its own User object.
+- For updating its own HMC password, it is sufficient if the HMC userid has task permission for Manage Users or object\-access permission for its own User object.
 
 
 
@@ -304,150 +304,150 @@ user
     | **type**: str
 
   {property}
-    Additional properties of the user, as described in the data model of the 'User' object in the :ref:`HMC API <HMC API>` book. Write-only properties in the data model are not included. The property names have hyphens (-) as described in that book.
+    Additional properties of the user, as described in the data model of the 'User' object in the :ref:`HMC API <HMC API>` book. Write\-only properties in the data model are not included. The property names have hyphens (\-) as described in that book.
 
     | **type**: raw
 
   user-role-names
-    Only present if :literal:`expand\_names=true`\ : Name of the user roles referenced by property :literal:`user-roles`.
+    Only present if :literal:`expand\_names=true`\ : Name of the user roles referenced by property :literal:`user\-roles`.
 
     | **type**: str
 
   user-role-objects
     Deprecated: This result property is deprecated because the :literal:`expand` parameter is deprecated.
 
-    Only present if :literal:`expand=true`\ : User roles referenced by property :literal:`user-roles`.
+    Only present if :literal:`expand=true`\ : User roles referenced by property :literal:`user\-roles`.
 
     | **type**: dict
 
     {property}
-      Properties of the user role, as described in the data model of the 'User Pattern' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
+      Properties of the user role, as described in the data model of the 'User Pattern' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
 
       | **type**: raw
 
 
   user-pattern-name
-    Only present for users with :literal:`type=pattern` and if :literal:`expand\_names=true`\ : Name of the user pattern referenced by property :literal:`user-pattern-uri`.
+    Only present for users with :literal:`type=pattern` and if :literal:`expand\_names=true`\ : Name of the user pattern referenced by property :literal:`user\-pattern\-uri`.
 
     | **type**: str
 
   user-pattern
     Deprecated: This result property is deprecated because the :literal:`expand` parameter is deprecated.
 
-    Only present for users with :literal:`type=pattern` and if :literal:`expand=true`\ : User pattern referenced by property :literal:`user-pattern-uri`.
+    Only present for users with :literal:`type=pattern` and if :literal:`expand=true`\ : User pattern referenced by property :literal:`user\-pattern\-uri`.
 
     | **type**: dict
 
     {property}
-      Properties of the user pattern, as described in the data model of the 'User Pattern' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
+      Properties of the user pattern, as described in the data model of the 'User Pattern' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
 
       | **type**: raw
 
 
   user-template-name
-    Only present for users with :literal:`type=pattern` and if :literal:`expand\_names=true`\ : Name of the template user referenced by property :literal:`user-template-uri`.
+    Only present for users with :literal:`type=pattern` and if :literal:`expand\_names=true`\ : Name of the template user referenced by property :literal:`user\-template\-uri`.
 
     | **type**: str
 
   user-template
     Deprecated: This result property is deprecated because the :literal:`expand` parameter is deprecated.
 
-    Only present for users with :literal:`type=pattern` and if :literal:`expand=true`\ : User template referenced by property :literal:`user-template-uri`.
+    Only present for users with :literal:`type=pattern` and if :literal:`expand=true`\ : User template referenced by property :literal:`user\-template\-uri`.
 
     | **type**: dict
 
     {property}
-      Properties of the template user, as described in the data model of the 'User' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
+      Properties of the template user, as described in the data model of the 'User' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
 
       | **type**: raw
 
 
   password-rule-name
-    Only present if :literal:`expand\_names=true`\ : Name of the password rule referenced by property :literal:`password-rule-uri`.
+    Only present if :literal:`expand\_names=true`\ : Name of the password rule referenced by property :literal:`password\-rule\-uri`.
 
     | **type**: str
 
   password-rule
     Deprecated: This result property is deprecated because the :literal:`expand` parameter is deprecated.
 
-    Only present if :literal:`expand=true`\ : Password rule referenced by property :literal:`password-rule-uri`.
+    Only present if :literal:`expand=true`\ : Password rule referenced by property :literal:`password\-rule\-uri`.
 
     | **type**: dict
 
     {property}
-      Properties of the password rule, as described in the data model of the 'Password Rule' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
+      Properties of the password rule, as described in the data model of the 'Password Rule' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
 
       | **type**: raw
 
 
   ldap-server-definition-name
-    Only present if :literal:`expand\_names=true`\ : Name of the LDAP server definition referenced by property :literal:`ldap-server-definition-uri`.
+    Only present if :literal:`expand\_names=true`\ : Name of the LDAP server definition referenced by property :literal:`ldap\-server\-definition\-uri`.
 
     | **type**: str
 
   ldap-server-definition
     Deprecated: This result property is deprecated because the :literal:`expand` parameter is deprecated.
 
-    Only present if :literal:`expand=true`\ : LDAP server definition referenced by property :literal:`ldap-server-definition-uri`.
+    Only present if :literal:`expand=true`\ : LDAP server definition referenced by property :literal:`ldap\-server\-definition\-uri`.
 
     | **type**: dict
 
     {property}
-      Properties of the LDAP server definition, as described in the data model of the 'LDAP Server Definition' object in the :ref:`HMC API <HMC API>` book. Write-only properties in the data model are not included. The property names have hyphens (-) as described in that book.
+      Properties of the LDAP server definition, as described in the data model of the 'LDAP Server Definition' object in the :ref:`HMC API <HMC API>` book. Write\-only properties in the data model are not included. The property names have hyphens (\-) as described in that book.
 
       | **type**: raw
 
 
   primary-mfa-server-definition-name
-    Only present if :literal:`expand\_names=true`\ : Name of the MFA server definition referenced by property :literal:`primary-mfa-server-definition-uri`.
+    Only present if :literal:`expand\_names=true`\ : Name of the MFA server definition referenced by property :literal:`primary\-mfa\-server\-definition\-uri`.
 
     | **type**: str
 
   primary-mfa-server-definition
     Deprecated: This result property is deprecated because the :literal:`expand` parameter is deprecated.
 
-    Only present if :literal:`expand=true`\ : MFA server definition referenced by property :literal:`primary-mfa-server-definition-uri`.
+    Only present if :literal:`expand=true`\ : MFA server definition referenced by property :literal:`primary\-mfa\-server\-definition\-uri`.
 
     | **type**: dict
 
     {property}
-      Properties of the MFA server definition, as described in the data model of the 'MFA Server Definition' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
+      Properties of the MFA server definition, as described in the data model of the 'MFA Server Definition' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
 
       | **type**: raw
 
 
   backup-mfa-server-definition-name
-    Only present if :literal:`expand\_names=true`\ : Name of the MFA server definition referenced by property :literal:`backup-mfa-server-definition-uri`.
+    Only present if :literal:`expand\_names=true`\ : Name of the MFA server definition referenced by property :literal:`backup\-mfa\-server\-definition\-uri`.
 
     | **type**: str
 
   backup-mfa-server-definition
     Deprecated: This result property is deprecated because the :literal:`expand` parameter is deprecated.
 
-    Only present if :literal:`expand=true`\ : MFA server definition referenced by property :literal:`backup-mfa-server-definition-uri`.
+    Only present if :literal:`expand=true`\ : MFA server definition referenced by property :literal:`backup\-mfa\-server\-definition\-uri`.
 
     | **type**: dict
 
     {property}
-      Properties of the MFA server definition, as described in the data model of the 'MFA Server Definition' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
+      Properties of the MFA server definition, as described in the data model of the 'MFA Server Definition' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
 
       | **type**: raw
 
 
   default-group-name
-    Only present if :literal:`expand\_names=true`\ : Name of the Group referenced by property :literal:`default-group-uri`.
+    Only present if :literal:`expand\_names=true`\ : Name of the Group referenced by property :literal:`default\-group\-uri`.
 
     | **type**: str
 
   default-group
     Deprecated: This result property is deprecated because the :literal:`expand` parameter is deprecated.
 
-    Only present if :literal:`expand=true`\ : Group referenced by property :literal:`default-group-uri`.
+    Only present if :literal:`expand=true`\ : Group referenced by property :literal:`default\-group\-uri`.
 
     | **type**: dict
 
     {property}
-      Properties of the Group, as described in the data model of the 'Group' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
+      Properties of the Group, as described in the data model of the 'Group' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
 
       | **type**: raw
 

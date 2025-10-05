@@ -249,7 +249,7 @@ password_rule
     | **type**: str
 
   {property}
-    Additional properties of the password rule, as described in the data model of the 'Password Rule' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
+    Additional properties of the password rule, as described in the data model of the 'Password Rule' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
 
     | **type**: raw
 

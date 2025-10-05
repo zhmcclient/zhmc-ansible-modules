@@ -23,7 +23,7 @@ Synopsis
 Requirements
 ------------
 
-- The HMC userid must have object-access permission to the User Pattern objects included in the result, or task permission to the 'Manage User Patterns' task.
+- The HMC userid must have object\-access permission to the User Pattern objects included in the result, or task permission to the 'Manage User Patterns' task.
 
 
 
@@ -179,9 +179,9 @@ user_patterns
   type
     The style in which the user pattern is expressed, as one of the following values:
 
-    :literal:`glob-like` - Glob-like pattern as used in file names, supporting the special characters :literal:`\*` and :literal:`?`.
+    :literal:`glob\-like` \- Glob\-like pattern as used in file names, supporting the special characters :literal:`\*` and :literal:`?`.
 
-    :literal:`regular-expression` - Regular expression pattern using :ref:`Java regular expressions <Java regular expressions>`.
+    :literal:`regular\-expression` \- Regular expression pattern using :ref:`Java regular expressions <Java regular expressions>`.
 
     | **type**: str
 
