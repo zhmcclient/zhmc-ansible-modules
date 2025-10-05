@@ -23,7 +23,7 @@ Synopsis
 Requirements
 ------------
 
-- The HMC userid must have object-access permission to the target password rules, or task permission to the 'Manage Password Rules' task.
+- The HMC userid must have object\-access permission to the target password rules, or task permission to the 'Manage Password Rules' task.
 
 
 

@@ -23,7 +23,7 @@ Synopsis
 Requirements
 ------------
 
-- The HMC userid must have object-access permissions to these objects: Target partition, CPC of target partition (only for HMC 2.13.0 and older).
+- The HMC userid must have object\-access permissions to these objects: Target partition, CPC of target partition (only for HMC 2.13.0 and older).
 
 
 
