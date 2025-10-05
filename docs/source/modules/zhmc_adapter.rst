@@ -26,8 +26,8 @@ Requirements
 ------------
 
 - The targeted Z system must be in the Dynamic Partition Manager (DPM) operational mode.
-- The HMC userid must have these task permissions: 'Adapter Details', 'Create HiperSockets Adapter', 'Delete HiperSockets Adapter', 'Configure Storage - System Programmer'.
-- The HMC userid must have object-access permissions to these objects: Target adapters, CPCs of target adapters.
+- The HMC userid must have these task permissions: 'Adapter Details', 'Create HiperSockets Adapter', 'Delete HiperSockets Adapter', 'Configure Storage \- System Programmer'.
+- The HMC userid must have object\-access permissions to these objects: Target adapters, CPCs of target adapters.
 
 
 
@@ -110,7 +110,7 @@ match
 
   The parameter is a dictionary. The key of each dictionary item is the property name as specified in the data model for adapter resources, with underscores instead of hyphens. The value of each dictionary item is the match value for the property (in YAML syntax). Integer properties may also be provided as decimal strings.
 
-  The specified match properties follow the rules of filtering for the zhmcclient library as described in https://python-zhmcclient.readthedocs.io/en/stable/concepts.html#filtering
+  The specified match properties follow the rules of filtering for the zhmcclient library as described in https://python\-zhmcclient.readthedocs.io/en/stable/concepts.html#filtering
 
   The possible match properties are all properties in the data model for adapter resources, including :literal:`name`.
 
@@ -143,7 +143,7 @@ properties
 
   \* :literal:`name`\ : Cannot be specified as a property because the name has already been specified in the :literal:`name` module parameter.
 
-  \* :literal:`type`\ : The desired adapter type can be specified in order to support adapters that can change their type (e.g. the FICON Express adapter can change its type between :literal:`not-configured`\ , :literal:`fcp` and :literal:`fc`\ ).
+  \* :literal:`type`\ : The desired adapter type can be specified in order to support adapters that can change their type (e.g. the FICON Express adapter can change its type between :literal:`not\-configured`\ , :literal:`fcp` and :literal:`fc`\ ).
 
   \* :literal:`crypto\_type`\ : The crypto type can be specified in order to support the ability of the Crypto Express adapters to change their crypto type. Valid values are :literal:`ep11`\ , :literal:`cca` and :literal:`acc`. Changing to :literal:`acc` will zeroize the crypto adapter.
 
@@ -310,7 +310,7 @@ adapter
     | **type**: str
 
   {property}
-    Additional properties of the adapter, as described in the data model of the 'Adapter' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
+    Additional properties of the adapter, as described in the data model of the 'Adapter' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
 
     | **type**: raw
 
@@ -326,7 +326,7 @@ adapter
       | **type**: str
 
     {property}
-      Additional properties of the port, as described in the data model of the 'Network Port' or 'Storage Port' element object of the 'Adapter' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book. In case of unconfigured FICON adapters, the property list is short.
+      Additional properties of the port, as described in the data model of the 'Network Port' or 'Storage Port' element object of the 'Adapter' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book. In case of unconfigured FICON adapters, the property list is short.
 
       | **type**: raw
 

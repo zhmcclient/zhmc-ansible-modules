@@ -27,7 +27,7 @@ Requirements
 
 - The targeted Z system must be in the Dynamic Partition Manager (DPM) operational mode.
 - The HMC userid must have these task permissions: 'New Partition', 'Delete Partition', 'Partition Details', 'Start Partition', 'Stop Partition', 'Dump Partition', 'PSW Restart'.
-- The HMC userid must have object-access permissions to these objects: Target partitions, CPCs of target partitions, Crypto adapters of target partitions.
+- The HMC userid must have object\-access permissions to these objects: Target partitions, CPCs of target partitions, Crypto adapters of target partitions.
 
 
 
@@ -108,7 +108,7 @@ state
 
   \* :literal:`absent`\ : Ensures that the partition does not exist in the specified CPC.
 
-  \* :literal:`stopped`\ : Ensures that the partition exists in the specified CPC, has the specified properties, and is in one of the inactive statuses ('stopped', 'terminated', 'paused', 'reservation-error').
+  \* :literal:`stopped`\ : Ensures that the partition exists in the specified CPC, has the specified properties, and is in one of the inactive statuses ('stopped', 'terminated', 'paused', 'reservation\-error').
 
   \* :literal:`active`\ : Ensures that the partition exists in the specified CPC, has the specified properties, and is in one of the active statuses ('active', 'degraded').
 
@@ -160,7 +160,7 @@ properties
 
   \* :literal:`boot\_network\_nic\_name`\ : The name of the NIC whose URI is used to construct :literal:`boot\_network\_device`. Specifying it requires that the partition exists.
 
-  \* :literal:`crypto\_configuration`\ : The crypto configuration for the partition, in the format of the :literal:`crypto-configuration` property of the partition (see :ref:`HMC API <HMC API>` for details), with the exception that adapters are specified with their names in field :literal:`crypto\_adapter\_names` instead of their URIs in field :literal:`crypto\_adapter\_uris`. If the :literal:`crypto\_adapter\_names` field is null, all crypto adapters of the CPC will be used.
+  \* :literal:`crypto\_configuration`\ : The crypto configuration for the partition, in the format of the :literal:`crypto\-configuration` property of the partition (see :ref:`HMC API <HMC API>` for details), with the exception that adapters are specified with their names in field :literal:`crypto\_adapter\_names` instead of their URIs in field :literal:`crypto\_adapter\_uris`. If the :literal:`crypto\_adapter\_names` field is null, all crypto adapters of the CPC will be used.
 
   Properties omitted in this dictionary will remain unchanged when the partition already exists, and will get the default value defined in the data model for partitions in the :ref:`HMC API <HMC API>` book when the partition is being created.
 
@@ -171,7 +171,7 @@ properties
 image_name
   Name of the ISO image for :literal:`state=iso\_mount` (required). Not permitted for any other :literal:`state` values.
 
-  This value is shown in the 'boot-iso-image-name' property of the partition.
+  This value is shown in the 'boot\-iso\-image\-name' property of the partition.
 
   If an ISO image with this name is already mounted to the partition, the new image will not be mounted. The image conntent is not verified.
 
@@ -191,23 +191,23 @@ image_file
 ins_file
   Path name of the INS file within the ISO image that will be used when booting from the ISO image for :literal:`state=iso\_mount` (required). Not permitted for any other :literal:`state` values.
 
-  This value is shown in the 'boot-iso-ins-file' property of the partition.
+  This value is shown in the 'boot\-iso\-ins\-file' property of the partition.
 
-  The 'boot-iso-ins-file' property of the partition is always updated, even when the ISO image was already mounted and thus is not re-mounted.
+  The 'boot\-iso\-ins\-file' property of the partition is always updated, even when the ISO image was already mounted and thus is not re\-mounted.
 
   | **required**: False
   | **type**: str
 
 
 expand_storage_groups
-  Boolean that controls whether the returned partition contains an additional artificial property :literal:`partition.storage-groups` that is the list of storage groups attached to the partition, with properties as described for the zhmc\_storage\_group module with :literal:`expand=true`.
+  Boolean that controls whether the returned partition contains an additional artificial property :literal:`partition.storage\-groups` that is the list of storage groups attached to the partition, with properties as described for the zhmc\_storage\_group module with :literal:`expand=true`.
 
   | **required**: False
   | **type**: bool
 
 
 expand_crypto_adapters
-  Boolean that controls whether the returned partition contains an additional artificial property :literal:`crypto-adapters` in its :literal:`crypto-configuration` property that is the list of crypto adapters attached to the partition, with properties as described for the zhmc\_adapter module.
+  Boolean that controls whether the returned partition contains an additional artificial property :literal:`crypto\-adapters` in its :literal:`crypto\-configuration` property that is the list of crypto adapters attached to the partition, with properties as described for the zhmc\_adapter module.
 
   | **required**: False
   | **type**: bool
@@ -516,12 +516,12 @@ partition
     | **type**: str
 
   {property}
-    Additional properties of the partition, as described in the data model of the 'Partition' object in the :ref:`HMC API <HMC API>` book. Write-only properties in the data model are not included. The property names have hyphens (-) as described in that book.
+    Additional properties of the partition, as described in the data model of the 'Partition' object in the :ref:`HMC API <HMC API>` book. Write\-only properties in the data model are not included. The property names have hyphens (\-) as described in that book.
 
     | **type**: raw
 
   hbas
-    HBAs of the partition. If the CPC does not have the storage-management feature enabled (ie. on z13), the list is empty.
+    HBAs of the partition. If the CPC does not have the storage\-management feature enabled (ie. on z13), the list is empty.
 
     | **type**: list
     | **elements**: dict
@@ -532,7 +532,7 @@ partition
       | **type**: str
 
     {property}
-      Additional properties of the HBA, as described in the data model of the 'HBA' element object of the 'Partition' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
+      Additional properties of the HBA, as described in the data model of the 'HBA' element object of the 'Partition' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
 
       | **type**: raw
 
@@ -549,7 +549,7 @@ partition
       | **type**: str
 
     {property}
-      Additional properties of the NIC, as described in the data model of the 'NIC' element object of the 'Partition' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
+      Additional properties of the NIC, as described in the data model of the 'NIC' element object of the 'Partition' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
 
       | **type**: raw
 
@@ -566,7 +566,7 @@ partition
       | **type**: str
 
     {property}
-      Additional properties of the virtual function, as described in the data model of the 'Virtual Function' element object of the 'Partition' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
+      Additional properties of the virtual function, as described in the data model of the 'Virtual Function' element object of the 'Partition' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
 
       | **type**: raw
 

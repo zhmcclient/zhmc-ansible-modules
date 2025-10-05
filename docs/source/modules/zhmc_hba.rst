@@ -24,9 +24,9 @@ Synopsis
 Requirements
 ------------
 
-- The targeted Z system must be a z13 generation and must be in the Dynamic Partition Manager (DPM) operational mode. The z14 and later generations in DPM mode manage HBAs automatically via the "dpm-storage-management" firmware feature.
+- The targeted Z system must be a z13 generation and must be in the Dynamic Partition Manager (DPM) operational mode. The z14 and later generations in DPM mode manage HBAs automatically via the "dpm\-storage\-management" firmware feature.
 - The HMC userid must have these task permissions: 'Partition Details'.
-- The HMC userid must have object-access permissions to these objects: Partitions of the target HBAs, CPCs of these partitions, storage adapters backing the target HBAs.
+- The HMC userid must have object\-access permissions to these objects: Partitions of the target HBAs, CPCs of these partitions, storage adapters backing the target HBAs.
 
 
 
@@ -221,7 +221,7 @@ hba
     | **type**: str
 
   {property}
-    Additional properties of the HBA, as described in the data model of the 'HBA' element object of the 'Partition' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
+    Additional properties of the HBA, as described in the data model of the 'HBA' element object of the 'Partition' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
 
     | **type**: raw
 

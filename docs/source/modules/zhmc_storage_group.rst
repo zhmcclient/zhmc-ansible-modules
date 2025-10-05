@@ -24,9 +24,9 @@ Synopsis
 Requirements
 ------------
 
-- The targeted Z system must be of generation z14 or later (to have the "dpm-storage-management" firmware feature) and must be in the Dynamic Partition Manager (DPM) operational mode.
-- The HMC userid must have these task permissions: 'Configure Storage - System Programmer'.
-- The HMC userid must have object-access permissions to these objects: Target storage groups, target CPCs, target storage adapters.
+- The targeted Z system must be of generation z14 or later (to have the "dpm\-storage\-management" firmware feature) and must be in the Dynamic Partition Manager (DPM) operational mode.
+- The HMC userid must have these task permissions: 'Configure Storage \- System Programmer'.
+- The HMC userid must have object\-access permissions to these objects: Target storage groups, target CPCs, target storage adapters.
 
 
 
@@ -474,7 +474,7 @@ storage_group
     | **type**: str
 
   {property}
-    Additional properties of the storage group, as described in the data model of the 'Storage Group' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
+    Additional properties of the storage group, as described in the data model of the 'Storage Group' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
 
     | **type**: raw
 
@@ -502,7 +502,7 @@ storage_group
       | **type**: int
 
     {property}
-      Additional properties of the storage port, as described in the data model of the 'Storage Port' element object of the 'Adapter' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
+      Additional properties of the storage port, as described in the data model of the 'Storage Port' element object of the 'Adapter' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
 
       | **type**: raw
 
@@ -517,7 +517,7 @@ storage_group
         | **type**: str
 
       {property}
-        Additional properties of the storage adapter, as described in the data model of the 'Adapter' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
+        Additional properties of the storage adapter, as described in the data model of the 'Adapter' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
 
         | **type**: raw
 
@@ -536,7 +536,7 @@ storage_group
       | **type**: str
 
     {property}
-      Additional properties of the storage volume, as described in the data model of the 'Storage Volume' element object of the 'Storage Group' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
+      Additional properties of the storage volume, as described in the data model of the 'Storage Volume' element object of the 'Storage Group' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
 
       | **type**: raw
 
@@ -549,7 +549,7 @@ storage_group
     | **elements**: dict
 
     {property}
-      Properties of the virtual storage resource, as described in the data model of the 'Virtual Storage Resource' element object of the 'Storage Group' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
+      Properties of the virtual storage resource, as described in the data model of the 'Virtual Storage Resource' element object of the 'Storage Group' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
 
       | **type**: raw
 
@@ -562,7 +562,7 @@ storage_group
     | **elements**: dict
 
     {property}
-      Properties of the partition, as described in the data model of the 'Partition' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (-) as described in that book.
+      Properties of the partition, as described in the data model of the 'Partition' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
 
       | **type**: raw
 

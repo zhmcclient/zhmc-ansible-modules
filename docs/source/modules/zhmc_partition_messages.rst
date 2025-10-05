@@ -25,8 +25,8 @@ Requirements
 
 - The targeted CPC must be in the DPM operational mode.
 - The targeted partition must be active (i.e. running an operating system).
-- The HMC userid must have these task permissions: 'Operating System Messages' (view-only is sufficient)
-- The HMC userid must have object-access permissions to these objects: Target CPC, target partition.
+- The HMC userid must have these task permissions: 'Operating System Messages' (view\-only is sufficient)
+- The HMC userid must have object\-access permissions to these objects: Target CPC, target partition.
 
 
 

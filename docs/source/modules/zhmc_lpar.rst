@@ -29,8 +29,8 @@ Requirements
 ------------
 
 - The targeted CPC must be in the classic operational mode.
-- The HMC userid must have these task permissions: 'Activate', 'Deactivate', 'Logical Processor Add' (if cores are updated), 'Firmware Details' (if 'zaware-...' properties are updated), 'Change Object Options' or 'Customize/Delete Activation Profiles' (if 'next-activation-profile-name' property is updated).
-- The HMC userid must have object-access permissions to these objects: Target LPARs, CPCs of target LPARs.
+- The HMC userid must have these task permissions: 'Activate', 'Deactivate', 'Logical Processor Add' (if cores are updated), 'Firmware Details' (if 'zaware\-...' properties are updated), 'Change Object Options' or 'Customize/Delete Activation Profiles' (if 'next\-activation\-profile\-name' property is updated).
+- The HMC userid must have object\-access permissions to these objects: Target LPARs, CPCs of target LPARs.
 
 
 
@@ -109,17 +109,17 @@ name
 state
   The desired state for the LPAR:
 
-  \* :literal:`inactive`\ : Ensures that the LPAR is inactive (i.e. status 'not-activated'), unless the LPAR is currently operating and the :literal:`force` parameter was not set to True. Properties cannot be updated. The LPAR is deactivated if needed.
+  \* :literal:`inactive`\ : Ensures that the LPAR is inactive (i.e. status 'not\-activated'), unless the LPAR is currently operating and the :literal:`force` parameter was not set to True. Properties cannot be updated. The LPAR is deactivated if needed.
 
-  \* :literal:`active`\ : Ensures that the LPAR is at least active (i.e. status is 'not-operating', 'operating' or 'exceptions'), and then ensures that the LPAR properties have the specified values. The LPAR is activated if needed using the 'Activate Logical Partition' operation. In certain cases, that operation will automatically load the LPAR. For details, see the :literal:`activation\_profile\_name` parameter.
+  \* :literal:`active`\ : Ensures that the LPAR is at least active (i.e. status is 'not\-operating', 'operating' or 'exceptions'), and then ensures that the LPAR properties have the specified values. The LPAR is activated if needed using the 'Activate Logical Partition' operation. In certain cases, that operation will automatically load the LPAR. For details, see the :literal:`activation\_profile\_name` parameter.
 
   \* :literal:`loaded`\ : Ensures that the LPAR is loaded (i.e. status is 'operating' or 'exceptions'), and then ensures that the LPAR properties have the specified values. The LPAR is first activated if needed using the 'Activate Logical Partition' operation, and then loaded if needed using the 'Load Logical Partition' operation. For details, see the :literal:`activation\_profile\_name` parameter.
 
-  \* :literal:`reset\_clear`\ : Performs the 'Reset Clear' HMC operation on the LPAR. This initializes the LPAR for loading by clearing its pending interruptions, resetting its channel subsystem, resetting its processors, and clearing its memory). The LPAR must be in status 'not-operating', 'operating', or 'exceptions'. If the LPAR status is 'operating' or 'exceptions', the operation will fail unless the :literal:`force` parameter is set to True. Properties cannot be updated.
+  \* :literal:`reset\_clear`\ : Performs the 'Reset Clear' HMC operation on the LPAR. This initializes the LPAR for loading by clearing its pending interruptions, resetting its channel subsystem, resetting its processors, and clearing its memory). The LPAR must be in status 'not\-operating', 'operating', or 'exceptions'. If the LPAR status is 'operating' or 'exceptions', the operation will fail unless the :literal:`force` parameter is set to True. Properties cannot be updated.
 
-  \* :literal:`reset\_normal`\ : Performs the 'Reset Normal' HMC operation on the LPAR. This initializes the LPAR for loading by clearing its pending interruptions, resetting its channel subsystem, and resetting its processors). It does not clear the memory. The LPAR must be in status 'not-operating', 'operating', or 'exceptions'. If the LPAR status is 'operating' or 'exceptions', the operation will fail unless the :literal:`force` parameter is set to True. Properties cannot be updated.
+  \* :literal:`reset\_normal`\ : Performs the 'Reset Normal' HMC operation on the LPAR. This initializes the LPAR for loading by clearing its pending interruptions, resetting its channel subsystem, and resetting its processors). It does not clear the memory. The LPAR must be in status 'not\-operating', 'operating', or 'exceptions'. If the LPAR status is 'operating' or 'exceptions', the operation will fail unless the :literal:`force` parameter is set to True. Properties cannot be updated.
 
-  \* :literal:`set`\ : Ensures that the LPAR properties have the specified values. Requires that the LPAR is at least active (i.e. status is 'not-operating', 'operating' or 'exceptions') but does not activate the LPAR if that is not the case.
+  \* :literal:`set`\ : Ensures that the LPAR properties have the specified values. Requires that the LPAR is at least active (i.e. status is 'not\-operating', 'operating' or 'exceptions') but does not activate the LPAR if that is not the case.
 
   \* :literal:`facts`\ : Returns the current LPAR properties.
 
@@ -151,11 +151,11 @@ activation_profile_name
 
   This parameter is not allowed for the other :literal:`state` values.
 
-  Default: The image or load activation profile specified in the 'next-activation-profile-name' property of the LPAR is used when the LPAR needs to be activated.
+  Default: The image or load activation profile specified in the 'next\-activation\-profile\-name' property of the LPAR is used when the LPAR needs to be activated.
 
-  For LPARs with activation modes other than SSC or zAware, the following applies: If an image activation profile is specified, the 'load-at-activation' property of the image activation profile determines whether an automatic load is performed, using the load parameters from the image activation profile. If a load activation profile is specified, an automatic load is always performed, using the parameters from the load activation profile.
+  For LPARs with activation modes other than SSC or zAware, the following applies: If an image activation profile is specified, the 'load\-at\-activation' property of the image activation profile determines whether an automatic load is performed, using the load parameters from the image activation profile. If a load activation profile is specified, an automatic load is always performed, using the parameters from the load activation profile.
 
-  For LPARs with activation modes SSC or zAware, the following applies: A load activation profile cannot be specified. The LPAR is always auto-loaded using internal load parameters (ignoring the 'load-at-activation' property and the load-related properties of their image activation profile).
+  For LPARs with activation modes SSC or zAware, the following applies: A load activation profile cannot be specified. The LPAR is always auto\-loaded using internal load parameters (ignoring the 'load\-at\-activation' property and the load\-related properties of their image activation profile).
 
   | **required**: False
   | **type**: str
@@ -168,7 +168,7 @@ load_address
 
   This parameter is used only when the LPAR is explicitly loaded using the 'Load Logical Partition' operation. It is not used when the LPAR is automatically loaded during the 'Activate Logical Partition' operation.
 
-  For z13 and older generations, this parameter is required. Starting with z14, this parameter is optional and defaults to the load address specified in the 'last-used-load-address' property of the LPAR.
+  For z13 and older generations, this parameter is required. Starting with z14, this parameter is optional and defaults to the load address specified in the 'last\-used\-load\-address' property of the LPAR.
 
   | **required**: False
   | **type**: str
@@ -248,7 +248,7 @@ force
 
 
 os_ipl_token
-  Setting this parameter for :literal:`state=reset\_clear` or :literal:`state=reset\_normal` requests that the corresponding HMC operations only be performed if the provided value matches the current value of the 'os-ipl-token' property of the LPAR, and be rejected otherwise. Note that the 'os-ipl-token' property of the LPAR is set by the operating system and is set only by some operating systems, such as z/OS. This parameter is ignored for other :literal:`state` values.
+  Setting this parameter for :literal:`state=reset\_clear` or :literal:`state=reset\_normal` requests that the corresponding HMC operations only be performed if the provided value matches the current value of the 'os\-ipl\-token' property of the LPAR, and be rejected otherwise. Note that the 'os\-ipl\-token' property of the LPAR is set by the operating system and is set only by some operating systems, such as z/OS. This parameter is ignored for other :literal:`state` values.
 
   | **required**: False
   | **type**: str
@@ -561,7 +561,7 @@ lpar
     | **type**: str
 
   {property}
-    Additional properties of the LPAR, as described in the data model of the 'Logical Partition' object in the :ref:`HMC API <HMC API>` book. Write-only properties in the data model are not included. The property names have hyphens (-) as described in that book.
+    Additional properties of the LPAR, as described in the data model of the 'Logical Partition' object in the :ref:`HMC API <HMC API>` book. Write\-only properties in the data model are not included. The property names have hyphens (\-) as described in that book.
 
     | **type**: raw
 

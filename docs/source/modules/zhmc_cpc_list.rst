@@ -23,7 +23,7 @@ Synopsis
 Requirements
 ------------
 
-- The HMC userid must have object-access permissions to these objects: Target CPCs.
+- The HMC userid must have object\-access permissions to these objects: Target CPCs.
 
 
 
@@ -198,7 +198,7 @@ cpcs
     | **type**: str
 
   has_unacceptable_status
-    Indicates whether the current status of the CPC is unacceptable, based on its 'acceptable-status' property. Only included for managed CPCs.
+    Indicates whether the current status of the CPC is unacceptable, based on its 'acceptable\-status' property. Only included for managed CPCs.
 
     | **type**: bool
 

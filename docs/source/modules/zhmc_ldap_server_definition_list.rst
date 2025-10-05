@@ -23,7 +23,7 @@ Synopsis
 Requirements
 ------------
 
-- The HMC userid must have object-access permission to the target LDAP Server Definitions, or task permission to the 'Manage Users' task.
+- The HMC userid must have object\-access permission to the target LDAP Server Definitions, or task permission to the 'Manage Users' task.
 
 
 
