@@ -9,7 +9,7 @@ mock>=2.0.0
 voluptuous>=0.11.7
 
 # Unit test (imports into testcases):
-pytest>=6.2.5
+pytest>=8.4.0
 testfixtures>=6.9.0
 colorama>=0.4.6
 # packaging is covered in requirements.txt
@@ -19,7 +19,7 @@ requests-mock>=1.6.0
 immutabledict>=4.2.0
 
 # Unit test (indirect dependencies):
-pluggy>=1.3.0
+pluggy>=1.5.0
 decorator>=4.0.11
 
 # Coverage reporting (no imports, invoked via coveralls script):
@@ -64,15 +64,17 @@ antsibull-docutils>=1.3.0
 # Safety CI by pyup.io
 # safety 3.6.1 fixes the issue with typer >=0.17.0, see https://github.com/pyupio/safety/issues/778
 # pydantic 2.8.0 fixes an install issue on Python 3.13.
-safety>=3.6.1
-safety-schemas>=0.0.14
+# pydantic 2.12.0 fixes an install issue on Python 3.14.
+# Safety 3.6.2 removed the pinning of pydantic<2.10.0,>=2.6.0.
+safety>=3.6.2
+safety-schemas>=0.0.16
 dparse>=0.6.4
 ruamel.yaml>=0.17.21
 click>=8.0.2
 Authlib>=1.3.1
 marshmallow>=3.15.0
-pydantic>=2.8.0
-pydantic_core>=2.20.0
+pydantic>=2.12.0
+pydantic_core>=2.41.1
 # safety 3.6.1 depends on typer>=0.16.0
 typer>=0.16.0
 typer-cli>=0.16.0

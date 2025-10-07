@@ -64,6 +64,6 @@ six==1.14.0; python_version == '3.9'
 six==1.16.0; python_version >= '3.10'
 stomp.py==8.1.1
 tomli==1.1.0
-typing_extensions==4.12.2
+typing-extensions==4.14.1
 urllib3==2.5.0
 websocket-client==1.8.0
