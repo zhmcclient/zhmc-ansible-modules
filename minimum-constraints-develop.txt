@@ -91,6 +91,9 @@ sphinxcontrib-serializinghtml==1.1.9
 sphinxcontrib-websupport==1.2.4
 autodocsumm==0.2.12
 Babel==2.11.0
+# Sphinx 8.2.0 started using roman-numerals-py
+roman-numerals-py==4.1.0
+roman-numerals==4.1.0
 
 # sphinx-versions: Retrieved from git repo in requirements-develop.txt
 # ansible-doc-extractor and it's dependent theme for docs generation (no imports, invoked via script):
