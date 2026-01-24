@@ -24,9 +24,10 @@ security:
     ignore-vulnerabilities:
         51457:
             reason: The py package is no longer being fixed, we use its latest version 1.11.0
-            
         79756:
             reason: Fixed authlib version 1.6.4 requires Python>=3.9 and is used there
+        82754:
+            reason: Fixed filelock version 3.20.1 requires Python>=3.10 and is used there
 
     # Continue with exit code 0 when vulnerabilities are found.
     continue-on-vulnerability-error: False
