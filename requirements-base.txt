@@ -4,7 +4,6 @@
 
 # Base dependencies (must be consistent with minimum-constraints-install.txt)
 
-pip>=25.0; python_version == '3.8'
-pip>=25.2; python_version >= '3.9'
+pip>=25.2
 setuptools>=78.1.1
 wheel>=0.38.1

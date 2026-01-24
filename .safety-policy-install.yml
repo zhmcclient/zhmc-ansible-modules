@@ -24,10 +24,8 @@ security:
     ignore-vulnerabilities:
         74261:
             reason: Fixed ansible-core version is 2.18.0 and is used where possible, but we require ansible-core>=2.15
-            
-        79883:
-            reason: Fixed pip version 25.2 requires Python>=3.9 and is used there
-
+        82327:
+            reason: Fixed ansible version is 12.2.0 and is used where possible, but we require ansible>=8
 
     # Continue with exit code 0 when vulnerabilities are found.
     continue-on-vulnerability-error: False
