@@ -1,0 +1,4 @@
+minor_changes:
+  - Test - Improved some settings for coverage measurement, and enabled branch
+    coverage reporting. This lowered the overall coverage percentage somewhat.
+    (issue 1254)
