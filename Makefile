@@ -239,7 +239,7 @@ help:
 	@echo "  pylint     - Run PyLint on sources"
 	@echo "  sanity     - Run Ansible sanity tests (includes pep8, pylint, validate-modules)"
 	@echo "  ansible_lint - Run ansible-lint on distribution archive (and built it)"
-	@echo "  safety     - Run safety for install and all"
+	@echo "  safety     - Run safety checker"
 	@echo "  bandit     - Run bandit checker"
 	@echo "  check_reqs - Perform missing dependency checks"
 	@echo "  check_frag - Run antsibull-changelog lint on change log fragments"
@@ -354,7 +354,9 @@ pylint: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(pylin
 	@echo "Makefile: $@ done."
 
 .PHONY: safety
-safety: $(done_dir)/safety_develop_$(pymn)_$(PACKAGE_LEVEL).done $(done_dir)/safety_install_$(pymn)_$(PACKAGE_LEVEL).done
+safety: Makefile $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(safety_develop_policy_file) $(safety_install_policy_file) minimum-constraints-develop.txt minimum-constraints-install.txt
+	bash -c "safety check --policy-file $(safety_develop_policy_file) -r minimum-constraints-develop.txt --full-report || test '$(RUN_TYPE)' == 'normal' || test '$(RUN_TYPE)' == 'scheduled' || exit 1"
+	bash -c "safety check --policy-file $(safety_install_policy_file) -r minimum-constraints-install.txt --full-report || test '$(RUN_TYPE)' == 'normal' || exit 1"
 	@echo "Makefile: $@ done."
 
 .PHONY: bandit
@@ -523,20 +525,6 @@ $(done_dir)/base_$(pymn)_$(PACKAGE_LEVEL).done: Makefile requirements-base.txt m
 	@echo "Makefile: Installing/upgrading pip, setuptools and wheel with PACKAGE_LEVEL=$(PACKAGE_LEVEL)"
 	$(PYTHON_CMD) -m pip install $(pip_level_opts) -r requirements-base.txt
 	echo "done" >$@
-
-$(done_dir)/safety_develop_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(safety_develop_policy_file) minimum-constraints-develop.txt minimum-constraints-install.txt
-	@echo "Makefile: Running Safety for development packages (and tolerate safety issues when RUN_TYPE is normal or scheduled)"
-	rm -f $@
-	bash -c "safety check --policy-file $(safety_develop_policy_file) -r minimum-constraints-develop.txt --full-report || test '$(RUN_TYPE)' == 'normal' || test '$(RUN_TYPE)' == 'scheduled' || exit 1"
-	echo "done" >$@
-	@echo "Makefile: Done running Safety for development packages"
-
-$(done_dir)/safety_install_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(safety_install_policy_file) minimum-constraints-install.txt
-	@echo "Makefile: Running Safety for install packages (and tolerate safety issues when RUN_TYPE is normal)"
-	rm -f $@
-	bash -c "safety check --policy-file $(safety_install_policy_file) -r minimum-constraints-install.txt --full-report || test '$(RUN_TYPE)' == 'normal' || exit 1"
-	echo "done" >$@
-	@echo "Makefile: Done running Safety for install packages"
 
 $(done_dir)/bandit_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 	@echo "Makefile: Running Bandit"
