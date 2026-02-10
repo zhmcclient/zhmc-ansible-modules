@@ -37,5 +37,5 @@ MarkupSafe==2.0.0
 
 # ansible-test
 yamllint==1.25.0; python_version <= '3.9'
-yamllint==1.26.3; python_version >= '3.10'
-pathspec==0.9.0
+yamllint==1.30.0; python_version >= '3.10'
+pathspec==0.10.3

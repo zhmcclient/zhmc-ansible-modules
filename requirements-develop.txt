@@ -14,7 +14,7 @@ testfixtures>=6.9.0
 colorama>=0.4.6
 # packaging is covered in requirements.txt
 requests>=2.32.4
-urllib3>=2.6.0
+urllib3>=2.6.3
 requests-mock>=1.6.0
 immutabledict>=4.2.0
 
@@ -38,20 +38,21 @@ coveralls>=3.3.1; python_version >= '3.13'  # 4.0 pins Python to <3.13
 
 # ansible-test
 yamllint>=1.25.0; python_version == '3.9'
-yamllint>=1.26.3; python_version >= '3.10'
-pathspec>=0.9.0
+yamllint>=1.30.0; python_version >= '3.10'
+pathspec>=0.10.3
 # rstcheck is used only in ansible <= 2.10 / ansible <= 4
 
 # ansible-lint
 # ansible-lint is run only on officially supported ansible-core versions
-# ansible-lint 6.0.0 requires ansible-core>=2.12, so it does not run on py39 with minimum package levels, so it is run only on py>=310
-# ansible-lint 6.14.0 depends on yamllint>=1.26.3, ansible-core>=2.12.0, and the packages listed below
-ansible-lint>=6.14.0; python_version >= '3.10'
+# ansible-lint 24.12.2 requires ansible-core>=2.13.0 and is the latest version
+#   that requires ansible-core<=2.15, so it runs on py>=310
+# ansible-lint 24.12.2 requires pathspec>=0.10.3, yamllint>=1.30.0, ansible-compat>=24.10.0, ruamel.yaml>=0.18.5
+ansible-lint>=24.12.2; python_version >= '3.10'
 black>=22.8.0; python_version >= '3.10'
 rich>=12.0.0; python_version >= '3.10'
 # wcmatch 8.5 fixes an AttributeError on Python 3.12
 wcmatch>=8.5; python_version >= '3.10'
-ansible-compat>=4.1.10; python_version >= '3.10'
+ansible-compat>=24.10.0; python_version >= '3.10'
 
 # antsibull-changelog
 antsibull-changelog>=0.32.0
@@ -64,22 +65,21 @@ antsibull-docutils>=1.3.0
 # Safety CI by pyup.io
 # safety 3.6.1 fixes the issue with typer >=0.17.0, see https://github.com/pyupio/safety/issues/778
 # pydantic 2.8.0 fixes an install issue on Python 3.13.
-safety>=3.6.1
-safety-schemas>=0.0.14
+safety>=3.7.0
+safety-schemas>=0.0.16
 dparse>=0.6.4
-ruamel.yaml>=0.17.21
+# ruamel.yaml starting with 0.18.17 requires ruamel.yaml.clibz
+ruamel.yaml>=0.19.1
 click>=8.0.2
-Authlib>=1.3.2; python_version == '3.8'
-Authlib>=1.6.5; python_version >= '3.9'
-marshmallow>=3.15.0
-pydantic>=2.8.0
-pydantic_core>=2.20.0
+Authlib>=1.6.5
+marshmallow>=3.26.2
+pydantic>=2.12.0
+pydantic_core>=2.41.1
 # safety 3.6.1 depends on typer>=0.16.0
 typer>=0.16.0
 typer-cli>=0.16.0
 typer-slim>=0.16.0
-# safety 3.4.0 depends on psutil~=6.1.0
-psutil~=6.1.0
+psutil>=6.1.0
 
 # Bandit checker
 bandit>=1.7.8

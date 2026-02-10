@@ -17,6 +17,12 @@ security:
     # Should be set to False.
     ignore-cvss-unknown-severity: False
 
+    # Ignore unpinned requirements
+    # Default is true. "Unpinned" in this case means anything else but "==".
+    # Since we are checking against the minimum-constraints file, this check
+    # is enabled (false).
+    ignore-unpinned-requirements: false
+
     # List of specific vulnerabilities to ignore.
     # {id}:                 # vulnerability ID
     #     reason: {text}    # optional: Reason for ignoring it. Will be reported in the Safety reports
@@ -28,6 +34,8 @@ security:
             reason: Fixed authlib version 1.6.4 requires Python>=3.9 and is used there
         82754:
             reason: Fixed filelock version 3.20.1 requires Python>=3.10 and is used there
+        84062:
+            reason: Fixed ansible-lint version 26.1.0 requires Python>=3.10 and ansible-core>=2.16 - too complex to use there
 
     # Continue with exit code 0 when vulnerabilities are found.
     continue-on-vulnerability-error: False
