@@ -131,6 +131,7 @@ pip-check-reqs==2.5.3; python_version >= '3.12'
 aiofiles==24.1.0
 alabaster==0.7.9
 annotated-types==0.6.0
+annotated-doc==0.0.4
 anyio==4.10.0
 backports-datetime-fromisoformat==2.0.3
 bleach==3.3.0
