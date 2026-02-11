@@ -34,6 +34,8 @@ security:
             reason: Fixed filelock version 3.20.1 requires Python>=3.10 and is used there
         84062:
             reason: Fixed ansible-lint version 26.1.0 requires Python>=3.10 and ansible-core>=2.16 - too complex to use there
+        84183:
+            reason: Fixed filelock version 3.20.3 requires Python>=3.10 and is used there
 
     # Continue with exit code 0 when vulnerabilities are found.
     continue-on-vulnerability-error: False
