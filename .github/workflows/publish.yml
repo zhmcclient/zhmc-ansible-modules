@@ -170,7 +170,7 @@ jobs:
 
     #-------- Publishing of collection
     - name: Publish collection to Ansible Galaxy
-      uses: artis3n/ansible_galaxy_collection@v2
+      uses: artis3n/ansible_galaxy_collection@v3
       with:
         api_key: ${{ secrets.GALAXY_API_KEY }}
 
