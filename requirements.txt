@@ -22,7 +22,7 @@ Jinja2>=3.1.6
 
 # ansible-core 2.15.13 requires any version of cryptography.
 # In order to address vulnerabilities, we require a higher version.
-cryptography>=44.0.1
+cryptography>=46.0.5
 
 # ansible-core 2.15.13 requires any version of packaging.
 # In order to address issue https://github.com/pypa/setuptools/issues/4483 when installing sphinx-versions,
