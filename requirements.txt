@@ -27,7 +27,7 @@ cryptography>=46.0.5
 # ansible-core 2.15.13 requires any version of packaging.
 # In order to address issue https://github.com/pypa/setuptools/issues/4483 when installing sphinx-versions,
 # we require a version >=22.0.
-packaging>=22.0
+packaging>=24.0
 
 # ansible-core 2.15.13 requires PyYAML>=5.1.
 # In order to address issue https://github.com/yaml/pyyaml/issues/724 (PyYAML 5.4 and 6.0.0 fails install since Cython 3
