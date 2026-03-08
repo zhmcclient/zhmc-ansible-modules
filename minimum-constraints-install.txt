@@ -8,9 +8,9 @@
 
 # Base dependencies (must be consistent with requirements-base.txt)
 
-pip==25.2
+pip==26.0
 setuptools==78.1.1
-wheel==0.38.1
+wheel==0.46.2
 
 
 # Direct dependencies on ansible/ansible-core for install (must be consistent with requirements-ansible.txt)
@@ -33,7 +33,7 @@ zhmcclient==1.24.0
 
 Jinja2==3.1.6
 cryptography==44.0.1
-packaging==22.0
+packaging==24.0
 PyYAML==6.0.2
 
 
