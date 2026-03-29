@@ -160,7 +160,10 @@ markdown-it-py==2.2.0
 mdurl==0.1.2
 more-itertools==5.0.0
 mypy_extensions==1.1.0
-nltk==3.9.1
+# nltk 3.9.3 fixes CVE-2025-14009
+# Need to comment out nltk==3.9.2 due to issue https://github.com/pyupio/safety/issues/847
+# nltk==3.9.2; python_version == '3.9'
+nltk==3.9.3; python_version >= '3.10'
 pathlib2==2.2.1
 pbr==2.0.0
 ply==3.10
