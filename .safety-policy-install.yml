@@ -32,6 +32,10 @@ security:
             reason: Fixed ansible-core version is 2.18.0 and is used where possible, but we require ansible-core>=2.15
         82327:
             reason: Fixed ansible version is 12.2.0 and is used where possible, but we require ansible>=8
+        90749:
+            reason: Fixed cryptography version 46.0.6 requires Python>=3.10 and is used there
+        90553:
+            reason: Fixed requests version 2.33.0 is not installable in the Python 3.9 CI environment, so Python 3.9 uses requests 2.32.4
 
     # Continue with exit code 0 when vulnerabilities are found.
     continue-on-vulnerability-error: False

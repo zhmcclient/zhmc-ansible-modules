@@ -38,8 +38,16 @@ security:
             reason: Fixed filelock version 3.20.3 requires Python>=3.10 and is used there
         84415:
             reason: Fixed filelock version 3.20.3 requires Python>=3.10 and is used there
-        88424:
-            reason: Fixed authlib version 1.6.7 requires Python>=3.10 and is used there
+        89481:
+            reason: Fixed authlib version 1.6.9 requires Python>=3.10 and is used there
+        89826:
+            reason: Fixed nltk version 3.9.4 requires Python>=3.10 and is used there
+        35073:
+           reason: Fixed pygments version 2.20.0 requires Python>=3.10 and is used there
+        89047:
+           reason: Fixed black version 26.3.1 requires Python>=3.10 and is used there
+        20373:
+            reason: Fixed pytest version 9.0.3 is not installable in the Python 3.9 CI environment, so Python 3.9 uses pytest 8.4.0
         # Need to comment out due to issue https://github.com/pyupio/safety/issues/847
         # SFTY-20260218-01424:
         #     reason: Fixed nltk version 3.9.3 requires Python>=3.10 and is used there

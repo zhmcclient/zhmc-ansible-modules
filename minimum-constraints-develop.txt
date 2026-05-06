@@ -13,7 +13,8 @@ mock==2.0.0
 voluptuous==0.11.7
 
 # Unit test (imports into testcases):
-pytest==8.4.0
+pytest==8.4.0; python_version == '3.9'
+pytest==9.0.3; python_version >= '3.10'
 testfixtures==6.9.0
 colorama==0.4.6
 # packaging is covered in requirements.txt
@@ -49,7 +50,7 @@ antsibull-docutils==1.3.0
 
 # ansible-lint
 ansible-lint==24.12.2; python_version >= '3.10'
-black==24.3.0; python_version >= '3.10'
+black==26.3.1; python_version >= '3.10'
 rich==12.0.0; python_version >= '3.10'
 wcmatch==8.5; python_version >= '3.10'
 ansible-compat==24.10.0; python_version >= '3.10'
@@ -61,7 +62,7 @@ safety-schemas==0.0.16
 dparse==0.6.4
 ruamel.yaml==0.19.1
 click==8.0.2
-Authlib==1.6.7
+Authlib==1.6.9
 marshmallow==3.26.2
 pydantic==2.12.0
 pydantic_core==2.41.1
@@ -78,7 +79,7 @@ Sphinx==7.2.0
 docutils==0.20.1
 sphinx-git==10.1.1
 GitPython==3.1.41
-Pygments==2.15.0
+Pygments==2.20.0
 sphinx-rtd-theme==2.0.0
 sphinxcontrib-applehelp==1.0.4
 sphinxcontrib-devhelp==1.0.2
@@ -163,7 +164,7 @@ mypy_extensions==1.1.0
 # nltk 3.9.3 fixes CVE-2025-14009
 # Need to comment out nltk==3.9.2 due to issue https://github.com/pyupio/safety/issues/847
 # nltk==3.9.2; python_version == '3.9'
-nltk==3.9.3; python_version >= '3.10'
+nltk==3.9.4; python_version >= '3.10'
 pathlib2==2.2.1
 pbr==2.0.0
 ply==3.10
