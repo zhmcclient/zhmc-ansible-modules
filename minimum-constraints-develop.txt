@@ -153,6 +153,7 @@ imagesize==1.3.0
 importlib-metadata==4.8.3
 iniconfig==2.1.0
 joblib==1.5.2
+joserfc==1.6.5
 keyring==21.4.0
 ld==0.5.0
 levenshtein==0.25.1
