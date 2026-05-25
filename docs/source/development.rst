@@ -350,14 +350,14 @@ local clone of the zhmc-ansible-modules Git repo.
           M.N.U:
             changes:
               minor_changes:
-              - . . .
-              - . . .
+                - . . .
+                - . . .
               release_summary: Released on 2023-08-26.
                 Functional enhancements and bug fixes.
                 This version contains all fixes up to version M.N-1.x.
             fragments:
-            - . . .
-            - . . .
+              - . . .
+              - . . .
             release_date: '2023-08-26'
 
       The date for "Released on" should be the same date as in ``release_date``.
