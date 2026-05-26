@@ -1,0 +1,3 @@
+warn_list: []
+exclude_paths:
+  - changelogs/changelog.yaml
