@@ -135,7 +135,7 @@ annotated-types==0.6.0
 annotated-doc==0.0.4
 anyio==4.10.0
 backports-datetime-fromisoformat==2.0.3
-bleach==3.3.0
+bleach==6.4.0
 bracex==2.6
 chardet==3.0.3
 colorclass==2.2.2
