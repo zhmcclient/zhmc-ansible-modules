@@ -14,6 +14,9 @@ pip==26.1; python_version >= '3.10'
 setuptools==78.1.1
 wheel==0.46.2
 
+# ld gets installed by 'make platform' on Linux - need to list it here to pass check_reqs.
+ld==0.5.0; sys_platform=="linux"
+
 
 # Direct dependencies on ansible/ansible-core for install (must be consistent with requirements-ansible.txt)
 
@@ -25,6 +28,9 @@ ansible-core==2.15.13; python_version <= '3.11'
 ansible-core==2.16.13; python_version == '3.12'
 ansible-core==2.18.0; python_version >= '3.13'
 
+# ansible-core 2.15.13 requires importlib-resources>=5.0,<5.1
+# ansible-core 2.16 no longer requires importlib-resources and uses the built-in Python module
+importlib-resources==5.0.0; python_version <= '3.11'  # Python 3.12 has importlib-resources 5.12
 
 # Direct dependencies for install, except ansible/ansible-core (must be consistent with requirements.txt)
 
@@ -49,7 +55,6 @@ decorator==4.0.11
 docopt==0.6.2
 idna==3.7
 immutable-views==0.6.0  # to be replaced with immutabledict in a future zhmcclient version
-importlib-resources==5.0.0
 jsonschema==4.18.0
 jsonschema-specifications==2023.3.6
 MarkupSafe==2.0.0
@@ -57,7 +62,6 @@ nocasedict==1.0.2
 pycparser==2.23
 pyrsistent==0.20.0
 python-dateutil==2.8.2
-pytz==2019.1
 referencing==0.31.0
 requests==2.32.5; python_version == '3.9'
 requests==2.33.0; python_version >= '3.10'
@@ -66,7 +70,7 @@ rpds-py==0.7.1
 six==1.14.0; python_version == '3.9'
 six==1.16.0; python_version >= '3.10'
 stomp.py==8.1.1
-tomli==1.1.0
+tomli==2.0.1; python_version <= '3.10'  # used by a number of packages; built-in to Python>=3.11
 typing-extensions==4.14.1
 # Need to comment out urllib3==2.6.3 due to issue https://github.com/pyupio/safety/issues/847
 # urllib3==2.6.3; python_version == '3.9'

@@ -90,7 +90,7 @@ sphinxcontrib-qthelp==1.0.3
 sphinxcontrib-serializinghtml==1.1.9
 sphinxcontrib-websupport==1.2.4
 autodocsumm==0.2.12
-Babel==2.11.0
+Babel==2.12.0
 # Sphinx 8.2.0 started using roman-numerals-py
 roman-numerals-py==4.1.0
 roman-numerals==4.1.0
@@ -135,13 +135,9 @@ annotated-types==0.6.0
 annotated-doc==0.0.4
 anyio==4.10.0
 backports-datetime-fromisoformat==2.0.3
-bleach==3.3.0
 bracex==2.6
-chardet==3.0.3
 colorclass==2.2.2
 commonmark==0.9.1
-configparser==4.0.2
-contextlib2==0.6.0
 distro==1.9.0
 exceptiongroup==1.0.2
 filelock==3.16.1; python_version == '3.9'
@@ -155,24 +151,17 @@ importlib-metadata==4.8.3
 iniconfig==2.1.0
 joblib==1.5.2
 joserfc==1.6.5
-keyring==21.4.0
-ld==0.5.0
-levenshtein==0.25.1
 markdown-it-py==2.2.0
 mdurl==0.1.2
-more-itertools==5.0.0
 mypy_extensions==1.1.0
 # nltk 3.9.3 fixes CVE-2025-14009
 # Need to comment out nltk==3.9.2 due to issue https://github.com/pyupio/safety/issues/847
 # nltk==3.9.2; python_version == '3.9'
 nltk==3.9.4; python_version >= '3.10'
-pathlib2==2.2.1
 pbr==2.0.0
-ply==3.10
 py==1.11.0  # Still required by pytest 6.2.5
 pytokens==0.4.0
 regex==2025.7.29
-requests-toolbelt==0.8.0
 roman-numerals-py==1.0.0
 ruamel.yaml.clib==0.2.7
 shellingham==1.3.0
@@ -183,8 +172,5 @@ stevedore==5.2.0
 tenacity==8.5.0
 toml==0.10.0
 tqdm==4.67.1
-types-docutils==0.18.3
 typing-inspection==0.4.2
-wcwidth==0.1.7
-webencodings==0.5.1
 zipp==3.19.1
