@@ -47,12 +47,12 @@ security:
         89047:
            reason: Fixed black version 26.3.1 requires Python>=3.10 and is used there
         20373:
-            reason: Fixed pytest version 9.0.3 is not installable in the Python 3.9 CI environment, so Python 3.9 uses pytest 8.4.0
-        90553:
-            reason: Fixed requests version 2.33.0 is not installable in the Python 3.9 CI environment, so we use requests 2.32.5 which is the latest available
+            reason: Fixed pytest version 9.0.3 requires Python>=3.10 and is used there
         # Need to comment out due to issue https://github.com/pyupio/safety/issues/847
         # SFTY-20260218-01424:
         #     reason: Fixed nltk version 3.9.3 requires Python>=3.10 and is used there
+        # SFTY-20260122-20373:
+        #     reason: Fixed pytest version 9.0.3 requires Python>=3.10 and is used there
 
     # Continue with exit code 0 when vulnerabilities are found.
     continue-on-vulnerability-error: False

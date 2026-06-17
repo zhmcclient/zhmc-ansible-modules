@@ -13,13 +13,12 @@ mock==2.0.0
 voluptuous==0.11.7
 
 # Unit test (imports into testcases):
-pytest==8.4.0; python_version == '3.9'
+# Need to comment out pytest==8.4.0 due to issue https://github.com/pyupio/safety/issues/847
+# pytest==8.4.0; python_version == '3.9'
 pytest==9.0.3; python_version >= '3.10'
 testfixtures==6.9.0
 colorama==0.4.6
 # packaging is covered in requirements.txt
-requests==2.32.5
-urllib3==2.6.3
 requests-mock==1.6.0
 immutabledict==4.2.0
 
@@ -62,7 +61,7 @@ safety-schemas==0.0.16
 dparse==0.6.4
 ruamel.yaml==0.19.1
 click==8.0.2
-Authlib==1.6.9
+Authlib==1.6.11
 marshmallow==3.26.2
 pydantic==2.12.0
 pydantic_core==2.41.1
@@ -70,6 +69,7 @@ typer==0.16.0
 typer-cli==0.16.0
 typer-slim==0.16.0
 psutil==6.1.0
+truststore==0.9.1
 
 # Bandit checker
 bandit==1.7.8
@@ -78,7 +78,7 @@ bandit==1.7.8
 Sphinx==7.2.0
 docutils==0.20.1
 sphinx-git==10.1.1
-GitPython==3.1.41
+GitPython==3.1.50
 Pygments==2.20.0
 sphinx-rtd-theme==2.0.0
 sphinxcontrib-applehelp==1.0.4

@@ -29,13 +29,19 @@ security:
     #     expires: {date}   # optional: Date when this ignore will expire
     ignore-vulnerabilities:
         74261:
-            reason: Fixed ansible-core version is 2.18.0 and is used where possible, but we require ansible-core>=2.15
+            reason: Fixed ansible-core version 2.18.0 requires Python>=3.11 and is used there
         82327:
-            reason: Fixed ansible version is 12.2.0 and is used where possible, but we require ansible>=8
+            reason: Fixed ansible version 12.2.0 requires Python>=3.11 and is used there
+        90553:
+            reason: Fixed requests version 2.33.0 requires Python>=3.10 and is used there
         90749:
             reason: Fixed cryptography version 46.0.6 requires Python>=3.10 and is used there
-        90553:
-            reason: Fixed requests version 2.32.5 is not installable in the Python 3.9 CI environment, so Python 3.9 uses requests 2.32.4
+        73302:
+            reason: Fixed ansible-core version 2.16.13 requires Python>=3.10 and is used on Python>=3.12
+
+        # Need to comment out SFTY IDs due to issue https://github.com/pyupio/safety/issues/847
+        # SFTY-20260511-47957:
+        #     reason: Fixed urllib3 version 2.7.0 requires Python>=3.10 and is used there
 
     # Continue with exit code 0 when vulnerabilities are found.
     continue-on-vulnerability-error: False

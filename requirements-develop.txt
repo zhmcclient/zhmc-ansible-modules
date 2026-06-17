@@ -9,8 +9,8 @@ mock>=2.0.0
 voluptuous>=0.11.7
 
 # Unit test (imports into testcases):
-pytest==8.4.0; python_version == '3.9'
-pytest==9.0.3; python_version >= '3.10'
+pytest>=8.4.0; python_version == '3.9'
+pytest>=9.0.3; python_version >= '3.10'
 testfixtures>=6.9.0
 colorama>=0.4.6
 # packaging is covered in requirements.txt
@@ -40,7 +40,7 @@ coveralls>=3.3.1; python_version >= '3.13'  # 4.0 pins Python to <3.13
 # ansible-test
 yamllint>=1.25.0; python_version == '3.9'
 yamllint>=1.30.0; python_version >= '3.10'
-pathspec>=0.10.3
+pathspec>=1.0.3
 # rstcheck is used only in ansible <= 2.10 / ansible <= 4
 
 # ansible-lint
