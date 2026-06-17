@@ -26,7 +26,7 @@ ansible==11.0.0; python_version >= '3.13'
 
 ansible-core==2.15.13; python_version <= '3.11'
 ansible-core==2.16.13; python_version == '3.12'
-ansible-core==2.18.0; python_version >= '3.13'
+ansible-core==2.18.1rc1; python_version >= '3.13'
 
 # ansible-core 2.15.13 requires importlib-resources>=5.0,<5.1
 # ansible-core 2.16 no longer requires importlib-resources and uses the built-in Python module
