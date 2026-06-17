@@ -17,7 +17,7 @@
 # Apart from that, we require the lowest Ansible version that supports a given Python version.
 ansible>=8.7.0; python_version <= '3.11'
 ansible>=9.0.1; python_version == '3.12'
-ansible>=11.0.0; python_version >= '3.13'
+ansible>=12.2.0; python_version >= '3.13'
 
 # ansible-core is pulled in by ansible, but is needed for pip-check-reqs checks.
 ansible-core>=2.15.13; python_version <= '3.11'
