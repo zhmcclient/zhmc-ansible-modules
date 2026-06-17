@@ -132,6 +132,11 @@ jobs:
       uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Set system locale to UTF-8 on Windows
+      # This avoids cp1252 errors in the ansible-galaxy command
+      if: startsWith(matrix.os, 'windows')
+      run: Set-WinSystemLocale -SystemLocale en-US; Set-WinUILanguageOverride -Language en-US
+      shell: pwsh
     - name: Display environment
       env:
         PACKAGE_LEVEL: ${{ matrix.package_level }}
