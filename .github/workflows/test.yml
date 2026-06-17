@@ -61,11 +61,6 @@ jobs:
               }, \
               { \
                 \"os\": \"macos-latest\", \
-                \"python-version\": \"3.9\", \
-                \"package_level\": \"latest\" \
-              }, \
-              { \
-                \"os\": \"macos-latest\", \
                 \"python-version\": \"3.14\", \
                 \"package_level\": \"latest\" \
               } \
