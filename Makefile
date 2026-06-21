@@ -49,13 +49,12 @@ ifndef RUN_TYPE
 endif
 
 # Determine OS platform make runs on
-PLATFORM := $(shell uname -s)
+PLATFORM := $(shell uname -s)  # Values: Linux, Darwin
+SHELL := $(shell which bash)
+.SHELLFLAGS := -c
 
 # Current working directory
 PWD := $(shell pwd)
-
-ENV = env | sort
-WHICH = which
 
 # Namespace and name of this collection
 collection_namespace := ibm
@@ -299,10 +298,10 @@ endif
 	@echo "Shell flags: $(.SHELLFLAGS)"
 	@echo "Make version: $(MAKE_VERSION)"
 	@echo "Python command name: $(PYTHON_CMD)"
-	@echo "Python command location: $(shell $(WHICH) $(PYTHON_CMD))"
+	@echo "Python command location: $(shell which -a $(PYTHON_CMD))"
 	@echo "Python version: $(python_m_n_version)"
 	@echo "Pip command name: $(PIP_CMD)"
-	@echo "Pip command location: $(shell $(WHICH) $(PIP_CMD))"
+	@echo "Pip command location: $(shell which -a $(PIP_CMD))"
 	@echo "Pip version: $(shell $(PIP_CMD) --version)"
 	@echo "$(collection_name) collection version: $(collection_version)"
 ifneq ($(ansible_core_version),)
@@ -318,7 +317,7 @@ endif
 .PHONY: env
 env:
 	@echo "Makefile: Environment variables as seen by make:"
-	$(ENV)
+	env | sort
 
 .PHONY: install
 install: _check_version $(done_dir)/install_$(pymn)_$(PACKAGE_LEVEL).done
@@ -334,12 +333,12 @@ docs: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(doc_bui
 
 .PHONY: linkcheck
 linkcheck: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(doc_rst_files)
-	@bash -c 'sphinx-build -b linkcheck $(sphinx_opts) $(doc_source_dir) $(doc_linkcheck_dir); rc=$$?; if [ $$rc -ne 0 ]; then echo "::notice::linkcheck failed (ignored)"; fi'
+	sphinx-build -b linkcheck $(sphinx_opts) $(doc_source_dir) $(doc_linkcheck_dir); rc=$$?; if [ $$rc -ne 0 ]; then echo "::notice::linkcheck failed (ignored)"; fi
 	@echo "Makefile: $@ done."
 
 .PHONY: test
 test: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
-	bash -c "PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. pytest $(pytest_cov_opts) $(pytest_opts) $(test_dir)/unit $(test_dir)/function"
+	PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. pytest $(pytest_cov_opts) $(pytest_opts) $(test_dir)/unit $(test_dir)/function
 	coverage html --rcfile $(coverage_rc_file)
 	@echo "Makefile: $@ done."
 
@@ -355,8 +354,8 @@ pylint: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(pylin
 
 .PHONY: safety
 safety: Makefile $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(safety_develop_policy_file) $(safety_install_policy_file) minimum-constraints-develop.txt minimum-constraints-install.txt
-	bash -c "safety check --policy-file $(safety_develop_policy_file) -r minimum-constraints-develop.txt --full-report || test '$(RUN_TYPE)' == 'normal' || test '$(RUN_TYPE)' == 'scheduled' || exit 1"
-	bash -c "safety check --policy-file $(safety_install_policy_file) -r minimum-constraints-install.txt --full-report || test '$(RUN_TYPE)' == 'normal' || exit 1"
+	safety check --policy-file $(safety_develop_policy_file) -r minimum-constraints-develop.txt --full-report || test '$(RUN_TYPE)' == 'normal' || test '$(RUN_TYPE)' == 'scheduled' || exit 1
+	safety check --policy-file $(safety_install_policy_file) -r minimum-constraints-install.txt --full-report || test '$(RUN_TYPE)' == 'normal' || exit 1
 	@echo "Makefile: $@ done."
 
 .PHONY: bandit
@@ -372,13 +371,13 @@ sanity: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(dist_
 	tar -xf $(dist_file) --directory $(sanity_coll_dir)
 ifeq ($(run_sanity),true)
 	echo "Running ansible sanity test in the current Python env (using ansible-core $(ansible_core_version) and Python $(python_version))"
-	bash -c "cd $(sanity_coll_dir); ansible-test sanity --verbose --truncate 0 --local"
+	cd $(sanity_coll_dir); ansible-test sanity --verbose --truncate 0 --local
 else
 	echo "Skipping ansible sanity test in the current Python env (using ansible-core $(ansible_core_version) and Python $(python_version))"
 endif
 ifeq ($(run_sanity),true)
 	echo "Running ansible sanity test in its own virtual Python env (using ansible-core $(ansible_core_version) and Python $(python_version))"
-	bash -c "cd $(sanity_coll_dir); ansible-test sanity --verbose --truncate 0 --venv --requirements"
+	cd $(sanity_coll_dir); ansible-test sanity --verbose --truncate 0 --venv --requirements
 else
 	echo "Skipping ansible sanity test in its own virtual Python env (using ansible-core $(ansible_core_version) and Python $(python_version))"
 endif
@@ -391,7 +390,7 @@ ifeq ($(run_ansible_lint),true)
 	rm -rf $(dist_dir)/tmp
 	mkdir -p $(dist_dir)/tmp
 	tar -xf $(dist_file) --directory $(dist_dir)/tmp
-	-bash -c "cd $(dist_dir)/tmp; ansible-lint --profile production -f pep8"
+	-cd $(dist_dir)/tmp; ansible-lint --profile production -f pep8
 else
 	echo "Skipping ansible-lint (using ansible-core $(ansible_core_version) and Python $(python_version))"
 endif
@@ -403,18 +402,18 @@ ifeq ($(PACKAGE_LEVEL),ansible)
 	@echo "Makefile: Warning: Skipping the checking of missing dependencies for PACKAGE_LEVEL=ansible" >&2
 else
 	@echo "Makefile: Checking missing dependencies of this package"
-	bash -c "cat requirements.txt requirements-ansible.txt >tmp_requirements.txt"
+	cat requirements.txt requirements-ansible.txt >tmp_requirements.txt
 	pip-missing-reqs $(src_py_dir) --requirements-file=tmp_requirements.txt
 	pip-missing-reqs $(src_py_dir) --requirements-file=minimum-constraints-install.txt
 	rm tmp_requirements.txt
 	@echo "Makefile: Done checking missing dependencies of this package"
 	@echo "Makefile: Checking missing dependencies of some development packages"
-	bash -c "cat minimum-constraints-develop.txt minimum-constraints-install.txt >tmp_minimum-constraints.txt"
+	cat minimum-constraints-develop.txt minimum-constraints-install.txt >tmp_minimum-constraints.txt
 	@rc=0; for pkg in $(check_reqs_packages); do dir=$$($(PYTHON_CMD) -c "import $${pkg} as m,os; dm=os.path.dirname(m.__file__); d=dm if not dm.endswith('site-packages') else m.__file__; print(d)"); cmd="pip-missing-reqs $${dir} --requirements-file=tmp_minimum-constraints.txt"; echo $${cmd}; $${cmd}; rc=$$(expr $${rc} + $${?}); done; exit $${rc}
 	@echo "Makefile: Done checking missing dependencies of some development packages"
 	@echo "Makefile: Checking missing dependencies of all installed packages"
-	bash -c "pip freeze | cut -d '=' -f 1 | grep -v '@' | tr '-' '.' | tr '_' '.' | xargs -I {} sh -c 'if ! grep -iE ^{}== tmp_minimum-constraints.txt >/dev/null; then sh -c \"pip freeze | grep -iE ^{}==\"; fi'" >tmp_missing-reqs.txt
-	bash -c "if [ -s tmp_missing-reqs.txt ]; then echo 'Error: Missing packages in minimum-constraints files compared to what is installed:'; cat tmp_missing-reqs.txt; false; fi"
+	pip freeze | cut -d '=' -f 1 | grep -v '@' | tr '-' '.' | tr '_' '.' | xargs -I {} sh -c 'if ! grep -iE ^{}== tmp_minimum-constraints.txt >/dev/null; then sh -c "pip freeze | grep -iE ^{}=="; fi' >tmp_missing-reqs.txt
+	if [ -s tmp_missing-reqs.txt ]; then echo 'Error: Missing packages in minimum-constraints files compared to what is installed:'; cat tmp_missing-reqs.txt; false; fi
 	@echo "Makefile: Done checking missing dependencies of all installed packages"
 	rm tmp_missing-reqs.txt
 	rm tmp_minimum-constraints.txt
@@ -429,17 +428,17 @@ check_frag: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 
 .PHONY:	end2end
 end2end: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
-	bash -c "PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. TESTEND2END_LOAD=true pytest -v $(pytest_cov_opts) $(pytest_opts) $(test_dir)/end2end"
+	PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. TESTEND2END_LOAD=true pytest -v $(pytest_cov_opts) $(pytest_opts) $(test_dir)/end2end
 	@echo "Makefile: $@ done."
 
 .PHONY:	end2end_show
 end2end_show:
-	bash -c "TESTEND2END_LOAD=true $(PYTHON_CMD) -c 'from zhmcclient.testutils import print_hmc_definitions; print_hmc_definitions()'"
+	TESTEND2END_LOAD=true $(PYTHON_CMD) -c 'from zhmcclient.testutils import print_hmc_definitions; print_hmc_definitions()'
 
 # TODO: Enable rc checking again once the remaining issues are resolved
 .PHONY:	end2end_mocked
 end2end_mocked: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
-	bash -c "PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. TESTEND2END_LOAD=true TESTINVENTORY=$(test_dir)/end2end/mocked_inventory.yaml TESTVAULT=$(test_dir)/end2end/mocked_vault.yaml pytest -v $(pytest_cov_opts) $(pytest_opts) $(test_dir)/end2end || true"
+	PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. TESTEND2END_LOAD=true TESTINVENTORY=$(test_dir)/end2end/mocked_inventory.yaml TESTVAULT=$(test_dir)/end2end/mocked_vault.yaml pytest -v $(pytest_cov_opts) $(pytest_opts) $(test_dir)/end2end || true
 	coverage html --rcfile $(coverage_rc_file)
 	@echo "Makefile: $@ done."
 
@@ -463,7 +462,7 @@ ifndef GALAXY_TOKEN
 endif
 	@echo "==> This will publish collection $(collection_full_name) version $(collection_version) on Ansible Galaxy"
 	@echo -n '==> Continue? [yN] '
-	@bash -c 'read answer; if [[ "$$answer" != "y" ]]; then echo "Aborted."; false; fi'
+	@read answer; if [[ "$$answer" != "y" ]]; then echo "Aborted."; false; fi
 	@echo ""
 	ansible-galaxy collection publish --server https://galaxy.ansible.com/ --token $(GALAXY_TOKEN) $(dist_file)
 	@echo "Done: Published collection $(collection_full_name) version $(collection_version) on Ansible Galaxy"
@@ -479,7 +478,7 @@ ifndef AUTOMATIONHUB_TOKEN
 endif
 	@echo "==> This will publish collection $(collection_full_name) version $(collection_version) on Ansible AutomationHub"
 	@echo -n '==> Continue? [yN] '
-	@bash -c 'read answer; if [[ "$$answer" != "y" ]]; then echo "Aborted."; false; fi'
+	@read answer; if [[ "$$answer" != "y" ]]; then echo "Aborted."; false; fi
 	@echo ""
 	@echo "Note: If the following upload fails, upload the collection manually as described in docs/source/development.rst"
 	@echo ""
@@ -516,7 +515,7 @@ $(done_dir)/install_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/base_$(p
 	echo "done" >$@
 
 $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/base_$(pymn)_$(PACKAGE_LEVEL).done tools/os_setup.sh requirements-develop.txt
-	bash -c 'tools/os_setup.sh'
+	tools/os_setup.sh
 	$(PYTHON_CMD) -m pip install $(pip_level_opts) $(pip_level_opts_new) -r requirements-develop.txt
 	echo "done" >$@
 
