@@ -14,7 +14,7 @@ pip==26.1; python_version >= '3.10'
 setuptools==78.1.1
 wheel==0.46.2
 
-# ld gets installed by 'make platform' on Linux - need to list it here to pass check_reqs.
+# ld gets installed by 'make platform' on Linux
 ld==0.5.0; sys_platform=="linux"
 
 
@@ -51,16 +51,15 @@ attrs==22.2.0
 certifi==2024.7.4
 cffi==2.0.0
 charset-normalizer==2.0.0
-decorator==4.0.11
 docopt==0.6.2
 idna==3.15
+immutabledict==4.2.0
 immutable-views==0.6.0  # to be replaced with immutabledict in a future zhmcclient version
 jsonschema==4.18.0
 jsonschema-specifications==2023.3.6
 MarkupSafe==2.0.0
 nocasedict==1.0.2
 pycparser==2.23
-pyrsistent==0.20.0
 python-dateutil==2.8.2
 referencing==0.31.0
 requests==2.32.5; python_version == '3.9'
@@ -70,7 +69,6 @@ rpds-py==0.7.1
 six==1.14.0; python_version == '3.9'
 six==1.16.0; python_version >= '3.10'
 stomp.py==8.1.1
-tomli==2.0.1; python_version <= '3.10'  # used by a number of packages; built-in to Python>=3.11
 typing-extensions==4.14.1
 # Need to comment out urllib3==2.6.3 due to issue https://github.com/pyupio/safety/issues/847
 # urllib3==2.6.3; python_version == '3.9'

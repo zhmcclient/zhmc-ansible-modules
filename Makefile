@@ -49,7 +49,8 @@ ifndef RUN_TYPE
 endif
 
 # Determine OS platform make runs on
-PLATFORM := $(shell uname -s)  # Values: Linux, Darwin
+# Values: Linux, Darwin
+PLATFORM := $(shell uname -s)
 SHELL := $(shell which bash)
 .SHELLFLAGS := -c
 
@@ -154,18 +155,6 @@ sanity_additional_files := \
 safety_install_policy_file := .safety-policy-install.yml
 safety_develop_policy_file := .safety-policy-develop.yml
 
-# Packages whose dependencies are checked using pip-missing-reqs
-ifeq ($(python_m_n_version),3.9)
-  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor pylint safety bandit ansible_test antsibull_changelog
-else ifeq ($(python_m_n_version),3.10)
-  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor pylint safety bandit ansible_test antsibull_changelog ansiblelint
-else ifeq ($(python_m_n_version),3.11)
-  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 sphinx ansible_doc_extractor pylint safety bandit ansible_test antsibull_changelog ansiblelint
-else
-# sphinx is excluded for Python >=3.12 because pip-missing-reqs 2.5 reports missing sphinx-versions package (rightfully)
-  check_reqs_packages := ansible pip_check_reqs pytest coverage coveralls flake8 ansible_doc_extractor pylint safety bandit ansible_test antsibull_changelog ansiblelint
-endif
-
 # Directories for documentation
 doc_source_dir := docs/source
 doc_templates_dir := docs/templates
@@ -232,7 +221,9 @@ help:
 	@echo "Currently active Python environment: Python $(python_m_n_version)"
 	@echo "Valid targets are:"
 	@echo "  install    - Install collection and its dependent Python packages"
+	@echo "  check_reqs_install - Perform missing install dependency checks (must be run before develop)"
 	@echo "  develop    - Set up the development environment"
+	@echo "  check_reqs - Perform missing dependency checks"
 	@echo "  dist       - Build the collection distribution archive in: $(dist_dir)"
 	@echo "  check      - Run flake8"
 	@echo "  pylint     - Run PyLint on sources"
@@ -240,7 +231,6 @@ help:
 	@echo "  ansible_lint - Run ansible-lint on distribution archive (and built it)"
 	@echo "  safety     - Run safety checker"
 	@echo "  bandit     - Run bandit checker"
-	@echo "  check_reqs - Perform missing dependency checks"
 	@echo "  check_frag - Run antsibull-changelog lint on change log fragments"
 	@echo "  docs       - Build the documentation for all enabled (docs/source/conf.py) versions in: $(doc_build_dir) using remote repo"
 	@echo "  docslocal  - Build the documentation from local repo contents in: $(doc_build_local_dir)"
@@ -396,28 +386,37 @@ else
 endif
 	@echo "Makefile: $@ done."
 
+.PHONY: check_reqs_install
+check_reqs_install: Makefile $(done_dir)/install_$(pymn)_$(PACKAGE_LEVEL).done minimum-constraints-install.txt
+	@echo "Makefile: Checking missing and extra install dependencies of this package"
+	pip freeze | cut -d '=' -f 1 | grep -v '@' | tr '-' '.' | tr '_' '.' | xargs -I {} sh -c 'if ! grep -iE ^{}== minimum-constraints-install.txt >/dev/null; then sh -c "pip freeze | grep -iE ^{}=="; fi' >tmp_missing-reqs.txt
+	if [ -s tmp_missing-reqs.txt ]; then echo 'Error: Missing packages in minimum-constraints-install.txt compared to what is installed:'; cat tmp_missing-reqs.txt; exit 1; fi
+	rm -f tmp_missing-reqs.txt
+	for pkg in $$(grep -E '^[a-z_0-9A-Z\-\.]+==' minimum-constraints-install.txt | cut -d '=' -f 1 | sort | uniq); do if ! pip show $$pkg >/dev/null 2>&1; then echo $$pkg; fi; done >extra_reqs_install_$(PLATFORM)_$(pymn)_$(PACKAGE_LEVEL).txt
+	if [ -s extra_reqs_install_$(PLATFORM)_$(pymn)_$(PACKAGE_LEVEL).txt ]; then echo 'Warning: Extra packages in minimum-constraints-install.txt compared to what is installed:'; cat extra_reqs_install_$(PLATFORM)_$(pymn)_$(PACKAGE_LEVEL).txt; fi
+	@echo "Makefile: Done checking missing and extra install dependencies of this package"
+	@echo "Makefile: $@ done."
+
 .PHONY: check_reqs
-check_reqs: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done minimum-constraints-develop.txt minimum-constraints-install.txt requirements.txt requirements-ansible.txt
-ifeq ($(PACKAGE_LEVEL),ansible)
-	@echo "Makefile: Warning: Skipping the checking of missing dependencies for PACKAGE_LEVEL=ansible" >&2
+check_reqs: Makefile $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done minimum-constraints-develop.txt minimum-constraints-install.txt requirements.txt requirements-ansible.txt
+	@echo "Makefile: Checking missing and extra dependencies of this package"
+ifeq ($(PLATFORM),Windows_native)
+# Reason for skipping on Windows is https://github.com/r1chardj0n3s/pip-check-reqs/issues/67
+	@echo "Makefile: Warning: Skipping the use of pip-missing-reqs on native Windows" >&2
 else
-	@echo "Makefile: Checking missing dependencies of this package"
 	cat requirements.txt requirements-ansible.txt >tmp_requirements.txt
 	pip-missing-reqs $(src_py_dir) --requirements-file=tmp_requirements.txt
 	pip-missing-reqs $(src_py_dir) --requirements-file=minimum-constraints-install.txt
-	rm tmp_requirements.txt
-	@echo "Makefile: Done checking missing dependencies of this package"
-	@echo "Makefile: Checking missing dependencies of some development packages"
-	cat minimum-constraints-develop.txt minimum-constraints-install.txt >tmp_minimum-constraints.txt
-	@rc=0; for pkg in $(check_reqs_packages); do dir=$$($(PYTHON_CMD) -c "import $${pkg} as m,os; dm=os.path.dirname(m.__file__); d=dm if not dm.endswith('site-packages') else m.__file__; print(d)"); cmd="pip-missing-reqs $${dir} --requirements-file=tmp_minimum-constraints.txt"; echo $${cmd}; $${cmd}; rc=$$(expr $${rc} + $${?}); done; exit $${rc}
-	@echo "Makefile: Done checking missing dependencies of some development packages"
-	@echo "Makefile: Checking missing dependencies of all installed packages"
-	pip freeze | cut -d '=' -f 1 | grep -v '@' | tr '-' '.' | tr '_' '.' | xargs -I {} sh -c 'if ! grep -iE ^{}== tmp_minimum-constraints.txt >/dev/null; then sh -c "pip freeze | grep -iE ^{}=="; fi' >tmp_missing-reqs.txt
-	if [ -s tmp_missing-reqs.txt ]; then echo 'Error: Missing packages in minimum-constraints files compared to what is installed:'; cat tmp_missing-reqs.txt; false; fi
-	@echo "Makefile: Done checking missing dependencies of all installed packages"
-	rm tmp_missing-reqs.txt
-	rm tmp_minimum-constraints.txt
+	rm -f tmp_requirements.txt
 endif
+	cat minimum-constraints-develop.txt minimum-constraints-install.txt >tmp_minimum-constraints.txt
+	pip freeze | cut -d '=' -f 1 | grep -v '@' | tr '-' '.' | tr '_' '.' | xargs -I {} sh -c 'if ! grep -iE ^{}== tmp_minimum-constraints.txt >/dev/null; then sh -c "pip freeze | grep -iE ^{}=="; fi' >tmp_missing-reqs.txt
+	if [ -s tmp_missing-reqs.txt ]; then echo 'Error: Missing packages in minimum-constraints files compared to what is installed:'; cat tmp_missing-reqs.txt; exit 1; fi
+	rm -f tmp_missing-reqs.txt
+	for pkg in $$(grep -E '^[a-z_0-9A-Z\-\.]+==' tmp_minimum-constraints.txt | cut -d '=' -f 1 | sort | uniq); do if ! pip show $$pkg >/dev/null 2>&1; then echo $$pkg; fi; done >extra_reqs_all_$(PLATFORM)_$(pymn)_$(PACKAGE_LEVEL).txt
+	if [ -s extra_reqs_all_$(PLATFORM)_$(pymn)_$(PACKAGE_LEVEL).txt ]; then echo 'Warning: Extra packages in minimum-constraints files compared to what is installed:'; cat extra_reqs_all_$(PLATFORM)_$(pymn)_$(PACKAGE_LEVEL).txt; fi
+	rm -f tmp_minimum-constraints.txt
+	@echo "Makefile: Done checking missing dependencies of this package"
 	@echo "Makefile: $@ done."
 
 .PHONY: check_frag
