@@ -135,7 +135,9 @@ Examples
          ca_certs: "{{ my_certs_dir }}"    # optional
        action: create
      register: session
-     no_log: true    # Protect result containing HMC session ID from being logged
+     # Note: The return value of this module is automatically treated as a no_log
+     # value, so the playbook does not need to specify C(no_log: true) to protect
+     # the returned session ID.
 
    - name: Example task using the previously created HMC session
      zhmc_cpc_list:
@@ -184,7 +186,7 @@ hmc_host
   | **type**: str
 
 hmc_auth
-  Credentials for the HMC session, for use by other tasks. This return value should be protected with :literal:`no\_log=true` for :literal:`action=create`\ , since it contains the HMC session ID. For :literal:`action=delete`\ , the same structure is returned, just with null values. This can be used to reset the variable that was set for :literal:`action=create`.
+  Credentials for the HMC session, for use by other tasks. For :literal:`action=delete`\ , the same structure is returned, just with null values. This can be used to reset the variable that was set for :literal:`action=create`.
 
   | **returned**: success
   | **type**: dict
@@ -199,7 +201,7 @@ hmc_auth
         }
 
   session_id
-    New HMC session ID for :literal:`action=create`\ , or null for :literal:`action=delete`.
+    New HMC session ID for :literal:`action=create`\ , or null for :literal:`action=delete`. Note that the entire return value of this module is automatically treated as a no\_log value, so this particular property is protected.
 
     | **type**: str
 
