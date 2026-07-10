@@ -28,3 +28,4 @@ tmp_*
 /build/
 /gh-pages/
 /docs_local
+/extra_reqs*.txt
