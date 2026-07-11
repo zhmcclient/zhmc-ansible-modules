@@ -57,7 +57,6 @@ STD_PWRULE_INPUT_PROPERTIES = {
     'min_length': 16,
     'max_length': 32,
     'consecutive_characters': 0,
-    'similarity_count': 2,
     'history_count': 2,
     'case_sensitive': True,
     'character_rules': [],
@@ -74,7 +73,6 @@ STD_PWRULE_PROPERTIES = {
     'min-length': STD_PWRULE_INPUT_PROPERTIES['min_length'],
     'max-length': STD_PWRULE_INPUT_PROPERTIES['max_length'],
     'consecutive-characters': STD_PWRULE_INPUT_PROPERTIES['consecutive_characters'],
-    'similarity-count': STD_PWRULE_INPUT_PROPERTIES['similarity_count'],
     'history-count': STD_PWRULE_INPUT_PROPERTIES['history_count'],
     'character-rules': STD_PWRULE_INPUT_PROPERTIES['character_rules'],
 }
@@ -185,8 +183,8 @@ PWRULE_ABSENT_PRESENT_TESTCASES = [
     # - initial_pwrule_props (dict): HMC-formatted properties for initial
     #    password rule, in addition to STD_PWRULE_PROPERTIES, or None for no
     #    initial password rule.
-    # - input_props (dict): 'properties' input parameter for zhmc_password_rule
-    #   module.
+    # - input_state (str): 'state' input parameter.
+    # - input_props (dict): 'properties' input parameter.
     # - exp_pwrule_props (dict): HMC-formatted properties for expected
     #   properties of created password rule.
     # - exp_changed (bool): Boolean for expected 'changed' flag.
@@ -205,12 +203,12 @@ PWRULE_ABSENT_PRESENT_TESTCASES = [
         'present',
         STD_PWRULE_INPUT_PROPERTIES,
         STD_PWRULE_PROPERTIES,
-        True,  # due to password
+        False,
     ),
     (
         "Present with existing password rule, some properties changed",
         {
-            'session-timeout': 30,
+            'max-length': 16,
         },
         'present',
         STD_PWRULE_INPUT_PROPERTIES,
