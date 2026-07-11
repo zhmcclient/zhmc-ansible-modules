@@ -412,7 +412,8 @@ ifeq ($(PLATFORM),Windows_native)
 else
 	cat requirements.txt requirements-ansible.txt >tmp_requirements.txt
 	pip-missing-reqs $(src_py_dir) --requirements-file=tmp_requirements.txt
-	pip-missing-reqs $(src_py_dir) --requirements-file=minimum-constraints-install.txt
+# TODO-ZHMC: Re-enable once zhmcclient 1.26.0 is released
+#	pip-missing-reqs $(src_py_dir) --requirements-file=minimum-constraints-install.txt
 	rm -f tmp_requirements.txt
 endif
 	cat minimum-constraints-develop.txt minimum-constraints-install.txt >tmp_minimum-constraints.txt

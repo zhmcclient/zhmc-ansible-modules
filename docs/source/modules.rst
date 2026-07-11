@@ -80,7 +80,9 @@ Modules supported only with CPCs in DPM operational mode:
    modules/zhmc_partition_messages
    modules/zhmc_storage_group
    modules/zhmc_storage_group_attachment
+   modules/zhmc_storage_group_list
    modules/zhmc_storage_volume
+   modules/zhmc_storage_volume_list
    modules/zhmc_virtual_function
 
 Modules supported only with CPCs in classic operational mode:
