@@ -828,3 +828,222 @@ def test_common_removed_dict(desc, in_dict, removed_properties):
             assert pname not in act_dict
         else:
             assert act_dict[pname] == in_value
+
+
+COMMON_UNDERSCORED_VALUE_TESTCASES = [
+    # Testcases for test_common_underscored_value()
+    # The list items are tuples with the following items:
+    # - desc (string): description of the testcase.
+    # - in_value (object): Input value. Must not be None.
+    # - exp_value (object): Expected return value.
+
+    (
+        "Empty dict",
+        {},
+        {}
+    ),
+    (
+        "Empty list",
+        [],
+        []
+    ),
+    (
+        "A string",
+        "foo",
+        "foo"
+    ),
+    (
+        "A string with hyphen",
+        "foo-bar",
+        "foo-bar"
+    ),
+    (
+        "A dict with hyphen keys",
+        {
+            "foo-bar": 1,
+            "foo-bar-cut": 1,
+        },
+        {
+            "foo_bar": 1,
+            "foo_bar_cut": 1,
+        }
+    ),
+    (
+        "A list of dicts with hyphen keys",
+        [
+            {
+                "foo-bar": 1,
+            },
+        ],
+        [
+            {
+                "foo_bar": 1,
+            },
+        ]
+    ),
+    (
+        "A list of lists of dicts with hyphen keys",
+        [
+            [
+                {
+                    "foo-bar": 1,
+                },
+            ],
+        ],
+        [
+            [
+                {
+                    "foo_bar": 1,
+                },
+            ],
+        ]
+    ),
+    (
+        "A dict with values that are list of dicts; all dicts have hyphen keys",
+        {
+            "dog-cat": [
+                {
+                    "foo-bar": 1,
+                },
+            ],
+        },
+        {
+            "dog_cat": [
+                {
+                    "foo_bar": 1,
+                },
+            ],
+        }
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "desc, in_value, exp_value",
+    COMMON_UNDERSCORED_VALUE_TESTCASES)
+def test_common_underscored_value(desc, in_value, exp_value):
+    # pylint: disable=unused-argument
+    """
+    Test the underscored_value() function, and indirectly the
+    underscored_dict() and underscored_list() functions.
+    """
+
+    saved_value = deepcopy(in_value)
+
+    # The code to be tested
+    act_value = common.underscored_value(in_value)
+
+    # Check that the input value has not been changed
+    assert_disparate_equal(in_value, saved_value)
+
+    assert act_value == exp_value
+
+
+COMMON_HYPHENED_VALUE_TESTCASES = [
+    # Testcases for test_common_hyphened_value()
+    # The list items are tuples with the following items:
+    # - desc (string): description of the testcase.
+    # - in_value (object): Input value. Must not be None.
+    # - exp_value (object): Expected return value.
+
+    (
+        "Empty dict",
+        {},
+        {}
+    ),
+    (
+        "Empty list",
+        [],
+        []
+    ),
+    (
+        "A string",
+        "foo",
+        "foo"
+    ),
+    (
+        "A string with underscore",
+        "foo_bar",
+        "foo_bar"
+    ),
+    (
+        "A dict with underscore keys",
+        {
+            "foo_bar": 1,
+            "foo_bar_cut": 1,
+        },
+        {
+            "foo-bar": 1,
+            "foo-bar-cut": 1,
+        }
+    ),
+    (
+        "A list of dicts with underscore keys",
+        [
+            {
+                "foo_bar": 1,
+            },
+        ],
+        [
+            {
+                "foo-bar": 1,
+            },
+        ]
+    ),
+    (
+        "A list of lists of dicts with underscore keys",
+        [
+            [
+                {
+                    "foo_bar": 1,
+                },
+            ],
+        ],
+        [
+            [
+                {
+                    "foo-bar": 1,
+                },
+            ],
+        ]
+    ),
+    (
+        "A dict with values that are list of dicts; all dicts have underscore "
+        "keys",
+        {
+            "dog_cat": [
+                {
+                    "foo_bar": 1,
+                },
+            ],
+        },
+        {
+            "dog-cat": [
+                {
+                    "foo-bar": 1,
+                },
+            ],
+        }
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "desc, in_value, exp_value",
+    COMMON_HYPHENED_VALUE_TESTCASES)
+def test_common_hyphened_value(desc, in_value, exp_value):
+    # pylint: disable=unused-argument
+    """
+    Test the hyphened_value() function, and indirectly the
+    hyphened_dict() and hyphened_list() functions.
+    """
+
+    saved_value = deepcopy(in_value)
+
+    # The code to be tested
+    act_value = common.hyphened_value(in_value)
+
+    # Check that the input value has not been changed
+    assert_disparate_equal(in_value, saved_value)
+
+    assert act_value == exp_value
