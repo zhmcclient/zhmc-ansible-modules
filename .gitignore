@@ -21,6 +21,7 @@ tmp_*
 /dist/
 /docs_linkcheck/
 /docs_build/
+/build_changelogs/
 /tests/output/
 /AUTHORS
 /ChangeLog
