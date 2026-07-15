@@ -95,7 +95,7 @@ full_properties
 
 
 expand_names
-  If True and :literal:`full\_properties` is set, additional artificial properties will be returned for the names of referenced objects, such as user roles, password rule, etc. Default: False.
+  If True and :literal:`full\_properties` is True, additional artificial properties will be returned for the names of referenced objects, such as user roles, password rule, etc. See the return value for details.
 
   | **required**: False
   | **type**: bool
@@ -187,42 +187,59 @@ users
     | **type**: raw
 
   user_role_names
-    Only present if :literal:`expand\_names=true`\ : Name of the user roles referenced by property :literal:`user\_roles`.
+    Name of the user roles referenced by property :literal:`user\_roles`.
 
-    | **type**: str
+    Only present if :literal:`expand\_names` is True.
+
+    | **type**: list
+    | **elements**: str
 
   user_pattern_name
-    Only present for users with :literal:`type=pattern` and if :literal:`expand\_names=true`\ : Name of the user pattern referenced by property :literal:`user\_pattern\_uri`.
+    Name of the user pattern referenced by property :literal:`user\_pattern\_uri`.
+
+    Only present for users with :literal:`type=pattern` if :literal:`expand\_names` is True.
 
     | **type**: str
 
   user_template_name
-    Only present for users with :literal:`type=pattern` and if :literal:`expand\_names=true`\ : Name of the template user referenced by property :literal:`user\_template\_uri`.
+    Name of the template user referenced by property :literal:`user\_template\_uri`.
+
+    Only present for users with :literal:`type=pattern` if :literal:`expand\_names` is True.
 
     | **type**: str
 
   password_rule_name
-    Only present if :literal:`expand\_names=true`\ : Name of the password rule referenced by property :literal:`password\_rule\_uri`.
+    Name of the password rule referenced by property :literal:`password\_rule\_uri`.
+
+    Only present if :literal:`expand\_names` is True.
 
     | **type**: str
 
   ldap_server_definition_name
-    Only present if :literal:`expand\_names=true`\ : Name of the LDAP server definition referenced by property :literal:`ldap\_server\_definition\_uri`.
+    Name of the LDAP server definition referenced by property :literal:`ldap\_server\_definition\_uri`.
+
+    Only present if :literal:`expand\_names` is True.
 
     | **type**: str
 
   primary_mfa_server_definition_name
-    Only present if :literal:`expand\_names=true`\ : Name of the MFA server definition referenced by property :literal:`primary\_mfa\_server\_definition\_uri`.
+    Name of the MFA server definition referenced by property :literal:`primary\_mfa\_server\_definition\_uri`.
+
+    Only present if :literal:`expand\_names` is True.
 
     | **type**: str
 
   backup_mfa_server_definition_name
-    Only present if :literal:`expand\_names=true`\ : Name of the MFA server definition referenced by property :literal:`backup\_mfa\_server\_definition\_uri`.
+    Name of the MFA server definition referenced by property :literal:`backup\_mfa\_server\_definition\_uri`.
+
+    Only present if :literal:`expand\_names` is True.
 
     | **type**: str
 
   default_group_name
-    Only present if :literal:`expand\_names=true`\ : Name of the Group referenced by property :literal:`default\_group\_uri`.
+    Name of the Group referenced by property :literal:`default\_group\_uri`.
+
+    Only present if :literal:`expand\_names` is True.
 
     | **type**: str
 

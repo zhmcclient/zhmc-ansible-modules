@@ -140,16 +140,16 @@ properties
 
 
 expand
-  Deprecated: The :literal:`expand` parameter is deprecated because the returned password rule, user role, user pattern and LDAP server definition objects have an independent lifecycle, so the same objects are returned when invoking this module in a loop through all users. Use the respective other modules of this collection to get the properties of these objects.
+  If True, the return value will contain additional artificial properties that expand certain URI or name properties to the full set of resource properties. See the return value for details.
 
-  Boolean that controls whether the returned user contains additional artificial properties that expand certain URI or name properties to the full set of resource properties (see description of return values of this module).
+  :strong:`Deprecated`\ : The :literal:`expand` parameter is deprecated because the returned password rule, user role, user pattern and LDAP server definition objects have an independent lifecycle, so the same objects are returned when invoking this module in a loop through all users. Use the respective other modules of this collection to get the properties of these objects.
 
   | **required**: False
   | **type**: bool
 
 
 expand_names
-  Boolean that controls whether the returned user contains additional artificial properties for the names of referenced objects, such as user roles, password rule, etc.
+  If True, the return value will contain additional artificial properties for the names of referenced objects, such as user roles, password rule, etc.
 
   For backwards compatibility, this parameter defaults to True.
 
@@ -314,9 +314,11 @@ user
     | **type**: str
 
   user-role-objects
-    Deprecated: This result property is deprecated because the :literal:`expand` parameter is deprecated.
+    User roles referenced by property :literal:`user\-roles`.
 
-    Only present if :literal:`expand=true`\ : User roles referenced by property :literal:`user\-roles`.
+    Only present if :literal:`expand` is True.
+
+    :strong:`Deprecated`\ : This result property is deprecated because the :literal:`expand` parameter is deprecated.
 
     | **type**: dict
 
@@ -332,9 +334,11 @@ user
     | **type**: str
 
   user-pattern
-    Deprecated: This result property is deprecated because the :literal:`expand` parameter is deprecated.
+    User pattern referenced by property :literal:`user\-pattern\-uri`.
 
-    Only present for users with :literal:`type=pattern` and if :literal:`expand=true`\ : User pattern referenced by property :literal:`user\-pattern\-uri`.
+    Only present for users with :literal:`type=pattern` and if :literal:`expand` is True.
+
+    :strong:`Deprecated`\ : This result property is deprecated because the :literal:`expand` parameter is deprecated.
 
     | **type**: dict
 
@@ -350,9 +354,11 @@ user
     | **type**: str
 
   user-template
-    Deprecated: This result property is deprecated because the :literal:`expand` parameter is deprecated.
+    User template referenced by property :literal:`user\-template\-uri`.
 
-    Only present for users with :literal:`type=pattern` and if :literal:`expand=true`\ : User template referenced by property :literal:`user\-template\-uri`.
+    Only present for users with :literal:`type=pattern` and if :literal:`expand` is True.
+
+    :strong:`Deprecated`\ : This result property is deprecated because the :literal:`expand` parameter is deprecated.
 
     | **type**: dict
 
@@ -368,9 +374,11 @@ user
     | **type**: str
 
   password-rule
-    Deprecated: This result property is deprecated because the :literal:`expand` parameter is deprecated.
+    Password rule referenced by property :literal:`password\-rule\-uri`.
 
-    Only present if :literal:`expand=true`\ : Password rule referenced by property :literal:`password\-rule\-uri`.
+    Only present if :literal:`expand` is True.
+
+    :strong:`Deprecated`\ : This result property is deprecated because the :literal:`expand` parameter is deprecated.
 
     | **type**: dict
 
@@ -386,9 +394,11 @@ user
     | **type**: str
 
   ldap-server-definition
-    Deprecated: This result property is deprecated because the :literal:`expand` parameter is deprecated.
+    LDAP server definition referenced by property :literal:`ldap\-server\-definition\-uri`.
 
-    Only present if :literal:`expand=true`\ : LDAP server definition referenced by property :literal:`ldap\-server\-definition\-uri`.
+    Only present if :literal:`expand` is True.
+
+    :strong:`Deprecated`\ : This result property is deprecated because the :literal:`expand` parameter is deprecated.
 
     | **type**: dict
 
@@ -404,9 +414,11 @@ user
     | **type**: str
 
   primary-mfa-server-definition
-    Deprecated: This result property is deprecated because the :literal:`expand` parameter is deprecated.
+    MFA server definition referenced by property :literal:`primary\-mfa\-server\-definition\-uri`.
 
-    Only present if :literal:`expand=true`\ : MFA server definition referenced by property :literal:`primary\-mfa\-server\-definition\-uri`.
+    Only present if :literal:`expand` is True.
+
+    :strong:`Deprecated`\ : This result property is deprecated because the :literal:`expand` parameter is deprecated.
 
     | **type**: dict
 
@@ -422,9 +434,11 @@ user
     | **type**: str
 
   backup-mfa-server-definition
-    Deprecated: This result property is deprecated because the :literal:`expand` parameter is deprecated.
+    MFA server definition referenced by property :literal:`backup\-mfa\-server\-definition\-uri`.
 
-    Only present if :literal:`expand=true`\ : MFA server definition referenced by property :literal:`backup\-mfa\-server\-definition\-uri`.
+    Only present if :literal:`expand` is True.
+
+    :strong:`Deprecated`\ : This result property is deprecated because the :literal:`expand` parameter is deprecated.
 
     | **type**: dict
 
@@ -440,9 +454,11 @@ user
     | **type**: str
 
   default-group
-    Deprecated: This result property is deprecated because the :literal:`expand` parameter is deprecated.
+    Group referenced by property :literal:`default\-group\-uri`.
 
-    Only present if :literal:`expand=true`\ : Group referenced by property :literal:`default\-group\-uri`.
+    Only present if :literal:`expand` is True.
+
+    :strong:`Deprecated`\ : This result property is deprecated because the :literal:`expand` parameter is deprecated.
 
     | **type**: dict
 

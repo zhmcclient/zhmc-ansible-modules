@@ -110,9 +110,9 @@ options:
     default: false
   expand_names:
     description:
-      - "If True and O(full_properties) is set, additional artificial properties
-         will be returned for the names of referenced objects, such as user
-         roles, password rule, etc. Default: False."
+      - "If True and O(full_properties) is True, additional artificial
+         properties will be returned for the names of referenced objects, such
+         as user roles, password rule, etc. See the return value for details."
     type: bool
     required: false
     default: false
@@ -171,41 +171,53 @@ users:
         The property names will have underscores instead of hyphens.
       type: raw
     user_role_names:
-      description: "Only present if O(expand_names=true): Name of the user
-        roles referenced by property C(user_roles)."
-      type: str
+      description:
+        - "Name of the user roles referenced by property C(user_roles)."
+        - "Only present if O(expand_names) is True."
+      type: list
+      elements: str
     user_pattern_name:
-      description: "Only present for users with C(type=pattern) and if
-        O(expand_names=true): Name of the user pattern referenced by property
-        C(user_pattern_uri)."
+      description:
+        - "Name of the user pattern referenced by property
+           C(user_pattern_uri)."
+        - "Only present for users with C(type=pattern) if O(expand_names) is
+           True."
       type: str
     user_template_name:
-      description: "Only present for users with C(type=pattern) and if
-        O(expand_names=true): Name of the template user referenced by property
-        C(user_template_uri)."
+      description:
+        - "Name of the template user referenced by property
+           C(user_template_uri)."
+        - "Only present for users with C(type=pattern) if O(expand_names) is
+           True."
       type: str
     password_rule_name:
-      description: "Only present if O(expand_names=true): Name of the password
-        rule referenced by property C(password_rule_uri)."
+      description:
+        - "Name of the password rule referenced by property
+           C(password_rule_uri)."
+        - "Only present if O(expand_names) is True."
       type: str
     ldap_server_definition_name:
-      description: "Only present if O(expand_names=true): Name of the LDAP
-        server definition referenced by property
-        C(ldap_server_definition_uri)."
+      description:
+        - "Name of the LDAP server definition referenced by property
+           C(ldap_server_definition_uri)."
+        - "Only present if O(expand_names) is True."
       type: str
     primary_mfa_server_definition_name:
-      description: "Only present if O(expand_names=true): Name of the MFA
-        server definition referenced by property
-        C(primary_mfa_server_definition_uri)."
+      description:
+        - "Name of the MFA server definition referenced by property
+           C(primary_mfa_server_definition_uri)."
+        - "Only present if O(expand_names) is True."
       type: str
     backup_mfa_server_definition_name:
-      description: "Only present if O(expand_names=true): Name of the MFA
-        server definition referenced by property
-        C(backup_mfa_server_definition_uri)."
+      description:
+        - "Name of the MFA server definition referenced by property
+           C(backup_mfa_server_definition_uri)."
+        - "Only present if O(expand_names) is True."
       type: str
     default_group_name:
-      description: "Only present if O(expand_names=true): Name of the Group
-        referenced by property C(default_group_uri)."
+      description:
+        - "Name of the Group referenced by property C(default_group_uri)."
+        - "Only present if O(expand_names) is True."
       type: str
   sample:
     [
