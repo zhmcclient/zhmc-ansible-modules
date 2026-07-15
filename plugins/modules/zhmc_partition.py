@@ -269,6 +269,26 @@ options:
     type: bool
     required: false
     default: false
+  expand_nics:
+    description:
+      - "If True, the return value will contain an additional artificial
+         property RV(partition.nics) that is the list of NICs of the partition,
+         with properties as described in the data model of the 'NIC' element
+         object within the 'Partition' object in the R(HMC API,HMC API) book.
+         The property names have hyphens (-) as described in that book."
+      - "B(Deprecated): When not specified or specified as null, this parameter
+         will be treated as true in order to provide backwards compatibility.
+         In release 2.0.0, the default for this parameter will be changed to
+         False for consistency with other expansion control parameters.
+         In order to prepare for that, it is recommended already now to specify
+         this parameter as True or False, depending on whether the additional
+         data is needed.
+         To foster the explicit specification of the parameter, an Ansible
+         deprecation warning will be issued when the parameter is not
+         specified (or specified as null)."
+    type: bool
+    required: false
+    default: null
   log_file:
     description:
       - "File path of a log file to which the logic flow of this module as well
@@ -301,6 +321,7 @@ EXAMPLES = """
       ifl_processors: 2
       initial_memory: 1024
       maximum_memory: 1024
+    expand_nics: false
   register: part1
 
 - name: Configure an FCP boot volume and start the partition (z14 or later)
@@ -314,6 +335,7 @@ EXAMPLES = """
       boot_device: storage-volume
       boot_storage_group_name: sg1
       boot_storage_volume_name: boot1
+    expand_nics: false
   register: part1
 
 - name: Configure an FTP boot server and start the partition
@@ -329,6 +351,7 @@ EXAMPLES = """
       boot_ftp_username: ftpuser
       boot_ftp_password: ftppass
       boot_ftp_insfile: /insfile
+    expand_nics: false
   register: part1
 
 - name: Ensure the partition does not exist
@@ -356,6 +379,7 @@ EXAMPLES = """
             access_mode: control-usage
           - domain_index: 1
             access_mode: control
+    expand_nics: false
   register: part1
 
 - name: Ensure that an ISO image is mounted to the partition
@@ -386,6 +410,7 @@ EXAMPLES = """
     state: facts
     expand_storage_groups: true
     expand_crypto_adapters: true
+    expand_nics: true
   register: part1
 """
 
@@ -434,7 +459,10 @@ partition:
             The property names have hyphens (-) as described in that book."
           type: raw
     nics:
-      description: "NICs of the partition."
+      description:
+        - "NICs of the partition."
+        - "Only present for O(expand_nics=true) or when O(expand_nics) is not
+           specified."
       type: list
       elements: dict
       contains:
@@ -1507,7 +1535,7 @@ def change_crypto_config(partition, crypto_changes, check_mode):
 
 def add_artificial_properties(
         partition_properties, partition, expand_storage_groups,
-        expand_crypto_adapters):
+        expand_crypto_adapters, expand_nics):
     """
     Add artificial properties to the partition_properties dict.
 
@@ -1515,13 +1543,6 @@ def add_artificial_properties(
     artificial properties:
 
     * 'hbas': List of Hba objects of the partition.
-
-    * 'nics': List of Nic objects of the partition, with their properties
-      and these artificial properties:
-
-        * 'adapter-name'
-        * 'adapter-port'
-        * 'adapter-id'
 
     * 'virtual-functions': List of VirtualFunction objects of the partition.
 
@@ -1554,6 +1575,15 @@ def add_artificial_properties(
 
     * 'crypto-adapters' in 'crypto-configuration': List of Adapter objects
       representing the crypto adapters assigned to the partition.
+
+    and if expand_nics is True:
+
+    * 'nics': List of NIC objects of the partition, with their properties
+      and these artificial properties:
+
+        * 'adapter-name'
+        * 'adapter-port'
+        * 'adapter-id'
     """
     cpc = partition.manager.cpc
     console = cpc.manager.console
@@ -1566,34 +1596,35 @@ def add_artificial_properties(
             hbas_prop.append(dict(hba.properties))
     partition_properties['hbas'] = hbas_prop
 
-    # Get the NIC child elements of the partition
-    nics_prop = []
-    for nic in partition.nics.list(full_properties=True):
-        nic_props = {}
-        nic_props.update(nic.properties)
-        # Add artificial properties adapter-name/-port/-id:
-        vswitch_uri = nic.prop("virtual-switch-uri", None)
-        if vswitch_uri:
-            # vswitch-based NIC (OSA, HS up to z16)
-            vswitch = cpc.virtual_switches.find(**{'object-uri': vswitch_uri})
-            adapter_uri = vswitch.get_property('backing-adapter-uri')
-            adapter_port = vswitch.get_property('port')
-            adapter = cpc.adapters.find(**{'object-uri': adapter_uri})
-            nic_props['adapter-name'] = adapter.name
-            nic_props['adapter-port'] = adapter_port
-            nic_props['adapter-id'] = adapter.get_property('adapter-id')
-        else:
-            # adapter-based NIC (RoCE, CNA up to z16 or all adapter types
-            # since z17)
-            port_uri = nic.prop("network-adapter-port-uri", None)
-            port_props = session.get(port_uri)
-            adapter_uri = port_props['parent']
-            adapter = cpc.adapters.find(**{'object-uri': adapter_uri})
-            nic_props['adapter-name'] = adapter.name
-            nic_props['adapter-port'] = port_props['index']
-            nic_props['adapter-id'] = adapter.get_property('adapter-id')
-        nics_prop.append(nic_props)
-    partition_properties['nics'] = nics_prop
+    if expand_nics:
+        # Get the NIC child elements of the partition
+        nics_prop = []
+        for nic in partition.nics.list(full_properties=True):
+            nic_props = {}
+            nic_props.update(nic.properties)
+            # Add artificial properties adapter-name/-port/-id:
+            vswitch_uri = nic.prop("virtual-switch-uri", None)
+            if vswitch_uri:
+                # vswitch-based NIC (OSA, HS up to z16)
+                vswitch = cpc.virtual_switches.find(**{'object-uri': vswitch_uri})
+                adapter_uri = vswitch.get_property('backing-adapter-uri')
+                adapter_port = vswitch.get_property('port')
+                adapter = cpc.adapters.find(**{'object-uri': adapter_uri})
+                nic_props['adapter-name'] = adapter.name
+                nic_props['adapter-port'] = adapter_port
+                nic_props['adapter-id'] = adapter.get_property('adapter-id')
+            else:
+                # adapter-based NIC (RoCE, CNA up to z16 or all adapter types
+                # since z17)
+                port_uri = nic.prop("network-adapter-port-uri", None)
+                port_props = session.get(port_uri)
+                adapter_uri = port_props['parent']
+                adapter = cpc.adapters.find(**{'object-uri': adapter_uri})
+                nic_props['adapter-name'] = adapter.name
+                nic_props['adapter-port'] = port_props['index']
+                nic_props['adapter-id'] = adapter.get_property('adapter-id')
+            nics_prop.append(nic_props)
+        partition_properties['nics'] = nics_prop
 
     # Get the VF child elements of the partition
     vfs_prop = []
@@ -1800,6 +1831,7 @@ def ensure_active(params, check_mode):
     partition_name = params['name']
     expand_storage_groups = params['expand_storage_groups']
     expand_crypto_adapters = params['expand_crypto_adapters']
+    expand_nics = params['expand_nics']
     select_prop_names = params['select_properties']  # with underscores
 
     changed = False
@@ -1882,7 +1914,8 @@ def ensure_active(params, check_mode):
 
         result = dict(partition.properties)
         add_artificial_properties(
-            result, partition, expand_storage_groups, expand_crypto_adapters)
+            result, partition, expand_storage_groups, expand_crypto_adapters,
+            expand_nics)
 
         result = removed_dict(result, WRITEONLY_PROPERTIES_HYPHEN)
 
@@ -1907,6 +1940,7 @@ def ensure_stopped(params, check_mode):
     partition_name = params['name']
     expand_storage_groups = params['expand_storage_groups']
     expand_crypto_adapters = params['expand_crypto_adapters']
+    expand_nics = params['expand_nics']
     select_prop_names = params['select_properties']  # with underscores
 
     changed = False
@@ -1982,7 +2016,8 @@ def ensure_stopped(params, check_mode):
 
         result = dict(partition.properties)
         add_artificial_properties(
-            result, partition, expand_storage_groups, expand_crypto_adapters)
+            result, partition, expand_storage_groups, expand_crypto_adapters,
+            expand_nics)
 
         result = removed_dict(result, WRITEONLY_PROPERTIES_HYPHEN)
 
@@ -2145,6 +2180,7 @@ def facts(params, check_mode):
     partition_name = params['name']
     expand_storage_groups = params['expand_storage_groups']
     expand_crypto_adapters = params['expand_crypto_adapters']
+    expand_nics = params['expand_nics']
     select_prop_names = params['select_properties']  # with underscores
 
     changed = False
@@ -2161,7 +2197,8 @@ def facts(params, check_mode):
 
         result = dict(partition.properties)
         add_artificial_properties(
-            result, partition, expand_storage_groups, expand_crypto_adapters)
+            result, partition, expand_storage_groups, expand_crypto_adapters,
+            expand_nics)
 
         return changed, result
 
@@ -2215,6 +2252,7 @@ def main():
         expand_storage_groups=dict(required=False, type='bool', default=False),
         expand_crypto_adapters=dict(required=False, type='bool',
                                     default=False),
+        expand_nics=dict(required=False, type='bool', default=None),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),
     )
@@ -2237,6 +2275,19 @@ def main():
     if LOGGER.isEnabledFor(logging.DEBUG):
         LOGGER.debug("Module entry: params: %r",
                      blanked_params(module.params, WRITEONLY_PROPERTIES_USCORE))
+
+    if module.params['expand_nics'] is None:
+        # For now, maintain backwards compatibility
+        module.params['expand_nics'] = True
+        # The
+        msg = (
+            "The current default value True for parameter 'expand_nics' is "
+            "deprecated. The default value will change to False. To prepare "
+            "for that, specify it as True or False already now, depending on "
+            "whether the RV(partition.nics) property in the module return "
+            "value is actually used.")
+        LOGGER.warning("Deprecation warning: %s", msg)
+        module.deprecate(msg, version="2.0.0", collection_name="ibm.ibm_zhmc")
 
     try:
 

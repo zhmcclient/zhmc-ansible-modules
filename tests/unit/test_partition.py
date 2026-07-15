@@ -55,6 +55,7 @@ def test_main_success(ansible_mod_cls, perform_task_func):
         'properties': None,
         'expand_storage_groups': False,
         'expand_crypto_adapters': False,
+        'expand_nics': False,
         'log_file': None,
     }
     check_mode = False
@@ -111,6 +112,7 @@ def test_main_success(ansible_mod_cls, perform_task_func):
                                    default=False),
         expand_crypto_adapters=dict(required=False, type='bool',
                                     default=False),
+        expand_nics=dict(required=False, type='bool', default=None),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),
     )
@@ -154,6 +156,7 @@ def test_main_param_error(ansible_mod_cls, perform_task_func):
         'properties': None,
         'expand_storage_groups': False,
         'expand_crypto_adapters': False,
+        'expand_nics': False,
         'log_file': None,
     }
     check_mode = False

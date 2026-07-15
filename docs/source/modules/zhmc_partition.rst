@@ -213,6 +213,15 @@ expand_crypto_adapters
   | **type**: bool
 
 
+expand_nics
+  If True, the return value will contain an additional artificial property :literal:`partition.nics` that is the list of NICs of the partition, with properties as described in the data model of the 'NIC' element object within the 'Partition' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
+
+  :strong:`Deprecated`\ : When not specified or specified as null, this parameter will be treated as true in order to provide backwards compatibility. In release 2.0.0, the default for this parameter will be changed to False for consistency with other expansion control parameters. In order to prepare for that, it is recommended already now to specify this parameter as True or False, depending on whether the additional data is needed. To foster the explicit specification of the parameter, an Ansible deprecation warning will be issued when the parameter is not specified (or specified as null).
+
+  | **required**: False
+  | **type**: bool
+
+
 log_file
   File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.
 
@@ -243,6 +252,7 @@ Examples
          ifl_processors: 2
          initial_memory: 1024
          maximum_memory: 1024
+       expand_nics: false
      register: part1
 
    - name: Configure an FCP boot volume and start the partition (z14 or later)
@@ -256,6 +266,7 @@ Examples
          boot_device: storage-volume
          boot_storage_group_name: sg1
          boot_storage_volume_name: boot1
+       expand_nics: false
      register: part1
 
    - name: Configure an FTP boot server and start the partition
@@ -271,6 +282,7 @@ Examples
          boot_ftp_username: ftpuser
          boot_ftp_password: ftppass
          boot_ftp_insfile: /insfile
+       expand_nics: false
      register: part1
 
    - name: Ensure the partition does not exist
@@ -298,6 +310,7 @@ Examples
                access_mode: control-usage
              - domain_index: 1
                access_mode: control
+       expand_nics: false
      register: part1
 
    - name: Ensure that an ISO image is mounted to the partition
@@ -328,6 +341,7 @@ Examples
        state: facts
        expand_storage_groups: true
        expand_crypto_adapters: true
+       expand_nics: true
      register: part1
 
 
@@ -539,6 +553,8 @@ partition
 
   nics
     NICs of the partition.
+
+    Only present for :literal:`expand\_nics=true` or when :literal:`expand\_nics` is not specified.
 
     | **type**: list
     | **elements**: dict
