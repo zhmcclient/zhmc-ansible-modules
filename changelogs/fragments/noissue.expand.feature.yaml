@@ -1,0 +1,15 @@
+minor_changes:
+  - "Docs - Clarified the documentation of input parameters that control the
+    expansion of references to names or entire objects and their corresponding
+    properties in the module return values of the following modules:
+    'zhmc_nic_list', 'zhmc_partition', 'zhmc_storage_group', 'zhmc_user',
+    'zhmc_user_list'."
+deprecated_features:
+  - The 'partition.virtual-functions' property in the return value of the
+    'zhmc_partition' module has been deprecated because zEDC adapters were
+    last supported on z13 systems.
+    The property will be removed in release 2.0.0 of this collection.
+  - The 'partition.hbas' property in the return value of the
+    'zhmc_partition' module has been deprecated because managing HBAs
+    directly was last supported on z13 systems.
+    The property will be removed in release 2.0.0 of this collection.

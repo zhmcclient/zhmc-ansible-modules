@@ -124,9 +124,9 @@ options:
     default: false
   expand_names:
     description:
-      - "If True and O(full_properties) is set, additional artificial properties
-         will be returned for the names and other identification of the backing
-         adapter and port. Default: False."
+      - "If True and O(full_properties) is True, additional artificial
+         properties will be returned for the names and other identification of
+         the backing adapter and port. See the return value for details."
     type: bool
     required: false
     default: false
@@ -190,17 +190,22 @@ nics:
         The property names will have underscores instead of hyphens.
       type: raw
     adapter_id:
-      description: "Only present if O(expand_names=true) and
-        O(full_properties=true): Adapter ID (PCHID) of the backing adapter of
-        the NIC."
+      description:
+        - "Adapter ID (PCHID) of the backing adapter of the NIC."
+        - "Only present if O(expand_names) is True and O(full_properties) is
+           True."
       type: str
     adapter_name:
-      description: "Only present if O(expand_names=true) and
-        O(full_properties=true): Name of the backing adapter of the NIC."
+      description:
+        - "Name of the backing adapter of the NIC."
+        - "Only present if O(expand_names) is True and O(full_properties) is
+           True."
       type: str
     adapter_port:
-      description: "Only present if O(expand_names=true) and
-        O(full_properties=true): Port index of the backing port of the NIC."
+      description:
+        - "Port index of the backing port of the NIC."
+        - "Only present if O(expand_names) is True and O(full_properties) is
+           True."
       type: str
   sample:
     [

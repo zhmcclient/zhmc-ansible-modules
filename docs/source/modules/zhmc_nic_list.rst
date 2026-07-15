@@ -109,7 +109,7 @@ full_properties
 
 
 expand_names
-  If True and :literal:`full\_properties` is set, additional artificial properties will be returned for the names and other identification of the backing adapter and port. Default: False.
+  If True and :literal:`full\_properties` is True, additional artificial properties will be returned for the names and other identification of the backing adapter and port. See the return value for details.
 
   | **required**: False
   | **type**: bool
@@ -211,17 +211,23 @@ nics
     | **type**: raw
 
   adapter_id
-    Only present if :literal:`expand\_names=true` and :literal:`full\_properties=true`\ : Adapter ID (PCHID) of the backing adapter of the NIC.
+    Adapter ID (PCHID) of the backing adapter of the NIC.
+
+    Only present if :literal:`expand\_names` is True and :literal:`full\_properties` is True.
 
     | **type**: str
 
   adapter_name
-    Only present if :literal:`expand\_names=true` and :literal:`full\_properties=true`\ : Name of the backing adapter of the NIC.
+    Name of the backing adapter of the NIC.
+
+    Only present if :literal:`expand\_names` is True and :literal:`full\_properties` is True.
 
     | **type**: str
 
   adapter_port
-    Only present if :literal:`expand\_names=true` and :literal:`full\_properties=true`\ : Port index of the backing port of the NIC.
+    Port index of the backing port of the NIC.
+
+    Only present if :literal:`expand\_names` is True and :literal:`full\_properties` is True.
 
     | **type**: str
 
