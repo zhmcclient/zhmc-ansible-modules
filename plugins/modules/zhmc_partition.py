@@ -252,20 +252,23 @@ options:
     default: null
   expand_storage_groups:
     description:
-      - "Boolean that controls whether the returned partition contains
-         an additional artificial property RV(partition.storage-groups) that is the list
-         of storage groups attached to the partition, with properties as
-         described for the zhmc_storage_group module with C(expand=true)."
+      - "If True, the return value will contain an additional artificial
+         property RV(partition.storage-groups) that is the list of storage
+         groups attached to the partition, with properties as described in the
+         data model of the 'Storage Group' object in the R(HMC API,HMC API)
+         book.
+         The property names will have hyphens (-) as described in that book."
     type: bool
     required: false
     default: false
   expand_crypto_adapters:
     description:
-      - "Boolean that controls whether the returned partition contains
-         an additional artificial property C(crypto-adapters) in its
-         C(crypto-configuration) property that is the list
-         of crypto adapters attached to the partition, with properties as
-         described for the zhmc_adapter module."
+      - "If True, the return value will contain an additional artificial
+         property C(partition.crypto-configuration.crypto-adapters) that is
+         the list of crypto adapters used in the crypto configuration of the
+         partition, with properties as described in the data model of the
+         'Adapter' object in the R(HMC API,HMC API) book.
+         The property names will have hyphens (-) as described in that book."
     type: bool
     required: false
     default: false
@@ -412,15 +415,28 @@ partition:
       description: "Partition name"
       type: str
     "{property}":
-      description: "Additional properties of the partition, as described in
-        the data model of the 'Partition' object in the R(HMC API,HMC API) book.
-        Write-only properties in the data model are not included.
-        The property names have hyphens (-) as described in that book."
+      description:
+        - "Additional properties of the partition, as described in the data
+           model of the 'Partition' object in the R(HMC API,HMC API) book."
+        - "If O(expand_crypto_adapters) is True, the
+           C(partition.crypto-configuration) property contains an additional
+           artificial property C(crypto-adapters) that is the list of crypto
+           adapters used in the crypto configuration of the partition, with
+           properties as described in the data model of the 'Adapter' object
+           in the R(HMC API,HMC API) book."
+        - "Write-only properties in the data model are not included."
+        - "The property names will have hyphens (-) as described in that book."
       type: raw
     hbas:
-      description: "HBAs of the partition. If the CPC does not have the
-        storage-management feature enabled (ie. on z13), the list is
-        empty."
+      description:
+        - "HBAs of the partition."
+        - "Attaching HBAs directly to a partition was last supported on z13
+           systems. On later systems, the 'dpm-storage-management' feature is
+           always enabled, HBAs are managed indirectly through storage groups,
+           this property is still provided for compatibility but will always
+           be an empty list."
+        - "B(Deprecated): This property will be removed in release 2.0.0 of
+           this collection."
       type: list
       elements: dict
       contains:
@@ -428,10 +444,11 @@ partition:
           description: "HBA name"
           type: str
         "{property}":
-          description: "Additional properties of the HBA, as described in the
-            data model of the 'HBA' element object of the 'Partition' object
-            in the R(HMC API,HMC API) book.
-            The property names have hyphens (-) as described in that book."
+          description:
+            - "Additional properties of the HBA, as described in the data model
+               of the 'HBA' element object of the 'Partition' object in the
+               R(HMC API,HMC API) book.
+               The property names will have hyphens (-) as described in that book."
           type: raw
     nics:
       description: "NICs of the partition."
@@ -442,13 +459,21 @@ partition:
           description: "NIC name"
           type: str
         "{property}":
-          description: "Additional properties of the NIC, as described in the
-            data model of the 'NIC' element object of the 'Partition' object
-            in the R(HMC API,HMC API) book.
-            The property names have hyphens (-) as described in that book."
+          description:
+            - "Additional properties of the NIC, as described in the data model
+               of the 'NIC' element object of the 'Partition' object in the
+               R(HMC API,HMC API) book.
+               The property names will have hyphens (-) as described in that book."
           type: raw
     virtual-functions:
-      description: "Virtual functions of the partition."
+      description:
+        - "Virtual functions on zEDC accelerator adapters attached to the
+           partition."
+        - "zEDC accelerator adapters were last supported on z13 systems.
+           On later systems, this property is still provided for compatibility
+           but will always be an empty list."
+        - "B(Deprecated): This property will be removed in release 2.0.0 of
+           this collection."
       type: list
       elements: dict
       contains:
@@ -456,14 +481,16 @@ partition:
           description: "Virtual function name"
           type: str
         "{property}":
-          description: "Additional properties of the virtual function, as
-            described in the data model of the 'Virtual Function' element
-            object of the 'Partition' object in the R(HMC API,HMC API) book.
-            The property names have hyphens (-) as described in that book."
+          description:
+            - "Additional properties of the virtual function, as described in
+               the data model of the 'Virtual Function' element object of the
+               'Partition' object in the R(HMC API,HMC API) book.
+               The property names will have hyphens (-) as described in that book."
           type: raw
     storage-groups:
-      description: "Storage groups attached to the partition. Only present for
-        O(expand_storage_groups=true)."
+      description:
+        - "Storage groups attached to the partition."
+        - "Only present if O(expand_storage_groups) is True."
       type: list
       elements: dict
       contains:
@@ -471,8 +498,11 @@ partition:
           description: "Storage group name"
           type: str
         "{property}":
-          description: "Additional properties of the storage group, as
-            described for the zhmc_storage_group module with C(expand=true)."
+          description:
+            - "Additional properties of the storage group, as described in the
+               data model of the 'Storage Group' object in the
+               R(HMC API,HMC API) book.
+               The property names will have hyphens (-) as described in that book."
           type: raw
   sample:
     {
