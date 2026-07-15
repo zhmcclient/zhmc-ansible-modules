@@ -161,6 +161,7 @@ doc_templates_dir := docs/templates
 doc_linkcheck_dir := docs_linkcheck
 doc_build_dir := docs_build
 doc_build_local_dir := docs_local
+doc_build_changelogs_dir := build_changelogs
 
 # Module RST files
 module_rst_dir := $(doc_source_dir)/modules
@@ -561,6 +562,13 @@ $(doc_build_dir)/index.html: Makefile $(doc_rst_files) $(doc_source_dir)/conf.py
 .PHONY: docslocal
 docslocal: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(doc_rst_files) $(doc_source_dir)/conf.py
 	rm -rf $(doc_build_local_dir)
-	antsibull-changelog generate --reload-plugins -vv
+	rm -rf $(doc_build_changelogs_dir)
+	mkdir -p $(doc_build_changelogs_dir)
+	cp -R changelogs $(doc_build_changelogs_dir)/
+	cp galaxy.yml $(doc_build_changelogs_dir)/
+	sh -c "cd $(doc_build_changelogs_dir); antsibull-changelog release --reload-plugins -vv"
+	cp CHANGELOG.rst CHANGELOG.rst.tmp
+	cp $(doc_build_changelogs_dir)/CHANGELOG.rst CHANGELOG.rst
 	sphinx-build -b html $(sphinx_opts) $(doc_source_dir) $(doc_build_local_dir)
+	cp CHANGELOG.rst.tmp CHANGELOG.rst
 #	open $(doc_build_local_dir)/index.html
