@@ -11,7 +11,7 @@
 # requirements file requirements-ansible.txt that is not part of the Ansible collection package.
 
 # TODO-ZHMC: Re-enable once zhmcclient 1.26.0 is released
-zhmcclient @ git+https://github.com/zhmcclient/python-zhmcclient.git@andy/add-props-storage-volume-list
+zhmcclient @ git+https://github.com/zhmcclient/python-zhmcclient.git@master
 # zhmcclient>=1.26.0
 
 
