@@ -155,7 +155,7 @@ markdown-it-py==2.2.0
 mdurl==0.1.2
 mypy_extensions==1.1.0
 nltk==3.9.2; python_version == '3.9'
-nltk==3.9.4; python_version >= '3.10'
+nltk==3.10.0; python_version >= '3.10'
 pbr==2.0.0
 pytokens==0.4.0
 regex==2025.7.29

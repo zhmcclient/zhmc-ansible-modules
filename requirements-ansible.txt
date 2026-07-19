@@ -21,5 +21,5 @@ ansible>=11.0.0; python_version >= '3.13'
 
 # ansible-core is pulled in by ansible, but is needed for pip-check-reqs checks.
 ansible-core>=2.15.13; python_version <= '3.11'
-ansible-core>=2.16.13; python_version == '3.12'
-ansible-core>=2.18.1; python_version >= '3.13'
+ansible-core>=2.16.19; python_version == '3.12'
+ansible-core>=2.18.18; python_version >= '3.13'
