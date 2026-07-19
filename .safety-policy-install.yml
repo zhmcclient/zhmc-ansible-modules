@@ -40,6 +40,8 @@ security:
             reason: Fixed cryptography version 46.0.6 requires Python>=3.10 and is used there
         96886:
             reason: Fixed urllib3 version 2.7.0 requires Python>=3.10 and is used there
+        SFTY-20260605-18433:
+            reason: There is no fixed ansible-core version for ansible-core 2.15.x
         SFTY-20260122-20373:
             reason: Fixed pytest version 9.0.3 requires Python>=3.10 and is used there
         SFTY-20260511-47957:
