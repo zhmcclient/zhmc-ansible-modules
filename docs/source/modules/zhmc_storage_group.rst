@@ -134,7 +134,7 @@ properties
 
 
 expand
-  Boolean that controls whether the returned storage group contains additional artificial properties that expand certain URI or name properties to the full set of resource properties (see description of return values of this module).
+  If True, the return value will contain additional artificial properties that expand certain URI or name properties to the full set of resource properties. See the return value for details.
 
   | **required**: False
   | **type**: bool
@@ -485,9 +485,13 @@ storage_group
     | **elements**: str
 
   candidate-adapter-ports
-    Only present if :literal:`expand=true`\ : List of candidate storage adapter ports of the storage group. Will be empty for storage group types other than FCP.
+    List of candidate storage adapter ports of the storage group.
 
-    | **returned**: success+expand
+    Will be empty for storage group types other than FCP.
+
+    Only present if :literal:`expand` is True.
+
+    | **returned**: success
     | **type**: list
     | **elements**: dict
 
@@ -524,9 +528,11 @@ storage_group
 
 
   storage-volumes
-    Only present if :literal:`expand=true`\ : Storage volumes of the storage group.
+    Storage volumes of the storage group.
 
-    | **returned**: success+expand
+    Only present if :literal:`expand` is True.
+
+    | **returned**: success
     | **type**: list
     | **elements**: dict
 
@@ -542,9 +548,13 @@ storage_group
 
 
   virtual-storage-resources
-    Only present if :literal:`expand=true`\ : Virtual storage resources of the storage group. Will be empty for storage group types other than FCP.
+    Virtual storage resources of the storage group.
 
-    | **returned**: success+expand
+    Will be empty for storage group types other than FCP.
+
+    Only present if :literal:`expand` is True.
+
+    | **returned**: success
     | **type**: list
     | **elements**: dict
 
@@ -555,9 +565,11 @@ storage_group
 
 
   attached-partitions
-    Only present if :literal:`expand=true`\ : Partitions to which the storage group is attached.
+    Partitions to which the storage group is attached.
 
-    | **returned**: success+expand
+    Only present if :literal:`expand` is True.
+
+    | **returned**: success
     | **type**: list
     | **elements**: dict
 

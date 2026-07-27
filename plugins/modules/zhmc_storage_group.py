@@ -167,10 +167,9 @@ options:
     default: null
   expand:
     description:
-      - "Boolean that controls whether the returned storage group contains
-         additional artificial properties that expand certain URI or name
-         properties to the full set of resource properties (see description of
-         return values of this module)."
+      - "If True, the return value will contain additional artificial
+         properties that expand certain URI or name properties to the full set
+         of resource properties. See the return value for details."
     type: bool
     required: false
     default: false
@@ -286,10 +285,11 @@ storage_group:
       type: list
       elements: str
     candidate-adapter-ports:
-      description: "Only present if O(expand=true): List of candidate storage
-        adapter ports of the storage group. Will be empty for storage group
-        types other than FCP."
-      returned: "success+expand"
+      description:
+        - "List of candidate storage adapter ports of the storage group."
+        - "Will be empty for storage group types other than FCP."
+        - "Only present if O(expand) is True."
+      returned: "success"
       type: list
       elements: dict
       contains:
@@ -319,9 +319,10 @@ storage_group:
                 The property names have hyphens (-) as described in that book."
               type: raw
     storage-volumes:
-      description: "Only present if O(expand=true): Storage volumes of the
-        storage group."
-      returned: "success+expand"
+      description:
+        - "Storage volumes of the storage group."
+        - "Only present if O(expand) is True."
+      returned: "success"
       type: list
       elements: dict
       contains:
@@ -335,10 +336,11 @@ storage_group:
             The property names have hyphens (-) as described in that book."
           type: raw
     virtual-storage-resources:
-      description: "Only present if O(expand=true): Virtual storage resources
-        of the storage group. Will be empty for storage group types other than
-        FCP."
-      returned: "success+expand"
+      description:
+        - "Virtual storage resources of the storage group."
+        - "Will be empty for storage group types other than FCP."
+        - "Only present if O(expand) is True."
+      returned: "success"
       type: list
       elements: dict
       contains:
@@ -350,9 +352,10 @@ storage_group:
             The property names have hyphens (-) as described in that book."
           type: raw
     attached-partitions:
-      description: "Only present if O(expand=true): Partitions to which the
-        storage group is attached."
-      returned: "success+expand"
+      description:
+        - "Partitions to which the storage group is attached."
+        - "Only present if O(expand) is True."
+      returned: "success"
       type: list
       elements: dict
       contains:
