@@ -142,6 +142,8 @@ colorclass==2.2.2
 commonmark==0.9.1
 configparser==4.0.2
 contextlib2==0.6.0
+# defusedxml is used by nltk>=3.10.0
+defusedxml==0.7.1; python_version >= '3.10'
 distro==1.9.0
 exceptiongroup==1.0.2
 filelock==3.16.1; python_version == '3.9'
@@ -188,3 +190,11 @@ typing-inspection==0.4.2
 wcwidth==0.1.7
 webencodings==0.5.1
 zipp==3.19.1
+
+build==1.2.0; python_version >= '3.10'  # Used by pipdeptree>=4.0.0
+installer==1.0.1; python_version >= '3.10'  # Used by pipdeptree>=4.0.0
+nab-index==0.0.11; python_version >= '3.10'  # Used by pipdeptree>=4.0.0
+nab-python==0.0.11; python_version >= '3.10'  # Used by pipdeptree>=4.0.0
+nab-resolver==0.0.11; python_version >= '3.10'  # Used by pipdeptree>=4.0.0
+pyproject_hooks==1.2.0; python_version >= '3.10'  # Used by pipdeptree>=4.0.0
+tomli_w==1.2.0; python_version >= '3.10'  # Used by pipdeptree>=4.0.0
