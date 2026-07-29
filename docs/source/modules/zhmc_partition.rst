@@ -583,9 +583,76 @@ partition
       | **type**: str
 
     {property}
-      Additional properties of the storage group, as described for the zhmc\_storage\_group module with :literal:`expand=true`.
+      Additional properties of the storage group, as described in the data model of the 'Storage Group' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
 
       | **type**: raw
+
+    storage-volumes
+      Storage volumes of the storage group.
+
+      | **type**: list
+      | **elements**: dict
+
+      name
+        Storage volume name
+
+        | **type**: str
+
+      {property}
+        Additional properties of the storage volume, as described in the data model of the 'Storage Volume' element object of the 'Storage Group' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
+
+        | **type**: raw
+
+
+    candidate-adapter-ports
+      List of candidate storage adapter ports of the storage group. Only present for storage group type FCP.
+
+      | **type**: list
+      | **elements**: dict
+
+      name
+        Storage port name
+
+        | **type**: str
+
+      index
+        Storage port index
+
+        | **type**: int
+
+      {property}
+        Additional properties of the storage port, as described in the data model of the 'Storage Port' element object of the 'Adapter' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
+
+        | **type**: raw
+
+      parent-adapter
+        Storage adapter of the candidate port.
+
+        | **type**: dict
+
+        name
+          Storage adapter name
+
+          | **type**: str
+
+        {property}
+          Additional properties of the storage adapter, as described in the data model of the 'Adapter' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
+
+          | **type**: raw
+
+
+
+    virtual-storage-resources
+      Virtual storage resources of the storage group. Only present for storage group type FCP.
+
+      | **type**: list
+      | **elements**: dict
+
+      {property}
+        Properties of the virtual storage resource, as described in the data model of the 'Virtual Storage Resource' element object of the 'Storage Group' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
+
+        | **type**: raw
+
 
 
 

@@ -471,9 +471,69 @@ partition:
           description: "Storage group name"
           type: str
         "{property}":
-          description: "Additional properties of the storage group, as
-            described for the zhmc_storage_group module with C(expand=true)."
+          description: "Additional properties of the storage group, as described
+            in the data model of the 'Storage Group' object in the
+            R(HMC API,HMC API) book.
+            The property names have hyphens (-) as described in that book."
           type: raw
+        storage-volumes:
+          description: "Storage volumes of the storage group."
+          type: list
+          elements: dict
+          contains:
+            name:
+              description: "Storage volume name"
+              type: str
+            "{property}":
+              description: "Additional properties of the storage volume, as
+                described in the data model of the 'Storage Volume' element object
+                of the 'Storage Group' object in the R(HMC API,HMC API) book.
+                The property names have hyphens (-) as described in that book."
+              type: raw
+        candidate-adapter-ports:
+          description: "List of candidate storage adapter ports of the storage
+            group. Only present for storage group type FCP."
+          type: list
+          elements: dict
+          contains:
+            name:
+              description: "Storage port name"
+              type: str
+            index:
+              description: "Storage port index"
+              type: int
+            "{property}":
+              description: "Additional properties of the storage port, as described
+                in the data model of the 'Storage Port' element object of the
+                'Adapter' object in the R(HMC API,HMC API) book.
+                The property names have hyphens (-) as described in that book."
+              type: raw
+            parent-adapter:
+              description: "Storage adapter of the candidate port."
+              type: dict
+              contains:
+                name:
+                  description: "Storage adapter name"
+                  type: str
+                "{property}":
+                  description: "Additional properties of the storage adapter, as
+                    described in the data model of the 'Adapter' object in the
+                    R(HMC API,HMC API) book.
+                    The property names have hyphens (-) as described in that book."
+                  type: raw
+        virtual-storage-resources:
+          description: "Virtual storage resources of the storage group.
+            Only present for storage group type FCP."
+          type: list
+          elements: dict
+          contains:
+            "{property}":
+              description: "Properties of the virtual storage resource, as
+                described in the data model of the 'Virtual Storage Resource'
+                element object of the 'Storage Group' object in the
+                R(HMC API,HMC API) book.
+                The property names have hyphens (-) as described in that book."
+              type: raw
   sample:
     {
         "acceptable-status": [
@@ -1538,17 +1598,21 @@ def add_artificial_properties(
       storage groups attached to the partition, with their properties
       and these artificial properties:
 
+        * 'storage-volumes': List of StorageVolume objects of the storage
+          group.
+
         * 'candidate-adapter-ports': List of Port objects representing the
           candidate adapter ports of the storage group, with their properties
           and these artificial properties:
 
             - 'parent-adapter': Adapter object of the port.
 
-        * 'storage-volumes': List of StorageVolume objects of the storage
-          group.
+          Only present for storage groups of type "fcp".
 
         * 'virtual-storage-resources': List of VirtualStorageResource objects
           of the storage group.
+
+          Only present for storage groups of type "fcp".
 
     and if expand_crypto_adapters is True:
 
@@ -1627,18 +1691,8 @@ def add_artificial_properties(
                 sg_properties = None
             else:
                 storage_group.pull_full_properties()
+                sg_type = storage_group.get_property('type')
                 sg_properties = dict(storage_group.properties)
-
-                # Candidate adapter ports and their adapters (full set of props)
-                caps_prop = []
-                for cap in storage_group.list_candidate_adapter_ports(
-                        full_properties=True):
-                    cap_properties = dict(cap.properties)
-                    adapter = cap.manager.adapter
-                    adapter.pull_full_properties()
-                    cap_properties['parent-adapter'] = dict(adapter.properties)
-                    caps_prop.append(cap_properties)
-                sg_properties['candidate-adapter-ports'] = caps_prop
 
                 # Storage volumes (full set of properties).
                 # Note: We create the storage volumes from the
@@ -1653,15 +1707,36 @@ def add_artificial_properties(
                     svs_prop.append(dict(sv.properties))
                 sg_properties['storage-volumes'] = svs_prop
 
+                # Candidate adapter ports and their parent adapters (full set
+                # of props).
+                # Note: Only FCP storage groups have candidate adapter ports.
+                # This property will not be present for other storage group
+                # types, consistent with how the HMC handles that.
+                if sg_type == 'fcp':
+                    caps_prop = []
+                    for cap in storage_group.list_candidate_adapter_ports(
+                            full_properties=True):
+                        adapter = cap.manager.adapter
+                        adapter.pull_full_properties()
+                        cap_properties = dict(cap.properties)
+                        cap_properties['parent-adapter'] = dict(adapter.properties)
+                        caps_prop.append(cap_properties)
+                    sg_properties['candidate-adapter-ports'] = caps_prop
+
                 # Virtual storage resources (full set of properties).
-                vsrs_prop = []
-                vsr_uris = storage_group.get_property(
-                    'virtual-storage-resource-uris')
-                for vsr_uri in vsr_uris:
-                    vsr = storage_group.virtual_storage_resources.resource_object(vsr_uri)
-                    vsr.pull_full_properties()
-                    vsrs_prop.append(dict(vsr.properties))
-                sg_properties['virtual-storage-resources'] = vsrs_prop
+                # Note: Only FCP storage groups have virtual storage resources.
+                # This property will not be present for other storage group
+                # types, consistent with how the HMC handles that.
+                if sg_type == 'fcp':
+                    vsrs_prop = []
+                    vsr_uris = storage_group.get_property(
+                        'virtual-storage-resource-uris')
+                    for vsr_uri in vsr_uris:
+                        vsr = storage_group.virtual_storage_resources. \
+                            resource_object(vsr_uri)
+                        vsr.pull_full_properties()
+                        vsrs_prop.append(dict(vsr.properties))
+                    sg_properties['virtual-storage-resources'] = vsrs_prop
 
             sgs_prop.append(sg_properties)
 
