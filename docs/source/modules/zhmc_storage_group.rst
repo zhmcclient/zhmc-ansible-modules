@@ -484,10 +484,38 @@ storage_group
     | **type**: list
     | **elements**: str
 
-  candidate-adapter-ports
-    Only present if :literal:`expand=true`\ : List of candidate storage adapter ports of the storage group. Will be empty for storage group types other than FCP.
+  attached-partitions
+    List of partitions to which the storage group is attached. Only present if :literal:`expand=true`.
 
-    | **returned**: success+expand
+    | **type**: list
+    | **elements**: dict
+
+    {property}
+      Properties of the partition, as described in the data model of the 'Partition' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
+
+      | **type**: raw
+
+
+  storage-volumes
+    Storage volumes of the storage group. Only present if :literal:`expand=true`.
+
+    | **type**: list
+    | **elements**: dict
+
+    name
+      Storage volume name
+
+      | **type**: str
+
+    {property}
+      Additional properties of the storage volume, as described in the data model of the 'Storage Volume' element object of the 'Storage Group' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
+
+      | **type**: raw
+
+
+  candidate-adapter-ports
+    List of candidate storage adapter ports of the storage group. Only present if :literal:`expand=true` and for storage group type FCP.
+
     | **type**: list
     | **elements**: dict
 
@@ -523,46 +551,14 @@ storage_group
 
 
 
-  storage-volumes
-    Only present if :literal:`expand=true`\ : Storage volumes of the storage group.
-
-    | **returned**: success+expand
-    | **type**: list
-    | **elements**: dict
-
-    name
-      Storage volume name
-
-      | **type**: str
-
-    {property}
-      Additional properties of the storage volume, as described in the data model of the 'Storage Volume' element object of the 'Storage Group' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
-
-      | **type**: raw
-
-
   virtual-storage-resources
-    Only present if :literal:`expand=true`\ : Virtual storage resources of the storage group. Will be empty for storage group types other than FCP.
+    Virtual storage resources of the storage group. Only present if :literal:`expand=true` and for storage group type FCP.
 
-    | **returned**: success+expand
     | **type**: list
     | **elements**: dict
 
     {property}
       Properties of the virtual storage resource, as described in the data model of the 'Virtual Storage Resource' element object of the 'Storage Group' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
-
-      | **type**: raw
-
-
-  attached-partitions
-    Only present if :literal:`expand=true`\ : Partitions to which the storage group is attached.
-
-    | **returned**: success+expand
-    | **type**: list
-    | **elements**: dict
-
-    {property}
-      Properties of the partition, as described in the data model of the 'Partition' object in the :ref:`HMC API <HMC API>` book. The property names have hyphens (\-) as described in that book.
 
       | **type**: raw
 
