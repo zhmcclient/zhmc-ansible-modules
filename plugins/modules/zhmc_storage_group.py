@@ -285,11 +285,35 @@ storage_group:
         attached."
       type: list
       elements: str
+    attached-partitions:
+      description: "List of partitions to which the storage group is attached.
+        Only present if O(expand=true)."
+      type: list
+      elements: dict
+      contains:
+        "{property}":
+          description: "Properties of the partition, as described in the data
+            model of the 'Partition' object in the R(HMC API,HMC API) book.
+            The property names have hyphens (-) as described in that book."
+          type: raw
+    storage-volumes:
+      description: "Storage volumes of the storage group.
+        Only present if O(expand=true)."
+      type: list
+      elements: dict
+      contains:
+        name:
+          description: "Storage volume name"
+          type: str
+        "{property}":
+          description: "Additional properties of the storage volume, as
+            described in the data model of the 'Storage Volume' element object
+            of the 'Storage Group' object in the R(HMC API,HMC API) book.
+            The property names have hyphens (-) as described in that book."
+          type: raw
     candidate-adapter-ports:
-      description: "Only present if O(expand=true): List of candidate storage
-        adapter ports of the storage group. Will be empty for storage group
-        types other than FCP."
-      returned: "success+expand"
+      description: "List of candidate storage adapter ports of the storage
+        group. Only present if O(expand=true) and for storage group type FCP."
       type: list
       elements: dict
       contains:
@@ -318,27 +342,9 @@ storage_group:
                 R(HMC API,HMC API) book.
                 The property names have hyphens (-) as described in that book."
               type: raw
-    storage-volumes:
-      description: "Only present if O(expand=true): Storage volumes of the
-        storage group."
-      returned: "success+expand"
-      type: list
-      elements: dict
-      contains:
-        name:
-          description: "Storage volume name"
-          type: str
-        "{property}":
-          description: "Additional properties of the storage volume, as
-            described in the data model of the 'Storage Volume' element object
-            of the 'Storage Group' object in the R(HMC API,HMC API) book.
-            The property names have hyphens (-) as described in that book."
-          type: raw
     virtual-storage-resources:
-      description: "Only present if O(expand=true): Virtual storage resources
-        of the storage group. Will be empty for storage group types other than
-        FCP."
-      returned: "success+expand"
+      description: "Virtual storage resources of the storage group.
+        Only present if O(expand=true) and for storage group type FCP."
       type: list
       elements: dict
       contains:
@@ -347,18 +353,6 @@ storage_group:
             described in the data model of the 'Virtual Storage Resource'
             element object of the 'Storage Group' object in the
             R(HMC API,HMC API) book.
-            The property names have hyphens (-) as described in that book."
-          type: raw
-    attached-partitions:
-      description: "Only present if O(expand=true): Partitions to which the
-        storage group is attached."
-      returned: "success+expand"
-      type: list
-      elements: dict
-      contains:
-        "{property}":
-          description: "Properties of the partition, as described in the data
-            model of the 'Partition' object in the R(HMC API,HMC API) book.
             The property names have hyphens (-) as described in that book."
           type: raw
   sample:
@@ -762,24 +756,25 @@ def add_artificial_properties(sg_properties, storage_group, expand):
 
     If expand is True:
 
+    * 'attached-partitions': List of Partition objects to which the storage
+      group is attached. Each Partition object is represented as a dictionary
+      of its properties.
+
+    * 'storage-volumes': List of StorageVolume objects, each of which is
+      represented as its dictionary of properties.
+
     * 'candidate-adapter-ports': List of Port objects, each of which is
-      represented as its dictionary of properties. Only for FCP SGs.
+      represented as its dictionary of properties.
+      Will only be present for FCP SGs.
 
       The Port properties are extended by these properties:
 
       - 'parent-adapter': Adapter object of the port, represented as its
         dictionary of properties.
 
-    * 'storage-volumes': List of StorageVolume objects, each of which is
-      represented as its dictionary of properties.
-
     * 'virtual-storage-resources': List of VirtualStorageResource objects,
       each of which is represented as its dictionary of properties.
-      Only for FCP SGs.
-
-    * 'attached-partitions': List of Partition objects to which the storage
-      group is attached. Each Partition object is represented as a dictionary
-      of its properties.
+      Will only be present for FCP SGs.
     """
 
     parts = storage_group.list_attached_partitions()
@@ -793,19 +788,13 @@ def add_artificial_properties(sg_properties, storage_group, expand):
 
     if expand:
 
-        # Candidate adapter ports and their parent adapters (full set of props)
-        # Note: Only FCP storage groups have candidate adapter ports.
-        # This property will be an empty array for other storage group types.
-        caps_prop = []
-        if sg_type == 'fcp':
-            for cap in storage_group.list_candidate_adapter_ports(
-                    full_properties=True):
-                adapter = cap.manager.adapter
-                adapter.pull_full_properties()
-                cap_properties = dict(cap.properties)
-                cap_properties['parent-adapter'] = dict(adapter.properties)
-                caps_prop.append(cap_properties)
-        sg_properties['candidate-adapter-ports'] = caps_prop
+        # List of attached partitions (full set of properties).
+        parts = storage_group.list_attached_partitions()
+        parts_prop = []
+        for part in parts:
+            part.pull_full_properties()
+            parts_prop.append(dict(part.properties))
+        sg_properties['attached-partitions'] = parts_prop
 
         # Storage volumes (full set of properties).
         # Note: We create the storage volumes from the 'storage-volume-uris'
@@ -819,26 +808,34 @@ def add_artificial_properties(sg_properties, storage_group, expand):
             svs_prop.append(dict(sv.properties))
         sg_properties['storage-volumes'] = svs_prop
 
+        # Candidate adapter ports and their parent adapters (full set of props)
+        # Note: Only FCP storage groups have candidate adapter ports.
+        # This property will not be present for other storage group
+        # types, consistent with how the HMC handles that.
+        if sg_type == 'fcp':
+            caps_prop = []
+            for cap in storage_group.list_candidate_adapter_ports(
+                    full_properties=True):
+                adapter = cap.manager.adapter
+                adapter.pull_full_properties()
+                cap_properties = dict(cap.properties)
+                cap_properties['parent-adapter'] = dict(adapter.properties)
+                caps_prop.append(cap_properties)
+            sg_properties['candidate-adapter-ports'] = caps_prop
+
         # Virtual storage resources (full set of properties).
         # Note: Only FCP storage groups have virtual storage resources.
-        # This property will be an empty array for other storage group types.
-        vsrs_prop = []
+        # This property will not be present for other storage group
+        # types, consistent with how the HMC handles that.
         if sg_type == 'fcp':
+            vsrs_prop = []
             vsr_uris = storage_group.get_property('virtual-storage-resource-uris')
             for vsr_uri in vsr_uris:
                 vsr = storage_group.virtual_storage_resources.resource_object(
                     vsr_uri)
                 vsr.pull_full_properties()
                 vsrs_prop.append(dict(vsr.properties))
-        sg_properties['virtual-storage-resources'] = vsrs_prop
-
-        # List of attached partitions (full set of properties).
-        parts = storage_group.list_attached_partitions()
-        parts_prop = []
-        for part in parts:
-            part.pull_full_properties()
-            parts_prop.append(dict(part.properties))
-        sg_properties['attached-partitions'] = parts_prop
+            sg_properties['virtual-storage-resources'] = vsrs_prop
 
 
 def ensure_present(params, check_mode):
