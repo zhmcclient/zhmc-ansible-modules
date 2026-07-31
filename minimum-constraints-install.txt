@@ -40,7 +40,7 @@ zhmcclient==1.26.0
 
 Jinja2==3.1.6
 cryptography==48.0.1
-packaging==24.0
+packaging==24.1
 PyYAML==6.0.2
 
 

@@ -1,105 +1,32 @@
 # Pip requirements file for development dependencies.
 
 
-# Direct dependencies for development and indirect dependencies for development
-# that are needed for some reason (must be consistent with minimum-constraints-develop.txt)
+# Direct dependencies for development
+# (must be consistent with minimum-constraints-develop.txt)
 
-# Ansible validate-modules (no imports, invoked via validate-modules script)
-mock>=2.0.0
-voluptuous>=0.11.7
+# antsibull changelog manager
+antsibull-changelog>=0.32.0
 
-# Unit test (imports into testcases):
+# Test tools
 pytest>=8.4.0; python_version == '3.9'
 pytest>=9.0.3; python_version >= '3.10'
-testfixtures>=6.9.0
-colorama>=0.4.6
-# packaging is covered in requirements.txt
-requests>=2.32.4
-urllib3>=2.6.3
-requests-mock>=1.6.0
+mock>=2.0.0
 
-# Unit test (indirect dependencies):
-pluggy>=1.5.0
-decorator>=4.0.11
+# Coverage reporting tools
+coverage>=7.8.0
+coveralls>=4.0.1; python_version == '3.9'
+coveralls>=4.0.2; python_version >= '3.10'
+pytest-cov>=5.0.0
 
-# Coverage reporting (no imports, invoked via coveralls script):
-# coveralls versions 4.0.0/4.0.1 have increased their pinning of coverage to <8,
-#   but they have also added a constraint for Python to <3.13. Due to that
-#   Python pinning, we need to use the older coverage and coveralls versions on
-#   Python>=3.13.
-# Note: The pinnings on Python 3.13 prevent pip backtracking.
-coverage>=7.8.0; python_version <= '3.12'
-coverage>=6.5.0,<7.0; python_version >= '3.13'  # repeats pinning in coveralls 3.3.1
-pytest-cov>=5.0.0; python_version <= '3.12'
-pytest-cov>=5.0.0,<6.0; python_version >= '3.13'  # 6.0 would require coverage>=7.5
-coveralls>=4.0.1; python_version <= '3.12'
-coveralls>=3.3.1; python_version >= '3.13'  # 4.0 pins Python to <3.13
-# PyYAML is specified in requirements.txt
+# ansible-doc-extractor
+ansible-doc-extractor>=0.1.8
 
-# ansible-test
-yamllint>=1.25.0; python_version == '3.9'
-yamllint>=1.30.0; python_version >= '3.10'
-pathspec>=1.0.3
-# rstcheck is used only in ansible <= 2.10 / ansible <= 4
-
-# ansible-lint
-# ansible-lint is run only on officially supported ansible-core versions
-# ansible-lint 24.12.2 requires ansible-core>=2.13.0 and is the latest version
-#   that requires ansible-core<=2.15, so it runs on py>=310
-# ansible-lint 24.12.2 requires pathspec>=0.10.3, yamllint>=1.30.0, ansible-compat>=24.10.0, ruamel.yaml>=0.18.5
-ansible-lint>=24.12.2; python_version >= '3.10'
-black>=26.3.1; python_version >= '3.10'
-rich>=12.0.0; python_version >= '3.10'
-# wcmatch 8.5 fixes an AttributeError on Python 3.12
-wcmatch>=8.5; python_version >= '3.10'
-ansible-compat>=24.10.0; python_version >= '3.10'
-
-# antsibull-changelog
-antsibull-changelog>=0.32.0
-semantic-version>=2.10.0
-rstcheck>=6.2.5
-rstcheck-core>=1.2.2
-antsibull-fileutils>=1.4.0
-antsibull-docutils>=1.3.0
-
-# Safety CI by pyup.io
-safety>=3.8.1
-safety-schemas>=0.0.16
-dparse>=0.6.4
-ruamel.yaml>=0.19.1
-click>=8.0.2
-Authlib>=1.6.12
-marshmallow>=3.26.2
-pydantic>=2.12.0
-pydantic_core>=2.41.1
-typer>=0.16.0
-typer-cli>=0.16.0
-typer-slim>=0.16.0
-# safety 3.8.1 depends on ruststore>=0.10.4 only on Python>=3.10
-truststore>=0.10.4; python_version >= '3.10'
-
-# Bandit checker
-bandit>=1.7.8
-
-# Sphinx (no imports, invoked via sphinx-build script):
+# Sphinx doc builder and optional extensions
 # Sphinx 9 hangs when used with sphinx-versions
 Sphinx>=7.2.0,<9
-docutils>=0.20.1
-sphinx-git>=10.1.1
-GitPython>=3.1.41
-Pygments>=2.20.0
-sphinx-rtd-theme>=2.0.0
-sphinxcontrib-applehelp>=1.0.4
-sphinxcontrib-devhelp>=1.0.2
-sphinxcontrib-htmlhelp>=2.0.1
-sphinxcontrib-jquery>=4.1
-sphinxcontrib-jsmath>=1.0.1
-sphinxcontrib-qthelp>=1.0.3
-sphinxcontrib-serializinghtml>=1.1.9
-sphinxcontrib-websupport>=1.2.4
 autodocsumm>=0.2.12
-Babel>=2.12.0
-
+sphinx-git>=10.1.1
+sphinx-rtd-theme>=2.0.0
 # Note: sphinx-versions in the latest released version 1.1.3 still uses the
 #       deprecated Sphinx.add_stylesheet() method. That method is deprecated
 #       since Sphinx 1.8, and was removed in Sphinx 4.0, and reintroduced as
@@ -108,33 +35,35 @@ Babel>=2.12.0
 # TODO: Remove getting sphinx-versions from this git repo.
 git+https://github.com/andy-maier/sphinx-versions.git@1.1.3.post2#egg=sphinx-versions
 
-# ansible-doc-extractor and it's dependent theme for docs generation (no imports, invoked via script):
-# The Makefile defines in doc_build on which Python versions docs are built. Keep in sync with Makefile and minimum-constraints-develop.txt.
-ansible-doc-extractor>=0.1.8
-antsibull-docs-parser>=1.0.0
+# Package dependency checkers
+pipdeptree>=2.24.0
+pip-check-reqs>=2.5.1
 
-# PyLint (no imports, invoked via pylint script)
-# Pylint is run in ansible sanity test, but it installs its own version
-pylint>=3.3.1
-astroid>=3.3.8
-lazy-object-proxy>=1.4.3
-wrapt>=1.17.2
-platformdirs>=4.1.0
-isort>=4.3.8
-tomlkit>=0.10.1
-dill>=0.3.7
+# yamllint checker
+yamllint>=1.25.0; python_version == '3.9'
+yamllint>=1.30.0; python_version >= '3.10'
 
-# Flake8 and dependents (no imports, invoked via flake8 script):
-# Pycodestyle is run in ansible sanity test, but it installs its own version
+# ansible-lint checker
+# ansible-lint is run only on officially supported ansible-core versions
+# ansible-lint 24.12.2 requires ansible-core>=2.13.0 and is the latest version
+#   that requires ansible-core<=2.15, so it runs on py>=310
+ansible-lint>=24.12.2; python_version >= '3.10'
+
+# Safety checker
+safety>=3.8.1
+
+# Flake8 checker
 flake8>=6.1.0
-mccabe>=0.7.0
-pycodestyle>=2.11.0
-pyflakes>=3.1.0
-entrypoints>=0.3.0
 
-# Package dependency management tools (not used by any make rules)
-pipdeptree>=2.2.0
-pip-check-reqs>=2.5.6
+# PyLint checker
+pylint>=3.3.1
 
+# Bandit checker
+bandit>=1.7.8
+
+
+# Indirect dependencies for development that are needed for some reason
+
+# Pip is covered by requirements-base.txt but needs to be repeated here because it is used by pip-check-reqs.
 # Pinning pip to <26.2 is a quick fix to circumvent https://github.com/adamtheturtle/pip-check-reqs/issues/570
 pip>=26.1.2,<26.2; python_version >= '3.10'

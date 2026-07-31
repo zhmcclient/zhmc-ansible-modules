@@ -1,82 +1,146 @@
-# Pip constraints file for packages needed for development.
-#
-# This file specifies constraints that match the minimum versions specified in
-# requirements-develop.txt. They are used for example when setting up test
-# environments with the minimum versions of any dependent packages.
+# Pip constraints file for development dependencies.
 
 
 # Direct dependencies for development and indirect dependencies for development
 # that are needed for some reason (must be consistent with requirements-develop.txt)
 
-# Ansible validate-modules (no imports, invoked via validate-modules script)
-mock==2.0.0
-voluptuous==0.11.7
+# antsibull changelog manager
+antsibull-changelog==0.32.0
 
-# Unit test (imports into testcases):
+# Test tools
 pytest==8.4.0; python_version == '3.9'
 pytest==9.0.3; python_version >= '3.10'
-testfixtures==6.9.0
-colorama==0.4.6
-# packaging is covered in requirements.txt
-requests-mock==1.6.0
+mock==2.0.0
 
-# Unit test (indirect dependencies):
-pluggy==1.5.0
-decorator==4.0.11
-
-# Coverage reporting (no imports, invoked via coveralls script):
-coverage==7.8.0; python_version <= '3.12'
-coverage==6.5.0; python_version >= '3.13'
+# Coverage reporting tools
+coverage==7.8.0
+coveralls==4.0.1; python_version == '3.9'
+coveralls==4.0.2; python_version >= '3.10'
 pytest-cov==5.0.0
-coveralls==4.0.1; python_version <= '3.12'
-coveralls==3.3.1; python_version >= '3.13'
 
-# ansible-test
+# ansible-doc-extractor
+ansible-doc-extractor==0.1.8
+
+# Sphinx doc builder and optional extensions
+Sphinx==7.2.0
+autodocsumm==0.2.12
+sphinx-git==10.1.1
+sphinx-rtd-theme==2.0.0
+
+# Package dependency checkers
+pipdeptree==2.24.0
+pip-check-reqs==2.5.6
+
+# yamllint
 yamllint==1.25.0; python_version == '3.9'
 yamllint==1.34.0; python_version >= '3.10'
-pathspec==1.0.3
-# rstcheck is used only in ansible <= 2.10 / ansible <= 4
 
-# antsibull-changelog
-antsibull-changelog==0.32.0
-semantic-version==2.10.0
-rstcheck==6.2.5
-rstcheck-core==1.2.2
-antsibull-fileutils==1.4.0
-antsibull-docutils==1.3.0
-
-# ansible-lint
+# ansible-lint checker
 ansible-lint==24.12.2; python_version >= '3.10'
-black==26.3.1; python_version >= '3.10'
-rich==12.0.0; python_version >= '3.10'
-wcmatch==8.5; python_version >= '3.10'
-ansible-compat==24.10.0; python_version >= '3.10'
-subprocess-tee==0.4.1; python_version >= '3.10'
 
-# Safety CI by pyup.io
+# Safety checker
 safety==3.8.1
-safety-schemas==0.0.16
-dparse==0.6.4
-ruamel.yaml==0.19.1
-click==8.0.2
-Authlib==1.6.12
-marshmallow==3.26.2
-pydantic==2.12.0
-pydantic_core==2.41.1
-typer==0.16.0
-typer-cli==0.16.0
-typer-slim==0.16.0
-truststore==0.10.4; python_version >= '3.10'
+
+# Flake8 checker
+flake8==6.1.0
+
+# PyLint checker
+pylint==3.3.1
 
 # Bandit checker
 bandit==1.7.8
 
-# Sphinx (no imports, invoked via sphinx-build script):
-Sphinx==7.2.0
+
+# Indirect dependencies for development that are needed for some reason
+
+# Pip is covered by requirements-base.txt but needs to be repeated here because it is used by pip-check-reqs.
+pip==26.0.1; python_version == '3.9'
+pip==26.1.2; python_version >= '3.10'
+
+
+# Indirect dependencies for development that are not in requirements-develop.txt
+
+aiofiles==24.1.0
+alabaster==0.7.9
+annotated-doc==0.0.4
+annotated-types==0.6.0
+ansible-compat==24.10.0
+antsibull-docs-parser==1.0.0
+antsibull-docutils==1.3.0
+antsibull-fileutils==1.4.0
+anyio==4.10.0
+astroid==3.3.8
+Authlib==1.6.12
+autodocsumm==0.2.12
+Babel==2.12.0
+backports-datetime-fromisoformat==2.0.3
+black==26.3.1
+bracex==2.6
+build==1.2.0; python_version >= '3.10'  # Used by pipdeptree>=4.0.0
+click==8.0.2
+colorama==0.4.6
+colorclass==2.2.2
+commonmark==0.9.1
+decorator==4.0.11
+defusedxml==0.7.1; python_version >= '3.10'
+dill==0.3.7
+distro==1.9.0
 docutils==0.20.1
-sphinx-git==10.1.1
+dparse==0.6.4
+entrypoints==0.3.0
+exceptiongroup==1.0.2
+filelock==3.16.1; python_version == '3.9'
+filelock==3.20.3; python_version >= '3.10'
+gitdb==4.0.8
 GitPython==3.1.50
+h11==0.16.0
+httpcore==1.0.9
+httpx==0.28.1
+imagesize==1.3.0
+importlib-metadata==4.8.3
+iniconfig==2.1.0
+installer==1.0.1; python_version >= '3.10'  # Used by pipdeptree>=4.0.0
+isort==4.3.8
+joblib==1.5.2
+joserfc==1.6.8
+lazy-object-proxy==1.4.3
+markdown-it-py==2.2.0
+marshmallow==3.26.2
+mccabe==0.7.0
+mdurl==0.1.2
+mypy_extensions==1.1.0
+nab-index==0.0.11; python_version >= '3.10'  # Used by pipdeptree>=4.0.0
+nab-python==0.0.11; python_version >= '3.10'  # Used by pipdeptree>=4.0.0
+nab-resolver==0.0.11; python_version >= '3.10'  # Used by pipdeptree>=4.0.0
+nltk==3.9.2; python_version == '3.9'
+nltk==3.10.0; python_version >= '3.10'
+pathspec==1.0.3
+pbr==2.0.0
+platformdirs==4.1.0
+pluggy==1.5.0
+pycodestyle==2.11.0
+pydantic_core==2.41.1
+pydantic==2.12.0
+pyflakes==3.1.0
 Pygments==2.20.0
+pyproject_hooks==1.2.0; python_version >= '3.10'  # Used by pipdeptree>=4.0.0
+pytokens==0.4.0
+regex==2025.7.29
+requests-mock==1.6.0
+rich==12.0.0
+roman-numerals-py==4.1.0
+roman-numerals==4.1.0
+rstcheck-core==1.2.2
+rstcheck==6.2.5
+ruamel.yaml.clib==0.2.15
+ruamel.yaml==0.19.1
+safety-schemas==0.0.16
+semantic-version==2.10.0
+shellingham==1.3.0
+smmap==3.0.1
+sniffio==1.1.0
+snowballstemmer==2.0.0
+sphinx-git==10.1.1
 sphinx-rtd-theme==2.0.0
 sphinxcontrib-applehelp==1.0.4
 sphinxcontrib-devhelp==1.0.2
@@ -86,96 +150,22 @@ sphinxcontrib-jsmath==1.0.1
 sphinxcontrib-qthelp==1.0.3
 sphinxcontrib-serializinghtml==1.1.9
 sphinxcontrib-websupport==1.2.4
-autodocsumm==0.2.12
-Babel==2.12.0
-# Sphinx 8.2.0 started using roman-numerals-py
-roman-numerals-py==4.1.0
-roman-numerals==4.1.0
-
-# sphinx-versions: Retrieved from git repo in requirements-develop.txt
-# ansible-doc-extractor and it's dependent theme for docs generation (no imports, invoked via script):
-# The Makefile defines in doc_build on which Python versions docs are built. Keep in sync with Makefile and requirements-develop.txt.
-
-ansible-doc-extractor==0.1.8
-antsibull-docs-parser==1.0.0
-
-# PyLint (no imports, invoked via pylint script):
-# Pylint is run in ansible sanity test, but it installs its own version
-pylint==3.3.1
-astroid==3.3.8
-lazy-object-proxy==1.4.3
-wrapt==1.17.2
-platformdirs==4.1.0
-isort==4.3.8
-tomlkit==0.10.1
-dill==0.3.7
-
-# Flake8 and dependents (no imports, invoked via flake8 script):
-# Pycodestyle is run in ansible sanity test, but it installs its own version
-flake8==6.1.0
-mccabe==0.7.0
-pycodestyle==2.11.0
-pyflakes==3.1.0
-entrypoints==0.3.0
-
-# Package dependency management tools (not used by any make rules)
-pipdeptree==2.2.0
-pip-check-reqs==2.5.6
-
-
-# Indirect dependencies for development that are not in requirements-develop.txt and not in minimum-constraints-install.txt
-
-aiofiles==24.1.0
-alabaster==0.7.9
-annotated-types==0.6.0
-annotated-doc==0.0.4
-anyio==4.10.0
-backports-datetime-fromisoformat==2.0.3
-bracex==2.6
-colorclass==2.2.2
-commonmark==0.9.1
-decorator==4.0.11
-# defusedxml is used by nltk>=3.10.0
-defusedxml==0.7.1; python_version >= '3.10'
-distro==1.9.0
-exceptiongroup==1.0.2
-filelock==3.16.1; python_version == '3.9'
-filelock==3.20.3; python_version >= '3.10'
-gitdb==4.0.8
-h11==0.16.0
-httpcore==1.0.9
-httpx==0.28.1
-imagesize==1.3.0
-importlib-metadata==4.8.3
-iniconfig==2.1.0
-joblib==1.5.2
-joserfc==1.6.8
-markdown-it-py==2.2.0
-mdurl==0.1.2
-mypy_extensions==1.1.0
-nltk==3.9.2; python_version == '3.9'
-nltk==3.10.0; python_version >= '3.10'
-pbr==2.0.0
-pytokens==0.4.0
-regex==2025.7.29
-roman-numerals-py==1.0.0
-# ruamel.yaml.clib is used by ansible-lint on Python<3.14
-# See also https://github.com/ansible/ansible-lint/issues/5107
-ruamel.yaml.clib==0.2.15
-shellingham==1.3.0
-smmap==3.0.1
-sniffio==1.1.0
-snowballstemmer==2.0.0
 stevedore==5.2.0
+subprocess-tee==0.4.1
 tenacity==8.5.0
-tomli==2.0.1; python_version <= '3.10'  # used by a number of packages; built-in to Python>=3.11
-tqdm==4.67.1
-typing-inspection==0.4.2
-zipp==3.19.1
-build==1.2.0; python_version >= '3.10'  # Used by pipdeptree>=4.0.0
-installer==1.0.1; python_version >= '3.10'  # Used by pipdeptree>=4.0.0
-nab-index==0.0.11; python_version >= '3.10'  # Used by pipdeptree>=4.0.0
-nab-python==0.0.11; python_version >= '3.10'  # Used by pipdeptree>=4.0.0
-nab-resolver==0.0.11; python_version >= '3.10'  # Used by pipdeptree>=4.0.0
-pyproject_hooks==1.2.0; python_version >= '3.10'  # Used by pipdeptree>=4.0.0
+testfixtures==6.9.0
+testfixtures==6.9.0
 tomli_w==1.2.0; python_version >= '3.10'  # Used by pipdeptree>=4.0.0
+tomli==2.0.1; python_version <= '3.10'  # used by a number of packages; built-in to Python>=3.11
+tomlkit==0.10.1
+tqdm==4.67.1
+truststore==0.10.4
+typer-cli==0.16.0
+typer-slim==0.16.0
+typer==0.16.0
+typing-inspection==0.4.2
+tzdata==2023.4; sys_platform == 'win32'
+voluptuous==0.11.7
+wcmatch==8.5
+wrapt==1.17.2
+zipp==3.19.1
