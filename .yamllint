@@ -1,0 +1,8 @@
+# yamllint config file
+
+extends: default
+
+rules:
+  indentation:
+    spaces: consistent
+    indent-sequences: whatever
