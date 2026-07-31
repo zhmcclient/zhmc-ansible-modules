@@ -1028,6 +1028,83 @@ def to_unicode(value):
         f"{value!r}")
 
 
+def underscored_value(value):
+    """
+    Return a copy of the input property value in which any nested properties
+    (in dicts or list dict keys have been
+    renamed from hyphen to underscore.
+    """
+    if isinstance(value, dict):
+        return underscored_dict(value)
+
+    if isinstance(value, list):
+        return underscored_list(value)
+
+    return value
+
+
+def underscored_dict(value):
+    """
+    Return a copy of the input dict in which the keys have been renamed from
+    hyphen to underscore, and the values have been processed by
+    underscored_value().
+    """
+    ret_value = {}
+    for _key, _value in value.items():
+        u_key = _key.replace('-', '_')
+        ret_value[u_key] = underscored_value(_value)
+    return ret_value
+
+
+def underscored_list(value):
+    """
+    Return a copy of the input list in which the list items have been processed
+    by underscored_value().
+    """
+    ret_value = []
+    for _value in value:
+        ret_value.append(underscored_value(_value))
+    return ret_value
+
+
+def hyphened_value(value):
+    """
+    Return a copy of the input property value in which any nested properties
+    (in dicts or list dict keys have been renamed from underscore to hyphen.
+    """
+    if isinstance(value, dict):
+        return hyphened_dict(value)
+
+    if isinstance(value, list):
+        return hyphened_list(value)
+
+    return value
+
+
+def hyphened_dict(value):
+    """
+    Return a copy of the input dict in which the keys have been renamed from
+    underscore to hyphen, and the values have been processed by
+    hyphened_value().
+    """
+    ret_value = {}
+    for _key, _value in value.items():
+        u_key = _key.replace('_', '-')
+        ret_value[u_key] = hyphened_value(_value)
+    return ret_value
+
+
+def hyphened_list(value):
+    """
+    Return a copy of the input list in which the list items have been processed
+    by hyphened_value().
+    """
+    ret_value = []
+    for _value in value:
+        ret_value.append(hyphened_value(_value))
+    return ret_value
+
+
 def process_normal_property(
         prop_name, resource_properties, input_props, resource):
     """
@@ -1083,11 +1160,12 @@ def process_normal_property(
     if not (create or update):
         raise AssertionError()
 
-    hmc_prop_name = prop_name.replace('_', '-')
     input_prop_value = input_props[prop_name]
+    hmc_input_prop_value = hyphened_value(input_prop_value)
+    hmc_prop_name = prop_name.replace('_', '-')
 
     if type_cast:
-        input_prop_value = type_cast(input_prop_value)
+        hmc_input_prop_value = type_cast(hmc_input_prop_value)
 
     if resource:
         # Resource does exist.
@@ -1095,14 +1173,14 @@ def process_normal_property(
         current_prop_value = resource.properties.get(hmc_prop_name)
 
         if eq_func:
-            equal = eq_func(current_prop_value, input_prop_value,
+            equal = eq_func(current_prop_value, hmc_input_prop_value,
                             prop_name)
         else:
-            equal = (current_prop_value == input_prop_value)
+            equal = (current_prop_value == hmc_input_prop_value)
 
         if not equal:
             if update:
-                update_props[hmc_prop_name] = input_prop_value
+                update_props[hmc_prop_name] = hmc_input_prop_value
                 if not update_while_active:
                     deactivate = True
             else:
@@ -1110,14 +1188,14 @@ def process_normal_property(
                     f"Property {prop_name!r} can be set during "
                     f"{resource.__class__.__name__} creation but cannot be "
                     f"updated afterwards (from {current_prop_value!r} "
-                    f"to {input_prop_value!r}).")
+                    f"to {hmc_input_prop_value!r}).")
     else:
         # Resource does not exist.
         # Prefer setting the property during resource creation.
         if create:
-            create_props[hmc_prop_name] = input_prop_value
+            create_props[hmc_prop_name] = hmc_input_prop_value
         else:
-            update_props[hmc_prop_name] = input_prop_value
+            update_props[hmc_prop_name] = hmc_input_prop_value
             if not update_while_active:
                 deactivate = True
 
