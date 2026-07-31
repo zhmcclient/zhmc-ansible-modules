@@ -10,9 +10,8 @@
 # expect dependencies to ansible or ansible-core in the package's requirements file, they have been moved to a separate
 # requirements file requirements-ansible.txt that is not part of the Ansible collection package.
 
-# TODO-ZHMC: Re-enable once zhmcclient 1.26.0 is released
-zhmcclient @ git+https://github.com/zhmcclient/python-zhmcclient.git@master
-# zhmcclient>=1.26.0
+# zhmcclient @ git+https://github.com/zhmcclient/python-zhmcclient.git@master
+zhmcclient>=1.26.0
 
 
 # Indirect dependencies for install that are needed for some reason (must be consistent with minimum-constraints-install.txt)
