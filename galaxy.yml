@@ -13,6 +13,7 @@ authors:
   - Andreas Maier <maiera@de.ibm.com>
   - Andreas Scheuring <andreas.scheuring@de.ibm.com>
   - Anil Kumar Dakarapu <anil.kumar.dakarapu@ibm.com>
+  - Chaithra Vonteddu <vonteddu.chaithra1@ibm.com>
   - Demetrios Dimatos <dimatos@gmail.com>
   - Juergen Leopold <leopoldj@de.ibm.com>
   - Kathiravan Velusamy <kathir.velu@in.ibm.com>
@@ -73,6 +74,7 @@ build_ignore:
   - 'tmp_*'
   - .coverage
   - .pytest_cache
+  - .ansible
   - venv
   - htmlcov
   - dist
@@ -100,12 +102,12 @@ build_ignore:
   - CODE_OF_CONDUCT.md
   - CONTRIBUTING.rst  # only in older branches
   - DCO1.1.txt  # only in older branches
-  - LICENSE
   - Makefile
   # requirements.txt is intentionally included for dependent install
   - dev-requirements.txt  # old name
   - requirements-base.txt
   - requirements-develop.txt
+  - requirements-ansible.txt
   - ansible-constraints.txt
   - minimum-constraints.txt  # old name
   - minimum-constraints-install.txt  # old name
@@ -118,3 +120,9 @@ build_ignore:
   - tests/function
   - tests/unit
   - done
+  - build_changelogs
+  - importer_result.json
+  - 'extra_reqs_*.txt'
+  - .mailmap
+  - changelogs
+  - renovate.json

@@ -30,3 +30,4 @@ tmp_*
 /gh-pages/
 /docs_local
 /extra_reqs*.txt
+importer_result.json
