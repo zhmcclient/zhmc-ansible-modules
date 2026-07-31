@@ -365,6 +365,7 @@ indent-after-paren=4
 indent-string='    '
 
 # Maximum number of characters on a single line.
+# Keep in sync with line-length.max in .yamllint
 max-line-length=160
 
 # Maximum number of lines in a module.

@@ -1,0 +1,6 @@
+# ansible-lint config file
+---
+
+warn_list: []
+exclude_paths:
+  - changelogs/changelog.yaml
