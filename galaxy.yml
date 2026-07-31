@@ -106,6 +106,7 @@ build_ignore:
   - dev-requirements.txt  # old name
   - requirements-base.txt
   - requirements-develop.txt
+  - requirements-ansible.txt
   - ansible-constraints.txt
   - minimum-constraints.txt  # old name
   - minimum-constraints-install.txt  # old name
@@ -118,3 +119,11 @@ build_ignore:
   - tests/function
   - tests/unit
   - done
+  - build_changelogs
+  - importer_result.json
+  - 'extra_reqs_*.txt'
+  - .mailmap
+  - changelogs/fragments
+  - 'changelogs/fragments/*'
+  - changelogs/config.yaml
+  - changelogs/.plugin-cache.yaml
