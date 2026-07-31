@@ -51,6 +51,7 @@ Modules targeting the HMC (i.e. not a specific CPC):
    modules/zhmc_user_pattern_list
    modules/zhmc_ldap_server_definition
    modules/zhmc_ldap_server_definition_list
+   modules/zhmc_http
 
 Modules supported with CPCs in any operational mode:
 
