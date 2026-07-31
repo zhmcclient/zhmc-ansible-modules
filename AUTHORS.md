@@ -7,6 +7,7 @@ Adilet Sabyrbaev <adilet.sabyrbaev2@ibm.com>
 Andreas Maier <maiera@de.ibm.com>
 Andreas Scheuring <andreas.scheuring@de.ibm.com>
 Anil Kumar Dakarapu <anil.kumar.dakarapu@ibm.com>
+Chaithra Vonteddu <vonteddu.chaithra1@ibm.com>
 Demetrios Dimatos <ddimatos@us.ibm.com>
 Juergen Leopold <leopoldj@de.ibm.com>
 Kathiravan Velusamy <kathir.velu@in.ibm.com>
