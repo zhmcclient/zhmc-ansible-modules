@@ -557,6 +557,7 @@ releases:
       - Reduced the GitHub Actions test environments to save resources.
       - Test - Fixed new issues raised by pylint 4.0.0.
       - Upgraded zhmcclient version to 1.26.0.
+      - Addressed import issues on Ansible AutomationHub.
       release_summary: Released on 2026-07-31.
         Bug fixes.
     fragments:
