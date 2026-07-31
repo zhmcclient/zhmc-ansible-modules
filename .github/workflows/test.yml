@@ -75,6 +75,16 @@ jobs:
     - name: Show matrix in JSON
       run: echo '${{ steps.select_matrix.outputs.matrix }}'
 
+  cert_check:
+    # strategy:
+    #   fail-fast: false
+    # runs-on: ubuntu-latest
+    uses: ansible-collections/partner-certification-checker/.github/workflows/certification-reusable.yml@v3.0.0
+    # with:
+    #   ansible-core-version: '2.18.0'
+    #   collection-root: 'ansible_collections/junipernetworks/junos'
+    #   automation-hub: true
+
   test:
     needs: set_matrix
     strategy:
@@ -300,7 +310,9 @@ jobs:
         make linkcheck
 
   test_finish:
-    needs: test
+    needs:
+      - test
+      - cert_check
     runs-on: ubuntu-latest
     container: python:3-slim
     steps:
