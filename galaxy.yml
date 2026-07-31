@@ -73,6 +73,7 @@ build_ignore:
   - 'tmp_*'
   - .coverage
   - .pytest_cache
+  - .ansible
   - venv
   - htmlcov
   - dist
@@ -100,7 +101,6 @@ build_ignore:
   - CODE_OF_CONDUCT.md
   - CONTRIBUTING.rst  # only in older branches
   - DCO1.1.txt  # only in older branches
-  - LICENSE
   - Makefile
   # requirements.txt is intentionally included for dependent install
   - dev-requirements.txt  # old name
@@ -123,7 +123,5 @@ build_ignore:
   - importer_result.json
   - 'extra_reqs_*.txt'
   - .mailmap
-  - changelogs/fragments
-  - 'changelogs/fragments/*'
-  - changelogs/config.yaml
-  - changelogs/.plugin-cache.yaml
+  - changelogs
+  - renovate.json
