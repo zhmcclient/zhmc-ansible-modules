@@ -1,8 +1,11 @@
 # yamllint config file
+---
 
 extends: default
 
 rules:
+  line-length:
+    max: 160  # Keep in sync with max-line-length in .pylintrc
   indentation:
     spaces: consistent
     indent-sequences: whatever
