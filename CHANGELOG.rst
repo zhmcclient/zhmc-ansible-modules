@@ -4,6 +4,37 @@ ibm.ibm\_zhmc Release Notes
 
 .. contents:: Topics
 
+v1.10.1
+=======
+
+Release Summary
+---------------
+
+Released on 2026-07-31. Bug fixes.
+
+Minor Changes
+-------------
+
+- Added an action plugin for the "zhmc_session" module that treats its return value as a no_log value. That avoids the need for users of this module to specify ``no_log: true`` in the task using that module.
+- Dev - Added dependencies for Sphinx and other packages.
+- Fixed safety issues up to 2026-07-31.
+- Fixed the bug that nested properties the 'properties' input parameter were not converted to hyphen before being passed to the HMC. This fixed the following modules when used with state values that allow passing input properties: 'zhmc_lpar' with properties 'absolute-{type}-capping'; 'zhmc_password_rule' with property 'character-rules'; 'zhmc_user_pattern' with properties 'ldap-group-to-template-mappings' and 'sso-group-to-template-mappings'.
+- Reduced the GitHub Actions test environments to save resources.
+- Test - Fixed new issues raised by pylint 4.0.0.
+- Upgraded zhmcclient version to 1.26.0.
+
+Breaking Changes
+----------------
+
+- The return value of the zhmc_partition module with C(expand_storagegroups: true) was changed for storage groups with type other than "fcp" because such storage groups do not have virtual storage resources or candidate adapter ports. Previously, such storage groups in the module return value had properties "virtual-storage-resources" and "candidate-adapter-ports" that had an empty list as their values. Now, these properties are omitted from such returned storage groups.
+
+Bugfixes
+--------
+
+- Development - Fixed that pip-missing-reqs raised TypeError by pinning pip to <26.2. (issue 1379)
+- Fixed that using the zhmc_partition module with C(expand_storagegroups: true) resulted in an unhandled KeyError exception when storage groups with type other than "fcp" were attached to the partition. (issue 1378)
+- Fixed the description of the "storage-groups" property in the return value of the zhmc_partition module. It was referring to the return value of the zhmc_storage_group module with expand=true, which has some additional properties that are not in the return value of the zhmc_partition module.
+
 v1.10.0
 =======
 
