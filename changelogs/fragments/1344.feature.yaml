@@ -1,4 +1,0 @@
-minor_changes:
-  - 'Added an action plugin for the "zhmc_session" module that treats its
-     return value as a no_log value. That avoids the need for users of this
-     module to specify ``no_log: true`` in the task using that module.'
