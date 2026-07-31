@@ -499,7 +499,7 @@ endif
 # The second rm command of each type is for files that were used before 1.0.0, to make it easier to switch.
 .PHONY: clobber
 clobber:
-	rm -Rf .cache .pytest_cache $(sanity_root_dir) htmlcov $(doc_linkcheck_dir) $(doc_build_dir) $(doc_build_local_dir) tests/output build .tox *.egg-info *.done $(done_dir)/*.done
+	rm -Rf .cache .pytest_cache $(sanity_root_dir) htmlcov $(doc_linkcheck_dir) $(doc_build_dir) $(doc_build_local_dir) $(doc_build_changelogs_dir) tests/output build .tox *.egg-info *.done $(done_dir)/*.done importer_result.json extra_reqs_*.txt
 	rm -f .coverage MANIFEST MANIFEST.in AUTHORS ChangeLog
 	find . -name "*.pyc" -delete -o -name "__pycache__" -delete -o -name "*.tmp" -delete -o -name "tmp_*" -delete
 	@echo "Makefile: $@ done."
