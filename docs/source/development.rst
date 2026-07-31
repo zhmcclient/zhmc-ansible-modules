@@ -382,15 +382,7 @@ local clone of the zhmc-ansible-modules Git repo.
         MN=0.8
         BRANCH=stable_${MN}
 
-3.  Create a topic branch for the version that is being released:
-
-    .. code-block:: sh
-
-        git checkout ${BRANCH}
-        git pull
-        git checkout -b release_${MNU}
-
-4.  Run the Safety tool:
+3.  Run the Safety tool:
 
     .. code-block:: sh
 
@@ -401,19 +393,27 @@ local clone of the zhmc-ansible-modules Git repo.
 
     Roll back the PR into any maintained stable branches.
 
-5.  Check for any
+4.  Check for any
     `dependabot alerts <https://github.com/zhmcclient/zhmc-ansible-modules/security/dependabot>`_.
 
     If there are any dependabot alerts, fix them in a separate branch/PR.
 
     Roll back the PR into any maintained stable branches.
 
-6.  Review the result of the latest Mend scan in
+5.  Review the result of the latest Mend scan in
     `this Box folder <https://ibm.ent.box.com/folder/190964336381?s=070khx70ijj3ime3k4yfx7r7cjb2xx0k>`_.
 
     If the Mend scan shows any issues, fix them in a separate branch/PR.
 
     Roll back the PR into any maintained stable branches.
+
+6.  Create a topic branch for the version that is being released:
+
+    .. code-block:: sh
+
+        git checkout ${BRANCH}
+        git pull
+        git checkout -b release_${MNU}
 
 7.  Edit the Galaxy metadata file:
 
@@ -503,6 +503,16 @@ local clone of the zhmc-ansible-modules Git repo.
 
         make authors
 
+    Check if there are any differences in the AUTHORS.md file:
+
+    .. code-block:: sh
+
+        git diff AUTHORS.md
+
+    If there are duplicate names or new names that do not have a reasonable
+    format, add corresponding entries into the ``.mailmap`` file and repeat
+    this step.
+
 12. Commit your changes and push the topic branch to the remote repo:
 
     .. code-block:: sh
@@ -581,32 +591,36 @@ local clone of the zhmc-ansible-modules Git repo.
 
           make dist
 
-    * Open https://console.redhat.com/ansible/automation-hub/namespaces/ibm/
-      and log in to your account.
+    * Open https://console.redhat.com/ansible/automation-hub/collections/staging/ibm/ibm_zhmc/
+      and log in to your RedHat account.
 
-    * Click on the "Upload Collection" button at the top right of the page,
-      and in the file selection dialog that pops up, select the distribution
-      archive for the version you want to upload:
+    * Click on the "Upload new version" button at the top right of the page.
+      It opens a new page for uploading the collection.
 
-      .. code-block:: text
+      - In the "Collection file" field, select the distribution archive for the
+        version you want to upload:
 
-          dist/ibm-ibm_zhmc-{M}.{N}.{U}.tar.gz
+        .. code-block:: text
 
-    **Attention!!** This only works once for each version. You cannot
-    re-release the same version more than once.
+            dist/ibm-ibm_zhmc-{M}.{N}.{U}.tar.gz
 
-    Verify that the import on Ansible AutomationHub succeeded, by checking the
-    status at
-    https://console.redhat.com/ansible/automation-hub/my-imports/?namespace=ibm
-    (you need to log in).
+      - Select "Staging Repos".
 
-    After the import succeeded, the release must still be approved by RedHat
-    before it is published, so the approval status should now show
-    "waiting for approval".
+      - Press the "Upload Collection" button.
 
-    The RedHat team should approve the release within a day or so. Once it has
-    been approved, the new version will be visible on Ansible AutomationHub at
-    https://console.redhat.com/ansible/automation-hub/repo/published/ibm/ibm_zhmc/ .
+      **Attention!!** This only works once for each version. You cannot
+      re-release the same version more than once.
+
+    * Go back to the ibm_zhmc collection page and select tab "Import log".
+
+      - Verify that your version is shown there and has Status "Completed" and
+        Approval status "waiting for approval".
+
+    You have now uploaded the new version, but it must still be approved by
+    RedHat before it is published. The RedHat team should approve the release
+    of the new version within a day or so. Once it has been approved, the new
+    version will be visible on Ansible AutomationHub at
+    https://console.redhat.com/ansible/automation-hub/collections/published/ibm/ibm_zhmc/
 
 
 .. _`Starting a new version`:
