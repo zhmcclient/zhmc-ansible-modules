@@ -1,0 +1,8 @@
+minor_changes:
+  - "Fixed the bug that nested properties the 'properties' input parameter
+    were not converted to hyphen before being passed to the HMC.
+    This fixed the following modules when used with state values that
+    allow passing input properties:
+    'zhmc_lpar' with properties 'absolute-{type}-capping';
+    'zhmc_password_rule' with property 'character-rules';
+    'zhmc_user_pattern' with properties 'ldap-group-to-template-mappings' and 'sso-group-to-template-mappings'."
