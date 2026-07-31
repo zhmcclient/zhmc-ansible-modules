@@ -21,6 +21,7 @@ tmp_*
 /dist/
 /docs_linkcheck/
 /docs_build/
+/build_changelogs/
 /tests/output/
 /AUTHORS
 /ChangeLog
@@ -28,3 +29,4 @@ tmp_*
 /build/
 /gh-pages/
 /docs_local
+/extra_reqs*.txt
