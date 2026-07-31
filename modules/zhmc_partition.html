@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>zhmc_partition – Manage a partition (DPM mode) &mdash; IBM Z HMC collection  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/banner.css?v=fd51b7f5" />
 
   
@@ -667,10 +667,81 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>{property}</dt><dd><p>Additional properties of the storage group, as described for the zhmc_storage_group module with <code class="docutils literal notranslate"><span class="pre">expand=true</span></code>.</p>
+<dt>{property}</dt><dd><p>Additional properties of the storage group, as described in the data model of the ‘Storage Group’ object in the <a class="reference internal" href="../bibliography.html#hmc-api"><span class="std std-ref">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: raw</div>
 </div>
+</dd>
+<dt>storage-volumes</dt><dd><p>Storage volumes of the storage group.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: list</div>
+<div class="line"><strong>elements</strong>: dict</div>
+</div>
+<dl>
+<dt>name</dt><dd><p>Storage volume name</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>{property}</dt><dd><p>Additional properties of the storage volume, as described in the data model of the ‘Storage Volume’ element object of the ‘Storage Group’ object in the <a class="reference internal" href="../bibliography.html#hmc-api"><span class="std std-ref">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: raw</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>candidate-adapter-ports</dt><dd><p>List of candidate storage adapter ports of the storage group. Only present for storage group type FCP.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: list</div>
+<div class="line"><strong>elements</strong>: dict</div>
+</div>
+<dl>
+<dt>name</dt><dd><p>Storage port name</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>index</dt><dd><p>Storage port index</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: int</div>
+</div>
+</dd>
+<dt>{property}</dt><dd><p>Additional properties of the storage port, as described in the data model of the ‘Storage Port’ element object of the ‘Adapter’ object in the <a class="reference internal" href="../bibliography.html#hmc-api"><span class="std std-ref">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: raw</div>
+</div>
+</dd>
+<dt>parent-adapter</dt><dd><p>Storage adapter of the candidate port.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: dict</div>
+</div>
+<dl>
+<dt>name</dt><dd><p>Storage adapter name</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>{property}</dt><dd><p>Additional properties of the storage adapter, as described in the data model of the ‘Adapter’ object in the <a class="reference internal" href="../bibliography.html#hmc-api"><span class="std std-ref">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: raw</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt>virtual-storage-resources</dt><dd><p>Virtual storage resources of the storage group. Only present for storage group type FCP.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: list</div>
+<div class="line"><strong>elements</strong>: dict</div>
+</div>
+<dl>
+<dt>{property}</dt><dd><p>Properties of the virtual storage resource, as described in the data model of the ‘Virtual Storage Resource’ element object of the ‘Storage Group’ object in the <a class="reference internal" href="../bibliography.html#hmc-api"><span class="std std-ref">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: raw</div>
+</div>
+</dd>
+</dl>
 </dd>
 </dl>
 </dd>
@@ -708,7 +779,7 @@
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.10.0
+        v: 1.10.1
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -724,7 +795,7 @@
             <dd><a href="../1.7.4/modules/zhmc_partition.html">1.7.4</a></dd>
             <dd><a href="../1.8.3/modules/zhmc_partition.html">1.8.3</a></dd>
             <dd><a href="../1.9.6/modules/zhmc_partition.html">1.9.6</a></dd>
-            <dd><a href="../1.10.0/modules/zhmc_partition.html">1.10.0</a></dd>
+            <dd><a href="../1.10.1/modules/zhmc_partition.html">1.10.1</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

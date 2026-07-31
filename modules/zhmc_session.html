@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>zhmc_session – Manage HMC sessions across tasks &mdash; IBM Z HMC collection  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/banner.css?v=fd51b7f5" />
 
   
@@ -244,7 +244,9 @@
 <span class="w">      </span><span class="nt">ca_certs</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_certs_dir</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w">    </span><span class="c1"># optional</span>
 <span class="w">    </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">session</span>
-<span class="w">  </span><span class="nt">no_log</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">    </span><span class="c1"># Protect result containing HMC session ID from being logged</span>
+<span class="w">  </span><span class="c1"># Note: The return value of this module is automatically treated as a no_log</span>
+<span class="w">  </span><span class="c1"># value, so the playbook does not need to specify C(no_log: true) to protect</span>
+<span class="w">  </span><span class="c1"># the returned session ID.</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Example task using the previously created HMC session</span>
 <span class="w">  </span><span class="nt">zhmc_cpc_list</span><span class="p">:</span>
@@ -283,7 +285,7 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>hmc_auth</dt><dd><p>Credentials for the HMC session, for use by other tasks. This return value should be protected with <code class="docutils literal notranslate"><span class="pre">no_log=true</span></code> for <code class="docutils literal notranslate"><span class="pre">action=create</span></code>, since it contains the HMC session ID. For <code class="docutils literal notranslate"><span class="pre">action=delete</span></code>, the same structure is returned, just with null values. This can be used to reset the variable that was set for <code class="docutils literal notranslate"><span class="pre">action=create</span></code>.</p>
+<dt>hmc_auth</dt><dd><p>Credentials for the HMC session, for use by other tasks. For <code class="docutils literal notranslate"><span class="pre">action=delete</span></code>, the same structure is returned, just with null values. This can be used to reset the variable that was set for <code class="docutils literal notranslate"><span class="pre">action=create</span></code>.</p>
 <div class="line-block">
 <div class="line"><strong>returned</strong>: success</div>
 <div class="line"><strong>type</strong>: dict</div>
@@ -299,7 +301,7 @@
 </div>
 </div></blockquote>
 <dl>
-<dt>session_id</dt><dd><p>New HMC session ID for <code class="docutils literal notranslate"><span class="pre">action=create</span></code>, or null for <code class="docutils literal notranslate"><span class="pre">action=delete</span></code>.</p>
+<dt>session_id</dt><dd><p>New HMC session ID for <code class="docutils literal notranslate"><span class="pre">action=create</span></code>, or null for <code class="docutils literal notranslate"><span class="pre">action=delete</span></code>. Note that the entire return value of this module is automatically treated as a no_log value, so this particular property is protected.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: str</div>
 </div>
@@ -348,7 +350,7 @@
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.10.0
+        v: 1.10.1
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -364,7 +366,7 @@
             <dd><a href="../1.7.4/modules/zhmc_session.html">1.7.4</a></dd>
             <dd><a href="../1.8.3/modules/zhmc_session.html">1.8.3</a></dd>
             <dd><a href="../1.9.6/modules/zhmc_session.html">1.9.6</a></dd>
-            <dd><a href="../1.10.0/modules/zhmc_session.html">1.10.0</a></dd>
+            <dd><a href="../1.10.1/modules/zhmc_session.html">1.10.1</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Development &mdash; IBM Z HMC collection  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/banner.css?v=fd51b7f5" />
 
   
@@ -61,6 +61,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#setting-up-the-development-environment">Setting up the development environment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#building-the-documentation">Building the documentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#testing">Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#handling-dependabot-alerts-and-prs">Handling Dependabot alerts and PRs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#backporting">Backporting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#releasing-a-version">Releasing a version</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#starting-a-new-version">Starting a new version</a></li>
 </ul>
@@ -245,39 +247,49 @@ specific Ansible versions as defined in the <code class="docutils literal notran
 <tr class="row-even"><td><p>3.11</p></td>
 <td><p>latest</p></td>
 <td><p>11.x</p></td>
-<td><p>2.18 (1)</p></td>
+<td><p>2.18</p></td>
 </tr>
 <tr class="row-odd"><td><p>3.12</p></td>
 <td><p>latest</p></td>
 <td><p>11.x</p></td>
-<td><p>2.18 (1)</p></td>
+<td><p>2.18</p></td>
 </tr>
 <tr class="row-even"><td><p>3.13</p></td>
 <td><p>latest</p></td>
 <td><p>11.x</p></td>
-<td><p>2.18 (1)</p></td>
+<td><p>2.18</p></td>
 </tr>
-<tr class="row-odd"><td><p>3.9</p></td>
+<tr class="row-odd"><td><p>3.14</p></td>
+<td><p>latest</p></td>
+<td><p>11.x</p></td>
+<td><p>2.18</p></td>
+</tr>
+<tr class="row-even"><td><p>3.9</p></td>
 <td><p>minimum</p></td>
 <td><p>8.0</p></td>
 <td><p>2.15</p></td>
 </tr>
-<tr class="row-even"><td><p>3.10</p></td>
+<tr class="row-odd"><td><p>3.10</p></td>
 <td><p>minimum</p></td>
 <td><p>8.0</p></td>
 <td><p>2.15</p></td>
 </tr>
-<tr class="row-odd"><td><p>3.11</p></td>
+<tr class="row-even"><td><p>3.11</p></td>
 <td><p>minimum</p></td>
 <td><p>8.0</p></td>
 <td><p>2.15</p></td>
 </tr>
-<tr class="row-even"><td><p>3.12</p></td>
+<tr class="row-odd"><td><p>3.12</p></td>
 <td><p>minimum</p></td>
 <td><p>9.0</p></td>
 <td><p>2.16</p></td>
 </tr>
-<tr class="row-odd"><td><p>3.13</p></td>
+<tr class="row-even"><td><p>3.13</p></td>
+<td><p>minimum</p></td>
+<td><p>11.0</p></td>
+<td><p>2.18</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.14</p></td>
 <td><p>minimum</p></td>
 <td><p>11.0</p></td>
 <td><p>2.18</p></td>
@@ -305,20 +317,103 @@ specific Ansible versions as defined in the <code class="docutils literal notran
 <tr class="row-even"><td><p>3.13</p></td>
 <td><p>ansible</p></td>
 <td><p>11.0</p></td>
-<td><p>2.18 (1)</p></td>
+<td><p>2.18</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.14</p></td>
+<td><p>ansible</p></td>
+<td><p>11.0</p></td>
+<td><p>2.18</p></td>
 </tr>
 </tbody>
 </table>
-<p>Notes:
-* (1) Ansible 12 is not yet released at this point.</p>
 <p>The versions for the ‘latest’ and ‘minimum’ package levels are in sync with the
 latest and minimum Ansible versions supported for a particular Python version,
 as documented in <a class="reference internal" href="installation.html#supported-environments"><span class="std std-ref">Supported environments</span></a>.
 The versions for the ‘ansible’ package level are designed to cover all
 Ansible versions.</p>
 </section>
+<section id="handling-dependabot-alerts-and-prs">
+<span id="id7"></span><h2>Handling Dependabot alerts and PRs<a class="headerlink" href="#handling-dependabot-alerts-and-prs" title="Link to this heading"></a></h2>
+<p>The GitHub Dependabot settings on this repo are set as follows:</p>
+<ul class="simple">
+<li><p>Dependabot alerts: Enabled</p></li>
+<li><p>Dependabot malware alerts: Enabled</p></li>
+<li><p>Dependabot security updates: Enabled</p></li>
+</ul>
+<p>This causes the creation of
+<a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/security/dependabot">Dependabot alerts</a>
+and the creation of
+<a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/pulls?q=is%3Apr+label%3Adependencies+is%3Aopen">Dependabot pull requests</a>
+to fix them.</p>
+<p>These pull requests can be recognized by their <code class="docutils literal notranslate"><span class="pre">dependencies</span></code> label. They
+increase the package versions in the requirements files and also in the
+minimum-constraints files. However, there are some limitations:</p>
+<ul>
+<li><p>When a new package version cannot by installed in all supported Python
+environments, Dependabot adds an according warning to the alert, and does not
+create a fix PR. The warning in the alert reads like this:</p>
+<p><code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">Dependabot</span> <span class="pre">cannot</span> <span class="pre">update</span> <span class="pre">&lt;package&gt;</span> <span class="pre">to</span> <span class="pre">a</span> <span class="pre">non-vulnerable</span> <span class="pre">version</span>
+<span class="pre">`</span></code></p>
+</li>
+<li><p>Dependabot does not always correctly handle environment markers in requirements
+and minimum-constraints files.</p></li>
+</ul>
+<p>Dependabot alerts should be handled as follows:</p>
+<ul>
+<li><p>For created PRs, double check that all occurrences of the package have been
+increased in the <code class="docutils literal notranslate"><span class="pre">*.txt</span></code> files and that the PR succeedes.</p>
+<p>Then, add the <code class="docutils literal notranslate"><span class="pre">backport</span></code> label and merge the PR.</p>
+<p>The presence of the <code class="docutils literal notranslate"><span class="pre">backport</span></code> label will cause a backport PR to the
+latest <code class="docutils literal notranslate"><span class="pre">stable_M.N</span></code> branch to be created. See <a class="reference internal" href="#backporting"><span class="std std-ref">Backporting</span></a> for
+details. Merging the PR will close the Dependabot alert(s).</p>
+</li>
+<li><p>For the remaining Dependabot alerts, create PRs that increase the package
+version to the version that is recommended in the PR. Make sure you do that
+for all occurrences of the package in the <code class="docutils literal notranslate"><span class="pre">*.txt</span></code> files. You probably will
+need to split the entry for the package by Python version. Use
+<a class="reference external" href="https://pypi.org">Pypi</a> to find out which package versions support which
+Python versions.</p>
+<p>Example:</p>
+<p>Assume this package requires Python &gt;=3.9 and the
+<code class="docutils literal notranslate"><span class="pre">minimum-constraints-install.txt</span></code> file contains a single entry for the
+urllib3 package (it would also be in <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> with <code class="docutils literal notranslate"><span class="pre">&gt;=</span></code>):</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>urllib3==2.6.0
+</pre></div>
+</div>
+<p>Dependabot has an alert that recommends upgrading urllib3 to 2.7.0, but has
+failed creating a PR.</p>
+<p>The <a class="reference external" href="https://pypi.org/project/urllib3/">urllib3 package on Pypi</a> shows
+that version 2.6.3 is the latest version supported on Python 3.9, and
+version 2.7.0 requires Python 3.10.</p>
+<p>Split the entry between these two Python versions:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>urllib3==2.6.0; python_version == &#39;3.9&#39;
+urllib3==2.7.0; python_version &gt;= &#39;3.10&#39;
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="backporting">
+<span id="id8"></span><h2>Backporting<a class="headerlink" href="#backporting" title="Link to this heading"></a></h2>
+<p>This repo supports assisted backporting of PRs targeting the <code class="docutils literal notranslate"><span class="pre">master</span></code> branch
+to the latest <code class="docutils literal notranslate"><span class="pre">stable_M.N</span></code> branch.</p>
+<p>To trigger the backporting, add the label <code class="docutils literal notranslate"><span class="pre">backport</span></code> to a PR targeting the
+<code class="docutils literal notranslate"><span class="pre">master</span></code> branch. Merging that PR will cause a backport PR to be created, if
+the backporting can be done without merge conflicts.</p>
+<p>This is done by the <code class="docutils literal notranslate"><span class="pre">backport.yml</span></code> GitHub Actions workflow. The workflow
+determines the latest version of existing <code class="docutils literal notranslate"><span class="pre">stable_M.N</span></code> branches and then
+attempts to cherry-pick the PR to that branch. If there are merge conflicts,
+the workflow fails.</p>
+<p>When merging the PR with the <code class="docutils literal notranslate"><span class="pre">backport</span></code> label does not create a backport PR,
+look at the
+<a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/actions/workflows/backport.yml">run of the backport workflow</a>
+to find out why it failed and create the backport PR by cherry-picking the
+commits from the original PR and resolving the merge conflicts. For this, it is
+helpful to have only one commit in each PR.</p>
+</section>
 <section id="releasing-a-version">
-<span id="id7"></span><h2>Releasing a version<a class="headerlink" href="#releasing-a-version" title="Link to this heading"></a></h2>
+<span id="id9"></span><h2>Releasing a version<a class="headerlink" href="#releasing-a-version" title="Link to this heading"></a></h2>
 <p>This section shows the steps for releasing a version of this collection to
 <a class="reference external" href="https://galaxy.ansible.com/">Ansible Galaxy</a> and
 <a class="reference external" href="https://console.redhat.com/ansible/automation-hub">Ansible AutomationHub</a>.</p>
@@ -426,14 +521,14 @@ released, as follows:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">M.N.U</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">changes</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">minor_changes</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">. . .</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">. . .</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">. . .</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">. . .</span>
 <span class="w">    </span><span class="nt">release_summary</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Released on 2023-08-26.</span>
 <span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">Functional enhancements and bug fixes.</span>
 <span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">This version contains all fixes up to version M.N-1.x.</span>
 <span class="w">  </span><span class="nt">fragments</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">. . .</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">. . .</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">. . .</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">. . .</span>
 <span class="w">  </span><span class="nt">release_date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2023-08-26&#39;</span>
 </pre></div>
 </div>
@@ -569,7 +664,7 @@ been approved, the new version will be visible on Ansible AutomationHub at
 </ol>
 </section>
 <section id="starting-a-new-version">
-<span id="id9"></span><h2>Starting a new version<a class="headerlink" href="#starting-a-new-version" title="Link to this heading"></a></h2>
+<span id="id12"></span><h2>Starting a new version<a class="headerlink" href="#starting-a-new-version" title="Link to this heading"></a></h2>
 <p>This section shows the steps for starting development of a new version.</p>
 <p>These steps may be performed right after the steps for
 <a class="reference internal" href="#releasing-a-version"><span class="std std-ref">Releasing a version</span></a>, or independently.</p>
@@ -620,39 +715,6 @@ branch of its minor version:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>checkout<span class="w"> </span><span class="si">${</span><span class="nv">BRANCH</span><span class="si">}</span>
 git<span class="w"> </span>pull
 git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>start_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
-</pre></div>
-</div>
-</li>
-<li><p>Edit the change log:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>vi<span class="w"> </span>docs/source/release_notes.rst
-</pre></div>
-</div>
-<p>and insert the following section before the top-most section, and update
-the version to a draft version of the version that is being started:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Version M.N.U-dev1
-------------------
-
-This version contains all fixes up to version M.N-1.x.
-
-Released: not yet
-
-Availability: `AutomationHub`_, `Galaxy`_, `GitHub`_
-
-**Incompatible changes:**
-
-**Deprecations:**
-
-**Bug fixes:**
-
-**Enhancements:**
-
-**Cleanup:**
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-ansible-modules/issues
 </pre></div>
 </div>
 </li>
@@ -746,7 +808,7 @@ git<span class="w"> </span>branch<span class="w"> </span>-D<span class="w"> </sp
             <dd><a href="../1.7.4/development.html">1.7.4</a></dd>
             <dd><a href="../1.8.3/development.html">1.8.3</a></dd>
             <dd><a href="../1.9.6/development.html">1.9.6</a></dd>
-            <dd><a href="../1.10.0/development.html">1.10.0</a></dd>
+            <dd><a href="../1.10.1/development.html">1.10.1</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

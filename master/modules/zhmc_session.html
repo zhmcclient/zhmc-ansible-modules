@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>zhmc_session – Manage HMC sessions across tasks &mdash; IBM Z HMC collection  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/banner.css?v=fd51b7f5" />
 
   
@@ -69,6 +69,7 @@
 <li class="toctree-l2"><a class="reference internal" href="zhmc_user_pattern_list.html">zhmc_user_pattern_list – List HMC user patterns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_ldap_server_definition.html">zhmc_ldap_server_definition – Manage an LDAP Server Definition on the HMC</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_ldap_server_definition_list.html">zhmc_ldap_server_definition_list – List LDAP Server Definitions on the HMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_http.html">zhmc_http – Perform direct HTTP requests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_cpc.html">zhmc_cpc – Manage a CPC</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_cpc_list.html">zhmc_cpc_list – List CPCs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_cpc_capacity.html">zhmc_cpc_capacity – Manage temporary processor capacity</a></li>
@@ -84,7 +85,9 @@
 <li class="toctree-l2"><a class="reference internal" href="zhmc_partition_messages.html">zhmc_partition_messages – Get console messages for OS in a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group.html">zhmc_storage_group – Manage a storage group (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Manage attachment of a storage group to a partition (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_list.html">zhmc_storage_group_list – List storage groups (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_volume.html">zhmc_storage_volume – Manage a storage volume (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_volume_list.html">zhmc_storage_volume_list – List storage volumes of a storage group (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_virtual_function.html">zhmc_virtual_function – Manage a virtual function of a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_lpar.html">zhmc_lpar – Manage an LPAR (classic mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_command.html">zhmc_lpar_command – Execute OS console command in an LPAR (classic mode)</a></li>
@@ -244,7 +247,9 @@
 <span class="w">      </span><span class="nt">ca_certs</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_certs_dir</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w">    </span><span class="c1"># optional</span>
 <span class="w">    </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">session</span>
-<span class="w">  </span><span class="nt">no_log</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">    </span><span class="c1"># Protect result containing HMC session ID from being logged</span>
+<span class="w">  </span><span class="c1"># Note: The return value of this module is automatically treated as a no_log</span>
+<span class="w">  </span><span class="c1"># value, so the playbook does not need to specify C(no_log: true) to protect</span>
+<span class="w">  </span><span class="c1"># the returned session ID.</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Example task using the previously created HMC session</span>
 <span class="w">  </span><span class="nt">zhmc_cpc_list</span><span class="p">:</span>
@@ -283,7 +288,7 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>hmc_auth</dt><dd><p>Credentials for the HMC session, for use by other tasks. This return value should be protected with <code class="docutils literal notranslate"><span class="pre">no_log=true</span></code> for <code class="docutils literal notranslate"><span class="pre">action=create</span></code>, since it contains the HMC session ID. For <code class="docutils literal notranslate"><span class="pre">action=delete</span></code>, the same structure is returned, just with null values. This can be used to reset the variable that was set for <code class="docutils literal notranslate"><span class="pre">action=create</span></code>.</p>
+<dt>hmc_auth</dt><dd><p>Credentials for the HMC session, for use by other tasks. For <code class="docutils literal notranslate"><span class="pre">action=delete</span></code>, the same structure is returned, just with null values. This can be used to reset the variable that was set for <code class="docutils literal notranslate"><span class="pre">action=create</span></code>.</p>
 <div class="line-block">
 <div class="line"><strong>returned</strong>: success</div>
 <div class="line"><strong>type</strong>: dict</div>
@@ -299,7 +304,7 @@
 </div>
 </div></blockquote>
 <dl>
-<dt>session_id</dt><dd><p>New HMC session ID for <code class="docutils literal notranslate"><span class="pre">action=create</span></code>, or null for <code class="docutils literal notranslate"><span class="pre">action=delete</span></code>.</p>
+<dt>session_id</dt><dd><p>New HMC session ID for <code class="docutils literal notranslate"><span class="pre">action=create</span></code>, or null for <code class="docutils literal notranslate"><span class="pre">action=delete</span></code>. Note that the entire return value of this module is automatically treated as a no_log value, so this particular property is protected.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: str</div>
 </div>
@@ -364,7 +369,7 @@
             <dd><a href="../../1.7.4/modules/zhmc_session.html">1.7.4</a></dd>
             <dd><a href="../../1.8.3/modules/zhmc_session.html">1.8.3</a></dd>
             <dd><a href="../../1.9.6/modules/zhmc_session.html">1.9.6</a></dd>
-            <dd><a href="../../1.10.0/modules/zhmc_session.html">1.10.0</a></dd>
+            <dd><a href="../../1.10.1/modules/zhmc_session.html">1.10.1</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
