@@ -31,6 +31,7 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
 
 from plugins.modules import zhmc_password_rule
+from plugins.module_utils.common import hyphened_value
 from .utils import mock_ansible_module, get_failure_msg
 
 urllib3.disable_warnings()
@@ -60,7 +61,21 @@ STD_PWRULE_INPUT_PROPERTIES = {
     'similarity_count': 2,
     'history_count': 2,
     'case_sensitive': True,
-    'character_rules': [],
+    'character_rules': [
+        {
+            'min_characters': 8,
+            'max_characters': 32,
+            'alphabetic': 'allowed',
+            'numeric': 'allowed',
+            'special': 'allowed',
+            'custom_character_sets': [
+                {
+                    'character_set': '€',
+                    'inclusion': 'allowed'
+                },
+            ]
+        }
+    ]
 }
 
 
@@ -76,7 +91,7 @@ STD_PWRULE_PROPERTIES = {
     'consecutive-characters': STD_PWRULE_INPUT_PROPERTIES['consecutive_characters'],
     'similarity-count': STD_PWRULE_INPUT_PROPERTIES['similarity_count'],
     'history-count': STD_PWRULE_INPUT_PROPERTIES['history_count'],
-    'character-rules': STD_PWRULE_INPUT_PROPERTIES['character_rules'],
+    'character-rules': hyphened_value(STD_PWRULE_INPUT_PROPERTIES['character_rules']),
 }
 
 
