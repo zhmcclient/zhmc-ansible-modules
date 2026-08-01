@@ -36,6 +36,5 @@ MarkupSafe==2.0.0
 # Direct dependencies for development (must be consistent with requirements-develop.txt)
 
 # ansible-test
-yamllint==1.25.0; python_version <= '3.9'
-yamllint==1.30.0; python_version >= '3.10'
+yamllint==1.37.1
 pathspec==1.0.3
