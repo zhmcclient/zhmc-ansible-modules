@@ -4,47 +4,6 @@ ibm.ibm\_zhmc Release Notes
 
 .. contents:: Topics
 
-v1.11.0
-=======
-
-Minor Changes
--------------
-
-- Added a new module "zhmc_http" that issues direct HTTP requests against the HMC WS-API in order to allow using operations that are not yet implemented in other modules.
-- Added an action plugin for the "zhmc_session" module that treats its return value as a no_log value. That avoids the need for users of this module to specify ``no_log: true`` in the task using that module.
-- Added new modules 'zhmc_storage_group_list' and 'zhmc_storage_volume_list' for listing storage groups and their volumes. (issues 1159, 1160)
-- Dev - Added dependencies for Sphinx.
-- Development - Added a GitHub Actions workflow named 'backport' that creates a backport PR to the latest stable branch stable_M.N when a PR labeled with the 'backport' label is merged.
-- Development - Changed from the unmaintained GitHub action gsactions/commit-message-checker to its new fork ddev/commit-message-checker.
-- Development - Simplified pip dependency file requirements-develop.txt by removing any indirect package dependencies and leaving that to the requirements of the packages we use directly. Reorganized the minimum-constraints-develop.txt file accordingly.
-- Docs - Added sections that describe how to handle GitHub Dependabot alerts and how to use the assisted backporting of PRs.
-- Fixed Mend issues up to 2026-02-26.
-- Fixed safety issues up to 2026-07-10.
-- Fixed the bug that nested properties the 'properties' input parameter were not converted to hyphen before being passed to the HMC. This fixed the following modules when used with state values that allow passing input properties: 'zhmc_lpar' with properties 'absolute-{type}-capping'; 'zhmc_password_rule' with property 'character-rules'; 'zhmc_user_pattern' with properties 'ldap-group-to-template-mappings' and 'sso-group-to-template-mappings'.
-- Reduced the GitHub Actions test environments to save resources.
-- Removed Travis control file (was used in IBM internal fork).
-- Removed unused packages from minimum constraints files.
-- Test - Added check for missing and extra dependencies in minimum constraints files based on installed packages. The result is displayed as a warning in the summary of the GitHub Actions run of the "test" workflow.
-- Test - Added retries for sending coverage data to the coveralls.io site to address issues with the site.
-- Test - Enabled tests on Python 3.14.
-- Test - Fixed bugs in the end2end tests for the 'zhmc_password_rule' module.
-- Test - Fixed new issues raised by pylint 4.0.0.
-- Test - Improved some settings for coverage measurement, and enabled branch coverage reporting. This lowered the overall coverage percentage somewhat. (issue 1254)
-- Test - Relaxed the commit message length check in the test workflow so that it no longer requires an empty line after the title and that it ignores the PR ID created by squash commits when checking the length.
-- Upgraded zhmcclient version to 1.26.0.
-
-Breaking Changes
-----------------
-
-- The return value of the zhmc_partition module with C(expand_storagegroups: true) was changed for storage groups with type other than "fcp" because such storage groups do not have virtual storage resources or candidate adapter ports. Previously, such storage groups in the module return value had properties "virtual-storage-resources" and "candidate-adapter-ports" that had an empty list as their values. Now, these properties are omitted from such returned storage groups.
-
-Bugfixes
---------
-
-- Development - Fixed that pip-missing-reqs raised TypeError by pinning pip to <26.2. (issue 1379)
-- Fixed that using the zhmc_partition module with C(expand_storagegroups: true) resulted in an unhandled KeyError exception when storage groups with type other than "fcp" were attached to the partition. (issue 1378)
-- Fixed the description of the "storage-groups" property in the return value of the zhmc_partition module. It was referring to the return value of the zhmc_storage_group module with expand=true, which has some additional properties that are not in the return value of the zhmc_partition module.
-
 v1.10.0
 =======
 

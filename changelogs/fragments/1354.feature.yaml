@@ -1,0 +1,4 @@
+minor_changes:
+  - Added a new module "zhmc_http" that issues direct HTTP requests against the
+    HMC WS-API in order to allow using operations that are not yet implemented
+    in other modules.
