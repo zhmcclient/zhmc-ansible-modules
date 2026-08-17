@@ -5,7 +5,7 @@
 # that are needed for some reason (must be consistent with requirements-develop.txt)
 
 # antsibull changelog manager
-antsibull-changelog==0.32.0
+antsibull-changelog==0.35.1
 
 # Test tools
 pytest==9.0.3
@@ -69,9 +69,9 @@ annotated-doc==0.0.4
 annotated-types==0.6.0
 ansible-builder==3.1.1
 ansible-compat==24.10.0
-antsibull-docs-parser==1.0.0
-antsibull-docutils==1.3.0
-antsibull-fileutils==1.4.0
+antsibull-docs-parser==1.2.2
+antsibull-docutils==1.4.0
+antsibull-fileutils==1.5.3
 anyio==4.10.0
 astroid==3.3.8
 Authlib==1.6.12
@@ -122,10 +122,10 @@ pbr==2.0.0
 platformdirs==4.1.0
 pluggy==1.5.0
 pycodestyle==2.11.0
-pydantic_core==2.41.1
-pydantic==2.12.0
+pydantic_core==2.46.4
+pydantic==2.13.4
 pyflakes==3.1.0
-Pygments==2.20.0
+Pygments==2.21.0
 pyproject_hooks==1.2.0  # Used by pipdeptree>=4.0.0
 pytokens==0.4.0
 regex==2025.7.29
