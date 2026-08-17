@@ -2,7 +2,7 @@ namespace: ibm
 
 name: ibm_zhmc
 
-version: 1.11.0
+version: 1.11.0-dev1
 
 readme: README.md
 
@@ -13,7 +13,6 @@ authors:
   - Andreas Maier <maiera@de.ibm.com>
   - Andreas Scheuring <andreas.scheuring@de.ibm.com>
   - Anil Kumar Dakarapu <anil.kumar.dakarapu@ibm.com>
-  - Chaithra Vonteddu <vonteddu.chaithra1@ibm.com>
   - Demetrios Dimatos <dimatos@gmail.com>
   - Juergen Leopold <leopoldj@de.ibm.com>
   - Kathiravan Velusamy <kathir.velu@in.ibm.com>

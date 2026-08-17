@@ -1,0 +1,4 @@
+minor_changes:
+  - Added new modules 'zhmc_storage_group_list' and 'zhmc_storage_volume_list'
+    for listing storage groups and their volumes.
+    (issues 1159, 1160)
