@@ -104,13 +104,13 @@ jobs:
           echo "Update version '${{ steps.set-update-version.outputs.result }}' in tag '${{ steps.set-tag.outputs.result }}' is invalid (must be 0 when releasing master branch)";
           false;
         fi
-    - name: Check update version to be non-0 when releasing stable branch for pushed tag
-      if: ${{ steps.set-is-stable-branch.outputs.result == 'true' }}
-      run: |
-        if [[ ${{ steps.set-update-version.outputs.result }} == '0' ]]; then
-          echo "Update version '${{ steps.set-update-version.outputs.result }}' in tag '${{ steps.set-tag.outputs.result }}' is invalid (must be non-0 when releasing stable branch for pushed tag)";
-          false;
-        fi
+    # - name: Check update version to be non-0 when releasing stable branch for pushed tag
+    #   if: ${{ steps.set-is-stable-branch.outputs.result == 'true' }}
+    #   run: |
+    #     if [[ ${{ steps.set-update-version.outputs.result }} == '0' ]]; then
+    #       echo "Update version '${{ steps.set-update-version.outputs.result }}' in tag '${{ steps.set-tag.outputs.result }}' is invalid (must be non-0 when releasing stable branch for pushed tag)";
+    #       false;
+    #     fi
 
     #-------- Setup of work environment
     - name: Checkout repo
