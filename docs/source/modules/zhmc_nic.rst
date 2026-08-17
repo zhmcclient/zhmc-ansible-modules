@@ -278,4 +278,9 @@ nic
 
     | **type**: int
 
+  partition-link-name
+    The name of the partition link backing this NIC. Only present when the :literal:`partition\-link\-uri` property is present, i.e. for Hipersockets based NICs.
+
+    | **type**: str
+
 
