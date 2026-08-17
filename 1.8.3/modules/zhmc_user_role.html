@@ -342,36 +342,36 @@
 <section id="examples">
 <h2><a class="toc-backref" href="#id4" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
 <div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
-<span class="c1"># Note: The following examples assume that some variables named &#39;my_*&#39; are set.</span>
+<span class="c1"># Note: The following examples assume that some variables named 'my_*' are set.</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Gather facts about a user role</span>
 <span class="w">  </span><span class="nt">zhmc_user_role</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_user_role_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_user_role_name</span> <span class="cp">}}</span><span class="s">"</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">facts</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rule1</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ensure the user role does not exist</span>
 <span class="w">  </span><span class="nt">zhmc_user_role</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_user_role_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_user_role_name</span> <span class="cp">}}</span><span class="s">"</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ensure the user role exists and has certain properties</span>
 <span class="w">  </span><span class="nt">zhmc_user_role</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_user_role_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_user_role_name</span> <span class="cp">}}</span><span class="s">"</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 <span class="w">    </span><span class="nt">properties</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Example</span><span class="nv"> </span><span class="s">user</span><span class="nv"> </span><span class="s">role</span><span class="nv"> </span><span class="s">1&quot;</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"Example</span><span class="nv"> </span><span class="s">user</span><span class="nv"> </span><span class="s">role</span><span class="nv"> </span><span class="s">1"</span>
 <span class="w">      </span><span class="nt">permissions</span><span class="p">:</span>
-<span class="w">        </span><span class="c1"># Task permission to &quot;configure-storage-storageadmin&quot;:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">task</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;configure-storage-storageadmin&quot;</span>
-<span class="w">        </span><span class="c1"># Task permission to the view-only version of &quot;hardware-messages&quot;:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">task</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;hardware-messages&quot;</span>
+<span class="w">        </span><span class="c1"># Task permission to "configure-storage-storageadmin":</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">task</span><span class="p">:</span><span class="w"> </span><span class="s">"configure-storage-storageadmin"</span>
+<span class="w">        </span><span class="c1"># Task permission to the view-only version of "hardware-messages":</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">task</span><span class="p">:</span><span class="w"> </span><span class="s">"hardware-messages"</span>
 <span class="w">          </span><span class="nt">view_only</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">        </span><span class="c1"># Object permission to all CPCs:</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cpc</span>
@@ -409,42 +409,42 @@
 </div>
 <blockquote>
 <div><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;associated-system-defined-user-role-name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;hmc-operator-tasks&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;associated-system-defined-user-role-uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/api/user-roles/e8c098cb-0597-4003-8e5b-e3a63476c2f8&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;class&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user-role&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;zhmc test user role 1&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;is-inheritance-enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;is-locked&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;zhmc_test_role_1&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;object-id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3dc87062-f651-11ec-8ea3-00106f25b43c&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;object-uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/api/user-roles/3dc87062-f651-11ec-8ea3-00106f25b43c&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;parent&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/api/console&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;permissions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="nt">"associated-system-defined-user-role-name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"hmc-operator-tasks"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"associated-system-defined-user-role-uri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/user-roles/e8c098cb-0597-4003-8e5b-e3a63476c2f8"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"class"</span><span class="p">:</span><span class="w"> </span><span class="s2">"user-role"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"zhmc test user role 1"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"is-inheritance-enabled"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"is-locked"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"zhmc_test_role_1"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"object-id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"3dc87062-f651-11ec-8ea3-00106f25b43c"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"object-uri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/user-roles/3dc87062-f651-11ec-8ea3-00106f25b43c"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"parent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/console"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"permissions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;task&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;configure-storage-storageadmin&quot;</span>
+<span class="w">            </span><span class="nt">"task"</span><span class="p">:</span><span class="w"> </span><span class="s2">"configure-storage-storageadmin"</span>
 <span class="w">        </span><span class="p">},</span>
 <span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;task&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;hardware-messages&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;view_only&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">            </span><span class="nt">"task"</span><span class="p">:</span><span class="w"> </span><span class="s2">"hardware-messages"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"view_only"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
 <span class="w">        </span><span class="p">},</span>
 <span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;task&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;se-cryptographic-management&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;view_only&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">            </span><span class="nt">"task"</span><span class="p">:</span><span class="w"> </span><span class="s2">"se-cryptographic-management"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"view_only"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
 <span class="w">        </span><span class="p">},</span>
 <span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;class&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cpc&quot;</span>
+<span class="w">            </span><span class="nt">"class"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cpc"</span>
 <span class="w">        </span><span class="p">},</span>
 <span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;cpc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;P000A218&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;partition&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Test&quot;</span>
+<span class="w">            </span><span class="nt">"cpc"</span><span class="p">:</span><span class="w"> </span><span class="s2">"P000A218"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"partition"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Test"</span>
 <span class="w">        </span><span class="p">},</span>
 <span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;adapter&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;HiSoClassic&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;cpc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;P000A218&quot;</span>
+<span class="w">            </span><span class="nt">"adapter"</span><span class="p">:</span><span class="w"> </span><span class="s2">"HiSoClassic"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"cpc"</span><span class="p">:</span><span class="w"> </span><span class="s2">"P000A218"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">],</span>
-<span class="w">    </span><span class="nt">&quot;replication-overwrite-possible&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user-defined&quot;</span>
+<span class="w">    </span><span class="nt">"replication-overwrite-possible"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"user-defined"</span>
 <span class="p">}</span>
 </pre></div>
 </div>

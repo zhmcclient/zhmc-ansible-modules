@@ -249,31 +249,31 @@
 <section id="examples">
 <h2><a class="toc-backref" href="#id4" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
 <div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
-<span class="c1"># Note: The following examples assume that some variables named &#39;my_*&#39; are set.</span>
+<span class="c1"># Note: The following examples assume that some variables named 'my_*' are set.</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Gather facts about a user pattern</span>
 <span class="w">  </span><span class="nt">zhmc_user_pattern</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_user_pattern_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_user_pattern_name</span> <span class="cp">}}</span><span class="s">"</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">facts</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">userpattern1</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ensure the user pattern does not exist</span>
 <span class="w">  </span><span class="nt">zhmc_user_pattern</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_user_pattern_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_user_pattern_name</span> <span class="cp">}}</span><span class="s">"</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ensure the user pattern exists and has certain properties</span>
 <span class="w">  </span><span class="nt">zhmc_user_pattern</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_user_pattern_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_user_pattern_name</span> <span class="cp">}}</span><span class="s">"</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 <span class="w">    </span><span class="nt">properties</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Example</span><span class="nv"> </span><span class="s">user</span><span class="nv"> </span><span class="s">pattern</span><span class="nv"> </span><span class="s">1&quot;</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"Example</span><span class="nv"> </span><span class="s">user</span><span class="nv"> </span><span class="s">pattern</span><span class="nv"> </span><span class="s">1"</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">userpattern1</span>
 </pre></div>
 </div>
@@ -302,36 +302,36 @@
 </div>
 <blockquote>
 <div><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;class&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user-pattern&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A pattern that matches a bluepages email address.&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;domain_name_restrictions&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;domain_name_restrictions_ldap_server_definition_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;domain_name_restrictions_ldap_server_definition_uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;element_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cbcaf7a0-46cc-11e9-bfd3-f44a39cd42f9&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;element_uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/api/console/user-patterns/cbcaf7a0-46cc-11e9-bfd3-f44a39cd42f9&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;ldap_group_default_template_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;ldap_group_default_template_uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;ldap_group_ldap_server_definition_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;ldap_group_ldap_server_definition_uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;ldap_group_to_template_mappings&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;ldap_server_definition_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;ldap_server_definition_uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Bluepages email address&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;parent&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/api/console&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;pattern&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;*@*ibm.com&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;replication_overwrite_possible&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;retention_time&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">90</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;search_order_index&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;specific_template_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Product Engineering and Access Administrator&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;specific_template_uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/api/users/97769500-4a81-11e9-aa1b-00106f23f636&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;template_name_override&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;template_name_override_default_template_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;template_name_override_default_template_uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;template_name_override_ldap_server_definition_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;template_name_override_ldap_server_definition_uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;glob-like&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;user_template_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Product Engineering and Access Administrator&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;user_template_uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/api/users/97769500-4a81-11e9-aa1b-00106f23f636&quot;</span>
+<span class="w">    </span><span class="nt">"class"</span><span class="p">:</span><span class="w"> </span><span class="s2">"user-pattern"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"A pattern that matches a bluepages email address."</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"domain_name_restrictions"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"domain_name_restrictions_ldap_server_definition_name"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"domain_name_restrictions_ldap_server_definition_uri"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"element_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cbcaf7a0-46cc-11e9-bfd3-f44a39cd42f9"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"element_uri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/console/user-patterns/cbcaf7a0-46cc-11e9-bfd3-f44a39cd42f9"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"ldap_group_default_template_name"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"ldap_group_default_template_uri"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"ldap_group_ldap_server_definition_name"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"ldap_group_ldap_server_definition_uri"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"ldap_group_to_template_mappings"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"ldap_server_definition_name"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"ldap_server_definition_uri"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Bluepages email address"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"parent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/console"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"pattern"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*@*ibm.com"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"replication_overwrite_possible"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"retention_time"</span><span class="p">:</span><span class="w"> </span><span class="mi">90</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"search_order_index"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"specific_template_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Product Engineering and Access Administrator"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"specific_template_uri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/users/97769500-4a81-11e9-aa1b-00106f23f636"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"template_name_override"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"template_name_override_default_template_name"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"template_name_override_default_template_uri"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"template_name_override_ldap_server_definition_name"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"template_name_override_ldap_server_definition_uri"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"glob-like"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"user_template_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Product Engineering and Access Administrator"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"user_template_uri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/users/97769500-4a81-11e9-aa1b-00106f23f636"</span>
 <span class="p">}</span>
 </pre></div>
 </div>

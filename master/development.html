@@ -209,8 +209,8 @@ has been built successfully.</p>
 can be specified via the environment variable <code class="docutils literal notranslate"><span class="pre">TESTOPTS</span></code>, as shown in these
 examples:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>make<span class="w"> </span><span class="nb">test</span><span class="w">                                      </span><span class="c1"># Run all unit and function tests</span>
-$<span class="w"> </span><span class="nv">TESTOPTS</span><span class="o">=</span><span class="s1">&#39;-vv&#39;</span><span class="w"> </span>make<span class="w"> </span><span class="nb">test</span><span class="w">                       </span><span class="c1"># Specify -vv verbosity for pytest</span>
-$<span class="w"> </span><span class="nv">TESTOPTS</span><span class="o">=</span><span class="s1">&#39;-k test_partition.py&#39;</span><span class="w"> </span>make<span class="w"> </span><span class="nb">test</span><span class="w">      </span><span class="c1"># Run only this test source file</span>
+$<span class="w"> </span><span class="nv">TESTOPTS</span><span class="o">=</span><span class="s1">'-vv'</span><span class="w"> </span>make<span class="w"> </span><span class="nb">test</span><span class="w">                       </span><span class="c1"># Specify -vv verbosity for pytest</span>
+$<span class="w"> </span><span class="nv">TESTOPTS</span><span class="o">=</span><span class="s1">'-k test_partition.py'</span><span class="w"> </span>make<span class="w"> </span><span class="nb">test</span><span class="w">      </span><span class="c1"># Run only this test source file</span>
 </pre></div>
 </div>
 <p>The automated tests performed by Github Actions run on a standard set of test
@@ -234,95 +234,80 @@ specific Ansible versions as defined in the <code class="docutils literal notran
 <td><p>Ansible</p></td>
 <td><p>Ansible core</p></td>
 </tr>
-<tr class="row-even"><td><p>3.9</p></td>
-<td><p>latest</p></td>
-<td><p>8.x</p></td>
-<td><p>2.15</p></td>
-</tr>
-<tr class="row-odd"><td><p>3.10</p></td>
+<tr class="row-even"><td><p>3.10</p></td>
 <td><p>latest</p></td>
 <td><p>10.x</p></td>
 <td><p>2.17</p></td>
 </tr>
-<tr class="row-even"><td><p>3.11</p></td>
+<tr class="row-odd"><td><p>3.11</p></td>
 <td><p>latest</p></td>
-<td><p>11.x</p></td>
-<td><p>2.18</p></td>
+<td><p>12.x</p></td>
+<td><p>2.19</p></td>
 </tr>
-<tr class="row-odd"><td><p>3.12</p></td>
+<tr class="row-even"><td><p>3.12</p></td>
 <td><p>latest</p></td>
-<td><p>11.x</p></td>
-<td><p>2.18</p></td>
+<td><p>14.x</p></td>
+<td><p>2.21</p></td>
 </tr>
-<tr class="row-even"><td><p>3.13</p></td>
+<tr class="row-odd"><td><p>3.13</p></td>
 <td><p>latest</p></td>
-<td><p>11.x</p></td>
-<td><p>2.18</p></td>
+<td><p>14.x</p></td>
+<td><p>2.21</p></td>
 </tr>
-<tr class="row-odd"><td><p>3.14</p></td>
+<tr class="row-even"><td><p>3.14</p></td>
 <td><p>latest</p></td>
-<td><p>11.x</p></td>
-<td><p>2.18</p></td>
-</tr>
-<tr class="row-even"><td><p>3.9</p></td>
-<td><p>minimum</p></td>
-<td><p>8.0</p></td>
-<td><p>2.15</p></td>
+<td><p>14.x</p></td>
+<td><p>2.21</p></td>
 </tr>
 <tr class="row-odd"><td><p>3.10</p></td>
-<td><p>minimum</p></td>
-<td><p>8.0</p></td>
-<td><p>2.15</p></td>
-</tr>
-<tr class="row-even"><td><p>3.11</p></td>
-<td><p>minimum</p></td>
-<td><p>8.0</p></td>
-<td><p>2.15</p></td>
-</tr>
-<tr class="row-odd"><td><p>3.12</p></td>
 <td><p>minimum</p></td>
 <td><p>9.0</p></td>
 <td><p>2.16</p></td>
 </tr>
-<tr class="row-even"><td><p>3.13</p></td>
+<tr class="row-even"><td><p>3.11</p></td>
 <td><p>minimum</p></td>
 <td><p>11.0</p></td>
 <td><p>2.18</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.12</p></td>
+<td><p>minimum</p></td>
+<td><p>13.0</p></td>
+<td><p>2.20</p></td>
+</tr>
+<tr class="row-even"><td><p>3.13</p></td>
+<td><p>minimum</p></td>
+<td><p>13.0</p></td>
+<td><p>2.20</p></td>
 </tr>
 <tr class="row-odd"><td><p>3.14</p></td>
 <td><p>minimum</p></td>
-<td><p>11.0</p></td>
-<td><p>2.18</p></td>
+<td><p>13.0</p></td>
+<td><p>2.20</p></td>
 </tr>
-<tr class="row-even"><td><p>3.9</p></td>
-<td><p>ansible</p></td>
-<td><p>8.0</p></td>
-<td><p>2.15</p></td>
-</tr>
-<tr class="row-odd"><td><p>3.10</p></td>
+<tr class="row-even"><td><p>3.10</p></td>
 <td><p>ansible</p></td>
 <td><p>9.0</p></td>
 <td><p>2.16</p></td>
 </tr>
-<tr class="row-even"><td><p>3.11</p></td>
-<td><p>ansible</p></td>
-<td><p>10.0</p></td>
-<td><p>2.17</p></td>
-</tr>
-<tr class="row-odd"><td><p>3.12</p></td>
+<tr class="row-odd"><td><p>3.11</p></td>
 <td><p>ansible</p></td>
 <td><p>11.0</p></td>
 <td><p>2.18</p></td>
 </tr>
-<tr class="row-even"><td><p>3.13</p></td>
+<tr class="row-even"><td><p>3.12</p></td>
 <td><p>ansible</p></td>
-<td><p>11.0</p></td>
-<td><p>2.18</p></td>
+<td><p>12.0</p></td>
+<td><p>2.19</p></td>
 </tr>
-<tr class="row-odd"><td><p>3.14</p></td>
+<tr class="row-odd"><td><p>3.13</p></td>
 <td><p>ansible</p></td>
-<td><p>11.0</p></td>
-<td><p>2.18</p></td>
+<td><p>13.0</p></td>
+<td><p>2.20</p></td>
+</tr>
+<tr class="row-even"><td><p>3.14</p></td>
+<td><p>ansible</p></td>
+<td><p>14.0</p></td>
+<td><p>2.21</p></td>
 </tr>
 </tbody>
 </table>
@@ -387,8 +372,8 @@ failed creating a PR.</p>
 that version 2.6.3 is the latest version supported on Python 3.9, and
 version 2.7.0 requires Python 3.10.</p>
 <p>Split the entry between these two Python versions:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>urllib3==2.6.0; python_version == &#39;3.9&#39;
-urllib3==2.7.0; python_version &gt;= &#39;3.10&#39;
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>urllib3==2.6.0; python_version == '3.9'
+urllib3==2.7.0; python_version &gt;= '3.10'
 </pre></div>
 </div>
 </li>
@@ -529,7 +514,7 @@ released, as follows:</p>
 <span class="w">  </span><span class="nt">fragments</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">. . .</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">. . .</span>
-<span class="w">  </span><span class="nt">release_date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2023-08-26&#39;</span>
+<span class="w">  </span><span class="nt">release_date</span><span class="p">:</span><span class="w"> </span><span class="s">'2023-08-26'</span>
 </pre></div>
 </div>
 <p>The date for “Released on” should be the same date as in <code class="docutils literal notranslate"><span class="pre">release_date</span></code>.</p>
@@ -579,7 +564,7 @@ format, add corresponding entries into the <code class="docutils literal notrans
 this step.</p>
 </li>
 <li><p>Commit your changes and push the topic branch to the remote repo:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>commit<span class="w"> </span>-asm<span class="w"> </span><span class="s2">&quot;Release </span><span class="si">${</span><span class="nv">MNU</span><span class="si">}</span><span class="s2">&quot;</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>commit<span class="w"> </span>-asm<span class="w"> </span><span class="s2">"Release </span><span class="si">${</span><span class="nv">MNU</span><span class="si">}</span><span class="s2">"</span>
 git<span class="w"> </span>push<span class="w"> </span>--set-upstream<span class="w"> </span>origin<span class="w"> </span>release_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
 </pre></div>
 </div>
@@ -746,7 +731,7 @@ including the description of development/alpha/etc suffixes, as described
 in <a class="reference external" href="https://semver.org/">https://semver.org/</a></p>
 </li>
 <li><p>Commit your changes and push them to the remote repo:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>commit<span class="w"> </span>-asm<span class="w"> </span><span class="s2">&quot;Start </span><span class="si">${</span><span class="nv">MNU</span><span class="si">}</span><span class="s2">&quot;</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>commit<span class="w"> </span>-asm<span class="w"> </span><span class="s2">"Start </span><span class="si">${</span><span class="nv">MNU</span><span class="si">}</span><span class="s2">"</span>
 git<span class="w"> </span>push<span class="w"> </span>--set-upstream<span class="w"> </span>origin<span class="w"> </span>start_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
 </pre></div>
 </div>

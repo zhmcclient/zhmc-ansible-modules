@@ -191,10 +191,10 @@ variable as needed, the only requirement is that the shell script must be
 found in the PATH:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nv">python_script</span><span class="o">=</span><span class="nv">$HOME</span>/local/bin/env_python
 
-$<span class="w"> </span>cat<span class="w"> </span>&gt;<span class="nv">$python_script</span><span class="w"> </span><span class="se">\&lt;\&lt;</span><span class="s1">&#39;EOT&#39;</span>
+$<span class="w"> </span>cat<span class="w"> </span>&gt;<span class="nv">$python_script</span><span class="w"> </span><span class="se">\&lt;\&lt;</span><span class="s1">'EOT'</span>
 <span class="c1">#!/bin/bash</span>
 <span class="nv">py</span><span class="o">=</span><span class="k">$(</span>which<span class="w"> </span>python<span class="k">)</span>
-<span class="nv">$py</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$@</span><span class="s2">&quot;</span>
+<span class="nv">$py</span><span class="w"> </span><span class="s2">"</span><span class="nv">$@</span><span class="s2">"</span>
 EOT
 
 $<span class="w"> </span>chmod<span class="w"> </span><span class="m">755</span><span class="w"> </span><span class="nv">$python_script</span>

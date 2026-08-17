@@ -255,39 +255,39 @@
 <section id="examples">
 <h2><a class="toc-backref" href="#id4" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
 <div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
-<span class="c1"># Note: The following examples assume that some variables named &#39;my_*&#39; are set.</span>
+<span class="c1"># Note: The following examples assume that some variables named 'my_*' are set.</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ensure NIC exists in the partition</span>
 <span class="w">  </span><span class="nt">zhmc_partition</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">cpc_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">partition_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_partition_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_nic_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">cpc_name</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">partition_name</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_partition_name</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_nic_name</span> <span class="cp">}}</span><span class="s">"</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 <span class="w">    </span><span class="nt">properties</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">adapter_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;OSD</span><span class="nv"> </span><span class="s">0128</span><span class="nv"> </span><span class="s">A13B-13&quot;</span>
+<span class="w">      </span><span class="nt">adapter_name</span><span class="p">:</span><span class="w"> </span><span class="s">"OSD</span><span class="nv"> </span><span class="s">0128</span><span class="nv"> </span><span class="s">A13B-13"</span>
 <span class="w">      </span><span class="nt">adapter_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
-<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">port</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">our</span><span class="nv"> </span><span class="s">data</span><span class="nv"> </span><span class="s">network&quot;</span>
-<span class="w">      </span><span class="nt">device_number</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;023F&quot;</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"The</span><span class="nv"> </span><span class="s">port</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">our</span><span class="nv"> </span><span class="s">data</span><span class="nv"> </span><span class="s">network"</span>
+<span class="w">      </span><span class="nt">device_number</span><span class="p">:</span><span class="w"> </span><span class="s">"023F"</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nic1</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ensure NIC does not exist in the partition</span>
 <span class="w">  </span><span class="nt">zhmc_partition</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">cpc_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">partition_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_partition_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_nic_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">cpc_name</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">partition_name</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_partition_name</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_nic_name</span> <span class="cp">}}</span><span class="s">"</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Gather facts about a NIC</span>
 <span class="w">  </span><span class="nt">zhmc_partition</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">cpc_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">partition_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_partition_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_nic_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">cpc_name</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">partition_name</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_partition_name</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_nic_name</span> <span class="cp">}}</span><span class="s">"</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">facts</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nic1</span>
 </pre></div>
@@ -317,25 +317,25 @@
 </div>
 <blockquote>
 <div><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;adapter-id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;128&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;adapter-name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OSD_128_MGMT_NET2_30&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;adapter-port&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;class&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nic&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;HAMGMT&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;device-number&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0004&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;element-id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;5956e97a-f433-11ea-b67c-00106f239d19&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;element-uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/api/partitions/32323df4-f433-11ea-b67c-00106f239d19/nics/5956e97a-f433-11ea-b67c-00106f239d19&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;mac-address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;02:d2:4d:80:b9:88&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;HAMGMT0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;parent&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/api/partitions/32323df4-f433-11ea-b67c-00106f239d19&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;ssc-ip-address&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;ssc-ip-address-type&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;ssc-management-nic&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;ssc-mask-prefix&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;osd&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;virtual-switch-uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/api/virtual-switches/db2f0bec-e578-11e8-bd0a-00106f239c31&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;vlan-id&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;vlan-type&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="w">    </span><span class="nt">"adapter-id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"128"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"adapter-name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OSD_128_MGMT_NET2_30"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"adapter-port"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"class"</span><span class="p">:</span><span class="w"> </span><span class="s2">"nic"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"HAMGMT"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"device-number"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0004"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"element-id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"5956e97a-f433-11ea-b67c-00106f239d19"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"element-uri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/partitions/32323df4-f433-11ea-b67c-00106f239d19/nics/5956e97a-f433-11ea-b67c-00106f239d19"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"mac-address"</span><span class="p">:</span><span class="w"> </span><span class="s2">"02:d2:4d:80:b9:88"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"HAMGMT0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"parent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/partitions/32323df4-f433-11ea-b67c-00106f239d19"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"ssc-ip-address"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"ssc-ip-address-type"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"ssc-management-nic"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"ssc-mask-prefix"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"osd"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"virtual-switch-uri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/virtual-switches/db2f0bec-e578-11e8-bd0a-00106f239c31"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"vlan-id"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"vlan-type"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
 <span class="p">}</span>
 </pre></div>
 </div>

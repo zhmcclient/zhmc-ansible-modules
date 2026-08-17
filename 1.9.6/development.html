@@ -199,8 +199,8 @@ has been built successfully.</p>
 can be specified via the environment variable <code class="docutils literal notranslate"><span class="pre">TESTOPTS</span></code>, as shown in these
 examples:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>make<span class="w"> </span><span class="nb">test</span><span class="w">                                      </span><span class="c1"># Run all unit and function tests</span>
-$<span class="w"> </span><span class="nv">TESTOPTS</span><span class="o">=</span><span class="s1">&#39;-vv&#39;</span><span class="w"> </span>make<span class="w"> </span><span class="nb">test</span><span class="w">                       </span><span class="c1"># Specify -vv verbosity for pytest</span>
-$<span class="w"> </span><span class="nv">TESTOPTS</span><span class="o">=</span><span class="s1">&#39;-k test_partition.py&#39;</span><span class="w"> </span>make<span class="w"> </span><span class="nb">test</span><span class="w">      </span><span class="c1"># Run only this test source file</span>
+$<span class="w"> </span><span class="nv">TESTOPTS</span><span class="o">=</span><span class="s1">'-vv'</span><span class="w"> </span>make<span class="w"> </span><span class="nb">test</span><span class="w">                       </span><span class="c1"># Specify -vv verbosity for pytest</span>
+$<span class="w"> </span><span class="nv">TESTOPTS</span><span class="o">=</span><span class="s1">'-k test_partition.py'</span><span class="w"> </span>make<span class="w"> </span><span class="nb">test</span><span class="w">      </span><span class="c1"># Run only this test source file</span>
 </pre></div>
 </div>
 <p>The automated tests performed by Github Actions run on a standard set of test
@@ -433,7 +433,7 @@ reported.</p>
 <p>If there are any dependebot issues, fix them.</p>
 </li>
 <li><p>Commit your changes and push the topic branch to the remote repo:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>commit<span class="w"> </span>-asm<span class="w"> </span><span class="s2">&quot;Release </span><span class="si">${</span><span class="nv">MNU</span><span class="si">}</span><span class="s2">&quot;</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>commit<span class="w"> </span>-asm<span class="w"> </span><span class="s2">"Release </span><span class="si">${</span><span class="nv">MNU</span><span class="si">}</span><span class="s2">"</span>
 git<span class="w"> </span>push<span class="w"> </span>--set-upstream<span class="w"> </span>origin<span class="w"> </span>release_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
 </pre></div>
 </div>
@@ -622,7 +622,7 @@ including the description of development/alpha/etc suffixes, as described
 in <a class="reference external" href="https://semver.org/">https://semver.org/</a></p>
 </li>
 <li><p>Commit your changes and push them to the remote repo:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>commit<span class="w"> </span>-asm<span class="w"> </span><span class="s2">&quot;Start </span><span class="si">${</span><span class="nv">MNU</span><span class="si">}</span><span class="s2">&quot;</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>commit<span class="w"> </span>-asm<span class="w"> </span><span class="s2">"Start </span><span class="si">${</span><span class="nv">MNU</span><span class="si">}</span><span class="s2">"</span>
 git<span class="w"> </span>push<span class="w"> </span>--set-upstream<span class="w"> </span>origin<span class="w"> </span>start_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
 </pre></div>
 </div>

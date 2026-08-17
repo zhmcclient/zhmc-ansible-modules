@@ -193,10 +193,10 @@ variable as needed, the only requirement is that the shell script must be
 found in the PATH:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nv">python_script</span><span class="o">=</span><span class="nv">$HOME</span>/local/bin/env_python
 
-$<span class="w"> </span>cat<span class="w"> </span>&gt;<span class="nv">$python_script</span><span class="w"> </span><span class="se">\&lt;\&lt;</span><span class="s1">&#39;EOT&#39;</span>
+$<span class="w"> </span>cat<span class="w"> </span>&gt;<span class="nv">$python_script</span><span class="w"> </span><span class="se">\&lt;\&lt;</span><span class="s1">'EOT'</span>
 <span class="c1">#!/bin/bash</span>
 <span class="nv">py</span><span class="o">=</span><span class="k">$(</span>which<span class="w"> </span>python<span class="k">)</span>
-<span class="nv">$py</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$@</span><span class="s2">&quot;</span>
+<span class="nv">$py</span><span class="w"> </span><span class="s2">"</span><span class="nv">$@</span><span class="s2">"</span>
 EOT
 
 $<span class="w"> </span>chmod<span class="w"> </span><span class="m">755</span><span class="w"> </span><span class="nv">$python_script</span>
@@ -346,18 +346,18 @@ collection applies regarding compatibility.</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>1.11.x</p></td>
-<td><p>&gt;= 8.0.x</p></td>
-<td><p>&gt;= 2.15.x</p></td>
+<td><p>&gt;= 9.0.x</p></td>
+<td><p>&gt;= 2.16.x</p></td>
 <td><p>&gt;= 2.11</p></td>
-<td><p>2026-07-31</p></td>
+<td><p>2026-08-17</p></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><p>1.10.x</p></td>
+<tr class="row-odd"><td><p>1.10.x (1)</p></td>
 <td><p>&gt;= 8.0.x</p></td>
 <td><p>&gt;= 2.15.x</p></td>
 <td><p>&gt;= 2.11</p></td>
 <td><p>2025-09-24</p></td>
-<td><p>2026-07-31</p></td>
+<td><p>2026-08-17</p></td>
 </tr>
 <tr class="row-even"><td><p>1.9.x</p></td>
 <td><p>&gt;= 8.0.x</p></td>
@@ -431,6 +431,13 @@ collection applies regarding compatibility.</p>
 </tr>
 </tbody>
 </table>
+<p>Notes:</p>
+<ul class="simple">
+<li><ol class="arabic simple">
+<li><p>Only available on Ansible Galaxy, not on Automation Hub</p></li>
+</ol>
+</li>
+</ul>
 <p>The <a class="reference external" href="https://docs.ansible.com/ansible/latest/reference_appendices/release_and_maintenance.html#ansible-core-support-matrix">Ansible-core Support Matrix</a>
 shows for each ansible-core version the supported Python versions and the
 support timeframe.</p>

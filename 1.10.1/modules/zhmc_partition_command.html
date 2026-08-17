@@ -251,15 +251,15 @@
 <section id="examples">
 <h2><a class="toc-backref" href="#id4" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
 <div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
-<span class="c1"># Note: The following examples assume that some variables named &#39;my_*&#39; are set.</span>
+<span class="c1"># Note: The following examples assume that some variables named 'my_*' are set.</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Get z/VM CP level via OS console command</span>
 <span class="w">  </span><span class="nt">zhmc_partition_command</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">cpc_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">my_partition_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Q</span><span class="nv"> </span><span class="s">CPLEVEL&quot;</span>
+<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">cpc_name</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_partition_name</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="s">"Q</span><span class="nv"> </span><span class="s">CPLEVEL"</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">zvm_cplevel_output</span>
 </pre></div>
 </div>
@@ -292,10 +292,10 @@
 </div>
 <blockquote>
 <div><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
-<span class="w">    </span><span class="s2">&quot;04:30:02 Q CPLEVEL&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="s2">&quot;04:30:02 z/VM Version 7 Release 2.0, service level 2101 (64-bit)&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="s2">&quot;04:30:02 Generated at 05/19/21 10:00:00 CES&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="s2">&quot;04:30:02 IPL at 06/04/24 19:18:57 CES&quot;</span>
+<span class="w">    </span><span class="s2">"04:30:02 Q CPLEVEL"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"04:30:02 z/VM Version 7 Release 2.0, service level 2101 (64-bit)"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"04:30:02 Generated at 05/19/21 10:00:00 CES"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"04:30:02 IPL at 06/04/24 19:18:57 CES"</span>
 <span class="p">]</span>
 </pre></div>
 </div>
