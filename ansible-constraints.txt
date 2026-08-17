@@ -11,11 +11,16 @@
 # ansible 10 (ansible-core 2.17) requires Python >=3.10 and its sanity test supports Python 3.10 to 3.12.
 # ansible 11 (ansible-core 2.18) requires Python >=3.11 and its sanity test supports Python 3.11 to 3.13.
 # ansible 12 (ansible-core 2.19) requires Python >=3.11 and its sanity test supports Python 3.11 to 3.13.
+# ansible 13 (ansible-core 2.20) requires Python >=3.12 and its sanity test supports Python 3.12 to 3.14.
+# ansible 14 (ansible-core 2.21) requires Python >=3.12 and its sanity test supports Python 3.12 to 3.14.
 # Ansible 9 requires Python >=3.10 - this is the check that no Python version below 3.10 is used.
-ansible>=9.0.1,<10; python_version <= '3.10'         # Ansible 9.x / ansible-core 2.16
-ansible>=10.0.1,<11; python_version == '3.11'        # Ansible 10.x / ansible-core 2.17
-ansible>=11.0.0,<12; python_version == '3.12'        # Ansible 11.x / ansible-core 2.18
-ansible>=11.0.0,<12; python_version >= '3.13'        # TODO: Update to Ansible 12.x / ansible-core 2.19 once ansible 12 becomes available
+# In this file, we try to use all Ansible versions across the Python versions we test with.
+# Ansible 10 is not tested because there are more supported Ansible versions than supported Python versions.
+ansible>=9.0.1,<10; python_version <= '3.10'
+ansible>=11.0.0,<12; python_version == '3.11'
+ansible>=12.0.0,<13; python_version == '3.12'
+ansible>=13.0.0,<14; python_version == '3.13'
+ansible>=14.0.0; python_version >= '3.14'
 
 
 # Indirect dependencies are not specified in this file, unless needed to solve versioning issues:
