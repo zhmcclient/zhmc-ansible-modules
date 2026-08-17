@@ -5,7 +5,7 @@
 # (must be consistent with minimum-constraints-develop.txt)
 
 # antsibull changelog manager
-antsibull-changelog>=0.32.0
+antsibull-changelog>=0.35.1
 
 # Test tools
 pytest>=9.0.3
