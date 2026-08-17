@@ -313,7 +313,7 @@ collection applies regarding compatibility.
 +------------+-----------+--------------+------------+-------------+-------------+
 | Collection | Ansible   | ansible-core | Z HMC      | GA          | End of Life |
 +============+===========+==============+============+=============+=============+
-| 1.10.x     | >= 8.0.x  | >= 2.15.x    | >= 2.11    | 2025-09-24  |             |
+| 1.10.x (1) | >= 8.0.x  | >= 2.15.x    | >= 2.11    | 2025-09-24  |             |
 +------------+-----------+--------------+------------+-------------+-------------+
 | 1.9.x      | >= 8.0.x  | >= 2.15.x    | >= 2.11    | 2024-07-18  | 2025-09-24  |
 +------------+-----------+--------------+------------+-------------+-------------+
@@ -335,6 +335,10 @@ collection applies regarding compatibility.
 +------------+-----------+--------------+------------+-------------+-------------+
 | 1.0.x      | >= 2.9.x  | >= 2.9.x     | >= 2.11    | 2022-04-08  | 2022-06-01  |
 +------------+-----------+--------------+------------+-------------+-------------+
+
+Notes:
+
+* (1) Only available on Ansible Galaxy, not on Automation Hub
 
 The `Ansible-core Support Matrix <https://docs.ansible.com/ansible/latest/reference_appendices/release_and_maintenance.html#ansible-core-support-matrix>`_
 shows for each ansible-core version the supported Python versions and the
