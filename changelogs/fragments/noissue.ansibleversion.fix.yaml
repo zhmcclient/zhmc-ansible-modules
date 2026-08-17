@@ -1,0 +1,3 @@
+minor_changes:
+  - "Increased the minimum ansible-core version required for this collection to >=2.16.0.
+     This also increases the Ansible version to >=9 and the Python version to >=3.10."

@@ -11,4 +11,4 @@
 # Python requirements and constraint files.
 #
 ---
-requires_ansible: ">=2.15.0"  # Ansible 8, requires Python>=3.9
+requires_ansible: ">=2.16.0"  # Ansible 9, requires Python>=3.10
