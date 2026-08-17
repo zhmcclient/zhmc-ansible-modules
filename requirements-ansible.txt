@@ -12,11 +12,15 @@
 # ansible 10 (ansible-core 2.17) requires Python >=3.10 and its sanity test supports Python 3.10 to 3.12.
 # ansible 11 (ansible-core 2.18) requires Python >=3.11 and its sanity test supports Python 3.11 to 3.13.
 # ansible 12 (ansible-core 2.19) requires Python >=3.11 and its sanity test supports Python 3.11 to 3.13.
+# ansible 13 (ansible-core 2.20) requires Python >=3.12 and its sanity test supports Python 3.12 to 3.14.
+# ansible 14 (ansible-core 2.21) requires Python >=3.12 and its sanity test supports Python 3.12 to 3.14.
 # Ansible 9 requires Python >=3.10 - this is the check that no Python version below 3.10 is used.
-# Apart from that, we require the lowest Ansible version that supports a given Python version.
+# In this file, we require the lowest Ansible version that supports a given Python version.
 ansible>=9.0.1; python_version <= '3.12'
-ansible>=11.0.0; python_version >= '3.13'
+ansible>=11.0.0; python_version == '3.13'
+ansible>=13.0.0; python_version >= '3.14'
 
 # ansible-core is pulled in by ansible, but is needed for pip-check-reqs checks.
 ansible-core>=2.16.19; python_version <= '3.12'
-ansible-core>=2.18.18; python_version >= '3.13'
+ansible-core>=2.18.18; python_version == '3.13'
+ansible-core>=2.20.0; python_version >= '3.14'
