@@ -632,6 +632,18 @@ releases:
       - noissue.sphinx-deps.yaml
       - noissue.zhmcclient.feature.yaml
     release_date: '2026-08-17'
+  1.11.1:
+    changes:
+      minor_changes:
+        - Added support for a new artificial property 'partition-link-name' in the
+          result of the zhmc_nic module. Its value is the name of the partition link
+          referenced by the 'partition-link-uri' property that was added in HMC 2.17.
+        - 'Added support for new input properties for the zhmc_nic module that were
+          added in HMC 2.17: ''type'' is now specifiable when creating a NIC; ''promiscuous_mode''.'
+      release_summary: Released on 2023-08-18. Bug fixes.
+    fragments:
+      - 1410.feature.yaml
+    release_date: '2026-08-18'
   1.2.0:
     changes:
       bugfixes:

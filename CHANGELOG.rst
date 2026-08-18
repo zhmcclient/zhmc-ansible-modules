@@ -4,6 +4,15 @@ ibm.ibm\_zhmc Release Notes
 
 .. contents:: Topics
 
+v1.11.1
+=======
+
+Minor Changes
+-------------
+
+- Added support for a new artificial property 'partition-link-name' in the result of the zhmc_nic module. Its value is the name of the partition link referenced by the 'partition-link-uri' property that was added in HMC 2.17.
+- Added support for new input properties for the zhmc_nic module that were added in HMC 2.17: 'type' is now specifiable when creating a NIC; 'promiscuous_mode'.
+
 v1.11.0
 =======
 
