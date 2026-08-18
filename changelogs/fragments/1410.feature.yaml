@@ -1,0 +1,8 @@
+minor_changes:
+  - "Added support for new input properties for the zhmc_nic module that
+     were added in HMC 2.17: 'type' is now specifiable when creating a NIC;
+     'promiscuous_mode'."
+  - "Added support for a new artificial property 'partition-link-name' in the
+     result of the zhmc_nic module. Its value is the name of the partition link
+     referenced by the 'partition-link-uri' property that was added in HMC
+     2.17."
