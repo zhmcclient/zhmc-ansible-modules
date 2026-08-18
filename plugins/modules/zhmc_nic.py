@@ -257,6 +257,11 @@ nic:
     adapter-port:
       description: "Port index of the backing port of the NIC."
       type: int
+    partition-link-name:
+      description: "The name of the partition link backing this NIC.
+        Only present when the C(partition-link-uri) property is present, i.e.
+        for Hipersockets based NICs."
+      type: str
   sample:
     {
         "adapter-id": "128",
@@ -333,6 +338,9 @@ ZHMC_NIC_PROPERTIES = {
     # create+update properties:
     'name': (
         False, True, True, True, None, None),  # provided in 'name' module parm
+    # The type property became creatable with the network-express-support
+    # feature (SE 2.17.0).
+    'type': (True, True, False, False, None, None),
     'description': (True, True, True, True, None, to_unicode),
     'device_number': (True, True, True, True, eq_hex, None),
     'network_adapter_port_uri': (
@@ -361,13 +369,18 @@ ZHMC_NIC_PROPERTIES = {
     # (SE 2.15 GA2).
     'function_number': (True, True, True, True, None, int),
     'function_range': (True, True, True, True, None, int),
+    # The promiscuous-mode property was introduced with the
+    # network-express-support feature (SE 2.17.0).
+    'promiscuous_mode': (True, True, True, True, None, None),
 
     # read-only properties:
     'element-uri': (False, False, False, None, None, None),
     'element-id': (False, False, False, None, None, None),
     'parent': (False, False, False, None, None, None),
     'class': (False, False, False, None, None, None),
-    'type': (False, False, False, None, None, None),
+    # The partition-link-uri property was introduced with the
+    # dpm-partition-lifecycle-management feature (SE 2.17.0).
+    'partition_link_uri': (False, False, False, None, None, None),
 }
 
 
@@ -662,9 +675,11 @@ def add_artificial_properties(nic_properties, nic):
     * 'adapter-name'
     * 'adapter-port'
     * 'adapter-id'
+    * 'partition-link-name'
     """
     partition = nic.manager.parent
     cpc = partition.manager.cpc
+    console = cpc.manager.console
     session = cpc.manager.client.session
 
     # Add artificial properties for backing adapter:
@@ -686,6 +701,13 @@ def add_artificial_properties(nic_properties, nic):
     nic_properties['adapter-id'] = adapter.get_property('adapter-id')
     nic_properties['adapter-name'] = adapter.name
     nic_properties['adapter-port'] = adapter_port
+
+    # Add artificial properties for partition link:
+    plink_uri = nic.prop('partition-link-uri', None)
+    if plink_uri:
+        # vswitch-based NIC (OSA, HS up to z16)
+        plink = console.partition_links.find(**{'object-uri': plink_uri})
+        nic_properties['partition-link-name'] = plink.name
 
 
 def ensure_present(params, check_mode):
