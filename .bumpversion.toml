@@ -1,0 +1,21 @@
+[tool.bumpversion]
+current_version = "1.12.0-a0"
+ignore_missing_version = true
+allow_dirty = true
+commit = false
+tag = false
+# Defining parameter 'start' as just '0' did not work; it needed to be 'a0'.
+parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)(-(?P<start>a0)(\\.(?P<dev>dev\\d+)\\.(?P<commit>g[0-9a-f]+)(\\.(?P<dirty>dirty))?)?)?"
+serialize = [
+  "{major}.{minor}.{patch}-{start}.{dev}.{commit}.{dirty}",
+  "{major}.{minor}.{patch}-{start}.{dev}.{commit}",
+  "{major}.{minor}.{patch}-{start}",
+  "{major}.{minor}.{patch}",
+]
+
+[[tool.bumpversion.files]]
+filename = "galaxy.yml"
+regex = true
+# We use a regex instead of '{current_version}' to tolerate inconsistent version to this file
+search = "version: (\\d+\\.\\d+\\.\\d+(-a0(\\.dev\\d+\\.g[0-9a-f]+(\\.dirty)?)?)?)"
+replace = "version: {new_version}"

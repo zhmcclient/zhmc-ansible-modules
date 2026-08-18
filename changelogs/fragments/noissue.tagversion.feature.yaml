@@ -1,0 +1,7 @@
+minor_changes:
+  - "Made the collection version based on the most recent git tag in the
+     history of the HEAD branch.
+     For released versions, nothing changes; the collection version will still
+     be 'M.N.U'.
+     While in development, the collection version will have the git tag based
+     format 'M.N.U-a0.devD.gCOMMIT.dirty' or a subset thereof."

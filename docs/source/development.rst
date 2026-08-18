@@ -412,17 +412,11 @@ local clone of the zhmc-ansible-modules Git repo.
         git pull
         git checkout -b release_${MNU}
 
-7.  Edit the Galaxy metadata file:
+7.  Set the collection version to the release version:
 
     .. code-block:: sh
 
-        vi galaxy.yml
-
-    and set the 'version' parameter to the version that is being released:
-
-    .. code-block:: yaml
-
-        version: M.N.U
+        bump-my-version --new-version ${MNU}
 
 8.  Update the change log:
 
@@ -599,7 +593,7 @@ local clone of the zhmc-ansible-modules Git repo.
 
         .. code-block:: text
 
-            dist/ibm-ibm_zhmc-{M}.{N}.{U}.tar.gz
+            dist/ibm-ibm_zhmc-M.N.U.tar.gz
 
       - Select "Staging Repos".
 
@@ -687,22 +681,11 @@ local clone of the zhmc-ansible-modules Git repo.
         git pull
         git checkout -b start_${MNU}
 
-3.  Edit the Galaxy metadata file:
+3.  Set the collection version to the start version:
 
     .. code-block:: sh
 
-        vi galaxy.yml
-
-    and update the version to a draft version of the version that is being
-    started:
-
-    .. code-block:: yaml
-
-        version: M.N.U-dev1
-
-    Note: The version must follow the rules for semantic versioning 2.0
-    including the description of development/alpha/etc suffixes, as described
-    in https://semver.org/
+        bump-my-version --new-version ${MNU}-a0
 
 4.  Commit your changes and push them to the remote repo:
 
@@ -711,26 +694,33 @@ local clone of the zhmc-ansible-modules Git repo.
         git commit -asm "Start ${MNU}"
         git push --set-upstream origin start_${MNU}
 
-5.  On GitHub, create a Pull Request for branch ``start_M.N.U``.
+5.  Set the git tag for the start version:
+
+    .. code-block:: sh
+
+        git tag -f ${MNU}-a0
+        git push -f --tags
+
+6.  On GitHub, create a Pull Request for branch ``start_M.N.U``.
 
     Important: When creating Pull Requests, GitHub by default targets the
     ``master`` branch. When starting a version based on a stable branch, you
     need to change the target branch of the Pull Request to ``stable_M.N``.
 
-6.  On GitHub, create a milestone for the new version ``M.N.U``.
+7.  On GitHub, create a milestone for the new version ``M.N.U``.
 
     You can create a milestone in GitHub via Issues -> Milestones -> New
     Milestone.
 
-7.  On GitHub, go through all open issues and pull requests that still have
+8.  On GitHub, go through all open issues and pull requests that still have
     milestones for previous releases set, and either set them to the new
     milestone, or to have no milestone.
 
-8.  On GitHub, once the checks for the Pull Request for branch ``start_M.N.U``
+9.  On GitHub, once the checks for the Pull Request for branch ``start_M.N.U``
     have succeeded, merge the Pull Request (no review is needed). This
     automatically deletes the branch on GitHub.
 
-9.  Update and clean up the local repo:
+10. Update and clean up the local repo:
 
     .. code-block:: sh
 

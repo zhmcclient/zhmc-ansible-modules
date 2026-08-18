@@ -164,7 +164,7 @@ jobs:
         RUN_TYPE: ${{ steps.set-run-type.outputs.result }}
       run: |
         make platform
-    - name: Install the package and its dependents
+    - name: Install the collection and its dependent Python packages
       env:
         PACKAGE_LEVEL: ${{ matrix.package_level }}
         RUN_TYPE: ${{ steps.set-run-type.outputs.result }}
@@ -199,6 +199,16 @@ jobs:
       run: |
         xz --version;
         bash -c "! (xz --version | grep -E '5\.6\.(0|1)')"
+    - name: Install the collection again using its correct version
+      env:
+        PACKAGE_LEVEL: ${{ matrix.package_level }}
+        RUN_TYPE: ${{ steps.set-run-type.outputs.result }}
+      run: |
+        make install
+    - name: Show installed collection versions
+      run: |
+        echo "Installed Ansible collections:"
+        ansible-galaxy collection list
     - name: Show package dependency tree
       run: |
         echo "Package dependency tree of installed Python packages:"
