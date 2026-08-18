@@ -308,6 +308,13 @@
 <div class="line"><strong>type</strong>: bool</div>
 </div>
 </dd>
+<dt>expand_nics</dt><dd><p>If True, the return value will contain an additional artificial property <code class="docutils literal notranslate"><span class="pre">partition.nics</span></code> that is the list of NICs of the partition, with properties as described in the data model of the ‘NIC’ element object within the ‘Partition’ object in the <a class="reference internal" href="../bibliography.html#hmc-api"><span class="std std-ref">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<p><strong>Deprecated</strong>: When not specified or specified as null, this parameter will be treated as true in order to provide backwards compatibility. In release 2.0.0, the default for this parameter will be changed to False for consistency with other expansion control parameters. In order to prepare for that, it is recommended already now to specify this parameter as True or False, depending on whether the additional data is needed. To foster the explicit specification of the parameter, an Ansible deprecation warning will be issued when the parameter is not specified (or specified as null).</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: bool</div>
+</div>
+</dd>
 <dt>log_file</dt><dd><p>File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
@@ -333,6 +340,7 @@
 <span class="w">      </span><span class="nt">ifl_processors</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
 <span class="w">      </span><span class="nt">initial_memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1024</span>
 <span class="w">      </span><span class="nt">maximum_memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1024</span>
+<span class="w">    </span><span class="nt">expand_nics</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">part1</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Configure an FCP boot volume and start the partition (z14 or later)</span>
@@ -346,6 +354,7 @@
 <span class="w">      </span><span class="nt">boot_device</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">storage-volume</span>
 <span class="w">      </span><span class="nt">boot_storage_group_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sg1</span>
 <span class="w">      </span><span class="nt">boot_storage_volume_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">boot1</span>
+<span class="w">    </span><span class="nt">expand_nics</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">part1</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Configure an FTP boot server and start the partition</span>
@@ -361,6 +370,7 @@
 <span class="w">      </span><span class="nt">boot_ftp_username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ftpuser</span>
 <span class="w">      </span><span class="nt">boot_ftp_password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ftppass</span>
 <span class="w">      </span><span class="nt">boot_ftp_insfile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/insfile</span>
+<span class="w">    </span><span class="nt">expand_nics</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">part1</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ensure the partition does not exist</span>
@@ -388,6 +398,7 @@
 <span class="w">            </span><span class="nt">access_mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">control-usage</span>
 <span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">domain_index</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
 <span class="w">            </span><span class="nt">access_mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">control</span>
+<span class="w">    </span><span class="nt">expand_nics</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">part1</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ensure that an ISO image is mounted to the partition</span>
@@ -418,6 +429,7 @@
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">facts</span>
 <span class="w">    </span><span class="nt">expand_storage_groups</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">    </span><span class="nt">expand_crypto_adapters</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">expand_nics</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">part1</span>
 </pre></div>
 </div>
@@ -624,6 +636,7 @@
 </dl>
 </dd>
 <dt>nics</dt><dd><p>NICs of the partition.</p>
+<p>Only present for <code class="docutils literal notranslate"><span class="pre">expand_nics=true</span></code> or when <code class="docutils literal notranslate"><span class="pre">expand_nics</span></code> is not specified.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: list</div>
 <div class="line"><strong>elements</strong>: dict</div>
@@ -799,7 +812,7 @@
             <dd><a href="../../1.8.3/modules/zhmc_partition.html">1.8.3</a></dd>
             <dd><a href="../../1.9.6/modules/zhmc_partition.html">1.9.6</a></dd>
             <dd><a href="../../1.10.1/modules/zhmc_partition.html">1.10.1</a></dd>
-            <dd><a href="../../1.11.0/modules/zhmc_partition.html">1.11.0</a></dd>
+            <dd><a href="../../1.11.1/modules/zhmc_partition.html">1.11.1</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
