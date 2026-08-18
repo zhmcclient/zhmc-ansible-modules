@@ -1,0 +1,18 @@
+minor_changes:
+  - Added a new input parameter 'expand_nics' to the 'zhmc_partition' module
+    that controls whether the 'partition.nics' property with the NICs of
+    the partition is present in the return value. For compatibility reasons,
+    the default for the 'expand_nics' parameter is True.
+deprecated_features:
+  - When the new input parameter 'expand_nics' of the 'zhmc_partition' module
+    is not specified or specified as null, the parameter will be treated as
+    True in order to provide backwards compatibility.
+    In version 2.0.0 of this collection, the default for this parameter will
+    be changed to False, for consistency with other expansion control
+    parameters.
+    To prepare for that future change, specify the parameter as True or False
+    depending on whether the 'partition.nics' property in the  module return
+    value needs to be present.
+    To foster the explicit specification of the parameter, an Ansible
+    deprecation warning and a corresponding log file entry will be created
+    when the parameter is not specified (or specified as null).

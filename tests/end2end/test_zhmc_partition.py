@@ -687,6 +687,7 @@ def test_zhmc_partition_facts(
             'properties': {},
             'expand_storage_groups': False,
             'expand_crypto_adapters': False,
+            'expand_nics': False,
             'log_file': LOG_FILE,
             '_faked_session': faked_session,
         }
@@ -974,6 +975,7 @@ def test_zhmc_partition_state(
                 'properties': input_props2,
                 'expand_storage_groups': False,
                 'expand_crypto_adapters': False,
+                'expand_nics': False,
                 'log_file': LOG_FILE,
                 '_faked_session': faked_session,
             }
@@ -1423,6 +1425,7 @@ def test_zhmc_partition_properties(
                     'properties': update_props,
                     'expand_storage_groups': False,
                     'expand_crypto_adapters': False,
+                    'expand_nics': False,
                     'log_file': LOG_FILE,
                     '_faked_session': faked_session,
                 }
@@ -1588,6 +1591,7 @@ def test_zhmc_partition_boot_stovol(
                 'properties': update_props,
                 'expand_storage_groups': False,
                 'expand_crypto_adapters': False,
+                'expand_nics': False,
                 'log_file': LOG_FILE,
                 '_faked_session': faked_session,
             }
@@ -1745,6 +1749,7 @@ def test_zhmc_partition_iso_mount(
                 'properties': None,
                 'expand_storage_groups': False,
                 'expand_crypto_adapters': False,
+                'expand_nics': False,
                 'log_file': LOG_FILE,
                 '_faked_session': faked_session,
             }
