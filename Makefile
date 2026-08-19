@@ -66,6 +66,8 @@ collection_full_name := $(collection_namespace).$(collection_name)
 # Note: The collection version is defined in galaxy.yml
 collection_version := $(shell $(PYTHON_CMD) tools/version.py)
 
+bump_my_version := $(shell which bump-my-version)
+
 # Python versions
 python_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('{v[0]}.{v[1]}.{v[2]}'.format(v=sys.version_info))")
 python_major_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('%s'%sys.version_info[0])")
@@ -544,7 +546,14 @@ $(done_dir)/bandit_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/develop_$
 
 $(dist_file): Makefile $(done_dir)/install_deps_$(pymn)_$(PACKAGE_LEVEL).done $(dist_dependent_files)
 	mkdir -p $(dist_dir)
+	cp -p galaxy.yml galaxy.yml.tmp
+	cp -p .bumpversion.toml .bumpversion.toml.tmp
+ifneq ($(bump_my_version),)
+	bump-my-version bump --new-version $(collection_version)
+endif
 	ansible-galaxy collection build --output-path=$(dist_dir) --force .
+	mv galaxy.yml.tmp galaxy.yml
+	mv .bumpversion.toml.tmp .bumpversion.toml
 
 $(module_rst_dir):
 	mkdir -p $(module_rst_dir)
@@ -566,8 +575,8 @@ docslocal: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(do
 	cp -R changelogs $(doc_build_changelogs_dir)/
 	cp galaxy.yml $(doc_build_changelogs_dir)/
 	sh -c "cd $(doc_build_changelogs_dir); antsibull-changelog release --reload-plugins -vv"
-	cp CHANGELOG.rst CHANGELOG.rst.tmp
+	cp -p CHANGELOG.rst CHANGELOG.rst.tmp
 	cp $(doc_build_changelogs_dir)/CHANGELOG.rst CHANGELOG.rst
 	sphinx-build -b html $(sphinx_opts) $(doc_source_dir) $(doc_build_local_dir)
-	cp CHANGELOG.rst.tmp CHANGELOG.rst
+	mv CHANGELOG.rst.tmp CHANGELOG.rst
 #	open $(doc_build_local_dir)/index.html
