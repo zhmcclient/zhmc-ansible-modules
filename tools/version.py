@@ -29,6 +29,14 @@ import re
 RELEASE_START_PATTERN = re.compile(r'^[0-9]+\.[0-9]+\.[0-9]+(-a0)?$')
 
 
+class FallbackError(Exception):
+    """
+    Exception indicating that determining the git based collection version
+    should fall back to use the version from the galaxy.yml file.
+    """
+    pass
+
+
 def get_git_version():
     """
     Return the collection version based on git tags.
@@ -49,23 +57,30 @@ def get_git_version():
     - M.N.U                   - if on the release tag
 
     In the initial 'make install' in the test workflow, the GitPython package
-    providing the 'git' module is not yet installed. In that case, ImportError
-    is raised to indicate that.
+    providing the 'git' module is not yet installed. Also, if the script is not
+    run in the git repo, the GitPython package obviously cannot read the git
+    tags. In these cases FallbackError is raised to indicate to the caller
+    that a fallback to alternative approaches for determining the collection
+    version should be performed.
 
-    In case of any other issue, RuntimeError is raised.
+    In case of any other issues, RuntimeError is raised. That should be handled
+    to let script fail.
     """
-    import git  # pylint: disable=import-outside-toplevel
+    try:
+        import git  # pylint: disable=import-outside-toplevel
+    except ImportError as exc:
+        raise FallbackError(f"Cannot import git module: {exc}")
 
     try:
         repo = git.Repo(search_parent_directories=True)
     except git.exc.InvalidGitRepositoryError as exc:
-        raise RuntimeError(f"Not in a git repo: {exc}")
+        raise FallbackError(f"Not in a git repo: {exc}")
 
     try:
         latest_tag = repo.git.describe(tags=True, abbrev="0")
     except git.exc.GitCommandError as exc:
         if "No names found" in exc.stderr:
-            raise RuntimeError("No git tag found in history of HEAD branch")
+            raise FallbackError("No git tag found in history of HEAD branch")
         git_command = ' '.join(exc.command)
         git_msg = exc.stderr.replace("stderr: ", "").strip("\n '")
         raise RuntimeError(f"git command '{git_command}' failed: {git_msg}")
@@ -93,9 +108,10 @@ def get_galaxy_version():
     """
     Return the collection version defined in the galaxy.yml file.
 
-    In case of any issue, RuntimeError is raised.
+    In case of any issues, RuntimeError is raised. That should be handled
+    to let script fail.
 
-    In order to avoid the dependency to a yaml package, this is done by
+    In order to avoid the dependency to a YAML parsing package, this is done by
     parsing the file with a regular expression.
     """
     galaxy_file = '../galaxy.yml'  # relative to the dir of this file
@@ -119,7 +135,7 @@ def main():
     try:
         try:
             coll_version = get_git_version()
-        except ImportError:
+        except FallbackError:
             coll_version = get_galaxy_version()
     except RuntimeError as exc:
         print(f"{MY_CMD}: Error: {exc}", file=sys.stderr, flush=True)
