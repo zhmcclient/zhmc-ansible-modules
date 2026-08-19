@@ -7,6 +7,11 @@ ibm.ibm\_zhmc Release Notes
 v1.11.0
 =======
 
+Release Summary
+---------------
+
+Released on 2026-07-31. Functional enhancements and bug fixes. This version contains all fixes up to version 1.10.1.
+
 Minor Changes
 -------------
 
