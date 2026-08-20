@@ -134,7 +134,7 @@ properties
 
 
 expand
-  Boolean that controls whether the returned storage group contains additional artificial properties that expand certain URI or name properties to the full set of resource properties (see description of return values of this module).
+  If True, the return value will contain additional artificial properties that expand certain URI or name properties to the full set of resource properties. See the return value for details.
 
   | **required**: False
   | **type**: bool
@@ -485,8 +485,11 @@ storage_group
     | **elements**: str
 
   attached-partitions
-    List of partitions to which the storage group is attached. Only present if :literal:`expand=true`.
+    Partitions to which the storage group is attached.
 
+    Only present if :literal:`expand` is True.
+
+    | **returned**: success
     | **type**: list
     | **elements**: dict
 
@@ -497,8 +500,11 @@ storage_group
 
 
   storage-volumes
-    Storage volumes of the storage group. Only present if :literal:`expand=true`.
+    Storage volumes of the storage group.
 
+    Only present if :literal:`expand` is True.
+
+    | **returned**: success
     | **type**: list
     | **elements**: dict
 
@@ -514,8 +520,13 @@ storage_group
 
 
   candidate-adapter-ports
-    List of candidate storage adapter ports of the storage group. Only present if :literal:`expand=true` and for storage group type FCP.
+    List of candidate storage adapter ports of the storage group.
 
+    Will be empty for storage group types other than FCP.
+
+    Only present if :literal:`expand` is True.
+
+    | **returned**: success
     | **type**: list
     | **elements**: dict
 
@@ -552,8 +563,13 @@ storage_group
 
 
   virtual-storage-resources
-    Virtual storage resources of the storage group. Only present if :literal:`expand=true` and for storage group type FCP.
+    Virtual storage resources of the storage group.
 
+    Will be empty for storage group types other than FCP.
+
+    Only present if :literal:`expand` is True.
+
+    | **returned**: success
     | **type**: list
     | **elements**: dict
 

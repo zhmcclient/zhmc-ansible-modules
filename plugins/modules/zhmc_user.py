@@ -165,24 +165,23 @@ options:
     default: null
   expand:
     description:
-      - "Deprecated: The O(expand) parameter is deprecated because the
+      - "If True, the return value will contain additional artificial
+         properties that expand certain URI or name properties to the full set
+         of resource properties. See the return value for details."
+      - "B(Deprecated): The O(expand) parameter is deprecated because the
          returned password rule, user role, user pattern and LDAP server
          definition objects have an independent lifecycle, so the same objects
          are returned when invoking this module in a loop through all users.
          Use the respective other modules of this collection to get the
          properties of these objects."
-      - "Boolean that controls whether the returned user contains
-         additional artificial properties that expand certain URI or name
-         properties to the full set of resource properties (see description of
-         return values of this module)."
     type: bool
     required: false
     default: false
   expand_names:
     description:
-      - "Boolean that controls whether the returned user contains additional
-         artificial properties for the names of referenced objects, such as
-         user roles, password rule, etc."
+      - "If True, the return value will contain additional artificial
+         properties for the names of referenced objects, such as user roles,
+         password rule, etc."
       - "For backwards compatibility, this parameter defaults to True."
     type: bool
     required: false
@@ -275,10 +274,10 @@ user:
       type: str
     user-role-objects:
       description:
-        - "Deprecated: This result property is deprecated because the
+        - "User roles referenced by property C(user-roles)."
+        - "Only present if O(expand) is True."
+        - "B(Deprecated): This result property is deprecated because the
            O(expand) parameter is deprecated."
-        - "Only present if O(expand=true): User roles referenced by property
-           C(user-roles)."
       type: dict
       contains:
         "{property}":
@@ -294,10 +293,11 @@ user:
       type: str
     user-pattern:
       description:
-        - "Deprecated: This result property is deprecated because the
+        - "User pattern referenced by property C(user-pattern-uri)."
+        - "Only present for users with C(type=pattern) and if O(expand) is
+           True."
+        - "B(Deprecated): This result property is deprecated because the
            O(expand) parameter is deprecated."
-        - "Only present for users with C(type=pattern) and if O(expand=true):
-           User pattern referenced by property C(user-pattern-uri)."
       type: dict
       contains:
         "{property}":
@@ -313,10 +313,11 @@ user:
       type: str
     user-template:
       description:
-        - "Deprecated: This result property is deprecated because the
+        - "User template referenced by property C(user-template-uri)."
+        - "Only present for users with C(type=pattern) and if O(expand) is
+           True."
+        - "B(Deprecated): This result property is deprecated because the
            O(expand) parameter is deprecated."
-        - "Only present for users with C(type=pattern) and if O(expand=true):
-           User template referenced by property C(user-template-uri)."
       type: dict
       contains:
         "{property}":
@@ -330,10 +331,10 @@ user:
       type: str
     password-rule:
       description:
-        - "Deprecated: This result property is deprecated because the
+        - "Password rule referenced by property C(password-rule-uri)."
+        - "Only present if O(expand) is True."
+        - "B(Deprecated): This result property is deprecated because the
            O(expand) parameter is deprecated."
-        - "Only present if O(expand=true): Password rule referenced by property
-           C(password-rule-uri)."
       type: dict
       contains:
         "{property}":
@@ -349,10 +350,11 @@ user:
       type: str
     ldap-server-definition:
       description:
-        - "Deprecated: This result property is deprecated because the
+        - "LDAP server definition referenced by property
+           C(ldap-server-definition-uri)."
+        - "Only present if O(expand) is True."
+        - "B(Deprecated): This result property is deprecated because the
            O(expand) parameter is deprecated."
-        - "Only present if O(expand=true): LDAP server definition referenced by
-           property C(ldap-server-definition-uri)."
       type: dict
       contains:
         "{property}":
@@ -369,10 +371,11 @@ user:
       type: str
     primary-mfa-server-definition:
       description:
-        - "Deprecated: This result property is deprecated because the
+        - "MFA server definition referenced by property
+           C(primary-mfa-server-definition-uri)."
+        - "Only present if O(expand) is True."
+        - "B(Deprecated): This result property is deprecated because the
            O(expand) parameter is deprecated."
-        - "Only present if O(expand=true): MFA server definition referenced by
-           property C(primary-mfa-server-definition-uri)."
       type: dict
       contains:
         "{property}":
@@ -388,10 +391,11 @@ user:
       type: str
     backup-mfa-server-definition:
       description:
-        - "Deprecated: This result property is deprecated because the
+        - "MFA server definition referenced by property
+           C(backup-mfa-server-definition-uri)."
+        - "Only present if O(expand) is True."
+        - "B(Deprecated): This result property is deprecated because the
            O(expand) parameter is deprecated."
-        - "Only present if O(expand=true): MFA server definition referenced by
-           property C(backup-mfa-server-definition-uri)."
       type: dict
       contains:
         "{property}":
@@ -406,10 +410,10 @@ user:
       type: str
     default-group:
       description:
-        - "Deprecated: This result property is deprecated because the
+        - "Group referenced by property C(default-group-uri)."
+        - "Only present if O(expand) is True."
+        - "B(Deprecated): This result property is deprecated because the
            O(expand) parameter is deprecated."
-        - "Only present if O(expand=true): Group referenced by property
-           C(default-group-uri)."
       type: dict
       contains:
         "{property}":
@@ -1415,8 +1419,13 @@ def main():
                      blanked_params(module.params, WRITEONLY_PROPERTIES_USCORE))
 
     if module.params['expand']:
-        LOGGER.warning(
-            "Deprecated parameter 'expand' is used for zhmc_user module")
+        msg = (
+            "The deprecated input parameter 'expand' of the zhmc_user module "
+            "was specified as True. To prepare for the future removal of "
+            "that parameter, specify it as False and stop using its "
+            "additional properties in the return value.")
+        LOGGER.warning("Deprecation warning: %s", msg)
+        module.deprecate(msg, version="2.0.0", collection_name="ibm.ibm_zhmc")
 
     try:
 
