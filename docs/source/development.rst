@@ -434,7 +434,7 @@ local clone of the zhmc-ansible-modules Git repo.
 
       This removes the changelog fragment files.
 
-    * Edit the changelog file:
+    * Edit the changelog.yaml file:
 
       .. code-block:: sh
 
@@ -463,11 +463,11 @@ local clone of the zhmc-ansible-modules Git repo.
       The sentence "This version contains ..." is only needed if there have been
       releases of fix versions on the prior minor version.
 
-    * Generate/update CHANGELOG.rst:
+    * Update CHANGELOG.rst from the changelog.yaml file:
 
       .. code-block:: sh
 
-          make docslocal
+          antsibull-changelog generate -vv
 
 9.  When releasing a new major or minor version, edit the support matrix:
 
