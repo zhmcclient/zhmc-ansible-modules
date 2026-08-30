@@ -6,5 +6,5 @@
 
 # Pinning pip to <26.2 is a quick fix to circumvent https://github.com/adamtheturtle/pip-check-reqs/issues/570
 pip>=26.1.2,<26.2
-setuptools>=78.1.1
+setuptools>=83.0.0
 wheel>=0.46.2
