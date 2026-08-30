@@ -38,7 +38,7 @@ pipdeptree>=2.24.0
 pip-check-reqs>=2.5.1
 
 # yamllint checker
-yamllint>=1.30.0
+yamllint>=1.34.0
 
 # ansible-lint checker
 # ansible-lint and ansible-compat must be consistent with the Ansible version that is used.
