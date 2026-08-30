@@ -6,7 +6,6 @@
 
 # Version tools
 bump-my-version>=1.0.0
-GitPython>=3.1.50
 
 # antsibull changelog manager
 antsibull-changelog>=0.35.1

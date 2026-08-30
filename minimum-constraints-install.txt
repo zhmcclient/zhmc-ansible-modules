@@ -9,7 +9,7 @@
 # Base dependencies (must be consistent with requirements-base.txt)
 
 pip==26.1.2
-setuptools==78.1.1
+setuptools==83.0.0
 wheel==0.46.2
 
 # ld gets installed by 'make platform' on Linux
