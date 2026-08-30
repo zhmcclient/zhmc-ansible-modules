@@ -37,7 +37,7 @@ pip-check-reqs==2.5.6
 yamllint==1.37.1
 
 # ansible-lint checker
-ansible-lint==24.12.2
+ansible-lint==25.1.0
 
 # Ansible galaxy import checker
 galaxy-importer==0.4.40
