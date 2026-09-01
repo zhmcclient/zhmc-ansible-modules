@@ -58,7 +58,7 @@ bandit==1.7.8
 # Indirect dependencies for development that are needed for some reason
 
 # Pip is covered by requirements-base.txt but needs to be repeated here because it is used by pip-check-reqs.
-pip==26.1.2
+pip==26.2
 
 # galaxy-importer 0.4.40 depends on attrs>=21.4.0,<23
 # jsonschema 4.18.0 depends on attrs>=22.2.0
