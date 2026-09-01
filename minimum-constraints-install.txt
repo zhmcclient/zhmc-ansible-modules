@@ -8,7 +8,7 @@
 
 # Base dependencies (must be consistent with requirements-base.txt)
 
-pip==26.1.2
+pip==26.2
 setuptools==83.0.0
 wheel==0.46.2
 
