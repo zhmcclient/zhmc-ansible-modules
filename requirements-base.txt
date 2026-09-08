@@ -5,6 +5,6 @@
 # Base dependencies (must be consistent with minimum-constraints-install.txt)
 
 # Pinning pip to <26.2 is a quick fix to circumvent https://github.com/adamtheturtle/pip-check-reqs/issues/570
-pip>=26.1.2,<26.2
+pip>=26.2,<26.3
 setuptools>=83.0.0
 wheel>=0.46.2
