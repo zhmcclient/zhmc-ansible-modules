@@ -83,4 +83,4 @@ attrs>=22.2.0,<23
 
 # Authlib 1.8.0 prefers httpx2 over httpx whenever httpx2 is importable, causing safety to
 # crash with a TypeError. See https://github.com/pyupio/safety/pull/916.
-Authlib==1.6.12,<1.8.0
+Authlib==1.8.0,<1.9.0
