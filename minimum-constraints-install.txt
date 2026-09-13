@@ -40,7 +40,7 @@ zhmcclient==1.26.0
 # Indirect dependencies for install that are needed for some reason (must be consistent with requirements.txt)
 
 Jinja2==3.1.6
-cryptography==48.0.1
+cryptography==50.0.1
 packaging==26.2
 PyYAML==6.0.2
 
