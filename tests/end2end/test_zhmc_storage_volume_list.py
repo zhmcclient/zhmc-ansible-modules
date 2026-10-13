@@ -159,11 +159,15 @@ def test_zhmc_storage_volume_list(
     """
     Test the zhmc_storage_volume_list module.
     """
-
     hd = hmc_session.hmc_definition
-    hmc_host = hd.host
-    hmc_auth = dict(userid=hd.userid, password=hd.password,
-                    ca_certs=hd.ca_certs, verify=hd.verify)
+    hmc_host = hmc_session.host
+    userid = hmc_session.userid
+    password = hmc_session._password  # pylint: disable=protected-access
+    ca_certs = hmc_session.verify_cert \
+        if isinstance(hmc_session.verify_cert, str) else None
+    verify = bool(hmc_session.verify_cert)
+    hmc_auth = dict(userid=userid, password=password, ca_certs=ca_certs,
+                    verify=verify)
 
     # Get the module arguments for the test.
     # We need to use the defaults defined in the module argument spec
@@ -181,11 +185,16 @@ def test_zhmc_storage_volume_list(
 
     faked_session = hmc_session if hd.mock_file else None
 
+    cpcs = client.cpcs.list()
+    cpc_by_uri = {cpc.uri: cpc for cpc in cpcs}
+
     # Pick a random storage group as a target for the test
     all_storage_groups = console.storage_groups.list()
     if len(all_storage_groups) == 0:
         pytest.skip("This HMC has no storage groups")
     picked_storage_group = random.choice(all_storage_groups)
+    picked_cpc_uri = picked_storage_group.get_property('cpc-uri')
+    picked_cpc = cpc_by_uri[picked_cpc_uri]
 
     # Pick a random storage volume for the volume name filtering
     if use_name_filter:
@@ -225,6 +234,7 @@ def test_zhmc_storage_volume_list(
     params = {
         'hmc_host': hmc_host,
         'hmc_auth': hmc_auth,
+        'cpc_name': picked_cpc.name,
         'storage_group_name': picked_storage_group.name,
         'name': picked_storage_volume_name,
         'fulfillment_state': fulfillment_state,
