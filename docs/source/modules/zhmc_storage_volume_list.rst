@@ -88,6 +88,15 @@ hmc_auth
 
 
 
+cpc_name
+  The name of the CPC associated with the target storage group.
+
+  Note that storage group names are only guaranteed to be unique within a CPC, so specifying this parameter may be necessary depending on the names of the storage groups. For backwards compatibility, this parameter remains optional. If this parameter is not specified, the storage group is looked up on all managed CPCs and an error is returned if there is more than one storage group that has the name specified in :literal:`storage\_group\_name`.
+
+  | **required**: False
+  | **type**: str
+
+
 storage_group_name
   Name of the storage group whose storage volumes are to be listed.
 
@@ -186,17 +195,19 @@ Examples
    ---
    # Note: The following examples assume that some variables named 'my_*' are set.
 
-   - name: List the volumes of storage group SG1
+   - name: List the volumes of storage group SG1 on CPCA
      zhmc_storage_volume_list:
        hmc_host: "{{ my_hmc_host }}"
        hmc_auth: "{{ my_hmc_auth }}"
+       cpc_name: CPCA
        storage_group_name: SG1
      register: storage_volume_list
 
-   - name: List the data volumes of storage group SG1
+   - name: List the data volumes of storage group SG1 on CPCA
      zhmc_storage_volume_list:
        hmc_host: "{{ my_hmc_host }}"
        hmc_auth: "{{ my_hmc_auth }}"
+       cpc_name: CPCA
        storage_group_name: SG1
        usage: data
      register: storage_volume_list

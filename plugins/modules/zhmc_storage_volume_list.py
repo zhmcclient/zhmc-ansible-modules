@@ -108,6 +108,18 @@ options:
         type: bool
         required: false
         default: true
+  cpc_name:
+    description:
+      - The name of the CPC associated with the target storage group.
+      - Note that storage group names are only guaranteed to be unique within
+        a CPC, so specifying this parameter may be necessary depending on the
+        names of the storage groups. For backwards compatibility, this
+        parameter remains optional. If this parameter is not specified,
+        the storage group is looked up on all managed CPCs and an error is
+        returned if there is more than one storage group that has the name
+        specified in C(storage_group_name).
+    type: str
+    required: false
   storage_group_name:
     description:
       - Name of the storage group whose storage volumes are to be listed.
@@ -203,17 +215,19 @@ EXAMPLES = """
 ---
 # Note: The following examples assume that some variables named 'my_*' are set.
 
-- name: List the volumes of storage group SG1
+- name: List the volumes of storage group SG1 on CPCA
   zhmc_storage_volume_list:
     hmc_host: "{{ my_hmc_host }}"
     hmc_auth: "{{ my_hmc_auth }}"
+    cpc_name: CPCA
     storage_group_name: SG1
   register: storage_volume_list
 
-- name: List the data volumes of storage group SG1
+- name: List the data volumes of storage group SG1 on CPCA
   zhmc_storage_volume_list:
     hmc_host: "{{ my_hmc_host }}"
     hmc_auth: "{{ my_hmc_auth }}"
+    cpc_name: CPCA
     storage_group_name: SG1
     usage: data
   register: storage_volume_list
@@ -300,6 +314,7 @@ def perform_list(params):
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
 
+    cpc_name = params['cpc_name']
     storage_group_name = params['storage_group_name']
     name = params['name']
     fulfillment_state = params['fulfillment_state']
@@ -320,8 +335,27 @@ def perform_list(params):
         client = zhmcclient.Client(session)
         console = client.consoles.console
 
-        storage_group = console.storage_groups.find_by_name(storage_group_name)
+        cpc = client.cpcs.find(name=cpc_name) if cpc_name else None
+
+        sg_filter_args = {
+            'name': storage_group_name
+        }
+        if cpc:
+            sg_filter_args['cpc-uri'] = cpc.uri
+        storage_groups = console.storage_groups.list(filter_args=sg_filter_args)
         # The default exception handling is sufficient for the above.
+
+        if len(storage_groups) == 0:
+            cpc_str = f"CPC {cpc.name!r}" if cpc else "any CPC"
+            raise ParameterError(
+                f"Storage group {storage_group_name!r} not found on {cpc_str}")
+
+        if len(storage_groups) > 1:
+            raise ParameterError(
+                f"More than one storage group named {storage_group_name!r} "
+                "found on the CPCs")
+
+        storage_group = storage_groups[0]
 
         filter_args = {}
         if name:
@@ -366,6 +400,7 @@ def main():
         hmc_host=dict(required=True, type='raw'),
         hmc_auth=hmc_auth_parameter(),
         storage_group_name=dict(required=True, type='str'),
+        cpc_name=dict(required=False, type='str', default=None),
         name=dict(required=False, type='str', default=None),
         fulfillment_state=dict(required=False, type='str', default=None),
         maximum_size=dict(required=False, type='int', default=None),
