@@ -76,12 +76,13 @@ Modules supported only with CPCs in DPM operational mode:
    modules/zhmc_nic
    modules/zhmc_nic_list
    modules/zhmc_partition
-   modules/zhmc_partition_command
    modules/zhmc_partition_list
+   modules/zhmc_partition_command
    modules/zhmc_partition_messages
    modules/zhmc_storage_group
-   modules/zhmc_storage_group_attachment
    modules/zhmc_storage_group_list
+   modules/zhmc_storage_group_attachment
+   modules/zhmc_storage_group_attachment_list
    modules/zhmc_storage_volume
    modules/zhmc_storage_volume_list
    modules/zhmc_virtual_function
@@ -93,8 +94,8 @@ Modules supported only with CPCs in classic operational mode:
    :glob:
 
    modules/zhmc_lpar
-   modules/zhmc_lpar_command
    modules/zhmc_lpar_list
+   modules/zhmc_lpar_command
    modules/zhmc_lpar_messages
 
 You can also access the documentation of each module from the command line by
