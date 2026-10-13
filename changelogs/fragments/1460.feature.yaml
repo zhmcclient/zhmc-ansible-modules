@@ -1,0 +1,9 @@
+minor_changes:
+  - Added a new input parameter 'cpc_name' to the existing
+    'zhmc_storage_volume_list' module in order to properly handle storage group
+    names that are not unique across all managed CPCs. The new parameter is
+    optional for backwards compatibility, but is highly recommended to always
+    be used. If this new parameter is not specified and storage group names are
+    not unique across all managed CPCs, the module now returns an error, where
+    previously it has silently returned the volumes from any one of the
+    same-named storage groups.
