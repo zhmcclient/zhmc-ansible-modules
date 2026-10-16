@@ -145,7 +145,8 @@ pyproject_hooks==1.2.0
 python-dotenv==1.2.3
 pytokens==0.4.0
 questionary==2.1.1
-regex==2025.7.29
+regex==2025.7.29; python_version <= '3.14'
+regex==2026.9.29; python_version >= '3.15'
 requests-mock==1.6.0
 rich-click==1.9.8
 rich==12.0.0
