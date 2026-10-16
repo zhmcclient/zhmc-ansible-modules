@@ -183,7 +183,7 @@ disable=I0011, unrecognized-option,
         consider-using-generator, bad-option-value, redundant-u-string-prefix,
         use-implicit-booleaness-not-comparison, use-dict-literal,
         missing-module-docstring, wrong-import-position, redefined-builtin,
-        try-except-raise,
+        try-except-raise, ungrouped-imports,
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
