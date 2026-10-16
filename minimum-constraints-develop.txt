@@ -134,9 +134,11 @@ platformdirs==4.1.0
 pluggy==1.5.0
 prompt_toolkit==3.0.53
 pycodestyle==2.11.0
-pydantic_core==2.46.4
+pydantic_core==2.46.4; python_version <= '3.14'
+pydantic_core==2.50.1; python_version >= '3.15'
 pydantic-settings==2.15.0
-pydantic==2.13.4
+pydantic==2.13.4; python_version <= '3.14'
+pydantic==2.14.1; python_version >= '3.15'
 pyflakes==3.1.0
 Pygments==2.21.0
 pyproject_hooks==1.2.0
@@ -180,7 +182,8 @@ truststore==0.10.4
 typer-cli==0.16.0
 typer-slim==0.16.0
 typer==0.16.0
-typing-inspection==0.4.2
+typing-inspection==0.4.2; python_version <= '3.14'
+typing-inspection==0.4.4; python_version >= '3.15'
 wcmatch==8.5.1
 wcwidth==0.8.2
 zipp==3.19.1
