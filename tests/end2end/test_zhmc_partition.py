@@ -36,8 +36,8 @@ from zhmcclient.testutils import dpm_mode_cpcs  # noqa: F401, E501
 
 from plugins.modules import zhmc_partition
 from plugins.module_utils.common import pull_partition_status
-from .utils import mock_ansible_module, get_failure_msg, setup_logging, \
-    skip_warn
+from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth, \
+    setup_logging, skip_warn
 
 urllib3.disable_warnings()
 
@@ -660,11 +660,10 @@ def test_zhmc_partition_facts(
         assert cpc.dpm_enabled
 
         session = cpc.manager.session
-        hd = session.hmc_definition
-        hmc_host = hd.host
-        hmc_auth = dict(userid=hd.userid, password=hd.password,
-                        ca_certs=hd.ca_certs, verify=hd.verify)
 
+        hmc_host = session.host
+        hmc_auth = get_hmc_auth(session)
+        hd = session.hmc_definition
         faked_session = session if hd.mock_file else None
 
         # Determine a random existing partition
@@ -933,16 +932,15 @@ def test_zhmc_partition_state(
         assert cpc.dpm_enabled
 
         session = cpc.manager.session
+
+        hmc_host = session.host
+        hmc_auth = get_hmc_auth(session)
         hd = session.hmc_definition
-        hmc_host = hd.host
-        hmc_auth = dict(userid=hd.userid, password=hd.password,
-                        ca_certs=hd.ca_certs, verify=hd.verify)
+        faked_session = session if hd.mock_file else None
 
         if hd.mock_file:
             pytest.skip("Asynchronous partition start/stop not supported "
                         "in zhmcclient_mock")
-
-        faked_session = session if hd.mock_file else None
 
         # Create a partition name that does not exist
         partition_name = unique_partition_name()
@@ -1261,16 +1259,15 @@ def test_zhmc_partition_properties(
         assert cpc.dpm_enabled
 
         session = cpc.manager.session
+
+        hmc_host = session.host
+        hmc_auth = get_hmc_auth(session)
         hd = session.hmc_definition
-        hmc_host = hd.host
-        hmc_auth = dict(userid=hd.userid, password=hd.password,
-                        ca_certs=hd.ca_certs, verify=hd.verify)
+        faked_session = session if hd.mock_file else None
 
         if hd.mock_file:
             pytest.skip("Asynchronous partition start/stop not supported "
                         "in zhmcclient_mock")
-
-        faked_session = session if hd.mock_file else None
 
         # Create a partition name that does not exist
         partition_name = unique_partition_name()
@@ -1520,11 +1517,10 @@ def test_zhmc_partition_boot_stovol(
 
         console = cpc.manager.console
         session = cpc.manager.session
-        hd = session.hmc_definition
-        hmc_host = hd.host
-        hmc_auth = dict(userid=hd.userid, password=hd.password,
-                        ca_certs=hd.ca_certs, verify=hd.verify)
 
+        hmc_host = session.host
+        hmc_auth = get_hmc_auth(session)
+        hd = session.hmc_definition
         faked_session = session if hd.mock_file else None
 
         if hd.mock_file:
@@ -1714,11 +1710,10 @@ def test_zhmc_partition_iso_mount(
         assert cpc.dpm_enabled
 
         session = cpc.manager.session
-        hd = session.hmc_definition
-        hmc_host = hd.host
-        hmc_auth = dict(userid=hd.userid, password=hd.password,
-                        ca_certs=hd.ca_certs, verify=hd.verify)
 
+        hmc_host = session.host
+        hmc_auth = get_hmc_auth(session)
+        hd = session.hmc_definition
         faked_session = session if hd.mock_file else None
 
         if hd.mock_file:

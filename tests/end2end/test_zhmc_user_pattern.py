@@ -31,7 +31,7 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
 
 from plugins.modules import zhmc_user_pattern
-from .utils import mock_ansible_module, get_failure_msg
+from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
 
 urllib3.disable_warnings()
 
@@ -140,15 +140,13 @@ def test_zhmc_user_pattern_facts(
     Test the zhmc_user_pattern module with state=facts.
     """
 
+    hmc_host = hmc_session.host
+    hmc_auth = get_hmc_auth(hmc_session)
     hd = hmc_session.hmc_definition
-    hmc_host = hd.host
-    hmc_auth = dict(userid=hd.userid, password=hd.password,
-                    ca_certs=hd.ca_certs, verify=hd.verify)
+    faked_session = hmc_session if hd.mock_file else None
 
     client = zhmcclient.Client(hmc_session)
     console = client.consoles.console
-
-    faked_session = hmc_session if hd.mock_file else None
 
     # Determine a random existing user pattern of the desired type to test.
     upatterns = console.user_patterns.list()
@@ -266,11 +264,9 @@ def test_zhmc_user_pattern_absent_present(
     Test the zhmc_user_pattern module with state=absent/present.
     """
 
+    hmc_host = hmc_session.host
+    hmc_auth = get_hmc_auth(hmc_session)
     hd = hmc_session.hmc_definition
-    hmc_host = hd.host
-    hmc_auth = dict(userid=hd.userid, password=hd.password,
-                    ca_certs=hd.ca_certs, verify=hd.verify)
-
     faked_session = hmc_session if hd.mock_file else None
 
     client = zhmcclient.Client(hmc_session)

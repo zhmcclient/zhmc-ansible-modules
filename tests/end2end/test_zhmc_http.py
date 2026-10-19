@@ -29,7 +29,7 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
 
 from plugins.modules import zhmc_http
-from .utils import mock_ansible_module, get_failure_msg
+from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
 
 urllib3.disable_warnings()
 
@@ -77,15 +77,14 @@ def test_zhmc_http_get(
     """
     Test GET HTTP method
     """
+
+    hmc_host = hmc_session.host
+    hmc_auth = get_hmc_auth(hmc_session)
     hd = hmc_session.hmc_definition
-    hmc_host = hd.host
-    hmc_auth = dict(userid=hd.userid, password=hd.password,
-                    ca_certs=hd.ca_certs, verify=hd.verify)
+    faked_session = hmc_session if hd.mock_file else None
 
     client = zhmcclient.Client(hmc_session)
     console = client.consoles.console
-
-    faked_session = hmc_session if hd.mock_file else None
 
     # Prepare module input parameters (must be all required + optional)
     params = {
@@ -136,15 +135,14 @@ def test_zhmc_http_post(
     """
     Test POST HTTP method
     """
+
+    hmc_host = hmc_session.host
+    hmc_auth = get_hmc_auth(hmc_session)
     hd = hmc_session.hmc_definition
-    hmc_host = hd.host
-    hmc_auth = dict(userid=hd.userid, password=hd.password,
-                    ca_certs=hd.ca_certs, verify=hd.verify)
+    faked_session = hmc_session if hd.mock_file else None
 
     client = zhmcclient.Client(hmc_session)
     console = client.consoles.console
-
-    faked_session = hmc_session if hd.mock_file else None
 
     urole_name = new_urole_name()
 
@@ -212,15 +210,14 @@ def test_zhmc_http_delete(
     """
     Test DELETE HTTP method
     """
+
+    hmc_host = hmc_session.host
+    hmc_auth = get_hmc_auth(hmc_session)
     hd = hmc_session.hmc_definition
-    hmc_host = hd.host
-    hmc_auth = dict(userid=hd.userid, password=hd.password,
-                    ca_certs=hd.ca_certs, verify=hd.verify)
+    faked_session = hmc_session if hd.mock_file else None
 
     client = zhmcclient.Client(hmc_session)
     console = client.consoles.console
-
-    faked_session = hmc_session if hd.mock_file else None
 
     urole_name = new_urole_name()
 

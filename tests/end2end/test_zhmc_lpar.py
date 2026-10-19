@@ -34,8 +34,8 @@ from zhmcclient.testutils import classic_mode_cpcs  # noqa: F401, E501
 from plugins.modules import zhmc_lpar
 from plugins.module_utils.common import ensure_lpar_inactive, \
     ensure_lpar_active, ensure_lpar_loaded, pull_lpar_status
-from .utils import mock_ansible_module, get_failure_msg, skip_warn, \
-    setup_logging, set_resource_property
+from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth, \
+    skip_warn, setup_logging, set_resource_property
 
 
 urllib3.disable_warnings()
@@ -630,11 +630,10 @@ def test_zhmc_lpar_state(
         assert not cpc.dpm_enabled
 
         session = cpc.manager.session
-        hd = session.hmc_definition
-        hmc_host = hd.host
-        hmc_auth = dict(userid=hd.userid, password=hd.password,
-                        ca_certs=hd.ca_certs, verify=hd.verify)
 
+        hmc_host = session.host
+        hmc_auth = get_hmc_auth(session)
+        hd = session.hmc_definition
         faked_session = session if hd.mock_file else None
 
         # The following has no check since classic_mode_cpcs only contains
@@ -978,11 +977,10 @@ def test_zhmc_lpar_facts(
         assert not cpc.dpm_enabled
 
         session = cpc.manager.session
-        hd = session.hmc_definition
-        hmc_host = hd.host
-        hmc_auth = dict(userid=hd.userid, password=hd.password,
-                        ca_certs=hd.ca_certs, verify=hd.verify)
 
+        hmc_host = session.host
+        hmc_auth = get_hmc_auth(session)
+        hd = session.hmc_definition
         faked_session = session if hd.mock_file else None
 
         # Pick any LPAR on the CPC
