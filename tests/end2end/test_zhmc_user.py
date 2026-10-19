@@ -32,7 +32,7 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 
 from plugins.module_utils.common import params_deepcopy
 from plugins.modules import zhmc_user
-from .utils import mock_ansible_module, get_failure_msg
+from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
 
 urllib3.disable_warnings()
 
@@ -316,15 +316,13 @@ def test_zhmc_user_facts(
     Test the zhmc_user module with state=facts.
     """
 
+    hmc_host = hmc_session.host
+    hmc_auth = get_hmc_auth(hmc_session)
     hd = hmc_session.hmc_definition
-    hmc_host = hd.host
-    hmc_auth = dict(userid=hd.userid, password=hd.password,
-                    ca_certs=hd.ca_certs, verify=hd.verify)
+    faked_session = hmc_session if hd.mock_file else None
 
     client = zhmcclient.Client(hmc_session)
     console = client.consoles.console
-
-    faked_session = hmc_session if hd.mock_file else None
 
     # Determine a random existing user of the desired type to test.
     users = console.users.list()
@@ -460,11 +458,9 @@ def test_zhmc_user_absent_present(
     Test the zhmc_user module with state=absent/present.
     """
 
+    hmc_host = hmc_session.host
+    hmc_auth = get_hmc_auth(hmc_session)
     hd = hmc_session.hmc_definition
-    hmc_host = hd.host
-    hmc_auth = dict(userid=hd.userid, password=hd.password,
-                    ca_certs=hd.ca_certs, verify=hd.verify)
-
     faked_session = hmc_session if hd.mock_file else None
 
     expand = False  # Expansion is tested elsewhere
@@ -660,11 +656,9 @@ def test_zhmc_update_user_roles(
     Test the zhmc_user module with updating user roles on existing users.
     """
 
+    hmc_host = hmc_session.host
+    hmc_auth = get_hmc_auth(hmc_session)
     hd = hmc_session.hmc_definition
-    hmc_host = hd.host
-    hmc_auth = dict(userid=hd.userid, password=hd.password,
-                    ca_certs=hd.ca_certs, verify=hd.verify)
-
     faked_session = hmc_session if hd.mock_file else None
 
     expand = False  # Expansion is tested elsewhere

@@ -28,7 +28,7 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
 
 from plugins.modules import zhmc_cpc_list
-from .utils import mock_ansible_module, get_failure_msg
+from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
 
 urllib3.disable_warnings()
 
@@ -179,14 +179,12 @@ def test_zhmc_cpc_list(
     Test the zhmc_cpc_list module with managed and unmanaged CPCs.
     """
 
+    hmc_host = hmc_session.host
+    hmc_auth = get_hmc_auth(hmc_session)
     hd = hmc_session.hmc_definition
-    hmc_host = hd.host
-    hmc_auth = dict(userid=hd.userid, password=hd.password,
-                    ca_certs=hd.ca_certs, verify=hd.verify)
+    faked_session = hmc_session if hd.mock_file else None
 
     client = zhmcclient.Client(hmc_session)
-
-    faked_session = hmc_session if hd.mock_file else None
 
     full_properties = property_flags.get('full_properties', False)
 
