@@ -16,7 +16,7 @@
 # Ansible 9 requires Python >=3.10 - this is the check that no Python version below 3.10 is used.
 # In this file, we try to use all Ansible versions across the Python versions we test with.
 # Ansible 10 is not tested because there are more supported Ansible versions than supported Python versions.
-ansible>=9.0.1,<10; python_version <= '3.10'
+ansible>=9.0.1,<10; python_version == '3.10'
 ansible>=11.0.0,<12; python_version == '3.11'
 ansible>=12.0.0,<13; python_version == '3.12'
 ansible>=13.0.0,<14; python_version == '3.13'
@@ -39,5 +39,5 @@ MarkupSafe==2.0.0
 # Direct dependencies for development (must be consistent with requirements-develop.txt)
 
 # ansible-test
-yamllint==1.37.1
+yamllint==1.38.0
 pathspec==1.0.3
