@@ -28,14 +28,10 @@ security:
     #     reason: {text}    # optional: Reason for ignoring it. Will be reported in the Safety reports
     #     expires: {date}   # optional: Date when this ignore will expire
     ignore-vulnerabilities:
-        73302:
-            reason: Fixed ansible-core version 2.16.13 requires Python>=3.10 and is used on Python>=3.12
         74261:
             reason: Fixed ansible-core version 2.18.0 requires Python>=3.11 and is used there
         82327:
             reason: Fixed ansible version 12.2.0 requires Python>=3.11 and is used there
-        SFTY-20260605-18433:
-            reason: There is no fixed ansible-core version for ansible-core 2.15.x
 
     # Continue with exit code 0 when vulnerabilities are found.
     continue-on-vulnerability-error: False
