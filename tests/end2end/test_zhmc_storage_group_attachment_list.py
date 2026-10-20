@@ -28,7 +28,7 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
 
 from plugins.modules import zhmc_storage_group_attachment_list
-from .utils import mock_ansible_module, get_failure_msg
+from .utils import mock_ansible_module, get_failure_msg, available_dpm_cpcs
 from .conftest import LOG_FILE
 
 
@@ -144,7 +144,12 @@ def test_zhmc_storage_group_attachment_list(
 
     faked_session = hmc_session if hd.mock_file else None
 
-    cpcs = client.cpcs.list()
+    # The testcases require that the CPC associated with the storage group
+    # is available. Skip this test if there is no available DPM mode CPC.
+    cpcs = available_dpm_cpcs(client.cpcs.list())
+    if not cpcs:
+        pytest.skip("No available DPM mode CPCs")
+
     cpc_by_uri = {cpc.uri: cpc for cpc in cpcs}
 
     # Pick a random storage group and its associated CPC

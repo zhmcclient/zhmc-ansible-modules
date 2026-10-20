@@ -137,6 +137,7 @@ CPC_FACTS_TESTCASES = [
         [
             'name',
             'object-uri',
+            'dpm-enabled',
         ],
         [
             'description',
@@ -152,6 +153,7 @@ CPC_FACTS_TESTCASES = [
         [
             'name',
             'object-uri',
+            'dpm-enabled',
         ],
         [
             'description',

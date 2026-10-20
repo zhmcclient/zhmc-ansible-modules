@@ -123,3 +123,55 @@ def get_hmc_auth(session):
     hmc_auth = dict(userid=userid, password=password, ca_certs=ca_certs,
                     verify=verify)
     return hmc_auth
+
+
+# CPC status values that are considered unavailable for the purpose of testing.
+UNAVAILABLE_CPC_STATUSES = (
+    "not-operating",        # CPC is not IML complete or no CPU operating
+    "not-communicating",    # HMC is not communicating with the SE
+    "status-check",         # SE is not communicating with the CPC
+    "no-power",             # CPC has no power
+)
+
+
+def unavailable_cpcs(cpcs):
+    """
+    Return the unavailable CPCs from the specified list of CPCs.
+
+    A CPC is considered unavailable if its status is in
+    UNAVAILABLE_CPC_STATUSES.
+
+    Parameters:
+      cpcs (list of zhmcclient.Cpc): List of CPCs.
+
+    Returns:
+      list of zhmcclient.Cpc: List of unavailable CPCs.
+    """
+    unavail_cpcs = []
+    for cpc in cpcs:
+        status = cpc.get_property("status")
+        if status in UNAVAILABLE_CPC_STATUSES:
+            unavail_cpcs.append(cpc)
+    return unavail_cpcs
+
+
+def available_dpm_cpcs(cpcs):
+    """
+    Return the available DPM mode CPCs from the specified list of CPCs.
+
+    A CPC is considered available if its status is not in
+    UNAVAILABLE_CPC_STATUSES.
+
+    Parameters:
+      cpcs (list of zhmcclient.Cpc): List of CPCs.
+
+    Returns:
+      list of zhmcclient.Cpc: List of available DPM mode CPCs.
+    """
+    result_cpcs = []
+    for cpc in cpcs:
+        status = cpc.get_property("status")
+        dpm = cpc.get_property("dpm-enabled")
+        if dpm and status not in UNAVAILABLE_CPC_STATUSES:
+            result_cpcs.append(cpc)
+    return result_cpcs
