@@ -28,7 +28,8 @@ from zhmcclient.testutils import classic_mode_cpcs  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
 
 from plugins.modules import zhmc_lpar_list
-from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth, \
+    underscored_properties
 from .conftest import LOG_FILE
 
 
@@ -44,13 +45,14 @@ VOLATILE_LPAR_PROPERTIES = [
     'current_ifl_processing_weight',
     'current_ziip_processing_weight',
     'current_cf_processing_weight',
+    'power_wattage',
 ]
 
 
 def get_module_output(mod_obj):
     """
-    Return the module output as a tuple (changed, user_properties) (i.e.
-    the arguments of the call to exit_json()).
+    Return the module output as a tuple (changed, lpars)
+    (i.e. the arguments of the call to exit_json()).
     If the module failed, return None.
     """
 
@@ -66,55 +68,89 @@ def get_module_output(mod_obj):
     return func(*call_args[0], **call_args[1])
 
 
-def assert_lpar_list(lpar_list, exp_lpar_dict):
+def assert_lpar_list(act_lpar_list, exp_lpar_dict):
     """
-    Assert the output of the zhmc_lpar_list module
+    Assert the output of the zhmc_lpar_list module.
 
     Parameters:
 
-      lpar_list(list): Result of zhmc_lpar_list module, as a list of
-        dicts of LPAR properties as documented (with underscores in their
-        names).
+      act_lpar_list (list of dict): Actual result of the module,
+        as a list of properties (name: value), including any artificial
+        properties. The property names must be as returned by the module.
 
-      exp_lpar_dict(dict): Expected LPARs with their properties.
-        Key: tuple(CPC name, LPAR name).
-        Value: Dict of expected LPAR properties (including any artificial
-        properties, all with underscores in their names).
+      exp_lpar_dict (dict of dict): Expected properties,
+        as a dict (key: properties) where key is a tuple(CPC name, LPAR name)
+        and properties is a dict (name: value), including any artificial
+        properties. The property names must be as returned by the zhmcclient
+        list method (i.e. with hyphens).
     """
+    assert isinstance(act_lpar_list, list)
+    assert isinstance(exp_lpar_dict, dict)
 
-    assert isinstance(lpar_list, list)
+    assert len(act_lpar_list) == len(exp_lpar_dict), (
+        "Unexpected number of LPARs:\n"
+        f"Actual objects: {act_lpar_list!r}\n"
+        f"Expected objects: {exp_lpar_dict!r}\n"
+    )
+    for act_lpar_properties in act_lpar_list:
+        assert isinstance(act_lpar_properties, dict)
 
-    exp_lpar_keys = list(exp_lpar_dict.keys())
-    lpar_keys = [(ri.get('cpc_name', None), ri.get('name', None))
-                 for ri in lpar_list]
-    assert set(lpar_keys) == set(exp_lpar_keys)
-
-    for lpar_item in lpar_list:
-        lpar_name = lpar_item.get('name', None)
-        cpc_name = lpar_item.get('cpc_name', None)
+        # Check for the key properties
+        assert 'cpc_name' in act_lpar_properties, (
+            "Returned LPAR does not have a 'cpc_name' "
+            f"property: {act_lpar_properties!r}")
+        cpc_name = act_lpar_properties['cpc_name']
+        assert 'name' in act_lpar_properties, (
+            "Returned LPAR does not have a 'name' "
+            f"property: {act_lpar_properties!r}")
+        lpar_name = act_lpar_properties['name']
         lpar_key = (cpc_name, lpar_name)
 
-        assert lpar_name is not None, \
-            f"Returned LPAR {lpar_item!r} does not have a 'name' property"
-
-        assert cpc_name is not None, \
-            f"Returned LPAR {lpar_item!r} does not have a 'cpc_name' property"
-
-        assert lpar_key in exp_lpar_dict, \
-            f"Result contains unexpected LPAR {lpar_name!r} in CPC {cpc_name!r}"
+        assert lpar_key in exp_lpar_dict, (
+            f"Unexpected returned LPAR {lpar_key!r}")
 
         exp_lpar_properties = exp_lpar_dict[lpar_key]
-        for pname, pvalue in lpar_item.items():
-            assert '-' not in pname, \
-                f"Property {pname!r} in LPAR {lpar_name!r} is returned with " \
-                "hyphens in the property name"
-            assert pname in exp_lpar_properties, \
-                f"Unexpected property {pname!r} in result LPAR {lpar_name!r}"
+        assert isinstance(exp_lpar_properties, dict)
+        exp_lpar_properties = underscored_properties(exp_lpar_properties)
+
+        exp_lpar_pnames = list(exp_lpar_properties.keys())
+        act_lpar_pnames = list(act_lpar_properties.keys())
+
+        # Check the actually returned objects against the expected properties.
+        # This discovers unexpected properties.
+        for pname, act_value in act_lpar_properties.items():
+            assert '-' not in pname, (
+                f"Property {pname!r} in returned "
+                f"LPAR {lpar_key!r} "
+                "has hyphens in the property name")
+            assert pname in exp_lpar_properties, (
+                f"Unexpected property {pname!r} in returned "
+                f"LPAR {lpar_key!r}:\n"
+                f"Expected properties: {exp_lpar_pnames}\n"
+                f"Actual properties: {act_lpar_pnames}")
             if pname not in VOLATILE_LPAR_PROPERTIES:
                 exp_value = exp_lpar_properties[pname]
-                assert pvalue == exp_value, \
-                    f"Incorrect value for property {pname!r} of result LPAR " \
-                    f"{lpar_name!r}"
+                assert act_value == exp_value, (
+                    f"Incorrect value for property {pname!r} of returned "
+                    f"LPAR {lpar_key!r}:\n"
+                    f"Expected value: {exp_value!r}\n"
+                    f"Actual value: {act_value!r}")
+
+        # Check the expected properties against the actually returned objects.
+        # This discovers missing properties.
+        for pname, exp_value in exp_lpar_properties.items():
+            assert pname in act_lpar_properties, (
+                f"Missing property {pname!r} in returned "
+                f"LPAR {lpar_key!r}:\n"
+                f"Expected properties: {exp_lpar_pnames}\n"
+                f"Actual properties: {act_lpar_pnames}")
+            if pname not in VOLATILE_LPAR_PROPERTIES:
+                act_value = act_lpar_properties[pname]
+                assert act_value == exp_value, (
+                    f"Incorrect value for property {pname!r} of returned "
+                    f"LPAR {lpar_key!r}:\n"
+                    f"Expected value: {exp_value!r}\n"
+                    f"Actual value: {act_value!r}")
 
 
 @pytest.mark.parametrize(
@@ -168,77 +204,59 @@ def test_zhmc_lpar_list(
         client = zhmcclient.Client(session)
         console = client.consoles.console
 
+        # Get the module arguments for the test.
+        # We need to use the defaults defined in the module argument spec
+        additional_properties = property_flags.get('additional_properties', [])
         full_properties = property_flags.get('full_properties', False)
-        additional_properties = property_flags.get(
-            'additional_properties', [])
 
         # Determine the expected LPARs on the HMC
-        test_logger.debug("Listing expected LPARs")
-        av = client.query_api_version()
-        hmc_version_info = [int(x) for x in av['hmc-version'].split('.')]
-        api_version_info = [av['api-major-version'], av['api-minor-version']]
+        hmc_version = client.query_api_version()['hmc-version']
+        hmc_version_info = [int(x) for x in hmc_version.split('.')]
         if hmc_version_info < [2, 14, 0]:
-            # List the LPARs in the traditional way
-            if additional_properties:
-                # Get full properties instead of specific additional properties
-                # since "List Logical Partitions of a CPC" does not support
-                # additional-properties.
-                _full_properties = True
-            else:
-                _full_properties = full_properties
+            # Use the "List Logical Partitions of a CPC" operation.
             if with_cpc:
-                exp_lpars = cpc.lpars.list(full_properties=_full_properties)
+                exp_lpars = cpc.lpars.list(
+                    additional_properties=additional_properties,
+                    full_properties=full_properties)
             else:
-                cpcs_ = client.cpcs.list(full_properties=_full_properties)
+                cpcs_ = client.cpcs.list()
                 exp_lpars = []
                 for cpc_ in cpcs_:
-                    exp_lpars.extend(cpc_.lpars.list(
-                        full_properties=full_properties))
+                    lpars_ = cpc_.lpars.list(
+                        additional_properties=additional_properties,
+                        full_properties=full_properties)
+                    exp_lpars.extend(lpars_)
         else:
-            # List the LPARs using the new operation
-            if additional_properties and api_version_info < [4, 10]:
-                # Get full properties instead of specific additional properties
-                # since "List Permitted Logical Partitions" does not support
-                # additional-properties on these early 2.16 HMC versions.
-                _additional_properties = None
-                _full_properties = True
-            else:
-                _additional_properties = additional_properties
-                _full_properties = full_properties
+            # Use the "List Permitted Logical Partitions" operation.
             if with_cpc:
                 filter_args = {'cpc-name': cpc.name}
             else:
                 filter_args = None
             exp_lpars = console.list_permitted_lpars(
                 filter_args=filter_args,
-                additional_properties=_additional_properties,
-                full_properties=_full_properties)
+                additional_properties=additional_properties,
+                full_properties=full_properties)
+
+        # Prepare the expected data for comparison
         exp_lpar_dict = {}
-        se_versions = {}
-        test_logger.debug("Processing expected LPARs")
+        se_versions = {}  # Cache the SE versions (key: CPC name)
         for lpar in exp_lpars:
-            test_logger.debug(
-                "Expected properties of LPAR %r on CPC %r are: %r",
-                lpar.name, cpc.name, dict(lpar.properties))
-            cpc = lpar.manager.parent
+            cpc_ = lpar.manager.parent
             try:
-                se_version = se_versions[cpc.name]
+                se_version = se_versions[cpc_.name]
             except KeyError:
                 try:
                     se_version = lpar.properties['se-version']
                 except KeyError:
-                    test_logger.debug(
-                        "Getting expected se-version of CPC %r", cpc.name)
-                    se_version = cpc.get_property('se-version')
-                se_versions[cpc.name] = se_version
+                    se_version = cpc_.get_property('se-version')
+                se_versions[cpc_.name] = se_version
             exp_properties = {
-                'cpc_name': cpc.name,
+                'cpc_name': cpc_.name,
+                'cpc_uri': cpc_.uri,
                 'se_version': se_version,
             }
-            for pname_hmc, pvalue in lpar.properties.items():
-                pname = pname_hmc.replace('-', '_')
-                exp_properties[pname] = pvalue
-            exp_lpar_key = (cpc.name, lpar.name)
+            exp_properties.update(lpar.properties)
+            exp_lpar_key = (cpc_.name, lpar.name)
             exp_lpar_dict[exp_lpar_key] = exp_properties
 
         # Prepare module input parameters (must be all required + optional)

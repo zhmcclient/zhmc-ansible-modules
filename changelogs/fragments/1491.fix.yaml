@@ -1,0 +1,4 @@
+minor_changes:
+  - End2end Test - Fixed all end2end tests and added testcases.
+  - In the 'zhmc_partition' module, fixed a KeyError when 'expand_crypto' is
+    specified and the partition has no crypto configuration.

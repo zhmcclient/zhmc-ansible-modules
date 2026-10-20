@@ -1,0 +1,2 @@
+minor_changes:
+  - End2end Test - Support for password_command in .zhmc_vault file.

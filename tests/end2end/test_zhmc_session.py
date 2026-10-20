@@ -28,7 +28,7 @@ from zhmcclient.testutils import hmc_definition  # noqa: F401, E501
 
 from plugins.modules import zhmc_session, zhmc_cpc_list
 from plugins.module_utils.common import parse_hmc_host
-from .utils import mock_ansible_module, get_failure_msg
+from .utils import mock_ansible_module, get_failure_msg, get_password
 from .conftest import LOG_FILE
 from ..utils import RunMode, handle_runmode
 
@@ -251,7 +251,7 @@ def test_zhmc_session_single(
             if in_hmc_auth['userid'] == FROM_HMC_DEFINITION \
             else in_hmc_auth['userid']
     if 'password' in in_hmc_auth:
-        hmc_auth['password'] = hmc_definition.password \
+        hmc_auth['password'] = get_password(hmc_definition) \
             if in_hmc_auth['password'] == FROM_HMC_DEFINITION \
             else in_hmc_auth['password']
     if 'ca_certs' in in_hmc_auth:
@@ -363,7 +363,7 @@ def test_zhmc_session_sequence(
         'hmc_host': hmc_definition.host,
         'hmc_auth': {
             'userid': hmc_definition.userid,
-            'password': hmc_definition.password,
+            'password': get_password(hmc_definition),
             'session_id': None,
             'ca_certs': hmc_definition.ca_certs,
             'verify': hmc_definition.verify,
@@ -415,6 +415,7 @@ def test_zhmc_session_sequence(
             'verify': hmc_definition.verify,
         },
         'include_unmanaged_cpcs': False,
+        'additional_properties': [],
         'full_properties': False,
         'log_file': LOG_FILE,
         '_faked_session': None,

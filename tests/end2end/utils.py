@@ -23,6 +23,10 @@ __metaclass__ = type
 import warnings
 import pytest
 
+# TODO: Make run_password_command() or a new get_password() public in
+# zhmcclient.testutils and use that, instead of this internal function.
+from zhmcclient.testutils._hmc_session_functions import run_password_command
+
 
 def mock_ansible_module(ansible_mod_cls, params, check_mode):
     """
@@ -123,3 +127,111 @@ def get_hmc_auth(session):
     hmc_auth = dict(userid=userid, password=password, ca_certs=ca_certs,
                     verify=verify)
     return hmc_auth
+
+
+# CPC status values that are considered unavailable for the purpose of testing.
+UNAVAILABLE_CPC_STATUSES = (
+    "not-operating",        # CPC is not IML complete or no CPU operating
+    "not-communicating",    # HMC is not communicating with the SE
+    "status-check",         # SE is not communicating with the CPC
+    "no-power",             # CPC has no power
+)
+
+
+def unavailable_cpcs(cpcs):
+    """
+    Return the unavailable CPCs from the specified list of CPCs.
+
+    A CPC is considered unavailable if its status is in
+    UNAVAILABLE_CPC_STATUSES.
+
+    Parameters:
+      cpcs (list of zhmcclient.Cpc): List of CPCs.
+
+    Returns:
+      list of zhmcclient.Cpc: List of unavailable CPCs.
+    """
+    unavail_cpcs = []
+    for cpc in cpcs:
+        status = cpc.get_property("status")
+        if status in UNAVAILABLE_CPC_STATUSES:
+            unavail_cpcs.append(cpc)
+    return unavail_cpcs
+
+
+def available_dpm_cpcs(cpcs):
+    """
+    Return the available DPM mode CPCs from the specified list of CPCs.
+
+    A CPC is considered available if its status is not in
+    UNAVAILABLE_CPC_STATUSES.
+
+    Parameters:
+      cpcs (list of zhmcclient.Cpc): List of CPCs.
+
+    Returns:
+      list of zhmcclient.Cpc: List of available DPM mode CPCs.
+    """
+    result_cpcs = []
+    for cpc in cpcs:
+        status = cpc.get_property("status")
+        dpm = cpc.get_property("dpm-enabled")
+        if dpm and status not in UNAVAILABLE_CPC_STATUSES:
+            result_cpcs.append(cpc)
+    return result_cpcs
+
+
+def underscored_properties(properties):
+    """
+    Return the input properties as a dict where the property names have been
+    converted from HMC names (with hyphens) to Ansible names (with underscores).
+
+    Parameters:
+      properties (Mapping): Input properties with hyphened names.
+    """
+    result = {}
+    for name_hmc, value in properties.items():
+        name = name_hmc.replace('-', '_')
+        result[name] = value
+    return result
+
+
+def get_password(hmc_definition):
+    """
+    Get the password from a HMC definition.
+
+    If the HMC definition provide the password via a password command, the
+    command is executed and the password captured from its stdout.
+
+    Otherwise, if the HMC definition provides the password directly, that is
+    used.
+
+    Otherwise, None is returned.
+
+    Parameters:
+
+      hmc_definition (zhmcclient.HMCDefinition): The HMC definition.
+
+    Returns:
+
+      str: Password, or None
+
+    Raises:
+      zhmcclient.PasswordCommandFailure: Error running the password command
+    """
+    if hmc_definition.password_command is not None:
+        variables = {
+            'host': hmc_definition.host,
+            'userid': hmc_definition.userid,
+        }
+        # May raise PasswordCommandFailure:
+        password = run_password_command(
+            hmc_definition.password_command,
+            variables,
+            hmc_definition.password_timeout)
+        return password
+
+    if hmc_definition.password is not None:
+        return hmc_definition.password
+
+    return None

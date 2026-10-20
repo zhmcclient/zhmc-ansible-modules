@@ -28,14 +28,23 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
 
 from plugins.modules import zhmc_storage_group_attachment_list
-from .utils import mock_ansible_module, get_failure_msg
+from .utils import mock_ansible_module, get_failure_msg, available_dpm_cpcs, \
+    underscored_properties
 from .conftest import LOG_FILE
+
+
+# Names of partition properties (with underscores) that are volatile, i.e. that
+# may change their values on subsequent retrievals even when no other change is
+# performed.
+VOLATILE_PARTITION_PROPERTIES = [
+    'power_wattage',
+]
 
 
 def get_module_output(mod_obj):
     """
-    Return the module output as a tuple (changed, user_properties) (i.e.
-    the arguments of the call to exit_json()).
+    Return the module output as a tuple (changed, partitions)
+    (i.e. the arguments of the call to exit_json()).
     If the module failed, return None.
     """
 
@@ -51,52 +60,83 @@ def get_module_output(mod_obj):
     return func(*call_args[0], **call_args[1])
 
 
-def assert_partition_list(partition_list, exp_partition_dict):
+def assert_partition_list(act_partition_list, exp_partition_dict):
     """
-    Assert the output of the zhmc_storage_group_attachment_list module.
+    Assert the output of the zhmc_password_rule_list module.
 
     Parameters:
 
-      partition_list(list): Result of zhmc_storage_group_attachment_list module,
-        as a list of dicts of partition properties as documented (with
-        underscores in their names).
+      act_partition_list (list of dict): Actual result of the module,
+        as a list of properties (name: value), including any artificial
+        properties. The property names must be as returned by the module.
 
-      exp_partition_dict(dict): Expected partitions with their properties.
-        Key: partition name.
-        Value: Dict of expected partition properties (all with underscores in
-        their names).
+      exp_partition_dict (dict of dict): Expected properties,
+        as a dict (key: properties) where key is the object name and properties
+        is a dict (name: value), including any artificial properties. The
+        property names must be as returned by the zhmcclient list method.
+        (i.e. with hyphens).
     """
+    assert isinstance(act_partition_list, list)
+    assert isinstance(exp_partition_dict, dict)
 
-    assert isinstance(partition_list, list)
+    assert len(act_partition_list) == len(exp_partition_dict), (
+        "Unexpected number of partitions:\n"
+        f"Actual objects: {act_partition_list!r}\n"
+        f"Expected objects: {exp_partition_dict!r}\n"
+    )
+    for act_partition_properties in act_partition_list:
+        assert isinstance(act_partition_properties, dict)
 
-    exp_len = len(exp_partition_dict)
-    assert len(partition_list) == exp_len
+        # Check for the key property
+        assert 'name' in act_partition_properties, (
+            "Returned partition does not have a 'name' "
+            f"property: {act_partition_properties!r}")
+        partition_name = act_partition_properties['name']
+        assert partition_name in exp_partition_dict, (
+            f"Unexpected returned partition {partition_name!r}")
 
-    for partition_item in partition_list:
+        exp_partition_properties = exp_partition_dict[partition_name]
+        assert isinstance(exp_partition_properties, dict)
+        exp_partition_properties = underscored_properties(exp_partition_properties)
 
-        assert 'name' in partition_item, (
-            f"Returned partition item {partition_item!r} does not have a "
-            "'name' property")
-        part_name = partition_item['name']
+        exp_partition_pnames = list(exp_partition_properties.keys())
+        act_partition_pnames = list(act_partition_properties.keys())
 
-        assert part_name in exp_partition_dict, \
-            f"Result contains unexpected partition: {part_name!r}"
-
-        exp_partition_properties = exp_partition_dict[part_name]
-
-        for pname, pvalue in partition_item.items():
-
+        # Check the actually returned objects against the expected properties.
+        # This discovers unexpected properties.
+        for pname, act_value in act_partition_properties.items():
             assert '-' not in pname, (
-                f"Property {pname!r} in partition {part_name!r} is "
-                "returned with hyphens in the property name")
-
+                f"Property {pname!r} in returned "
+                f"partition {partition_name!r} "
+                "has hyphens in the property name")
             assert pname in exp_partition_properties, (
-                f"Unexpected property {pname!r} in partition {part_name!r}")
+                f"Unexpected property {pname!r} in returned "
+                f"partition {partition_name!r}:\n"
+                f"Expected properties: {exp_partition_pnames}\n"
+                f"Actual properties: {act_partition_pnames}")
+            if pname not in VOLATILE_PARTITION_PROPERTIES:
+                exp_value = exp_partition_properties[pname]
+                assert act_value == exp_value, (
+                    f"Incorrect value for property {pname!r} of returned "
+                    f"partition {partition_name!r}:\n"
+                    f"Expected value: {exp_value!r}\n"
+                    f"Actual value: {act_value!r}")
 
-            exp_value = exp_partition_properties[pname]
-            assert pvalue == exp_value, (
-                f"Incorrect value for property {pname!r} of partition "
-                f"{part_name!r}")
+        # Check the expected properties against the actually returned objects.
+        # This discovers missing properties.
+        for pname, exp_value in exp_partition_properties.items():
+            assert pname in act_partition_properties, (
+                f"Missing property {pname!r} in returned "
+                f"partition {partition_name!r}:\n"
+                f"Expected properties: {exp_partition_pnames}\n"
+                f"Actual properties: {act_partition_pnames}")
+            if pname not in VOLATILE_PARTITION_PROPERTIES:
+                act_value = act_partition_properties[pname]
+                assert act_value == exp_value, (
+                    f"Incorrect value for property {pname!r} of returned "
+                    f"partition {partition_name!r}:\n"
+                    f"Expected value: {exp_value!r}\n"
+                    f"Actual value: {act_value!r}")
 
 
 @pytest.mark.parametrize(
@@ -144,7 +184,12 @@ def test_zhmc_storage_group_attachment_list(
 
     faked_session = hmc_session if hd.mock_file else None
 
-    cpcs = client.cpcs.list()
+    # The testcases require that the CPC associated with the storage group
+    # is available. Skip this test if there is no available DPM mode CPC.
+    cpcs = available_dpm_cpcs(client.cpcs.list())
+    if not cpcs:
+        pytest.skip("No available DPM mode CPCs")
+
     cpc_by_uri = {cpc.uri: cpc for cpc in cpcs}
 
     # Pick a random storage group and its associated CPC
@@ -166,10 +211,11 @@ def test_zhmc_storage_group_attachment_list(
         **filter_kwargs)
     exp_partition_dict = {}
     for part in exp_partitions:
-        exp_properties = {'cpc_name': picked_cpc.name}
-        for pname_hmc, pvalue in part.properties.items():
-            pname = pname_hmc.replace('-', '_')
-            exp_properties[pname] = pvalue
+        exp_properties = {
+            'cpc_name': picked_cpc.name,
+            'cpc_uri': picked_cpc.uri,
+        }
+        exp_properties.update(part.properties)
         exp_partition_dict[part.name] = exp_properties
 
     # Prepare module input parameters (must be all required + optional)
@@ -201,5 +247,4 @@ def test_zhmc_storage_group_attachment_list(
     changed, partition_list = get_module_output(mod_obj)
     assert changed is False
 
-    assert_partition_list(
-        partition_list, exp_partition_dict)
+    assert_partition_list(partition_list, exp_partition_dict)

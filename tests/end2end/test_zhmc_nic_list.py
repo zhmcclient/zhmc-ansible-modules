@@ -28,14 +28,15 @@ from zhmcclient.testutils import dpm_mode_cpcs  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
 
 from plugins.modules import zhmc_nic_list
-from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth, \
+    underscored_properties
 from .conftest import LOG_FILE
 
 
 def get_module_output(mod_obj):
     """
-    Return the module output as a tuple (changed, nic_properties) (i.e.
-    the arguments of the call to exit_json()).
+    Return the module output as a tuple (changed, nics)
+    (i.e. the arguments of the call to exit_json()).
     If the module failed, return None.
     """
 
@@ -51,67 +52,91 @@ def get_module_output(mod_obj):
     return func(*call_args[0], **call_args[1])
 
 
-def assert_nic_list(nic_list, exp_nic_dict):
+def assert_nic_list(act_nic_list, exp_nic_dict):
     """
-    Assert the output of the zhmc_nic_list module
+    Assert the output of the zhmc_nic_list module.
 
     Parameters:
 
-      nic_list(list): Result of zhmc_nic_list module, as a list of
-        dicts of NIC properties as documented (with underscores in their
-        names).
+      act_nic_list (list of dict): Actual result of the module,
+        as a list of properties (name: value), including any artificial
+        properties. The property names must be as returned by the module.
 
-      exp_nic_dict(dict): Expected NICs with their properties.
-        Key: tuple(CPC name, partition name, NIC name).
-        Value: Dict of expected NIC properties (including any artificial
-        properties, all with underscores in their names).
+      exp_nic_dict (dict of dict): Expected properties,
+        as a dict (key: properties) where key is a tuple(CPC name, partition
+        name, NIC name) and properties is a dict (name: value), including any
+        artificial properties. The property names must be as returned by the
+        zhmcclient list method (i.e. with hyphens).
     """
+    assert isinstance(act_nic_list, list)
+    assert isinstance(exp_nic_dict, dict)
 
-    assert isinstance(nic_list, list)
+    assert len(act_nic_list) == len(exp_nic_dict), (
+        "Unexpected number of NICs:\n"
+        f"Actual objects: {act_nic_list!r}\n"
+        f"Expected objects: {exp_nic_dict!r}\n"
+    )
+    for act_nic_properties in act_nic_list:
+        assert isinstance(act_nic_properties, dict)
 
-    exp_nic_keys = list(exp_nic_dict.keys())
-    nic_keys = [(item.get('cpc_name', None), item.get('partition_name', None),
-                item.get('name', None)) for item in nic_list]
-    assert set(nic_keys) == set(exp_nic_keys)
+        # Check for the key properties
+        assert 'cpc_name' in act_nic_properties, (
+            "Returned NIC does not have a 'cpc_name' "
+            f"property: {act_nic_properties!r}")
+        cpc_name = act_nic_properties['cpc_name']
+        assert 'partition_name' in act_nic_properties, (
+            "Returned NIC does not have a 'partition_name' "
+            f"property: {act_nic_properties!r}")
+        partition_name = act_nic_properties['partition_name']
+        assert 'name' in act_nic_properties, (
+            "Returned NIC does not have a 'name' "
+            f"property: {act_nic_properties!r}")
+        nic_name = act_nic_properties['name']
+        nic_key = (cpc_name, partition_name, nic_name)
 
-    for nic_item in nic_list:
-        nic_name = nic_item.get('name', None)
-        part_name = nic_item.get('partition_name', None)
-        cpc_name = nic_item.get('cpc_name', None)
-        nic_key = (cpc_name, part_name, nic_name)
-
-        assert nic_name is not None, \
-            f"Returned NIC {nic_item!r} does not have a 'name' property"
-
-        assert part_name is not None, \
-            f"Returned NIC {nic_item!r} does not have a 'part_name' property"
-
-        assert cpc_name is not None, \
-            f"Returned NIC {nic_item!r} does not have a 'cpc_name' property"
-
-        assert nic_key in exp_nic_dict, \
-            f"Result contains unexpected NIC {nic_name!r} in partition " \
-            f"{part_name!r} in CPC {cpc_name!r}"
+        assert nic_key in exp_nic_dict, (
+            f"Unexpected returned NIC {nic_key!r}")
 
         exp_nic_properties = exp_nic_dict[nic_key]
-        for pname, pvalue in nic_item.items():
-            assert '-' not in pname, \
-                f"Property {pname!r} in NIC {nic_name!r} is " \
-                "returned with hyphens in the property name"
-            assert pname in exp_nic_properties, \
-                f"Unexpected property {pname!r} in result NIC " \
-                f"{nic_name!r}. Expected properties: " \
-                f"{list(exp_nic_properties.keys())!r}"
+        assert isinstance(exp_nic_properties, dict)
+        exp_nic_properties = underscored_properties(exp_nic_properties)
+
+        exp_nic_pnames = list(exp_nic_properties.keys())
+        act_nic_pnames = list(act_nic_properties.keys())
+
+        # Check the actually returned objects against the expected properties.
+        # This discovers unexpected properties.
+        for pname, act_value in act_nic_properties.items():
+            assert '-' not in pname, (
+                f"Property {pname!r} in returned "
+                f"NIC {nic_key!r} "
+                "has hyphens in the property name")
+            assert pname in exp_nic_properties, (
+                f"Unexpected property {pname!r} in returned "
+                f"NIC {nic_key!r}:\n"
+                f"Expected properties: {exp_nic_pnames}\n"
+                f"Actual properties: {act_nic_pnames}")
             exp_value = exp_nic_properties[pname]
-            assert pvalue == exp_value, \
-                f"Incorrect value for property {pname!r} of result NIC " \
-                f"{nic_name!r}"
-        act_nic_pnames = list(nic_item.keys())
-        for pname in exp_nic_properties.keys():
-            assert pname in act_nic_pnames, \
-                f"Missing property {pname!r} in result NIC " \
-                f"{nic_name!r}. Expected properties: " \
-                f"{list(exp_nic_properties.keys())!r}"
+            assert act_value == exp_value, (
+                f"Incorrect value for property {pname!r} of returned "
+                f"NIC {nic_key!r}:\n"
+                f"Expected value: {exp_value!r}\n"
+                f"Actual value: {act_value!r}")
+
+        # Check the expected properties against the actually returned objects.
+        # This discovers missing properties.
+        for pname, exp_value in exp_nic_properties.items():
+            assert pname in act_nic_properties, (
+                f"Missing property {pname!r} in returned "
+                f"NIC {nic_key!r}:\n"
+                f"Expected properties: {exp_nic_pnames}\n"
+                f"Actual properties: {act_nic_pnames}")
+            act_value = act_nic_properties[pname]
+            assert act_value == exp_value, (
+                f"Incorrect value for property {pname!r} of returned "
+                f"NIC {nic_key!r}:\n"
+                f"Expected value: {exp_value!r}\n"
+                f"Actual value: {act_value!r}")
 
 
 @pytest.mark.parametrize(
@@ -119,14 +144,21 @@ def assert_nic_list(nic_list, exp_nic_dict):
         pytest.param(
             {}, id="property_flags()"),
         pytest.param(
+            {'expand_names': True},
+            id="property_flags(expand_names=True)"),
+        pytest.param(
+            {'additional_properties': ['description']},
+            id="property_flags(additional_properties=[description])"),
+        pytest.param(
+            {'additional_properties': ['description'], 'expand_names': True},
+            id="property_flags(additional_properties=[description]),"
+            "expand_names=True"),
+        pytest.param(
             {'full_properties': True},
             id="property_flags(full_properties=True)"),
         pytest.param(
             {'full_properties': True, 'expand_names': True},
             id="property_flags(full_properties=True,expand_names=True)"),
-        pytest.param(
-            {'expand_names': True},
-            id="property_flags(expand_names=True)"),
     ]
 )
 @pytest.mark.parametrize(
@@ -178,35 +210,43 @@ def test_zhmc_nic_list(
             "Testing with CPC %s, partition %s (type %s)",
             cpc.name, partition.name, partition_type)
 
+        # Get the module arguments for the test.
+        # We need to use the defaults defined in the module argument spec
+        additional_properties = property_flags.get('additional_properties', [])
         full_properties = property_flags.get('full_properties', False)
         expand_names = property_flags.get('expand_names', False)
 
-        # Determine the expected NICs
-        test_logger.debug("Listing expected NICs of partition %r", partition.name)
-        exp_nics = partition.nics.list(full_properties=full_properties)
+        # Make sure that the result has the 'name' property of the NIC
+        if not full_properties:
+            if not additional_properties:
+                additional_properties = ['name']
+            elif 'name' not in additional_properties:
+                additional_properties = list(additional_properties)
+                additional_properties.append('name')
 
-        # Determine expected NIC properties
+        # Determine the expected NICs on the HMC
+        exp_nics = partition.nics.list(
+            additional_properties=additional_properties,
+            full_properties=full_properties)
+
+        # Prepare the expected data for comparison
         exp_nic_dict = {}
         for nic in exp_nics:
             exp_properties = {
                 'cpc_name': cpc.name,
+                'cpc_uri': cpc.uri,
                 'partition_name': partition.name,
-                'name': nic.name,
+                'partition_uri': partition.uri,
             }
-            if full_properties:
-                for pname_hmc, pvalue in nic.properties.items():
-                    pname = pname_hmc.replace('-', '_')
-                    exp_properties[pname] = pvalue
-            if full_properties and expand_names:
+            exp_properties.update(nic.properties)
+            if expand_names:
                 port = nic.backing_port()
                 adapter = port.manager.parent
                 exp_properties['adapter_id'] = \
                     adapter.get_property('adapter-id')
                 exp_properties['adapter_name'] = adapter.name
+                exp_properties['adapter_uri'] = adapter.uri
                 exp_properties['adapter_port'] = port.get_property('index')
-            test_logger.debug(
-                "Expected properties of NIC %r are: %r",
-                nic.name, exp_properties)
             exp_nic_key = (cpc.name, partition.name, nic.name)
             exp_nic_dict[exp_nic_key] = exp_properties
 
@@ -216,6 +256,7 @@ def test_zhmc_nic_list(
             'hmc_auth': hmc_auth,
             'cpc_name': cpc.name,
             'partition_name': partition.name,
+            'additional_properties': additional_properties,
             'full_properties': full_properties,
             'expand_names': expand_names,
             'log_file': LOG_FILE,

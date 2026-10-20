@@ -1802,7 +1802,7 @@ def add_artificial_properties(
 
     if expand_crypto_adapters:
 
-        cc = partition_properties['crypto-configuration']
+        cc = partition_properties.get('crypto-configuration', None)
         if cc:
             # partition_properties is only a shallow copy of the
             # Partition.properties dict, so cc is still a dict within the

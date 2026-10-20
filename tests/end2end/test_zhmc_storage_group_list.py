@@ -28,14 +28,15 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
 
 from plugins.modules import zhmc_storage_group_list
-from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth, \
+    available_dpm_cpcs, underscored_properties
 from .conftest import LOG_FILE
 
 
 def get_module_output(mod_obj):
     """
-    Return the module output as a tuple (changed, user_properties) (i.e.
-    the arguments of the call to exit_json()).
+    Return the module output as a tuple (changed, storage_groups)
+    (i.e. the arguments of the call to exit_json()).
     If the module failed, return None.
     """
 
@@ -51,61 +52,94 @@ def get_module_output(mod_obj):
     return func(*call_args[0], **call_args[1])
 
 
-def assert_storage_group_list(storage_group_list, exp_storage_group_dict):
+def assert_storage_group_list(act_stogroup_list, exp_stogroup_dict):
     """
     Assert the output of the zhmc_storage_group_list module.
 
     Parameters:
 
-      storage_group_list(list): Result of zhmc_storage_group_list module, as a
-        list of dicts of CPC properties as documented (with underscores in
-        their names).
+      act_stogroup_list (list of dict): Actual result of the module,
+        as a list of properties (name: value), including any artificial
+        properties. The property names must be as returned by the module.
 
-      exp_storage_group_dict(dict): Expected storage groups with their
-        properties.
-        Key: Storage group name.
-        Value: Dict of expected storage group properties (including any
-        artificial properties, all with underscores in their names).
+      exp_stogroup_dict (dict of dict): Expected properties,
+        as a dict (key: properties) where key is the object name and properties
+        is a dict (name: value), including any artificial properties. The
+        property names must be as returned by the zhmcclient list method.
+        (i.e. with hyphens).
     """
+    assert isinstance(act_stogroup_list, list)
+    assert isinstance(exp_stogroup_dict, dict)
 
-    assert isinstance(storage_group_list, list)
+    assert len(act_stogroup_list) == len(exp_stogroup_dict), (
+        "Unexpected number of storage groups:\n"
+        f"Actual objects: {act_stogroup_list!r}\n"
+        f"Expected objects: {exp_stogroup_dict!r}\n"
+    )
+    for act_stogroup_properties in act_stogroup_list:
+        assert isinstance(act_stogroup_properties, dict)
 
-    exp_len = len(exp_storage_group_dict)
-    assert len(storage_group_list) == exp_len
+        # Check for the key property
+        assert 'name' in act_stogroup_properties, (
+            "Returned storage group does not have a 'name' "
+            f"property: {act_stogroup_properties!r}")
+        stogroup_name = act_stogroup_properties['name']
+        assert stogroup_name in exp_stogroup_dict, (
+            f"Unexpected returned storage group {stogroup_name!r}")
 
-    for storage_group_item in storage_group_list:
+        exp_stogroup_properties = exp_stogroup_dict[stogroup_name]
+        assert isinstance(exp_stogroup_properties, dict)
+        exp_stogroup_properties = underscored_properties(exp_stogroup_properties)
 
-        assert 'name' in storage_group_item, (
-            f"Returned storage group item {storage_group_item!r} does not "
-            "have a 'name' property")
-        sg_name = storage_group_item['name']
+        exp_stogroup_pnames = list(exp_stogroup_properties.keys())
+        act_stogroup_pnames = list(act_stogroup_properties.keys())
 
-        assert sg_name in exp_storage_group_dict, \
-            f"Result contains unexpected storage group: {sg_name!r}"
-
-        exp_storage_group_properties = exp_storage_group_dict[sg_name]
-
-        for pname, pvalue in storage_group_item.items():
-
+        # Check the actually returned objects against the expected properties.
+        # This discovers unexpected properties.
+        # Note that the underlying zhmcclient list method implements
+        # additional_properties by returning all properties. However, the check
+        # for unexpected properties still works because both the Ansible module
+        # under test and the test function use the same zhmcclient list method.
+        for pname, act_value in act_stogroup_properties.items():
             assert '-' not in pname, (
-                f"Property {pname!r} in storage group {sg_name!r} is "
-                "returned with hyphens in the property name")
+                f"Property {pname!r} in returned "
+                f"storage group {stogroup_name!r} "
+                "has hyphens in the property name")
+            assert pname in exp_stogroup_properties, (
+                f"Unexpected property {pname!r} in returned "
+                f"storage group {stogroup_name!r}:\n"
+                f"Expected properties: {exp_stogroup_pnames}\n"
+                f"Actual properties: {act_stogroup_pnames}")
+            exp_value = exp_stogroup_properties[pname]
+            assert act_value == exp_value, (
+                f"Incorrect value for property {pname!r} of returned "
+                f"storage group {stogroup_name!r}:\n"
+                f"Expected value: {exp_value!r}\n"
+                f"Actual value: {act_value!r}")
 
-            assert pname in exp_storage_group_properties, (
-                f"Unexpected property {pname!r} in storage group "
-                f"{sg_name!r}")
-
-            exp_value = exp_storage_group_properties[pname]
-            assert pvalue == exp_value, (
-                f"Incorrect value for property {pname!r} of storage group "
-                f"{sg_name!r}")
+        # Check the expected properties against the actually returned objects.
+        # This discovers missing properties.
+        for pname, exp_value in exp_stogroup_properties.items():
+            assert pname in act_stogroup_properties, (
+                f"Missing property {pname!r} in returned "
+                f"storage group {stogroup_name!r}:\n"
+                f"Expected properties: {exp_stogroup_pnames}\n"
+                f"Actual properties: {act_stogroup_pnames}")
+            act_value = act_stogroup_properties[pname]
+            assert act_value == exp_value, (
+                f"Incorrect value for property {pname!r} of returned "
+                f"storage group {stogroup_name!r}:\n"
+                f"Expected value: {exp_value!r}\n"
+                f"Actual value: {act_value!r}")
 
 
 @pytest.mark.parametrize(
-    "property_args", [
-        pytest.param({}, id="property_args()"),
+    "property_flags", [
+        pytest.param({}, id="property_flags()"),
+        pytest.param({'additional_properties': ['description']},
+                     id="property_flags(additional_properties=[description])"),
         pytest.param({'full_properties': True},
-                     id="property_args(full_properties=True)"),
+                     id="property_flags(full_properties=True)"),
     ]
 )
 @pytest.mark.parametrize(
@@ -129,7 +163,7 @@ def assert_storage_group_list(storage_group_list, exp_storage_group_dict):
 @mock.patch("plugins.modules.zhmc_storage_group_list.AnsibleModule",
             autospec=True)
 def test_zhmc_storage_group_list(
-        ansible_mod_cls, check_mode, filter_args, property_args,
+        ansible_mod_cls, check_mode, filter_args, property_flags,
         hmc_session):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name
     """
@@ -141,19 +175,24 @@ def test_zhmc_storage_group_list(
     hd = hmc_session.hmc_definition
     faked_session = hmc_session if hd.mock_file else None
 
-    # Get the module arguments for the test.
-    # We need to use the defaults defined in the module argument spec
-    full_properties = property_args.get('full_properties', False)
-    type = filter_args.get('type', None)
-    fulfillment_state = filter_args.get('fulfillment_state', None)
-
-    use_name_filter = filter_args.get('use_name_filter', False)
-    use_cpc_name_filter = filter_args.get('use_cpc_name_filter', False)
-
     client = zhmcclient.Client(hmc_session)
     console = client.consoles.console
 
-    cpcs = client.cpcs.list()
+    # Get the module arguments for the test.
+    # We need to use the defaults defined in the module argument spec
+    additional_properties = property_flags.get('additional_properties', [])
+    full_properties = property_flags.get('full_properties', False)
+    type = filter_args.get('type', None)
+    fulfillment_state = filter_args.get('fulfillment_state', None)
+    use_name_filter = filter_args.get('use_name_filter', False)
+    use_cpc_name_filter = filter_args.get('use_cpc_name_filter', False)
+
+    # The testcases require that the CPC associated with the storage group
+    # is available. Skip this test if there is no available DPM mode CPC.
+    cpcs = available_dpm_cpcs(client.cpcs.list())
+    if not cpcs:
+        pytest.skip("No available DPM mode CPCs")
+
     cpc_by_uri = {cpc.uri: cpc for cpc in cpcs}
 
     # Pick a random storage group and its associated CPC
@@ -164,7 +203,7 @@ def test_zhmc_storage_group_list(
     picked_cpc_uri = picked_storage_group.get_property('cpc-uri')
     picked_cpc = cpc_by_uri[picked_cpc_uri]
 
-    # Prepare the expected storage group result
+    # Determine the expected list of storage groups
     filter_args = {}
     if use_cpc_name_filter:
         filter_args['cpc-uri'] = picked_cpc_uri
@@ -175,15 +214,17 @@ def test_zhmc_storage_group_list(
     if fulfillment_state:
         filter_args['fulfillment-state'] = fulfillment_state
     exp_storage_groups = console.storage_groups.list(
-        filter_args=filter_args, full_properties=full_properties)
+        filter_args=filter_args,
+        additional_properties=additional_properties,
+        full_properties=full_properties)
     exp_storage_group_dict = {}
     for storage_group in exp_storage_groups:
         cpc_uri = storage_group.get_property('cpc-uri')
         cpc_name = cpc_by_uri[cpc_uri].get_property('name')
-        exp_properties = {'cpc_name': cpc_name}
-        for pname_hmc, pvalue in storage_group.properties.items():
-            pname = pname_hmc.replace('-', '_')
-            exp_properties[pname] = pvalue
+        exp_properties = {
+            'cpc_name': cpc_name
+        }
+        exp_properties.update(storage_group.properties)
         exp_storage_group_dict[storage_group.name] = exp_properties
 
     # Prepare module input parameters (must be all required + optional)
@@ -194,6 +235,7 @@ def test_zhmc_storage_group_list(
         'cpc_name': picked_cpc.name if use_cpc_name_filter else None,
         'type': type,
         'fulfillment_state': fulfillment_state,
+        'additional_properties': additional_properties,
         'full_properties': full_properties,
         'log_file': LOG_FILE,
         '_faked_session': faked_session,
@@ -216,5 +258,4 @@ def test_zhmc_storage_group_list(
     changed, storage_group_list = get_module_output(mod_obj)
     assert changed is False
 
-    assert_storage_group_list(
-        storage_group_list, exp_storage_group_dict)
+    assert_storage_group_list(storage_group_list, exp_storage_group_dict)
