@@ -266,7 +266,7 @@ def perform_list(params):
     check_mutually_exclusive(
         params,
         name1="additional_properties", name2="full_properties",
-        default1=False, default2=False)
+        default1=[], default2=False)
 
     session, logoff = open_session(params)
     try:
@@ -276,24 +276,12 @@ def perform_list(params):
         # version 2.14.0. The operation depends only on the HMC version and not
         # on the SE/CPC version, so it is supported e.g. for a 2.14 HMC managing
         # a z13 CPC.
-        #
-        # The "List Permitted Logical Partitions" operation supports the
-        # 'additional-properties' query parameter starting with feature
-        # 'secure-boot-with-certificates' (API version 4.10, HMC version 2.16
-        # after initial GA).
-        #
-        # The "List Logical Partitions of a CPC" operation does not support an
-        # 'additional-properties' query parameter as of HMC API version 4.10,
-        # HMC version 2.16 after initial GA) (but the zhmcclient package
-        # since its version 1.27.0 covers for that and supports the
-        # 'additional_properties' parameter in list() for all HMC versions).
+        # The zhmcclient list methods support the additional_properties
+        # parameter and handle that across all HMC versions.
+        hmc_version = client.query_api_version()['hmc-version']
+        hmc_version_info = [int(x) for x in hmc_version.split('.')]
 
-        av = client.query_api_version()
-        hmc_version_info = [int(x) for x in av['hmc-version'].split('.')]
-        api_version_info = [av['api-major-version'], av['api-minor-version']]
-
-        if hmc_version_info < [2, 14, 0] or \
-                additional_properties and api_version_info < [4, 10]:
+        if hmc_version_info < [2, 14, 0]:
 
             # Use the "List Logical Partitions of a CPC" operation.
             if cpc_name:
@@ -301,18 +289,18 @@ def perform_list(params):
                              "list LPARs of the CPC", cpc_name)
                 cpc = client.cpcs.find(name=cpc_name)
                 lpars = cpc.lpars.list(
-                    full_properties=full_properties,
-                    additional_properties=additional_properties)
+                    additional_properties=additional_properties,
+                    full_properties=full_properties)
             else:
                 LOGGER.debug("Listing LPARs of all managed CPCs via list "
                              "CPCs and list LPARs on each CPC")
                 cpcs = client.cpcs.list()
                 lpars = []
                 for cpc in cpcs:
-                    _lpars = cpc.lpars.list(
-                        full_properties=full_properties,
-                        additional_properties=additional_properties)
-                    lpars.extend(_lpars)
+                    lpars_ = cpc.lpars.list(
+                        additional_properties=additional_properties,
+                        full_properties=full_properties)
+                    lpars.extend(lpars_)
 
         else:
 

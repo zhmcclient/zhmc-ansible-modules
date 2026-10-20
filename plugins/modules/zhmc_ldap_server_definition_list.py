@@ -216,7 +216,7 @@ def perform_list(params):
     check_mutually_exclusive(
         params,
         name1="additional_properties", name2="full_properties",
-        default1=False, default2=False)
+        default1=[], default2=False)
 
     session, logoff = open_session(params)
     try:
