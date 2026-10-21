@@ -34,7 +34,7 @@ from zhmcclient.testutils import dpm_mode_cpcs  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
 
 from plugins.modules import zhmc_adapter
-from .utils import mock_ansible_module, get_failure_msg
+from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
 
 urllib3.disable_warnings()
 
@@ -294,11 +294,10 @@ def test_zhmc_adapter_facts(
         assert cpc.dpm_enabled
 
         session = cpc.manager.session
-        hd = session.hmc_definition
-        hmc_host = hd.host
-        hmc_auth = dict(userid=hd.userid, password=hd.password,
-                        ca_certs=hd.ca_certs, verify=hd.verify)
 
+        hmc_host = session.host
+        hmc_auth = get_hmc_auth(session)
+        hd = session.hmc_definition
         faked_session = session if hd.mock_file else None
 
         hmc_version = cpc.manager.console.prop('version')
@@ -593,11 +592,10 @@ def test_zhmc_adapter_states(
         assert cpc.dpm_enabled
 
         session = cpc.manager.session
-        hd = session.hmc_definition
-        hmc_host = hd.host
-        hmc_auth = dict(userid=hd.userid, password=hd.password,
-                        ca_certs=hd.ca_certs, verify=hd.verify)
 
+        hmc_host = session.host
+        hmc_auth = get_hmc_auth(session)
+        hd = session.hmc_definition
         faked_session = session if hd.mock_file else None
 
         hmc_version = cpc.manager.console.prop('version')

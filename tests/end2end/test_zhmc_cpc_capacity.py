@@ -31,7 +31,8 @@ from zhmcclient.testutils import all_cpcs  # noqa: F401, E501
 
 from plugins.modules import zhmc_cpc_capacity
 from plugins.module_utils.common import underscore_properties
-from .utils import mock_ansible_module, get_failure_msg, setup_logging
+from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth, \
+    setup_logging
 
 urllib3.disable_warnings()
 
@@ -134,11 +135,10 @@ def test_zhmc_cpc_capacity_facts(
     cpc = random.choice(all_cpcs)
 
     session = cpc.manager.session
-    hd = session.hmc_definition
-    hmc_host = hd.host
-    hmc_auth = dict(userid=hd.userid, password=hd.password,
-                    ca_certs=hd.ca_certs, verify=hd.verify)
 
+    hmc_host = session.host
+    hmc_auth = get_hmc_auth(session)
+    hd = session.hmc_definition
     faked_session = session if hd.mock_file else None
 
     # Determine the expected CPC properties
@@ -210,11 +210,10 @@ def test_zhmc_cpc_capacity_set(
     cpc = random.choice(all_cpcs)
 
     session = cpc.manager.session
-    hd = session.hmc_definition
-    hmc_host = hd.host
-    hmc_auth = dict(userid=hd.userid, password=hd.password,
-                    ca_certs=hd.ca_certs, verify=hd.verify)
 
+    hmc_host = session.host
+    hmc_auth = get_hmc_auth(session)
+    hd = session.hmc_definition
     faked_session = session if hd.mock_file else None
 
     temp_sw_model = cpc.get_property('software-model-permanent-plus-temporary')

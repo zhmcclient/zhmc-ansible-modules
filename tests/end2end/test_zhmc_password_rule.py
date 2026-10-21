@@ -32,7 +32,7 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 
 from plugins.modules import zhmc_password_rule
 from plugins.module_utils.common import hyphened_value
-from .utils import mock_ansible_module, get_failure_msg
+from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
 
 urllib3.disable_warnings()
 
@@ -146,15 +146,13 @@ def test_zhmc_password_rule_facts(
     Test the zhmc_password_rule module with state=facts.
     """
 
+    hmc_host = hmc_session.host
+    hmc_auth = get_hmc_auth(hmc_session)
     hd = hmc_session.hmc_definition
-    hmc_host = hd.host
-    hmc_auth = dict(userid=hd.userid, password=hd.password,
-                    ca_certs=hd.ca_certs, verify=hd.verify)
+    faked_session = hmc_session if hd.mock_file else None
 
     client = zhmcclient.Client(hmc_session)
     console = client.consoles.console
-
-    faked_session = hmc_session if hd.mock_file else None
 
     # Determine a random existing password rule of the desired type to test.
     pwrules = console.password_rules.list()
@@ -271,11 +269,9 @@ def test_zhmc_password_rule_absent_present(
     Test the zhmc_password_rule module with state=absent/present.
     """
 
+    hmc_host = hmc_session.host
+    hmc_auth = get_hmc_auth(hmc_session)
     hd = hmc_session.hmc_definition
-    hmc_host = hd.host
-    hmc_auth = dict(userid=hd.userid, password=hd.password,
-                    ca_certs=hd.ca_certs, verify=hd.verify)
-
     faked_session = hmc_session if hd.mock_file else None
 
     client = zhmcclient.Client(hmc_session)
