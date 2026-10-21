@@ -178,3 +178,28 @@ def set_resource_property(resource, name, value):
     old_value = resource.get_property(name)
     resource.update_properties({name: value})
     return old_value
+
+
+def get_hmc_auth(session):
+    """
+    Create and return the hmc_auth input parameter for testing ibm_zhmc Ansible
+    modules from an HMC session.
+
+    Parameters:
+
+      session (zhmcclient.Session): HMC session object, providing all the data
+        for the return value.
+
+    Returns:
+
+      dict: Dictionary with items that can be used for the hmc_auth input
+      parameter for testing ibm_zhmc Ansible modules.
+    """
+    userid = session.userid
+    password = session._password  # pylint: disable=protected-access
+    ca_certs = session.verify_cert \
+        if isinstance(session.verify_cert, str) else None
+    verify = bool(session.verify_cert)
+    hmc_auth = dict(userid=userid, password=password, ca_certs=ca_certs,
+                    verify=verify)
+    return hmc_auth

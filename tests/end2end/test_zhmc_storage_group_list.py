@@ -29,7 +29,7 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
 
 from plugins.modules import zhmc_storage_group_list
-from .utils import mock_ansible_module, get_failure_msg
+from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
 
 urllib3.disable_warnings()
 
@@ -143,10 +143,10 @@ def test_zhmc_storage_group_list(
     Test the zhmc_storage_group_list module.
     """
 
+    hmc_host = hmc_session.host
+    hmc_auth = get_hmc_auth(hmc_session)
     hd = hmc_session.hmc_definition
-    hmc_host = hd.host
-    hmc_auth = dict(userid=hd.userid, password=hd.password,
-                    ca_certs=hd.ca_certs, verify=hd.verify)
+    faked_session = hmc_session if hd.mock_file else None
 
     # Get the module arguments for the test.
     # We need to use the defaults defined in the module argument spec
@@ -159,8 +159,6 @@ def test_zhmc_storage_group_list(
 
     client = zhmcclient.Client(hmc_session)
     console = client.consoles.console
-
-    faked_session = hmc_session if hd.mock_file else None
 
     cpcs = client.cpcs.list()
     cpc_by_uri = {cpc.uri: cpc for cpc in cpcs}

@@ -29,7 +29,7 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
 
 from plugins.modules import zhmc_storage_volume_list
-from .utils import mock_ansible_module, get_failure_msg
+from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
 
 urllib3.disable_warnings()
 
@@ -159,15 +159,11 @@ def test_zhmc_storage_volume_list(
     """
     Test the zhmc_storage_volume_list module.
     """
-    hd = hmc_session.hmc_definition
+
     hmc_host = hmc_session.host
-    userid = hmc_session.userid
-    password = hmc_session._password  # pylint: disable=protected-access
-    ca_certs = hmc_session.verify_cert \
-        if isinstance(hmc_session.verify_cert, str) else None
-    verify = bool(hmc_session.verify_cert)
-    hmc_auth = dict(userid=userid, password=password, ca_certs=ca_certs,
-                    verify=verify)
+    hmc_auth = get_hmc_auth(hmc_session)
+    hd = hmc_session.hmc_definition
+    faked_session = hmc_session if hd.mock_file else None
 
     # Get the module arguments for the test.
     # We need to use the defaults defined in the module argument spec
@@ -182,8 +178,6 @@ def test_zhmc_storage_volume_list(
 
     client = zhmcclient.Client(hmc_session)
     console = client.consoles.console
-
-    faked_session = hmc_session if hd.mock_file else None
 
     cpcs = client.cpcs.list()
     cpc_by_uri = {cpc.uri: cpc for cpc in cpcs}

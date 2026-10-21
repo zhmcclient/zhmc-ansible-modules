@@ -29,7 +29,8 @@ from zhmcclient.testutils import dpm_mode_cpcs  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
 
 from plugins.modules import zhmc_partition_list
-from .utils import mock_ansible_module, get_failure_msg, setup_logging
+from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth, \
+    setup_logging
 
 urllib3.disable_warnings()
 
@@ -156,15 +157,14 @@ def test_zhmc_partition_list(
         logger.debug("Testing with CPC %s", cpc.name)
 
         session = cpc.manager.session
+
+        hmc_host = session.host
+        hmc_auth = get_hmc_auth(session)
         hd = session.hmc_definition
-        hmc_host = hd.host
-        hmc_auth = dict(userid=hd.userid, password=hd.password,
-                        ca_certs=hd.ca_certs, verify=hd.verify)
+        faked_session = session if hd.mock_file else None
 
         client = zhmcclient.Client(session)
         console = client.consoles.console
-
-        faked_session = session if hd.mock_file else None
 
         full_properties = property_flags.get('full_properties', False)
         additional_properties = property_flags.get(
