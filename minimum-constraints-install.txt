@@ -20,12 +20,13 @@ ld==0.5.0; sys_platform=="linux"
 
 ansible==9.0.1; python_version <= '3.12'
 ansible==11.0.0; python_version == '3.13'
-ansible==13.0.0; python_version >= '3.14'
+ansible==13.0.0; python_version >= '3.14' and python_version < '3.15'
 
 # ansible-core is pulled in by ansible, but is needed for pip-check-reqs checks.
 ansible-core==2.16.19; python_version <= '3.12'
 ansible-core==2.18.18; python_version == '3.13'
-ansible-core==2.20.8; python_version >= '3.14'
+ansible-core==2.20.8; python_version == '3.14'
+ansible-core==2.22.0rc1; python_version >= '3.15'
 
 
 # ansible-core 2.15.13 requires importlib-resources>=5.0,<5.1
@@ -64,9 +65,11 @@ python-dateutil==2.8.2
 referencing==0.31.0
 requests==2.33.0
 resolvelib==0.8.0
-rpds-py==0.7.1
+rpds-py==0.7.1; python_version <= '3.14'
+rpds-py==2026.9.1; python_version >= '3.15'
 six==1.16.0
 stomp.py==8.1.1
-typing-extensions==4.14.1
+typing-extensions==4.14.1; python_version <= '3.14'
+typing-extensions==4.16.0; python_version >= '3.15'
 urllib3==2.7.0
 websocket-client==1.8.0
