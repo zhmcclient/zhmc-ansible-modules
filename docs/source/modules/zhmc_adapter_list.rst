@@ -139,7 +139,7 @@ additional_properties
 
   The property names are specified with underscores instead of hyphens.
 
-  On HMCs with an API version below 4.10 (= HMC version 2.16.0 with some post\-GA updates), all properties of each adapter will be returned if this parameter is specified, but you should not rely on that.
+  Depending on the HMC version, more properties than those specified may be returned, but you should not rely on that.
 
   | **required**: False
   | **type**: list
@@ -147,11 +147,11 @@ additional_properties
 
 
 full_properties
-  If True, all properties of each adapter will be returned. Default: False.
+  If True, all readable properties of each adapter will be returned. Default: False.
 
   Mutually exclusive with :literal:`additional\_properties`.
 
-  Note: Setting this to True causes a loop of 'Get Adapter Properties' operations to be executed. It is preferable from a performance perspective to use the :literal:`additional\_properties` parameter instead.
+  Note: It is preferable from a performance perspective to use the :literal:`additional\_properties` parameter instead.
 
   | **required**: False
   | **type**: bool

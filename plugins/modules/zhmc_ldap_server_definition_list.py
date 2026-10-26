@@ -99,6 +99,29 @@ options:
         type: bool
         required: false
         default: true
+  additional_properties:
+    description:
+      - List of additional properties to be returned for each LDAP server
+        definition, in addition to the default properties (see result
+        description).
+      - Mutually exclusive with O(full_properties).
+      - The property names are specified with underscores instead of hyphens.
+      - Depending on the HMC version, more properties than those specified
+        may be returned, but you should not rely on that.
+    type: list
+    elements: str
+    required: false
+    default: []
+  full_properties:
+    description:
+      - "If True, all readable properties of each LDAP server definition will
+        be returned. Default: False."
+      - Mutually exclusive with O(additional_properties).
+      - "Note: It is preferable from a performance perspective to use the
+        O(additional_properties) parameter instead."
+    type: bool
+    required: false
+    default: false
   log_file:
     description:
       - "File path of a log file to which the logic flow of this module as well
@@ -163,7 +186,7 @@ from ansible.module_utils.basic import AnsibleModule, \
 
 from ..module_utils.common import log_init, open_session, close_session, \
     hmc_auth_parameter, Error, common_fail_on_import_errors, \
-    parse_hmc_host, blanked_params  # noqa: E402
+    parse_hmc_host, blanked_params, check_mutually_exclusive  # noqa: E402
 
 try:
     import zhmcclient
@@ -186,6 +209,15 @@ def perform_list(params):
       zhmcclient.Error: Any zhmcclient exception can happen.
     """
 
+    additional_properties = \
+        [p.replace('_', '-') for p in params['additional_properties']]
+    full_properties = params['full_properties']
+
+    check_mutually_exclusive(
+        params,
+        name1="additional_properties", name2="full_properties",
+        default1=False, default2=False)
+
     session, logoff = open_session(params)
     try:
         client = zhmcclient.Client(session)
@@ -194,7 +226,9 @@ def perform_list(params):
         lsd_list = []
 
         # List the LDAP Server Definitions
-        lsds = console.ldap_server_definitions.list()
+        lsds = console.ldap_server_definitions.list(
+            full_properties=full_properties,
+            additional_properties=additional_properties)
         # The default exception handling is sufficient for the above.
         for lsd in lsds:
             lsd_properties = {
@@ -216,6 +250,9 @@ def main():
     argument_spec = dict(
         hmc_host=dict(required=True, type='raw'),
         hmc_auth=hmc_auth_parameter(),
+        additional_properties=dict(
+            required=False, type='list', elements='str', default=[]),
+        full_properties=dict(required=False, type='bool', default=False),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),
     )

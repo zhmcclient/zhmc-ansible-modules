@@ -1,0 +1,13 @@
+minor_changes:
+  - "Added the 'additional_properties' input parameter to the following list
+    modules that did not have it yet:
+    'zhmc_cpc_list',
+    'zhmc_ldap_server_definition_list',
+    'zhmc_nic_list',
+    'zhmc_password_rule_list',
+    'zhmc_storage_group_list',
+    'zhmc_user_list',
+    'zhmc_user_pattern_list',
+    'zhmc_user_role_list'."
+  - "Added the 'full_properties' input parameter to the following list modules:
+    'zhmc_ldap_server_definition_list'."

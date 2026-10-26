@@ -99,17 +99,33 @@ partition_name
   | **type**: str
 
 
-full_properties
-  If True, all properties of each NIC will be returned. Default: False.
+additional_properties
+  List of additional properties to be returned for each NIC, in addition to the default properties (see result description).
 
-  Note: A loop of 'Get NIC Properties' operations will be executed regardless of the value of :literal:`full\_properties` because the NIC name cannot be determined otherwise.
+  Mutually exclusive with :literal:`full\_properties`.
+
+  The property names are specified with underscores instead of hyphens.
+
+  Depending on the HMC version, more properties than those specified may be returned, but you should not rely on that.
+
+  | **required**: False
+  | **type**: list
+  | **elements**: str
+
+
+full_properties
+  If True, all readable properties of each NIC will be returned. Default: False.
+
+  Mutually exclusive with :literal:`additional\_properties`.
+
+  Note: It is preferable from a performance perspective to use the :literal:`additional\_properties` parameter instead.
 
   | **required**: False
   | **type**: bool
 
 
 expand_names
-  If True and :literal:`full\_properties` is True, additional artificial properties will be returned for the names and other identification of the backing adapter and port. See the return value for details.
+  If True, additional artificial properties will be returned for the names of the backing adapter and port. See the return value for details.
 
   | **required**: False
   | **type**: bool
@@ -206,28 +222,28 @@ nics
     | **type**: str
 
   {additional_property}
-    Additional properties requested via :literal:`full\_properties`. The property names will have underscores instead of hyphens.
+    Additional properties requested via :literal:`full\_properties` or :literal:`additional\_properties`. The property names will have underscores instead of hyphens.
 
     | **type**: raw
 
   adapter_id
     Adapter ID (PCHID) of the backing adapter of the NIC.
 
-    Only present if :literal:`expand\_names` is True and :literal:`full\_properties` is True.
+    Only present if :literal:`expand\_names` is True.
 
     | **type**: str
 
   adapter_name
     Name of the backing adapter of the NIC.
 
-    Only present if :literal:`expand\_names` is True and :literal:`full\_properties` is True.
+    Only present if :literal:`expand\_names` is True.
 
     | **type**: str
 
   adapter_port
     Port index of the backing port of the NIC.
 
-    Only present if :literal:`expand\_names` is True and :literal:`full\_properties` is True.
+    Only present if :literal:`expand\_names` is True.
 
     | **type**: str
 

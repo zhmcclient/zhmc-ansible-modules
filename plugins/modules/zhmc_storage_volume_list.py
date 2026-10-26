@@ -175,23 +175,19 @@ options:
         in addition to the default properties (see result description).
       - Mutually exclusive with O(full_properties).
       - The property names are specified with underscores instead of hyphens.
-      - Not all properties defined in the data model are supported. For
-        supported properties, see the description of query parameter
-        "additional-properties" in the "List Storage Volumes of a Storage Group"
-        operation in the R(HMC API,HMC API) book.
+      - Depending on the HMC version, more properties than those specified
+        may be returned, but you should not rely on that.
     type: list
     elements: str
     required: false
     default: []
   full_properties:
     description:
-      - "If True, all properties of each storage volume will be returned.
-        Default: False."
+      - "If True, all readable properties of each storage volume will be
+        returned. Default: False."
       - Mutually exclusive with O(additional_properties).
-      - "Note: Setting this to True causes a loop of 'Get Storage Group
-        Properties' operations to be executed. It is preferable from a
-        performance perspective to use the O(additional_properties) parameter
-        instead."
+      - "Note: It is preferable from a performance perspective to use the
+        O(additional_properties) parameter instead."
     type: bool
     required: false
     default: false
@@ -269,7 +265,8 @@ storage_volumes:
       type: str
       choices: ['boot', 'data']
     "{additional_property}":
-      description: Additional properties requested via O(full_properties).
+      description: Additional properties requested via O(full_properties) or
+        O(additional_properties).
         The property names will have underscores instead of hyphens.
       type: raw
   sample:
@@ -291,7 +288,8 @@ from ansible.module_utils.basic import AnsibleModule, \
 
 from ..module_utils.common import log_init, open_session, close_session, \
     hmc_auth_parameter, Error, ParameterError, \
-    common_fail_on_import_errors, parse_hmc_host, blanked_params  # noqa: E402
+    common_fail_on_import_errors, parse_hmc_host, blanked_params, \
+    check_mutually_exclusive  # noqa: E402
 
 try:
     import zhmcclient
@@ -325,10 +323,10 @@ def perform_list(params):
         [p.replace('_', '-') for p in params['additional_properties']]
     full_properties = params['full_properties']
 
-    if additional_properties and full_properties:
-        raise ParameterError(
-            "The 'additional_properties' and 'full_properties' module "
-            "parameters are mutually exclusive but both are specified.")
+    check_mutually_exclusive(
+        params,
+        name1="additional_properties", name2="full_properties",
+        default1=False, default2=False)
 
     session, logoff = open_session(params)
     try:
