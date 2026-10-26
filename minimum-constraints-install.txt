@@ -34,7 +34,8 @@ importlib-resources==5.0.0; python_version <= '3.11'  # Python 3.12 has importli
 
 # Direct dependencies for install, except ansible/ansible-core (must be consistent with requirements.txt)
 
-zhmcclient==1.26.0
+# TODO-ZHMC: Enable 1.27.0 once released
+# zhmcclient==1.27.0
 
 
 # Indirect dependencies for install that are needed for some reason (must be consistent with requirements.txt)

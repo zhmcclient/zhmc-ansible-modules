@@ -85,6 +85,31 @@ hmc_auth
 
 
 
+additional_properties
+  List of additional properties to be returned for each LDAP server definition, in addition to the default properties (see result description).
+
+  Mutually exclusive with :literal:`full\_properties`.
+
+  The property names are specified with underscores instead of hyphens.
+
+  Depending on the HMC version, more properties than those specified may be returned, but you should not rely on that.
+
+  | **required**: False
+  | **type**: list
+  | **elements**: str
+
+
+full_properties
+  If True, all readable properties of each LDAP server definition will be returned. Default: False.
+
+  Mutually exclusive with :literal:`additional\_properties`.
+
+  Note: It is preferable from a performance perspective to use the :literal:`additional\_properties` parameter instead.
+
+  | **required**: False
+  | **type**: bool
+
+
 log_file
   File path of a log file to which the logic flow of this module as well as interactions with the HMC are logged. If null, logging will be propagated to the Python root logger.
 

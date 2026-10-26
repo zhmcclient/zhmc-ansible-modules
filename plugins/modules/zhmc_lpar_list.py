@@ -121,22 +121,19 @@ options:
         addition to the default properties (see result description).
       - Mutually exclusive with O(full_properties).
       - The property names are specified with underscores instead of hyphens.
-      - On HMCs with an API version below 4.10 (= HMC version 2.16.0 plus some
-        post-GA updates), all properties of each LPAR will be returned if this
-        parameter is specified, but you should not rely on that.
+      - Depending on the HMC version, more properties than those specified
+        may be returned, but you should not rely on that.
     type: list
     elements: str
     required: false
     default: []
   full_properties:
     description:
-      - "If True, all properties of each LPAR will be returned.
+      - "If True, all readable properties of each LPAR will be returned.
         Default: False."
       - Mutually exclusive with O(additional_properties).
-      - "Note: Setting this to True causes a loop of 'Get Logical Partition
-        Properties' operations to be executed. It is preferable from a
-        performance perspective to use the O(additional_properties) parameter
-        instead."
+      - "Note: It is preferable from a performance perspective to use the
+        O(additional_properties) parameter instead."
     type: bool
     required: false
     default: false
@@ -237,8 +234,8 @@ from ansible.module_utils.basic import AnsibleModule, \
     missing_required_lib  # noqa: E402
 
 from ..module_utils.common import log_init, open_session, close_session, \
-    hmc_auth_parameter, Error, ParameterError, \
-    common_fail_on_import_errors, parse_hmc_host, blanked_params  # noqa: E402
+    hmc_auth_parameter, Error, common_fail_on_import_errors, \
+    parse_hmc_host, blanked_params, check_mutually_exclusive  # noqa: E402
 
 try:
     import zhmcclient
@@ -266,10 +263,10 @@ def perform_list(params):
         [p.replace('_', '-') for p in params['additional_properties']]
     full_properties = params['full_properties']
 
-    if additional_properties and full_properties:
-        raise ParameterError(
-            "The 'additional_properties' and 'full_properties' module "
-            "parameters are mutually exclusive but both are specified.")
+    check_mutually_exclusive(
+        params,
+        name1="additional_properties", name2="full_properties",
+        default1=False, default2=False)
 
     session, logoff = open_session(params)
     try:
@@ -287,65 +284,52 @@ def perform_list(params):
         #
         # The "List Logical Partitions of a CPC" operation does not support an
         # 'additional-properties' query parameter as of HMC API version 4.10,
-        # HMC version 2.16 after initial GA).
+        # HMC version 2.16 after initial GA) (but the zhmcclient package
+        # since its version 1.27.0 covers for that and supports the
+        # 'additional_properties' parameter in list() for all HMC versions).
+
         av = client.query_api_version()
         hmc_version_info = [int(x) for x in av['hmc-version'].split('.')]
         api_version_info = [av['api-major-version'], av['api-minor-version']]
-        if hmc_version_info < [2, 14, 0]:
+
+        if hmc_version_info < [2, 14, 0] or \
+                additional_properties and api_version_info < [4, 10]:
+
             # Use the "List Logical Partitions of a CPC" operation.
-            if additional_properties:
-                # Get full properties instead of specific additional properties
-                # since "List Logical Partitions of a CPC" does not support
-                # additional-properties.
-                additional_properties = None
-                full_properties = True
-            if full_properties:
-                prop_str = "full properties"
-            else:
-                prop_str = "default properties"
             if cpc_name:
-                LOGGER.debug("Listing LPARs of CPC %s (Find CPC, "
-                             "then list LPARs with %s)",
-                             cpc_name, prop_str)
+                LOGGER.debug("Listing LPARs of CPC %s via find CPC and "
+                             "list LPARs of the CPC", cpc_name)
                 cpc = client.cpcs.find(name=cpc_name)
-                lpars = cpc.lpars.list(full_properties=full_properties)
+                lpars = cpc.lpars.list(
+                    full_properties=full_properties,
+                    additional_properties=additional_properties)
             else:
-                LOGGER.debug("Listing LPARs of all managed CPCs (List "
-                             "CPCs, then on each CPC list LPARs with %s)",
-                             prop_str)
+                LOGGER.debug("Listing LPARs of all managed CPCs via list "
+                             "CPCs and list LPARs on each CPC")
                 cpcs = client.cpcs.list()
                 lpars = []
                 for cpc in cpcs:
-                    _lpars = cpc.lpars.list(full_properties=full_properties)
+                    _lpars = cpc.lpars.list(
+                        full_properties=full_properties,
+                        additional_properties=additional_properties)
                     lpars.extend(_lpars)
+
         else:
+
             # Use the "List Permitted Logical Partitions" operation.
-            if additional_properties and api_version_info < [4, 10]:
-                # Get full properties instead of specific additional properties
-                # since "List Permitted Logical Partitions" does not support
-                # additional-properties on these early 2.16 HMC versions.
-                additional_properties = None
-                full_properties = True
-            if full_properties:
-                prop_str = "full properties"
-            elif additional_properties:
-                prop_str = "additional properties"
-            else:
-                prop_str = "default properties"
             if cpc_name:
-                LOGGER.debug("Listing LPARs of CPC %s "
-                             "(List permitted LPARs with %s)",
-                             cpc_name, prop_str)
+                LOGGER.debug("Listing LPARs of CPC %s via list permitted "
+                             "LPARs", cpc_name)
                 filter_args = {'cpc-name': cpc_name}
             else:
-                LOGGER.debug("Listing LPARs of all managed CPCs "
-                             "(List permitted LPARs with %s)",
-                             prop_str)
+                LOGGER.debug("Listing LPARs of all managed CPCs via "
+                             "list permitted LPARs")
                 filter_args = None
             lpars = client.consoles.console.list_permitted_lpars(
                 filter_args=filter_args,
                 additional_properties=additional_properties,
                 full_properties=full_properties)
+
         # The default exception handling is sufficient for the above.
 
         se_versions = {}

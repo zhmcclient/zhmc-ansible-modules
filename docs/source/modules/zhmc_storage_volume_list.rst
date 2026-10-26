@@ -159,7 +159,7 @@ additional_properties
 
   The property names are specified with underscores instead of hyphens.
 
-  Not all properties defined in the data model are supported. For supported properties, see the description of query parameter "additional\-properties" in the "List Storage Volumes of a Storage Group" operation in the :ref:`HMC API <HMC API>` book.
+  Depending on the HMC version, more properties than those specified may be returned, but you should not rely on that.
 
   | **required**: False
   | **type**: list
@@ -167,11 +167,11 @@ additional_properties
 
 
 full_properties
-  If True, all properties of each storage volume will be returned. Default: False.
+  If True, all readable properties of each storage volume will be returned. Default: False.
 
   Mutually exclusive with :literal:`additional\_properties`.
 
-  Note: Setting this to True causes a loop of 'Get Storage Group Properties' operations to be executed. It is preferable from a performance perspective to use the :literal:`additional\_properties` parameter instead.
+  Note: It is preferable from a performance perspective to use the :literal:`additional\_properties` parameter instead.
 
   | **required**: False
   | **type**: bool
@@ -289,7 +289,7 @@ storage_volumes
     | **type**: str
 
   {additional_property}
-    Additional properties requested via :literal:`full\_properties`. The property names will have underscores instead of hyphens.
+    Additional properties requested via :literal:`full\_properties` or :literal:`additional\_properties`. The property names will have underscores instead of hyphens.
 
     | **type**: raw
 

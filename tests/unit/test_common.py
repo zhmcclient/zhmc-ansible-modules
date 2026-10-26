@@ -1047,3 +1047,127 @@ def test_common_hyphened_value(desc, in_value, exp_value):
     assert_disparate_equal(in_value, saved_value)
 
     assert act_value == exp_value
+
+
+COMMON_CHECK_MUTUALLY_EXCLUSIVE_TESTCASES = [
+    # Testcases for test_common_hyphened_value()
+    # The list items are tuples with the following items:
+    # - desc (string): description of the testcase.
+    # - in_kwargs (dict): Input kwargs.
+    # - exp_pass (bool): Indicates whether the check is expected to pass.
+
+    (
+        "Two boolean parms with default False, none provided",
+        {
+            "params": {"parm1": False, "parm2": False},
+            "name1": "parm1",
+            "name2": "parm2",
+            "default1": False,
+            "default2": False,
+        },
+        True
+    ),
+    (
+        "Two boolean parms with default False, first one provided",
+        {
+            "params": {"parm1": True, "parm2": False},
+            "name1": "parm1",
+            "name2": "parm2",
+            "default1": False,
+            "default2": False,
+        },
+        True
+    ),
+    (
+        "Two boolean parms with default False, second one provided",
+        {
+            "params": {"parm1": False, "parm2": True},
+            "name1": "parm1",
+            "name2": "parm2",
+            "default1": False,
+            "default2": False,
+        },
+        True
+    ),
+    (
+        "Two boolean parms with default False, both provided",
+        {
+            "params": {"parm1": True, "parm2": True},
+            "name1": "parm1",
+            "name2": "parm2",
+            "default1": False,
+            "default2": False,
+        },
+        False
+    ),
+
+    (
+        "Two string parms with default None, none provided",
+        {
+            "params": {"parm1": None, "parm2": None},
+            "name1": "parm1",
+            "name2": "parm2",
+            "default1": None,
+            "default2": None,
+        },
+        True
+    ),
+    (
+        "Two string parms with default None, first one provided",
+        {
+            "params": {"parm1": "foo", "parm2": None},
+            "name1": "parm1",
+            "name2": "parm2",
+            "default1": None,
+            "default2": None,
+        },
+        True
+    ),
+    (
+        "Two string parms with default None, second one provided",
+        {
+            "params": {"parm1": None, "parm2": "bar"},
+            "name1": "parm1",
+            "name2": "parm2",
+            "default1": None,
+            "default2": None,
+        },
+        True
+    ),
+    (
+        "Two string parms with default None, both provided",
+        {
+            "params": {"parm1": "foo", "parm2": "bar"},
+            "name1": "parm1",
+            "name2": "parm2",
+            "default1": None,
+            "default2": None,
+        },
+        False
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "desc, in_kwargs, exp_pass",
+    COMMON_CHECK_MUTUALLY_EXCLUSIVE_TESTCASES)
+def test_common_check_mutually_exclusive(desc, in_kwargs, exp_pass):
+    # pylint: disable=unused-argument
+    """
+    Test the check_mutually_exclusive() function.
+    """
+
+    if exp_pass:
+
+        # The code to be tested
+        common.check_mutually_exclusive(**in_kwargs)
+
+    else:
+        with pytest.raises(common.ParameterError) as exc_info:
+
+            # The code to be tested
+            common.check_mutually_exclusive(**in_kwargs)
+
+        exc = exc_info.value
+        exc_msg = str(exc)
+        re.search(r"module parameters are mutually exclusive", exc_msg)
