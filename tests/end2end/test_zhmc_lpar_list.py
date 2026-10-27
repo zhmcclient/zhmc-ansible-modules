@@ -21,7 +21,6 @@ __metaclass__ = type
 
 from unittest import mock
 import pytest
-import urllib3
 import zhmcclient
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
@@ -29,15 +28,9 @@ from zhmcclient.testutils import classic_mode_cpcs  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
 
 from plugins.modules import zhmc_lpar_list
-from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth, \
-    setup_logging
+from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from .conftest import LOG_FILE
 
-urllib3.disable_warnings()
-
-# Create log file
-LOGGING = False
-
-LOG_FILE = 'test_zhmc_lpar_list.log' if LOGGING else None
 
 # Names of LPAR properties (with underscores) that are volatile, i.e. that may
 # change their values on subsequent retrievals even when no other change is
@@ -148,7 +141,7 @@ def assert_lpar_list(lpar_list, exp_lpar_dict):
 @mock.patch("plugins.modules.zhmc_lpar_list.AnsibleModule", autospec=True)
 def test_zhmc_lpar_list(
         ansible_mod_cls, check_mode, property_flags, with_cpc,
-        classic_mode_cpcs):  # noqa: F811, E501
+        test_logger, classic_mode_cpcs):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name
     """
     Test the zhmc_lpar_list module with classic mode CPCs.
@@ -156,15 +149,14 @@ def test_zhmc_lpar_list(
     if not classic_mode_cpcs:
         pytest.skip("HMC definition does not include any CPCs in classic mode")
 
-    logger = setup_logging(LOGGING, 'test_zhmc_lpar_list', LOG_FILE)
-    logger.debug("Entered test function with: "
-                 "check_mode=%r, property_flags=%r, with_cpc=%r",
-                 check_mode, property_flags, with_cpc)
+    test_logger.debug(
+        "Test parameters: check_mode=%r, property_flags=%r, with_cpc=%r",
+        check_mode, property_flags, with_cpc)
 
     for cpc in classic_mode_cpcs:
         assert not cpc.dpm_enabled
 
-        logger.debug("Testing with CPC %s", cpc.name)
+        test_logger.debug("Testing with CPC %s", cpc.name)
 
         session = cpc.manager.session
 
@@ -181,7 +173,7 @@ def test_zhmc_lpar_list(
             'additional_properties', [])
 
         # Determine the expected LPARs on the HMC
-        logger.debug("Listing expected LPARs")
+        test_logger.debug("Listing expected LPARs")
         av = client.query_api_version()
         hmc_version_info = [int(x) for x in av['hmc-version'].split('.')]
         api_version_info = [av['api-major-version'], av['api-minor-version']]
@@ -223,10 +215,11 @@ def test_zhmc_lpar_list(
                 full_properties=_full_properties)
         exp_lpar_dict = {}
         se_versions = {}
-        logger.debug("Processing expected LPARs")
+        test_logger.debug("Processing expected LPARs")
         for lpar in exp_lpars:
-            logger.debug("Expected properties of LPAR %r on CPC %r are: %r",
-                         lpar.name, cpc.name, dict(lpar.properties))
+            test_logger.debug(
+                "Expected properties of LPAR %r on CPC %r are: %r",
+                lpar.name, cpc.name, dict(lpar.properties))
             cpc = lpar.manager.parent
             try:
                 se_version = se_versions[cpc.name]
@@ -234,8 +227,8 @@ def test_zhmc_lpar_list(
                 try:
                     se_version = lpar.properties['se-version']
                 except KeyError:
-                    logger.debug("Getting expected se-version of CPC %r",
-                                 cpc.name)
+                    test_logger.debug(
+                        "Getting expected se-version of CPC %r", cpc.name)
                     se_version = cpc.get_property('se-version')
                 se_versions[cpc.name] = se_version
             exp_properties = {
@@ -277,5 +270,3 @@ def test_zhmc_lpar_list(
         assert changed is False
 
         assert_lpar_list(lpar_list, exp_lpar_dict)
-
-    logger.debug("Leaving test function")

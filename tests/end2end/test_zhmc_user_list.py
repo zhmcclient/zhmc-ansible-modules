@@ -21,7 +21,6 @@ __metaclass__ = type
 
 from unittest import mock
 import pytest
-import urllib3
 import zhmcclient
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
@@ -29,13 +28,7 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 
 from plugins.modules import zhmc_user_list
 from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
-
-urllib3.disable_warnings()
-
-# Print debug messages
-DEBUG = False
-
-LOG_FILE = 'zhmc_user_list.log' if DEBUG else None
+from .conftest import LOG_FILE
 
 
 def get_module_output(mod_obj):

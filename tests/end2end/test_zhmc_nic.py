@@ -22,23 +22,15 @@ __metaclass__ = type
 from unittest import mock
 import random
 import pytest
-import urllib3
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 from zhmcclient.testutils import dpm_mode_cpcs  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
 
 from plugins.modules import zhmc_nic
-from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth, \
-    setup_logging
+from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from .conftest import LOG_FILE
 
-urllib3.disable_warnings()
-
-DEBUG = False  # Print debug messages
-
-# Logging for zhmcclient HMC interactions and test functions
-LOGGING = True
-LOG_FILE = 'test_zhmc_nic.log' if LOGGING else None
 
 # NIC properties that are not always present, but only under certain
 # conditions. Properties are specified with hyphens.
@@ -127,7 +119,8 @@ def assert_nic_props(act_props, exp_props, where):
 )
 @mock.patch("plugins.modules.zhmc_nic.AnsibleModule", autospec=True)
 def test_zhmc_nic_facts(
-        ansible_mod_cls, check_mode, dpm_mode_cpcs):  # noqa: F811, E501
+        ansible_mod_cls, check_mode,
+        test_logger, dpm_mode_cpcs):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_nic module with state=facts on DPM mode CPCs.
@@ -135,9 +128,7 @@ def test_zhmc_nic_facts(
     if not dpm_mode_cpcs:
         pytest.skip("HMC definition does not include any CPCs in DPM mode")
 
-    logger = setup_logging(LOGGING, 'test_zhmc_nic_facts', LOG_FILE)
-    logger.debug("Entered test function with: check_mode=%r",
-                 check_mode)
+    test_logger.debug("Test parameters: check_mode=%r", check_mode)
 
     for cpc in dpm_mode_cpcs:
         assert cpc.dpm_enabled
@@ -157,8 +148,9 @@ def test_zhmc_nic_facts(
         nics = partition.nics.list()
         nic = random.choice(nics)
 
-        logger.debug("Testing with CPC %s, partition %s, NIC %s",
-                     cpc.name, partition.name, nic.name)
+        test_logger.debug(
+            "Testing with CPC %s, partition %s, NIC %s",
+            cpc.name, partition.name, nic.name)
 
         # Determine expected NIC properties
         exp_properties = dict(nic.properties)
@@ -168,8 +160,9 @@ def test_zhmc_nic_facts(
             adapter.get_property('adapter-id')
         exp_properties['adapter-name'] = adapter.name
         exp_properties['adapter-port'] = port.get_property('index')
-        logger.debug("Expected properties of NIC %r are: %r",
-                     nic.name, exp_properties)
+        test_logger.debug(
+            "Expected properties of NIC %r are: %r",
+            nic.name, exp_properties)
 
         where = f"NIC '{nic.name}'"
 
@@ -206,8 +199,6 @@ def test_zhmc_nic_facts(
 
         # Check the presence and absence of properties in the result
         assert_nic_props(nic_properties, exp_properties, where)
-
-    logger.debug("Leaving test function")
 
 
 # TODO: Add tests for state=present

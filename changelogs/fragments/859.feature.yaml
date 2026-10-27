@@ -1,0 +1,7 @@
+minor_changes:
+  - Test - Improved the approach for logging in the end2end tests.
+    Logging is now enabled by setting the env var TESTLOGFILE to the path name
+    of a log file. If not set, logging is disabled. The entry into and exit
+    from end2end test function calls is now logged automatically, if logging
+    is enabled. The previously existing debug prints have all been migrated
+    to use logging.

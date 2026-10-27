@@ -23,7 +23,6 @@ import random
 import re
 from unittest import mock
 import pytest
-import urllib3
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 from zhmcclient.testutils import classic_mode_cpcs  # noqa: F401, E501
@@ -31,12 +30,8 @@ from zhmcclient.testutils import classic_mode_cpcs  # noqa: F401, E501
 
 from plugins.modules import zhmc_lpar_command
 from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from .conftest import LOG_FILE
 from ..utils import RunMode, handle_runmode
-
-urllib3.disable_warnings()
-
-LOGGING = False
-LOG_FILE = 'zhmc_lpar_command.log' if LOGGING else None
 
 
 def get_module_output(mod_obj):
@@ -134,7 +129,7 @@ TESTCASES_ZHMC_LPAR_COMMAND = [
 def test_zhmc_lpar_command(
         ansible_mod_cls, check_mode,
         desc, in_params, act_mode, os_type, command, exp_output, runmode,
-        classic_mode_cpcs, request):  # noqa: F811, E501
+        request, classic_mode_cpcs):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_lpar_command module with classic mode CPCs.

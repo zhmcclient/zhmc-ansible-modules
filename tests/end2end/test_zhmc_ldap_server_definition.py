@@ -24,7 +24,6 @@ from unittest import mock
 import random
 from pprint import pformat
 import pytest
-import urllib3
 import zhmcclient
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
@@ -32,14 +31,9 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 
 from plugins.modules import zhmc_ldap_server_definition
 from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from .conftest import LOG_FILE
 from ..utils import RunMode, handle_runmode
 
-urllib3.disable_warnings()
-
-# Print debug messages
-DEBUG = False
-
-LOG_FILE = 'zhmc_ldap_server_definition.log' if DEBUG else None
 
 # Properties in the returned LDAP server definition facts that are not always
 # present, but only under certain conditions. The comments state the condition
@@ -325,10 +319,10 @@ LSD_ABSENT_PRESENT_TESTCASES = [
             autospec=True)
 def test_zhmc_lsd_absent_present(
         ansible_mod_cls,
-        desc, initial_lsd_props, input_state,
-        input_props, exp_lsd_props, exp_changed, runmode,
+        desc, initial_lsd_props, input_state, input_props, exp_lsd_props,
+        exp_changed, runmode,
         check_mode, diff_case,
-        hmc_session, request):  # noqa: F811, E501
+        request, hmc_session):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_ldap_server_definition module with state=absent/present.

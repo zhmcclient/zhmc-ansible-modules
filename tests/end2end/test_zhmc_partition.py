@@ -26,7 +26,6 @@ import re
 import random
 from pprint import pformat
 import pytest
-import urllib3
 import zhmcclient
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
@@ -35,17 +34,10 @@ from zhmcclient.testutils import dpm_mode_cpcs  # noqa: F401, E501
 
 from plugins.modules import zhmc_partition
 from plugins.module_utils.common import pull_partition_status
-from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth, \
-    setup_logging
+from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from .conftest import LOG_FILE
 from ..utils import RunMode, handle_runmode
 
-urllib3.disable_warnings()
-
-DEBUG = False  # Print debug messages
-
-# Logging for zhmcclient HMC interactions and test functions
-LOGGING = False
-LOG_FILE = 'test_zhmc_partition.log' if LOGGING else None
 
 # Partition properties that are not always present, but only under certain
 # conditions.
@@ -141,7 +133,7 @@ def storage_mgmt_enabled(cpc):
     return False
 
 
-def setup_partition(hd, cpc, name, properties, status='stopped'):
+def setup_partition(test_logger, hd, cpc, name, properties, status='stopped'):
     """
     Create a new partition on the specified CPC, for test purposes.
 
@@ -164,8 +156,8 @@ def setup_partition(hd, cpc, name, properties, status='stopped'):
 
     try:
 
-        if DEBUG:
-            print(f"Debug: setup_partition: Creating test partition {name!r}")
+        test_logger.debug(
+            "setup_partition: Creating test partition %r", name)
         try:
             partition = cpc.partitions.create(props)
         except zhmcclient.HTTPError as exc:
@@ -212,13 +204,13 @@ def setup_partition(hd, cpc, name, properties, status='stopped'):
         # The partition is initially in status 'stopped'.
         # Establish the desired partition status.
         if status == 'stopped':
-            if DEBUG:
-                print(f"Debug: setup_partition: Test partition {name!r} is "
-                      "already in status 'stopped'.")
+            test_logger.debug(
+                "setup_partition: Test partition %r is already in status "
+                "'stopped'.", name)
         elif status == 'starting':
-            if DEBUG:
-                print("Debug: setup_partition: Getting test partition "
-                      f"{name!r} into status 'starting'")
+            test_logger.debug(
+                "setup_partition: Getting test partition %r into status '"
+                "starting'", name)
             try:
                 partition.start(wait_for_completion=False)
             except zhmcclient.HTTPError as exc:
@@ -244,13 +236,13 @@ def setup_partition(hd, cpc, name, properties, status='stopped'):
                     "setup_partition: Starting test partition without waiting "
                     "for completion did not result in status 'starting', but "
                     f"in status {current_status!r}")
-            if DEBUG:
-                print("Debug: setup_partition: Successfully got test "
-                      f"partition {name!r} into status 'starting'")
+            test_logger.debug(
+                "setup_partition: Successfully got test partition %r into "
+                "status 'starting'", name)
         elif status == 'stopping':
-            if DEBUG:
-                print("Debug: setup_partition: Getting test partition "
-                      f"{name!r} into status 'stopping'")
+            test_logger.debug(
+                "setup_partition: Getting test partition %r into status "
+                "'stopping'", name)
             try:
                 job = partition.start(wait_for_completion=False)
                 job.wait_for_completion()
@@ -270,9 +262,9 @@ def setup_partition(hd, cpc, name, properties, status='stopped'):
                       "setup_partition: Stopping test partition without "
                       "waiting for completion did not result in status "
                       f"'stopping', but in status {current_status!r}")
-            if DEBUG:
-                print("Debug: setup_partition: Successfully got test partition "
-                      f"{name!r} into status 'stopping'")
+            test_logger.debug(
+                "setup_partition: Successfully got test partition %r into "
+                "status 'stopping'", name)
         elif status == 'active':
             ptype = partition.prop('type')
             if ptype != 'ssc':
@@ -280,9 +272,9 @@ def setup_partition(hd, cpc, name, properties, status='stopped'):
                       "setup_partition: Testcase definition error: Status "
                       "'active' can only be requested for SSC-type partitions, "
                       f"but partition {name!r} has type {ptype!r}")
-            if DEBUG:
-                print("Debug: setup_partition: Getting SSC test partition "
-                      f"{name!r} into status 'active'")
+            test_logger.debug(
+                "setup_partition: Getting SSC test partition %r into status "
+                "'active'", name)
             try:
                 job = partition.start(wait_for_completion=False)
                 job.wait_for_completion()
@@ -311,9 +303,9 @@ def setup_partition(hd, cpc, name, properties, status='stopped'):
                     f"setup_partition: Starting SSC test partition {name!r} "
                     "and waiting for completion did not result in status "
                     f"'active', but in status {current_status!r}")
-            if DEBUG:
-                print("Debug: setup_partition: Successfully got SSC test "
-                      f"partition {name!r} into status 'active'")
+            test_logger.debug(
+                "setup_partition: Successfully got SSC test partition %r "
+                "into status 'active'", name)
         elif status == 'paused':
             ptype = partition.prop('type')
             if ptype != 'linux':
@@ -321,9 +313,9 @@ def setup_partition(hd, cpc, name, properties, status='stopped'):
                       "setup_partition: Testcase definition error: Status "
                       "'paused' can only be requested for linux-type "
                       f"partitions, but partition {name!r} has type {ptype!r}")
-            if DEBUG:
-                print("Debug: setup_partition: Getting Linux test partition "
-                      f"{name!r} into status 'paused'")
+            test_logger.debug(
+                "setup_partition: Getting Linux test partition %r into status "
+                "'paused'", name)
             try:
                 job = partition.start(wait_for_completion=False)
                 job.wait_for_completion()
@@ -337,9 +329,9 @@ def setup_partition(hd, cpc, name, properties, status='stopped'):
                     f"setup_partition: Starting Linux test partition {name!r} "
                     "and waiting for completion did not result in status "
                     f"'paused', but in status {current_status!r}")
-            if DEBUG:
-                print("Debug: setup_partition: Successfully got linux test "
-                      f"partition {name!r} into status 'paused'")
+            test_logger.debug(
+                "setup_partition: Successfully got linux test partition %r "
+                "into status 'paused'", name)
         else:
             raise AssertionError(
                   "setup_partition: Testcase definition error: Status "
@@ -347,14 +339,14 @@ def setup_partition(hd, cpc, name, properties, status='stopped'):
                   f"{name!r}.")
 
     except zhmcclient.Error as exc:
-        teardown_partition(cpc, name)
+        teardown_partition(test_logger, cpc, name)
         pytest.skip("Error in HMC operation during test partition setup: "
                     f"{exc}")
 
     return partition
 
 
-def teardown_partition(cpc, name):
+def teardown_partition(test_logger, cpc, name):
     """
     Delete a partition created for test purposes by setup_partition().
 
@@ -380,9 +372,9 @@ def teardown_partition(cpc, name):
 
     status = pull_partition_status(partition)
     if status not in ('stopped', 'reservation-error'):
-        if DEBUG:
-            print("Debug: teardown_partition: Stopping test partition "
-                  f"{name!r} with status {status!r}")
+        test_logger.debug(
+            "teardown_partition: Stopping test partition %r with status %r",
+            name, status)
         try:
             job = partition.stop(wait_for_completion=False)
             job.wait_for_completion()
@@ -391,17 +383,16 @@ def teardown_partition(cpc, name):
                   f"{name!r} with status {status!r} on CPC {cpc.name!r} "
                   f"failed with: {exc}")
 
-    if DEBUG:
-        print(f"Debug: teardown_partition: Deleting test partition {name!r}")
+    test_logger.debug(
+        "teardown_partition: Deleting test partition %r", name)
     try:
         partition.delete()
     except zhmcclient.Error as exc:
         print(f"Warning: teardown_partition: Deleting test partition {name!r} "
               f"on CPC {cpc.name!r} failed with: {exc} - please clean it up "
               "manually!")
-    if DEBUG:
-        print("Debug: teardown_partition: Successfully deleted test partition "
-              f"{name!r}")
+    test_logger.debug(
+        "teardown_partition: Successfully deleted test partition %r", name)
 
 
 def unique_partition_name():
@@ -637,15 +628,16 @@ PARTITION_FACTS_TESTCASES = [
     ]
 )
 @pytest.mark.parametrize(
-    "desc, select_properties, exp_prop_names, not_prop_names, "
-    "exp_msg, exp_changed, runmode",
+    "desc, select_properties, exp_prop_names, not_prop_names, exp_msg, "
+    "exp_changed, runmode",
     PARTITION_FACTS_TESTCASES)
 @mock.patch("plugins.modules.zhmc_partition.AnsibleModule", autospec=True)
 def test_zhmc_partition_facts(
         ansible_mod_cls,
-        desc, select_properties, exp_prop_names, not_prop_names,
-        exp_msg, exp_changed, runmode,
-        check_mode, dpm_mode_cpcs, request):  # noqa: F811, E501
+        desc, select_properties, exp_prop_names, not_prop_names, exp_msg,
+        exp_changed, runmode,
+        check_mode,
+        request, test_logger, dpm_mode_cpcs):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_partition module with state=facts on DPM mode CPCs.
@@ -654,8 +646,6 @@ def test_zhmc_partition_facts(
 
     if not dpm_mode_cpcs:
         pytest.skip("HMC definition does not include any CPCs in DPM mode")
-
-    setup_logging(LOGGING, 'test_zhmc_partition_facts', LOG_FILE)
 
     for cpc in dpm_mode_cpcs:
         assert cpc.dpm_enabled
@@ -917,7 +907,8 @@ def test_zhmc_partition_state(
         ansible_mod_cls,
         desc, initial_props, initial_status, input_state, input_props, exp_msg,
         exp_props, exp_changed, runmode,
-        check_mode, dpm_mode_cpcs, request):  # noqa: F811, E501
+        check_mode,
+        request, test_logger, dpm_mode_cpcs):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_partition module with different initial and target state.
@@ -926,8 +917,6 @@ def test_zhmc_partition_state(
 
     if not dpm_mode_cpcs:
         pytest.skip("HMC definition does not include any CPCs in DPM mode")
-
-    setup_logging(LOGGING, 'test_zhmc_partition_state', LOG_FILE)
 
     for cpc in dpm_mode_cpcs:
         assert cpc.dpm_enabled
@@ -956,7 +945,8 @@ def test_zhmc_partition_state(
         # Create initial partition, if specified so
         if initial_props is not None:
             setup_partition(
-                hd, cpc, partition_name, initial_props, initial_status)
+                test_logger, hd, cpc, partition_name, initial_props,
+                initial_status)
 
         try:
 
@@ -1036,7 +1026,7 @@ def test_zhmc_partition_state(
                     assert_partition_props(output_props, exp_props, where)
 
         finally:
-            teardown_partition(cpc, partition_name)
+            teardown_partition(test_logger, cpc, partition_name)
 
 
 # New values for updating properties.
@@ -1240,7 +1230,8 @@ NON_RETRIEVABLE_PROPS = ('boot_ftp_password', 'ssc_master_pw')
 )
 @mock.patch("plugins.modules.zhmc_partition.AnsibleModule", autospec=True)
 def test_zhmc_partition_properties(
-        ansible_mod_cls, type_state, check_mode, dpm_mode_cpcs):  # noqa: F811, E501
+        ansible_mod_cls, type_state, check_mode,
+        test_logger, dpm_mode_cpcs):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name
     """
     Test the zhmc_partition module with updating properties.
@@ -1248,8 +1239,6 @@ def test_zhmc_partition_properties(
 
     if not dpm_mode_cpcs:
         pytest.skip("HMC definition does not include any CPCs in DPM mode")
-
-    setup_logging(LOGGING, 'test_zhmc_partition_properties', LOG_FILE)
 
     partition_type, state = type_state
 
@@ -1286,7 +1275,7 @@ def test_zhmc_partition_properties(
             assert state == 'stopped'
             initial_status = 'stopped'
         partition = setup_partition(
-            hd, cpc, partition_name, create_props, initial_status)
+            test_logger, hd, cpc, partition_name, create_props, initial_status)
 
         try:
 
@@ -1329,8 +1318,7 @@ def test_zhmc_partition_properties(
 
             for update_item in update_items:
 
-                if DEBUG:
-                    print(f"Debug: Testcase: update_item={update_item!r}")
+                test_logger.debug("Testcase: update_item=%r", update_item)
 
                 where = f"update_item {update_item!r}"
 
@@ -1369,13 +1357,11 @@ def test_zhmc_partition_properties(
                         elif current_hmc_value != new_hmc_value:
                             exp_changed = True
 
-                    if DEBUG:
-                        print(f"Debug: Property {prop_hmc_name!r}: "
-                              f"update={update}, "
-                              f"update_while_active={update_while_active}, "
-                              f"current_hmc_value={current_hmc_value!r}, "
-                              f"new_value={new_value!r}, "
-                              f"new_hmc_value={new_hmc_value!r}")
+                    test_logger.debug(
+                        "Property %r: update=%s, update_while_active=%s, "
+                        "current_hmc_value=%r, new_value=%r, new_hmc_value=%r",
+                        prop_hmc_name, update, update_while_active,
+                        current_hmc_value, new_value, new_hmc_value)
                     update_props[prop_name] = new_value
                     if prop_name not in NON_RETRIEVABLE_PROPS:
                         exp_props[prop_hmc_name] = new_hmc_value
@@ -1383,28 +1369,25 @@ def test_zhmc_partition_properties(
                 if 'cp_processors' in update_props:
                     cpc_cp_count = cpc.get_property(
                         'processor-count-general-purpose')
-                    if DEBUG:
-                        print(f"Debug: CPC has {cpc_cp_count} CPs")
+                    test_logger.debug("CPC has %s CPs", cpc_cp_count)
                     if cpc_cp_count < 2:
-                        if DEBUG:
-                            print("Debug: CPC has not enough CPs; "
-                                  f"skipping update item: {update_item!r}")
+                        test_logger.debug(
+                            "CPC has not enough CPs; skipping update item: %r",
+                            update_item)
                         continue
                 if 'ifl_processors' in update_props:
                     cpc_ifl_count = cpc.get_property('processor-count-ifl')
-                    if DEBUG:
-                        print(f"Debug: CPC has {cpc_ifl_count} IFLs")
+                    test_logger.debug("CPC has %s IFLs", cpc_ifl_count)
                     if cpc_ifl_count < 2:
-                        if DEBUG:
-                            print("Debug: CPC has not enough IFLs; "
-                                  f"skipping update item: {update_item!r}")
+                        test_logger.debug(
+                            "CPC has not enough IFLs; skipping update item: %r",
+                            update_item)
                         continue
 
                 initial_props = copy.deepcopy(partition.properties)
 
-                if DEBUG:
-                    print("Debug: Calling module with "
-                          f"properties={update_props!r}")
+                test_logger.debug(
+                    "Calling module with properties=%r", update_props)
 
                 # Prepare module input parms (must be all required + optional)
                 params = {
@@ -1471,7 +1454,7 @@ def test_zhmc_partition_properties(
                 assert_partition_props(output_props, exp_props, where)
 
         finally:
-            teardown_partition(cpc, partition_name)
+            teardown_partition(test_logger, cpc, partition_name)
 
 
 @pytest.mark.parametrize(
@@ -1493,7 +1476,8 @@ def test_zhmc_partition_properties(
 )
 @mock.patch("plugins.modules.zhmc_partition.AnsibleModule", autospec=True)
 def test_zhmc_partition_boot_stovol(
-        ansible_mod_cls, type_state, via, check_mode, dpm_mode_cpcs):  # noqa: F811, E501
+        ansible_mod_cls, type_state, via, check_mode,
+        test_logger, dpm_mode_cpcs):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name
     """
     Test the zhmc_partition module when configuring boot from a storage volume.
@@ -1501,8 +1485,6 @@ def test_zhmc_partition_boot_stovol(
 
     if not dpm_mode_cpcs:
         pytest.skip("HMC definition does not include any CPCs in DPM mode")
-
-    setup_logging(LOGGING, 'test_zhmc_partition_boot_stovol', LOG_FILE)
 
     partition_type, state = type_state
 
@@ -1532,8 +1514,8 @@ def test_zhmc_partition_boot_stovol(
         assert partition_type == 'linux'
         create_props = STD_LINUX_PARTITION_HMC_INPUT_PROPS
         create_props['type'] = partition_type
-        partition = setup_partition(hd, cpc, partition_name, create_props,
-                                    state)
+        partition = setup_partition(
+            test_logger, hd, cpc, partition_name, create_props, state)
 
         stogrp = None
         try:
@@ -1568,8 +1550,7 @@ def test_zhmc_partition_boot_stovol(
                     'boot_storage_volume': boot_volume.uri,
                 }
 
-            if DEBUG:
-                print(f"Debug: Calling module with properties={update_props!r}")
+            test_logger.debug("Calling module with properties=%r", update_props)
 
             # Prepare module input parms (must be all required + optional)
             params = {
@@ -1633,7 +1614,7 @@ def test_zhmc_partition_boot_stovol(
             if stogrp:
                 partition.detach_storage_group(stogrp)
                 stogrp.delete()
-            teardown_partition(cpc, partition_name)
+            teardown_partition(test_logger, cpc, partition_name)
 
 
 PARTITION_ISO_MOUNT_TESTCASES = [
@@ -1702,7 +1683,8 @@ PARTITION_ISO_MOUNT_TESTCASES = [
 def test_zhmc_partition_iso_mount(
         ansible_mod_cls,
         desc, image_name, image_file, ins_file, exp_msg, exp_changed, runmode,
-        check_mode, dpm_mode_cpcs, request):  # noqa: F811, E501
+        check_mode,
+        request, test_logger, dpm_mode_cpcs):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_partition module with state='iso_mount'.
@@ -1732,8 +1714,8 @@ def test_zhmc_partition_iso_mount(
         # Create initial partition
         create_props = STD_LINUX_PARTITION_HMC_INPUT_PROPS
         create_props['type'] = 'linux'
-        partition = setup_partition(hd, cpc, partition_name, create_props,
-                                    'stopped')
+        partition = setup_partition(
+            test_logger, hd, cpc, partition_name, create_props, 'stopped')
 
         try:
 
@@ -1785,7 +1767,7 @@ def test_zhmc_partition_iso_mount(
             image_name = partition.get_property('boot-iso-image-name')
             if image_name:
                 partition.unmount_iso_image()
-            teardown_partition(cpc, partition_name)
+            teardown_partition(test_logger, cpc, partition_name)
 
 
 # TODO: Testcases for ISO unmount

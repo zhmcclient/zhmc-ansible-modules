@@ -24,7 +24,6 @@ from unittest import mock
 import random
 from pprint import pformat
 import pytest
-import urllib3
 import zhmcclient
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
@@ -33,14 +32,9 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 from plugins.module_utils.common import params_deepcopy
 from plugins.modules import zhmc_user
 from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from .conftest import LOG_FILE
 from ..utils import RunMode, handle_runmode
 
-urllib3.disable_warnings()
-
-# Print debug messages
-DEBUG = False
-
-LOG_FILE = 'zhmc_user.log' if DEBUG else None
 
 # Properties in the returned user facts that are not always present, but
 # only under certain conditions. This includes artificial properties whose base
@@ -310,7 +304,8 @@ def assert_user_props(user_props, expand, expand_names, where):
 )
 @mock.patch("plugins.modules.zhmc_user.AnsibleModule", autospec=True)
 def test_zhmc_user_facts(
-        ansible_mod_cls, user_type, auth_type, expand, expand_names, check_mode,
+        ansible_mod_cls, user_type, auth_type, expand_names, expand,
+        check_mode,
         hmc_session):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name
     """
@@ -461,7 +456,7 @@ def test_zhmc_user_absent_present(
         desc, initial_user_props, initial_related_names, input_state,
         input_props, exp_user_props, exp_changed, runmode,
         check_mode,
-        hmc_session, request):  # noqa: F811, E501
+        request, hmc_session):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_user module with state=absent/present.
@@ -669,7 +664,7 @@ def test_zhmc_update_user_roles(
         desc, initial_urole_names, input_urole_names, exp_urole_names,
         exp_exc_type, exp_changed, runmode,
         check_mode,
-        hmc_session, request):  # noqa: F811, E501
+        request, hmc_session):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_user module with updating user roles on existing users.

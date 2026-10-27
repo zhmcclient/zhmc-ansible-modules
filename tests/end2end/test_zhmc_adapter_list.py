@@ -21,7 +21,6 @@ __metaclass__ = type
 
 from unittest import mock
 import pytest
-import urllib3
 import zhmcclient
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
@@ -30,13 +29,10 @@ from zhmcclient.testutils import dpm_mode_cpcs  # noqa: F401, E501
 
 from plugins.modules import zhmc_adapter_list
 from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
-
-urllib3.disable_warnings()
-
-# Print debug messages
-DEBUG = False
-
-LOG_FILE = 'zhmc_adapter_list.log' if DEBUG else None
+from .conftest import LOG_FILE
+# pylint: disable=line-too-long,unused-import
+from .conftest import test_logger  # noqa: F401, E501
+# pylint: enable=line-too-long,unused-import
 
 
 def get_module_output(mod_obj):
@@ -140,7 +136,7 @@ def assert_adapter_list(adapter_list, exp_adapter_dict):
 @mock.patch("plugins.modules.zhmc_adapter_list.AnsibleModule", autospec=True)
 def test_zhmc_adapter_list(
         ansible_mod_cls, check_mode, property_flags, filters, with_cpc,
-        dpm_mode_cpcs):  # noqa: F811, E501
+        test_logger, dpm_mode_cpcs):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name
     """
     Test the zhmc_adapter_list module with DPM mode CPCs.
@@ -166,8 +162,8 @@ def test_zhmc_adapter_list(
             'additional_properties', [])
 
         # Determine the expected adapters on the HMC
-        if DEBUG:
-            print("Debug: Listing expected adapters")
+        test_logger.debug("Listing expected adapters")
+
         av = client.query_api_version()
         hmc_version_info = [int(x) for x in av['hmc-version'].split('.')]
         api_version_info = [av['api-major-version'], av['api-minor-version']]
@@ -227,10 +223,9 @@ def test_zhmc_adapter_list(
         #      'cpc-name'.
         exp_adapter_dict = {}
         for adapter in exp_adapters:
-            if DEBUG:
-                prop_names = list(adapter.properties.keys())
-                print(f"Debug: Expected properties of adapter {adapter.name!r} "
-                      f"on CPC {cpc.name!r}: {prop_names!r}")
+            test_logger.debug(
+                "Expected properties of adapter %r on CPC %r: %r",
+                adapter.name, cpc.name, list(adapter.properties.keys()))
             cpc = adapter.manager.parent
             exp_properties = {
                 'cpc_name': cpc.name

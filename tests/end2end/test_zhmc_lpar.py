@@ -23,7 +23,6 @@ import random
 import re
 from unittest import mock
 import pytest
-import urllib3
 import zhmcclient
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
@@ -34,18 +33,10 @@ from plugins.modules import zhmc_lpar
 from plugins.module_utils.common import ensure_lpar_inactive, \
     ensure_lpar_active, ensure_lpar_loaded, pull_lpar_status
 from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth, \
-    setup_logging, set_resource_property
+    set_resource_property
+from .conftest import LOG_FILE
 from ..utils import RunMode, handle_runmode
 
-
-urllib3.disable_warnings()
-
-# Print debug messages in tests
-DEBUG = False
-
-# Logging for zhmcclient HMC interactions and test functions
-LOGGING = False
-LOG_FILE = 'test_zhmc_lpar.log'
 
 # LPAR properties that are not always present, but only under certain
 LPAR_CONDITIONAL_PROPS = (
@@ -177,14 +168,14 @@ def assert_lpar_props(act_props, exp_props, where):
         assert prop_name not in act_props, where
 
 
-def ensure_lpar_status(logger, lpar, iap, status):
+def ensure_lpar_status(test_logger, lpar, iap, status):
     """
     Ensure that the LPAR is in the desired status, in order to prepare or
     clean up end2end tests.
     """
     if status == 'not-activated':
         ensure_lpar_inactive(
-            logger, lpar, check_mode=False, operation_timeout=60,
+            test_logger, lpar, check_mode=False, operation_timeout=60,
             status_timeout=60)
         status = pull_lpar_status(lpar)
         assert status == 'not-activated'
@@ -197,7 +188,7 @@ def ensure_lpar_status(logger, lpar, iap, status):
         saved_auto_load = iap.get_property('load-at-activation')
         iap.update_properties({'load-at-activation': False})
         ensure_lpar_active(
-            logger, lpar, check_mode=False,
+            test_logger, lpar, check_mode=False,
             activation_profile_name=lpar.name, operation_timeout=60,
             status_timeout=60, allow_status_exceptions=True, force=True)
         iap.update_properties({'load-at-activation': saved_auto_load})
@@ -209,7 +200,8 @@ def ensure_lpar_status(logger, lpar, iap, status):
             f"support getting LPAR {lpar.name!r} into status {status!r}")
 
         ensure_lpar_loaded(
-            logger, lpar, check_mode=False, activation_profile_name=lpar.name,
+            test_logger, lpar, check_mode=False,
+            activation_profile_name=lpar.name,
             load_address=None, load_parameter=None, clear_indicator=True,
             store_status_indicator=False, operation_timeout=60,
             status_timeout=60, allow_status_exceptions=True, force=True)
@@ -581,7 +573,7 @@ def test_zhmc_lpar_state(
         input_state, input_kwargs, exp_msg, exp_status, exp_result, exp_changed,
         runmode,
         check_mode,
-        classic_mode_cpcs, request):  # noqa: F811, E501
+        request, test_logger, classic_mode_cpcs):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_lpar module with different initial and target state.
@@ -624,8 +616,6 @@ def test_zhmc_lpar_state(
 
     if not classic_mode_cpcs:
         pytest.skip("HMC definition does not include any CPCs in classic mode")
-
-    logger = setup_logging(LOGGING, 'test_zhmc_lpar_state', LOG_FILE)
 
     for cpc in classic_mode_cpcs:
         assert not cpc.dpm_enabled
@@ -725,32 +715,35 @@ def test_zhmc_lpar_state(
             f"image activation profile {iap_name!r} on CPC {cpc.name} does "
             f"not match the lpar_mode {lpar_mode!r} of the testcase")
 
-        msg = f"Testing on CPC {cpc.name} with LPAR {lpar.name!r}"
-        print(msg)
-        logger.info(msg)
+        test_logger.info(
+            "Testing on CPC %r with LPAR %r", cpc.name, lpar.name)
 
-        logger.info("Preparation: Ensuring that LPAR %r has status %r",
-                    lpar.name, initial_status)
-        ensure_lpar_status(logger, lpar, iap, initial_status)
+        test_logger.info(
+            "Preparation: Ensuring that LPAR %r has status %r",
+            lpar.name, initial_status)
+        ensure_lpar_status(test_logger, lpar, iap, initial_status)
 
-        logger.info("Preparation: Setting 'next-activation-profile-name' = %r "
-                    "in LPAR %r", nap_name, lpar.name)
+        test_logger.info(
+            "Preparation: Setting 'next-activation-profile-name' = %r "
+            "in LPAR %r", nap_name, lpar.name)
         saved_nap_name = set_resource_property(
             lpar, 'next-activation-profile-name', nap_name)
 
-        logger.info("Preparation: Setting 'load-at-activation' = %r in image "
-                    "profile %r", auto_load, iap.name)
+        test_logger.info(
+            "Preparation: Setting 'load-at-activation' = %r in image "
+            "profile %r", auto_load, iap.name)
         saved_auto_load = set_resource_property(
             iap, 'load-at-activation', auto_load)
 
         where = f"LPAR {lpar_name!r}"
 
         try:
-            logger.info("Test: LPAR %r with initial status %r, module parms: "
-                        "state: %r, activation_profile_name: %r, "
-                        "additional parms: %r)",
-                        lpar.name, initial_status, input_state, ap_name,
-                        input_kwargs)
+            test_logger.info(
+                "Test: LPAR %r with initial status %r, module parms: "
+                "state: %r, activation_profile_name: %r, "
+                "additional parms: %r)",
+                lpar.name, initial_status, input_state, ap_name,
+                input_kwargs)
 
             # Prepare module input parameters (must be all required + optional)
             params = {
@@ -814,17 +807,19 @@ def test_zhmc_lpar_state(
                 assert_lpar_props(result, exp_result, where)
 
         finally:
-            logger.info("Cleanup: Ensuring that LPAR %r is inactive",
-                        lpar.name)
-            ensure_lpar_status(logger, lpar, iap, 'not-activated')
+            test_logger.info(
+                "Cleanup: Ensuring that LPAR %r is inactive", lpar.name)
+            ensure_lpar_status(test_logger, lpar, iap, 'not-activated')
 
-            logger.info("Cleanup: Setting 'next-activation-profile-name' = %r "
-                        "in LPAR %r", saved_nap_name, lpar.name)
+            test_logger.info(
+                "Cleanup: Setting 'next-activation-profile-name' = %r "
+                "in LPAR %r", saved_nap_name, lpar.name)
             set_resource_property(
                 lpar, 'next-activation-profile-name', saved_nap_name)
 
-            logger.info("Cleanup: Setting 'load-at-activation' = %r in image "
-                        "profile %r", saved_auto_load, iap.name)
+            test_logger.info(
+                "Cleanup: Setting 'load-at-activation' = %r in image "
+                "profile %r", saved_auto_load, iap.name)
             set_resource_property(iap, 'load-at-activation', saved_auto_load)
 
 
@@ -950,15 +945,16 @@ LPAR_FACTS_TESTCASES = [
     ]
 )
 @pytest.mark.parametrize(
-    "desc, select_properties, exp_prop_names, not_prop_names, "
-    "exp_msg, exp_changed, runmode",
+    "desc, select_properties, exp_prop_names, not_prop_names, exp_msg, "
+    "exp_changed, runmode",
     LPAR_FACTS_TESTCASES)
 @mock.patch("plugins.modules.zhmc_lpar.AnsibleModule", autospec=True)
 def test_zhmc_lpar_facts(
         ansible_mod_cls,
-        desc, select_properties, exp_prop_names, not_prop_names,
-        exp_msg, exp_changed, runmode,
-        check_mode, classic_mode_cpcs, request):  # noqa: F811, E501
+        desc, select_properties, exp_prop_names, not_prop_names, exp_msg,
+        exp_changed, runmode,
+        check_mode,
+        request, test_logger, classic_mode_cpcs):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_lpar module with state=facts.
@@ -969,8 +965,6 @@ def test_zhmc_lpar_facts(
 
     if not classic_mode_cpcs:
         pytest.skip("HMC definition does not include any CPCs in classic mode")
-
-    logger = setup_logging(LOGGING, 'test_zhmc_lpar_facts', LOG_FILE)
 
     for cpc in classic_mode_cpcs:
         assert not cpc.dpm_enabled
@@ -988,9 +982,8 @@ def test_zhmc_lpar_facts(
             pytest.skip(f"No LPARs exist on CPC {cpc.name}.")
         lpar = random.choice(lpars)
 
-        msg = f"Testing on CPC {cpc.name} with LPAR {lpar.name!r}"
-        print(msg)
-        logger.info(msg)
+        test_logger.info(
+            "Testing on CPC %r with LPAR %r", cpc.name, lpar.name)
 
         # Prepare module input parameters (must be all required + optional)
         params = {

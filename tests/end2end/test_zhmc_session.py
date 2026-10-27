@@ -22,7 +22,6 @@ __metaclass__ = type
 import re
 from unittest import mock
 import pytest
-import urllib3
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
@@ -30,14 +29,9 @@ from zhmcclient.testutils import hmc_definition  # noqa: F401, E501
 from plugins.modules import zhmc_session, zhmc_cpc_list
 from plugins.module_utils.common import parse_hmc_host
 from .utils import mock_ansible_module, get_failure_msg
+from .conftest import LOG_FILE
 from ..utils import RunMode, handle_runmode
 
-urllib3.disable_warnings()
-
-# Print debug messages
-DEBUG = False
-
-LOG_FILE = 'zhmc_session.log' if DEBUG else None
 
 # Regexp pattern to compare actual HMC session IDs against
 SESSION_ID_PATTERN = re.compile(r'[a-z0-9]{45,55}')
@@ -226,9 +220,10 @@ TESTCASES_ZHMC_SESSION_SINGLE = [
 )
 @mock.patch("plugins.modules.zhmc_session.AnsibleModule", autospec=True)
 def test_zhmc_session_single(
-        ansible_mod_cls, desc, check_mode, in_params, exp_exit_code,
-        exp_msg_pattern, exp_changed, exp_hmc_auth, runmode,
-        hmc_definition, request):  # noqa: F811, E501
+        ansible_mod_cls,
+        desc, check_mode, in_params, exp_exit_code, exp_msg_pattern,
+        exp_changed, exp_hmc_auth, runmode,
+        request, hmc_definition):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
     """
     Test specific input parameters on single invocations of the zhmc_session
@@ -348,7 +343,8 @@ def test_zhmc_session_single(
 @mock.patch("plugins.modules.zhmc_session.AnsibleModule", autospec=True)
 @mock.patch("plugins.modules.zhmc_cpc_list.AnsibleModule", autospec=True)
 def test_zhmc_session_sequence(
-        cpc_list_mod_cls, session_mod_cls, hmc_definition):  # noqa: F811, E501
+        cpc_list_mod_cls, session_mod_cls,
+        hmc_definition):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name
     """
     Test a sequence of playbook tasks with create, use, delete of sessions
