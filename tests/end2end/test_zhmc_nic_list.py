@@ -22,22 +22,14 @@ __metaclass__ = type
 import random
 from unittest import mock
 import pytest
-import urllib3
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 from zhmcclient.testutils import dpm_mode_cpcs  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
 
 from plugins.modules import zhmc_nic_list
-from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth, \
-    setup_logging
-
-urllib3.disable_warnings()
-
-# Create log file
-LOGGING = True
-
-LOG_FILE = 'test_zhmc_nic_list.log' if LOGGING else None
+from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from .conftest import LOG_FILE
 
 
 def get_module_output(mod_obj):
@@ -152,7 +144,7 @@ def assert_nic_list(nic_list, exp_nic_dict):
 @mock.patch("plugins.modules.zhmc_nic_list.AnsibleModule", autospec=True)
 def test_zhmc_nic_list(
         ansible_mod_cls, check_mode, partition_type, property_flags,
-        dpm_mode_cpcs):  # noqa: F811, E501
+        test_logger, dpm_mode_cpcs):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name
     """
     Test the zhmc_nic_list module with DPM mode CPCs.
@@ -160,10 +152,9 @@ def test_zhmc_nic_list(
     if not dpm_mode_cpcs:
         pytest.skip("HMC definition does not include any CPCs in DPM mode")
 
-    logger = setup_logging(LOGGING, 'test_zhmc_nic_list', LOG_FILE)
-    logger.debug("Entered test function with: "
-                 "check_mode=%r, partition_type=%r, property_flags=%r",
-                 check_mode, partition_type, property_flags)
+    test_logger.debug(
+        "Test parameters: check_mode=%r, partition_type=%r, property_flags=%r",
+        check_mode, partition_type, property_flags)
 
     for cpc in dpm_mode_cpcs:
         assert cpc.dpm_enabled
@@ -183,14 +174,15 @@ def test_zhmc_nic_list(
                         f"type {partition_type}")
         partition = random.choice(partitions)
 
-        logger.debug("Testing with CPC %s, partition %s (type %s)",
-                     cpc.name, partition.name, partition_type)
+        test_logger.debug(
+            "Testing with CPC %s, partition %s (type %s)",
+            cpc.name, partition.name, partition_type)
 
         full_properties = property_flags.get('full_properties', False)
         expand_names = property_flags.get('expand_names', False)
 
         # Determine the expected NICs
-        logger.debug("Listing expected NICs of partition %r", partition.name)
+        test_logger.debug("Listing expected NICs of partition %r", partition.name)
         exp_nics = partition.nics.list(full_properties=full_properties)
 
         # Determine expected NIC properties
@@ -212,8 +204,9 @@ def test_zhmc_nic_list(
                     adapter.get_property('adapter-id')
                 exp_properties['adapter_name'] = adapter.name
                 exp_properties['adapter_port'] = port.get_property('index')
-            logger.debug("Expected properties of NIC %r are: %r",
-                         nic.name, exp_properties)
+            test_logger.debug(
+                "Expected properties of NIC %r are: %r",
+                nic.name, exp_properties)
             exp_nic_key = (cpc.name, partition.name, nic.name)
             exp_nic_dict[exp_nic_key] = exp_properties
 
@@ -247,5 +240,3 @@ def test_zhmc_nic_list(
         assert changed is False
 
         assert_nic_list(nic_list, exp_nic_dict)
-
-    logger.debug("Leaving test function")

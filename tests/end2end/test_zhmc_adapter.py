@@ -26,7 +26,6 @@ import re
 import random
 from pprint import pformat
 import pytest
-import urllib3
 import zhmcclient
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
@@ -35,14 +34,9 @@ from zhmcclient.testutils import dpm_mode_cpcs  # noqa: F401, E501
 
 from plugins.modules import zhmc_adapter
 from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from .conftest import LOG_FILE
 from ..utils import RunMode, handle_runmode
 
-urllib3.disable_warnings()
-
-DEBUG = False  # Print debug messages
-DEBUG_LOG = False  # Write log file
-
-LOG_FILE = 'zhmc_adapter.log' if DEBUG_LOG else None
 
 # Adapter properties that are present only for certain adapter families.
 # Key: property name with hyphens
@@ -100,7 +94,7 @@ ADAPTER_ARTIFICIAL_PROPS = (
 )
 
 
-def setup_adapter(hd, cpc, name, properties):
+def setup_adapter(test_logger, hd, cpc, name, properties):
     """
     Create a new Hipersocket adapter on the specified CPC, for test purposes.
 
@@ -128,19 +122,19 @@ def setup_adapter(hd, cpc, name, properties):
             else:
                 raise
 
-        if DEBUG:
-            print("Debug: setup_adapter: Created test adapter "
-                  f"{adapter.name!r} with adapter-id {adapter_id!r}")
+        test_logger.debug(
+            "setup_adapter: Created test adapter %r with adapter-id %r",
+            adapter.name, adapter_id)
 
     except zhmcclient.Error as exc:
         if adapter_id:
-            teardown_adapter(cpc, adapter_id)
+            teardown_adapter(test_logger, cpc, adapter_id)
         pytest.skip(f"Error in HMC operation during test adapter setup: {exc}")
 
     return adapter
 
 
-def teardown_adapter(cpc, adapter_id):
+def teardown_adapter(test_logger, cpc, adapter_id):
     """
     Delete a Hipersocket adapter created for test purposes by setup_adapter().
 
@@ -168,9 +162,9 @@ def teardown_adapter(cpc, adapter_id):
               f"on CPC {cpc.name!r} failed with: {exc} - please clean it up "
               "manually!")
     else:
-        if DEBUG:
-            print("Debug: teardown_adapter: Deleted test adapter "
-                  f"{adapter.name!r} with adapter-id {adapter_id!r}")
+        test_logger.debug(
+            "teardown_adapter: Deleted test adapter %r with adapter-id %r",
+            adapter.name, adapter_id)
 
 
 def unique_adapter_name():
@@ -596,7 +590,8 @@ def test_zhmc_adapter_states(
         ansible_mod_cls,
         desc, initial_props, input_state, input_name, input_match, input_props,
         exp_props, exp_changed, exp_msg_pattern, runmode,
-        check_mode, dpm_mode_cpcs, request):  # noqa: F811, E501
+        check_mode,
+        request, test_logger, dpm_mode_cpcs):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_adapter module with state=absent/present on DPM mode CPCs,
@@ -636,7 +631,7 @@ def test_zhmc_adapter_states(
             # Create initial adapter, if specified so
             if initial_props:
                 initial_adapter = setup_adapter(
-                    hd, cpc, unique_name, initial_props)
+                    test_logger, hd, cpc, unique_name, initial_props)
                 # The adapter object provides the expected property values, so
                 # we pull full properties to make sure all are tested.
                 initial_adapter.pull_full_properties()
@@ -661,9 +656,9 @@ def test_zhmc_adapter_states(
 
             where = f"adapter '{unique_name}'"
 
-            if DEBUG:
-                print(f"Debug: Input parms: match={input_match2}, "
-                      f"name={input_name}")
+            test_logger.debug(
+                "zhmc_adapter input parms: state=%s, match=%r, name=%r",
+                input_state, input_match2, input_name)
 
             # Prepare module input parameters (must be all required + optional)
             params = {
@@ -745,6 +740,6 @@ def test_zhmc_adapter_states(
 
         finally:
             if initial_adapter_id:
-                teardown_adapter(cpc, initial_adapter_id)
+                teardown_adapter(test_logger, cpc, initial_adapter_id)
             if module_adapter_id:
-                teardown_adapter(cpc, module_adapter_id)
+                teardown_adapter(test_logger, cpc, module_adapter_id)

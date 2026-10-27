@@ -21,7 +21,6 @@ __metaclass__ = type
 
 from unittest import mock
 import pytest
-import urllib3
 import zhmcclient
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
@@ -29,13 +28,8 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 
 from plugins.modules import zhmc_cpc_list
 from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from .conftest import LOG_FILE
 
-urllib3.disable_warnings()
-
-# Print debug messages
-DEBUG = False
-
-LOG_FILE = 'zhmc_cpc_list.log' if DEBUG else None
 
 # Names of CPC properties (with underscores) that are volatile, i.e. that may
 # change their values on subsequent retrievals even when no other change is

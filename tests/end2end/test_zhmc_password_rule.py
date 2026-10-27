@@ -24,7 +24,6 @@ from unittest import mock
 import random
 from pprint import pformat
 import pytest
-import urllib3
 import zhmcclient
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
@@ -33,14 +32,9 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 from plugins.modules import zhmc_password_rule
 from plugins.module_utils.common import hyphened_value
 from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from .conftest import LOG_FILE
 from ..utils import RunMode, handle_runmode
 
-urllib3.disable_warnings()
-
-# Print debug messages
-DEBUG = False
-
-LOG_FILE = 'zhmc_password_rule.log' if DEBUG else None
 
 # Properties in the returned password rule facts that are not always present, but
 # only under certain conditions. This includes artificial properties whose base
@@ -141,7 +135,8 @@ def assert_pwrule_props(pwrule_props, where):
 )
 @mock.patch("plugins.modules.zhmc_password_rule.AnsibleModule", autospec=True)
 def test_zhmc_password_rule_facts(
-        ansible_mod_cls, check_mode, hmc_session):  # noqa: F811, E501
+        ansible_mod_cls, check_mode,
+        hmc_session):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name
     """
     Test the zhmc_password_rule module with state=facts.
@@ -263,16 +258,16 @@ PWRULE_ABSENT_PRESENT_TESTCASES = [
     ]
 )
 @pytest.mark.parametrize(
-    "desc, initial_pwrule_props, input_state, "
-    "input_props, exp_pwrule_props, exp_changed, runmode",
+    "desc, initial_pwrule_props, input_state, input_props, exp_pwrule_props, "
+    "exp_changed, runmode",
     PWRULE_ABSENT_PRESENT_TESTCASES)
 @mock.patch("plugins.modules.zhmc_password_rule.AnsibleModule", autospec=True)
 def test_zhmc_password_rule_absent_present(
         ansible_mod_cls,
-        desc, initial_pwrule_props, input_state,
-        input_props, exp_pwrule_props, exp_changed, runmode,
+        desc, initial_pwrule_props, input_state, input_props, exp_pwrule_props,
+        exp_changed, runmode,
         check_mode,
-        hmc_session, request):  # noqa: F811, E501
+        request, hmc_session):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_password_rule module with state=absent/present.

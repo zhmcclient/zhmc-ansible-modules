@@ -22,7 +22,6 @@ __metaclass__ = type
 import uuid
 from unittest import mock
 import pytest
-import urllib3
 import zhmcclient
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
@@ -30,13 +29,7 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 
 from plugins.modules import zhmc_http
 from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
-
-urllib3.disable_warnings()
-
-# Print debug messages
-DEBUG = False
-
-LOG_FILE = 'zhmc_http.log' if DEBUG else None
+from .conftest import LOG_FILE
 
 
 def new_urole_name():
@@ -72,7 +65,8 @@ def get_module_output(mod_obj):
 )
 @mock.patch("plugins.modules.zhmc_http.AnsibleModule", autospec=True)
 def test_zhmc_http_get(
-        ansible_mod_cls, check_mode, hmc_session):  # noqa: F811, E501
+        ansible_mod_cls, check_mode,
+        hmc_session):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name
     """
     Test GET HTTP method
@@ -130,7 +124,8 @@ def test_zhmc_http_get(
 )
 @mock.patch("plugins.modules.zhmc_http.AnsibleModule", autospec=True)
 def test_zhmc_http_post(
-        ansible_mod_cls, check_mode, hmc_session):  # noqa: F811, E501
+        ansible_mod_cls, check_mode,
+        hmc_session):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name
     """
     Test POST HTTP method
@@ -205,7 +200,8 @@ def test_zhmc_http_post(
 )
 @mock.patch("plugins.modules.zhmc_http.AnsibleModule", autospec=True)
 def test_zhmc_http_delete(
-        ansible_mod_cls, check_mode, hmc_session):  # noqa: F811, E501
+        ansible_mod_cls, check_mode,
+        hmc_session):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name
     """
     Test DELETE HTTP method

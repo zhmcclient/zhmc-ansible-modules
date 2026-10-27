@@ -121,8 +121,8 @@ test_py_files := \
 done_dir := done
 
 # Defaults for end2end tests - must match the defaults in zhmcclient/testutils.
-default_testinventory := $HOME/.zhmc_inventory.yaml
-default_testvault := $HOME/.zhmc_vault.yaml
+default_testinventory := $(HOME)/.zhmc_inventory.yaml
+default_testvault := $(HOME)/.zhmc_vault.yaml
 default_testhmc := default
 
 # Flake8 options
@@ -256,6 +256,7 @@ help:
 	@echo "  TESTHMC=... - HMC group or host name in HMC inventory file to be used in end2end tests. Default: $(default_testhmc)"
 	@echo "  TESTINVENTORY=... - Path name of HMC inventory file used in end2end tests. Default: $(default_testinventory)"
 	@echo "  TESTVAULT=... - Path name of HMC vault file used in end2end tests. Default: $(default_testvault)"
+	@echo "  TESTLOGFILE=... - Path name of the log file for end2end tests. Default: no logging"
 	@echo "  PACKAGE_LEVEL - Package level to be used for installing dependent Python"
 	@echo "      packages in 'install' and 'develop' targets:"
 	@echo "        latest - Latest package versions available on Pypi"

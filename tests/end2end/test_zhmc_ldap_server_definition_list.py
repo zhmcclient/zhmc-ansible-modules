@@ -21,7 +21,6 @@ __metaclass__ = type
 
 from unittest import mock
 import pytest
-import urllib3
 import zhmcclient
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
@@ -29,13 +28,7 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 
 from plugins.modules import zhmc_ldap_server_definition_list
 from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
-
-urllib3.disable_warnings()
-
-# Print debug messages
-DEBUG = False
-
-LOG_FILE = 'zhmc_ldap_server_definition_list.log' if DEBUG else None
+from .conftest import LOG_FILE
 
 
 def get_module_output(mod_obj):
@@ -90,7 +83,8 @@ def assert_lsd_list(lsd_list, exp_lsd_dict):
 @mock.patch("plugins.modules.zhmc_ldap_server_definition_list.AnsibleModule",
             autospec=True)
 def test_zhmc_ldap_server_definition_list(
-        ansible_mod_cls, check_mode, hmc_session):  # noqa: F811, E501
+        ansible_mod_cls, check_mode,
+        hmc_session):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name
     """
     Test the zhmc_ldap_server_definition_list module.

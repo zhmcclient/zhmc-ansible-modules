@@ -23,7 +23,6 @@ import re
 import random
 import pytest
 import mock
-import urllib3
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 from zhmcclient.testutils import all_cpcs  # noqa: F401, E501
@@ -31,15 +30,8 @@ from zhmcclient.testutils import all_cpcs  # noqa: F401, E501
 
 from plugins.modules import zhmc_cpc_capacity
 from plugins.module_utils.common import underscore_properties
-from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth, \
-    setup_logging
-
-urllib3.disable_warnings()
-
-# Enable logging
-LOGGING = False
-
-LOG_FILE = 'zhmc_cpc_capacity.log' if LOGGING else None
+from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from .conftest import LOG_FILE
 
 
 def calc_sw_model(sw_model, delta):
@@ -122,15 +114,14 @@ CPC_CAPACITY_PROPERTIES = [
 )
 @mock.patch("plugins.modules.zhmc_cpc_capacity.AnsibleModule", autospec=True)
 def test_zhmc_cpc_capacity_facts(
-        ansible_mod_cls, check_mode, all_cpcs):  # noqa: F811, E501
+        ansible_mod_cls, check_mode,
+        all_cpcs):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name
     """
     Test the zhmc_cpc_capacity module with state=facts.
     """
     if not all_cpcs:
         pytest.skip("HMC definition does not include any CPCs")
-
-    setup_logging(LOGGING, 'test_zhmc_cpc_capacity', LOG_FILE)
 
     cpc = random.choice(all_cpcs)
 
@@ -197,15 +188,14 @@ def test_zhmc_cpc_capacity_facts(
 )
 @mock.patch("plugins.modules.zhmc_cpc_capacity.AnsibleModule", autospec=True)
 def test_zhmc_cpc_capacity_set(
-        ansible_mod_cls, check_mode, all_cpcs):  # noqa: F811, E501
+        ansible_mod_cls, check_mode,
+        all_cpcs):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name
     """
     Test the zhmc_cpc_capacity module with state=set.
     """
     if not all_cpcs:
         pytest.skip("HMC definition does not include any CPCs")
-
-    setup_logging(LOGGING, 'test_zhmc_cpc_capacity', LOG_FILE)
 
     cpc = random.choice(all_cpcs)
 

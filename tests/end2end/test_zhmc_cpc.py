@@ -21,24 +21,15 @@ __metaclass__ = type
 
 from unittest import mock
 import pytest
-import urllib3
 # pylint: disable=line-too-long,unused-import
 from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 from zhmcclient.testutils import all_cpcs  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
 
 from plugins.modules import zhmc_cpc
-from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth, \
-    setup_logging
+from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from .conftest import LOG_FILE
 from ..utils import RunMode, handle_runmode
-
-urllib3.disable_warnings()
-
-DEBUG = False  # Print debug messages
-
-# Logging for zhmcclient HMC interactions and test functions
-LOGGING = False
-LOG_FILE = 'test_zhmc_cpc.log' if LOGGING else None
 
 
 def get_module_output(mod_obj):
@@ -186,9 +177,10 @@ CPC_FACTS_TESTCASES = [
 @mock.patch("plugins.modules.zhmc_cpc.AnsibleModule", autospec=True)
 def test_zhmc_cpc_facts(
         ansible_mod_cls,
-        desc, select_properties, exp_prop_names, not_prop_names,
-        exp_msg, exp_changed, runmode,
-        check_mode, all_cpcs, request):  # noqa: F811, E501
+        desc, select_properties, exp_prop_names, not_prop_names, exp_msg,
+        exp_changed, runmode,
+        check_mode,
+        request, all_cpcs):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_cpc module with state=facts on any CPCs.
@@ -197,8 +189,6 @@ def test_zhmc_cpc_facts(
 
     if not all_cpcs:
         pytest.skip("HMC definition does not include any CPCs")
-
-    setup_logging(LOGGING, 'test_zhmc_cpc_facts', LOG_FILE)
 
     for cpc in all_cpcs:
 
