@@ -22,13 +22,14 @@ __metaclass__ = type
 
 from unittest import mock
 import re
-import pdb
 import pytest
 import zhmcclient
 import zhmcclient_mock
 
 from plugins.modules import zhmc_partition
 from plugins.module_utils import common as module_utils
+
+from ..utils import RunMode, handle_runmode
 
 
 @mock.patch("plugins.modules.zhmc_partition.perform_task",
@@ -363,7 +364,8 @@ def mocked_cpc():
 
 PART_CREATE_CHECK_MODE_PARTITION_TESTCASES = [
     # Testcases for test_part_create_check_mode_partition()
-    # The list items are tuples with the following items:
+    #
+    # Each testcase is a tuple with the following items:
     # - desc (string): description of the testcase.
     # - create_props (dict): HMC-formatted properties for the create_props
     #   parameter of the function.
@@ -374,7 +376,7 @@ PART_CREATE_CHECK_MODE_PARTITION_TESTCASES = [
     # - exp_exc_type: Expected exception type, or None for no exc. expected.
     # - exp_exc_pattern: Expected exception message pattern, or None for no
     #   exception expected.
-    # - run: Indicates whether the test should be run, or 'pdb' for debugger.
+    # - runmode (RunMode): Run mode for the testcase.
 
     (
         "No input properties",
@@ -384,7 +386,7 @@ PART_CREATE_CHECK_MODE_PARTITION_TESTCASES = [
         module_utils.ParameterError,
         "Required.*properties.*missing.* "
         "(?=.* name)(?=.* initial_memory)(?=.* maximum_memory)",
-        True,
+        RunMode.RUN
     ),
     (
         "Memory-related required input properties missing",
@@ -397,7 +399,7 @@ PART_CREATE_CHECK_MODE_PARTITION_TESTCASES = [
         module_utils.ParameterError,
         "Required.*properties.*missing.* "
         "(?=.* initial_memory)(?=.* maximum_memory)",
-        True,
+        RunMode.RUN
     ),
     (
         "Minimum set of required input properties as create_props",
@@ -421,7 +423,7 @@ PART_CREATE_CHECK_MODE_PARTITION_TESTCASES = [
         },
         None,
         None,
-        True,
+        RunMode.RUN
     ),
     (
         "SSC partition with missing required SSC-specific properties",
@@ -437,7 +439,7 @@ PART_CREATE_CHECK_MODE_PARTITION_TESTCASES = [
         module_utils.ParameterError,
         "Required.*properties.*missing.* "
         "(?=.* ssc_host_name)(?=.* ssc_master_userid)(?=.* ssc_master_pw)",
-        True,
+        RunMode.RUN
     ),
     (
         "SSC partition with all required SSC-specific properties",
@@ -466,7 +468,7 @@ PART_CREATE_CHECK_MODE_PARTITION_TESTCASES = [
         },
         None,
         None,
-        True,
+        RunMode.RUN
     ),
     (
         "Partition with auto-generate of partition ID disabled and missing "
@@ -482,7 +484,7 @@ PART_CREATE_CHECK_MODE_PARTITION_TESTCASES = [
         None,
         module_utils.ParameterError,
         "Required.*properties.*missing.* partition_id",
-        True,
+        RunMode.RUN
     ),
     (
         "Partition with auto-generate of partition ID disabled and required "
@@ -507,7 +509,7 @@ PART_CREATE_CHECK_MODE_PARTITION_TESTCASES = [
         },
         None,
         None,
-        True,
+        RunMode.RUN
     ),
     (
         "FTP boot partition with missing required FTP boot specific properties",
@@ -524,7 +526,7 @@ PART_CREATE_CHECK_MODE_PARTITION_TESTCASES = [
         "Required.*properties.*missing.* "
         "(?=.* boot_ftp_host)(?=.* boot_ftp_username)(?=.* boot_ftp_password)"
         "(?=.* boot_ftp_insfile)",
-        True,
+        RunMode.RUN
     ),
     (
         "FTP boot partition with all required FTP boot specific properties",
@@ -554,7 +556,7 @@ PART_CREATE_CHECK_MODE_PARTITION_TESTCASES = [
         },
         None,
         None,
-        True,
+        RunMode.RUN
     ),
     (
         "removable-media boot partition with missing required boot properties",
@@ -570,7 +572,7 @@ PART_CREATE_CHECK_MODE_PARTITION_TESTCASES = [
         module_utils.ParameterError,
         "Required.*properties.*missing.* "
         "(?=.* boot_removable_media)(?=.* boot_removable_media_type)",
-        True,
+        RunMode.RUN
     ),
     (
         "removable-media boot partition with all required boot properties",
@@ -596,7 +598,7 @@ PART_CREATE_CHECK_MODE_PARTITION_TESTCASES = [
         },
         None,
         None,
-        True,
+        RunMode.RUN
     ),
     (
         "storage-adapter boot partition with missing required boot properties",
@@ -612,7 +614,7 @@ PART_CREATE_CHECK_MODE_PARTITION_TESTCASES = [
         module_utils.ParameterError,
         "Required.*properties.*missing.* "
         "(?=.* boot_logical_unit_number)(?=.* boot_world_wide_port_name)",
-        True,
+        RunMode.RUN
     ),
     (
         "storage-adapter boot partition with all required boot properties",
@@ -638,33 +640,30 @@ PART_CREATE_CHECK_MODE_PARTITION_TESTCASES = [
         },
         None,
         None,
-        True,
+        RunMode.RUN
     ),
 ]
 
 
 @pytest.mark.parametrize(
     "desc, create_props, update_props, exp_props, exp_exc_type, "
-    "exp_exc_pattern, run",
+    "exp_exc_pattern, runmode",
     PART_CREATE_CHECK_MODE_PARTITION_TESTCASES)
 def test_part_create_check_mode_partition(
         desc, create_props, update_props, exp_props, exp_exc_type,
-        exp_exc_pattern, run):
+        exp_exc_pattern, runmode,
+        request):  # noqa: F811, E501
+    # pylint: disable=unused-argument
     """
     Test the create_check_mode_partition() function.
     """
+    handle_runmode(request, runmode)
 
     cpc = mocked_cpc()
-
-    if not run:
-        pytest.skip(f"Testcase disabled: {desc}")
 
     if exp_exc_type:
 
         with pytest.raises(exp_exc_type) as exc_info:
-
-            if run == 'pdb':
-                pdb.set_trace()  # pylint: disable=forgotten-debug-statement
 
             # The function to be tested
             part_obj = zhmc_partition.create_check_mode_partition(
@@ -678,9 +677,6 @@ def test_part_create_check_mode_partition(
             f"  Actual message: {exc_msg}"
 
     else:
-
-        if run == 'pdb':
-            pdb.set_trace()  # pylint: disable=forgotten-debug-statement
 
         # The function to be tested
         part_obj = zhmc_partition.create_check_mode_partition(

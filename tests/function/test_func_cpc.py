@@ -32,6 +32,7 @@ from zhmcclient_mock import FakedSession
 from plugins.modules import zhmc_cpc
 
 from .func_utils import mock_ansible_module
+from ..utils import RunMode, handle_runmode
 
 # Faked Console that is used for all tests
 # (with property names as specified in HMC data model)
@@ -131,8 +132,19 @@ def get_module_output(mod_obj):
     return func(*call_args[0], **call_args[1])
 
 
-# Test cases for test_cpc_state()
 TEST_CPC_STATE_TESTCASES = [
+    # Test cases for test_cpc_state()
+    #
+    # Each testcase is a dict with the following items:
+    # - title (string): description of the testcase.
+    # - faked_cpc (dict): Properties for faked CPC to be set up before the test.
+    # - faked_cpc_properties (dict): Additional properties for faked CPC.
+    # - input_properties (dict): Input properties for the zhmc_cpc module.
+    # - input_state (str): Input state for the zhmc_cpc module.
+    # - exp_exit_code (int): Expected module exit code.
+    # - exp_message_pattern (str): Expected 'message' in module output.
+    # - exp_changed (bool): Expected 'changed' flag in module output.
+    # - runmode (RunMode): Run mode for the testcase.
 
     # CPC in classic mode with initial status 'operating'
     dict(
@@ -149,6 +161,7 @@ TEST_CPC_STATE_TESTCASES = [
             'status': 'not-operating',
         },
         exp_changed=True,
+        runmode=RunMode.RUN
     ),
     dict(
         title="CPC classic mode / operating / properties (ignored) / state=inactive",
@@ -166,6 +179,7 @@ TEST_CPC_STATE_TESTCASES = [
             'status': 'not-operating',
         },
         exp_changed=True,
+        runmode=RunMode.RUN
     ),
     dict(
         title="CPC classic mode / operating / no properties / state=active",
@@ -181,6 +195,7 @@ TEST_CPC_STATE_TESTCASES = [
             'status': 'operating',
         },
         exp_changed=False,
+        runmode=RunMode.RUN
     ),
     dict(
         title="CPC classic mode / operating / no properties / state=set",
@@ -196,6 +211,7 @@ TEST_CPC_STATE_TESTCASES = [
             'status': 'operating',
         },
         exp_changed=False,
+        runmode=RunMode.RUN
     ),
     dict(
         title="CPC classic mode / operating / properties / state=set",
@@ -214,6 +230,7 @@ TEST_CPC_STATE_TESTCASES = [
             'acceptable_status': ['operating', 'exceptions'],
         },
         exp_changed=True,
+        runmode=RunMode.RUN
     ),
 
     # CPC in classic mode with state=set and different input properties
@@ -231,6 +248,7 @@ TEST_CPC_STATE_TESTCASES = [
             'status': 'operating',
         },
         exp_changed=False,
+        runmode=RunMode.RUN
     ),
     dict(
         title="CPC classic mode / state=set / properties={}",
@@ -246,6 +264,7 @@ TEST_CPC_STATE_TESTCASES = [
             'status': 'operating',
         },
         exp_changed=False,
+        runmode=RunMode.RUN
     ),
     dict(
         title="CPC classic mode / state=set / properties={acceptable_status}",
@@ -264,6 +283,7 @@ TEST_CPC_STATE_TESTCASES = [
             'acceptable_status': ['operating', 'exceptions'],
         },
         exp_changed=True,
+        runmode=RunMode.RUN
     ),
     dict(
         title="CPC classic mode / state=set / properties=(all modifiable)",
@@ -288,6 +308,7 @@ TEST_CPC_STATE_TESTCASES = [
             'processor_running_time': 42,
         },
         exp_changed=True,
+        runmode=RunMode.RUN
     ),
     dict(
         title="CPC classic mode / state=set / properties=(a read-only)",
@@ -305,6 +326,7 @@ TEST_CPC_STATE_TESTCASES = [
             'status': 'operating',
         },
         exp_changed=False,
+        runmode=RunMode.RUN
     ),
     dict(
         title="CPC classic mode / state=facts / no properties",
@@ -321,6 +343,7 @@ TEST_CPC_STATE_TESTCASES = [
             'status': 'operating',
         },
         exp_changed=False,
+        runmode=RunMode.RUN
     ),
     dict(
         title="CPC classic mode / state=facts / properties=(modifiable/ignored)",
@@ -340,6 +363,7 @@ TEST_CPC_STATE_TESTCASES = [
             'acceptable_status': FAKED_CPC_1['acceptable-status']  # unchanged
         },
         exp_changed=False,
+        runmode=RunMode.RUN
     ),
 ]
 
@@ -363,26 +387,29 @@ class TestCpc:
     @pytest.mark.parametrize(
         "check_mode", [False, True])
     @pytest.mark.parametrize(
-        "testcases", TEST_CPC_STATE_TESTCASES)
+        "testcase", TEST_CPC_STATE_TESTCASES)
     @mock.patch("plugins.modules.zhmc_cpc.AnsibleModule", autospec=True)
-    def test_cpc_state(self, ansible_mod_cls, testcases, check_mode):
+    def test_cpc_state(
+            self, ansible_mod_cls, testcase, check_mode,
+            request):  # noqa: F811, E501
         """
         Tests for different state values.
         """
+        handle_runmode(request, testcase['runmode'])
 
         # Setup the faked CPC properties from the testcase
-        faked_cpc = dict(testcases['faked_cpc'])
-        faked_cpc.update(testcases['faked_cpc_properties'])
+        faked_cpc = dict(testcase['faked_cpc'])
+        faked_cpc.update(testcase['faked_cpc_properties'])
 
         # Get module input parameters from the testcase
-        input_properties = testcases['input_properties']
-        input_state = testcases['input_state']
+        input_properties = testcase['input_properties']
+        input_state = testcase['input_state']
 
         # Get expected values from testcase
-        exp_exit_code = testcases['exp_exit_code']
-        exp_message_pattern = testcases['exp_message_pattern']
-        exp_cpc_properties = testcases['exp_cpc_properties']
-        exp_changed = testcases['exp_changed']
+        exp_exit_code = testcase['exp_exit_code']
+        exp_message_pattern = testcase['exp_message_pattern']
+        exp_cpc_properties = testcase['exp_cpc_properties']
+        exp_changed = testcase['exp_changed']
 
         # Create the faked CPC
         faked_cpc = self.session.hmc.cpcs.add(faked_cpc)

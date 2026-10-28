@@ -20,7 +20,6 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 import random
-import pdb
 import re
 from unittest import mock
 import pytest
@@ -35,7 +34,8 @@ from plugins.modules import zhmc_lpar
 from plugins.module_utils.common import ensure_lpar_inactive, \
     ensure_lpar_active, ensure_lpar_loaded, pull_lpar_status
 from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth, \
-    skip_warn, setup_logging, set_resource_property
+    setup_logging, set_resource_property
+from ..utils import RunMode, handle_runmode
 
 
 urllib3.disable_warnings()
@@ -218,7 +218,9 @@ def ensure_lpar_status(logger, lpar, iap, status):
 
 
 LPAR_STATE_TESTCASES = [
-    # The list items are tuples with the following items:
+    # Testcases for test_zhmc_lpar_state()
+    #
+    # Each testcase is a tuple with the following items:
     # - desc (string): description of the testcase.
     # - lpar_mode (string): Activation mode of the LPAR.
     # - ap_type (string): Type of activation profile to be used for
@@ -238,7 +240,7 @@ LPAR_STATE_TESTCASES = [
     # - exp_result (dict): HMC-formatted properties for expected properties in
     #   the module result after the module succeeded.
     # - exp_changed (bool): Boolean for expected 'changed' flag.
-    # - run: Indicates whether the test should be run, or 'pdb' for debugger.
+    # - runmode (RunMode): Run mode for the testcase.
 
     (
         "Inactive general LPAR w/o auto-load, state=inactive, default parms, "
@@ -254,7 +256,7 @@ LPAR_STATE_TESTCASES = [
         'not-activated',
         {},
         False,
-        True,
+        RunMode.RUN
     ),
     (
         "Inactive general LPAR with auto-load, state=inactive, default parms, "
@@ -270,7 +272,7 @@ LPAR_STATE_TESTCASES = [
         'not-activated',
         {},
         False,
-        True,
+        RunMode.RUN
     ),
     (
         "Inactive general LPAR w/o auto-load, state=active, default parms, "
@@ -288,7 +290,7 @@ LPAR_STATE_TESTCASES = [
             'status': 'not-operating',
         },
         True,
-        True,
+        RunMode.RUN
     ),
     (
         "Inactive general LPAR with auto-load, state=active, default parms, "
@@ -306,7 +308,7 @@ LPAR_STATE_TESTCASES = [
             'status': 'operating',
         },
         True,
-        True,
+        RunMode.RUN
     ),
     (
         "Inactive general LPAR w/o auto-load, state=loaded, default parms, "
@@ -324,7 +326,7 @@ LPAR_STATE_TESTCASES = [
             'status': 'operating',
         },
         True,
-        True,
+        RunMode.RUN
     ),
     (
         "Inactive general LPAR with auto-load, state=loaded, default parms, "
@@ -342,7 +344,7 @@ LPAR_STATE_TESTCASES = [
             'status': 'operating',
         },
         True,
-        True,
+        RunMode.RUN
     ),
     (
         "Active general LPAR state=reset_clear, default parms",
@@ -357,7 +359,7 @@ LPAR_STATE_TESTCASES = [
         'not-operating',
         {},
         True,
-        True,
+        RunMode.RUN
     ),
     (
         "Active general LPAR state=reset_normal, default parms",
@@ -372,7 +374,7 @@ LPAR_STATE_TESTCASES = [
         'not-operating',
         {},
         True,
-        True,
+        RunMode.RUN
     ),
     (
         "Active general LPAR state=inactive, default parms",
@@ -387,7 +389,7 @@ LPAR_STATE_TESTCASES = [
         'not-activated',
         {},
         True,
-        True,
+        RunMode.RUN
     ),
 
     (
@@ -404,7 +406,7 @@ LPAR_STATE_TESTCASES = [
         'not-activated',
         {},
         False,
-        True,
+        RunMode.RUN
     ),
     (
         "Inactive Linux LPAR with auto-load, state=inactive, default parms, "
@@ -420,7 +422,7 @@ LPAR_STATE_TESTCASES = [
         'not-activated',
         {},
         False,
-        True,
+        RunMode.RUN
     ),
     (
         "Inactive Linux LPAR w/o auto-load, state=active, default parms, "
@@ -438,7 +440,7 @@ LPAR_STATE_TESTCASES = [
             'status': 'not-operating',
         },
         True,
-        True,
+        RunMode.RUN
     ),
     (
         "Inactive Linux LPAR with auto-load, state=active, default parms, "
@@ -456,7 +458,7 @@ LPAR_STATE_TESTCASES = [
             'status': 'operating',
         },
         True,
-        True,
+        RunMode.RUN
     ),
     (
         "Inactive Linux LPAR w/o auto-load, state=loaded, default parms, "
@@ -474,7 +476,7 @@ LPAR_STATE_TESTCASES = [
             'status': 'operating',
         },
         True,
-        True,
+        RunMode.RUN
     ),
     (
         "Inactive Linux LPAR with auto-load, state=loaded, default parms, "
@@ -492,7 +494,7 @@ LPAR_STATE_TESTCASES = [
             'status': 'operating',
         },
         True,
-        True,
+        RunMode.RUN
     ),
     (
         "Active Linux LPAR state=reset_clear, default parms",
@@ -507,7 +509,7 @@ LPAR_STATE_TESTCASES = [
         'not-operating',
         {},
         True,
-        True,
+        RunMode.RUN
     ),
     (
         "Active Linux LPAR state=reset_normal, default parms",
@@ -522,7 +524,7 @@ LPAR_STATE_TESTCASES = [
         'not-operating',
         {},
         True,
-        True,
+        RunMode.RUN
     ),
     (
         "Active Linux LPAR state=inactive, default parms",
@@ -537,7 +539,7 @@ LPAR_STATE_TESTCASES = [
         'not-activated',
         {},
         True,
-        True,
+        RunMode.RUN
     ),
 
     (
@@ -556,7 +558,7 @@ LPAR_STATE_TESTCASES = [
             'status': 'operating',
         },
         True,
-        True,
+        RunMode.RUN
     ),
 ]
 
@@ -570,16 +572,16 @@ LPAR_STATE_TESTCASES = [
 @pytest.mark.parametrize(
     "desc, lpar_mode, ap_type, nap_type, auto_load, initial_status, "
     "input_state, input_kwargs, exp_msg, exp_status, exp_result, exp_changed, "
-    "run",
+    "runmode",
     LPAR_STATE_TESTCASES)
 @mock.patch("plugins.modules.zhmc_lpar.AnsibleModule", autospec=True)
 def test_zhmc_lpar_state(
         ansible_mod_cls,
         desc, lpar_mode, auto_load, ap_type, nap_type, initial_status,
         input_state, input_kwargs, exp_msg, exp_status, exp_result, exp_changed,
-        run,
+        runmode,
         check_mode,
-        classic_mode_cpcs):  # noqa: F811, E501
+        classic_mode_cpcs, request):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_lpar module with different initial and target state.
@@ -618,11 +620,10 @@ def test_zhmc_lpar_state(
                 ssc: "LP03LOAD"
 
     """
+    handle_runmode(request, runmode)
+
     if not classic_mode_cpcs:
         pytest.skip("HMC definition does not include any CPCs in classic mode")
-
-    if not run:
-        skip_warn("Testcase is disabled in testcase definition")
 
     logger = setup_logging(LOGGING, 'test_zhmc_lpar_state', LOG_FILE)
 
@@ -728,9 +729,6 @@ def test_zhmc_lpar_state(
         print(msg)
         logger.info(msg)
 
-        if run == 'pdb':
-            pdb.set_trace()  # pylint: disable=forgotten-debug-statement
-
         logger.info("Preparation: Ensuring that LPAR %r has status %r",
                     lpar.name, initial_status)
         ensure_lpar_status(logger, lpar, iap, initial_status)
@@ -831,7 +829,9 @@ def test_zhmc_lpar_state(
 
 
 LPAR_FACTS_TESTCASES = [
-    # The list items are tuples with the following items:
+    # Testcases for test_zhmc_lpar_facts()
+    #
+    # Each testcase is a tuple with the following items:
     # - desc (string): description of the testcase.
     # - select_properties (list): Input for select_properties module parm
     # - exp_prop_names (list): Names of expected properties in module
@@ -843,7 +843,7 @@ LPAR_FACTS_TESTCASES = [
     # - exp_msg (string): Expected message pattern in case of module failure,
     #   or None for module success.
     # - exp_changed (bool): Boolean for expected 'changed' flag.
-    # - run: Indicates whether the test should be run, or 'pdb' for debugger.
+    # - runmode (RunMode): Run mode for the testcase.
 
     (
         "Default input parms = full properties",
@@ -858,7 +858,7 @@ LPAR_FACTS_TESTCASES = [
         [],
         None,
         False,
-        True,
+        RunMode.RUN
     ),
     (
         "select empty list of properties",
@@ -874,7 +874,7 @@ LPAR_FACTS_TESTCASES = [
         ],
         None,
         False,
-        True,
+        RunMode.RUN
     ),
     (
         "select one property",
@@ -890,7 +890,7 @@ LPAR_FACTS_TESTCASES = [
         ],
         None,
         False,
-        True,
+        RunMode.RUN
     ),
     (
         "select two properties",
@@ -906,7 +906,7 @@ LPAR_FACTS_TESTCASES = [
         ],
         None,
         False,
-        True,
+        RunMode.RUN
     ),
     (
         "select property with underscore",
@@ -922,7 +922,7 @@ LPAR_FACTS_TESTCASES = [
         ],
         None,
         False,
-        True,
+        RunMode.RUN
     ),
     (
         "select property with hyphen",
@@ -938,7 +938,7 @@ LPAR_FACTS_TESTCASES = [
         ],
         None,
         False,
-        True,
+        RunMode.RUN
     ),
 ]
 
@@ -951,25 +951,24 @@ LPAR_FACTS_TESTCASES = [
 )
 @pytest.mark.parametrize(
     "desc, select_properties, exp_prop_names, not_prop_names, "
-    "exp_msg, exp_changed, run",
+    "exp_msg, exp_changed, runmode",
     LPAR_FACTS_TESTCASES)
 @mock.patch("plugins.modules.zhmc_lpar.AnsibleModule", autospec=True)
 def test_zhmc_lpar_facts(
         ansible_mod_cls,
         desc, select_properties, exp_prop_names, not_prop_names,
-        exp_msg, exp_changed, run,
-        check_mode, classic_mode_cpcs):  # noqa: F811, E501
+        exp_msg, exp_changed, runmode,
+        check_mode, classic_mode_cpcs, request):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_lpar module with state=facts.
 
     The test LPARs can be in any status.
     """
+    handle_runmode(request, runmode)
+
     if not classic_mode_cpcs:
         pytest.skip("HMC definition does not include any CPCs in classic mode")
-
-    if not run:
-        skip_warn("Testcase is disabled in testcase definition")
 
     logger = setup_logging(LOGGING, 'test_zhmc_lpar_facts', LOG_FILE)
 
@@ -992,9 +991,6 @@ def test_zhmc_lpar_facts(
         msg = f"Testing on CPC {cpc.name} with LPAR {lpar.name!r}"
         print(msg)
         logger.info(msg)
-
-        if run == 'pdb':
-            pdb.set_trace()  # pylint: disable=forgotten-debug-statement
 
         # Prepare module input parameters (must be all required + optional)
         params = {

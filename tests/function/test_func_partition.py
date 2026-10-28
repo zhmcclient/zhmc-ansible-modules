@@ -32,6 +32,7 @@ from zhmcclient_mock import FakedSession
 from plugins.modules import zhmc_partition
 
 from .func_utils import mock_ansible_module
+from ..utils import RunMode, handle_runmode
 
 # FakedSession() init arguments
 FAKED_SESSION_KWARGS = dict(
@@ -384,6 +385,18 @@ def get_module_output(mod_obj):
 
 
 CRYPTO_CONFIG_SUCCESS_TESTCASES = [
+    # Testcases for test_crypto_config_success()
+    #
+    # Each testcase is a tuple with the following items:
+    # - title (string): description of the testcase.
+    # - adapters (list of dict): Properties for crypto adapters to be set up
+    #   before the test.
+    # - initial_config (dict): Initial crypto config.
+    # - input_props (dict): Input properties for the zhmc_partition module.
+    # - exp_config (dict): Expected crypto config after nodule return.
+    # - exp_changed (bool): Expected 'changed' flag in module output.
+    # - runmode (RunMode): Run mode for the testcase.
+
     (
         "No_change_to_empty_config",
         # adapters:
@@ -395,7 +408,8 @@ CRYPTO_CONFIG_SUCCESS_TESTCASES = [
         # exp_config:
         None,
         # exp_changed:
-        False
+        False,
+        RunMode.RUN
     ),
     (
         "Add adapter to empty config",
@@ -425,7 +439,8 @@ CRYPTO_CONFIG_SUCCESS_TESTCASES = [
             ],
         },
         # exp_changed:
-        True
+        True,
+        RunMode.RUN
     ),
     (
         "Add domain to empty config",
@@ -455,7 +470,8 @@ CRYPTO_CONFIG_SUCCESS_TESTCASES = [
             ],
         },
         # exp_changed:
-        True
+        True,
+        RunMode.RUN
     ),
     (
         "Add adapter+domain to empty config",
@@ -487,7 +503,8 @@ CRYPTO_CONFIG_SUCCESS_TESTCASES = [
             ],
         },
         # exp_changed:
-        True
+        True,
+        RunMode.RUN
     ),
     (
         "Change access mode of domain",
@@ -526,7 +543,8 @@ CRYPTO_CONFIG_SUCCESS_TESTCASES = [
             ],
         },
         # exp_changed:
-        True
+        True,
+        RunMode.RUN
     ),
     (
         "No change to adapter+domain",
@@ -565,7 +583,8 @@ CRYPTO_CONFIG_SUCCESS_TESTCASES = [
             ],
         },
         # exp_changed:
-        False
+        False,
+        RunMode.RUN
     ),
     (
         "Add adapter to adapter+domain",
@@ -606,7 +625,8 @@ CRYPTO_CONFIG_SUCCESS_TESTCASES = [
             ],
         },
         # exp_changed:
-        True
+        True,
+        RunMode.RUN
     ),
     (
         "Add domain to adapter+domain",
@@ -647,7 +667,8 @@ CRYPTO_CONFIG_SUCCESS_TESTCASES = [
             ],
         },
         # exp_changed:
-        True
+        True,
+        RunMode.RUN
     ),
     (
         "Add adapter+domain to adapter+domain",
@@ -690,7 +711,8 @@ CRYPTO_CONFIG_SUCCESS_TESTCASES = [
             ],
         },
         # exp_changed:
-        True
+        True,
+        RunMode.RUN
     ),
     (
         "Remove adapter+domain from adapter+domain",
@@ -725,7 +747,8 @@ CRYPTO_CONFIG_SUCCESS_TESTCASES = [
             ],
         },
         # exp_changed:
-        True
+        True,
+        RunMode.RUN
     ),
     (
         "Remove adapter+domain from 2 adapters + 2 domains",
@@ -766,7 +789,8 @@ CRYPTO_CONFIG_SUCCESS_TESTCASES = [
             ],
         },
         # exp_changed:
-        True
+        True,
+        RunMode.RUN
     ),
     (
         "Check domain index numbers provided as strings",
@@ -808,7 +832,8 @@ CRYPTO_CONFIG_SUCCESS_TESTCASES = [
             ],
         },
         # exp_changed:
-        True
+        True,
+        RunMode.RUN
     ),
 ]
 
@@ -1613,17 +1638,20 @@ class TestPartition:
     @pytest.mark.parametrize(
         "desired_state", ['stopped', 'active'])
     @pytest.mark.parametrize(
-        "desc, adapters, initial_config, input_props, exp_config, exp_changed",
-        CRYPTO_CONFIG_SUCCESS_TESTCASES)
+        "desc, adapters, initial_config, input_props, exp_config, exp_changed, "
+        "runmode", CRYPTO_CONFIG_SUCCESS_TESTCASES)
     @mock.patch("plugins.modules.zhmc_partition.AnsibleModule",
                 autospec=True)
     def test_crypto_config_success(
             self, ansible_mod_cls, desc, adapters, initial_config, input_props,
-            exp_config, exp_changed, desired_state, initial_state, check_mode):
+            exp_config, exp_changed, desired_state, initial_state, check_mode,
+            runmode,
+            request):  # noqa: F811, E501
         # pylint: disable=unused-argument
         """
         Tests for successful crypto configuration.
         """
+        handle_runmode(request, runmode)
 
         if initial_state != desired_state and not check_mode:
             pytest.skip("Async partition start/stop not supported by "

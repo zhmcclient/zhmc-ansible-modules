@@ -33,6 +33,7 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 from plugins.modules import zhmc_password_rule
 from plugins.module_utils.common import hyphened_value
 from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from ..utils import RunMode, handle_runmode
 
 urllib3.disable_warnings()
 
@@ -191,7 +192,9 @@ def test_zhmc_password_rule_facts(
 
 
 PWRULE_ABSENT_PRESENT_TESTCASES = [
-    # The list items are tuples with the following items:
+    # Testcases for test_zhmc_password_rule_absent_present()
+    #
+    # Each testcase is a tuple with the following items:
     # - desc (string): description of the testcase.
     # - initial_pwrule_props (dict): HMC-formatted properties for initial
     #    password rule, in addition to STD_PWRULE_PROPERTIES, or None for no
@@ -201,6 +204,7 @@ PWRULE_ABSENT_PRESENT_TESTCASES = [
     # - exp_pwrule_props (dict): HMC-formatted properties for expected
     #   properties of created password rule.
     # - exp_changed (bool): Boolean for expected 'changed' flag.
+    # - runmode (RunMode): Run mode for the testcase.
 
     (
         "Present with non-existing password rule",
@@ -209,6 +213,7 @@ PWRULE_ABSENT_PRESENT_TESTCASES = [
         STD_PWRULE_INPUT_PROPERTIES,
         STD_PWRULE_PROPERTIES,
         True,
+        RunMode.RUN
     ),
     (
         "Present with existing password rule, no properties changed",
@@ -217,6 +222,7 @@ PWRULE_ABSENT_PRESENT_TESTCASES = [
         STD_PWRULE_INPUT_PROPERTIES,
         STD_PWRULE_PROPERTIES,
         False,
+        RunMode.RUN
     ),
     (
         "Present with existing password rule, some properties changed",
@@ -227,6 +233,7 @@ PWRULE_ABSENT_PRESENT_TESTCASES = [
         STD_PWRULE_INPUT_PROPERTIES,
         STD_PWRULE_PROPERTIES,
         True,
+        RunMode.RUN
     ),
     (
         "Absent with existing password rule",
@@ -235,6 +242,7 @@ PWRULE_ABSENT_PRESENT_TESTCASES = [
         None,
         None,
         True,
+        RunMode.RUN
     ),
     (
         "Absent with non-existing password rule",
@@ -243,6 +251,7 @@ PWRULE_ABSENT_PRESENT_TESTCASES = [
         None,
         None,
         False,
+        RunMode.RUN
     ),
 ]
 
@@ -255,19 +264,20 @@ PWRULE_ABSENT_PRESENT_TESTCASES = [
 )
 @pytest.mark.parametrize(
     "desc, initial_pwrule_props, input_state, "
-    "input_props, exp_pwrule_props, exp_changed",
+    "input_props, exp_pwrule_props, exp_changed, runmode",
     PWRULE_ABSENT_PRESENT_TESTCASES)
 @mock.patch("plugins.modules.zhmc_password_rule.AnsibleModule", autospec=True)
 def test_zhmc_password_rule_absent_present(
         ansible_mod_cls,
         desc, initial_pwrule_props, input_state,
-        input_props, exp_pwrule_props, exp_changed,
+        input_props, exp_pwrule_props, exp_changed, runmode,
         check_mode,
-        hmc_session):  # noqa: F811, E501
+        hmc_session, request):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_password_rule module with state=absent/present.
     """
+    handle_runmode(request, runmode)
 
     hmc_host = hmc_session.host
     hmc_auth = get_hmc_auth(hmc_session)

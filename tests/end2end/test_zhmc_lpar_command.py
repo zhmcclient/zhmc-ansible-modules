@@ -31,6 +31,7 @@ from zhmcclient.testutils import classic_mode_cpcs  # noqa: F401, E501
 
 from plugins.modules import zhmc_lpar_command
 from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from ..utils import RunMode, handle_runmode
 
 urllib3.disable_warnings()
 
@@ -58,7 +59,9 @@ def get_module_output(mod_obj):
 
 
 TESTCASES_ZHMC_LPAR_COMMAND = [
-    # Testcases for test_zhmc_lpar_command(), each with these items:
+    # Testcases for test_zhmc_lpar_command()
+    #
+    # Each testcase is a tuple with the following items:
     # * desc (str): Testcase description
     # * in_params (dict): Input parameters passed to module, except for
     #   hmc_host, hmc_auth, cpc, name, command, log_file.
@@ -66,6 +69,7 @@ TESTCASES_ZHMC_LPAR_COMMAND = [
     # * os_type (str): LPAR os-type property, for selecting the LPAR
     # * command (str): Command to be executed
     # * exp_output (list): Expected command output lines, as a list of regexp
+    # * runmode (RunMode): Run mode for the testcase.
 
     (
         "Simple z/VM command",
@@ -80,7 +84,8 @@ TESTCASES_ZHMC_LPAR_COMMAND = [
             ".* z/VM Version .* Release .* service level .*",
             ".* Generated at .*",
             ".* IPL at .*",
-        ]
+        ],
+        RunMode.RUN
     ),
     (
         "Simple z/OS command",
@@ -94,7 +99,8 @@ TESTCASES_ZHMC_LPAR_COMMAND = [
             "D T",
             "RESPONSE=GR1 .* TIME=.*",
             "RESPONSE=TIME=.* DATE=.*",
-        ]
+        ],
+        RunMode.RUN
     ),
     # TODO: Find out how to deal with Linux password prompt
     # (
@@ -108,13 +114,14 @@ TESTCASES_ZHMC_LPAR_COMMAND = [
     #     [
     #         "uname -a",
     #         "Kernel Version .* s390x",
-    #     ]
+    #     ],
+    #     RunMode.RUN
     # ),
 ]
 
 
 @pytest.mark.parametrize(
-    "desc, in_params, act_mode, os_type, command, exp_output",
+    "desc, in_params, act_mode, os_type, command, exp_output, runmode",
     TESTCASES_ZHMC_LPAR_COMMAND
 )
 @pytest.mark.parametrize(
@@ -126,12 +133,14 @@ TESTCASES_ZHMC_LPAR_COMMAND = [
 @mock.patch("plugins.modules.zhmc_lpar_command.AnsibleModule", autospec=True)
 def test_zhmc_lpar_command(
         ansible_mod_cls, check_mode,
-        desc, in_params, act_mode, os_type, command, exp_output,
-        classic_mode_cpcs):  # noqa: F811, E501
+        desc, in_params, act_mode, os_type, command, exp_output, runmode,
+        classic_mode_cpcs, request):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_lpar_command module with classic mode CPCs.
     """
+    handle_runmode(request, runmode)
+
     if not classic_mode_cpcs:
         pytest.skip("HMC definition does not include any CPCs in classic mode")
 

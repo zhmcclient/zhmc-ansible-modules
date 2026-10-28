@@ -35,6 +35,7 @@ from zhmcclient.testutils import dpm_mode_cpcs  # noqa: F401, E501
 
 from plugins.modules import zhmc_adapter
 from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from ..utils import RunMode, handle_runmode
 
 urllib3.disable_warnings()
 
@@ -395,7 +396,9 @@ for pname, pvalue in HIPERSOCKET_UPDATE1_INPUT_PROPS.items():
     HIPERSOCKET_UPDATE1_EXP_PROPS_HMC[_PNAME_HMC] = pvalue
 
 ADAPTER_STATES_TESTCASES = [
-    # The list items are tuples with the following items:
+    # Testcases for test_zhmc_adapter_states()
+    #
+    # Each testcase is a tuple with the following items:
     # - desc (string): description of the testcase.
     # - initial_props (dict): HMC-formatted properties for initial adapter,
     #   or None for no initial adapter.
@@ -416,6 +419,7 @@ ADAPTER_STATES_TESTCASES = [
     #   when expecting success, or None when expecting failure.
     # - exp_msg_pattern (string): Pattern for expected failure message, or
     #   None when expecting success.
+    # - runmode (RunMode): Run mode for the testcase.
 
     (
         "state=present with non-existing adapter",
@@ -427,6 +431,7 @@ ADAPTER_STATES_TESTCASES = [
         STD_HIPERSOCKET_EXP_PROPS_HMC,
         True,
         None,
+        RunMode.RUN
     ),
     (
         "state=present with existing adapter, no properties changed",
@@ -438,6 +443,7 @@ ADAPTER_STATES_TESTCASES = [
         STD_HIPERSOCKET_EXP_PROPS_HMC,
         False,
         None,
+        RunMode.RUN
     ),
     (
         "state=present with existing adapter and property update",
@@ -449,6 +455,7 @@ ADAPTER_STATES_TESTCASES = [
         HIPERSOCKET_UPDATE1_EXP_PROPS_HMC,
         True,
         None,
+        RunMode.RUN
     ),
     (
         "state=set without match with existing adapter",
@@ -460,6 +467,7 @@ ADAPTER_STATES_TESTCASES = [
         HIPERSOCKET_UPDATE1_EXP_PROPS_HMC,
         True,
         None,
+        RunMode.RUN
     ),
     (
         "state=set without match with non-existing adapter",
@@ -471,6 +479,7 @@ ADAPTER_STATES_TESTCASES = [
         None,
         None,
         "NotFound: Could not find Adapter .*",
+        RunMode.RUN
     ),
     (
         "state=set with match by adapter-id of existing adapter without rename",
@@ -482,6 +491,7 @@ ADAPTER_STATES_TESTCASES = [
         HIPERSOCKET_UPDATE1_EXP_PROPS_HMC,
         True,
         None,
+        RunMode.RUN
     ),
     (
         "state=set with match by adapter-id of existing adapter with rename",
@@ -493,6 +503,7 @@ ADAPTER_STATES_TESTCASES = [
         HIPERSOCKET_UPDATE1_EXP_PROPS_HMC,
         True,
         None,
+        RunMode.RUN
     ),
     (
         "state=set with match by adapter-id of existing adapter with rename "
@@ -505,6 +516,7 @@ ADAPTER_STATES_TESTCASES = [
         None,
         None,
         "HTTPError: 400,8: An adapter with the name specified .*",
+        RunMode.RUN
     ),
     (
         "state=set with match by adapter-id of non-existing adapter",
@@ -516,6 +528,7 @@ ADAPTER_STATES_TESTCASES = [
         None,
         None,
         "NotFound: Could not find Adapter .*",
+        RunMode.RUN
     ),
     (
         "state=set with match by object-id of existing adapter without rename",
@@ -527,6 +540,7 @@ ADAPTER_STATES_TESTCASES = [
         HIPERSOCKET_UPDATE1_EXP_PROPS_HMC,
         True,
         None,
+        RunMode.RUN
     ),
     (
         "state=set with match by object-id of existing adapter with rename",
@@ -538,6 +552,7 @@ ADAPTER_STATES_TESTCASES = [
         HIPERSOCKET_UPDATE1_EXP_PROPS_HMC,
         True,
         None,
+        RunMode.RUN
     ),
     (
         "state=absent with existing adapter",
@@ -549,6 +564,7 @@ ADAPTER_STATES_TESTCASES = [
         None,
         True,
         None,
+        RunMode.RUN
     ),
     (
         "state=absent with non-existing adapter",
@@ -560,6 +576,7 @@ ADAPTER_STATES_TESTCASES = [
         None,
         False,
         None,
+        RunMode.RUN
     ),
 ]
 
@@ -572,19 +589,21 @@ ADAPTER_STATES_TESTCASES = [
 )
 @pytest.mark.parametrize(
     "desc, initial_props, input_state, input_name, input_match, input_props, "
-    "exp_props, exp_changed, exp_msg_pattern",
+    "exp_props, exp_changed, exp_msg_pattern, runmode",
     ADAPTER_STATES_TESTCASES)
 @mock.patch("plugins.modules.zhmc_adapter.AnsibleModule", autospec=True)
 def test_zhmc_adapter_states(
         ansible_mod_cls,
         desc, initial_props, input_state, input_name, input_match, input_props,
-        exp_props, exp_changed, exp_msg_pattern,
-        check_mode, dpm_mode_cpcs):  # noqa: F811, E501
+        exp_props, exp_changed, exp_msg_pattern, runmode,
+        check_mode, dpm_mode_cpcs, request):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_adapter module with state=absent/present on DPM mode CPCs,
     with Hipersocket adapters.
     """
+    handle_runmode(request, runmode)
+
     if not dpm_mode_cpcs:
         pytest.skip("HMC definition does not include any CPCs in DPM mode")
 
