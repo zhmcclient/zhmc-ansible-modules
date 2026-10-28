@@ -29,7 +29,8 @@ from zhmcclient.testutils import all_cpcs  # noqa: F401, E501
 
 from plugins.modules import zhmc_cpc
 from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth, \
-    setup_logging, skip_warn
+    setup_logging
+from ..utils import RunMode, handle_runmode
 
 urllib3.disable_warnings()
 
@@ -60,7 +61,9 @@ def get_module_output(mod_obj):
 
 
 CPC_FACTS_TESTCASES = [
-    # The list items are tuples with the following items:
+    # Testcases for test_zhmc_cpc_facts()
+    #
+    # Each testcase is a tuple with the following items:
     # - desc (string): description of the testcase.
     # - select_properties (list): Input for select_properties module parm
     # - exp_prop_names (list): Names of expected properties in module
@@ -72,7 +75,7 @@ CPC_FACTS_TESTCASES = [
     # - exp_msg (string): Expected message pattern in case of module failure,
     #   or None for module success.
     # - exp_changed (bool): Boolean for expected 'changed' flag.
-    # - run: Indicates whether the test should be run, or 'pdb' for debugger.
+    # - runmode (RunMode): Run mode for the testcase.
 
     (
         "Default input parms = full properties",
@@ -87,7 +90,7 @@ CPC_FACTS_TESTCASES = [
         [],
         None,
         False,
-        True,
+        RunMode.RUN
     ),
     (
         "select empty list of properties",
@@ -103,7 +106,7 @@ CPC_FACTS_TESTCASES = [
         ],
         None,
         False,
-        True,
+        RunMode.RUN
     ),
     (
         "select one property",
@@ -119,7 +122,7 @@ CPC_FACTS_TESTCASES = [
         ],
         None,
         False,
-        True,
+        RunMode.RUN
     ),
     (
         "select two properties",
@@ -135,7 +138,7 @@ CPC_FACTS_TESTCASES = [
         ],
         None,
         False,
-        True,
+        RunMode.RUN
     ),
     (
         "select property with underscore",
@@ -150,7 +153,7 @@ CPC_FACTS_TESTCASES = [
         ],
         None,
         False,
-        True,
+        RunMode.RUN
     ),
     (
         "select property with hyphen",
@@ -165,7 +168,7 @@ CPC_FACTS_TESTCASES = [
         ],
         None,
         False,
-        True,
+        RunMode.RUN
     ),
 ]
 
@@ -178,23 +181,22 @@ CPC_FACTS_TESTCASES = [
 )
 @pytest.mark.parametrize(
     "desc, select_properties, exp_prop_names, not_prop_names, "
-    "exp_msg, exp_changed, run",
+    "exp_msg, exp_changed, runmode",
     CPC_FACTS_TESTCASES)
 @mock.patch("plugins.modules.zhmc_cpc.AnsibleModule", autospec=True)
 def test_zhmc_cpc_facts(
         ansible_mod_cls,
         desc, select_properties, exp_prop_names, not_prop_names,
-        exp_msg, exp_changed, run,
-        check_mode, all_cpcs):  # noqa: F811, E501
+        exp_msg, exp_changed, runmode,
+        check_mode, all_cpcs, request):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_cpc module with state=facts on any CPCs.
     """
+    handle_runmode(request, runmode)
+
     if not all_cpcs:
         pytest.skip("HMC definition does not include any CPCs")
-
-    if not run:
-        skip_warn("Testcase is disabled in testcase definition")
 
     setup_logging(LOGGING, 'test_zhmc_cpc_facts', LOG_FILE)
 

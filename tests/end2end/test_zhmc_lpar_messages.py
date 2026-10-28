@@ -30,6 +30,7 @@ from zhmcclient.testutils import classic_mode_cpcs  # noqa: F401, E501
 
 from plugins.modules import zhmc_lpar_messages
 from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from ..utils import RunMode, handle_runmode
 
 urllib3.disable_warnings()
 
@@ -57,12 +58,15 @@ def get_module_output(mod_obj):
 
 
 TESTCASES_ZHMC_LPAR_MESSAGES = [
-    # Testcases for test_zhmc_lpar_messages(), each with these items:
+    # Testcases for test_zhmc_lpar_messages()
+    #
+    # Each testcase is a tuple with the following items:
     # * desc (str): Testcase description
     # * in_params (dict): Input parameters passed to module, except for
     #   hmc_host, hmc_auth, cpc, name, log_file.
     # * exp_seqnos (dict): Expected message sequence numbers, if success,
     #   or None for no checking
+    # - runmode (RunMode): Run mode for the testcase.
 
     (
         "Messages unfiltered",
@@ -73,7 +77,8 @@ TESTCASES_ZHMC_LPAR_MESSAGES = [
             'is_held': None,
             'is_priority': None,
         },
-        None
+        None,
+        RunMode.RUN
     ),
     (
         "Messages 0-2 filtered by begin/end",
@@ -84,7 +89,8 @@ TESTCASES_ZHMC_LPAR_MESSAGES = [
             'is_held': None,
             'is_priority': None,
         },
-        [0, 1, 2]
+        [0, 1, 2],
+        RunMode.RUN
     ),
     (
         "Messages 0-2 filtered by max_messages",
@@ -95,7 +101,8 @@ TESTCASES_ZHMC_LPAR_MESSAGES = [
             'is_held': None,
             'is_priority': None,
         },
-        [0, 1, 2]
+        [0, 1, 2],
+        RunMode.RUN
     ),
     (
         "Messages 1-2 filtered by begin and max_messages",
@@ -106,7 +113,8 @@ TESTCASES_ZHMC_LPAR_MESSAGES = [
             'is_held': None,
             'is_priority': None,
         },
-        [1, 2]
+        [1, 2],
+        RunMode.RUN
     ),
     (
         "Messages 0-2 filtered by max_messages and is_held/is_priority false",
@@ -117,13 +125,14 @@ TESTCASES_ZHMC_LPAR_MESSAGES = [
             'is_held': False,
             'is_priority': False,
         },
-        [0, 1, 2]
+        [0, 1, 2],
+        RunMode.RUN
     ),
 ]
 
 
 @pytest.mark.parametrize(
-    "desc, in_params, exp_seqnos",
+    "desc, in_params, exp_seqnos, runmode",
     TESTCASES_ZHMC_LPAR_MESSAGES
 )
 @pytest.mark.parametrize(
@@ -135,12 +144,14 @@ TESTCASES_ZHMC_LPAR_MESSAGES = [
 @mock.patch("plugins.modules.zhmc_lpar_messages.AnsibleModule", autospec=True)
 def test_zhmc_lpar_messages(
         ansible_mod_cls, check_mode,
-        desc, in_params, exp_seqnos,
-        classic_mode_cpcs):  # noqa: F811, E501
+        desc, in_params, exp_seqnos, runmode,
+        classic_mode_cpcs, request):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_lpar_messages module with classic mode CPCs.
     """
+    handle_runmode(request, runmode)
+
     if not classic_mode_cpcs:
         pytest.skip("HMC definition does not include any CPCs in classic mode")
 

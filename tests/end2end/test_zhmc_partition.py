@@ -24,7 +24,6 @@ import copy
 from unittest import mock
 import re
 import random
-import pdb
 from pprint import pformat
 import pytest
 import urllib3
@@ -37,7 +36,8 @@ from zhmcclient.testutils import dpm_mode_cpcs  # noqa: F401, E501
 from plugins.modules import zhmc_partition
 from plugins.module_utils.common import pull_partition_status
 from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth, \
-    setup_logging, skip_warn
+    setup_logging
+from ..utils import RunMode, handle_runmode
 
 urllib3.disable_warnings()
 
@@ -516,7 +516,9 @@ def assert_partition_props(act_props, exp_props, where):
 
 
 PARTITION_FACTS_TESTCASES = [
-    # The list items are tuples with the following items:
+    # Testcases for test_zhmc_partition_facts()
+    #
+    # Each testcase is a tuple with the following items:
     # - desc (string): description of the testcase.
     # - select_properties (list): Input for select_properties module parm
     # - exp_prop_names (list): Names of expected properties in module
@@ -528,7 +530,7 @@ PARTITION_FACTS_TESTCASES = [
     # - exp_msg (string): Expected message pattern in case of module failure,
     #   or None for module success.
     # - exp_changed (bool): Boolean for expected 'changed' flag.
-    # - run: Indicates whether the test should be run, or 'pdb' for debugger.
+    # - runmode (RunMode): Run mode for the testcase.
 
     (
         "Default input parms = full properties",
@@ -543,7 +545,7 @@ PARTITION_FACTS_TESTCASES = [
         [],
         None,
         False,
-        True,
+        RunMode.RUN
     ),
     (
         "select empty list of properties",
@@ -559,7 +561,7 @@ PARTITION_FACTS_TESTCASES = [
         ],
         None,
         False,
-        True,
+        RunMode.RUN
     ),
     (
         "select one property",
@@ -575,7 +577,7 @@ PARTITION_FACTS_TESTCASES = [
         ],
         None,
         False,
-        True,
+        RunMode.RUN
     ),
     (
         "select two properties",
@@ -591,7 +593,7 @@ PARTITION_FACTS_TESTCASES = [
         ],
         None,
         False,
-        True,
+        RunMode.RUN
     ),
     (
         "select property with underscore",
@@ -607,7 +609,7 @@ PARTITION_FACTS_TESTCASES = [
         ],
         None,
         False,
-        True,
+        RunMode.RUN
     ),
     (
         "select property with hyphen",
@@ -623,7 +625,7 @@ PARTITION_FACTS_TESTCASES = [
         ],
         None,
         False,
-        True,
+        RunMode.RUN
     ),
 ]
 
@@ -636,23 +638,22 @@ PARTITION_FACTS_TESTCASES = [
 )
 @pytest.mark.parametrize(
     "desc, select_properties, exp_prop_names, not_prop_names, "
-    "exp_msg, exp_changed, run",
+    "exp_msg, exp_changed, runmode",
     PARTITION_FACTS_TESTCASES)
 @mock.patch("plugins.modules.zhmc_partition.AnsibleModule", autospec=True)
 def test_zhmc_partition_facts(
         ansible_mod_cls,
         desc, select_properties, exp_prop_names, not_prop_names,
-        exp_msg, exp_changed, run,
-        check_mode, dpm_mode_cpcs):  # noqa: F811, E501
+        exp_msg, exp_changed, runmode,
+        check_mode, dpm_mode_cpcs, request):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_partition module with state=facts on DPM mode CPCs.
     """
+    handle_runmode(request, runmode)
+
     if not dpm_mode_cpcs:
         pytest.skip("HMC definition does not include any CPCs in DPM mode")
-
-    if not run:
-        skip_warn("Testcase is disabled in testcase definition")
 
     setup_logging(LOGGING, 'test_zhmc_partition_facts', LOG_FILE)
 
@@ -718,7 +719,9 @@ def test_zhmc_partition_facts(
 
 
 PARTITION_STATE_TESTCASES = [
-    # The list items are tuples with the following items:
+    # Testcases for test_zhmc_partition_state()
+    #
+    # Each testcase is a tuple with the following items:
     # - desc (string): description of the testcase.
     # - initial_props (dict): HMC-formatted properties for initial
     #    partition, or None for no initial partition.
@@ -733,7 +736,7 @@ PARTITION_STATE_TESTCASES = [
     # - exp_props (dict): HMC-formatted properties for expected
     #   properties of created partition.
     # - exp_changed (bool): Boolean for expected 'changed' flag.
-    # - run: Indicates whether the test should be run, or 'pdb' for debugger.
+    # - runmode (RunMode): Run mode for the testcase.
 
     (
         "state=stopped for Linux partition with non-existing partition",
@@ -744,7 +747,7 @@ PARTITION_STATE_TESTCASES = [
         None,
         STD_LINUX_PARTITION_HMC_EXP_PROPS,
         True,
-        True,
+        RunMode.RUN
     ),
     (
         "state=stopped for Linux partition with existing stopped partition, "
@@ -756,7 +759,7 @@ PARTITION_STATE_TESTCASES = [
         None,
         STD_LINUX_PARTITION_HMC_EXP_PROPS,
         False,
-        True,
+        RunMode.RUN
     ),
     (
         "state=stopped for Linux partition with existing paused partition, "
@@ -768,7 +771,7 @@ PARTITION_STATE_TESTCASES = [
         None,
         STD_LINUX_PARTITION_HMC_EXP_PROPS,
         True,
-        True,
+        RunMode.RUN
     ),
     (
         "state=active for Linux partition with existing stopped partition, "
@@ -781,7 +784,7 @@ PARTITION_STATE_TESTCASES = [
         "status 'paused'.*",
         None,
         None,
-        True,
+        RunMode.RUN
     ),
     (
         "state=active for Linux partition with existing paused partition, "
@@ -794,7 +797,7 @@ PARTITION_STATE_TESTCASES = [
         "status 'paused'.*",
         None,
         None,
-        True,
+        RunMode.RUN
     ),
     (
         "state=stopped for Linux partition with existing stopped partition, "
@@ -808,7 +811,7 @@ PARTITION_STATE_TESTCASES = [
         None,
         STD_LINUX_PARTITION_HMC_EXP_PROPS,
         True,
-        True,
+        RunMode.RUN
     ),
     (
         "state=stopped for SSC partition with non-existing partition",
@@ -819,7 +822,7 @@ PARTITION_STATE_TESTCASES = [
         None,
         STD_SSC_PARTITION_HMC_EXP_PROPS,
         True,
-        True,
+        RunMode.RUN
     ),
     # Note: state=active for a non-existing SSC partition requires the addition
     #       of an SSC mgmt NIC before the partition can be started. This case
@@ -835,7 +838,7 @@ PARTITION_STATE_TESTCASES = [
         None,
         STD_SSC_PARTITION_HMC_EXP_PROPS,
         False,
-        True,
+        RunMode.RUN
     ),
     (
         "state=active for SSC partition with existing stopped partition, "
@@ -847,7 +850,7 @@ PARTITION_STATE_TESTCASES = [
         None,  # Code ignores "HTTPError: 409,131"
         STD_SSC_PARTITION_HMC_EXP_PROPS,
         True,
-        True,
+        RunMode.RUN
     ),
     (
         "state=stopped for SSC partition with existing stopped partition, "
@@ -861,7 +864,7 @@ PARTITION_STATE_TESTCASES = [
         None,
         STD_SSC_PARTITION_HMC_EXP_PROPS,
         True,
-        True,
+        RunMode.RUN
     ),
     (
         "state=absent with existing stopped Linux partition",
@@ -872,7 +875,7 @@ PARTITION_STATE_TESTCASES = [
         None,
         None,
         True,
-        True,
+        RunMode.RUN
     ),
     (
         "state=absent with existing stopped SSC partition",
@@ -883,7 +886,7 @@ PARTITION_STATE_TESTCASES = [
         None,
         None,
         True,
-        True,
+        RunMode.RUN
     ),
     (
         "state=absent with non-existing partition",
@@ -894,7 +897,7 @@ PARTITION_STATE_TESTCASES = [
         None,
         None,
         False,
-        True,
+        RunMode.RUN
     ),
 ]
 
@@ -907,24 +910,22 @@ PARTITION_STATE_TESTCASES = [
 )
 @pytest.mark.parametrize(
     "desc, initial_props, initial_status, input_state, input_props, exp_msg, "
-    "exp_props, exp_changed, run",
+    "exp_props, exp_changed, runmode",
     PARTITION_STATE_TESTCASES)
 @mock.patch("plugins.modules.zhmc_partition.AnsibleModule", autospec=True)
 def test_zhmc_partition_state(
         ansible_mod_cls,
         desc, initial_props, initial_status, input_state, input_props, exp_msg,
-        exp_props, exp_changed, run,
-        check_mode, dpm_mode_cpcs):  # noqa: F811, E501
-    # pylint: disable=redefined-outer-name
+        exp_props, exp_changed, runmode,
+        check_mode, dpm_mode_cpcs, request):  # noqa: F811, E501
+    # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_partition module with different initial and target state.
     """
+    handle_runmode(request, runmode)
 
     if not dpm_mode_cpcs:
         pytest.skip("HMC definition does not include any CPCs in DPM mode")
-
-    if not run:
-        pytest.skip(f"Testcase disabled: {desc}")
 
     setup_logging(LOGGING, 'test_zhmc_partition_state', LOG_FILE)
 
@@ -981,9 +982,6 @@ def test_zhmc_partition_state(
             mod_obj = mock_ansible_module(ansible_mod_cls, params, check_mode)
 
             with pytest.raises(SystemExit) as exc_info:
-
-                if run == 'pdb':
-                    pdb.set_trace()  # pylint: disable=forgotten-debug-statement
 
                 # Exercise the code to be tested
                 zhmc_partition.main()
@@ -1639,7 +1637,9 @@ def test_zhmc_partition_boot_stovol(
 
 
 PARTITION_ISO_MOUNT_TESTCASES = [
-    # The list items are tuples with the following items:
+    # Testcases for test_zhmc_partition_iso_mount()
+    #
+    # Each testcase is a tuple with the following items:
     # - desc (string): description of the testcase.
     # - image_name (string): image_name module input parameter.
     # - image_file (string): image_file module input parameter.
@@ -1647,6 +1647,7 @@ PARTITION_ISO_MOUNT_TESTCASES = [
     # - exp_msg (string): Expected message pattern in case of module failure,
     #   or None for module success.
     # - exp_changed (bool): Boolean for expected 'changed' flag.
+    # - runmode (RunMode): Run mode for the testcase.
 
     (
         "Missing required input parameter image_name",
@@ -1655,6 +1656,7 @@ PARTITION_ISO_MOUNT_TESTCASES = [
         'bar',
         "Missing required module input parameter",
         False,
+        RunMode.RUN
     ),
     (
         "Missing required input parameter image_file",
@@ -1663,6 +1665,7 @@ PARTITION_ISO_MOUNT_TESTCASES = [
         'bar',
         "Missing required module input parameter",
         False,
+        RunMode.RUN
     ),
     (
         "Missing required input parameter ins_file",
@@ -1671,6 +1674,7 @@ PARTITION_ISO_MOUNT_TESTCASES = [
         None,
         "Missing required module input parameter",
         False,
+        RunMode.RUN
     ),
     (
         "ISO image file does not exist",
@@ -1679,6 +1683,7 @@ PARTITION_ISO_MOUNT_TESTCASES = [
         '/dummy.ins',
         "Cannot open ISO image file",
         False,
+        RunMode.RUN
     ),
     # TODO: Testcases with valid ISO file
 ]
@@ -1691,17 +1696,18 @@ PARTITION_ISO_MOUNT_TESTCASES = [
     ]
 )
 @pytest.mark.parametrize(
-    "desc, image_name, image_file, ins_file, exp_msg, exp_changed",
+    "desc, image_name, image_file, ins_file, exp_msg, exp_changed, runmode",
     PARTITION_ISO_MOUNT_TESTCASES)
 @mock.patch("plugins.modules.zhmc_partition.AnsibleModule", autospec=True)
 def test_zhmc_partition_iso_mount(
         ansible_mod_cls,
-        desc, image_name, image_file, ins_file, exp_msg, exp_changed,
-        check_mode, dpm_mode_cpcs):  # noqa: F811, E501
+        desc, image_name, image_file, ins_file, exp_msg, exp_changed, runmode,
+        check_mode, dpm_mode_cpcs, request):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_partition module with state='iso_mount'.
     """
+    handle_runmode(request, runmode)
 
     if not dpm_mode_cpcs:
         pytest.skip("HMC definition does not include any CPCs in DPM mode")

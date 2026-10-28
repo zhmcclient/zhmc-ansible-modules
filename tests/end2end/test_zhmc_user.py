@@ -33,6 +33,7 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 from plugins.module_utils.common import params_deepcopy
 from plugins.modules import zhmc_user
 from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from ..utils import RunMode, handle_runmode
 
 urllib3.disable_warnings()
 
@@ -369,7 +370,9 @@ def test_zhmc_user_facts(
 
 
 USER_ABSENT_PRESENT_TESTCASES = [
-    # The list items are tuples with the following items:
+    # Testcases for test_zhmc_user_absent_present()
+    #
+    # Each testcase is a tuple with the following items:
     # - desc (string): description of the testcase.
     # - initial_user_props (dict): HMC-formatted properties for initial user,
     #   in addition to STD_USER_PROPERTIES, or None for no initial user.
@@ -379,6 +382,7 @@ USER_ABSENT_PRESENT_TESTCASES = [
     # - exp_user_props (dict): HMC-formatted properties for expected
     #   properties of created user.
     # - exp_changed (bool): Boolean for expected 'changed' flag.
+    # - runmode (RunMode): Run mode for the testcase.
 
     (
         "Present with non-existing user",
@@ -388,6 +392,7 @@ USER_ABSENT_PRESENT_TESTCASES = [
         STD_USER_INPUT_PROPERTIES_WITH_PW,
         STD_USER_PROPERTIES,
         True,
+        RunMode.RUN
     ),
     (
         "Present with existing user, no properties changed",
@@ -399,6 +404,7 @@ USER_ABSENT_PRESENT_TESTCASES = [
         STD_USER_INPUT_PROPERTIES,
         STD_USER_PROPERTIES,
         True,  # due to password
+        RunMode.RUN
     ),
     (
         "Present with existing user, some properties changed",
@@ -412,6 +418,7 @@ USER_ABSENT_PRESENT_TESTCASES = [
         STD_USER_INPUT_PROPERTIES,
         STD_USER_PROPERTIES,
         True,
+        RunMode.RUN
     ),
     (
         "Absent with existing user",
@@ -423,6 +430,7 @@ USER_ABSENT_PRESENT_TESTCASES = [
         None,
         None,
         True,
+        RunMode.RUN
     ),
     (
         "Absent with non-existing user",
@@ -432,6 +440,7 @@ USER_ABSENT_PRESENT_TESTCASES = [
         None,
         None,
         False,
+        RunMode.RUN
     ),
 ]
 
@@ -444,19 +453,20 @@ USER_ABSENT_PRESENT_TESTCASES = [
 )
 @pytest.mark.parametrize(
     "desc, initial_user_props, initial_related_names, input_state, "
-    "input_props, exp_user_props, exp_changed",
+    "input_props, exp_user_props, exp_changed, runmode",
     USER_ABSENT_PRESENT_TESTCASES)
 @mock.patch("plugins.modules.zhmc_user.AnsibleModule", autospec=True)
 def test_zhmc_user_absent_present(
         ansible_mod_cls,
         desc, initial_user_props, initial_related_names, input_state,
-        input_props, exp_user_props, exp_changed,
+        input_props, exp_user_props, exp_changed, runmode,
         check_mode,
-        hmc_session):  # noqa: F811, E501
+        hmc_session, request):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_user module with state=absent/present.
     """
+    handle_runmode(request, runmode)
 
     hmc_host = hmc_session.host
     hmc_auth = get_hmc_auth(hmc_session)
@@ -573,7 +583,9 @@ def test_zhmc_user_absent_present(
 
 
 UPDATE_USER_ROLES_TESTCASES = [
-    # The list items are tuples with the following items:
+    # Testcases for test_zhmc_update_user_roles()
+    #
+    # Each testcase is a tuple with the following items:
     # - desc (string): description of the testcase.
     # - initial_urole_names (list): Names of user roles on the initial user.
     # - input_urole_names (list): 'user_role_names' input property for update
@@ -582,6 +594,7 @@ UPDATE_USER_ROLES_TESTCASES = [
     #   user.
     # - exp_exc_type (type): Expected exception type, or None for success.
     # - exp_changed (bool): Expected 'changed' flag.
+    # - runmode (RunMode): Run mode for the testcase.
 
     (
         "No initial user role, no input user role",
@@ -590,6 +603,7 @@ UPDATE_USER_ROLES_TESTCASES = [
         [],
         None,
         False,
+        RunMode.RUN
     ),
     (
         "No initial user role, one input user role",
@@ -598,6 +612,7 @@ UPDATE_USER_ROLES_TESTCASES = [
         ['hmc-access-administrator-tasks'],
         None,
         True,
+        RunMode.RUN
     ),
     (
         "One initial user role, no input user role",
@@ -606,6 +621,7 @@ UPDATE_USER_ROLES_TESTCASES = [
         [],
         None,
         True,
+        RunMode.RUN
     ),
     (
         "One initial user role, another input user role",
@@ -614,6 +630,7 @@ UPDATE_USER_ROLES_TESTCASES = [
         ['hmc-all-system-managed-objects'],
         None,
         True,
+        RunMode.RUN
     ),
     (
         "One initial user role, the same input user role",
@@ -622,6 +639,7 @@ UPDATE_USER_ROLES_TESTCASES = [
         ['hmc-access-administrator-tasks'],
         None,
         False,
+        RunMode.RUN
     ),
     (
         "One initial user role, the same and another input user role",
@@ -630,6 +648,7 @@ UPDATE_USER_ROLES_TESTCASES = [
         ['hmc-access-administrator-tasks', 'hmc-all-system-managed-objects'],
         None,
         True,
+        RunMode.RUN
     ),
 ]
 
@@ -642,19 +661,20 @@ UPDATE_USER_ROLES_TESTCASES = [
 )
 @pytest.mark.parametrize(
     "desc, initial_urole_names, input_urole_names, exp_urole_names, "
-    "exp_exc_type, exp_changed",
+    "exp_exc_type, exp_changed, runmode",
     UPDATE_USER_ROLES_TESTCASES)
 @mock.patch("plugins.modules.zhmc_user.AnsibleModule", autospec=True)
 def test_zhmc_update_user_roles(
         ansible_mod_cls,
         desc, initial_urole_names, input_urole_names, exp_urole_names,
-        exp_exc_type, exp_changed,
+        exp_exc_type, exp_changed, runmode,
         check_mode,
-        hmc_session):  # noqa: F811, E501
+        hmc_session, request):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_user module with updating user roles on existing users.
     """
+    handle_runmode(request, runmode)
 
     hmc_host = hmc_session.host
     hmc_auth = get_hmc_auth(hmc_session)

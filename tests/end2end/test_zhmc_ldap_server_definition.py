@@ -32,6 +32,7 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 
 from plugins.modules import zhmc_ldap_server_definition
 from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from ..utils import RunMode, handle_runmode
 
 urllib3.disable_warnings()
 
@@ -217,7 +218,9 @@ def test_zhmc_lsd_facts(
 
 
 LSD_ABSENT_PRESENT_TESTCASES = [
-    # The list items are tuples with the following items:
+    # Testcases for test_zhmc_lsd_absent_present()
+    #
+    # Each testcase is a tuple with the following items:
     # - desc (string): description of the testcase.
     # - initial_lsd_props (dict): HMC-formatted properties for initial
     #    LDAP server definition, in addition to STD_LSD_HMC_INPUT_PROPS,
@@ -229,6 +232,7 @@ LSD_ABSENT_PRESENT_TESTCASES = [
     # - exp_lsd_props (dict): HMC-formatted properties for expected
     #   properties of created LDAP server definition.
     # - exp_changed (bool): Boolean for expected 'changed' flag.
+    # - runmode (RunMode): Run mode for the testcase.
 
     (
         "Present with non-existing LDAP server definition, without password",
@@ -237,6 +241,7 @@ LSD_ABSENT_PRESENT_TESTCASES = [
         STD_LSD_MODULE_INPUT_PROPS,
         STD_LSD_HMC_EXP_PROPS,
         True,
+        RunMode.RUN
     ),
     (
         "Present with non-existing LDAP server definition, with password",
@@ -245,6 +250,7 @@ LSD_ABSENT_PRESENT_TESTCASES = [
         STD_LSD_MODULE_INPUT_PROPS_WITH_BIND,
         STD_LSD_HMC_EXP_PROPS_WITH_BIND,
         True,
+        RunMode.RUN
     ),
     (
         "Present with existing LDAP server definition, no properties changed",
@@ -253,6 +259,7 @@ LSD_ABSENT_PRESENT_TESTCASES = [
         None,
         STD_LSD_HMC_EXP_PROPS,
         False,
+        RunMode.RUN
     ),
     (
         "Present with existing LDAP server definition, some properties changed",
@@ -263,6 +270,7 @@ LSD_ABSENT_PRESENT_TESTCASES = [
         STD_LSD_MODULE_INPUT_PROPS,
         STD_LSD_HMC_EXP_PROPS,
         True,
+        RunMode.RUN
     ),
     (
         "Present with existing LDAP server definition, some properties "
@@ -274,6 +282,7 @@ LSD_ABSENT_PRESENT_TESTCASES = [
         STD_LSD_MODULE_INPUT_PROPS_WITH_BIND,
         STD_LSD_HMC_EXP_PROPS_WITH_BIND,
         True,
+        RunMode.RUN
     ),
     (
         "Absent with existing LDAP server definition",
@@ -282,6 +291,7 @@ LSD_ABSENT_PRESENT_TESTCASES = [
         None,
         None,
         True,
+        RunMode.RUN
     ),
     (
         "Absent with non-existing LDAP server definition",
@@ -290,6 +300,7 @@ LSD_ABSENT_PRESENT_TESTCASES = [
         None,
         None,
         False,
+        RunMode.RUN
     ),
 ]
 
@@ -308,20 +319,21 @@ LSD_ABSENT_PRESENT_TESTCASES = [
 )
 @pytest.mark.parametrize(
     "desc, initial_lsd_props, input_state, "
-    "input_props, exp_lsd_props, exp_changed",
+    "input_props, exp_lsd_props, exp_changed, runmode",
     LSD_ABSENT_PRESENT_TESTCASES)
 @mock.patch("plugins.modules.zhmc_ldap_server_definition.AnsibleModule",
             autospec=True)
 def test_zhmc_lsd_absent_present(
         ansible_mod_cls,
         desc, initial_lsd_props, input_state,
-        input_props, exp_lsd_props, exp_changed,
+        input_props, exp_lsd_props, exp_changed, runmode,
         check_mode, diff_case,
-        hmc_session):  # noqa: F811, E501
+        hmc_session, request):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_ldap_server_definition module with state=absent/present.
     """
+    handle_runmode(request, runmode)
 
     hmc_host = hmc_session.host
     hmc_auth = get_hmc_auth(hmc_session)

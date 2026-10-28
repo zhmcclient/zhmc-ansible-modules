@@ -31,6 +31,7 @@ from zhmcclient.testutils import dpm_mode_cpcs  # noqa: F401, E501
 
 from plugins.modules import zhmc_partition_command
 from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from ..utils import RunMode, handle_runmode
 
 urllib3.disable_warnings()
 
@@ -58,7 +59,9 @@ def get_module_output(mod_obj):
 
 
 TESTCASES_ZHMC_PARTITION_COMMAND = [
-    # Testcases for test_zhmc_partition_command(), each with these items:
+    # Testcases for test_zhmc_partition_command()
+    #
+    # Each testcase is a tuple with the following items:
     # * desc (str): Testcase description
     # * in_params (dict): Input parameters passed to module, except for
     #   hmc_host, hmc_auth, cpc, name, command, log_file.
@@ -66,6 +69,7 @@ TESTCASES_ZHMC_PARTITION_COMMAND = [
     # * os_type (str): partition os-type property, for selecting the partition
     # * command (str): Command to be executed
     # * exp_output (list): Expected command output lines, as a list of regexp
+    # * runmode (RunMode): Run mode for the testcase.
 
     (
         "Simple z/VM command",
@@ -80,7 +84,8 @@ TESTCASES_ZHMC_PARTITION_COMMAND = [
             ".* z/VM Version .* Release .* service level .*",
             ".* Generated at .*",
             ".* IPL at .*",
-        ]
+        ],
+        RunMode.RUN
     ),
     # TODO: Find out how to deal with Linux password prompt
     # (
@@ -94,13 +99,14 @@ TESTCASES_ZHMC_PARTITION_COMMAND = [
     #     [
     #         "uname -a",
     #         "Kernel Version .* s390x",
-    #     ]
+    #     ],
+    #     RunMode.RUN
     # ),
 ]
 
 
 @pytest.mark.parametrize(
-    "desc, in_params, type, os_type, command, exp_output",
+    "desc, in_params, type, os_type, command, exp_output, runmode",
     TESTCASES_ZHMC_PARTITION_COMMAND
 )
 @pytest.mark.parametrize(
@@ -112,12 +118,14 @@ TESTCASES_ZHMC_PARTITION_COMMAND = [
 @mock.patch("plugins.modules.zhmc_partition_command.AnsibleModule", autospec=True)
 def test_zhmc_partition_command(
         ansible_mod_cls, check_mode,
-        desc, in_params, type, os_type, command, exp_output,
-        dpm_mode_cpcs):  # noqa: F811, E501
+        desc, in_params, type, os_type, command, exp_output, runmode,
+        dpm_mode_cpcs, request):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_partition_command module with DPM mode CPCs.
     """
+    handle_runmode(request, runmode)
+
     if not dpm_mode_cpcs:
         pytest.skip("HMC definition does not include any CPCs in DPM mode")
 

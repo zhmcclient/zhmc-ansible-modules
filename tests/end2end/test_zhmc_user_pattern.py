@@ -32,6 +32,7 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 
 from plugins.modules import zhmc_user_pattern
 from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from ..utils import RunMode, handle_runmode
 
 urllib3.disable_warnings()
 
@@ -186,7 +187,9 @@ def test_zhmc_user_pattern_facts(
 
 
 UPATTERN_ABSENT_PRESENT_TESTCASES = [
-    # The list items are tuples with the following items:
+    # Testcases for test_zhmc_user_pattern_absent_present()
+    #
+    # Each testcase is a tuple with the following items:
     # - desc (string): description of the testcase.
     # - initial_upattern_props (dict): HMC-formatted properties for initial
     #    user pattern, in addition to STD_UPATTERN_HMC_INPUT_PROPS, or None for
@@ -196,6 +199,7 @@ UPATTERN_ABSENT_PRESENT_TESTCASES = [
     # - exp_upattern_props (dict): HMC-formatted properties for expected
     #   properties of created user pattern.
     # - exp_changed (bool): Boolean for expected 'changed' flag.
+    # - runmode (RunMode): Run mode for the testcase.
 
     (
         "Present with non-existing user pattern",
@@ -204,6 +208,7 @@ UPATTERN_ABSENT_PRESENT_TESTCASES = [
         STD_UPATTERN_MODULE_INPUT_PROPS,
         STD_UPATTERN_HMC_INPUT_PROPS,
         True,
+        RunMode.RUN
     ),
     (
         "Present with existing user pattern, no properties changed",
@@ -212,6 +217,7 @@ UPATTERN_ABSENT_PRESENT_TESTCASES = [
         None,
         STD_UPATTERN_HMC_INPUT_PROPS,
         False,
+        RunMode.RUN
     ),
     (
         "Present with existing user pattern, some properties changed",
@@ -222,6 +228,7 @@ UPATTERN_ABSENT_PRESENT_TESTCASES = [
         STD_UPATTERN_MODULE_INPUT_PROPS,
         STD_UPATTERN_HMC_INPUT_PROPS,
         True,
+        RunMode.RUN
     ),
     (
         "Absent with existing user pattern",
@@ -230,6 +237,7 @@ UPATTERN_ABSENT_PRESENT_TESTCASES = [
         None,
         None,
         True,
+        RunMode.RUN
     ),
     (
         "Absent with non-existing user pattern",
@@ -238,6 +246,7 @@ UPATTERN_ABSENT_PRESENT_TESTCASES = [
         None,
         None,
         False,
+        RunMode.RUN
     ),
 ]
 
@@ -250,19 +259,20 @@ UPATTERN_ABSENT_PRESENT_TESTCASES = [
 )
 @pytest.mark.parametrize(
     "desc, initial_upattern_props, input_state, "
-    "input_props, exp_upattern_props, exp_changed",
+    "input_props, exp_upattern_props, exp_changed, runmode",
     UPATTERN_ABSENT_PRESENT_TESTCASES)
 @mock.patch("plugins.modules.zhmc_user_pattern.AnsibleModule", autospec=True)
 def test_zhmc_user_pattern_absent_present(
         ansible_mod_cls,
         desc, initial_upattern_props, input_state,
-        input_props, exp_upattern_props, exp_changed,
+        input_props, exp_upattern_props, exp_changed, runmode,
         check_mode,
-        hmc_session):  # noqa: F811, E501
+        hmc_session, request):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
     """
     Test the zhmc_user_pattern module with state=absent/present.
     """
+    handle_runmode(request, runmode)
 
     hmc_host = hmc_session.host
     hmc_auth = get_hmc_auth(hmc_session)

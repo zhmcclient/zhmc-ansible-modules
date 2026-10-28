@@ -30,6 +30,7 @@ from zhmcclient.testutils import hmc_definition  # noqa: F401, E501
 from plugins.modules import zhmc_session, zhmc_cpc_list
 from plugins.module_utils.common import parse_hmc_host
 from .utils import mock_ansible_module, get_failure_msg
+from ..utils import RunMode, handle_runmode
 
 urllib3.disable_warnings()
 
@@ -84,7 +85,9 @@ def get_cpc_list_module_output(mod_obj):
 
 
 TESTCASES_ZHMC_SESSION_SINGLE = [
-    # Testcases for test_zhmc_session(), each with these items:
+    # Testcases for test_zhmc_session()
+    #
+    # Each testcase is a tuple with the following items:
     # * desc (str): Testcase description
     # * check_mode (bool): Check mode flag passed to module
     # * in_params (dict): Input parameters passed to module
@@ -92,6 +95,7 @@ TESTCASES_ZHMC_SESSION_SINGLE = [
     # * exp_msg_pattern (str): Exp. regexp pattern for error message, if failure
     # * exp_changed (bool): Expected changed flag returned from module
     # * exp_hmc_auth (dict): Expected hmc_auth module result, if success
+    # * runmode (RunMode): Run mode for the testcase.
 
     (
         "Successful create",
@@ -112,7 +116,8 @@ TESTCASES_ZHMC_SESSION_SINGLE = [
             'ca_certs': FROM_HMC_DEFINITION,
             'verify': FROM_HMC_DEFINITION,
             'session_id': SESSION_ID_PATTERN,
-        }
+        },
+        RunMode.RUN
     ),
     (
         "Failing create with missing userid",
@@ -129,7 +134,8 @@ TESTCASES_ZHMC_SESSION_SINGLE = [
         },
         1, "ParameterError.*'userid'.*missing",
         False,
-        None
+        None,
+        RunMode.RUN
     ),
     (
         "Failing create with missing password",
@@ -146,7 +152,8 @@ TESTCASES_ZHMC_SESSION_SINGLE = [
         },
         1, "ParameterError.*'password'.*missing",
         False,
-        None
+        None,
+        RunMode.RUN
     ),
     (
         "Failing create with session_id provided",
@@ -163,7 +170,8 @@ TESTCASES_ZHMC_SESSION_SINGLE = [
         },
         1, "ParameterError.*'session_id' item specified",
         False,
-        None
+        None,
+        RunMode.RUN
     ),
     (
         "Failed delete with session ID because userid also provided",
@@ -185,7 +193,8 @@ TESTCASES_ZHMC_SESSION_SINGLE = [
             'ca_certs': None,
             'verify': None,
             'session_id': None,
-        }
+        },
+        RunMode.RUN
     ),
     (
         "Successful delete with session ID and ca_cert/verify parms",
@@ -204,26 +213,28 @@ TESTCASES_ZHMC_SESSION_SINGLE = [
             'ca_certs': None,
             'verify': None,
             'session_id': None,
-        }
+        },
+        RunMode.RUN
     ),
 ]
 
 
 @pytest.mark.parametrize(
     "desc, check_mode, in_params, exp_exit_code, exp_msg_pattern, "
-    "exp_changed, exp_hmc_auth",
+    "exp_changed, exp_hmc_auth, runmode",
     TESTCASES_ZHMC_SESSION_SINGLE
 )
 @mock.patch("plugins.modules.zhmc_session.AnsibleModule", autospec=True)
 def test_zhmc_session_single(
         ansible_mod_cls, desc, check_mode, in_params, exp_exit_code,
-        exp_msg_pattern, exp_changed, exp_hmc_auth,
-        hmc_definition):  # noqa: F811, E501
+        exp_msg_pattern, exp_changed, exp_hmc_auth, runmode,
+        hmc_definition, request):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
     """
     Test specific input parameters on single invocations of the zhmc_session
     module.
     """
+    handle_runmode(request, runmode)
 
     if hmc_definition.mock_file:
         pytest.skip("zhmc_session module needs real HMC for end2end test")
