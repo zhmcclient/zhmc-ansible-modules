@@ -124,21 +124,19 @@ options:
         addition to the default properties (see result description).
       - Mutually exclusive with O(full_properties).
       - The property names are specified with underscores instead of hyphens.
-      - On HMCs with an HMC version below 2.14.0, all properties of each
-        partition will be returned if this parameter is specified, but you
-        should not rely on that.
+      - Depending on the HMC version, more properties than those specified
+        may be returned, but you should not rely on that.
     type: list
     elements: str
     required: false
     default: []
   full_properties:
     description:
-      - "If True, all properties of each partition will be returned.
+      - "If True, all readable properties of each partition will be returned.
         Default: False."
       - Mutually exclusive with O(additional_properties).
-      - "Note: Setting this to True causes a loop of 'Get Partition Properties'
-        operations to be executed. It is preferable from a performance
-        perspective to use the O(additional_properties) parameter instead."
+      - "Note: It is preferable from a performance perspective to use the
+        O(additional_properties) parameter instead."
     type: bool
     required: false
     default: false
@@ -234,8 +232,8 @@ from ansible.module_utils.basic import AnsibleModule, \
     missing_required_lib  # noqa: E402
 
 from ..module_utils.common import log_init, open_session, close_session, \
-    hmc_auth_parameter, Error, ParameterError, \
-    common_fail_on_import_errors, parse_hmc_host, blanked_params  # noqa: E402
+    hmc_auth_parameter, Error, common_fail_on_import_errors, \
+    parse_hmc_host, blanked_params, check_mutually_exclusive  # noqa: E402
 
 try:
     import zhmcclient
@@ -263,55 +261,49 @@ def perform_list(params):
         [p.replace('_', '-') for p in params['additional_properties']]
     full_properties = params['full_properties']
 
-    if additional_properties and full_properties:
-        raise ParameterError(
-            "The 'additional_properties' and 'full_properties' module "
-            "parameters are mutually exclusive but both are specified.")
+    check_mutually_exclusive(
+        params,
+        name1="additional_properties", name2="full_properties",
+        default1=False, default2=False)
 
     session, logoff = open_session(params)
     try:
         client = zhmcclient.Client(session)
+        console = client.consoles.console
 
         # The "List Permitted Partitions" operation was added in HMC version
         # 2.14.0. The operation depends only on the HMC version and not on the
         # SE/CPC version, so it is supported e.g. for a 2.14 HMC managing a z13
         # CPC.
         #
-        # The "List Permitted Partitions" operation as of HMC API version 4.10
-        # (= HMC version 2.16.0 plus some post-GA updates) does not support an
-        # 'additional-properties' query parameter.
+        # The "List Permitted Partitions" operation supports the
+        # 'additional-properties' query parameter starting with HMC API features
+        # 'dpm-hipersockets-partition-link-management' and
+        # 'dpm-ctc-partition-link-management' (added in HMC version 2.16.0
+        # after the initial GA).
         #
         # The "List Partitions of a CPC" operation has support for an
         # 'additional-properties' query parameter starting with HMC API version
         # 4.1 (= HMC version 2.16.0 initial GA).
         hmc_version = client.query_api_version()['hmc-version']
         hmc_version_info = [int(x) for x in hmc_version.split('.')]
-        if hmc_version_info < [2, 14, 0] or additional_properties:
+        ap_feature = console.api_feature_enabled(
+            "dpm-hipersockets-partition-link-management")
+
+        if (hmc_version_info < [2, 14, 0] or
+                additional_properties and not ap_feature):
+
             # Use the "List Partitions of a CPC" operation.
-            if hmc_version_info < [2, 16, 0] and additional_properties:
-                # Get full properties instead of specific additional properties
-                # since "List Partitions of a CPC" does not support
-                # additional-properties on these HMC versions.
-                additional_properties = None
-                full_properties = True
-            if full_properties:
-                prop_str = "full properties"
-            elif additional_properties:
-                prop_str = "additional properties"
-            else:
-                prop_str = "default properties"
             if cpc_name:
-                LOGGER.debug("Listing partitions of CPC %s (Find CPC, "
-                             "then list partitions with %s)",
-                             cpc_name, prop_str)
+                LOGGER.debug("Listing partitions of CPC %s via find CPC and "
+                             "list partitions", cpc_name)
                 cpc = client.cpcs.find(name=cpc_name)
                 partitions = cpc.partitions.list(
                     additional_properties=additional_properties,
                     full_properties=full_properties)
             else:
-                LOGGER.debug("Listing partitions of all managed CPCs (List "
-                             "CPCs, then on each CPC list partitions with %s)",
-                             prop_str)
+                LOGGER.debug("Listing partitions of all managed CPCs via list "
+                             "CPCs and list partitions on each CPC")
                 cpcs = client.cpcs.list()
                 partitions = []
                 for cpc in cpcs:
@@ -319,25 +311,22 @@ def perform_list(params):
                         additional_properties=additional_properties,
                         full_properties=full_properties)
                     partitions.extend(_partitions)
+
         else:
+
             # Use the "List Permitted Partitions" operation.
-            if full_properties:
-                prop_str = "full properties"
-            else:
-                prop_str = "default properties"
             if cpc_name:
-                LOGGER.debug("Listing partitions of CPC %s "
-                             "(List permitted partitions with %s)",
-                             cpc_name, prop_str)
+                LOGGER.debug("Listing partitions of CPC %s via list permitted "
+                             "partitions", cpc_name)
                 filter_args = {'cpc-name': cpc_name}
             else:
-                LOGGER.debug("Listing partitions of all managed CPCs "
-                             "(List permitted partitions with %s)",
-                             prop_str)
+                LOGGER.debug("Listing partitions of all managed CPCs via list "
+                             "permitted partitions")
                 filter_args = None
             partitions = client.consoles.console.list_permitted_partitions(
                 filter_args=filter_args,
                 full_properties=full_properties)
+
         # The default exception handling is sufficient for the above.
 
         se_versions = {}

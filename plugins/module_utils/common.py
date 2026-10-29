@@ -1845,3 +1845,28 @@ class ObjectsByUriCache:
                 props = dict(obj.properties)
             properties.append(props)
         return properties
+
+
+def check_mutually_exclusive(
+        params, name1, name2, default1, default2):
+    """
+    Check that two mutually exclusive input parameters are not both provided.
+
+    The check is performed by comparing the parameter values to their default
+    values. So if the parameters are provided with their default values, that
+    counts as "not provided".
+
+    Parameters:
+      params (dict): Complete set of input parameters (provided + defaulted)
+      name1 (str): Name of the first input parameter to check.
+      name2 (str): Name of the second input parameter to check.
+      default1 (object): Default value of the first input parameter.
+      default2 (object): Default value of the second input parameter.
+
+    Raises:
+      ParameterError: Mutually exclusive parameters have been specified.
+    """
+    if params[name1] != default1 and params[name2] != default2:
+        raise ParameterError(
+            f"The '{name1}' and '{name2}' module parameters are mutually "
+            "exclusive but both are specified.")
