@@ -1,0 +1,3 @@
+minor_changes:
+  - "Test - Fixed the deprecation warning issued by the zhmcclient library
+     when using zhmcclient_mock, by switching to zhmcclient.mock."

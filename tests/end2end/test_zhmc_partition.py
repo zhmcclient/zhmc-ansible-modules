@@ -930,7 +930,7 @@ def test_zhmc_partition_state(
 
         if hd.mock_file:
             pytest.skip("Asynchronous partition start/stop not supported "
-                        "in zhmcclient_mock")
+                        "in zhmcclient.mock")
 
         # Create a partition name that does not exist
         partition_name = unique_partition_name()
@@ -1254,7 +1254,7 @@ def test_zhmc_partition_properties(
 
         if hd.mock_file:
             pytest.skip("Asynchronous partition start/stop not supported "
-                        "in zhmcclient_mock")
+                        "in zhmcclient.mock")
 
         # Create a partition name that does not exist
         partition_name = unique_partition_name()

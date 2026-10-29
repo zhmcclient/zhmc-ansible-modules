@@ -26,7 +26,7 @@ from unittest import mock
 import pytest
 
 from zhmcclient import Client
-from zhmcclient_mock import FakedSession
+from zhmcclient.mock import FakedSession
 
 from plugins.modules import zhmc_lpar
 

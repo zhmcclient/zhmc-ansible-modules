@@ -24,7 +24,6 @@ from unittest import mock
 import re
 import pytest
 import zhmcclient
-import zhmcclient_mock
 
 from plugins.modules import zhmc_partition
 from plugins.module_utils import common as module_utils
@@ -353,7 +352,7 @@ def mocked_cpc():
     """
     Create and return a mocked Cpc object.
     """
-    session = zhmcclient_mock.FakedSession(**FAKED_SESSION_KWARGS)
+    session = zhmcclient.mock.FakedSession(**FAKED_SESSION_KWARGS)
     client = zhmcclient.Client(session)
     session.hmc.cpcs.add(FAKED_CPC_1)
     cpcs = client.cpcs.list()
