@@ -21,12 +21,11 @@ import os
 import time
 import pytest
 import urllib3
-import zhmcclient
 
 # Name of the env var that controls logging:
 # * If not set, logging is disabled.
 # * If set, logging is enabled to the specified log file.
-# Keep the variable name in sync with the Makefile help.
+# The env var name must be the one used by the zhmcclient testutils support.
 LOG_FILE_ENV_VAR = "TESTLOGFILE"
 
 # Path name of the log file, or None if logging is disabled
@@ -72,12 +71,8 @@ def setup_logging(log_file):
     """
     Set up logging for end2end testcases.
 
-    If a log file is specified, logging is enabled and two loggers are created
+    If a log file is specified, logging is enabled and one logger is created
     with a file handler to the log file:
-
-      * The zhmcclient logger.
-        That logger is named "zhmcclient.hmc" and is used by the zhmcclient
-        package for logging the HMC interactions.
 
       * The test function Logger.
         That logger is named as defined in TESTFUNC_LOGGER_NAME and is used
@@ -86,6 +81,10 @@ def setup_logging(log_file):
 
     If no log file is specified, logging is disabled. The same two loggers are
     created but disabled by setting them to log level NOTSET.
+
+    Note that the zhmcclient logging is also enabled to go to the same log
+    file and controlled by the same env var, via the zhmcclient testutils
+    support. For details, see zhmcclient/testutils/_hmc_session_functions.py.
 
     This setup function tolerates being called multiple times in the same
     Python process and will set up the loggers only once. However, it will
@@ -97,7 +96,6 @@ def setup_logging(log_file):
         `None`, if logging should be disabled.
     """
 
-    zhmcclient_logger = logging.getLogger(zhmcclient.HMC_LOGGER_NAME)
     testfunc_logger = logging.getLogger(TESTFUNC_LOGGER_NAME)
 
     if log_file:
@@ -107,15 +105,6 @@ def setup_logging(log_file):
 
         # Globally set the timezone conversion on Python logging
         logging.Formatter.converter = LOG_DATETIME_TIMEZONE
-
-        # Add the file handler to the zhmcclient logger, if needed.
-        zhmcclient_handler = file_handler(zhmcclient_logger, abs_log_file)
-        if zhmcclient_handler is None:
-            zhmcclient_handler = logging.FileHandler(
-                abs_log_file, encoding='utf-8')
-            zhmcclient_logger.addHandler(zhmcclient_handler)
-        zhmcclient_handler.setFormatter(formatter)
-        zhmcclient_logger.setLevel(LOG_LEVEL)
 
         # Add the file handler to the test function logger, if needed.
         testfunc_handler = file_handler(testfunc_logger, abs_log_file)
@@ -127,12 +116,10 @@ def setup_logging(log_file):
         testfunc_logger.setLevel(LOG_LEVEL)
 
         testfunc_logger.info(
-            "Logging is enabled for loggers %s and %s at level %s",
-            zhmcclient.HMC_LOGGER_NAME, TESTFUNC_LOGGER_NAME,
-            logging.getLevelName(LOG_LEVEL))
+            "Logging is enabled for logger %s at level %s",
+            TESTFUNC_LOGGER_NAME, logging.getLevelName(LOG_LEVEL))
 
     else:
-        zhmcclient_logger.setLevel(logging.NOTSET)
         testfunc_logger.setLevel(logging.NOTSET)
 
 
