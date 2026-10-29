@@ -30,15 +30,10 @@ from ansible.module_utils.basic import missing_required_lib
 
 try:
     from zhmcclient import Session, ClientAuthError, HTTPError
+    from zhmcclient.mock import FakedSession
     IMP_ZHMCCLIENT_ERR = None
 except ImportError:
     IMP_ZHMCCLIENT_ERR = traceback.format_exc()
-
-try:
-    from zhmcclient_mock import FakedSession
-    IMP_ZHMCCLIENT_MOCK_ERR = None
-except ImportError:
-    IMP_ZHMCCLIENT_MOCK_ERR = traceback.format_exc()
 
 BLANKED_OUT = '********'  # Replacement for blanked out sensitive values
 
@@ -106,9 +101,6 @@ def common_fail_on_import_errors(module):
     if IMP_ZHMCCLIENT_ERR is not None:
         module.fail_json(msg=missing_required_lib("zhmcclient"),
                          exception=IMP_ZHMCCLIENT_ERR)
-    if IMP_ZHMCCLIENT_MOCK_ERR is not None:
-        module.fail_json(msg=missing_required_lib("zhmcclient_mock"),
-                         exception=IMP_ZHMCCLIENT_MOCK_ERR)
 
 
 def open_session(params):
@@ -121,7 +113,7 @@ def open_session(params):
 
     * Faked session: If the '_faked_session' item in `params` is present
       and not `None`, a faked (=mocked) session with that
-      zhmcclient_mock.FakedSession object is returned, and there is no
+      zhmcclient.mock.FakedSession object is returned, and there is no
       communication with an HMC established. The faked session will not be
       logged off in close_session(). This is used for testing only.
 
@@ -145,7 +137,7 @@ def open_session(params):
         - hmc_auth (dict): Credentials, either with password or session_id.
           In case of a password, a new HMC session is created.
           In case of a session_id, that existing HMC session is used.
-        - _faked_session (zhmcclient_mock.FakedSession): Faked session, if
+        - _faked_session (zhmcclient.mock.FakedSession): Faked session, if
           testing.
 
     Returns:
