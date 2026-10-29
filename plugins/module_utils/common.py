@@ -1233,7 +1233,9 @@ def log_init(logger_name, log_file=None):
     # DATEFMT = None  # 2019-02-20 10:54:26,123 (= local time)
 
     if log_file:
-        handler = logging.FileHandler(log_file)
+        # delay=True causes the file handler to open file only when the first
+        # log entry is written.
+        handler = logging.FileHandler(log_file, delay=True)
         fmt = logging.Formatter(
             fmt='%(asctime)s %(levelname)s %(name)s %(process)d %(message)s',
             datefmt=DATEFMT)
@@ -1265,7 +1267,8 @@ def ensure_one_handler(logger, handler):
     """
     for hdlr in logger.handlers:
         if isinstance(hdlr, logging.FileHandler) and \
-                hdlr.stream.name == handler.stream.name:
+                hdlr.baseFilename == handler.baseFilename:
+            handler.close()
             break
     else:
         logger.addHandler(handler)
