@@ -44,6 +44,7 @@ VOLATILE_LPAR_PROPERTIES = [
     'current_ifl_processing_weight',
     'current_ziip_processing_weight',
     'current_cf_processing_weight',
+    'power_wattage',
 ]
 
 

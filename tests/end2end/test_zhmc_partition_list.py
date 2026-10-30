@@ -32,6 +32,14 @@ from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
 from .conftest import LOG_FILE
 
 
+# Names of Parttion properties (with underscores) that are volatile, i.e. that
+# may change their values on subsequent retrievals even when no other change is
+# performed.
+VOLATILE_PARTITION_PROPERTIES = [
+    'power_wattage',
+]
+
+
 def get_module_output(mod_obj):
     """
     Return the module output as a tuple (changed, user_properties) (i.e.
@@ -100,10 +108,11 @@ def assert_partition_list(partition_list, exp_partition_dict):
                 f"Unexpected property {pname!r} in result partition " \
                 f"{partition_name!r}. Expected properties: " \
                 f"{list(exp_partition_properties.keys())!r}"
-            exp_value = exp_partition_properties[pname]
-            assert pvalue == exp_value, \
-                f"Incorrect value for property {pname!r} of result partition " \
-                f"{partition_name!r}"
+            if pname not in VOLATILE_PARTITION_PROPERTIES:
+                exp_value = exp_partition_properties[pname]
+                assert pvalue == exp_value, \
+                    f"Incorrect value for property {pname!r} of result " \
+                    f"partition {partition_name!r}"
 
 
 @pytest.mark.parametrize(

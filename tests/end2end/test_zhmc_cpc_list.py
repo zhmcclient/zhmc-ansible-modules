@@ -27,7 +27,8 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
 
 from plugins.modules import zhmc_cpc_list
-from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth, \
+    unavailable_cpcs
 from .conftest import LOG_FILE
 
 
@@ -41,6 +42,9 @@ from .conftest import LOG_FILE
 #         volatile on 2.14 HMCs.
 VOLATILE_CPC_PROPERTIES = [
     'cpc_power_consumption',
+    'cpc_power_infrastructure',
+    'cpc_power_total_partition',
+    'cpc_power_unassigned',
     'zcpc_power_consumption',
     'zcpc_ambient_temperature',
     'zcpc_exhaust_temperature',
@@ -181,6 +185,14 @@ def test_zhmc_cpc_list(
     client = zhmcclient.Client(hmc_session)
 
     full_properties = property_flags.get('full_properties', False)
+
+    # The testcases with full_properties=True require that all managed CPCs
+    # are available. Skip this test if that is not the case.
+    if full_properties:
+        unavail_cpcs = unavailable_cpcs(client.cpcs.list())
+        if unavail_cpcs:
+            unavail_cpcs_str = ", ".join([cpc.name for cpc in unavail_cpcs])
+            pytest.skip(f"Some CPCs are unavailable: {unavail_cpcs_str}")
 
     # Determine the expected managed CPCs on the HMC
     exp_cpcs = client.cpcs.list(full_properties=full_properties)
