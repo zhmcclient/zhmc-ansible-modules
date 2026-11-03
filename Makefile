@@ -332,7 +332,7 @@ linkcheck: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(do
 	@echo "Makefile: $@ done."
 
 .PHONY: test
-test: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
+test: _check_version $(done_dir)/install_$(pymn)_$(PACKAGE_LEVEL).done $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 	PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. pytest $(pytest_cov_opts) $(pytest_opts) $(test_dir)/unit $(test_dir)/function
 	coverage html --rcfile $(coverage_rc_file)
 	@echo "Makefile: $@ done."
@@ -438,17 +438,17 @@ check_frag: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 	@echo "Makefile: $@ done."
 
 .PHONY:	end2end
-end2end: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
+end2end: _check_version $(done_dir)/install_$(pymn)_$(PACKAGE_LEVEL).done $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 	PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. TESTEND2END_LOAD=true pytest -v $(pytest_cov_opts) $(pytest_opts) $(test_dir)/end2end
 	@echo "Makefile: $@ done."
 
 .PHONY:	end2end_show
-end2end_show:
+end2end_show: $(done_dir)/install_$(pymn)_$(PACKAGE_LEVEL).done
 	TESTEND2END_LOAD=true $(PYTHON_CMD) -c 'from zhmcclient.testutils import print_hmc_definitions; print_hmc_definitions()'
 
 # TODO: Enable rc checking again once the remaining issues are resolved
 .PHONY:	end2end_mocked
-end2end_mocked: _check_version $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
+end2end_mocked: _check_version $(done_dir)/install_$(pymn)_$(PACKAGE_LEVEL).done $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 	PYTHONWARNINGS=default ANSIBLE_LIBRARY=$(module_py_dir) PYTHONPATH=. TESTEND2END_LOAD=true TESTINVENTORY=$(test_dir)/end2end/mocked_inventory.yaml TESTVAULT=$(test_dir)/end2end/mocked_vault.yaml pytest -v $(pytest_cov_opts) $(pytest_opts) $(test_dir)/end2end || true
 	coverage html --rcfile $(coverage_rc_file)
 	@echo "Makefile: $@ done."
