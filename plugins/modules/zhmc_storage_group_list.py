@@ -146,12 +146,25 @@ options:
     type: str
     required: false
     default: null
+  additional_properties:
+    description:
+      - List of additional properties to be returned for each storage group, in
+        addition to the default properties (see result description).
+      - Mutually exclusive with O(full_properties).
+      - The property names are specified with underscores instead of hyphens.
+      - Depending on the HMC version, more properties than those specified
+        may be returned, but you should not rely on that.
+    type: list
+    elements: str
+    required: false
+    default: []
   full_properties:
     description:
-      - "If True, all properties of each storage group will be returned.
-        Default: False."
-      - "Note: Setting this to True causes a loop of 'Get Storage Group
-        Properties' operations to be executed."
+      - "If True, all readable properties of each storage group will be
+        returned. Default: False."
+      - Mutually exclusive with O(additional_properties).
+      - "Note: It is preferable from a performance perspective to use the
+        O(additional_properties) parameter instead."
     type: bool
     required: false
     default: false
@@ -229,7 +242,8 @@ storage_groups:
         book.
       type: str
     "{additional_property}":
-      description: Additional properties requested via O(full_properties).
+      description: Additional properties requested via O(full_properties) or
+        O(additional_properties).
         The property names will have underscores instead of hyphens.
       type: raw
   sample:
@@ -252,7 +266,8 @@ from ansible.module_utils.basic import AnsibleModule, \
 
 from ..module_utils.common import log_init, open_session, close_session, \
     hmc_auth_parameter, Error, \
-    common_fail_on_import_errors, parse_hmc_host, blanked_params  # noqa: E402
+    common_fail_on_import_errors, parse_hmc_host, blanked_params, \
+    check_mutually_exclusive  # noqa: E402
 
 try:
     import zhmcclient
@@ -279,7 +294,14 @@ def perform_list(params):
     cpc_name = params['cpc_name']
     type = params['type']
     fulfillment_state = params['fulfillment_state']
+    additional_properties = \
+        [p.replace('_', '-') for p in params['additional_properties']]
     full_properties = params['full_properties']
+
+    check_mutually_exclusive(
+        params,
+        name1="additional_properties", name2="full_properties",
+        default1=False, default2=False)
 
     session, logoff = open_session(params)
     try:
@@ -304,7 +326,8 @@ def perform_list(params):
 
         storage_groups = console.storage_groups.list(
             filter_args=filter_args,
-            full_properties=full_properties)
+            full_properties=full_properties,
+            additional_properties=additional_properties)
         # The default exception handling is sufficient for the above.
 
         storage_group_list = []
@@ -338,6 +361,8 @@ def main():
         type=dict(required=False, type='str', choices=['fcp', 'fc'],
                   default=None),
         fulfillment_state=dict(required=False, type='str', default=None),
+        additional_properties=dict(
+            required=False, type='list', elements='str', default=[]),
         full_properties=dict(required=False, type='bool', default=False),
         log_file=dict(required=False, type='str', default=None),
         _faked_session=dict(required=False, type='raw'),

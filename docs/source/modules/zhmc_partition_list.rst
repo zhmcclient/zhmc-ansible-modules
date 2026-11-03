@@ -104,7 +104,7 @@ additional_properties
 
   The property names are specified with underscores instead of hyphens.
 
-  On HMCs with an HMC version below 2.14.0, all properties of each partition will be returned if this parameter is specified, but you should not rely on that.
+  Depending on the HMC version, more properties than those specified may be returned, but you should not rely on that.
 
   | **required**: False
   | **type**: list
@@ -112,11 +112,11 @@ additional_properties
 
 
 full_properties
-  If True, all properties of each partition will be returned. Default: False.
+  If True, all readable properties of each partition will be returned. Default: False.
 
   Mutually exclusive with :literal:`additional\_properties`.
 
-  Note: Setting this to True causes a loop of 'Get Partition Properties' operations to be executed. It is preferable from a performance perspective to use the :literal:`additional\_properties` parameter instead.
+  Note: It is preferable from a performance perspective to use the :literal:`additional\_properties` parameter instead.
 
   | **required**: False
   | **type**: bool

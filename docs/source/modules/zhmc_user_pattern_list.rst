@@ -85,10 +85,26 @@ hmc_auth
 
 
 
-full_properties
-  If True, all properties of each user pattern will be returned. Default: False.
+additional_properties
+  List of additional properties to be returned for each user pattern, in addition to the default properties (see result description).
 
-  Note: Setting this to True causes a loop of 'Get User Pattern Properties' operations to be executed.
+  Mutually exclusive with :literal:`full\_properties`.
+
+  The property names are specified with underscores instead of hyphens.
+
+  Depending on the HMC version, more properties than those specified may be returned, but you should not rely on that.
+
+  | **required**: False
+  | **type**: list
+  | **elements**: str
+
+
+full_properties
+  If True, all readable properties of each user pattern will be returned. Default: False.
+
+  Mutually exclusive with :literal:`additional\_properties`.
+
+  Note: It is preferable from a performance perspective to use the :literal:`additional\_properties` parameter instead.
 
   | **required**: False
   | **type**: bool
@@ -186,7 +202,7 @@ user_patterns
     | **type**: str
 
   {additional_property}
-    Additional properties requested via :literal:`full\_properties`\ , as described in the data model of the 'User Pattern' object in the :ref:`HMC API <HMC API>` book. The property names will have underscores instead of hyphens.
+    Additional properties requested via :literal:`full\_properties` or :literal:`additional\_properties`. The property names will have underscores instead of hyphens.
 
     | **type**: raw
 

@@ -112,21 +112,33 @@ options:
       - "Name of the partition whose NICs are to be listed."
     type: str
     required: true
+  additional_properties:
+    description:
+      - List of additional properties to be returned for each NIC, in
+        addition to the default properties (see result description).
+      - Mutually exclusive with O(full_properties).
+      - The property names are specified with underscores instead of hyphens.
+      - Depending on the HMC version, more properties than those specified
+        may be returned, but you should not rely on that.
+    type: list
+    elements: str
+    required: false
+    default: []
   full_properties:
     description:
-      - "If True, all properties of each NIC will be returned.
+      - "If True, all readable properties of each NIC will be returned.
         Default: False."
-      - "Note: A loop of 'Get NIC Properties' operations will be executed
-         regardless of the value of O(full_properties) because the NIC name
-         cannot be determined otherwise."
+      - Mutually exclusive with O(additional_properties).
+      - "Note: It is preferable from a performance perspective to use the
+        O(additional_properties) parameter instead."
     type: bool
     required: false
     default: false
   expand_names:
     description:
-      - "If True and O(full_properties) is True, additional artificial
-         properties will be returned for the names and other identification of
-         the backing adapter and port. See the return value for details."
+      - "If True, additional artificial properties will be returned for the
+        names of the backing adapter and port. See the return value for
+        details."
     type: bool
     required: false
     default: false
@@ -186,26 +198,24 @@ nics:
       description: "Name of the parent CPC of the partition"
       type: str
     "{additional_property}":
-      description: Additional properties requested via O(full_properties).
+      description: Additional properties requested via O(full_properties) or
+        O(additional_properties).
         The property names will have underscores instead of hyphens.
       type: raw
     adapter_id:
       description:
         - "Adapter ID (PCHID) of the backing adapter of the NIC."
-        - "Only present if O(expand_names) is True and O(full_properties) is
-           True."
+        - "Only present if O(expand_names) is True."
       type: str
     adapter_name:
       description:
         - "Name of the backing adapter of the NIC."
-        - "Only present if O(expand_names) is True and O(full_properties) is
-           True."
+        - "Only present if O(expand_names) is True."
       type: str
     adapter_port:
       description:
         - "Port index of the backing port of the NIC."
-        - "Only present if O(expand_names) is True and O(full_properties) is
-           True."
+        - "Only present if O(expand_names) is True."
       type: str
   sample:
     [
@@ -224,7 +234,7 @@ from ansible.module_utils.basic import AnsibleModule, \
 
 from ..module_utils.common import log_init, open_session, close_session, \
     hmc_auth_parameter, Error, common_fail_on_import_errors, parse_hmc_host, \
-    blanked_params, ObjectsByUriCache  # noqa: E402
+    blanked_params, ObjectsByUriCache, check_mutually_exclusive  # noqa: E402
 
 try:
     import zhmcclient
@@ -241,7 +251,7 @@ LOGGER = logging.getLogger(LOGGER_NAME)
 def add_artificial_properties_expand(nic_properties, nic, adapters_cache):
     """
     Add artificial properties to the nic_properties dict. This function is
-    called only when full_properties and expand_names are specified.
+    called only when expand_names is True.
 
     Upon return, the nic_properties dict has been extended by these properties:
 
@@ -285,8 +295,15 @@ def perform_list(params):
     """
     cpc_name = params.get('cpc_name')  # required
     partition_name = params.get('partition_name')  # required
+    additional_properties = \
+        [p.replace('_', '-') for p in params['additional_properties']]
     full_properties = params['full_properties']
     expand_names = params['expand_names']
+
+    check_mutually_exclusive(
+        params,
+        name1="additional_properties", name2="full_properties",
+        default1=False, default2=False)
 
     session, logoff = open_session(params)
     try:
@@ -300,12 +317,21 @@ def perform_list(params):
         partition = cpc.partitions.find(name=partition_name)
         # The default exception handling is sufficient for the above.
 
+        # Make sure that the result has the 'name' property of the NIC
+        if not full_properties:
+            if not additional_properties:
+                additional_properties = ['name']
+            elif 'name' not in additional_properties:
+                additional_properties = list(additional_properties)
+                additional_properties.append('name')
+
         LOGGER.debug("Listing NICs of partition %s", partition.name)
-        # We need to specify full_properties in order to get 'name'
-        nics = partition.nics.list(full_properties=True)
+        nics = partition.nics.list(
+            full_properties=full_properties,
+            additional_properties=additional_properties)
 
         # Get the data for the name expansions only once
-        if full_properties and expand_names:
+        if expand_names:
             adapters_cache = ObjectsByUriCache(cpc.adapters)
 
         nic_list = []
@@ -317,12 +343,11 @@ def perform_list(params):
                 "name": nic.name,
             }
 
-            if full_properties:
-                for pname_hmc, pvalue in nic.properties.items():
-                    pname = pname_hmc.replace('-', '_')
-                    nic_properties[pname] = pvalue
+            for pname_hmc, pvalue in nic.properties.items():
+                pname = pname_hmc.replace('-', '_')
+                nic_properties[pname] = pvalue
 
-            if full_properties and expand_names:
+            if expand_names:
                 add_artificial_properties_expand(
                     nic_properties, nic, adapters_cache)
 
@@ -344,6 +369,8 @@ def main():
         hmc_auth=hmc_auth_parameter(),
         cpc_name=dict(required=True, type='str'),
         partition_name=dict(required=True, type='str'),
+        additional_properties=dict(
+            required=False, type='list', elements='str', default=[]),
         full_properties=dict(required=False, type='bool', default=False),
         expand_names=dict(required=False, type='bool', default=False),
         log_file=dict(required=False, type='str', default=None),
