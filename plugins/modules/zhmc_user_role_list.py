@@ -168,6 +168,9 @@ user_roles:
     name:
       description: "User role name"
       type: str
+    object_uri:
+      description: "Canonical URI of the user role"
+      type: str
     type:
       description: "Type of the user role (V(system-defined), V(user-defined))"
       type: str
@@ -180,10 +183,12 @@ user_roles:
     [
         {
             "name": "Standard",
+            "object_uri": "/api/user-roles/...",
             "type": "system-defined"
         },
         {
             "name": "role 1",
+            "object_uri": "/api/user-roles/...",
             "type": "user-defined"
         }
     ]

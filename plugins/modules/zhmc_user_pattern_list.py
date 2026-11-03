@@ -171,7 +171,7 @@ user_patterns:
       description: "User pattern name"
       type: str
     element_uri:
-      description: "Element URI of the User Pattern object"
+      description: "Canonical URI of the user pattern"
       type: str
     type:
       description:
@@ -190,13 +190,13 @@ user_patterns:
   sample:
     [
         {
-            "element_uri": "/api/console/user-patterns/cbcaf7a0-46cc-11e9-bfd3-f44a39cd42f9",
             "name": "Bluepages email address",
+            "element_uri": "/api/console/user-patterns/...",
             "type": "glob-like"
         },
         {
-            "element_uri": "/api/console/user-patterns/fb22d4a2-4e40-11e9-a8a8-00106f23f636",
             "name": "regexp pattern 1",
+            "element_uri": "/api/console/user-patterns/...",
             "type": "regular-expression"
         }
     ]

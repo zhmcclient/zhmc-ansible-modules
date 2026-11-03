@@ -191,30 +191,30 @@ partitions
         [
             {
                 "cpc_name": "CPC1",
-                "cpc_uri": "/api/cpcs/....",
+                "cpc_uri": "/api/cpcs/...",
                 "name": "partition1",
-                "object_uri": "/api/partitions/....",
+                "object_uri": "/api/partitions/...",
                 "status": "active"
             }
         ]
 
   name
-    Partition name
+    Name of the attached partition
 
     | **type**: str
 
   object_uri
-    Canonical URI of the Partition
-
-    | **type**: str
-
-  cpc_uri
-    Canonical URI of the CPC of the partition
+    Canonical URI of the attached partition
 
     | **type**: str
 
   cpc_name
     Name of the CPC of the partition
+
+    | **type**: str
+
+  cpc_uri
+    Canonical URI of the CPC of the partition
 
     | **type**: str
 

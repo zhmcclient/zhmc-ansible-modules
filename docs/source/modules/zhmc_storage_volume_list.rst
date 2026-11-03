@@ -255,7 +255,7 @@ storage_volumes
 
         [
             {
-                "element_uri": "/api/storage-groups/..../storage-volumes/....",
+                "element_uri": "/api/storage-groups/.../storage-volumes/...",
                 "fulfillment_state": "complete",
                 "name": "storage_volume1",
                 "size": 500.0,
@@ -269,7 +269,7 @@ storage_volumes
     | **type**: str
 
   element_uri
-    Canonical URI of the storage volume object
+    Canonical URI of the storage volume
 
     | **type**: str
 

@@ -192,8 +192,10 @@ lpars
             {
                 "activation_mode": "linux",
                 "cpc_name": "CPC1",
+                "cpc_uri": "/api/cpcs/...",
                 "has_unacceptable_status": false,
                 "name": "LPAR1",
+                "object_uri": "/api/logical-partitions/...",
                 "se_version": "2.15.0",
                 "status": "active"
             }
@@ -204,8 +206,18 @@ lpars
 
     | **type**: str
 
+  object_uri
+    Canonical URI of the LPAR
+
+    | **type**: str
+
   cpc_name
     Name of the parent CPC of the LPAR
+
+    | **type**: str
+
+  cpc_uri
+    Canonical URI of the parent CPC of the adapter
 
     | **type**: str
 

@@ -191,11 +191,20 @@ nics:
     name:
       description: "NIC name"
       type: str
+    element_uri:
+      description: "Canonical URI of the NIC"
+      type: str
     partition_name:
       description: "Name of the parent partition of the NIC"
       type: str
+    partition_uri:
+      description: "Canonical URI of the parent partition of the NIC"
+      type: str
     cpc_name:
       description: "Name of the parent CPC of the partition"
+      type: str
+    cpc_uri:
+      description: "Canonical URI of the parent CPC of the partition"
       type: str
     "{additional_property}":
       description: Additional properties requested via O(full_properties) or
@@ -212,6 +221,11 @@ nics:
         - "Name of the backing adapter of the NIC."
         - "Only present if O(expand_names) is True."
       type: str
+    adapter_uri:
+      description:
+        - "Canonical URI of the backing adapter of the NIC."
+        - "Only present if O(expand_names) is True."
+      type: str
     adapter_port:
       description:
         - "Port index of the backing port of the NIC."
@@ -220,9 +234,12 @@ nics:
   sample:
     [
         {
-            "cpc_name": "CPC1",
             "name": "nic1",
-            "partition_name": "partition1"
+            "element_uri": "/api/partitions/.../nics/...",
+            "partition_name": "partition1",
+            "partition_uri": "/api/partitions/...",
+            "cpc_name": "CPC1",
+            "cpc_uri": "/api/cpcs/...",
         }
     ]
 """
@@ -257,6 +274,7 @@ def add_artificial_properties_expand(nic_properties, nic, adapters_cache):
 
     * 'adapter_id': Adapter ID (PCHID) of the backing adapter of the NIC.
     * 'adapter_name': Name of the backing adapter of the NIC.
+    * 'adapter_uri': URI of the backing adapter of the NIC.
     * 'adapter_port': Port index of the backing port of the NIC.
     """
 
@@ -282,6 +300,7 @@ def add_artificial_properties_expand(nic_properties, nic, adapters_cache):
     adapter = adapters_cache.resource_object(adapter_uri)
     nic_properties['adapter_id'] = adapter.get_property('adapter-id')
     nic_properties['adapter_name'] = adapter.name
+    nic_properties['adapter_uri'] = adapter.uri
     nic_properties['adapter_port'] = adapter_port
 
 
@@ -339,14 +358,13 @@ def perform_list(params):
 
             nic_properties = {
                 "cpc_name": cpc_name,
+                "cpc_uri": cpc.uri,
                 "partition_name": partition_name,
-                "name": nic.name,
+                "partition_uri": partition.uri,
             }
-
             for pname_hmc, pvalue in nic.properties.items():
                 pname = pname_hmc.replace('-', '_')
                 nic_properties[pname] = pvalue
-
             if expand_names:
                 add_artificial_properties_expand(
                     nic_properties, nic, adapters_cache)

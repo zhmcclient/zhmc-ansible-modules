@@ -166,15 +166,25 @@ ldap_server_definitions:
   elements: dict
   contains:
     name:
-      description: "User name"
+      description: "LDAP server definition name"
       type: str
+    element_uri:
+      description: "Canonical URI of the LDAP server definition"
+      type: str
+    "{additional_property}":
+      description: Additional properties requested via O(full_properties) or
+        O(additional_properties).
+        The property names will have underscores instead of hyphens.
+      type: raw
   sample:
     [
         {
-            "name": "Standard"
+            "name": "Standard",
+            "element_uri": "/api/console/ldap-server-definitions/..."
         },
         {
-            "name": "User 1"
+            "name": "LSD 1",
+            "element_uri": "/api/console/ldap-server-definitions/..."
         }
     ]
 """
@@ -230,10 +240,14 @@ def perform_list(params):
             full_properties=full_properties,
             additional_properties=additional_properties)
         # The default exception handling is sufficient for the above.
+
         for lsd in lsds:
-            lsd_properties = {
-                "name": lsd.name,
-            }
+
+            lsd_properties = {}
+            for pname_hmc, pvalue in lsd.properties.items():
+                pname = pname_hmc.replace('-', '_')
+                lsd_properties[pname] = pvalue
+
             lsd_list.append(lsd_properties)
 
         return lsd_list

@@ -179,16 +179,23 @@ users
         [
             {
                 "name": "Standard",
+                "object_uri": "/api/users/...",
                 "type": "system-defined"
             },
             {
                 "name": "User 1",
+                "object_uri": "/api/users/...",
                 "type": "standard"
             }
         ]
 
   name
     User name
+
+    | **type**: str
+
+  object_uri
+    Canonical URI of the user
 
     | **type**: str
 

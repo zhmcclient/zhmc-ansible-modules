@@ -190,8 +190,14 @@ lpars:
     name:
       description: "LPAR name"
       type: str
+    object_uri:
+      description: "Canonical URI of the LPAR"
+      type: str
     cpc_name:
       description: "Name of the parent CPC of the LPAR"
+      type: str
+    cpc_uri:
+      description: "Canonical URI of the parent CPC of the adapter"
       type: str
     se_version:
       description: "SE version of the parent CPC of the LPAR"
@@ -219,7 +225,9 @@ lpars:
     [
         {
             "name": "LPAR1",
+            "object_uri": "/api/logical-partitions/...",
             "cpc_name": "CPC1",
+            "cpc_uri": "/api/cpcs/...",
             "se_version": "2.15.0",
             "status": "active",
             "has_unacceptable_status": False,
@@ -350,6 +358,7 @@ def perform_list(params):
 
             lpar_properties = {
                 "cpc_name": parent_cpc.name,
+                "cpc_uri": parent_cpc.uri,
                 "se_version": se_version,
             }
             for pname_hmc, pvalue in lpar.properties.items():

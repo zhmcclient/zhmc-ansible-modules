@@ -171,16 +171,28 @@ ldap_server_definitions
 
         [
             {
+                "element_uri": "/api/console/ldap-server-definitions/...",
                 "name": "Standard"
             },
             {
-                "name": "User 1"
+                "element_uri": "/api/console/ldap-server-definitions/...",
+                "name": "LSD 1"
             }
         ]
 
   name
-    User name
+    LDAP server definition name
 
     | **type**: str
+
+  element_uri
+    Canonical URI of the LDAP server definition
+
+    | **type**: str
+
+  {additional_property}
+    Additional properties requested via :literal:`full\_properties` or :literal:`additional\_properties`. The property names will have underscores instead of hyphens.
+
+    | **type**: raw
 
 

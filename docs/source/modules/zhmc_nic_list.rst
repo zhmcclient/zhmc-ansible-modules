@@ -201,8 +201,11 @@ nics
         [
             {
                 "cpc_name": "CPC1",
+                "cpc_uri": "/api/cpcs/...",
+                "element_uri": "/api/partitions/.../nics/...",
                 "name": "nic1",
-                "partition_name": "partition1"
+                "partition_name": "partition1",
+                "partition_uri": "/api/partitions/..."
             }
         ]
 
@@ -211,13 +214,28 @@ nics
 
     | **type**: str
 
+  element_uri
+    Canonical URI of the NIC
+
+    | **type**: str
+
   partition_name
     Name of the parent partition of the NIC
 
     | **type**: str
 
+  partition_uri
+    Canonical URI of the parent partition of the NIC
+
+    | **type**: str
+
   cpc_name
     Name of the parent CPC of the partition
+
+    | **type**: str
+
+  cpc_uri
+    Canonical URI of the parent CPC of the partition
 
     | **type**: str
 
@@ -235,6 +253,13 @@ nics
 
   adapter_name
     Name of the backing adapter of the NIC.
+
+    Only present if :literal:`expand\_names` is True.
+
+    | **type**: str
+
+  adapter_uri
+    Canonical URI of the backing adapter of the NIC.
 
     Only present if :literal:`expand\_names` is True.
 

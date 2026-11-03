@@ -171,12 +171,12 @@ user_patterns
 
         [
             {
-                "element_uri": "/api/console/user-patterns/cbcaf7a0-46cc-11e9-bfd3-f44a39cd42f9",
+                "element_uri": "/api/console/user-patterns/...",
                 "name": "Bluepages email address",
                 "type": "glob-like"
             },
             {
-                "element_uri": "/api/console/user-patterns/fb22d4a2-4e40-11e9-a8a8-00106f23f636",
+                "element_uri": "/api/console/user-patterns/...",
                 "name": "regexp pattern 1",
                 "type": "regular-expression"
             }
@@ -188,7 +188,7 @@ user_patterns
     | **type**: str
 
   element_uri
-    Element URI of the User Pattern object
+    Canonical URI of the user pattern
 
     | **type**: str
 
