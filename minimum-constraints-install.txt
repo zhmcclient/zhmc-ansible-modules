@@ -34,7 +34,7 @@ importlib-resources==5.0.0; python_version <= '3.11'  # Python 3.12 has importli
 
 # Direct dependencies for install, except ansible/ansible-core (must be consistent with requirements.txt)
 
-zhmcclient==1.26.0
+zhmcclient==1.27.0
 
 
 # Indirect dependencies for install that are needed for some reason (must be consistent with requirements.txt)
@@ -48,7 +48,7 @@ PyYAML==6.0.2
 # All other indirect dependencies for install that are not in requirements.txt
 
 attrs==22.2.0
-certifi==2024.7.4
+certifi==2026.10.19
 cffi==2.0.0
 charset-normalizer==2.0.0
 docopt==0.6.2
@@ -67,6 +67,6 @@ resolvelib==0.8.0
 rpds-py==0.7.1
 six==1.16.0
 stomp.py==8.1.1
-typing-extensions==4.14.1
-urllib3==2.7.0
+typing-extensions==4.16.0
+urllib3==2.8.0
 websocket-client==1.8.0
