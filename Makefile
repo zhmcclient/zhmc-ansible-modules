@@ -204,9 +204,9 @@ sphinx_opts := -v
 # Pytest options
 coverage_rc_file := .coveragerc
 ifdef TESTCASES
-  pytest_opts := --color=yes -s $(TESTOPTS) -k '$(TESTCASES)'
+  pytest_opts := --color=auto -s $(TESTOPTS) -k '$(TESTCASES)'
 else
-  pytest_opts := --color=yes -s $(TESTOPTS)
+  pytest_opts := --color=auto -s $(TESTOPTS)
 endif
 # Note: The --cov-report=html option creates an HTML coverage report in the htmlcov
 #       directory, but it is incorrect in case the coverage data file is appended
