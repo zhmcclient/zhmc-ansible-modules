@@ -249,7 +249,7 @@ storage_volumes:
       description: Storage volume name
       type: str
     element_uri:
-      description: Canonical URI of the storage volume object
+      description: Canonical URI of the storage volume
       type: str
     fulfillment_state:
       description: The current fulfillment state of the storage volume.
@@ -273,7 +273,7 @@ storage_volumes:
     [
         {
             "name": "storage_volume1",
-            "element_uri": "/api/storage-groups/..../storage-volumes/....",
+            "element_uri": "/api/storage-groups/.../storage-volumes/...",
             "fulfillment_state": "complete",
             "size": 500.0,
             "usage": "boot"
@@ -376,6 +376,7 @@ def perform_list(params):
 
         storage_volume_list = []
         for storage_volume in storage_volumes:
+
             storage_volume_properties = {}
             for pname_hmc, pvalue in storage_volume.properties.items():
                 pname = pname_hmc.replace('-', '_')

@@ -168,6 +168,9 @@ password_rules:
     name:
       description: "Password rule name"
       type: str
+    element_uri:
+      description: "Canonical URI of the password rule"
+      type: str
     "{additional_property}":
       description: Additional properties requested via O(full_properties) or
         O(additional_properties).
@@ -177,9 +180,11 @@ password_rules:
     [
         {
             "name": "Basic",
+            "element_uri": "/api/console/password-rules/..."
         },
         {
             "name": "Standard",
+            "element_uri": "/api/console/password-rules/..."
         }
     ]
 """
@@ -235,6 +240,7 @@ def perform_list(params):
             full_properties=full_properties,
             additional_properties=additional_properties)
         # The default exception handling is sufficient for the above.
+
         for pwrule in pwrules:
 
             pwrule_properties = {}

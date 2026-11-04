@@ -175,6 +175,9 @@ users:
     name:
       description: "User name"
       type: str
+    object_uri:
+      description: "Canonical URI of the user"
+      type: str
     type:
       description: "Type of the user (V(standard), V(template),
         V(pattern-based), V(system-defined))"
@@ -237,10 +240,12 @@ users:
     [
         {
             "name": "Standard",
+            "object_uri": "/api/users/...",
             "type": "system-defined"
         },
         {
             "name": "User 1",
+            "object_uri": "/api/users/...",
             "type": "standard"
         }
     ]

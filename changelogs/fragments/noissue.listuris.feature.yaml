@@ -1,0 +1,12 @@
+minor_changes:
+    - "Added URI properties to the returned properties of the following
+      list modules:
+      zhmc_adapter_list: cpc_uri,
+      zhmc_ldap_server_definition_list: element_uri,
+      zhmc_adapter_list: cpc_uri,
+      zhmc_lpar_list: cpc_uri,
+      zhmc_nic_list: cpc_uri, partition_uri, adapter_uri,
+      zhmc_partition_list: object_uri,
+      zhmc_storage_group_attachment_list: cpc_uri."
+    - "Documented URI properties that were already returned for some of the
+      list modules."

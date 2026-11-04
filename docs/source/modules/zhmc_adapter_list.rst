@@ -242,7 +242,9 @@ adapters
                 "adapter_family": "osa",
                 "adapter_id": "10c",
                 "cpc_name": "CPC1",
+                "cpc_uri": "/api/cpcs/...",
                 "name": "adapter1",
+                "object_uri": "/api/adapters/...",
                 "status": "active",
                 "type": "osd"
             }
@@ -253,8 +255,18 @@ adapters
 
     | **type**: str
 
+  object_uri
+    Canonical URI of the adapter
+
+    | **type**: str
+
   cpc_name
     Name of the parent CPC of the adapter
+
+    | **type**: str
+
+  cpc_uri
+    Canonical URI of the parent CPC of the adapter
 
     | **type**: str
 

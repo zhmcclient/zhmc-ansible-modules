@@ -189,17 +189,24 @@ cpcs
                 "has_unacceptable_status": false,
                 "is_managed": true,
                 "name": "CPCA",
+                "object_uri": "/api/cpcs/...",
                 "se_version": "2.15",
                 "status": "active"
             },
             {
                 "is_managed": false,
-                "name": "NewCPC"
+                "name": "NewCPC",
+                "object_uri": "/api/cpcs/..."
             }
         ]
 
   name
     CPC name
+
+    | **type**: str
+
+  object_uri
+    Canonical URI of the CPC
 
     | **type**: str
 

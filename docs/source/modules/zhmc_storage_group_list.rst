@@ -229,10 +229,10 @@ storage_groups
         [
             {
                 "cpc_name": "CPC1",
-                "cpc_uri": "/api/cpcs/....",
+                "cpc_uri": "/api/cpcs/...",
                 "fulfillment_state": "complete",
                 "name": "storage_group1",
-                "object_uri": "/api/storage-groups/....",
+                "object_uri": "/api/storage-groups/...",
                 "type": "fcp"
             }
         ]
@@ -243,7 +243,7 @@ storage_groups
     | **type**: str
 
   object_uri
-    Canonical URI of the storage group object
+    Canonical URI of the storage group
 
     | **type**: str
 

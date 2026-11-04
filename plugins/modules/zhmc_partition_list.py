@@ -192,10 +192,16 @@ partitions:
   elements: dict
   contains:
     name:
-      description: "partition name"
+      description: "Partition name"
+      type: str
+    object_uri:
+      description: "Canonical URI of the partition"
       type: str
     cpc_name:
       description: "Name of the parent CPC of the partition"
+      type: str
+    cpc_uri:
+      description: "Canonical URI of the parent CPC of the partition"
       type: str
     se_version:
       description: "SE version of the parent CPC of the partition"
@@ -218,7 +224,9 @@ partitions:
     [
         {
             "name": "partition1",
+            "object_uri": "/api/partitions/...",
             "cpc_name": "CPC1",
+            "cpc_uri": "/api/cpcs/...",
             "se_version": "2.15.0",
             "status": "active",
             "has_unacceptable_status": False,
@@ -338,6 +346,7 @@ def perform_list(params):
 
             partition_properties = {
                 "cpc_name": parent_cpc.name,
+                "cpc_uri": parent_cpc.uri,
                 "se_version": se_version,
             }
             for pname_hmc, pvalue in partition.properties.items():

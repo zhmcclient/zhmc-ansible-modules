@@ -238,8 +238,14 @@ adapters:
     name:
       description: "Adapter name"
       type: str
+    object_uri:
+      description: "Canonical URI of the adapter"
+      type: str
     cpc_name:
       description: "Name of the parent CPC of the adapter"
+      type: str
+    cpc_uri:
+      description: "Canonical URI of the parent CPC of the adapter"
       type: str
     adapter_id:
       description: "Adapter ID (PCHID) of the adapter ('adapter-id' property)"
@@ -262,7 +268,9 @@ adapters:
     [
         {
             "name": "adapter1",
+            "object_uri": "/api/adapters/...",
             "cpc_name": "CPC1",
+            "cpc_uri": "/api/cpcs/...",
             "adapter_id": "10c",
             "adapter_family": "osa",
             "type": "osd",
@@ -400,6 +408,7 @@ def perform_list(params):
 
             adapter_properties = {
                 "cpc_name": parent_cpc.name,
+                "cpc_uri": parent_cpc.uri,
             }
             for pname_hmc, pvalue in adapter.properties.items():
                 pname = pname_hmc.replace('-', '_')

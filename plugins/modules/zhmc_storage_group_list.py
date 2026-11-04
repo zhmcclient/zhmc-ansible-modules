@@ -223,7 +223,7 @@ storage_groups:
       description: Storage group name
       type: str
     object_uri:
-      description: Canonical URI of the storage group object
+      description: Canonical URI of the storage group
       type: str
     cpc_name:
       description: Name of the CPC to which the storage group is associated
@@ -250,9 +250,9 @@ storage_groups:
     [
         {
             "name": "storage_group1",
-            "object_uri": "/api/storage-groups/....",
+            "object_uri": "/api/storage-groups/...",
             "cpc_name": "CPC1",
-            "cpc_uri": "/api/cpcs/....",
+            "cpc_uri": "/api/cpcs/...",
             "type": "fcp",
             "fulfillment_state": "complete"
         }
@@ -333,8 +333,10 @@ def perform_list(params):
         storage_group_list = []
         for storage_group in storage_groups:
             cpc_uri = storage_group.get_property('cpc-uri')
+
             storage_group_properties = {
                 "cpc_name": cpc_by_uri[cpc_uri].name,
+                # cpc_uri will be added from the list result
             }
             for pname_hmc, pvalue in storage_group.properties.items():
                 pname = pname_hmc.replace('-', '_')

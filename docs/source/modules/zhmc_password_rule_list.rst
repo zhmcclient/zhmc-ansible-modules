@@ -171,15 +171,22 @@ password_rules
 
         [
             {
+                "element_uri": "/api/console/password-rules/...",
                 "name": "Basic"
             },
             {
+                "element_uri": "/api/console/password-rules/...",
                 "name": "Standard"
             }
         ]
 
   name
     Password rule name
+
+    | **type**: str
+
+  element_uri
+    Canonical URI of the password rule
 
     | **type**: str
 

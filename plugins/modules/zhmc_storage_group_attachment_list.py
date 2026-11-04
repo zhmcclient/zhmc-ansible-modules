@@ -181,16 +181,16 @@ partitions:
   elements: dict
   contains:
     name:
-      description: Partition name
+      description: Name of the attached partition
       type: str
     object_uri:
-      description: Canonical URI of the Partition
-      type: str
-    cpc_uri:
-      description: Canonical URI of the CPC of the partition
+      description: Canonical URI of the attached partition
       type: str
     cpc_name:
       description: Name of the CPC of the partition
+      type: str
+    cpc_uri:
+      description: Canonical URI of the CPC of the partition
       type: str
     status:
       description: The status of the partition.
@@ -202,9 +202,9 @@ partitions:
     [
         {
             "name": "partition1",
-            "object_uri": "/api/partitions/....",
-            "cpc_uri": "/api/cpcs/....",
+            "object_uri": "/api/partitions/...",
             "cpc_name": "CPC1",
+            "cpc_uri": "/api/cpcs/...",
             "status": "active"
         }
     ]
@@ -268,8 +268,10 @@ def perform_list(params):
 
         partition_list = []
         for part in attached_partitions:
+
             part_properties = {
                 "cpc_name": cpc_name,
+                "cpc_uri": cpc.uri,
             }
             for pname_hmc, pvalue in part.properties.items():
                 pname = pname_hmc.replace('-', '_')

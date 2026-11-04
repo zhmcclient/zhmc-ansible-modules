@@ -184,6 +184,9 @@ cpcs:
     name:
       description: "CPC name"
       type: str
+    object_uri:
+      description: "Canonical URI of the CPC"
+      type: str
     is_managed:
       description: Indicates wehether the CPC is managed by the targeted HMC
         (true) or is unmanaged (false).
@@ -217,6 +220,7 @@ cpcs:
     [
         {
             "name": "CPCA",
+            "object_uri": "/api/cpcs/...",
             "is_managed": True,
             "status": "active",
             "has_unacceptable_status": False,
@@ -225,6 +229,7 @@ cpcs:
         },
         {
             "name": "NewCPC",
+            "object_uri": "/api/cpcs/...",
             "is_managed": False
         }
     ]
