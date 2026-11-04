@@ -276,9 +276,9 @@ msg:
 storage_group:
   description:
     - "For O(state=absent), an empty dictionary."
-    - "For O(state=present|facts|discover), the resource properties of the
-       target storage group after any changes, plus additional artificial
-       properties as described below."
+    - "For O(state=present|facts|discover|accept_mismatched), the resource
+       properties of the target storage group after any changes, plus
+       additional artificial properties as described below."
   returned: success
   type: dict
   contains:

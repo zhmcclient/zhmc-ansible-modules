@@ -254,7 +254,7 @@ msg
 storage_group
   For :literal:`state=absent`\ , an empty dictionary.
 
-  For :literal:`state=present\|facts\|discover`\ , the resource properties of the target storage group after any changes, plus additional artificial properties as described below.
+  For :literal:`state=present\|facts\|discover\|accept_mismatched`\ , the resource properties of the target storage group after any changes, plus additional artificial properties as described below.
 
   | **returned**: success
   | **type**: dict
