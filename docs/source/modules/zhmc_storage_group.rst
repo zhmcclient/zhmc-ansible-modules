@@ -111,11 +111,13 @@ state
 
   \* :literal:`discover`\ : Triggers LUN discovery. If :literal:`discover\_wait` is specified, waits for completion of the discovery. Requires that the storage group exists and is of type 'fcp'.
 
+  \* :literal:`accept_mismatched`\ : Accepts mismatched FCP storage volumes in this storage group. Requires that the storage group exists and is of type 'fcp'.
+
   \* :literal:`facts`\ : Returns the storage group properties.
 
   | **required**: True
   | **type**: str
-  | **choices**: absent, present, discover, facts
+  | **choices**: absent, present, discover, facts, accept_mismatched
 
 
 properties
@@ -252,7 +254,7 @@ msg
 storage_group
   For :literal:`state=absent`\ , an empty dictionary.
 
-  For :literal:`state=present\|facts\|discover`\ , the resource properties of the target storage group after any changes, plus additional artificial properties as described below.
+  For :literal:`state=present\|facts\|discover\|accept_mismatched`\ , the resource properties of the target storage group after any changes, plus additional artificial properties as described below.
 
   | **returned**: success
   | **type**: dict

@@ -140,10 +140,13 @@ options:
       - "* V(discover): Triggers LUN discovery. If O(discover_wait) is
          specified, waits for completion of the discovery.
          Requires that the storage group exists and is of type 'fcp'."
+      - "* V(accept_mismatched): Accepts mismatched FCP storage volumes in this
+         storage group.
+         Requires that the storage group exists and is of type 'fcp'."
       - "* V(facts): Returns the storage group properties."
     type: str
     required: true
-    choices: ['absent', 'present', 'discover', 'facts']
+    choices: ['absent', 'present', 'discover', 'facts', 'accept_mismatched']
   properties:
     description:
       - "Dictionary with desired properties for the storage group.
@@ -249,6 +252,15 @@ EXAMPLES = """
     name: "{{ my_storage_group_name }}"
     state: discover
   register: sg1
+
+- name: Accept mismatched FCP storage volumes
+  zhmc_storage_group:
+    hmc_host: "{{ my_hmc_host }}"
+    hmc_auth: "{{ my_hmc_auth }}"
+    cpc_name: "{{ my_cpc_name }}"
+    name: "{{ my_storage_group_name }}"
+    state: accept_mismatched
+  register: sg1
 """
 
 RETURN = """
@@ -264,9 +276,9 @@ msg:
 storage_group:
   description:
     - "For O(state=absent), an empty dictionary."
-    - "For O(state=present|facts|discover), the resource properties of the
-       target storage group after any changes, plus additional artificial
-       properties as described below."
+    - "For O(state=present|facts|discover|accept_mismatched), the resource
+       properties of the target storage group after any changes, plus
+       additional artificial properties as described below."
   returned: success
   type: dict
   contains:
@@ -1037,6 +1049,60 @@ def discover(params, check_mode):
         close_session(session, logoff)
 
 
+def accept_mismatched(params, check_mode):
+    """
+    Accept mismatched FCP storage volumes for a FCP storage group and return its
+    current facts.
+
+    Raises:
+      ParameterError: An issue with the module parameters.
+      zhmcclient.Error: Any zhmcclient exception can happen.
+    """
+
+    cpc_name = params['cpc_name']
+    storage_group_name = params['name']
+    expand = params['expand']
+
+    changed = False
+    result = {}
+
+    session, logoff = open_session(params)
+    try:
+        # The default exception handling is sufficient for this code
+        client = zhmcclient.Client(session)
+        console = client.consoles.console
+        cpc = client.cpcs.find(name=cpc_name)
+
+        storage_group = console.storage_groups.find(name=storage_group_name)
+
+        sg_cpc = storage_group.cpc
+        if sg_cpc.uri != cpc.uri:
+            raise ParameterError(
+                f"Storage group {storage_group_name!r} is not associated with "
+                f"the specified CPC {cpc.name!r}, but with CPC "
+                f"{sg_cpc.name!r}.")
+
+        sg_type = storage_group.prop('type')
+        if sg_type != 'fcp':
+            raise ParameterError(
+                f"Storage group {storage_group_name!r} is not of type 'fcp', "
+                f"but {sg_type!r}.")
+
+        if not check_mode:
+            storage_group.accept_mismatched_fcp_storage_volumes()
+            storage_group.pull_full_properties()
+
+        changed = True
+
+        result = dict(storage_group.properties)
+        add_artificial_properties(result, storage_group, expand)
+
+        return changed, result
+
+    finally:
+        close_session(session, logoff)
+
+
 def facts(params, check_mode):
     # pylint: disable=unused-argument
     """
@@ -1098,6 +1164,7 @@ def perform_task(params, check_mode):
         "present": ensure_present,
         "discover": discover,
         "facts": facts,
+        "accept_mismatched": accept_mismatched,
     }
     return actions[params['state']](params, check_mode)
 
@@ -1113,7 +1180,8 @@ def main():
         cpc_name=dict(required=True, type='str'),
         name=dict(required=True, type='str'),
         state=dict(required=True, type='str',
-                   choices=['absent', 'present', 'discover', 'facts']),
+                   choices=['absent', 'present', 'discover', 'facts',
+                            'accept_mismatched']),
         properties=dict(required=False, type='dict', default=None),
         expand=dict(required=False, type='bool', default=False),
         discover_wait=dict(required=False, type='bool', default=False),

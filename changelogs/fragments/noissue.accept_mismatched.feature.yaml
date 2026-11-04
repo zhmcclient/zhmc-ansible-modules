@@ -1,0 +1,3 @@
+minor_changes:
+  - Added support for accepting mismatched FCP storage volumes in the
+    'zhmc_storage_group' module via a new 'accept_mismatched' state.
