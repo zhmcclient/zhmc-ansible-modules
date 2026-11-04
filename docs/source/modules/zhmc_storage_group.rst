@@ -111,11 +111,13 @@ state
 
   \* :literal:`discover`\ : Triggers LUN discovery. If :literal:`discover\_wait` is specified, waits for completion of the discovery. Requires that the storage group exists and is of type 'fcp'.
 
+  \* :literal:`accept_mismatched`\ : Accepts mismatched FCP storage volumes in this storage group. Requires that the storage group exists and is of type 'fcp'.
+
   \* :literal:`facts`\ : Returns the storage group properties.
 
   | **required**: True
   | **type**: str
-  | **choices**: absent, present, discover, facts
+  | **choices**: absent, present, discover, facts, accept_mismatched
 
 
 properties
