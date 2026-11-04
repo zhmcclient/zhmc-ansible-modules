@@ -127,7 +127,7 @@ def test_zhmc_storage_group_attachment_list(
     hd = hmc_session.hmc_definition
     hmc_host = hmc_session.host
     userid = hmc_session.userid
-    password = hmc_session._password  # pylint: disable=protected-access
+    password = hmc_session.password
     ca_certs = hmc_session.verify_cert \
         if isinstance(hmc_session.verify_cert, str) else None
     verify = bool(hmc_session.verify_cert)
