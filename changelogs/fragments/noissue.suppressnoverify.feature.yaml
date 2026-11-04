@@ -1,0 +1,2 @@
+minor_changes:
+  - "End2end test - Suppressed the warning about using no_verify with the HMC."
