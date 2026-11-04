@@ -116,7 +116,7 @@ def get_hmc_auth(session):
       parameter for testing ibm_zhmc Ansible modules.
     """
     userid = session.userid
-    password = session._password  # pylint: disable=protected-access
+    password = session.password
     ca_certs = session.verify_cert \
         if isinstance(session.verify_cert, str) else None
     verify = bool(session.verify_cert)
