@@ -264,7 +264,7 @@ def perform_list(params):
     check_mutually_exclusive(
         params,
         name1="additional_properties", name2="full_properties",
-        default1=False, default2=False)
+        default1=[], default2=False)
 
     session, logoff = open_session(params)
     try:
@@ -275,23 +275,12 @@ def perform_list(params):
         # 2.14.0. The operation depends only on the HMC version and not on the
         # SE/CPC version, so it is supported e.g. for a 2.14 HMC managing a z13
         # CPC.
-        #
-        # The "List Permitted Partitions" operation supports the
-        # 'additional-properties' query parameter starting with HMC API features
-        # 'dpm-hipersockets-partition-link-management' and
-        # 'dpm-ctc-partition-link-management' (added in HMC version 2.16.0
-        # after the initial GA).
-        #
-        # The "List Partitions of a CPC" operation has support for an
-        # 'additional-properties' query parameter starting with HMC API version
-        # 4.1 (= HMC version 2.16.0 initial GA).
+        # The zhmcclient list methods support the additional_properties
+        # parameter and handle that across all HMC versions.
         hmc_version = client.query_api_version()['hmc-version']
         hmc_version_info = [int(x) for x in hmc_version.split('.')]
-        ap_feature = console.api_feature_enabled(
-            "dpm-hipersockets-partition-link-management")
 
-        if (hmc_version_info < [2, 14, 0] or
-                additional_properties and not ap_feature):
+        if hmc_version_info < [2, 14, 0]:
 
             # Use the "List Partitions of a CPC" operation.
             if cpc_name:
@@ -307,10 +296,10 @@ def perform_list(params):
                 cpcs = client.cpcs.list()
                 partitions = []
                 for cpc in cpcs:
-                    _partitions = cpc.partitions.list(
+                    partitions_ = cpc.partitions.list(
                         additional_properties=additional_properties,
                         full_properties=full_properties)
-                    partitions.extend(_partitions)
+                    partitions.extend(partitions_)
 
         else:
 
@@ -323,8 +312,9 @@ def perform_list(params):
                 LOGGER.debug("Listing partitions of all managed CPCs via list "
                              "permitted partitions")
                 filter_args = None
-            partitions = client.consoles.console.list_permitted_partitions(
+            partitions = console.list_permitted_partitions(
                 filter_args=filter_args,
+                additional_properties=additional_properties,
                 full_properties=full_properties)
 
         # The default exception handling is sufficient for the above.
