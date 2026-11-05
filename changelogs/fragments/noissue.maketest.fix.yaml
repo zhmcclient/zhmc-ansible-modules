@@ -1,3 +1,0 @@
-minor_changes:
-  - "Development - Fixed the dependencies of 'make test / end2end...' to
-     install the colleciton before testing."

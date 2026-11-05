@@ -1,3 +1,0 @@
-minor_changes:
-  - Added a new module 'zhmc_storage_group_attachment_list' that lists the
-    partitions attached to a storage group.

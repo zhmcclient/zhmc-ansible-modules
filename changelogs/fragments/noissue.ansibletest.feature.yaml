@@ -1,5 +1,0 @@
-minor_changes:
-  - "Added Ansible versions 12, 13 and 14 to the versions that are tested
-     with PACKAGE_LEVEL=ansible. Removed Ansible version 10 from testing,
-     because there are more supported Ansible versions than supported Python
-     versions."
