@@ -27,7 +27,8 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
 
 from plugins.modules import zhmc_cpc_list
-from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth, \
+    unavailable_cpcs, underscored_properties
 from .conftest import LOG_FILE
 
 
@@ -41,6 +42,9 @@ from .conftest import LOG_FILE
 #         volatile on 2.14 HMCs.
 VOLATILE_CPC_PROPERTIES = [
     'cpc_power_consumption',
+    'cpc_power_infrastructure',
+    'cpc_power_total_partition',
+    'cpc_power_unassigned',
     'zcpc_power_consumption',
     'zcpc_ambient_temperature',
     'zcpc_exhaust_temperature',
@@ -57,8 +61,8 @@ VOLATILE_CPC_PROPERTIES = [
 
 def get_module_output(mod_obj):
     """
-    Return the module output as a tuple (changed, user_properties) (i.e.
-    the arguments of the call to exit_json()).
+    Return the module output as a tuple (changed, cpcs)
+    (i.e. the arguments of the call to exit_json()).
     If the module failed, return None.
     """
 
@@ -74,79 +78,90 @@ def get_module_output(mod_obj):
     return func(*call_args[0], **call_args[1])
 
 
-def assert_cpc_list(
-        cpc_list, include_unmanaged_cpcs, exp_cpc_dict, exp_um_cpc_dict):
+def assert_cpc_list(act_cpc_list, exp_cpc_dict):
     """
     Assert the output of the zhmc_cpc_list module.
 
     Parameters:
 
-      cpc_list(list): Result of zhmc_cpc_list module, as a list of dicts of CPC
-        properties as documented (with underscores in their names).
+      act_cpc_list (list of dict): Actual result of the module,
+        as a list of properties (name: value), including any artificial
+        properties. The property names must be as returned by the module.
 
-      include_unmanaged_cpcs(bool): Include unmanaged CPCs.
-
-      exp_cpc_dict(dict): Expected managed CPCs with their properties.
-        Key: CPC name.
-        Value: Dict of expected CPC properties (including any artificial
-        properties, all with underscores in their names).
-
-      exp_um_cpc_dict(dict): Expected unmanaged CPCs with their properties.
-        Key: CPC name.
-        Value: Dict of expected CPC properties (including any artificial
-        properties, all with underscores in their names).
+      exp_cpc_dict (dict of dict): Expected properties,
+        as a dict (key: properties) where key is the object name and properties
+        is a dict (name: value), including any artificial properties. The
+        property names must be as returned by the zhmcclient list method.
+        (i.e. with hyphens).
     """
+    assert isinstance(act_cpc_list, list)
+    assert isinstance(exp_cpc_dict, dict)
 
-    assert isinstance(cpc_list, list)
+    assert len(act_cpc_list) == len(exp_cpc_dict), (
+        "Unexpected number of CPCs:\n"
+        f"Actual objects: {act_cpc_list!r}\n"
+        f"Expected objects: {exp_cpc_dict!r}\n"
+    )
+    for act_cpc_properties in act_cpc_list:
+        assert isinstance(act_cpc_properties, dict)
 
-    exp_len = len(exp_cpc_dict)
-    if include_unmanaged_cpcs:
-        exp_len += len(exp_um_cpc_dict)
-    assert len(cpc_list) == exp_len
+        # Check for the key property
+        assert 'name' in act_cpc_properties, (
+            "Returned CPC does not have a 'name' "
+            f"property: {act_cpc_properties!r}")
+        cpc_name = act_cpc_properties['name']
+        assert cpc_name in exp_cpc_dict, (
+            f"Unexpected returned CPC {cpc_name!r}")
 
-    for cpc_item in cpc_list:
+        exp_cpc_properties = exp_cpc_dict[cpc_name]
+        assert isinstance(exp_cpc_properties, dict)
+        exp_cpc_properties = underscored_properties(exp_cpc_properties)
 
-        assert 'name' in cpc_item, \
-            f"Returned CPC {cpc_item!r} does not have a 'name' property"
-        cpc_name = cpc_item['name']
+        exp_cpc_pnames = list(exp_cpc_properties.keys())
+        act_cpc_pnames = list(act_cpc_properties.keys())
 
-        assert 'is_managed' in cpc_item, \
-            f"Returned CPC {cpc_item!r} does not have a 'is_managed' property"
-        is_managed = cpc_item['is_managed']
+        # Check the actually returned objects against the expected properties.
+        # This discovers unexpected properties.
+        for pname, act_value in act_cpc_properties.items():
+            assert '-' not in pname, (
+                f"Property {pname!r} in returned "
+                f"CPC {cpc_name!r} "
+                "has hyphens in the property name")
+            assert pname in exp_cpc_properties, (
+                f"Unexpected property {pname!r} in returned "
+                f"CPC {cpc_name!r}:\n"
+                f"Expected properties: {exp_cpc_pnames}\n"
+                f"Actual properties: {act_cpc_pnames}")
+            if pname not in VOLATILE_CPC_PROPERTIES:
+                exp_value = exp_cpc_properties[pname]
+                assert act_value == exp_value, (
+                    f"Incorrect value for property {pname!r} of returned "
+                    f"CPC {cpc_name!r}:\n"
+                    f"Expected value: {exp_value!r}\n"
+                    f"Actual value: {act_value!r}")
 
-        if is_managed:
-            assert cpc_name in exp_cpc_dict, \
-                f"Result contains unexpected managed CPC: {cpc_name!r}"
-
-            exp_cpc_properties = exp_cpc_dict[cpc_name]
-            for pname, pvalue in cpc_item.items():
-
-                assert '-' not in pname, \
-                    f"Property {pname!r} in CPC {cpc_name!r} is returned " \
-                    "with hyphens in the property name"
-
-                # Handle artificial properties
-                if pname == 'is_managed':
-                    continue
-
-                # Verify normal properties
-                assert pname in exp_cpc_properties, \
-                    f"Unexpected property {pname!r} in CPC {cpc_name!r}"
-
-                if pname not in VOLATILE_CPC_PROPERTIES:
-                    exp_value = exp_cpc_properties[pname]
-                    assert pvalue == exp_value, \
-                        f"Incorrect value for property {pname!r} of CPC " \
-                        f"{cpc_name!r}"
-
-        else:
-            assert cpc_name in exp_um_cpc_dict, \
-                f"Result contains unexpected unmanaged CPC: {cpc_name!r}"
+        # Check the expected properties against the actually returned objects.
+        # This discovers missing properties.
+        for pname, exp_value in exp_cpc_properties.items():
+            assert pname in act_cpc_properties, (
+                f"Missing property {pname!r} in returned "
+                f"CPC {cpc_name!r}:\n"
+                f"Expected properties: {exp_cpc_pnames}\n"
+                f"Actual properties: {act_cpc_pnames}")
+            if pname not in VOLATILE_CPC_PROPERTIES:
+                act_value = act_cpc_properties[pname]
+                assert act_value == exp_value, (
+                    f"Incorrect value for property {pname!r} of returned "
+                    f"CPC {cpc_name!r}:\n"
+                    f"Expected value: {exp_value!r}\n"
+                    f"Actual value: {act_value!r}")
 
 
 @pytest.mark.parametrize(
     "property_flags", [
         pytest.param({}, id="property_flags()"),
+        pytest.param({'additional_properties': ['description']},
+                     id="property_flags(additional_properties=[description])"),
         pytest.param({'full_properties': True},
                      id="property_flags(full_properties=True)"),
     ]
@@ -180,33 +195,47 @@ def test_zhmc_cpc_list(
 
     client = zhmcclient.Client(hmc_session)
 
+    # Get the module arguments for the test.
+    # We need to use the defaults defined in the module argument spec
+    additional_properties = property_flags.get('additional_properties', [])
     full_properties = property_flags.get('full_properties', False)
 
-    # Determine the expected managed CPCs on the HMC
-    exp_cpcs = client.cpcs.list(full_properties=full_properties)
+    # The testcases with full_properties=True require that all managed CPCs
+    # are available. Skip this test if that is not the case.
+    if full_properties:
+        unavail_cpcs = unavailable_cpcs(client.cpcs.list())
+        if unavail_cpcs:
+            unavail_cpcs_str = ", ".join([cpc.name for cpc in unavail_cpcs])
+            pytest.skip(f"Some CPCs are unavailable: {unavail_cpcs_str}")
+
+    # Determine the expected CPCs on the HMC
+    exp_cpcs = client.cpcs.list(
+        additional_properties=additional_properties,
+        full_properties=full_properties)
+
+    # Prepare the expected data for comparison
     exp_cpc_dict = {}
     for cpc in exp_cpcs:
-        exp_properties = {}
-        for pname_hmc, pvalue in cpc.properties.items():
-            pname = pname_hmc.replace('-', '_')
-            exp_properties[pname] = pvalue
+        exp_properties = {
+            "is_managed": True,
+        }
+        exp_properties.update(cpc.properties)
         exp_cpc_dict[cpc.name] = exp_properties
-
-    # Determine the expected unmanaged CPCs on the HMC
-    exp_um_cpcs = client.consoles.console.list_unmanaged_cpcs()
-    exp_um_cpc_dict = {}
-    for cpc in exp_um_cpcs:
-        exp_properties = {}
-        for pname_hmc, pvalue in cpc.properties.items():
-            pname = pname_hmc.replace('-', '_')
-            exp_properties[pname] = pvalue
-        exp_um_cpc_dict[cpc.name] = exp_properties
+    if include_unmanaged_cpcs:
+        exp_um_cpcs = client.consoles.console.list_unmanaged_cpcs()
+        for cpc in exp_um_cpcs:
+            exp_properties = {
+                "is_managed": False,
+            }
+            exp_properties.update(cpc.properties)
+            exp_cpc_dict[cpc.name] = exp_properties
 
     # Prepare module input parameters (must be all required + optional)
     params = {
         'hmc_host': hmc_host,
         'hmc_auth': hmc_auth,
         'include_unmanaged_cpcs': include_unmanaged_cpcs,
+        'additional_properties': additional_properties,
         'full_properties': full_properties,
         'log_file': LOG_FILE,
         '_faked_session': faked_session,
@@ -229,5 +258,4 @@ def test_zhmc_cpc_list(
     changed, cpc_list = get_module_output(mod_obj)
     assert changed is False
 
-    assert_cpc_list(
-        cpc_list, include_unmanaged_cpcs, exp_cpc_dict, exp_um_cpc_dict)
+    assert_cpc_list(cpc_list, exp_cpc_dict)

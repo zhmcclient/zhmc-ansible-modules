@@ -28,14 +28,23 @@ from zhmcclient.testutils import dpm_mode_cpcs  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
 
 from plugins.modules import zhmc_partition_list
-from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth, \
+    underscored_properties
 from .conftest import LOG_FILE
+
+
+# Names of partition properties (with underscores) that are volatile, i.e. that
+# may change their values on subsequent retrievals even when no other change is
+# performed.
+VOLATILE_PARTITION_PROPERTIES = [
+    'power_wattage',
+]
 
 
 def get_module_output(mod_obj):
     """
-    Return the module output as a tuple (changed, user_properties) (i.e.
-    the arguments of the call to exit_json()).
+    Return the module output as a tuple (changed, partitions)
+    (i.e. the arguments of the call to exit_json()).
     If the module failed, return None.
     """
 
@@ -51,59 +60,89 @@ def get_module_output(mod_obj):
     return func(*call_args[0], **call_args[1])
 
 
-def assert_partition_list(partition_list, exp_partition_dict):
+def assert_partition_list(act_partition_list, exp_partition_dict):
     """
-    Assert the output of the zhmc_partition_list module
+    Assert the output of the zhmc_partition_list module.
 
     Parameters:
 
-      partition_list(list): Result of zhmc_partition_list module, as a list of
-        dicts of partition properties as documented (with underscores in their
-        names).
+      act_partition_list (list of dict): Actual result of the module,
+        as a list of properties (name: value), including any artificial
+        properties. The property names must be as returned by the module.
 
-      exp_partition_dict(dict): Expected partitions with their properties.
-        Key: tuple(CPC name, partition name).
-        Value: Dict of expected partition properties (including any artificial
-        properties, all with underscores in their names).
+      exp_partition_dict (dict of dict): Expected properties,
+        as a dict (key: properties) where key is a tuple(CPC name, partition
+        name) and properties is a dict (name: value), including any artificial
+        properties. The property names must be as returned by the zhmcclient
+        list method (i.e. with hyphens).
     """
+    assert isinstance(act_partition_list, list)
+    assert isinstance(exp_partition_dict, dict)
 
-    assert isinstance(partition_list, list)
+    assert len(act_partition_list) == len(exp_partition_dict), (
+        "Unexpected number of partitions:\n"
+        f"Actual objects: {act_partition_list!r}\n"
+        f"Expected objects: {exp_partition_dict!r}\n"
+    )
+    for act_partition_properties in act_partition_list:
+        assert isinstance(act_partition_properties, dict)
 
-    exp_part_keys = list(exp_partition_dict.keys())
-    part_keys = [(ri.get('cpc_name', None), ri.get('name', None))
-                 for ri in partition_list]
-    assert set(part_keys) == set(exp_part_keys)
+        # Check for the key properties
+        assert 'cpc_name' in act_partition_properties, (
+            "Returned partition does not have a 'cpc_name' "
+            f"property: {act_partition_properties!r}")
+        cpc_name = act_partition_properties['cpc_name']
+        assert 'name' in act_partition_properties, (
+            "Returned partition does not have a 'name' "
+            f"property: {act_partition_properties!r}")
+        partition_name = act_partition_properties['name']
+        partition_key = (cpc_name, partition_name)
 
-    for partition_item in partition_list:
-        partition_name = partition_item.get('name', None)
-        cpc_name = partition_item.get('cpc_name', None)
-        part_key = (cpc_name, partition_name)
+        assert partition_key in exp_partition_dict, (
+            f"Unexpected returned partition {partition_key!r}")
 
-        assert partition_name is not None, \
-            f"Returned partition {partition_item!r} does not have a 'name' " \
-            "property"
+        exp_partition_properties = exp_partition_dict[partition_key]
+        assert isinstance(exp_partition_properties, dict)
+        exp_partition_properties = underscored_properties(exp_partition_properties)
 
-        assert cpc_name is not None, \
-            f"Returned partition {partition_item!r} does not have a " \
-            "'cpc_name' property"
+        exp_partition_pnames = list(exp_partition_properties.keys())
+        act_partition_pnames = list(act_partition_properties.keys())
 
-        assert part_key in exp_partition_dict, \
-            f"Result contains unexpected partition {partition_name!r} in CPC " \
-            f"{cpc_name!r}"
+        # Check the actually returned objects against the expected properties.
+        # This discovers unexpected properties.
+        for pname, act_value in act_partition_properties.items():
+            assert '-' not in pname, (
+                f"Property {pname!r} in returned "
+                f"partition {partition_key!r} "
+                "has hyphens in the property name")
+            assert pname in exp_partition_properties, (
+                f"Unexpected property {pname!r} in returned "
+                f"partition {partition_key!r}:\n"
+                f"Expected properties: {exp_partition_pnames}\n"
+                f"Actual properties: {act_partition_pnames}")
+            if pname not in VOLATILE_PARTITION_PROPERTIES:
+                exp_value = exp_partition_properties[pname]
+                assert act_value == exp_value, (
+                    f"Incorrect value for property {pname!r} of returned "
+                    f"partition {partition_key!r}:\n"
+                    f"Expected value: {exp_value!r}\n"
+                    f"Actual value: {act_value!r}")
 
-        exp_partition_properties = exp_partition_dict[part_key]
-        for pname, pvalue in partition_item.items():
-            assert '-' not in pname, \
-                f"Property {pname!r} in partition {partition_name!r} is " \
-                "returned with hyphens in the property name"
-            assert pname in exp_partition_properties, \
-                f"Unexpected property {pname!r} in result partition " \
-                f"{partition_name!r}. Expected properties: " \
-                f"{list(exp_partition_properties.keys())!r}"
-            exp_value = exp_partition_properties[pname]
-            assert pvalue == exp_value, \
-                f"Incorrect value for property {pname!r} of result partition " \
-                f"{partition_name!r}"
+        # Check the expected properties against the actually returned objects.
+        # This discovers missing properties.
+        for pname, exp_value in exp_partition_properties.items():
+            assert pname in act_partition_properties, (
+                f"Missing property {pname!r} in returned "
+                f"partition {partition_key!r}:\n"
+                f"Expected properties: {exp_partition_pnames}\n"
+                f"Actual properties: {act_partition_pnames}")
+            if pname not in VOLATILE_PARTITION_PROPERTIES:
+                act_value = act_partition_properties[pname]
+                assert act_value == exp_value, (
+                    f"Incorrect value for property {pname!r} of returned "
+                    f"partition {partition_key!r}:\n"
+                    f"Expected value: {exp_value!r}\n"
+                    f"Actual value: {act_value!r}")
 
 
 @pytest.mark.parametrize(
@@ -157,73 +196,59 @@ def test_zhmc_partition_list(
         client = zhmcclient.Client(session)
         console = client.consoles.console
 
+        # Get the module arguments for the test.
+        # We need to use the defaults defined in the module argument spec
+        additional_properties = property_flags.get('additional_properties', [])
         full_properties = property_flags.get('full_properties', False)
-        additional_properties = property_flags.get(
-            'additional_properties', [])
 
         # Determine the expected partitions on the HMC
-        test_logger.debug("Listing expected partitions")
         hmc_version = client.query_api_version()['hmc-version']
         hmc_version_info = [int(x) for x in hmc_version.split('.')]
-        if hmc_version_info < [2, 14, 0] or additional_properties:
-            # List the LPARs in the traditional way
-            if hmc_version_info < [2, 16, 0] and additional_properties:
-                # Get full properties instead of specific additional properties
-                # since "List Partitions of a CPC" does not support
-                # additional-properties on these HMC versions.
-                _additional_properties = None
-                _full_properties = True
-            else:
-                _additional_properties = additional_properties
-                _full_properties = full_properties
+        if hmc_version_info < [2, 14, 0]:
+            # Use the "List Partitions of a CPC" operation.
             if with_cpc:
                 exp_partitions = cpc.partitions.list(
-                    additional_properties=_additional_properties,
-                    full_properties=_full_properties)
+                    additional_properties=additional_properties,
+                    full_properties=full_properties)
             else:
                 cpcs_ = client.cpcs.list()
                 exp_partitions = []
                 for cpc_ in cpcs_:
-                    _partitions = cpc_.partitions.list(
-                        additional_properties=_additional_properties,
-                        full_properties=_full_properties)
-                    exp_partitions.extend(_partitions)
+                    partitions_ = cpc_.partitions.list(
+                        additional_properties=additional_properties,
+                        full_properties=full_properties)
+                    exp_partitions.extend(partitions_)
         else:
-            # List the LPARs using the new operation
+            # Use the "List Permitted Partitions" operation.
             if with_cpc:
                 filter_args = {'cpc-name': cpc.name}
             else:
                 filter_args = None
             exp_partitions = console.list_permitted_partitions(
                 filter_args=filter_args,
+                additional_properties=additional_properties,
                 full_properties=full_properties)
 
+        # Prepare the expected data for comparison
         exp_partition_dict = {}
-        se_versions = {}
-        test_logger.debug("Processing expected partitions")
+        se_versions = {}  # Cache the SE versions (key: CPC name)
         for partition in exp_partitions:
-            test_logger.debug(
-                "Expected properties of partition %r on CPC %r are: %r",
-                partition.name, cpc.name, dict(partition.properties))
-            cpc = partition.manager.parent
+            cpc_ = partition.manager.parent
             try:
-                se_version = se_versions[cpc.name]
+                se_version = se_versions[cpc_.name]
             except KeyError:
                 try:
                     se_version = partition.properties['se-version']
                 except KeyError:
-                    test_logger.debug(
-                        "Getting expected se-version of CPC %r", cpc.name)
-                    se_version = cpc.get_property('se-version')
-                se_versions[cpc.name] = se_version
+                    se_version = cpc_.get_property('se-version')
+                se_versions[cpc_.name] = se_version
             exp_properties = {
-                'cpc_name': cpc.name,
+                'cpc_name': cpc_.name,
+                'cpc_uri': cpc_.uri,
                 'se_version': se_version,
             }
-            for pname_hmc, pvalue in partition.properties.items():
-                pname = pname_hmc.replace('-', '_')
-                exp_properties[pname] = pvalue
-            exp_part_key = (cpc.name, partition.name)
+            exp_properties.update(partition.properties)
+            exp_part_key = (cpc_.name, partition.name)
             exp_partition_dict[exp_part_key] = exp_properties
 
         # Prepare module input parameters (must be all required + optional)

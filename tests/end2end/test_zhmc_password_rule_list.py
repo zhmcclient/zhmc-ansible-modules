@@ -27,14 +27,15 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
 
 from plugins.modules import zhmc_password_rule_list
-from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth, \
+    underscored_properties
 from .conftest import LOG_FILE
 
 
 def get_module_output(mod_obj):
     """
-    Return the module output as a tuple (changed, user_properties) (i.e.
-    the arguments of the call to exit_json()).
+    Return the module output as a tuple (changed, password_rules)
+    (i.e. the arguments of the call to exit_json()).
     If the module failed, return None.
     """
 
@@ -50,55 +51,92 @@ def get_module_output(mod_obj):
     return func(*call_args[0], **call_args[1])
 
 
-def assert_pwrule_list(pwrule_list, exp_pwrule_dict):
+def assert_pwrule_list(act_pwrule_list, exp_pwrule_dict):
     """
     Assert the output of the zhmc_password_rule_list module.
 
     Parameters:
 
-      pwrule_list(list): Result of zhmc_password_rule_list module, as a list of
-        dicts of password rule properties as documented (with underscores in
-        their names).
+      act_pwrule_list (list of dict): Actual result of the module,
+        as a list of properties (name: value), including any artificial
+        properties. The property names must be as returned by the module.
 
-      exp_pwrule_dict(dict): Expected password rules with their properties.
-        Key: password rule name.
-        Value: Dict of expected password rule properties (including any
-        artificial properties, all with underscores in their names).
+      exp_pwrule_dict (dict of dict): Expected properties,
+        as a dict (key: properties) where key is the object name and properties
+        is a dict (name: value), including any artificial properties. The
+        property names must be as returned by the zhmcclient list method.
+        (i.e. with hyphens).
     """
+    assert isinstance(act_pwrule_list, list)
+    assert isinstance(exp_pwrule_dict, dict)
 
-    assert isinstance(pwrule_list, list)
+    assert len(act_pwrule_list) == len(exp_pwrule_dict), (
+        "Unexpected number of password rules:\n"
+        f"Actual objects: {act_pwrule_list!r}\n"
+        f"Expected objects: {exp_pwrule_dict!r}\n"
+    )
+    for act_pwrule_properties in act_pwrule_list:
+        assert isinstance(act_pwrule_properties, dict)
 
-    exp_pwrule_names = list(exp_pwrule_dict.keys())
-    pwrule_names = [ri.get('name', None) for ri in pwrule_list]
-    assert set(pwrule_names) == set(exp_pwrule_names)
-
-    for pwrule_item in pwrule_list:
-        pwrule_name = pwrule_item.get('name', None)
-
-        assert pwrule_name is not None, \
-            f"Returned password rule {pwrule_item!r} does not have a 'name' " \
-            "property"
-
-        assert pwrule_name in exp_pwrule_dict, \
-            f"Result contains unexpected password rule {pwrule_name!r}"
+        # Check for the key property
+        assert 'name' in act_pwrule_properties, (
+            "Returned password rule does not have a 'name' "
+            f"property: {act_pwrule_properties!r}")
+        pwrule_name = act_pwrule_properties['name']
+        assert pwrule_name in exp_pwrule_dict, (
+            f"Unexpected returned password rule {pwrule_name!r}")
 
         exp_pwrule_properties = exp_pwrule_dict[pwrule_name]
-        for pname, pvalue in pwrule_item.items():
-            assert '-' not in pname, \
-                f"Property {pname!r} in password rule {pwrule_name!r} is " \
-                "returned with hyphens in the property name"
-            assert pname in exp_pwrule_properties, \
-                f"Unexpected property {pname!r} in password rule " \
-                f"{pwrule_name!r}"
+        assert isinstance(exp_pwrule_properties, dict)
+        exp_pwrule_properties = underscored_properties(exp_pwrule_properties)
+
+        exp_pwrule_pnames = list(exp_pwrule_properties.keys())
+        act_pwrule_pnames = list(act_pwrule_properties.keys())
+
+        # Check the actually returned objects against the expected properties.
+        # This discovers unexpected properties.
+        # Note that the underlying zhmcclient list method implements
+        # additional_properties by returning all properties. However, the check
+        # for unexpected properties still works because both the Ansible module
+        # under test and the test function use the same zhmcclient list method.
+        for pname, act_value in act_pwrule_properties.items():
+            assert '-' not in pname, (
+                f"Property {pname!r} in returned "
+                f"password rule {pwrule_name!r} "
+                "has hyphens in the property name")
+            assert pname in exp_pwrule_properties, (
+                f"Unexpected property {pname!r} in returned "
+                f"password rule {pwrule_name!r}:\n"
+                f"Expected properties: {exp_pwrule_pnames}\n"
+                f"Actual properties: {act_pwrule_pnames}")
             exp_value = exp_pwrule_properties[pname]
-            assert pvalue == exp_value, \
-                f"Incorrect value for property {pname!r} of password rule " \
-                f"{pwrule_name!r}"
+            assert act_value == exp_value, (
+                f"Incorrect value for property {pname!r} of returned "
+                f"password rule {pwrule_name!r}:\n"
+                f"Expected value: {exp_value!r}\n"
+                f"Actual value: {act_value!r}")
+
+        # Check the expected properties against the actually returned objects.
+        # This discovers missing properties.
+        for pname, exp_value in exp_pwrule_properties.items():
+            assert pname in act_pwrule_properties, (
+                f"Missing property {pname!r} in returned "
+                f"password rule {pwrule_name!r}:\n"
+                f"Expected properties: {exp_pwrule_pnames}\n"
+                f"Actual properties: {act_pwrule_pnames}")
+            act_value = act_pwrule_properties[pname]
+            assert act_value == exp_value, (
+                f"Incorrect value for property {pname!r} of returned "
+                f"password rule {pwrule_name!r}:\n"
+                f"Expected value: {exp_value!r}\n"
+                f"Actual value: {act_value!r}")
 
 
 @pytest.mark.parametrize(
     "property_flags", [
         pytest.param({}, id="property_flags()"),
+        pytest.param({'additional_properties': ['description']},
+                     id="property_flags(additional_properties=[description])"),
         pytest.param({'full_properties': True},
                      id="property_flags(full_properties=True)"),
     ]
@@ -127,22 +165,24 @@ def test_zhmc_password_rule_list(
     client = zhmcclient.Client(hmc_session)
     console = client.consoles.console
 
+    # Get the module arguments for the test.
+    # We need to use the defaults defined in the module argument spec
+    additional_properties = property_flags.get('additional_properties', [])
     full_properties = property_flags.get('full_properties', False)
 
-    # Determine the expected list of password rules.
-    exp_pwrules = console.password_rules.list(full_properties=full_properties)
+    # Determine the expected list of password rules on the HMC.
+    exp_pwrules = console.password_rules.list(
+        additional_properties=additional_properties,
+        full_properties=full_properties)
     exp_pwrule_dict = {}
     for pwrule in exp_pwrules:
-        exp_properties = {}
-        for pname_hmc, pvalue in pwrule.properties.items():
-            pname = pname_hmc.replace('-', '_')
-            exp_properties[pname] = pvalue
-        exp_pwrule_dict[pwrule.name] = exp_properties
+        exp_pwrule_dict[pwrule.name] = dict(pwrule.properties)
 
     # Prepare module input parameters (must be all required + optional)
     params = {
         'hmc_host': hmc_host,
         'hmc_auth': hmc_auth,
+        'additional_properties': additional_properties,
         'full_properties': full_properties,
         'log_file': LOG_FILE,
         '_faked_session': faked_session,

@@ -183,7 +183,7 @@ def test_zhmc_cpc_capacity_facts(
 @pytest.mark.parametrize(
     "check_mode", [
         pytest.param(False, id="check_mode=False"),
-        # pytest.param(True, id="check_mode=True"),
+        # In check mode, the expected error would not be produced.
     ]
 )
 @mock.patch("plugins.modules.zhmc_cpc_capacity.AnsibleModule", autospec=True)

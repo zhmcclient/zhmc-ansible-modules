@@ -558,7 +558,7 @@ LPAR_STATE_TESTCASES = [
 @pytest.mark.parametrize(
     "check_mode", [
         pytest.param(False, id="check_mode=False"),
-        # pytest.param(True, id="check_mode=True"),
+        pytest.param(True, id="check_mode=True"),
     ]
 )
 @pytest.mark.parametrize(

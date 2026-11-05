@@ -27,14 +27,15 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
 
 from plugins.modules import zhmc_ldap_server_definition_list
-from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth, \
+    underscored_properties
 from .conftest import LOG_FILE
 
 
 def get_module_output(mod_obj):
     """
-    Return the module output as a tuple (changed, user_properties) (i.e.
-    the arguments of the call to exit_json()).
+    Return the module output as a tuple (changed, ldap_server_definitions)
+    (i.e. the arguments of the call to exit_json()).
     If the module failed, return None.
     """
 
@@ -50,30 +51,95 @@ def get_module_output(mod_obj):
     return func(*call_args[0], **call_args[1])
 
 
-def assert_lsd_list(lsd_list, exp_lsd_dict):
+def assert_lsd_list(act_lsd_list, exp_lsd_dict):
     """
-    Assert the output of the zhmc_ldap_server_definition_list module
+    Assert the output of the zhmc_ldap_server_definition_list module.
+
+    Parameters:
+
+      act_lsd_list (list of dict): Actual result of the module,
+        as a list of properties (name: value), including any artificial
+        properties. The property names must be as returned by the module.
+
+      exp_lsd_dict (dict of dict): Expected properties,
+        as a dict (key: properties) where key is the object name and properties
+        is a dict (name: value), including any artificial properties. The
+        property names must be as returned by the zhmcclient list method.
+        (i.e. with hyphens).
     """
-    assert isinstance(lsd_list, list)
-    assert len(lsd_list) == len(exp_lsd_dict)
-    for lsd_item in lsd_list:
-        assert 'name' in lsd_item, \
-            f"Returned LDAP server definition {lsd_item!r} does not have a " \
-            "'name' property"
-        lsd_name = lsd_item['name']
-        assert lsd_name in exp_lsd_dict, \
-            f"Unexpected returned LDAP server definition {lsd_name!r}"
-        exp_lsd = exp_lsd_dict[lsd_name]
-        for pname, pvalue in lsd_item.items():
-            assert pname in exp_lsd.properties, \
-                f"Unexpected property {pname!r} in LDAP server definition " \
-                f"{lsd_name!r}"
-            exp_value = exp_lsd.properties[pname]
-            assert pvalue == exp_value, \
-                f"Incorrect value for property {pname!r} of LDAP server " \
-                f"definition {lsd_name!r}"
+    assert isinstance(act_lsd_list, list)
+    assert isinstance(exp_lsd_dict, dict)
+
+    assert len(act_lsd_list) == len(exp_lsd_dict), (
+        "Unexpected number of LDAP server definitions:\n"
+        f"Actual objects: {act_lsd_list!r}\n"
+        f"Expected objects: {exp_lsd_dict!r}\n"
+    )
+    for act_lsd_properties in act_lsd_list:
+        assert isinstance(act_lsd_properties, dict)
+
+        # Check for the key property
+        assert 'name' in act_lsd_properties, (
+            "Returned LDAP server definition does not have a 'name' "
+            f"property: {act_lsd_properties!r}")
+        lsd_name = act_lsd_properties['name']
+        assert lsd_name in exp_lsd_dict, (
+            f"Unexpected returned LDAP server definition {lsd_name!r}")
+
+        exp_lsd_properties = exp_lsd_dict[lsd_name]
+        assert isinstance(exp_lsd_properties, dict)
+        exp_lsd_properties = underscored_properties(exp_lsd_properties)
+
+        exp_lsd_pnames = list(exp_lsd_properties.keys())
+        act_lsd_pnames = list(act_lsd_properties.keys())
+
+        # Check the actually returned objects against the expected properties.
+        # This discovers unexpected properties.
+        for pname, act_value in act_lsd_properties.items():
+            assert '-' not in pname, (
+                f"Property {pname!r} in returned "
+                f"LDAP server definition {lsd_name!r} "
+                "has hyphens in the property name")
+            assert pname in exp_lsd_properties, (
+                f"Unexpected property {pname!r} in returned "
+                f"LDAP server definition {lsd_name!r}:\n"
+                f"Expected properties: {exp_lsd_pnames}\n"
+                f"Actual properties: {act_lsd_pnames}")
+            exp_value = exp_lsd_properties[pname]
+            assert act_value == exp_value, (
+                f"Incorrect value for property {pname!r} of returned "
+                f"LDAP server definition {lsd_name!r}:\n"
+                f"Expected value: {exp_value!r}\n"
+                f"Actual value: {act_value!r}")
+
+        # Check the expected properties against the actually returned objects.
+        # This discovers missing properties.
+        for pname, exp_value in exp_lsd_properties.items():
+            assert pname in act_lsd_properties, (
+                f"Missing property {pname!r} in returned "
+                f"LDAP server definition {lsd_name!r}:\n"
+                f"Expected properties: {exp_lsd_pnames}\n"
+                f"Actual properties: {act_lsd_pnames}")
+            act_value = act_lsd_properties[pname]
+            assert act_value == exp_value, (
+                f"Incorrect value for property {pname!r} of returned "
+                f"LDAP server definition {lsd_name!r}:\n"
+                f"Expected value: {exp_value!r}\n"
+                f"Actual value: {act_value!r}")
 
 
+@pytest.mark.parametrize(
+    "property_flags", [
+        pytest.param(
+            {}, id="property_flags()"),
+        pytest.param(
+            {'additional_properties': ['description']},
+            id="property_flags(additional_properties=[description])"),
+        pytest.param(
+            {'full_properties': True},
+            id="property_flags(full_properties=True)"),
+    ]
+)
 @pytest.mark.parametrize(
     "check_mode", [
         pytest.param(False, id="check_mode=False"),
@@ -83,7 +149,7 @@ def assert_lsd_list(lsd_list, exp_lsd_dict):
 @mock.patch("plugins.modules.zhmc_ldap_server_definition_list.AnsibleModule",
             autospec=True)
 def test_zhmc_ldap_server_definition_list(
-        ansible_mod_cls, check_mode,
+        ansible_mod_cls, check_mode, property_flags,
         hmc_session):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name
     """
@@ -98,16 +164,25 @@ def test_zhmc_ldap_server_definition_list(
     client = zhmcclient.Client(hmc_session)
     console = client.consoles.console
 
-    # Determine the actual list of LDAP server definitions on the HMC.
-    act_lsds = console.ldap_server_definitions.list()
-    act_lsds_dict = {}
-    for r in act_lsds:
-        act_lsds_dict[r.name] = r
+    # Get the module arguments for the test.
+    # We need to use the defaults defined in the module argument spec
+    additional_properties = property_flags.get('additional_properties', [])
+    full_properties = property_flags.get('full_properties', False)
+
+    # Determine the expected list of LDAP server definitions on the HMC.
+    exp_lsds = console.ldap_server_definitions.list(
+        additional_properties=additional_properties,
+        full_properties=full_properties)
+    exp_lsd_dict = {}
+    for lsd in exp_lsds:
+        exp_lsd_dict[lsd.name] = dict(lsd.properties)
 
     # Prepare module input parameters (must be all required + optional)
     params = {
         'hmc_host': hmc_host,
         'hmc_auth': hmc_auth,
+        'additional_properties': additional_properties,
+        'full_properties': full_properties,
         'log_file': LOG_FILE,
         '_faked_session': faked_session,
     }
@@ -129,4 +204,4 @@ def test_zhmc_ldap_server_definition_list(
     changed, lsd_list = get_module_output(mod_obj)
     assert changed is False
 
-    assert_lsd_list(lsd_list, act_lsds_dict)
+    assert_lsd_list(lsd_list, exp_lsd_dict)

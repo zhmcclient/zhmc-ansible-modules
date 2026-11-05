@@ -28,14 +28,15 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
 
 from plugins.modules import zhmc_storage_volume_list
-from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth, \
+    available_dpm_cpcs, underscored_properties
 from .conftest import LOG_FILE
 
 
 def get_module_output(mod_obj):
     """
-    Return the module output as a tuple (changed, user_properties) (i.e.
-    the arguments of the call to exit_json()).
+    Return the module output as a tuple (changed, storage_volumes)
+    (i.e. the arguments of the call to exit_json()).
     If the module failed, return None.
     """
 
@@ -52,75 +53,102 @@ def get_module_output(mod_obj):
 
 
 def assert_storage_volume_list(
-        storage_volume_list, exp_storage_volume_dict, storage_group_name):
+        act_stovol_list, exp_stovol_dict, stogroup_name):
     """
-    Assert the output of the zhmc_storage_volume_list module.
+    Assert the output of the zhmc_storage_group_list module.
 
     Parameters:
 
-      storage_volume_list(list): Result of zhmc_storage_volume_list module, as a
-        list of dicts of CPC properties as documented (with underscores in
-        their names).
+      act_stovol_list (list of dict): Actual result of the module,
+        as a list of properties (name: value), including any artificial
+        properties. The property names must be as returned by the module.
 
-      exp_storage_volume_dict(dict): Expected storage volumes with their
-        properties.
-        Key: Storage volume name.
-        Value: Dict of expected storage volume properties (including any
-        artificial properties, all with underscores in their names).
+      exp_stovol_dict (dict of dict): Expected properties,
+        as a dict (key: properties) where key is the object name and properties
+        is a dict (name: value), including any artificial properties. The
+        property names must be as returned by the zhmcclient list method.
+        (i.e. with hyphens).
 
-      storage_group_name(str): Name of the storage group, for messages.
+      stogroup_name (str): Name of the parent storage group, for messages.
     """
+    assert isinstance(act_stovol_list, list)
+    assert isinstance(exp_stovol_dict, dict)
 
-    assert isinstance(storage_volume_list, list)
-
-    sv_names = [sv.get('name', None) for sv in storage_volume_list]
-    exp_sv_names = list(exp_storage_volume_dict.keys())
-
-    exp_len = len(exp_storage_volume_dict)
-    assert len(storage_volume_list) == exp_len, (
-        "Unexpected number of volumes in storage group "
-        f"{storage_group_name!r}:\n"
-        f"Actual volumes: {sv_names!r}\n"
-        f"Expected volumes: {exp_sv_names!r}\n"
+    assert len(act_stovol_list) == len(exp_stovol_dict), (
+        f"Unexpected number of volumes in storage group {stogroup_name!r}:\n"
+        f"Actual objects: {act_stovol_list!r}\n"
+        f"Expected objects: {exp_stovol_dict!r}\n"
     )
+    for act_stovol_properties in act_stovol_list:
+        assert isinstance(act_stovol_properties, dict)
 
-    for storage_volume_item in storage_volume_list:
+        # Check for the key property
+        assert 'name' in act_stovol_properties, (
+            f"Returned storage volume in storage group {stogroup_name!r} "
+            f"does not have a 'name' property: {act_stovol_properties!r}")
+        stovol_name = act_stovol_properties['name']
+        assert stovol_name in exp_stovol_dict, (
+            f"Unexpected returned storage volume {stovol_name!r} in "
+            f"storage group {stogroup_name!r} ")
 
-        assert 'name' in storage_volume_item, (
-            f"Returned storage volume item {storage_volume_item!r} in storage "
-            f"group {storage_group_name!r} does not have a 'name' property")
-        sv_name = storage_volume_item['name']
+        exp_stovol_properties = exp_stovol_dict[stovol_name]
+        assert isinstance(exp_stovol_properties, dict)
+        exp_stovol_properties = underscored_properties(exp_stovol_properties)
 
-        assert sv_name in exp_storage_volume_dict, (
-            f"Result for storage group {storage_group_name!r} contains "
-            f"unexpected storage volume: {sv_name!r}")
+        exp_stovol_pnames = list(exp_stovol_properties.keys())
+        act_stovol_pnames = list(act_stovol_properties.keys())
 
-        exp_storage_volume_properties = exp_storage_volume_dict[sv_name]
-
-        for pname, pvalue in storage_volume_item.items():
-
+        # Check the actually returned objects against the expected properties.
+        # This discovers unexpected properties.
+        # Note that the underlying zhmcclient list method implements
+        # additional_properties by returning all properties. However, the check
+        # for unexpected properties still works because both the Ansible module
+        # under test and the test function use the same zhmcclient list method.
+        for pname, act_value in act_stovol_properties.items():
             assert '-' not in pname, (
-                f"Property {pname!r} in storage volume {sv_name!r} in storage "
-                f"group {storage_group_name!r} is returned with hyphens in "
-                "the property name")
+                f"Property {pname!r} in returned "
+                f"storage volume {stovol_name!r} "
+                f"in storage group {stogroup_name!r} "
+                "has hyphens in the property name")
+            assert pname in exp_stovol_properties, (
+                f"Unexpected property {pname!r} in returned "
+                f"storage volume {stovol_name!r} "
+                f"in storage group {stogroup_name!r}:\n"
+                f"Expected properties: {exp_stovol_pnames}\n"
+                f"Actual properties: {act_stovol_pnames}")
+            exp_value = exp_stovol_properties[pname]
+            assert act_value == exp_value, (
+                f"Incorrect value for property {pname!r} of returned "
+                f"storage volume {stovol_name!r} "
+                f"in storage group {stogroup_name!r}:\n"
+                f"Expected value: {exp_value!r}\n"
+                f"Actual value: {act_value!r}")
 
-            assert pname in exp_storage_volume_properties, (
-                f"Unexpected property {pname!r} in storage volume "
-                f"{sv_name!r} in storage group {storage_group_name!r}")
-
-            exp_value = exp_storage_volume_properties[pname]
-            assert pvalue == exp_value, (
-                f"Incorrect value for property {pname!r} of storage volume "
-                f"{sv_name!r} in storage group {storage_group_name!r}")
+        # Check the expected properties against the actually returned objects.
+        # This discovers missing properties.
+        for pname, exp_value in exp_stovol_properties.items():
+            assert pname in act_stovol_properties, (
+                f"Missing property {pname!r} in returned "
+                f"storage volume {stovol_name!r} "
+                f"in storage group {stogroup_name!r}:\n"
+                f"Expected properties: {exp_stovol_pnames}\n"
+                f"Actual properties: {act_stovol_pnames}")
+            act_value = act_stovol_properties[pname]
+            assert act_value == exp_value, (
+                f"Incorrect value for property {pname!r} of returned "
+                f"storage volume {stovol_name!r} "
+                f"in storage group {stogroup_name!r}:\n"
+                f"Expected value: {exp_value!r}\n"
+                f"Actual value: {act_value!r}")
 
 
 @pytest.mark.parametrize(
-    "property_args", [
-        pytest.param({}, id="property_args()"),
-        pytest.param({'full_properties': True},
-                     id="property_args(full_properties=True)"),
+    "property_flags", [
+        pytest.param({}, id="property_flags()"),
         pytest.param({'additional_properties': ['uuid']},
-                     id="property_args(additional_properties=[uuid])"),
+                     id="property_flags(additional_properties=[uuid])"),
+        pytest.param({'full_properties': True},
+                     id="property_flags(full_properties=True)"),
     ]
 )
 @pytest.mark.parametrize(
@@ -146,7 +174,7 @@ def assert_storage_volume_list(
 @mock.patch("plugins.modules.zhmc_storage_volume_list.AnsibleModule",
             autospec=True)
 def test_zhmc_storage_volume_list(
-        ansible_mod_cls, check_mode, filter_args, property_args,
+        ansible_mod_cls, check_mode, filter_args, property_flags,
         hmc_session):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name
     """
@@ -158,21 +186,25 @@ def test_zhmc_storage_volume_list(
     hd = hmc_session.hmc_definition
     faked_session = hmc_session if hd.mock_file else None
 
+    client = zhmcclient.Client(hmc_session)
+    console = client.consoles.console
+
     # Get the module arguments for the test.
     # We need to use the defaults defined in the module argument spec
-    full_properties = property_args.get('full_properties', False)
-    additional_properties = property_args.get('additional_properties', [])
+    additional_properties = property_flags.get('additional_properties', [])
+    full_properties = property_flags.get('full_properties', False)
     fulfillment_state = filter_args.get('fulfillment_state', None)
     maximum_size = filter_args.get('maximum_size', None)
     minimum_size = filter_args.get('minimum_size', None)
     usage = filter_args.get('usage', None)
-
     use_name_filter = filter_args.get('use_name_filter', False)
 
-    client = zhmcclient.Client(hmc_session)
-    console = client.consoles.console
+    # The testcases require that the CPC associated with the storage group
+    # is available. Skip this test if there is no available DPM mode CPC.
+    cpcs = available_dpm_cpcs(client.cpcs.list())
+    if not cpcs:
+        pytest.skip("No available DPM mode CPCs")
 
-    cpcs = client.cpcs.list()
     cpc_by_uri = {cpc.uri: cpc for cpc in cpcs}
 
     # Pick a random storage group as a target for the test
@@ -194,6 +226,7 @@ def test_zhmc_storage_volume_list(
     else:
         picked_storage_volume_name = None
 
+    # Determine the expected list of storage volumes
     filter_args = {}
     if use_name_filter:
         filter_args['name'] = picked_storage_volume_name
@@ -207,15 +240,11 @@ def test_zhmc_storage_volume_list(
         filter_args['usage'] = usage
     exp_storage_volumes = picked_storage_group.storage_volumes.list(
         filter_args=filter_args,
-        full_properties=full_properties,
-        additional_properties=additional_properties)
+        additional_properties=additional_properties,
+        full_properties=full_properties)
     exp_storage_volume_dict = {}
-    for storage_volume in exp_storage_volumes:
-        exp_properties = {}
-        for pname_hmc, pvalue in storage_volume.properties.items():
-            pname = pname_hmc.replace('-', '_')
-            exp_properties[pname] = pvalue
-        exp_storage_volume_dict[storage_volume.name] = exp_properties
+    for stovol in exp_storage_volumes:
+        exp_storage_volume_dict[stovol.name] = dict(stovol.properties)
 
     # Prepare module input parameters (must be all required + optional)
     params = {
@@ -228,8 +257,8 @@ def test_zhmc_storage_volume_list(
         'maximum_size': maximum_size,
         'minimum_size': minimum_size,
         'usage': usage,
-        'full_properties': full_properties,
         'additional_properties': additional_properties,
+        'full_properties': full_properties,
         'log_file': LOG_FILE,
         '_faked_session': faked_session,
     }

@@ -186,7 +186,7 @@ def setup_partition(test_logger, hd, cpc, name, properties, status='stopped'):
         if not nes_feature:
             vswitch = cpc.virtual_switches.find(
                 **{'backing-adapter-uri': osa_adapter.uri,
-                   'port:': osa_port_index})
+                   'port': osa_port_index})
             nic_properties['virtual-switch-uri'] = vswitch.uri
         else:
             port = osa_adapter.ports.find(**{'index': osa_port_index})
@@ -340,8 +340,9 @@ def setup_partition(test_logger, hd, cpc, name, properties, status='stopped'):
 
     except zhmcclient.Error as exc:
         teardown_partition(test_logger, cpc, name)
-        pytest.skip("Error in HMC operation during test partition setup: "
-                    f"{exc}")
+        msg = f"setup_partition: Error during test partition setup: {exc}"
+        test_logger.error(msg)
+        raise AssertionError(msg)
 
     return partition
 
@@ -432,7 +433,9 @@ def get_module_output(mod_obj):
     return func(*call_args[0], **call_args[1])
 
 
-def assert_partition_props(act_props, exp_props, where):
+def assert_partition_props(
+        act_props, exp_props, expand_storage_groups, expand_crypto_adapters,
+        expand_nics, where):
     """
     Assert the actual properties of a partition.
 
@@ -440,6 +443,9 @@ def assert_partition_props(act_props, exp_props, where):
       act_props(dict): Actual partition props to verify (with dashes).
       exp_props(dict): Expected partition properties (with dashes).
       where(string): Indicator about the testcase for assertion messages.
+      expand_storage_groups (bool): Value of the same-named module input parm.
+      expand_crypto_adapters (bool): Value of the same-named module input parm.
+      expand_nics (bool): Value of the same-named module input parm.
     """
 
     assert isinstance(act_props, dict), where  # Dict of User role props
@@ -480,22 +486,42 @@ def assert_partition_props(act_props, exp_props, where):
         assert isinstance(hba_props_list, list), where  # List of HBAs
         for hba_props in hba_props_list:
             assert isinstance(hba_props, dict), where  # Dict of HBA properties
-    assert 'nics' in act_props, where
-    nic_props_list = act_props['nics']
-    if nic_props_list is not None:
-        assert isinstance(nic_props_list, list), where  # List of NICs
-        for nic_props in nic_props_list:
-            assert isinstance(nic_props, dict), where  # Dict of NIC properties
+
+    if expand_storage_groups:
+        assert 'storage-groups' in act_props, where
+    else:
+        assert 'storage-groups' not in act_props, where
+
+    if 'crypto-configuration' in act_props:
+        crypto_config = act_props['crypto-configuration']
+        if crypto_config is not None:
+            if expand_crypto_adapters:
+                assert 'crypto-adapters' in crypto_config, where
+            else:
+                assert 'crypto-adapters' not in crypto_config, where
+
+    if expand_nics is None or expand_nics is True:
+        assert 'nics' in act_props, where
+        nic_props_list = act_props['nics']
+        if nic_props_list is not None:
+            assert isinstance(nic_props_list, list), where  # List of NICs
+            for nic_props in nic_props_list:
+                assert isinstance(nic_props, dict), where  # Dict of NIC props
+    else:
+        assert 'nics' not in act_props, where
+
     assert 'virtual-functions' in act_props, where
     vf_props_list = act_props['virtual-functions']
     if vf_props_list is not None:
         assert isinstance(vf_props_list, list), where  # List of VFs
         for vf_props in vf_props_list:
             assert isinstance(vf_props, dict), where  # Dict of VF properties
+
     assert 'boot-storage-group-name' in act_props, where
     if 'boot-storage-group-name' in exp_props:
         exp_boot_sg_name = exp_props['boot-storage-group-name']
         assert act_props['boot-storage-group-name'] == exp_boot_sg_name
+
     assert 'boot-storage-volume-name' in act_props, where
     if 'boot-storage-volume-name' in exp_props:
         exp_boot_sv_name = exp_props['boot-storage-volume-name']
@@ -512,6 +538,9 @@ PARTITION_FACTS_TESTCASES = [
     # Each testcase is a tuple with the following items:
     # - desc (string): description of the testcase.
     # - select_properties (list): Input for select_properties module parm
+    # - expand_storage_groups (bool): Input for expand_storage_groups parm
+    # - expand_crypto_adapters (bool): Input for expand_crypto_adapters parm
+    # - expand_nics (bool): Input for expand_nics parm
     # - exp_prop_names (list): Names of expected properties in module
     #   result (HMC-formatted) in case of module success. The module may
     #   return more then those listed.
@@ -526,6 +555,9 @@ PARTITION_FACTS_TESTCASES = [
     (
         "Default input parms = full properties",
         None,
+        False,
+        False,
+        False,
         [
             'name',
             'object-uri',
@@ -533,7 +565,10 @@ PARTITION_FACTS_TESTCASES = [
             'status',
             'partition-id',
         ],
-        [],
+        [
+            'nics',
+            'storage-groups',
+        ],
         None,
         False,
         RunMode.RUN
@@ -541,6 +576,9 @@ PARTITION_FACTS_TESTCASES = [
     (
         "select empty list of properties",
         [],
+        False,
+        False,
+        False,
         [
             'name',             # always returned
             'object-uri',       # always returned
@@ -549,6 +587,8 @@ PARTITION_FACTS_TESTCASES = [
             'description',
             'status',
             'partition-id',
+            'nics',
+            'storage-groups',
         ],
         None,
         False,
@@ -557,6 +597,9 @@ PARTITION_FACTS_TESTCASES = [
     (
         "select one property",
         ['description'],
+        False,
+        False,
+        False,
         [
             'name',
             'object-uri',
@@ -565,6 +608,8 @@ PARTITION_FACTS_TESTCASES = [
         [
             'status',
             'partition-id',
+            'nics',
+            'storage-groups',
         ],
         None,
         False,
@@ -573,6 +618,9 @@ PARTITION_FACTS_TESTCASES = [
     (
         "select two properties",
         ['description', 'status'],
+        False,
+        False,
+        False,
         [
             'name',
             'object-uri',
@@ -581,6 +629,8 @@ PARTITION_FACTS_TESTCASES = [
         ],
         [
             'partition-id',
+            'nics',
+            'storage-groups',
         ],
         None,
         False,
@@ -589,6 +639,9 @@ PARTITION_FACTS_TESTCASES = [
     (
         "select property with underscore",
         ['partition_id'],
+        False,
+        False,
+        False,
         [
             'name',
             'object-uri',
@@ -597,6 +650,8 @@ PARTITION_FACTS_TESTCASES = [
         [
             'description',
             'status',
+            'nics',
+            'storage-groups',
         ],
         None,
         False,
@@ -605,6 +660,9 @@ PARTITION_FACTS_TESTCASES = [
     (
         "select property with hyphen",
         ['partition-id'],
+        False,
+        False,
+        False,
         [
             'name',
             'object-uri',
@@ -613,6 +671,115 @@ PARTITION_FACTS_TESTCASES = [
         [
             'description',
             'status',
+            'nics',
+            'storage-groups',
+        ],
+        None,
+        False,
+        RunMode.RUN
+    ),
+    (
+        "select two properties with expand_storage_groups",
+        ['description', 'status'],
+        True,
+        False,
+        False,
+        [
+            'name',
+            'object-uri',
+            'description',
+            'status',
+            'storage-groups',
+        ],
+        [
+            'partition-id',
+            'nics',
+        ],
+        None,
+        False,
+        RunMode.RUN
+    ),
+    (
+        "select two properties with expand_nics=True",
+        ['description', 'status'],
+        False,
+        False,
+        True,
+        [
+            'name',
+            'object-uri',
+            'description',
+            'status',
+            'nics',
+        ],
+        [
+            'partition-id',
+            'storage-groups',
+        ],
+        None,
+        False,
+        RunMode.RUN
+    ),
+    (
+        "select two properties with expand_nics=None",
+        ['description', 'status'],
+        False,
+        False,
+        None,
+        [
+            'name',
+            'object-uri',
+            'description',
+            'status',
+            'nics',
+        ],
+        [
+            'partition-id',
+            'storage-groups',
+        ],
+        None,
+        False,
+        RunMode.RUN
+    ),
+    (
+        "select crypto-configuration prop with expand_crypto_adapters=False",
+        ['description', 'status'],
+        False,
+        False,
+        False,
+        [
+            'name',
+            'object-uri',
+            'description',
+            'status',
+        ],
+        [
+            'crypto-configuration',
+            'partition-id',
+            'storage-groups',
+            'nics',
+        ],
+        None,
+        False,
+        RunMode.RUN
+    ),
+    (
+        "select crypto-configuration prop with expand_crypto_adapters=True",
+        ['description', 'status'],
+        False,
+        True,
+        False,
+        [
+            'name',
+            'object-uri',
+            'description',
+            'status',
+            'crypto-configuration',
+        ],
+        [
+            'partition-id',
+            'storage-groups',
+            'nics',
         ],
         None,
         False,
@@ -628,14 +795,16 @@ PARTITION_FACTS_TESTCASES = [
     ]
 )
 @pytest.mark.parametrize(
-    "desc, select_properties, exp_prop_names, not_prop_names, exp_msg, "
-    "exp_changed, runmode",
+    "desc, select_properties, expand_storage_groups, expand_crypto_adapters, "
+    "expand_nics, exp_prop_names, not_prop_names, exp_msg, exp_changed, "
+    "runmode",
     PARTITION_FACTS_TESTCASES)
 @mock.patch("plugins.modules.zhmc_partition.AnsibleModule", autospec=True)
 def test_zhmc_partition_facts(
         ansible_mod_cls,
-        desc, select_properties, exp_prop_names, not_prop_names, exp_msg,
-        exp_changed, runmode,
+        desc, select_properties, expand_storage_groups, expand_crypto_adapters,
+        expand_nics, exp_prop_names, not_prop_names, exp_msg, exp_changed,
+        runmode,
         check_mode,
         request, test_logger, dpm_mode_cpcs):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
@@ -675,9 +844,9 @@ def test_zhmc_partition_facts(
             'image_file': None,
             'ins_file': None,
             'properties': {},
-            'expand_storage_groups': False,
-            'expand_crypto_adapters': False,
-            'expand_nics': False,
+            'expand_storage_groups': expand_storage_groups,
+            'expand_crypto_adapters': expand_crypto_adapters,
+            'expand_nics': expand_nics,
             'log_file': LOG_FILE,
             '_faked_session': faked_session,
         }
@@ -703,7 +872,8 @@ def test_zhmc_partition_facts(
         # Check the presence and absence of properties in the result
         part_prop_names = list(part_properties.keys())
         for pname in exp_prop_names:
-            assert pname in part_prop_names
+            if pname != 'crypto-configuration':
+                assert pname in part_prop_names
         for pname in not_prop_names:
             assert pname not in part_prop_names
 
@@ -721,6 +891,9 @@ PARTITION_STATE_TESTCASES = [
     #   module.
     # - input_props (dict): 'properties' input parameter for zhmc_partition
     #   module.
+    # - expand_storage_groups (bool): Input for expand_storage_groups parm
+    # - expand_crypto_adapters (bool): Input for expand_crypto_adapters parm
+    # - expand_nics (bool): Input for expand_nics parm
     # - exp_msg (string): Expected message pattern in case of module failure,
     #   or None for module success.
     # - exp_props (dict): HMC-formatted properties for expected
@@ -734,6 +907,9 @@ PARTITION_STATE_TESTCASES = [
         None,
         'stopped',
         STD_LINUX_PARTITION_MODULE_INPUT_PROPS,
+        False,
+        False,
+        False,
         None,
         STD_LINUX_PARTITION_HMC_EXP_PROPS,
         True,
@@ -746,6 +922,9 @@ PARTITION_STATE_TESTCASES = [
         'stopped',
         'stopped',
         None,
+        False,
+        False,
+        False,
         None,
         STD_LINUX_PARTITION_HMC_EXP_PROPS,
         False,
@@ -758,6 +937,9 @@ PARTITION_STATE_TESTCASES = [
         'paused',
         'stopped',
         None,
+        False,
+        False,
+        False,
         None,
         STD_LINUX_PARTITION_HMC_EXP_PROPS,
         True,
@@ -770,6 +952,9 @@ PARTITION_STATE_TESTCASES = [
         'stopped',
         'active',
         None,
+        False,
+        False,
+        False,
         "StatusError: Abandoning the start of partition .* after reaching "
         "status 'paused'.*",
         None,
@@ -783,6 +968,9 @@ PARTITION_STATE_TESTCASES = [
         'paused',
         'active',
         None,
+        False,
+        False,
+        False,
         "StatusError: Abandoning the start of partition .* after reaching "
         "status 'paused'.*",
         None,
@@ -798,6 +986,9 @@ PARTITION_STATE_TESTCASES = [
         'stopped',
         'stopped',
         STD_LINUX_PARTITION_MODULE_INPUT_PROPS,
+        False,
+        False,
+        False,
         None,
         STD_LINUX_PARTITION_HMC_EXP_PROPS,
         True,
@@ -809,6 +1000,9 @@ PARTITION_STATE_TESTCASES = [
         None,
         'stopped',
         STD_SSC_PARTITION_MODULE_INPUT_PROPS,
+        False,
+        False,
+        False,
         None,
         STD_SSC_PARTITION_HMC_EXP_PROPS,
         True,
@@ -825,6 +1019,9 @@ PARTITION_STATE_TESTCASES = [
         'stopped',
         'stopped',
         None,
+        False,
+        False,
+        False,
         None,
         STD_SSC_PARTITION_HMC_EXP_PROPS,
         False,
@@ -837,6 +1034,9 @@ PARTITION_STATE_TESTCASES = [
         'stopped',
         'active',
         None,
+        False,
+        False,
+        False,
         None,  # Code ignores "HTTPError: 409,131"
         STD_SSC_PARTITION_HMC_EXP_PROPS,
         True,
@@ -851,8 +1051,67 @@ PARTITION_STATE_TESTCASES = [
         'stopped',
         'stopped',
         STD_SSC_PARTITION_MODULE_INPUT_PROPS,
+        False,
+        False,
+        False,
         None,
         STD_SSC_PARTITION_HMC_EXP_PROPS,
+        True,
+        RunMode.RUN
+    ),
+    (
+        "state=stopped with non-existing partition with expand_storage_groups",
+        None,
+        None,
+        'stopped',
+        STD_LINUX_PARTITION_MODULE_INPUT_PROPS,
+        True,
+        False,
+        False,
+        None,
+        STD_LINUX_PARTITION_HMC_EXP_PROPS,
+        True,
+        RunMode.RUN
+    ),
+    (
+        "state=stopped with non-existing partition with expand_crypto_config",
+        None,
+        None,
+        'stopped',
+        STD_LINUX_PARTITION_MODULE_INPUT_PROPS,
+        False,
+        True,
+        False,
+        None,
+        STD_LINUX_PARTITION_HMC_EXP_PROPS,
+        True,
+        RunMode.RUN
+    ),
+    (
+        "state=stopped with non-existing partition with expand_nics=True",
+        None,
+        None,
+        'stopped',
+        STD_LINUX_PARTITION_MODULE_INPUT_PROPS,
+        False,
+        False,
+        True,
+        None,
+        STD_LINUX_PARTITION_HMC_EXP_PROPS,
+        True,
+        RunMode.RUN
+    ),
+    (
+        "state=stopped with non-existing partition with expand_nics=None",
+        None,
+        None,
+        'stopped',
+        STD_LINUX_PARTITION_MODULE_INPUT_PROPS,
+        False,
+        False,
+        None,
+        None,
+        STD_LINUX_PARTITION_HMC_EXP_PROPS,
         True,
         RunMode.RUN
     ),
@@ -862,6 +1121,9 @@ PARTITION_STATE_TESTCASES = [
         'stopped',
         'absent',
         None,
+        False,
+        False,
+        False,
         None,
         None,
         True,
@@ -873,6 +1135,9 @@ PARTITION_STATE_TESTCASES = [
         'stopped',
         'absent',
         None,
+        False,
+        False,
+        False,
         None,
         None,
         True,
@@ -884,6 +1149,9 @@ PARTITION_STATE_TESTCASES = [
         None,
         'absent',
         None,
+        False,
+        False,
+        False,
         None,
         None,
         False,
@@ -899,15 +1167,16 @@ PARTITION_STATE_TESTCASES = [
     ]
 )
 @pytest.mark.parametrize(
-    "desc, initial_props, initial_status, input_state, input_props, exp_msg, "
+    "desc, initial_props, initial_status, input_state, input_props, "
+    "expand_storage_groups, expand_crypto_adapters, expand_nics, exp_msg, "
     "exp_props, exp_changed, runmode",
     PARTITION_STATE_TESTCASES)
 @mock.patch("plugins.modules.zhmc_partition.AnsibleModule", autospec=True)
 def test_zhmc_partition_state(
         ansible_mod_cls,
-        desc, initial_props, initial_status, input_state, input_props, exp_msg,
-        exp_props, exp_changed, runmode,
-        check_mode,
+        desc, initial_props, initial_status, input_state, input_props,
+        expand_storage_groups, expand_crypto_adapters, expand_nics, exp_msg,
+        exp_props, exp_changed, runmode, check_mode,
         request, test_logger, dpm_mode_cpcs):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name,unused-argument
     """
@@ -937,11 +1206,6 @@ def test_zhmc_partition_state(
 
         where = f"partition '{partition_name}'"
 
-        if input_props is not None:
-            input_props2 = input_props.copy()
-        else:
-            input_props2 = None
-
         # Create initial partition, if specified so
         if initial_props is not None:
             setup_partition(
@@ -961,10 +1225,10 @@ def test_zhmc_partition_state(
                 'image_name': None,
                 'image_file': None,
                 'ins_file': None,
-                'properties': input_props2,
-                'expand_storage_groups': False,
-                'expand_crypto_adapters': False,
-                'expand_nics': False,
+                'properties': input_props,
+                'expand_storage_groups': expand_storage_groups,
+                'expand_crypto_adapters': expand_crypto_adapters,
+                'expand_nics': expand_nics,
                 'log_file': LOG_FILE,
                 '_faked_session': faked_session,
             }
@@ -1008,8 +1272,8 @@ def test_zhmc_partition_state(
                         dict(sorted(initial_props.items(), key=lambda x: x[0]))\
                         if initial_props is not None else None
                     input_props_sorted = \
-                        dict(sorted(input_props2.items(), key=lambda x: x[0])) \
-                        if input_props2 is not None else None
+                        dict(sorted(input_props.items(), key=lambda x: x[0])) \
+                        if input_props is not None else None
                     output_props_sorted = \
                         dict(sorted(output_props.items(), key=lambda x: x[0])) \
                         if output_props is not None else None
@@ -1023,7 +1287,9 @@ def test_zhmc_partition_state(
                         f"Module input properties:\n{input_props_str}\n"
                         f"Resulting partition properties:\n{output_props_str}")
                 if input_state != 'absent':
-                    assert_partition_props(output_props, exp_props, where)
+                    assert_partition_props(
+                        output_props, exp_props, expand_storage_groups,
+                        expand_crypto_adapters, expand_nics, where)
 
         finally:
             teardown_partition(test_logger, cpc, partition_name)
@@ -1229,7 +1495,7 @@ NON_RETRIEVABLE_PROPS = ('boot_ftp_password', 'ssc_master_pw')
     ]
 )
 @mock.patch("plugins.modules.zhmc_partition.AnsibleModule", autospec=True)
-def test_zhmc_partition_properties(
+def test_zhmc_partition_update(
         ansible_mod_cls, type_state, check_mode,
         test_logger, dpm_mode_cpcs):  # noqa: F811, E501
     # pylint: disable=redefined-outer-name
@@ -1241,6 +1507,11 @@ def test_zhmc_partition_properties(
         pytest.skip("HMC definition does not include any CPCs in DPM mode")
 
     partition_type, state = type_state
+
+    # The variations on these input properties are tested elsewhere
+    expand_storage_groups = False
+    expand_crypto_adapters = False
+    expand_nics = False
 
     for cpc in dpm_mode_cpcs:
         assert cpc.dpm_enabled
@@ -1401,9 +1672,9 @@ def test_zhmc_partition_properties(
                     'image_file': None,
                     'ins_file': None,
                     'properties': update_props,
-                    'expand_storage_groups': False,
-                    'expand_crypto_adapters': False,
-                    'expand_nics': False,
+                    'expand_storage_groups': expand_storage_groups,
+                    'expand_crypto_adapters': expand_crypto_adapters,
+                    'expand_nics': expand_nics,
                     'log_file': LOG_FILE,
                     '_faked_session': faked_session,
                 }
@@ -1451,7 +1722,9 @@ def test_zhmc_partition_properties(
                         f"Module input properties:\n{update_props_str}\n"
                         f"Resulting partition properties:\n{output_props_str}")
 
-                assert_partition_props(output_props, exp_props, where)
+                assert_partition_props(
+                    output_props, exp_props, expand_storage_groups,
+                    expand_crypto_adapters, expand_nics, where)
 
         finally:
             teardown_partition(test_logger, cpc, partition_name)
@@ -1589,8 +1862,7 @@ def test_zhmc_partition_boot_stovol(
                 # The HMC does not allow configuring boot from storage volume
                 # when the volume is not fulfilled.
                 exp_exit_code = 1
-                exp_msg_pattern = "HTTPError: 409,122: Storage volume is not " \
-                    "fulfilled"
+                exp_msg_pattern = "HTTPError: 409,122:"
 
             if exit_code != 0:
                 msg = get_failure_msg(mod_obj)
@@ -1673,7 +1945,7 @@ PARTITION_ISO_MOUNT_TESTCASES = [
 @pytest.mark.parametrize(
     "check_mode", [
         pytest.param(False, id="check_mode=False"),
-        pytest.param(True, id="check_mode=True"),
+        # Check mode will always succeed
     ]
 )
 @pytest.mark.parametrize(

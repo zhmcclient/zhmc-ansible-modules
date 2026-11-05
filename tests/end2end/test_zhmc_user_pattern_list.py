@@ -27,14 +27,15 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
 
 from plugins.modules import zhmc_user_pattern_list
-from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth, \
+    underscored_properties
 from .conftest import LOG_FILE
 
 
 def get_module_output(mod_obj):
     """
-    Return the module output as a tuple (changed, user_properties) (i.e.
-    the arguments of the call to exit_json()).
+    Return the module output as a tuple (changed, user_patterns)
+    (i.e. the arguments of the call to exit_json()).
     If the module failed, return None.
     """
 
@@ -50,44 +51,92 @@ def get_module_output(mod_obj):
     return func(*call_args[0], **call_args[1])
 
 
-def assert_upattern_list(upattern_list, exp_upattern_dict):
+def assert_upattern_list(act_upattern_list, exp_upattern_dict):
     """
-    Assert the output of the zhmc_user_pattern_list module
+    Assert the output of the zhmc_user_pattern_list module.
+
+    Parameters:
+
+      act_upattern_list (list of dict): Actual result of the module,
+        as a list of properties (name: value), including any artificial
+        properties. The property names must be as returned by the module.
+
+      exp_upattern_dict (dict of dict): Expected properties,
+        as a dict (key: properties) where key is the object name and properties
+        is a dict (name: value), including any artificial properties. The
+        property names must be as returned by the zhmcclient list method.
+        (i.e. with hyphens).
     """
-    assert isinstance(upattern_list, list)
-    assert len(upattern_list) == len(exp_upattern_dict)
-    for upattern_item in upattern_list:
-        assert 'name' in upattern_item, \
-            f"Returned user pattern {upattern_item!r} does not have a 'name' " \
-            "property"
-        upattern_name = upattern_item['name']
-        assert upattern_name in exp_upattern_dict, \
-            f"Unexpected returned user pattern {upattern_name!r}"
+    assert isinstance(act_upattern_list, list)
+    assert isinstance(exp_upattern_dict, dict)
 
-        exp_upattern = exp_upattern_dict[upattern_name]
+    assert len(act_upattern_list) == len(exp_upattern_dict), (
+        "Unexpected number of user patterns:\n"
+        f"Actual objects: {act_upattern_list!r}\n"
+        f"Expected objects: {exp_upattern_dict!r}\n"
+    )
+    for act_upattern_properties in act_upattern_list:
+        assert isinstance(act_upattern_properties, dict)
 
-        # Convert expected properties to underscore names
-        exp_upattern_properties = {}
-        for pname_hmc, pvalue in exp_upattern.properties.items():
-            pname = pname_hmc.replace('-', '_')
-            exp_upattern_properties[pname] = pvalue
+        # Check for the key property
+        assert 'name' in act_upattern_properties, (
+            "Returned user pattern does not have a 'name' "
+            f"property: {act_upattern_properties!r}")
+        upattern_name = act_upattern_properties['name']
+        assert upattern_name in exp_upattern_dict, (
+            f"Unexpected returned user pattern {upattern_name!r}")
 
-        for pname, pvalue in upattern_item.items():
-            assert '-' not in pname, \
-                f"Property {pname!r} in user pattern {upattern_name!r} is " \
-                "returned with hyphens in the property name"
-            assert pname in exp_upattern_properties, \
-                f"Unexpected property {pname!r} in user pattern " \
-                f"{upattern_name!r}"
+        exp_upattern_properties = exp_upattern_dict[upattern_name]
+        assert isinstance(exp_upattern_properties, dict)
+        exp_upattern_properties = underscored_properties(exp_upattern_properties)
+
+        exp_upattern_pnames = list(exp_upattern_properties.keys())
+        act_upattern_pnames = list(act_upattern_properties.keys())
+
+        # Check the actually returned objects against the expected properties.
+        # This discovers unexpected properties.
+        # Note that the underlying zhmcclient list method implements
+        # additional_properties by returning all properties. However, the check
+        # for unexpected properties still works because both the Ansible module
+        # under test and the test function use the same zhmcclient list method.
+        for pname, act_value in act_upattern_properties.items():
+            assert '-' not in pname, (
+                f"Property {pname!r} in returned "
+                f"user pattern {upattern_name!r} "
+                "has hyphens in the property name")
+            assert pname in exp_upattern_properties, (
+                f"Unexpected property {pname!r} in returned "
+                f"user pattern {upattern_name!r}:\n"
+                f"Expected properties: {exp_upattern_pnames}\n"
+                f"Actual properties: {act_upattern_pnames}")
             exp_value = exp_upattern_properties[pname]
-            assert pvalue == exp_value, \
-                f"Incorrect value for property {pname!r} of user pattern " \
-                f"{upattern_name!r}"
+            assert act_value == exp_value, (
+                f"Incorrect value for property {pname!r} of returned "
+                f"user pattern {upattern_name!r}:\n"
+                f"Expected value: {exp_value!r}\n"
+                f"Actual value: {act_value!r}")
+
+        # Check the expected properties against the actually returned objects.
+        # This discovers missing properties.
+        for pname, exp_value in exp_upattern_properties.items():
+            assert pname in act_upattern_properties, (
+                f"Missing property {pname!r} in returned "
+                f"user pattern {upattern_name!r}:\n"
+                f"Expected properties: {exp_upattern_pnames}\n"
+                f"Actual properties: {act_upattern_pnames}")
+            act_value = act_upattern_properties[pname]
+            assert act_value == exp_value, (
+                f"Incorrect value for property {pname!r} of returned "
+                f"user pattern {upattern_name!r}:\n"
+                f"Expected value: {exp_value!r}\n"
+                f"Actual value: {act_value!r}")
 
 
 @pytest.mark.parametrize(
     "property_flags", [
         pytest.param({}, id="property_flags()"),
+        pytest.param({'additional_properties': ['uuid']},
+                     id="property_args(additional_properties=[uuid])"),
         pytest.param({'full_properties': True},
                      id="property_flags(full_properties=True)"),
     ]
@@ -116,18 +165,24 @@ def test_zhmc_user_pattern_list(
     client = zhmcclient.Client(hmc_session)
     console = client.consoles.console
 
+    # Get the module arguments for the test.
+    # We need to use the defaults defined in the module argument spec
+    additional_properties = property_flags.get('additional_properties', [])
     full_properties = property_flags.get('full_properties', False)
 
-    # Determine the actual list of user patterns on the HMC.
-    act_upatterns = console.user_patterns.list(full_properties=full_properties)
-    act_upatterns_dict = {}
-    for r in act_upatterns:
-        act_upatterns_dict[r.name] = r
+    # Determine the expected list of user patterns on the HMC.
+    exp_upatterns = console.user_patterns.list(
+        additional_properties=additional_properties,
+        full_properties=full_properties)
+    exp_upattern_dict = {}
+    for upattern in exp_upatterns:
+        exp_upattern_dict[upattern.name] = dict(upattern.properties)
 
     # Prepare module input parameters (must be all required + optional)
     params = {
         'hmc_host': hmc_host,
         'hmc_auth': hmc_auth,
+        'additional_properties': additional_properties,
         'full_properties': full_properties,
         'log_file': LOG_FILE,
         '_faked_session': faked_session,
@@ -150,4 +205,4 @@ def test_zhmc_user_pattern_list(
     changed, upattern_list = get_module_output(mod_obj)
     assert changed is False
 
-    assert_upattern_list(upattern_list, act_upatterns_dict)
+    assert_upattern_list(upattern_list, exp_upattern_dict)

@@ -28,7 +28,8 @@ from zhmcclient.testutils import dpm_mode_cpcs  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
 
 from plugins.modules import zhmc_adapter_list
-from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth, \
+    underscored_properties
 from .conftest import LOG_FILE
 # pylint: disable=line-too-long,unused-import
 from .conftest import test_logger  # noqa: F401, E501
@@ -37,8 +38,8 @@ from .conftest import test_logger  # noqa: F401, E501
 
 def get_module_output(mod_obj):
     """
-    Return the module output as a tuple (changed, user_properties) (i.e.
-    the arguments of the call to exit_json()).
+    Return the module output as a tuple (changed, adapters)
+    (i.e. the arguments of the call to exit_json()).
     If the module failed, return None.
     """
 
@@ -54,54 +55,92 @@ def get_module_output(mod_obj):
     return func(*call_args[0], **call_args[1])
 
 
-def assert_adapter_list(adapter_list, exp_adapter_dict):
+def assert_adapter_list(act_adapter_list, exp_adapter_dict):
     """
-    Assert the output of the zhmc_adapter_list module
+    Assert the output of the zhmc_adapter_list module.
 
     Parameters:
 
-      adapter_list(list): Result of zhmc_adapter_list module, as a list of
-        dicts of adapter properties as documented (with underscores in their
-        names).
+      act_adapter_list (list of dict): Actual result of the module,
+        as a list of properties (name: value), including any artificial
+        properties. The property names must be as returned by the module.
 
-      exp_adapter_dict(dict): Expected adapters with their properties.
-        Key: tuple(CPC name, adapter ID).
-        Value: Dict of expected adapter properties (including any artificial
-        properties, all with underscores in their names).
+      exp_adapter_dict (dict of dict): Expected properties,
+        as a dict (key: properties) where key is a tuple(cpc name, adapter ID)
+        and properties is a dict (name: value), including any artificial
+        properties. The property names must be as returned by the zhmcclient
+        list method (i.e. with hyphens).
     """
+    assert isinstance(act_adapter_list, list)
+    assert isinstance(exp_adapter_dict, dict)
 
-    assert isinstance(adapter_list, list)
+    assert len(act_adapter_list) == len(exp_adapter_dict), (
+        "Unexpected number of adapters:\n"
+        f"Actual objects: {act_adapter_list!r}\n"
+        f"Expected objects: {exp_adapter_dict!r}\n"
+    )
+    for act_adapter_properties in act_adapter_list:
+        assert isinstance(act_adapter_properties, dict)
 
-    exp_cpc_adapter_keys = list(exp_adapter_dict.keys())
-    cpc_adapter_keys = [(a.get('cpc_name', None), a.get('adapter_id', None))
-                        for a in adapter_list]
-    assert set(cpc_adapter_keys) == set(exp_cpc_adapter_keys)
+        # Check for the key properties
+        assert 'cpc_name' in act_adapter_properties, (
+            "Returned adapter does not have a 'cpc_name' "
+            f"property: {act_adapter_properties!r}")
+        cpc_name = act_adapter_properties['cpc_name']
+        assert 'adapter_id' in act_adapter_properties, (
+            "Returned adapter does not have a 'adapter_id' "
+            f"property: {act_adapter_properties!r}")
+        adapter_id = act_adapter_properties['adapter_id']
+        adapter_key = (cpc_name, adapter_id)
 
-    for adapter_item in adapter_list:
-        adapter_id = adapter_item.get('adapter_id', None)
-        cpc_name = adapter_item.get('cpc_name', None)
-        cpc_adapter_key = (cpc_name, adapter_id)
+        assert adapter_key in exp_adapter_dict, (
+            f"Unexpected returned adapter {adapter_key!r}")
 
-        assert adapter_id is not None, \
-            f"Returned adapter {adapter_item!r} does not have an " \
-            "'adapter_id' property"
+        exp_adapter_properties = exp_adapter_dict[adapter_key]
+        assert isinstance(exp_adapter_properties, dict)
+        exp_adapter_properties = underscored_properties(exp_adapter_properties)
 
-        assert cpc_adapter_key in exp_adapter_dict, \
-            f"Result contains unexpected adapter ID {adapter_id!r} in CPC " \
-            f"{cpc_name!r}"
+        exp_adapter_pnames = list(exp_adapter_properties.keys())
+        act_adapter_pnames = list(act_adapter_properties.keys())
 
-        exp_adapter_properties = exp_adapter_dict[cpc_adapter_key]
-        for pname, pvalue in adapter_item.items():
-            assert '-' not in pname, \
-                f"Property {pname!r} in adapter ID {adapter_id!r} is " \
-                "returned with hyphens in the property name"
-            assert pname in exp_adapter_properties, \
-                f"Unexpected property {pname!r} in result adapter ID " \
-                f"{adapter_id!r}"
+        # Check the actually returned objects against the expected properties.
+        # This discovers unexpected properties.
+        # Note that the zhmcclient list method that is used depends on the
+        # HMC version, and some of them implement additional_properties by
+        # returning all properties. However, the check for unexpected
+        # properties still works because both the Ansible module under test
+        # and the test function use the same set of zhmcclient list methods.
+        for pname, act_value in act_adapter_properties.items():
+            assert '-' not in pname, (
+                f"Property {pname!r} in returned "
+                f"adapter {adapter_key!r} "
+                "has hyphens in the property name")
+            assert pname in exp_adapter_properties, (
+                f"Unexpected property {pname!r} in returned "
+                f"adapter {adapter_key!r}:\n"
+                f"Expected properties: {exp_adapter_pnames}\n"
+                f"Actual properties: {act_adapter_pnames}")
             exp_value = exp_adapter_properties[pname]
-            assert pvalue == exp_value, \
-                f"Incorrect value for property {pname!r} of result adapter " \
-                f"ID {adapter_id!r}"
+            assert act_value == exp_value, (
+                f"Incorrect value for property {pname!r} of returned "
+                f"adapter {adapter_key!r}:\n"
+                f"Expected value: {exp_value!r}\n"
+                f"Actual value: {act_value!r}")
+
+        # Check the expected properties against the actually returned objects.
+        # This discovers missing properties.
+        for pname, exp_value in exp_adapter_properties.items():
+            assert pname in act_adapter_properties, (
+                f"Missing property {pname!r} in returned "
+                f"adapter {adapter_key!r}:\n"
+                f"Expected properties: {exp_adapter_pnames}\n"
+                f"Actual properties: {act_adapter_pnames}")
+            act_value = act_adapter_properties[pname]
+            assert act_value == exp_value, (
+                f"Incorrect value for property {pname!r} of returned "
+                f"adapter {adapter_key!r}:\n"
+                f"Expected value: {exp_value!r}\n"
+                f"Actual value: {act_value!r}")
 
 
 @pytest.mark.parametrize(
@@ -157,9 +196,10 @@ def test_zhmc_adapter_list(
         client = zhmcclient.Client(session)
         console = client.consoles.console
 
+        # Get the module arguments for the test.
+        # We need to use the defaults defined in the module argument spec
+        additional_properties = property_flags.get('additional_properties', [])
         full_properties = property_flags.get('full_properties', False)
-        additional_properties = property_flags.get(
-            'additional_properties', [])
 
         # Determine the expected adapters on the HMC
         test_logger.debug("Listing expected adapters")
@@ -228,11 +268,10 @@ def test_zhmc_adapter_list(
                 adapter.name, cpc.name, list(adapter.properties.keys()))
             cpc = adapter.manager.parent
             exp_properties = {
-                'cpc_name': cpc.name
+                'cpc_name': cpc.name,
+                'cpc_uri': cpc.uri,
             }
-            for pname_hmc, pvalue in adapter.properties.items():
-                pname = pname_hmc.replace('-', '_')
-                exp_properties[pname] = pvalue
+            exp_properties.update(adapter.properties)
             exp_cpc_adapter_key = (cpc.name, adapter.properties['adapter-id'])
             exp_adapter_dict[exp_cpc_adapter_key] = exp_properties
 

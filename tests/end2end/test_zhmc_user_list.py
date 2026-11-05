@@ -27,14 +27,15 @@ from zhmcclient.testutils import hmc_definition, hmc_session  # noqa: F401, E501
 # pylint: enable=line-too-long,unused-import
 
 from plugins.modules import zhmc_user_list
-from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth
+from .utils import mock_ansible_module, get_failure_msg, get_hmc_auth, \
+    underscored_properties
 from .conftest import LOG_FILE
 
 
 def get_module_output(mod_obj):
     """
-    Return the module output as a tuple (changed, user_properties) (i.e.
-    the arguments of the call to exit_json()).
+    Return the module output as a tuple (changed, users)
+    (i.e. the arguments of the call to exit_json()).
     If the module failed, return None.
     """
 
@@ -50,55 +51,97 @@ def get_module_output(mod_obj):
     return func(*call_args[0], **call_args[1])
 
 
-def assert_user_list(user_list, exp_user_dict):
+def assert_user_list(act_user_list, exp_user_dict):
     """
     Assert the output of the zhmc_user_list module.
 
     Parameters:
 
-      user_list(list): Result of zhmc_user_list module, as a list of
-        dicts of user properties as documented (with underscores in
-        their names).
+      act_user_list (list of dict): Actual result of the module,
+        as a list of properties (name: value), including any artificial
+        properties. The property names must be as returned by the module.
 
-      exp_user_dict(dict): Expected users with their properties.
-        Key: user name.
-        Value: Dict of expected user properties (including any
-        artificial properties, all with underscores in their names).
+      exp_user_dict (dict of dict): Expected properties,
+        as a dict (key: properties) where key is the object name and properties
+        is a dict (name: value), including any artificial properties. The
+        property names must be as returned by the zhmcclient list method.
+        (i.e. with hyphens).
     """
+    assert isinstance(act_user_list, list)
+    assert isinstance(exp_user_dict, dict)
 
-    assert isinstance(user_list, list)
+    assert len(act_user_list) == len(exp_user_dict), (
+        "Unexpected number of users:\n"
+        f"Actual objects: {act_user_list!r}\n"
+        f"Expected objects: {exp_user_dict!r}\n"
+    )
+    for act_user_properties in act_user_list:
+        assert isinstance(act_user_properties, dict)
 
-    exp_user_names = list(exp_user_dict.keys())
-    user_names = [ri.get('name', None) for ri in user_list]
-    assert set(user_names) == set(exp_user_names)
+        # Check for the key property
+        assert 'name' in act_user_properties, (
+            "Returned user does not have a 'name' "
+            f"property: {act_user_properties!r}")
+        user_name = act_user_properties['name']
+        assert user_name in exp_user_dict, (
+            f"Unexpected returned user {user_name!r}")
 
-    for user_item in user_list:
-        user_name = user_item.get('name', None)
-        user_type = user_item.get('type', None)
-
-        assert user_name is not None, \
-            f"Returned user {user_item!r} does not have a 'name' property"
-
-        assert user_name in exp_user_dict, \
-            f"Unexpected returned user {user_name!r}"
+        user_type = act_user_properties.get('type', None)
 
         exp_user_properties = exp_user_dict[user_name]
-        for pname, pvalue in user_item.items():
-            assert '-' not in pname, \
-                f"Property {pname!r} in user {user_name!r} is returned with " \
-                "hyphens in the property name"
-            assert pname in exp_user_properties, \
-                f"Unexpected property {pname!r} in user {user_name!r}"
-            exp_value = exp_user_properties[pname]
+        assert isinstance(exp_user_properties, dict)
+        exp_user_properties = underscored_properties(exp_user_properties)
 
+        exp_user_pnames = list(exp_user_properties.keys())
+        act_user_pnames = list(act_user_properties.keys())
+
+        # Check the actually returned objects against the expected properties.
+        # This discovers unexpected properties.
+        # Note that the underlying zhmcclient list method implements
+        # additional_properties by returning all properties. However, the check
+        # for unexpected properties still works because both the Ansible module
+        # under test and the test function use the same zhmcclient list method.
+        for pname, act_value in act_user_properties.items():
+            assert '-' not in pname, (
+                f"Property {pname!r} in returned "
+                f"user {user_name!r} "
+                "has hyphens in the property name")
+            assert pname in exp_user_properties, (
+                f"Unexpected property {pname!r} in returned "
+                f"user {user_name!r}:\n"
+                f"Expected properties: {exp_user_pnames}\n"
+                f"Actual properties: {act_user_pnames}")
             if user_type == 'pattern-based' and \
                     pname in ('object_uri', 'object_id'):
                 # Pattern-based users are re-created upon every login
                 # and each such user has a different object ID.
                 continue
+            exp_value = exp_user_properties[pname]
+            assert act_value == exp_value, (
+                f"Incorrect value for property {pname!r} of returned "
+                f"user {user_name!r}:\n"
+                f"Expected value: {exp_value!r}\n"
+                f"Actual value: {act_value!r}")
 
-            assert pvalue == exp_value, \
-                f"Incorrect value for property {pname!r} of user {user_name!r}"
+        # Check the expected properties against the actually returned objects.
+        # This discovers missing properties.
+        for pname, exp_value in exp_user_properties.items():
+            assert pname in act_user_properties, (
+                f"Missing property {pname!r} in returned "
+                f"user {user_name!r}:\n"
+                f"Expected properties: {exp_user_pnames}\n"
+                f"Actual properties: {act_user_pnames}")
+            if user_type == 'pattern-based' and \
+                    pname in ('object_uri', 'object_id'):
+                # Pattern-based users are re-created upon every login
+                # and each such user has a different object ID.
+                continue
+            act_value = act_user_properties[pname]
+            assert act_value == exp_value, (
+                f"Incorrect value for property {pname!r} of returned "
+                f"user {user_name!r}:\n"
+                f"Expected value: {exp_value!r}\n"
+                f"Actual value: {act_value!r}")
 
 
 def add_artificial_properties(user_properties, console, user):
@@ -191,10 +234,19 @@ def add_artificial_properties(user_properties, console, user):
 @pytest.mark.parametrize(
     "property_flags", [
         pytest.param({}, id="property_flags()"),
+        pytest.param({'expand_names': True},
+                     id="expand_names=True)"),
+        pytest.param({'additional_properties': ['description']},
+                     id="property_flags(additional_properties=[description])"),
+        pytest.param({'additional_properties': ['description'],
+                      'expand_names': True},
+                     id="property_flags(additional_properties=[description],"
+                     "expand_names=True)"),
         pytest.param({'full_properties': True},
                      id="property_flags(full_properties=True)"),
         pytest.param({'full_properties': True, 'expand_names': True},
-                     id="property_flags(full_properties=True,expand_names=True)"),
+                     id="property_flags(full_properties=True,"
+                     "expand_names=True)"),
     ]
 )
 @pytest.mark.parametrize(
@@ -221,26 +273,28 @@ def test_zhmc_user_list(
     client = zhmcclient.Client(hmc_session)
     console = client.consoles.console
 
+    # Get the module arguments for the test.
+    # We need to use the defaults defined in the module argument spec
+    additional_properties = property_flags.get('additional_properties', [])
     full_properties = property_flags.get('full_properties', False)
     expand_names = property_flags.get('expand_names', False)
 
     # Determine the expected list of users.
-    exp_users = console.users.list(full_properties=full_properties)
+    exp_users = console.users.list(
+        additional_properties=additional_properties,
+        full_properties=full_properties)
     exp_user_dict = {}
     for user in exp_users:
-        user_properties = dict(user.properties)
+        exp_properties = dict(user.properties)
         if full_properties and expand_names:
-            add_artificial_properties(user_properties, console, user)
-        user_properties_under = {}
-        for pname_hmc, pvalue in user_properties.items():
-            pname = pname_hmc.replace('-', '_')
-            user_properties_under[pname] = pvalue
-        exp_user_dict[user.name] = user_properties_under
+            add_artificial_properties(exp_properties, console, user)
+        exp_user_dict[user.name] = exp_properties
 
     # Prepare module input parameters (must be all required + optional)
     params = {
         'hmc_host': hmc_host,
         'hmc_auth': hmc_auth,
+        'additional_properties': additional_properties,
         'full_properties': full_properties,
         'expand_names': expand_names,
         'log_file': LOG_FILE,
