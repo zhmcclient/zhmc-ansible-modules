@@ -1,3 +1,0 @@
-minor_changes:
-  - "Test - Fixed the resource warning when logging was enabled in end2end tests,
-     about the log file not being closed."

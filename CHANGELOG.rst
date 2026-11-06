@@ -4,6 +4,45 @@ ibm.ibm\_zhmc Release Notes
 
 .. contents:: Topics
 
+v1.12.0
+=======
+
+Minor Changes
+-------------
+
+- Added Ansible versions 12, 13 and 14 to the versions that are tested with PACKAGE_LEVEL=ansible. Removed Ansible version 10 from testing, because there are more supported Ansible versions than supported Python versions.
+- Added URI properties to the returned properties of the following list modules: zhmc_adapter_list: cpc_uri, zhmc_ldap_server_definition_list: element_uri, zhmc_adapter_list: cpc_uri, zhmc_lpar_list: cpc_uri, zhmc_nic_list: cpc_uri, partition_uri, adapter_uri, zhmc_partition_list: object_uri, zhmc_storage_group_attachment_list: cpc_uri.
+- Added a new input parameter 'cpc_name' to the existing 'zhmc_storage_volume_list' module in order to properly handle storage group names that are not unique across all managed CPCs. The new parameter is optional for backwards compatibility, but is highly recommended to always be used. If this new parameter is not specified and storage group names are not unique across all managed CPCs, the module now returns an error, where previously it has silently returned the volumes from any one of the same-named storage groups.
+- Added a new input parameter 'expand_nics' to the 'zhmc_partition' module that controls whether the 'partition.nics' property with the NICs of the partition is present in the return value. For compatibility reasons, the default for the 'expand_nics' parameter is True.
+- Added a new module 'zhmc_storage_group_attachment_list' that lists the partitions attached to a storage group.
+- Added support for a new artificial property 'partition-link-name' in the result of the zhmc_nic module. Its value is the name of the partition link referenced by the 'partition-link-uri' property that was added in HMC 2.17.
+- Added support for accepting mismatched FCP storage volumes in the 'zhmc_storage_group' module via a new 'accept_mismatched' state.
+- Added support for new input properties for the zhmc_nic module that were added in HMC 2.17: 'type' is now specifiable when creating a NIC; 'promiscuous_mode'.
+- Added the 'additional_properties' input parameter to the following list modules that did not have it yet: 'zhmc_cpc_list', 'zhmc_ldap_server_definition_list', 'zhmc_nic_list', 'zhmc_password_rule_list', 'zhmc_storage_group_list', 'zhmc_user_list', 'zhmc_user_pattern_list', 'zhmc_user_role_list'.
+- Added the 'full_properties' input parameter to the following list modules: 'zhmc_ldap_server_definition_list'.
+- Addresses safety issues up to 2026-10-20
+- Development - Fixed the dependencies of 'make test / end2end...' to install the colleciton before testing.
+- Docs - Clarified the documentation of input parameters that control the expansion of references to names or entire objects and their corresponding properties in the module return values of the following modules: 'zhmc_nic_list', 'zhmc_partition', 'zhmc_storage_group', 'zhmc_user', 'zhmc_user_list'.
+- Documented URI properties that were already returned for some of the list modules.
+- End2end Test - Fixed all end2end tests and added testcases.
+- End2end Test - Support for password_command in .zhmc_vault file.
+- End2end test - Suppressed the warning about using no_verify with the HMC.
+- In the 'zhmc_partition' module, fixed a KeyError when 'expand_crypto' is specified and the partition has no crypto configuration.
+- Increased the minimum ansible-core version required for this collection to >=2.16.0. This also increases the Ansible version to >=9 and the Python version to >=3.10.
+- Made the collection version based on the most recent git tag in the history of the HEAD branch. For released versions, nothing changes; the collection version will still be 'M.N.U'. While in development, the collection version will have the git tag based format 'M.N.U-a0.devD.gCOMMIT.dirty' or a subset thereof.
+- Test - Fixed the deprecation warning issued by the zhmcclient library when using zhmcclient_mock, by switching to zhmcclient.mock.
+- Test - Fixed the resource warning when logging was enabled in end2end tests, about the log file not being closed.
+- Test - Improved parametrized testcases by adding or migrating to a 'runmode' parameter that allows specifying how to run the testcase, for example to expect failure or to invoke the pdb debugger before running the test.
+- Test - Improved the approach for logging in the end2end tests. Logging is now enabled by setting the env var TESTLOGFILE to the path name of a log file. If not set, logging is disabled. The entry into and exit from end2end test function calls is now logged automatically, if logging is enabled. The previously existing debug prints have all been migrated to use logging.
+- Upgraded zhmcclient to 1.27.0 to pick up new functions and fixes.
+
+Deprecated Features
+-------------------
+
+- The 'partition.hbas' property in the return value of the 'zhmc_partition' module has been deprecated because managing HBAs directly was last supported on z13 systems. The property will be removed in release 2.0.0 of this collection.
+- The 'partition.virtual-functions' property in the return value of the 'zhmc_partition' module has been deprecated because zEDC adapters were last supported on z13 systems. The property will be removed in release 2.0.0 of this collection.
+- When the new input parameter 'expand_nics' of the 'zhmc_partition' module is not specified or specified as null, the parameter will be treated as True in order to provide backwards compatibility. In version 2.0.0 of this collection, the default for this parameter will be changed to False, for consistency with other expansion control parameters. To prepare for that future change, specify the parameter as True or False depending on whether the 'partition.nics' property in the  module return value needs to be present. To foster the explicit specification of the parameter, an Ansible deprecation warning and a corresponding log file entry will be created when the parameter is not specified (or specified as null).
+
 v1.11.0
 =======
 

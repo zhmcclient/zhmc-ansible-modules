@@ -12,6 +12,7 @@ Demetrios Dimatos <ddimatos@us.ibm.com>
 Juergen Leopold <leopoldj@de.ibm.com>
 Kathiravan Velusamy <kathir.velu@in.ibm.com>
 Klaus Smolin <smolin@de.ibm.com>
+Sheetal Pyatigoudar <sheetal.pyatigoudar@ibm.com>
 Uday Kiran Reddy Konda <Uday.Kiran.Reddy.Konda@ibm.com>
 Vance Morris <vmorris@us.ibm.com>
 dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>

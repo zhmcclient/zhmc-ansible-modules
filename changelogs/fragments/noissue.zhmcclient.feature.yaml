@@ -1,2 +1,0 @@
-minor_changes:
-  - Upgraded zhmcclient to 1.27.0 to pick up new functions and fixes.
