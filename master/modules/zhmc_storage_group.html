@@ -20,7 +20,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="zhmc_storage_group_attachment – Manage attachment of a storage group to a partition (DPM mode)" href="zhmc_storage_group_attachment.html" />
+    <link rel="next" title="zhmc_storage_group_list – List storage groups (DPM mode)" href="zhmc_storage_group_list.html" />
     <link rel="prev" title="zhmc_partition_messages – Get console messages for OS in a partition (DPM mode)" href="zhmc_partition_messages.html" /> 
 </head>
 
@@ -74,8 +74,8 @@
 <li class="toctree-l2"><a class="reference internal" href="zhmc_nic.html">zhmc_nic – Manage a NIC of a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_nic_list.html">zhmc_nic_list – List NICs of a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_partition.html">zhmc_partition – Manage a partition (DPM mode)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_partition_command.html">zhmc_partition_command – Execute OS console command in a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_partition_list.html">zhmc_partition_list – List partitions (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_partition_command.html">zhmc_partition_command – Execute OS console command in a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_partition_messages.html">zhmc_partition_messages – Get console messages for OS in a partition (DPM mode)</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">zhmc_storage_group – Manage a storage group (DPM mode)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#synopsis">Synopsis</a></li>
@@ -86,14 +86,15 @@
 <li class="toctree-l3"><a class="reference internal" href="#return-values">Return Values</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Manage attachment of a storage group to a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_list.html">zhmc_storage_group_list – List storage groups (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Manage attachment of a storage group to a partition (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment_list.html">zhmc_storage_group_attachment_list – List the partitions attached to a storage group (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_volume.html">zhmc_storage_volume – Manage a storage volume (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_volume_list.html">zhmc_storage_volume_list – List storage volumes of a storage group (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_virtual_function.html">zhmc_virtual_function – Manage a virtual function of a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_lpar.html">zhmc_lpar – Manage an LPAR (classic mode)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_command.html">zhmc_lpar_command – Execute OS console command in an LPAR (classic mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_list.html">zhmc_lpar_list – List LPARs (classic mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_command.html">zhmc_lpar_command – Execute OS console command in an LPAR (classic mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_messages.html">zhmc_lpar_messages – Get console messages for OS in an LPAR (classic mode)</a></li>
 </ul>
 </li>
@@ -235,11 +236,12 @@
 <p>* <code class="docutils literal notranslate"><span class="pre">absent</span></code>: Ensures that the storage group does not exist. If the storage group is currently attached to any partitions, the module will fail (this is an idempotency limitation).</p>
 <p>* <code class="docutils literal notranslate"><span class="pre">present</span></code>: Ensures that the storage group exists and is associated with the specified CPC, and has the specified properties. The attachment state of an already existing storage group to a partition is not changed.</p>
 <p>* <code class="docutils literal notranslate"><span class="pre">discover</span></code>: Triggers LUN discovery. If <code class="docutils literal notranslate"><span class="pre">discover_wait</span></code> is specified, waits for completion of the discovery. Requires that the storage group exists and is of type ‘fcp’.</p>
+<p>* <code class="docutils literal notranslate"><span class="pre">accept_mismatched</span></code>: Accepts mismatched FCP storage volumes in this storage group. Requires that the storage group exists and is of type ‘fcp’.</p>
 <p>* <code class="docutils literal notranslate"><span class="pre">facts</span></code>: Returns the storage group properties.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: True</div>
 <div class="line"><strong>type</strong>: str</div>
-<div class="line"><strong>choices</strong>: absent, present, discover, facts</div>
+<div class="line"><strong>choices</strong>: absent, present, discover, facts, accept_mismatched</div>
 </div>
 </dd>
 <dt>properties</dt><dd><p>Dictionary with desired properties for the storage group. Used for <code class="docutils literal notranslate"><span class="pre">state=present</span></code>; ignored for <code class="docutils literal notranslate"><span class="pre">state=absent|facts</span></code>. Dictionary key is the property name with underscores instead of hyphens, and dictionary value is the property value in YAML syntax. Integer properties may also be provided as decimal strings.</p>
@@ -252,7 +254,7 @@
 <div class="line"><strong>type</strong>: dict</div>
 </div>
 </dd>
-<dt>expand</dt><dd><p>Boolean that controls whether the returned storage group contains additional artificial properties that expand certain URI or name properties to the full set of resource properties (see description of return values of this module).</p>
+<dt>expand</dt><dd><p>If True, the return value will contain additional artificial properties that expand certain URI or name properties to the full set of resource properties. See the return value for details.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: bool</div>
@@ -326,6 +328,15 @@
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_storage_group_name</span> <span class="cp">}}</span><span class="s">"</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">discover</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sg1</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Accept mismatched FCP storage volumes</span>
+<span class="w">  </span><span class="nt">zhmc_storage_group</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">cpc_name</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_cpc_name</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_storage_group_name</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">accept_mismatched</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sg1</span>
 </pre></div>
 </div>
 </section>
@@ -353,7 +364,7 @@
 </div>
 </dd>
 <dt>storage_group</dt><dd><p>For <code class="docutils literal notranslate"><span class="pre">state=absent</span></code>, an empty dictionary.</p>
-<p>For <code class="docutils literal notranslate"><span class="pre">state=present|facts|discover</span></code>, the resource properties of the target storage group after any changes, plus additional artificial properties as described below.</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">state=present|facts|discover|accept_mismatched</span></code>, the resource properties of the target storage group after any changes, plus additional artificial properties as described below.</p>
 <div class="line-block">
 <div class="line"><strong>returned</strong>: success</div>
 <div class="line"><strong>type</strong>: dict</div>
@@ -587,8 +598,10 @@
 <div class="line"><strong>elements</strong>: str</div>
 </div>
 </dd>
-<dt>attached-partitions</dt><dd><p>List of partitions to which the storage group is attached. Only present if <code class="docutils literal notranslate"><span class="pre">expand=true</span></code>.</p>
+<dt>attached-partitions</dt><dd><p>Partitions to which the storage group is attached.</p>
+<p>Only present if <code class="docutils literal notranslate"><span class="pre">expand</span></code> is True.</p>
 <div class="line-block">
+<div class="line"><strong>returned</strong>: success</div>
 <div class="line"><strong>type</strong>: list</div>
 <div class="line"><strong>elements</strong>: dict</div>
 </div>
@@ -600,8 +613,10 @@
 </dd>
 </dl>
 </dd>
-<dt>storage-volumes</dt><dd><p>Storage volumes of the storage group. Only present if <code class="docutils literal notranslate"><span class="pre">expand=true</span></code>.</p>
+<dt>storage-volumes</dt><dd><p>Storage volumes of the storage group.</p>
+<p>Only present if <code class="docutils literal notranslate"><span class="pre">expand</span></code> is True.</p>
 <div class="line-block">
+<div class="line"><strong>returned</strong>: success</div>
 <div class="line"><strong>type</strong>: list</div>
 <div class="line"><strong>elements</strong>: dict</div>
 </div>
@@ -618,8 +633,11 @@
 </dd>
 </dl>
 </dd>
-<dt>candidate-adapter-ports</dt><dd><p>List of candidate storage adapter ports of the storage group. Only present if <code class="docutils literal notranslate"><span class="pre">expand=true</span></code> and for storage group type FCP.</p>
+<dt>candidate-adapter-ports</dt><dd><p>List of candidate storage adapter ports of the storage group.</p>
+<p>Will be empty for storage group types other than FCP.</p>
+<p>Only present if <code class="docutils literal notranslate"><span class="pre">expand</span></code> is True.</p>
 <div class="line-block">
+<div class="line"><strong>returned</strong>: success</div>
 <div class="line"><strong>type</strong>: list</div>
 <div class="line"><strong>elements</strong>: dict</div>
 </div>
@@ -658,8 +676,11 @@
 </dd>
 </dl>
 </dd>
-<dt>virtual-storage-resources</dt><dd><p>Virtual storage resources of the storage group. Only present if <code class="docutils literal notranslate"><span class="pre">expand=true</span></code> and for storage group type FCP.</p>
+<dt>virtual-storage-resources</dt><dd><p>Virtual storage resources of the storage group.</p>
+<p>Will be empty for storage group types other than FCP.</p>
+<p>Only present if <code class="docutils literal notranslate"><span class="pre">expand</span></code> is True.</p>
 <div class="line-block">
+<div class="line"><strong>returned</strong>: success</div>
 <div class="line"><strong>type</strong>: list</div>
 <div class="line"><strong>elements</strong>: dict</div>
 </div>
@@ -682,7 +703,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="zhmc_partition_messages.html" class="btn btn-neutral float-left" title="zhmc_partition_messages – Get console messages for OS in a partition (DPM mode)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="zhmc_storage_group_attachment.html" class="btn btn-neutral float-right" title="zhmc_storage_group_attachment – Manage attachment of a storage group to a partition (DPM mode)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="zhmc_storage_group_list.html" class="btn btn-neutral float-right" title="zhmc_storage_group_list – List storage groups (DPM mode)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
@@ -723,6 +744,8 @@
             <dd><a href="../../1.9.6/modules/zhmc_storage_group.html">1.9.6</a></dd>
             <dd><a href="../../1.10.1/modules/zhmc_storage_group.html">1.10.1</a></dd>
             <dd><a href="../../1.11.1/modules/zhmc_storage_group.html">1.11.1</a></dd>
+            <dd><a href="../../1.12.0-a0/modules/zhmc_storage_group.html">1.12.0-a0</a></dd>
+            <dd><a href="../../1.12.0/modules/zhmc_storage_group.html">1.12.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

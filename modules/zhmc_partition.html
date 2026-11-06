@@ -20,7 +20,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="zhmc_partition_command – Execute OS console command in a partition (DPM mode)" href="zhmc_partition_command.html" />
+    <link rel="next" title="zhmc_partition_list – List partitions (DPM mode)" href="zhmc_partition_list.html" />
     <link rel="prev" title="zhmc_nic_list – List NICs of a partition (DPM mode)" href="zhmc_nic_list.html" /> 
 </head>
 
@@ -82,18 +82,19 @@
 <li class="toctree-l3"><a class="reference internal" href="#return-values">Return Values</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_partition_command.html">zhmc_partition_command – Execute OS console command in a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_partition_list.html">zhmc_partition_list – List partitions (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_partition_command.html">zhmc_partition_command – Execute OS console command in a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_partition_messages.html">zhmc_partition_messages – Get console messages for OS in a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group.html">zhmc_storage_group – Manage a storage group (DPM mode)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Manage attachment of a storage group to a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_list.html">zhmc_storage_group_list – List storage groups (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Manage attachment of a storage group to a partition (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment_list.html">zhmc_storage_group_attachment_list – List the partitions attached to a storage group (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_volume.html">zhmc_storage_volume – Manage a storage volume (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_volume_list.html">zhmc_storage_volume_list – List storage volumes of a storage group (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_virtual_function.html">zhmc_virtual_function – Manage a virtual function of a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_lpar.html">zhmc_lpar – Manage an LPAR (classic mode)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_command.html">zhmc_lpar_command – Execute OS console command in an LPAR (classic mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_list.html">zhmc_lpar_list – List LPARs (classic mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_command.html">zhmc_lpar_command – Execute OS console command in an LPAR (classic mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_messages.html">zhmc_lpar_messages – Get console messages for OS in an LPAR (classic mode)</a></li>
 </ul>
 </li>
@@ -296,13 +297,20 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>expand_storage_groups</dt><dd><p>Boolean that controls whether the returned partition contains an additional artificial property <code class="docutils literal notranslate"><span class="pre">partition.storage-groups</span></code> that is the list of storage groups attached to the partition, with properties as described for the zhmc_storage_group module with <code class="docutils literal notranslate"><span class="pre">expand=true</span></code>.</p>
+<dt>expand_storage_groups</dt><dd><p>If True, the return value will contain an additional artificial property <code class="docutils literal notranslate"><span class="pre">partition.storage-groups</span></code> that is the list of storage groups attached to the partition, with properties as described in the data model of the ‘Storage Group’ object in the <a class="reference internal" href="../bibliography.html#hmc-api"><span class="std std-ref">HMC API</span></a> book. The property names will have hyphens (-) as described in that book.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: bool</div>
 </div>
 </dd>
-<dt>expand_crypto_adapters</dt><dd><p>Boolean that controls whether the returned partition contains an additional artificial property <code class="docutils literal notranslate"><span class="pre">crypto-adapters</span></code> in its <code class="docutils literal notranslate"><span class="pre">crypto-configuration</span></code> property that is the list of crypto adapters attached to the partition, with properties as described for the zhmc_adapter module.</p>
+<dt>expand_crypto_adapters</dt><dd><p>If True, the return value will contain an additional artificial property <code class="docutils literal notranslate"><span class="pre">partition.crypto-configuration.crypto-adapters</span></code> that is the list of crypto adapters used in the crypto configuration of the partition, with properties as described in the data model of the ‘Adapter’ object in the <a class="reference internal" href="../bibliography.html#hmc-api"><span class="std std-ref">HMC API</span></a> book. The property names will have hyphens (-) as described in that book.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: bool</div>
+</div>
+</dd>
+<dt>expand_nics</dt><dd><p>If True, the return value will contain an additional artificial property <code class="docutils literal notranslate"><span class="pre">partition.nics</span></code> that is the list of NICs of the partition, with properties as described in the data model of the ‘NIC’ element object within the ‘Partition’ object in the <a class="reference internal" href="../bibliography.html#hmc-api"><span class="std std-ref">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<p><strong>Deprecated</strong>: When not specified or specified as null, this parameter will be treated as true in order to provide backwards compatibility. In release 2.0.0, the default for this parameter will be changed to False for consistency with other expansion control parameters. In order to prepare for that, it is recommended already now to specify this parameter as True or False, depending on whether the additional data is needed. To foster the explicit specification of the parameter, an Ansible deprecation warning will be issued when the parameter is not specified (or specified as null).</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: bool</div>
@@ -333,6 +341,7 @@
 <span class="w">      </span><span class="nt">ifl_processors</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
 <span class="w">      </span><span class="nt">initial_memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1024</span>
 <span class="w">      </span><span class="nt">maximum_memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1024</span>
+<span class="w">    </span><span class="nt">expand_nics</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">part1</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Configure an FCP boot volume and start the partition (z14 or later)</span>
@@ -346,6 +355,7 @@
 <span class="w">      </span><span class="nt">boot_device</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">storage-volume</span>
 <span class="w">      </span><span class="nt">boot_storage_group_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sg1</span>
 <span class="w">      </span><span class="nt">boot_storage_volume_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">boot1</span>
+<span class="w">    </span><span class="nt">expand_nics</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">part1</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Configure an FTP boot server and start the partition</span>
@@ -361,6 +371,7 @@
 <span class="w">      </span><span class="nt">boot_ftp_username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ftpuser</span>
 <span class="w">      </span><span class="nt">boot_ftp_password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ftppass</span>
 <span class="w">      </span><span class="nt">boot_ftp_insfile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/insfile</span>
+<span class="w">    </span><span class="nt">expand_nics</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">part1</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ensure the partition does not exist</span>
@@ -388,6 +399,7 @@
 <span class="w">            </span><span class="nt">access_mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">control-usage</span>
 <span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">domain_index</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
 <span class="w">            </span><span class="nt">access_mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">control</span>
+<span class="w">    </span><span class="nt">expand_nics</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">part1</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ensure that an ISO image is mounted to the partition</span>
@@ -418,6 +430,7 @@
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">facts</span>
 <span class="w">    </span><span class="nt">expand_storage_groups</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">    </span><span class="nt">expand_crypto_adapters</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">expand_nics</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">part1</span>
 </pre></div>
 </div>
@@ -600,12 +613,17 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>{property}</dt><dd><p>Additional properties of the partition, as described in the data model of the ‘Partition’ object in the <a class="reference internal" href="../bibliography.html#hmc-api"><span class="std std-ref">HMC API</span></a> book. Write-only properties in the data model are not included. The property names have hyphens (-) as described in that book.</p>
+<dt>{property}</dt><dd><p>Additional properties of the partition, as described in the data model of the ‘Partition’ object in the <a class="reference internal" href="../bibliography.html#hmc-api"><span class="std std-ref">HMC API</span></a> book.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">expand_crypto_adapters</span></code> is True, the <code class="docutils literal notranslate"><span class="pre">partition.crypto-configuration</span></code> property contains an additional artificial property <code class="docutils literal notranslate"><span class="pre">crypto-adapters</span></code> that is the list of crypto adapters used in the crypto configuration of the partition, with properties as described in the data model of the ‘Adapter’ object in the <a class="reference internal" href="../bibliography.html#hmc-api"><span class="std std-ref">HMC API</span></a> book.</p>
+<p>Write-only properties in the data model are not included.</p>
+<p>The property names will have hyphens (-) as described in that book.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: raw</div>
 </div>
 </dd>
-<dt>hbas</dt><dd><p>HBAs of the partition. If the CPC does not have the storage-management feature enabled (ie. on z13), the list is empty.</p>
+<dt>hbas</dt><dd><p>HBAs of the partition.</p>
+<p>Attaching HBAs directly to a partition was last supported on z13 systems. On later systems, the ‘dpm-storage-management’ feature is always enabled, HBAs are managed indirectly through storage groups, this property is still provided for compatibility but will always be an empty list.</p>
+<p><strong>Deprecated</strong>: This property will be removed in release 2.0.0 of this collection.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: list</div>
 <div class="line"><strong>elements</strong>: dict</div>
@@ -616,7 +634,7 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>{property}</dt><dd><p>Additional properties of the HBA, as described in the data model of the ‘HBA’ element object of the ‘Partition’ object in the <a class="reference internal" href="../bibliography.html#hmc-api"><span class="std std-ref">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<dt>{property}</dt><dd><p>Additional properties of the HBA, as described in the data model of the ‘HBA’ element object of the ‘Partition’ object in the <a class="reference internal" href="../bibliography.html#hmc-api"><span class="std std-ref">HMC API</span></a> book. The property names will have hyphens (-) as described in that book.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: raw</div>
 </div>
@@ -624,6 +642,7 @@
 </dl>
 </dd>
 <dt>nics</dt><dd><p>NICs of the partition.</p>
+<p>Only present for <code class="docutils literal notranslate"><span class="pre">expand_nics=true</span></code> or when <code class="docutils literal notranslate"><span class="pre">expand_nics</span></code> is not specified.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: list</div>
 <div class="line"><strong>elements</strong>: dict</div>
@@ -634,14 +653,16 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>{property}</dt><dd><p>Additional properties of the NIC, as described in the data model of the ‘NIC’ element object of the ‘Partition’ object in the <a class="reference internal" href="../bibliography.html#hmc-api"><span class="std std-ref">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<dt>{property}</dt><dd><p>Additional properties of the NIC, as described in the data model of the ‘NIC’ element object of the ‘Partition’ object in the <a class="reference internal" href="../bibliography.html#hmc-api"><span class="std std-ref">HMC API</span></a> book. The property names will have hyphens (-) as described in that book.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: raw</div>
 </div>
 </dd>
 </dl>
 </dd>
-<dt>virtual-functions</dt><dd><p>Virtual functions of the partition.</p>
+<dt>virtual-functions</dt><dd><p>Virtual functions on zEDC accelerator adapters attached to the partition.</p>
+<p>zEDC accelerator adapters were last supported on z13 systems. On later systems, this property is still provided for compatibility but will always be an empty list.</p>
+<p><strong>Deprecated</strong>: This property will be removed in release 2.0.0 of this collection.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: list</div>
 <div class="line"><strong>elements</strong>: dict</div>
@@ -652,14 +673,15 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>{property}</dt><dd><p>Additional properties of the virtual function, as described in the data model of the ‘Virtual Function’ element object of the ‘Partition’ object in the <a class="reference internal" href="../bibliography.html#hmc-api"><span class="std std-ref">HMC API</span></a> book. The property names have hyphens (-) as described in that book.</p>
+<dt>{property}</dt><dd><p>Additional properties of the virtual function, as described in the data model of the ‘Virtual Function’ element object of the ‘Partition’ object in the <a class="reference internal" href="../bibliography.html#hmc-api"><span class="std std-ref">HMC API</span></a> book. The property names will have hyphens (-) as described in that book.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: raw</div>
 </div>
 </dd>
 </dl>
 </dd>
-<dt>storage-groups</dt><dd><p>Storage groups attached to the partition. Only present for <code class="docutils literal notranslate"><span class="pre">expand_storage_groups=true</span></code>.</p>
+<dt>storage-groups</dt><dd><p>Storage groups attached to the partition.</p>
+<p>Only present if <code class="docutils literal notranslate"><span class="pre">expand_storage_groups</span></code> is True.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: list</div>
 <div class="line"><strong>elements</strong>: dict</div>
@@ -759,7 +781,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="zhmc_nic_list.html" class="btn btn-neutral float-left" title="zhmc_nic_list – List NICs of a partition (DPM mode)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="zhmc_partition_command.html" class="btn btn-neutral float-right" title="zhmc_partition_command – Execute OS console command in a partition (DPM mode)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="zhmc_partition_list.html" class="btn btn-neutral float-right" title="zhmc_partition_list – List partitions (DPM mode)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
@@ -782,7 +804,7 @@
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.11.1
+        v: 1.12.0
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -800,6 +822,8 @@
             <dd><a href="../1.9.6/modules/zhmc_partition.html">1.9.6</a></dd>
             <dd><a href="../1.10.1/modules/zhmc_partition.html">1.10.1</a></dd>
             <dd><a href="../1.11.1/modules/zhmc_partition.html">1.11.1</a></dd>
+            <dd><a href="../1.12.0-a0/modules/zhmc_partition.html">1.12.0-a0</a></dd>
+            <dd><a href="../1.12.0/modules/zhmc_partition.html">1.12.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

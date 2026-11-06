@@ -461,17 +461,29 @@ branch of its minor version:</p>
 </div>
 <p>If any of the two safety runs fails, fix the safety issues that are reported,
 in a separate branch/PR.</p>
-<p>Roll back the PR into any maintained stable branches.</p>
+<p><a class="reference internal" href="#backporting"><span class="std std-ref">Backport</span></a> the PR into any maintained stable branches.</p>
+</li>
+<li><p>Run the check for missing dependencies:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>check_reqs
+</pre></div>
+</div>
+<p>If this fails, add the missing dependencies that are reported to the
+correct minimum-constraints*.txt file, in a separate branch/PR.</p>
+<p>You can determine the correct minimum-constraints*.txt file for a dependent
+package by using <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">pipdeptree</span> <span class="pre">-r</span> <span class="pre">-p</span> <span class="pre">&lt;package-name&gt;</span></code> to see which
+other packages use it. The dependent package should be put into the
+minimum-constraints*.txt file that has the package(s) using it.</p>
+<p><a class="reference internal" href="#backporting"><span class="std std-ref">Backport</span></a> the PR into the latest <code class="docutils literal notranslate"><span class="pre">stable_M.N</span></code> branch.</p>
 </li>
 <li><p>Check for any
 <a class="reference external" href="https://github.com/zhmcclient/zhmc-ansible-modules/security/dependabot">dependabot alerts</a>.</p>
 <p>If there are any dependabot alerts, fix them in a separate branch/PR.</p>
-<p>Roll back the PR into any maintained stable branches.</p>
+<p><a class="reference internal" href="#backporting"><span class="std std-ref">Backport</span></a> the PR into any maintained stable branches.</p>
 </li>
 <li><p>Review the result of the latest Mend scan in
 <a class="reference external" href="https://ibm.ent.box.com/folder/190964336381?s=070khx70ijj3ime3k4yfx7r7cjb2xx0k">this Box folder</a>.</p>
 <p>If the Mend scan shows any issues, fix them in a separate branch/PR.</p>
-<p>Roll back the PR into any maintained stable branches.</p>
+<p><a class="reference internal" href="#backporting"><span class="std std-ref">Backport</span></a> the PR into any maintained stable branches.</p>
 </li>
 <li><p>Create a topic branch for the version that is being released:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>checkout<span class="w"> </span><span class="si">${</span><span class="nv">BRANCH</span><span class="si">}</span>
@@ -480,12 +492,8 @@ git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </
 </pre></div>
 </div>
 </li>
-<li><p>Edit the Galaxy metadata file:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>vi<span class="w"> </span>galaxy.yml
-</pre></div>
-</div>
-<p>and set the ‘version’ parameter to the version that is being released:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">M.N.U</span>
+<li><p>Set the collection version to the release version:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>bump-my-version<span class="w"> </span>--new-version<span class="w"> </span><span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
 </pre></div>
 </div>
 </li>
@@ -497,7 +505,7 @@ git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </
 </div>
 <p>This removes the changelog fragment files.</p>
 </li>
-<li><p>Edit the changelog file:</p>
+<li><p>Edit the changelog.yaml file:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>vi<span class="w"> </span>changelogs/changelog.yaml
 </pre></div>
 </div>
@@ -521,8 +529,8 @@ released, as follows:</p>
 <p>The sentence “This version contains …” is only needed if there have been
 releases of fix versions on the prior minor version.</p>
 </li>
-<li><p>Generate/update CHANGELOG.rst:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>docslocal
+<li><p>Update CHANGELOG.rst from the changelog.yaml file:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>antsibull-changelog<span class="w"> </span>generate<span class="w"> </span>-vv
 </pre></div>
 </div>
 </li>
@@ -586,8 +594,6 @@ on GitHub.</p>
 <p>Verify that the milestone has no open items anymore. If it does have open
 items, investigate why and fix (probably step 1 was not performed).</p>
 </li>
-</ol>
-<ol class="arabic" start="15">
 <li><p>Publish the collection to Ansible Galaxy</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>checkout<span class="w"> </span><span class="si">${</span><span class="nv">BRANCH</span><span class="si">}</span>
 git<span class="w"> </span>pull
@@ -637,7 +643,7 @@ It opens a new page for uploading the collection.</p>
 <ul>
 <li><p>In the “Collection file” field, select the distribution archive for the
 version you want to upload:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>dist/ibm-ibm_zhmc-{M}.{N}.{U}.tar.gz
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>dist/ibm-ibm_zhmc-M.N.U.tar.gz
 </pre></div>
 </div>
 </li>
@@ -717,22 +723,20 @@ git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </
 </pre></div>
 </div>
 </li>
-<li><p>Edit the Galaxy metadata file:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>vi<span class="w"> </span>galaxy.yml
+<li><p>Set the collection version to the start version:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>bump-my-version<span class="w"> </span>--new-version<span class="w"> </span><span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>-a0
 </pre></div>
 </div>
-<p>and update the version to a draft version of the version that is being
-started:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">M.N.U-dev1</span>
-</pre></div>
-</div>
-<p>Note: The version must follow the rules for semantic versioning 2.0
-including the description of development/alpha/etc suffixes, as described
-in <a class="reference external" href="https://semver.org/">https://semver.org/</a></p>
 </li>
 <li><p>Commit your changes and push them to the remote repo:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>commit<span class="w"> </span>-asm<span class="w"> </span><span class="s2">"Start </span><span class="si">${</span><span class="nv">MNU</span><span class="si">}</span><span class="s2">"</span>
 git<span class="w"> </span>push<span class="w"> </span>--set-upstream<span class="w"> </span>origin<span class="w"> </span>start_<span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>Set the git tag for the start version:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>tag<span class="w"> </span>-f<span class="w"> </span><span class="si">${</span><span class="nv">MNU</span><span class="si">}</span>-a0
+git<span class="w"> </span>push<span class="w"> </span>-f<span class="w"> </span>--tags
 </pre></div>
 </div>
 </li>
@@ -809,6 +813,8 @@ git<span class="w"> </span>branch<span class="w"> </span>-D<span class="w"> </sp
             <dd><a href="../1.9.6/development.html">1.9.6</a></dd>
             <dd><a href="../1.10.1/development.html">1.10.1</a></dd>
             <dd><a href="../1.11.1/development.html">1.11.1</a></dd>
+            <dd><a href="../1.12.0-a0/development.html">1.12.0-a0</a></dd>
+            <dd><a href="../1.12.0/development.html">1.12.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

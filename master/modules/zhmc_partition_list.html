@@ -20,8 +20,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="zhmc_partition_messages – Get console messages for OS in a partition (DPM mode)" href="zhmc_partition_messages.html" />
-    <link rel="prev" title="zhmc_partition_command – Execute OS console command in a partition (DPM mode)" href="zhmc_partition_command.html" /> 
+    <link rel="next" title="zhmc_partition_command – Execute OS console command in a partition (DPM mode)" href="zhmc_partition_command.html" />
+    <link rel="prev" title="zhmc_partition – Manage a partition (DPM mode)" href="zhmc_partition.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -74,7 +74,6 @@
 <li class="toctree-l2"><a class="reference internal" href="zhmc_nic.html">zhmc_nic – Manage a NIC of a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_nic_list.html">zhmc_nic_list – List NICs of a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_partition.html">zhmc_partition – Manage a partition (DPM mode)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_partition_command.html">zhmc_partition_command – Execute OS console command in a partition (DPM mode)</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">zhmc_partition_list – List partitions (DPM mode)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#requirements">Requirements</a></li>
@@ -84,16 +83,18 @@
 <li class="toctree-l3"><a class="reference internal" href="#return-values">Return Values</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_partition_command.html">zhmc_partition_command – Execute OS console command in a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_partition_messages.html">zhmc_partition_messages – Get console messages for OS in a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group.html">zhmc_storage_group – Manage a storage group (DPM mode)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Manage attachment of a storage group to a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_list.html">zhmc_storage_group_list – List storage groups (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Manage attachment of a storage group to a partition (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment_list.html">zhmc_storage_group_attachment_list – List the partitions attached to a storage group (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_volume.html">zhmc_storage_volume – Manage a storage volume (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_volume_list.html">zhmc_storage_volume_list – List storage volumes of a storage group (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_virtual_function.html">zhmc_virtual_function – Manage a virtual function of a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_lpar.html">zhmc_lpar – Manage an LPAR (classic mode)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_command.html">zhmc_lpar_command – Execute OS console command in an LPAR (classic mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_list.html">zhmc_lpar_list – List LPARs (classic mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_command.html">zhmc_lpar_command – Execute OS console command in an LPAR (classic mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_messages.html">zhmc_lpar_messages – Get console messages for OS in an LPAR (classic mode)</a></li>
 </ul>
 </li>
@@ -229,16 +230,16 @@
 <dt>additional_properties</dt><dd><p>List of additional properties to be returned for each partition, in addition to the default properties (see result description).</p>
 <p>Mutually exclusive with <code class="docutils literal notranslate"><span class="pre">full_properties</span></code>.</p>
 <p>The property names are specified with underscores instead of hyphens.</p>
-<p>On HMCs with an HMC version below 2.14.0, all properties of each partition will be returned if this parameter is specified, but you should not rely on that.</p>
+<p>Depending on the HMC version, more properties than those specified may be returned, but you should not rely on that.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: list</div>
 <div class="line"><strong>elements</strong>: str</div>
 </div>
 </dd>
-<dt>full_properties</dt><dd><p>If True, all properties of each partition will be returned. Default: False.</p>
+<dt>full_properties</dt><dd><p>If True, all readable properties of each partition will be returned. Default: False.</p>
 <p>Mutually exclusive with <code class="docutils literal notranslate"><span class="pre">additional_properties</span></code>.</p>
-<p>Note: Setting this to True causes a loop of ‘Get Partition Properties’ operations to be executed. It is preferable from a performance perspective to use the <code class="docutils literal notranslate"><span class="pre">additional_properties</span></code> parameter instead.</p>
+<p>Note: It is preferable from a performance perspective to use the <code class="docutils literal notranslate"><span class="pre">additional_properties</span></code> parameter instead.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: bool</div>
@@ -307,8 +308,10 @@
 <div><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
 <span class="w">    </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">"cpc_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CPC1"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"cpc_uri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/cpcs/..."</span><span class="p">,</span>
 <span class="w">        </span><span class="nt">"has_unacceptable_status"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">        </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"partition1"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"object_uri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/partitions/..."</span><span class="p">,</span>
 <span class="w">        </span><span class="nt">"se_version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2.15.0"</span><span class="p">,</span>
 <span class="w">        </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"active"</span>
 <span class="w">    </span><span class="p">}</span>
@@ -317,12 +320,22 @@
 </div>
 </div></blockquote>
 <dl>
-<dt>name</dt><dd><p>partition name</p>
+<dt>name</dt><dd><p>Partition name</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>object_uri</dt><dd><p>Canonical URI of the partition</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
 <dt>cpc_name</dt><dd><p>Name of the parent CPC of the partition</p>
+<div class="line-block">
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
+<dt>cpc_uri</dt><dd><p>Canonical URI of the parent CPC of the partition</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: str</div>
 </div>
@@ -357,8 +370,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="zhmc_partition_command.html" class="btn btn-neutral float-left" title="zhmc_partition_command – Execute OS console command in a partition (DPM mode)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="zhmc_partition_messages.html" class="btn btn-neutral float-right" title="zhmc_partition_messages – Get console messages for OS in a partition (DPM mode)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="zhmc_partition.html" class="btn btn-neutral float-left" title="zhmc_partition – Manage a partition (DPM mode)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="zhmc_partition_command.html" class="btn btn-neutral float-right" title="zhmc_partition_command – Execute OS console command in a partition (DPM mode)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
@@ -399,6 +412,8 @@
             <dd><a href="../../1.9.6/modules/zhmc_partition_list.html">1.9.6</a></dd>
             <dd><a href="../../1.10.1/modules/zhmc_partition_list.html">1.10.1</a></dd>
             <dd><a href="../../1.11.1/modules/zhmc_partition_list.html">1.11.1</a></dd>
+            <dd><a href="../../1.12.0-a0/modules/zhmc_partition_list.html">1.12.0-a0</a></dd>
+            <dd><a href="../../1.12.0/modules/zhmc_partition_list.html">1.12.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

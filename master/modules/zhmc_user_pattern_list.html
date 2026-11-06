@@ -81,18 +81,19 @@
 <li class="toctree-l2"><a class="reference internal" href="zhmc_nic.html">zhmc_nic – Manage a NIC of a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_nic_list.html">zhmc_nic_list – List NICs of a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_partition.html">zhmc_partition – Manage a partition (DPM mode)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_partition_command.html">zhmc_partition_command – Execute OS console command in a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_partition_list.html">zhmc_partition_list – List partitions (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_partition_command.html">zhmc_partition_command – Execute OS console command in a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_partition_messages.html">zhmc_partition_messages – Get console messages for OS in a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group.html">zhmc_storage_group – Manage a storage group (DPM mode)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Manage attachment of a storage group to a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_list.html">zhmc_storage_group_list – List storage groups (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Manage attachment of a storage group to a partition (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment_list.html">zhmc_storage_group_attachment_list – List the partitions attached to a storage group (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_volume.html">zhmc_storage_volume – Manage a storage volume (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_volume_list.html">zhmc_storage_volume_list – List storage volumes of a storage group (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_virtual_function.html">zhmc_virtual_function – Manage a virtual function of a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_lpar.html">zhmc_lpar – Manage an LPAR (classic mode)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_command.html">zhmc_lpar_command – Execute OS console command in an LPAR (classic mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_list.html">zhmc_lpar_list – List LPARs (classic mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_command.html">zhmc_lpar_command – Execute OS console command in an LPAR (classic mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_messages.html">zhmc_lpar_messages – Get console messages for OS in an LPAR (classic mode)</a></li>
 </ul>
 </li>
@@ -214,8 +215,19 @@
 </dd>
 </dl>
 </dd>
-<dt>full_properties</dt><dd><p>If True, all properties of each user pattern will be returned. Default: False.</p>
-<p>Note: Setting this to True causes a loop of ‘Get User Pattern Properties’ operations to be executed.</p>
+<dt>additional_properties</dt><dd><p>List of additional properties to be returned for each user pattern, in addition to the default properties (see result description).</p>
+<p>Mutually exclusive with <code class="docutils literal notranslate"><span class="pre">full_properties</span></code>.</p>
+<p>The property names are specified with underscores instead of hyphens.</p>
+<p>Depending on the HMC version, more properties than those specified may be returned, but you should not rely on that.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: list</div>
+<div class="line"><strong>elements</strong>: str</div>
+</div>
+</dd>
+<dt>full_properties</dt><dd><p>If True, all readable properties of each user pattern will be returned. Default: False.</p>
+<p>Mutually exclusive with <code class="docutils literal notranslate"><span class="pre">additional_properties</span></code>.</p>
+<p>Note: It is preferable from a performance perspective to use the <code class="docutils literal notranslate"><span class="pre">additional_properties</span></code> parameter instead.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: bool</div>
@@ -267,12 +279,12 @@
 <blockquote>
 <div><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">"element_uri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/console/user-patterns/cbcaf7a0-46cc-11e9-bfd3-f44a39cd42f9"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"element_uri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/console/user-patterns/..."</span><span class="p">,</span>
 <span class="w">        </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Bluepages email address"</span><span class="p">,</span>
 <span class="w">        </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"glob-like"</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">"element_uri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/console/user-patterns/fb22d4a2-4e40-11e9-a8a8-00106f23f636"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"element_uri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/console/user-patterns/..."</span><span class="p">,</span>
 <span class="w">        </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"regexp pattern 1"</span><span class="p">,</span>
 <span class="w">        </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"regular-expression"</span>
 <span class="w">    </span><span class="p">}</span>
@@ -286,7 +298,7 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>element_uri</dt><dd><p>Element URI of the User Pattern object</p>
+<dt>element_uri</dt><dd><p>Canonical URI of the user pattern</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: str</div>
 </div>
@@ -298,7 +310,7 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>{additional_property}</dt><dd><p>Additional properties requested via <code class="docutils literal notranslate"><span class="pre">full_properties</span></code>, as described in the data model of the ‘User Pattern’ object in the <a class="reference internal" href="../bibliography.html#hmc-api"><span class="std std-ref">HMC API</span></a> book. The property names will have underscores instead of hyphens.</p>
+<dt>{additional_property}</dt><dd><p>Additional properties requested via <code class="docutils literal notranslate"><span class="pre">full_properties</span></code> or <code class="docutils literal notranslate"><span class="pre">additional_properties</span></code>. The property names will have underscores instead of hyphens.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: raw</div>
 </div>
@@ -355,6 +367,8 @@
             <dd><a href="../../1.9.6/modules/zhmc_user_pattern_list.html">1.9.6</a></dd>
             <dd><a href="../../1.10.1/modules/zhmc_user_pattern_list.html">1.10.1</a></dd>
             <dd><a href="../../1.11.1/modules/zhmc_user_pattern_list.html">1.11.1</a></dd>
+            <dd><a href="../../1.12.0-a0/modules/zhmc_user_pattern_list.html">1.12.0-a0</a></dd>
+            <dd><a href="../../1.12.0/modules/zhmc_user_pattern_list.html">1.12.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

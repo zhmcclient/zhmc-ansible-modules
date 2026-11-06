@@ -21,7 +21,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="zhmc_storage_group – Manage a storage group (DPM mode)" href="zhmc_storage_group.html" />
-    <link rel="prev" title="zhmc_partition_list – List partitions (DPM mode)" href="zhmc_partition_list.html" /> 
+    <link rel="prev" title="zhmc_partition_command – Execute OS console command in a partition (DPM mode)" href="zhmc_partition_command.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -74,8 +74,8 @@
 <li class="toctree-l2"><a class="reference internal" href="zhmc_nic.html">zhmc_nic – Manage a NIC of a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_nic_list.html">zhmc_nic_list – List NICs of a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_partition.html">zhmc_partition – Manage a partition (DPM mode)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_partition_command.html">zhmc_partition_command – Execute OS console command in a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_partition_list.html">zhmc_partition_list – List partitions (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_partition_command.html">zhmc_partition_command – Execute OS console command in a partition (DPM mode)</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">zhmc_partition_messages – Get console messages for OS in a partition (DPM mode)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#synopsis">Synopsis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#requirements">Requirements</a></li>
@@ -85,14 +85,15 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group.html">zhmc_storage_group – Manage a storage group (DPM mode)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Manage attachment of a storage group to a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_list.html">zhmc_storage_group_list – List storage groups (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Manage attachment of a storage group to a partition (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment_list.html">zhmc_storage_group_attachment_list – List the partitions attached to a storage group (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_volume.html">zhmc_storage_volume – Manage a storage volume (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_volume_list.html">zhmc_storage_volume_list – List storage volumes of a storage group (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_virtual_function.html">zhmc_virtual_function – Manage a virtual function of a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_lpar.html">zhmc_lpar – Manage an LPAR (classic mode)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_command.html">zhmc_lpar_command – Execute OS console command in an LPAR (classic mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_list.html">zhmc_lpar_list – List LPARs (classic mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_command.html">zhmc_lpar_command – Execute OS console command in an LPAR (classic mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_messages.html">zhmc_lpar_messages – Get console messages for OS in an LPAR (classic mode)</a></li>
 </ul>
 </li>
@@ -377,7 +378,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="zhmc_partition_list.html" class="btn btn-neutral float-left" title="zhmc_partition_list – List partitions (DPM mode)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="zhmc_partition_command.html" class="btn btn-neutral float-left" title="zhmc_partition_command – Execute OS console command in a partition (DPM mode)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="zhmc_storage_group.html" class="btn btn-neutral float-right" title="zhmc_storage_group – Manage a storage group (DPM mode)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
@@ -419,6 +420,8 @@
             <dd><a href="../../1.9.6/modules/zhmc_partition_messages.html">1.9.6</a></dd>
             <dd><a href="../../1.10.1/modules/zhmc_partition_messages.html">1.10.1</a></dd>
             <dd><a href="../../1.11.1/modules/zhmc_partition_messages.html">1.11.1</a></dd>
+            <dd><a href="../../1.12.0-a0/modules/zhmc_partition_messages.html">1.12.0-a0</a></dd>
+            <dd><a href="../../1.12.0/modules/zhmc_partition_messages.html">1.12.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

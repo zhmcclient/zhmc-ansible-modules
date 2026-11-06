@@ -74,12 +74,13 @@
 <li class="toctree-l2"><a class="reference internal" href="zhmc_nic.html">zhmc_nic – Manage a NIC of a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_nic_list.html">zhmc_nic_list – List NICs of a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_partition.html">zhmc_partition – Manage a partition (DPM mode)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_partition_command.html">zhmc_partition_command – Execute OS console command in a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_partition_list.html">zhmc_partition_list – List partitions (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_partition_command.html">zhmc_partition_command – Execute OS console command in a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_partition_messages.html">zhmc_partition_messages – Get console messages for OS in a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group.html">zhmc_storage_group – Manage a storage group (DPM mode)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Manage attachment of a storage group to a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_list.html">zhmc_storage_group_list – List storage groups (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Manage attachment of a storage group to a partition (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment_list.html">zhmc_storage_group_attachment_list – List the partitions attached to a storage group (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_volume.html">zhmc_storage_volume – Manage a storage volume (DPM mode)</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">zhmc_storage_volume_list – List storage volumes of a storage group (DPM mode)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#synopsis">Synopsis</a></li>
@@ -92,8 +93,8 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_virtual_function.html">zhmc_virtual_function – Manage a virtual function of a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_lpar.html">zhmc_lpar – Manage an LPAR (classic mode)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_command.html">zhmc_lpar_command – Execute OS console command in an LPAR (classic mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_list.html">zhmc_lpar_list – List LPARs (classic mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_command.html">zhmc_lpar_command – Execute OS console command in an LPAR (classic mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_messages.html">zhmc_lpar_messages – Get console messages for OS in an LPAR (classic mode)</a></li>
 </ul>
 </li>
@@ -219,6 +220,13 @@
 </dd>
 </dl>
 </dd>
+<dt>cpc_name</dt><dd><p>The name of the CPC associated with the target storage group.</p>
+<p>Note that storage group names are only guaranteed to be unique within a CPC, so specifying this parameter may be necessary depending on the names of the storage groups. For backwards compatibility, this parameter remains optional. If this parameter is not specified, the storage group is looked up on all managed CPCs and an error is returned if there is more than one storage group that has the name specified in <code class="docutils literal notranslate"><span class="pre">storage_group_name</span></code>.</p>
+<div class="line-block">
+<div class="line"><strong>required</strong>: False</div>
+<div class="line"><strong>type</strong>: str</div>
+</div>
+</dd>
 <dt>storage_group_name</dt><dd><p>Name of the storage group whose storage volumes are to be listed.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: True</div>
@@ -265,16 +273,16 @@
 <dt>additional_properties</dt><dd><p>List of additional properties to be returned for each storage volume, in addition to the default properties (see result description).</p>
 <p>Mutually exclusive with <code class="docutils literal notranslate"><span class="pre">full_properties</span></code>.</p>
 <p>The property names are specified with underscores instead of hyphens.</p>
-<p>Not all properties defined in the data model are supported. For supported properties, see the description of query parameter “additional-properties” in the “List Storage Volumes of a Storage Group” operation in the <a class="reference internal" href="../bibliography.html#hmc-api"><span class="std std-ref">HMC API</span></a> book.</p>
+<p>Depending on the HMC version, more properties than those specified may be returned, but you should not rely on that.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: list</div>
 <div class="line"><strong>elements</strong>: str</div>
 </div>
 </dd>
-<dt>full_properties</dt><dd><p>If True, all properties of each storage volume will be returned. Default: False.</p>
+<dt>full_properties</dt><dd><p>If True, all readable properties of each storage volume will be returned. Default: False.</p>
 <p>Mutually exclusive with <code class="docutils literal notranslate"><span class="pre">additional_properties</span></code>.</p>
-<p>Note: Setting this to True causes a loop of ‘Get Storage Group Properties’ operations to be executed. It is preferable from a performance perspective to use the <code class="docutils literal notranslate"><span class="pre">additional_properties</span></code> parameter instead.</p>
+<p>Note: It is preferable from a performance perspective to use the <code class="docutils literal notranslate"><span class="pre">additional_properties</span></code> parameter instead.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: bool</div>
@@ -293,17 +301,19 @@
 <div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
 <span class="c1"># Note: The following examples assume that some variables named 'my_*' are set.</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">List the volumes of storage group SG1</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">List the volumes of storage group SG1 on CPCA</span>
 <span class="w">  </span><span class="nt">zhmc_storage_volume_list</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">"</span>
 <span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">cpc_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CPCA</span>
 <span class="w">    </span><span class="nt">storage_group_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SG1</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">storage_volume_list</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">List the data volumes of storage group SG1</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">List the data volumes of storage group SG1 on CPCA</span>
 <span class="w">  </span><span class="nt">zhmc_storage_volume_list</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">hmc_host</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_hmc_host</span> <span class="cp">}}</span><span class="s">"</span>
 <span class="w">    </span><span class="nt">hmc_auth</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">my_hmc_auth</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">cpc_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CPCA</span>
 <span class="w">    </span><span class="nt">storage_group_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SG1</span>
 <span class="w">    </span><span class="nt">usage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">storage_volume_list</span>
@@ -344,7 +354,7 @@
 <blockquote>
 <div><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">"element_uri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/storage-groups/..../storage-volumes/...."</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"element_uri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/storage-groups/.../storage-volumes/..."</span><span class="p">,</span>
 <span class="w">        </span><span class="nt">"fulfillment_state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"complete"</span><span class="p">,</span>
 <span class="w">        </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"storage_volume1"</span><span class="p">,</span>
 <span class="w">        </span><span class="nt">"size"</span><span class="p">:</span><span class="w"> </span><span class="mf">500.0</span><span class="p">,</span>
@@ -360,7 +370,7 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>element_uri</dt><dd><p>Canonical URI of the storage volume object</p>
+<dt>element_uri</dt><dd><p>Canonical URI of the storage volume</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: str</div>
 </div>
@@ -380,7 +390,7 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>{additional_property}</dt><dd><p>Additional properties requested via <code class="docutils literal notranslate"><span class="pre">full_properties</span></code>. The property names will have underscores instead of hyphens.</p>
+<dt>{additional_property}</dt><dd><p>Additional properties requested via <code class="docutils literal notranslate"><span class="pre">full_properties</span></code> or <code class="docutils literal notranslate"><span class="pre">additional_properties</span></code>. The property names will have underscores instead of hyphens.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: raw</div>
 </div>
@@ -437,6 +447,8 @@
             <dd><a href="../../1.9.6/index.html">1.9.6</a></dd>
             <dd><a href="../../1.10.1/index.html">1.10.1</a></dd>
             <dd><a href="../../1.11.1/modules/zhmc_storage_volume_list.html">1.11.1</a></dd>
+            <dd><a href="../../1.12.0-a0/modules/zhmc_storage_volume_list.html">1.12.0-a0</a></dd>
+            <dd><a href="../../1.12.0/modules/zhmc_storage_volume_list.html">1.12.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

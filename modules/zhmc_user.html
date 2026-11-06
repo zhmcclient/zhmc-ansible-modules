@@ -81,18 +81,19 @@
 <li class="toctree-l2"><a class="reference internal" href="zhmc_nic.html">zhmc_nic – Manage a NIC of a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_nic_list.html">zhmc_nic_list – List NICs of a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_partition.html">zhmc_partition – Manage a partition (DPM mode)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_partition_command.html">zhmc_partition_command – Execute OS console command in a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_partition_list.html">zhmc_partition_list – List partitions (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_partition_command.html">zhmc_partition_command – Execute OS console command in a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_partition_messages.html">zhmc_partition_messages – Get console messages for OS in a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group.html">zhmc_storage_group – Manage a storage group (DPM mode)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Manage attachment of a storage group to a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_list.html">zhmc_storage_group_list – List storage groups (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment.html">zhmc_storage_group_attachment – Manage attachment of a storage group to a partition (DPM mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_storage_group_attachment_list.html">zhmc_storage_group_attachment_list – List the partitions attached to a storage group (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_volume.html">zhmc_storage_volume – Manage a storage volume (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_storage_volume_list.html">zhmc_storage_volume_list – List storage volumes of a storage group (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_virtual_function.html">zhmc_virtual_function – Manage a virtual function of a partition (DPM mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_lpar.html">zhmc_lpar – Manage an LPAR (classic mode)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_command.html">zhmc_lpar_command – Execute OS console command in an LPAR (classic mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_list.html">zhmc_lpar_list – List LPARs (classic mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_command.html">zhmc_lpar_command – Execute OS console command in an LPAR (classic mode)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zhmc_lpar_messages.html">zhmc_lpar_messages – Get console messages for OS in an LPAR (classic mode)</a></li>
 </ul>
 </li>
@@ -250,14 +251,14 @@
 <div class="line"><strong>type</strong>: dict</div>
 </div>
 </dd>
-<dt>expand</dt><dd><p>Deprecated: The <code class="docutils literal notranslate"><span class="pre">expand</span></code> parameter is deprecated because the returned password rule, user role, user pattern and LDAP server definition objects have an independent lifecycle, so the same objects are returned when invoking this module in a loop through all users. Use the respective other modules of this collection to get the properties of these objects.</p>
-<p>Boolean that controls whether the returned user contains additional artificial properties that expand certain URI or name properties to the full set of resource properties (see description of return values of this module).</p>
+<dt>expand</dt><dd><p>If True, the return value will contain additional artificial properties that expand certain URI or name properties to the full set of resource properties. See the return value for details.</p>
+<p><strong>Deprecated</strong>: The <code class="docutils literal notranslate"><span class="pre">expand</span></code> parameter is deprecated because the returned password rule, user role, user pattern and LDAP server definition objects have an independent lifecycle, so the same objects are returned when invoking this module in a loop through all users. Use the respective other modules of this collection to get the properties of these objects.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
 <div class="line"><strong>type</strong>: bool</div>
 </div>
 </dd>
-<dt>expand_names</dt><dd><p>Boolean that controls whether the returned user contains additional artificial properties for the names of referenced objects, such as user roles, password rule, etc.</p>
+<dt>expand_names</dt><dd><p>If True, the return value will contain additional artificial properties for the names of referenced objects, such as user roles, password rule, etc.</p>
 <p>For backwards compatibility, this parameter defaults to True.</p>
 <div class="line-block">
 <div class="line"><strong>required</strong>: False</div>
@@ -407,8 +408,9 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>user-role-objects</dt><dd><p>Deprecated: This result property is deprecated because the <code class="docutils literal notranslate"><span class="pre">expand</span></code> parameter is deprecated.</p>
-<p>Only present if <code class="docutils literal notranslate"><span class="pre">expand=true</span></code>: User roles referenced by property <code class="docutils literal notranslate"><span class="pre">user-roles</span></code>.</p>
+<dt>user-role-objects</dt><dd><p>User roles referenced by property <code class="docutils literal notranslate"><span class="pre">user-roles</span></code>.</p>
+<p>Only present if <code class="docutils literal notranslate"><span class="pre">expand</span></code> is True.</p>
+<p><strong>Deprecated</strong>: This result property is deprecated because the <code class="docutils literal notranslate"><span class="pre">expand</span></code> parameter is deprecated.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: dict</div>
 </div>
@@ -425,8 +427,9 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>user-pattern</dt><dd><p>Deprecated: This result property is deprecated because the <code class="docutils literal notranslate"><span class="pre">expand</span></code> parameter is deprecated.</p>
-<p>Only present for users with <code class="docutils literal notranslate"><span class="pre">type=pattern</span></code> and if <code class="docutils literal notranslate"><span class="pre">expand=true</span></code>: User pattern referenced by property <code class="docutils literal notranslate"><span class="pre">user-pattern-uri</span></code>.</p>
+<dt>user-pattern</dt><dd><p>User pattern referenced by property <code class="docutils literal notranslate"><span class="pre">user-pattern-uri</span></code>.</p>
+<p>Only present for users with <code class="docutils literal notranslate"><span class="pre">type=pattern</span></code> and if <code class="docutils literal notranslate"><span class="pre">expand</span></code> is True.</p>
+<p><strong>Deprecated</strong>: This result property is deprecated because the <code class="docutils literal notranslate"><span class="pre">expand</span></code> parameter is deprecated.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: dict</div>
 </div>
@@ -443,8 +446,9 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>user-template</dt><dd><p>Deprecated: This result property is deprecated because the <code class="docutils literal notranslate"><span class="pre">expand</span></code> parameter is deprecated.</p>
-<p>Only present for users with <code class="docutils literal notranslate"><span class="pre">type=pattern</span></code> and if <code class="docutils literal notranslate"><span class="pre">expand=true</span></code>: User template referenced by property <code class="docutils literal notranslate"><span class="pre">user-template-uri</span></code>.</p>
+<dt>user-template</dt><dd><p>User template referenced by property <code class="docutils literal notranslate"><span class="pre">user-template-uri</span></code>.</p>
+<p>Only present for users with <code class="docutils literal notranslate"><span class="pre">type=pattern</span></code> and if <code class="docutils literal notranslate"><span class="pre">expand</span></code> is True.</p>
+<p><strong>Deprecated</strong>: This result property is deprecated because the <code class="docutils literal notranslate"><span class="pre">expand</span></code> parameter is deprecated.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: dict</div>
 </div>
@@ -461,8 +465,9 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>password-rule</dt><dd><p>Deprecated: This result property is deprecated because the <code class="docutils literal notranslate"><span class="pre">expand</span></code> parameter is deprecated.</p>
-<p>Only present if <code class="docutils literal notranslate"><span class="pre">expand=true</span></code>: Password rule referenced by property <code class="docutils literal notranslate"><span class="pre">password-rule-uri</span></code>.</p>
+<dt>password-rule</dt><dd><p>Password rule referenced by property <code class="docutils literal notranslate"><span class="pre">password-rule-uri</span></code>.</p>
+<p>Only present if <code class="docutils literal notranslate"><span class="pre">expand</span></code> is True.</p>
+<p><strong>Deprecated</strong>: This result property is deprecated because the <code class="docutils literal notranslate"><span class="pre">expand</span></code> parameter is deprecated.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: dict</div>
 </div>
@@ -479,8 +484,9 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>ldap-server-definition</dt><dd><p>Deprecated: This result property is deprecated because the <code class="docutils literal notranslate"><span class="pre">expand</span></code> parameter is deprecated.</p>
-<p>Only present if <code class="docutils literal notranslate"><span class="pre">expand=true</span></code>: LDAP server definition referenced by property <code class="docutils literal notranslate"><span class="pre">ldap-server-definition-uri</span></code>.</p>
+<dt>ldap-server-definition</dt><dd><p>LDAP server definition referenced by property <code class="docutils literal notranslate"><span class="pre">ldap-server-definition-uri</span></code>.</p>
+<p>Only present if <code class="docutils literal notranslate"><span class="pre">expand</span></code> is True.</p>
+<p><strong>Deprecated</strong>: This result property is deprecated because the <code class="docutils literal notranslate"><span class="pre">expand</span></code> parameter is deprecated.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: dict</div>
 </div>
@@ -497,8 +503,9 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>primary-mfa-server-definition</dt><dd><p>Deprecated: This result property is deprecated because the <code class="docutils literal notranslate"><span class="pre">expand</span></code> parameter is deprecated.</p>
-<p>Only present if <code class="docutils literal notranslate"><span class="pre">expand=true</span></code>: MFA server definition referenced by property <code class="docutils literal notranslate"><span class="pre">primary-mfa-server-definition-uri</span></code>.</p>
+<dt>primary-mfa-server-definition</dt><dd><p>MFA server definition referenced by property <code class="docutils literal notranslate"><span class="pre">primary-mfa-server-definition-uri</span></code>.</p>
+<p>Only present if <code class="docutils literal notranslate"><span class="pre">expand</span></code> is True.</p>
+<p><strong>Deprecated</strong>: This result property is deprecated because the <code class="docutils literal notranslate"><span class="pre">expand</span></code> parameter is deprecated.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: dict</div>
 </div>
@@ -515,8 +522,9 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>backup-mfa-server-definition</dt><dd><p>Deprecated: This result property is deprecated because the <code class="docutils literal notranslate"><span class="pre">expand</span></code> parameter is deprecated.</p>
-<p>Only present if <code class="docutils literal notranslate"><span class="pre">expand=true</span></code>: MFA server definition referenced by property <code class="docutils literal notranslate"><span class="pre">backup-mfa-server-definition-uri</span></code>.</p>
+<dt>backup-mfa-server-definition</dt><dd><p>MFA server definition referenced by property <code class="docutils literal notranslate"><span class="pre">backup-mfa-server-definition-uri</span></code>.</p>
+<p>Only present if <code class="docutils literal notranslate"><span class="pre">expand</span></code> is True.</p>
+<p><strong>Deprecated</strong>: This result property is deprecated because the <code class="docutils literal notranslate"><span class="pre">expand</span></code> parameter is deprecated.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: dict</div>
 </div>
@@ -533,8 +541,9 @@
 <div class="line"><strong>type</strong>: str</div>
 </div>
 </dd>
-<dt>default-group</dt><dd><p>Deprecated: This result property is deprecated because the <code class="docutils literal notranslate"><span class="pre">expand</span></code> parameter is deprecated.</p>
-<p>Only present if <code class="docutils literal notranslate"><span class="pre">expand=true</span></code>: Group referenced by property <code class="docutils literal notranslate"><span class="pre">default-group-uri</span></code>.</p>
+<dt>default-group</dt><dd><p>Group referenced by property <code class="docutils literal notranslate"><span class="pre">default-group-uri</span></code>.</p>
+<p>Only present if <code class="docutils literal notranslate"><span class="pre">expand</span></code> is True.</p>
+<p><strong>Deprecated</strong>: This result property is deprecated because the <code class="docutils literal notranslate"><span class="pre">expand</span></code> parameter is deprecated.</p>
 <div class="line-block">
 <div class="line"><strong>type</strong>: dict</div>
 </div>
@@ -580,7 +589,7 @@
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.11.1
+        v: 1.12.0
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -598,6 +607,8 @@
             <dd><a href="../1.9.6/modules/zhmc_user.html">1.9.6</a></dd>
             <dd><a href="../1.10.1/modules/zhmc_user.html">1.10.1</a></dd>
             <dd><a href="../1.11.1/modules/zhmc_user.html">1.11.1</a></dd>
+            <dd><a href="../1.12.0-a0/modules/zhmc_user.html">1.12.0-a0</a></dd>
+            <dd><a href="../1.12.0/modules/zhmc_user.html">1.12.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
