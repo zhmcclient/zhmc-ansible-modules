@@ -25,8 +25,9 @@ import sys
 import os
 import re
 
+# Pattern for the latest tag:
 # Release version 'M.N.U' or start version 'M.N.U-a0'
-RELEASE_START_PATTERN = re.compile(r'^[0-9]+\.[0-9]+\.[0-9]+(-a0)?$')
+LATEST_TAG_PATTERN = re.compile(r'^[0-9]+\.[0-9]+\.[0-9]+(-a0)?$')
 
 
 class FallbackError(Exception):
@@ -85,7 +86,7 @@ def get_git_version():
         git_msg = exc.stderr.replace("stderr: ", "").strip("\n '")
         raise RuntimeError(f"git command '{git_command}' failed: {git_msg}")
 
-    if RELEASE_START_PATTERN.match(latest_tag) is None:
+    if LATEST_TAG_PATTERN.match(latest_tag) is None:
         raise RuntimeError(
             "Incorrect format for most recent git tag in history of HEAD "
             f"branch: {latest_tag} - must be M.N.U-a0 or M.N.U")
@@ -95,11 +96,13 @@ def get_git_version():
     # - M.N.U-a0-D-gC.dirty     - if repo directory is dirty
     # - M.N.U-a0-D-gC           - if repo directory is not dirty but has
     #                             commits since the start tag
+    # - M.N.U-D-gC              - if on the start commit before being tagged
     # - M.N.U-a0                - if on the start tag
     # - M.N.U                   - if on the release tag
 
-    # Translate '-D-gC' to '.devD.gC', if present
-    coll_version = re.sub(r'-([0-9]+)-g([0-9a-f]+)', r'.dev\1.g\2', git_version)
+    # Translate '-a0-D-gC' or '-D-gC' to '-a0.devD.gC', if present
+    coll_version = re.sub(
+        r'-(a0-)?([0-9]+)-g([0-9a-f]+)', r'-a0.dev\2.g\3', git_version)
 
     return coll_version
 
